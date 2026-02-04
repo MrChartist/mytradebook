@@ -150,10 +150,15 @@ Deno.serve(async (req) => {
           `
           )
           .eq("id", payload.trade_id)
-          .single();
+          .maybeSingle();
 
-        if (error || !trade) {
-          throw new Error(`Trade not found: ${payload.trade_id}`);
+        if (error) throw error;
+        if (!trade) {
+          console.log(`Trade not found: ${payload.trade_id}, skipping notification`);
+          return new Response(
+            JSON.stringify({ success: true, skipped: true, reason: "Trade not found" }),
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
         }
 
         // Use user's telegram_chat_id if available
@@ -216,10 +221,15 @@ Deno.serve(async (req) => {
           .eq("id", payload.trade_id)
           .order("timestamp", { foreignTable: "trade_events", ascending: false })
           .limit(1, { foreignTable: "trade_events" })
-          .single();
+          .maybeSingle();
 
-        if (error || !trade) {
-          throw new Error(`Trade not found: ${payload.trade_id}`);
+        if (error) throw error;
+        if (!trade) {
+          console.log(`Trade not found: ${payload.trade_id}, skipping notification`);
+          return new Response(
+            JSON.stringify({ success: true, skipped: true, reason: "Trade not found" }),
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
         }
 
         if (trade.user_settings?.telegram_chat_id) {
@@ -262,10 +272,15 @@ Deno.serve(async (req) => {
           `
           )
           .eq("id", payload.trade_id)
-          .single();
+          .maybeSingle();
 
-        if (error || !trade) {
-          throw new Error(`Trade not found: ${payload.trade_id}`);
+        if (error) throw error;
+        if (!trade) {
+          console.log(`Trade not found: ${payload.trade_id}, skipping notification`);
+          return new Response(
+            JSON.stringify({ success: true, skipped: true, reason: "Trade not found" }),
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
         }
 
         if (trade.user_settings?.telegram_chat_id) {
@@ -310,10 +325,15 @@ Deno.serve(async (req) => {
           `
           )
           .eq("id", payload.trade_id)
-          .single();
+          .maybeSingle();
 
-        if (error || !trade) {
-          throw new Error(`Trade not found: ${payload.trade_id}`);
+        if (error) throw error;
+        if (!trade) {
+          console.log(`Trade not found: ${payload.trade_id}, skipping notification`);
+          return new Response(
+            JSON.stringify({ success: true, skipped: true, reason: "Trade not found" }),
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
         }
 
         if (trade.user_settings?.telegram_chat_id) {
@@ -346,10 +366,15 @@ Deno.serve(async (req) => {
           `
           )
           .eq("id", payload.alert_id)
-          .single();
+          .maybeSingle();
 
-        if (error || !alert) {
-          throw new Error(`Alert not found: ${payload.alert_id}`);
+        if (error) throw error;
+        if (!alert) {
+          console.log(`Alert not found: ${payload.alert_id}, skipping notification`);
+          return new Response(
+            JSON.stringify({ success: true, skipped: true, reason: "Alert not found" }),
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
         }
 
         if (alert.user_settings?.telegram_chat_id) {
@@ -385,10 +410,15 @@ Deno.serve(async (req) => {
           `
           )
           .eq("id", payload.alert_id)
-          .single();
+          .maybeSingle();
 
-        if (error || !alert) {
-          throw new Error(`Alert not found: ${payload.alert_id}`);
+        if (error) throw error;
+        if (!alert) {
+          console.log(`Alert not found: ${payload.alert_id}, skipping notification`);
+          return new Response(
+            JSON.stringify({ success: true, skipped: true, reason: "Alert not found" }),
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
         }
 
         if (alert.user_settings?.telegram_chat_id) {
@@ -420,10 +450,15 @@ Deno.serve(async (req) => {
           `
           )
           .eq("id", payload.alert_id)
-          .single();
+          .maybeSingle();
 
-        if (error || !alert) {
-          throw new Error(`Alert not found: ${payload.alert_id}`);
+        if (error) throw error;
+        if (!alert) {
+          console.log(`Alert not found: ${payload.alert_id}, skipping notification`);
+          return new Response(
+            JSON.stringify({ success: true, skipped: true, reason: "Alert not found" }),
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
         }
 
         if (alert.user_settings?.telegram_chat_id) {
@@ -460,10 +495,15 @@ Deno.serve(async (req) => {
           `
           )
           .eq("id", payload.trade_id)
-          .single();
+          .maybeSingle();
 
-        if (error || !trade) {
-          throw new Error(`Trade not found: ${payload.trade_id}`);
+        if (error) throw error;
+        if (!trade) {
+          console.log(`Trade not found: ${payload.trade_id}, skipping notification`);
+          return new Response(
+            JSON.stringify({ success: true, skipped: true, reason: "Trade not found" }),
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
         }
 
         if (trade.user_settings?.telegram_chat_id) {
@@ -490,10 +530,15 @@ Deno.serve(async (req) => {
           `
           )
           .eq("id", payload.report_id)
-          .single();
+          .maybeSingle();
 
-        if (error || !report) {
-          throw new Error(`Report not found: ${payload.report_id}`);
+        if (error) throw error;
+        if (!report) {
+          console.log(`Report not found: ${payload.report_id}, skipping notification`);
+          return new Response(
+            JSON.stringify({ success: true, skipped: true, reason: "Report not found" }),
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
         }
 
         if (report.user_settings?.telegram_chat_id) {
