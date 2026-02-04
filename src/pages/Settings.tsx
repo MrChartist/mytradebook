@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   User,
   Bell,
@@ -6,14 +6,17 @@ import {
   Link,
   Shield,
   Moon,
-  Sun,
   Save,
   ExternalLink,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const settingsSections = [
   { id: "profile", label: "Profile", icon: User },
@@ -24,7 +27,56 @@ const settingsSections = [
 ];
 
 export default function Settings() {
+  const { profile, user } = useAuth();
   const [activeSection, setActiveSection] = useState("profile");
+  const [saving, setSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
+
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        name: profile.name || "",
+        email: profile.email || user?.email || "",
+        phone: profile.phone || "",
+      });
+    }
+  }, [profile, user]);
+
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+        })
+        .eq("user_id", user.id);
+      
+      if (error) throw error;
+      toast.success("Profile saved successfully");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to save profile");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const getInitials = () => {
+    if (!formData.name) return "MC";
+    return formData.name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -68,7 +120,7 @@ export default function Settings() {
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-full bg-gradient-primary flex items-center justify-center text-primary-foreground text-xl font-bold">
-                    JD
+                    {getInitials()}
                   </div>
                   <Button variant="outline" size="sm">
                     Change Photo
@@ -80,7 +132,8 @@ export default function Settings() {
                       Full Name
                     </label>
                     <Input
-                      defaultValue="John Doe"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="bg-accent border-border"
                     />
                   </div>
@@ -89,7 +142,8 @@ export default function Settings() {
                       Email
                     </label>
                     <Input
-                      defaultValue="john@example.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="bg-accent border-border"
                     />
                   </div>
@@ -98,7 +152,8 @@ export default function Settings() {
                       Phone
                     </label>
                     <Input
-                      defaultValue="+91 9876543210"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className="bg-accent border-border"
                     />
                   </div>
@@ -113,8 +168,12 @@ export default function Settings() {
                     />
                   </div>
                 </div>
-                <Button className="bg-gradient-primary">
-                  <Save className="w-4 h-4 mr-2" />
+                <Button className="bg-gradient-primary" onClick={handleSaveProfile} disabled={saving}>
+                  {saving ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Save className="w-4 h-4 mr-2" />
+                  )}
                   Save Changes
                 </Button>
               </div>
