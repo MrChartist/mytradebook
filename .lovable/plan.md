@@ -1,295 +1,220 @@
 
 
-# Multi-User Trading Platform - Complete Implementation Plan
+# Research Trade Journal with Trailing Stop Loss and Telegram Alerts
+
+## Overview
+
+This plan transforms the existing trade tracking system into a **research-focused trade journal** that:
+1. Removes the concept of "quantity" (since this is for research/analysis, not actual trading)
+2. Adds **Trailing Stop Loss** functionality
+3. Sends automatic Telegram notifications for all trade events (entry, SL hit, TSL updates, target hits)
+4. Connects the Trade Journal and all alerts with Telegram
+
+---
 
 ## Current State Analysis
 
-### What's Built (Frontend UI Only)
-- **7 Page Layouts**: Dashboard, Studies, Alerts, Trades, Journal, Reports, Settings
-- **Design System**: Dark theme with trading colors (profit/loss), glass-card components
-- **Static Mock Data**: All pages display hardcoded sample data
-- **UI Components**: Sidebar navigation, charts, tables, cards
+**Existing Features:**
+- Trade creation with symbol, entry price, stop loss, targets (up to 3), rating, confidence
+- Trade events tracking (SL_HIT, TARGET1_HIT, etc.)
+- Basic trade-monitor edge function that checks SL and targets
+- Telegram notifications already working for trade updates
 
-### What's NOT Working
-1. **Non-functional Buttons**: "New Alert", "New Trade", "New Study", Edit, Delete buttons have no actions
-2. **No Backend/Database**: All data is hardcoded - nothing persists
-3. **No Authentication**: Login page simulates OTP but doesn't actually authenticate
-4. **No Integrations**: Dhan API, Telegram Bot, Google OAuth are not connected
-5. **No Background Workers**: No alert evaluation, trade monitoring, or report generation
-6. **Mobile Menu**: Hamburger icon doesn't open a navigation drawer
-
----
-
-## Implementation Roadmap
-
-### Phase 1: Enable Cloud and Database Setup (Foundation)
-
-#### 1.1 Enable Lovable Cloud
-- Retry Cloud enablement for database and authentication
-- This provides PostgreSQL, Edge Functions, and Authentication
-
-#### 1.2 Create Database Schema
-Migration files to create all required tables:
-
-**Tables to Create:**
-- `profiles` - User profile data linked to auth.users
-- `user_roles` - Separate roles table (Admin/Client) for security
-- `user_settings` - User preferences and integration settings
-- `studies` - Market analysis entries with category and tags
-- `alerts` - Price and technical condition alerts
-- `trades` - Trade entries with segment, entry/exit, SL/targets
-- `trade_events` - Trade lifecycle events (entry, SL hit, target hit)
-- `pattern_tags`, `candlestick_tags`, `mistake_tags` - Journal tagging taxonomy
-- `trade_patterns`, `trade_mistakes` - Many-to-many tag relationships
-- `weekly_reports` - Generated weekly summaries
-
-**Security Setup:**
-- Row Level Security (RLS) policies on all tables
-- Security definer function `has_role()` for role checking
-- Users can only access their own data
+**What Needs to Change:**
+- Make quantity optional (default to 1 for research trades)
+- Add trailing stop loss configuration and tracking
+- Add timeframe/holding period field
+- Connect all trade journal events to Telegram
+- Auto-trigger alerts based on price movements
 
 ---
 
-### Phase 2: Authentication System
+## Implementation Plan
 
-#### 2.1 Google OAuth Login
-- Configure Supabase Google provider
-- Implement `signInWithOAuth({ provider: 'google' })`
-- Handle auth state changes with `onAuthStateChange`
-- Auto-create profile on first login via database trigger
+### Phase 1: Database Schema Updates
 
-#### 2.2 Phone OTP Login
-- Create Edge Function for OTP generation and verification
-- Store hashed OTP in `otp_codes` table with 5-minute expiry
-- Integrate SMS gateway (Twilio/AWS SNS) for sending OTP
-- Rate limit: 5 OTP requests per 15 minutes
-
-#### 2.3 Auth Context and Protected Routes
-- Create `AuthContext` provider with session state
-- Build `ProtectedRoute` wrapper component
-- Redirect unauthenticated users to `/login`
-- Store user session and role in context
-
----
-
-### Phase 3: Core CRUD Features
-
-#### 3.1 Alerts Module
-- **Create Alert Modal**: Form with symbol, condition type (Price Above/Below/% Change), threshold, recurrence
-- **Database Operations**: Insert, update, toggle active, delete alerts
-- **Real-time Updates**: Supabase real-time subscription for alert status
-- **Type Safety**: Zod schema validation for all forms
-
-#### 3.2 Studies Module
-- **Create Study Modal**: Title, symbol, category, notes, tags
-- **Image Attachments**: Supabase Storage for chart screenshots
-- **Tag Management**: Add/remove tags dynamically
-- **Edit/Delete**: Full CRUD with confirmation dialogs
-
-#### 3.3 Trades Module
-- **Create Trade Modal**: Symbol, segment, type (BUY/SELL), quantity, entry price, SL, targets, rating, confidence
-- **Trade Table**: Real data from database with filters
-- **Trade Detail View**: Full trade info with event timeline
-- **Close Trade**: Manual closure with P&L calculation
-
-#### 3.4 Journal Module
-- **Pattern Tagging**: Link trades to patterns, candlesticks, mistakes
-- **Analytics Queries**: Win rate by pattern, mistake impact calculations
-- **Calendar View**: Trade history calendar with daily P&L
-- **Kanban Board**: Mistake review workflow
-
----
-
-### Phase 4: API Integrations
-
-#### 4.1 Dhan API Integration
-- **Edge Function**: `dhan-sync` for portfolio synchronization
-- **Secrets Required**: `DHAN_CLIENT_ID`, `DHAN_ACCESS_TOKEN`
-- **Sync Logic**: Fetch positions from Dhan, match with local trades
-- **Order Execution**: Send buy/sell orders via Dhan API
-
-#### 4.2 Telegram Bot Integration
-- **Edge Function**: `telegram-notify` for sending messages
-- **Secret Required**: `TELEGRAM_BOT_TOKEN`
-- **User Setting**: Store individual `telegram_chat_id` per user
-- **Message Templates**: Trade alerts, SL/Target hits, weekly reports
-- **Markdown Formatting**: Professional message styling
-
-#### 4.3 Google OAuth
-- Configure in Supabase Dashboard (requires user action)
-- Set redirect URLs correctly
-- Handle OAuth callback in Login page
-
----
-
-### Phase 5: Background Workers (Edge Functions + Cron)
-
-#### 5.1 Alert Evaluator
-- **Edge Function**: `evaluate-alerts`
-- **Schedule**: Every 5 minutes via pg_cron
-- **Logic**: 
-  - Fetch active alerts
-  - Get current prices (from Dhan or market data API)
-  - Evaluate conditions
-  - Trigger Telegram notification if matched
-  - Update `last_triggered` and `trigger_count`
-
-#### 5.2 Trade Monitor
-- **Edge Function**: `monitor-trades`
-- **Schedule**: Every 1 minute for open positions
-- **Logic**:
-  - Fetch open trades
-  - Get current prices
-  - Check if SL or targets hit
-  - Create trade events
-  - Send Telegram updates
-  - Auto-execute orders via Dhan (if configured)
-
-#### 5.3 Weekly Reporter
-- **Edge Function**: `generate-weekly-report`
-- **Schedule**: Monday 6:00 AM IST via pg_cron
-- **Logic**:
-  - Aggregate trades from previous week
-  - Segment by trade type
-  - Calculate metrics (P&L, win rate, best/worst)
-  - Store in `weekly_reports` table
-  - Send to Telegram and email
-
----
-
-### Phase 6: UI Enhancements
-
-#### 6.1 Mobile Navigation Drawer
-- Sheet component for mobile menu
-- Trigger from hamburger button
-- Same navigation items as desktop sidebar
-
-#### 6.2 Loading States
-- Skeleton loaders for data fetching
-- Toast notifications for success/error
-- Optimistic updates for better UX
-
-#### 6.3 Form Validation
-- Zod schemas for all input forms
-- react-hook-form integration
-- Field-level error messages
-
----
-
-## Technical Architecture
-
-### File Structure for New Code
+Add new columns to the `trades` table:
 
 ```text
-src/
-  contexts/
-    AuthContext.tsx          # Authentication state management
-  hooks/
-    useAuth.ts               # Auth helper hooks
-    useAlerts.ts             # Alerts CRUD hooks
-    useStudies.ts            # Studies CRUD hooks
-    useTrades.ts             # Trades CRUD hooks
-  components/
-    modals/
-      CreateAlertModal.tsx   # Alert creation form
-      CreateStudyModal.tsx   # Study creation form
-      CreateTradeModal.tsx   # Trade entry form
-      TradeDetailModal.tsx   # Trade detail view
-      ConfirmDeleteModal.tsx # Deletion confirmation
-    layout/
-      MobileDrawer.tsx       # Mobile navigation
-      ProtectedRoute.tsx     # Auth guard component
-  lib/
-    supabase.ts              # Supabase client
-    schemas.ts               # Zod validation schemas
-  integrations/
-    supabase/
-      client.ts              # Supabase client config
-      types.ts               # Generated TypeScript types
-
-supabase/
-  migrations/
-    001_create_profiles.sql
-    002_create_user_roles.sql
-    003_create_studies.sql
-    004_create_alerts.sql
-    005_create_trades.sql
-    006_create_journal_tags.sql
-    007_create_weekly_reports.sql
-  functions/
-    telegram-notify/
-      index.ts
-    dhan-sync/
-      index.ts
-    evaluate-alerts/
-      index.ts
-    generate-weekly-report/
-      index.ts
++-------------------------------+-------------------+----------------------------------+
+| Column                        | Type              | Description                      |
++-------------------------------+-------------------+----------------------------------+
+| trailing_sl_enabled           | boolean           | Enable trailing stop loss        |
+| trailing_sl_percent           | numeric           | Trailing SL distance as %        |
+| trailing_sl_points            | numeric           | Trailing SL distance in points   |
+| trailing_sl_current           | numeric           | Current trailing SL price        |
+| trailing_sl_trigger_price     | numeric           | Price at which TSL activates     |
+| timeframe                     | varchar           | e.g., "15min", "1H", "4H", "1D"  |
+| holding_period                | varchar           | Expected hold duration           |
++-------------------------------+-------------------+----------------------------------+
 ```
 
-### Database Relationships
+Add new event type for trailing stop loss:
+- `TSL_UPDATED` - When trailing SL is adjusted
 
+### Phase 2: UI Updates
+
+**Create Trade Modal Changes:**
+- Make quantity field optional (default 1 for research)
+- Add "Timeframe" dropdown (1min, 5min, 15min, 1H, 4H, 1D, 1W)
+- Add "Expected Holding Period" field
+- Add "Trailing Stop Loss" section:
+  - Toggle to enable/disable
+  - Choice: Percentage-based or Points-based
+  - Trigger price (when TSL activates, e.g., after reaching first target)
+
+**Trade Detail Modal Changes:**
+- Display trailing SL status and current value
+- Show TSL update history in events timeline
+- Visual indicator when TSL is active vs pending
+
+### Phase 3: Trade Monitor Edge Function Enhancements
+
+Update `trade-monitor/index.ts` to:
+
+1. **Check and Update Trailing Stop Loss:**
+   - When price moves favorably, update trailing SL
+   - For BUY trades: TSL trails below current price
+   - For SELL trades: TSL trails above current price
+   - Only activate TSL after trigger price is hit
+
+2. **Send Telegram Notifications for:**
+   - New trade created (ENTRY)
+   - Stop Loss hit
+   - Trailing Stop Loss hit
+   - Trailing Stop Loss updated (moved in favorable direction)
+   - Each target hit (T1, T2, T3)
+   - Trade closed manually
+
+3. **Enhanced notification format:**
 ```text
-auth.users (Supabase managed)
-    |
-    +-- profiles (1:1)
-    |
-    +-- user_roles (1:many, separate for security)
-    |
-    +-- user_settings (1:1)
-    |
-    +-- studies (1:many)
-    |
-    +-- alerts (1:many)
-    |
-    +-- trades (1:many)
-            |
-            +-- trade_events (1:many)
-            |
-            +-- trade_patterns (many:many via pattern_tags)
-            |
-            +-- trade_mistakes (many:many via mistake_tags)
+Example TSL Update Notification:
+--------------------------------
+🔄 *Trailing SL Updated*
+
+Symbol: *RELIANCE*
+Entry: ₹2,400
+Current: ₹2,520
+New TSL: ₹2,470 (was ₹2,350)
+
+Locked Gain: +₹70 (+2.9%)
+```
+
+### Phase 4: Create Telegram Notification Triggers
+
+Modify `useTrades.ts` hook to send Telegram notifications when:
+- Trade is created (call telegram-notify with type: "new_trade")
+- Trade is closed manually (call telegram-notify with type: "trade_closed")
+
+The trade-monitor edge function already handles:
+- SL/TSL hits
+- Target hits
+
+### Phase 5: Enhanced Trade Form Schema
+
+Update `src/lib/schemas.ts`:
+
+```typescript
+// New fields for research trades
+timeframes: ["1min", "5min", "15min", "30min", "1H", "4H", "1D", "1W"] as const
+
+createTradeSchema = z.object({
+  symbol: z.string().required(),
+  segment: z.enum(marketSegments).required(),
+  trade_type: z.enum(tradeTypes).required(),
+  quantity: z.number().optional().default(1), // Now optional
+  entry_price: z.number().required(),
+  stop_loss: z.number().optional(),
+  targets: z.array(z.number()).max(3).optional(),
+  rating: z.number().min(1).max(10).optional(),
+  confidence_score: z.number().min(1).max(5).optional(),
+  timeframe: z.enum(timeframes).optional(),
+  holding_period: z.string().optional(),
+  trailing_sl_enabled: z.boolean().default(false),
+  trailing_sl_percent: z.number().positive().optional(),
+  trailing_sl_trigger_price: z.number().optional(),
+  notes: z.string().optional(),
+  // ... other existing fields
+})
 ```
 
 ---
 
-## Implementation Priority
+## Technical Details
 
-| Priority | Feature | Effort | Dependencies |
-|----------|---------|--------|--------------|
-| 1 | Enable Cloud | Low | None |
-| 2 | Database Schema | Medium | Cloud |
-| 3 | Auth (Google OAuth) | Medium | Cloud |
-| 4 | Alerts CRUD | Medium | Auth |
-| 5 | Trades CRUD | Medium | Auth |
-| 6 | Studies CRUD | Low | Auth |
-| 7 | Mobile Navigation | Low | None |
-| 8 | Telegram Integration | Medium | Secrets |
-| 9 | Dhan API Integration | High | Secrets |
-| 10 | Background Workers | High | All above |
-| 11 | Weekly Reports | Medium | Trades + Telegram |
+### Trailing Stop Loss Logic
+
+```text
+For BUY trades:
+1. User sets entry at ₹100, SL at ₹95, TSL 2% trailing, trigger at ₹105
+2. When price reaches ₹105, TSL activates
+3. TSL = Current Price - (Entry Price * TSL%)
+4. If price goes to ₹110, TSL becomes ₹108 (110 - 2%)
+5. If price drops to ₹108, TSL is hit -> close trade
+
+For SELL trades:
+1. User shorts at ₹100, SL at ₹105, TSL 2% trailing, trigger at ₹95
+2. When price reaches ₹95, TSL activates
+3. TSL = Current Price + (Entry Price * TSL%)
+4. If price drops to ₹90, TSL becomes ₹92 (90 + 2%)
+5. If price rises to ₹92, TSL is hit -> close trade
+```
+
+### Telegram Message Templates
+
+```text
+Entry:
+🚀 *New Research Trade*
+*BUY* *RELIANCE* at ₹2,400
+Timeframe: 4H | Hold: Intraday
+🛑 SL: ₹2,350 (-2.1%)
+🔄 TSL: 1.5% (activates at ₹2,450)
+🎯 T1: ₹2,480 | T2: ₹2,560
+⭐ Rating: 8/10 | Confidence: 4/5
+
+SL/TSL Hit:
+🛑 *Stop Loss Hit!*
+*RELIANCE* closed at ₹2,350
+Entry: ₹2,400 → Exit: ₹2,350
+P&L: -₹50 (-2.1%)
+Reason: SL_HIT
+
+Target Hit:
+🎯 *Target 1 Hit!*
+*RELIANCE* reached ₹2,480
+Entry: ₹2,400 | Current: ₹2,485
+P&L: +₹85 (+3.5%)
+🔄 TSL now active at ₹2,440
+
+TSL Update:
+🔄 *Trailing SL Moved*
+*RELIANCE* TSL: ₹2,440 → ₹2,475
+Price: ₹2,520
+Locked Gain: +₹75 (+3.1%)
+```
 
 ---
 
-## Secrets Required
+## Files to Modify/Create
 
-Before integrations can work, you'll need to add these secrets:
-
-| Secret Name | Purpose | Where to Get |
-|-------------|---------|--------------|
-| `TELEGRAM_BOT_TOKEN` | Send notifications | @BotFather on Telegram |
-| `DHAN_CLIENT_ID` | Trading API | Dhan Developer Portal |
-| `DHAN_ACCESS_TOKEN` | Trading API | Dhan Developer Portal |
+| File | Action | Description |
+|------|--------|-------------|
+| Database migration | Create | Add trailing SL columns, timeframe, make quantity nullable |
+| `src/lib/schemas.ts` | Modify | Add new fields, make quantity optional |
+| `src/components/modals/CreateTradeModal.tsx` | Modify | Add TSL, timeframe, holding period fields |
+| `src/components/modals/TradeDetailModal.tsx` | Modify | Show TSL status and history |
+| `src/hooks/useTrades.ts` | Modify | Send Telegram on create/close, handle new fields |
+| `supabase/functions/trade-monitor/index.ts` | Modify | Add TSL logic and enhanced notifications |
+| `supabase/functions/telegram-notify/index.ts` | Modify | Add TSL notification templates |
 
 ---
 
-## Immediate Next Steps
+## Summary
 
-**Recommended Order:**
-1. Enable Lovable Cloud (retry)
-2. Create database migrations for core tables
-3. Implement Google OAuth authentication
-4. Add Create Alert modal with database persistence
-5. Add Create Trade modal with database persistence
-6. Fix mobile navigation drawer
+This plan creates a complete **research trade journaling system** where:
+- You log trade ideas with entry, SL, targets, timeframe, and confidence
+- Trailing stop loss automatically adjusts as price moves favorably  
+- All events (entry, SL/TSL hits, target hits, manual close) send Telegram alerts
+- No need to specify quantity since this is research/analysis focused
+- Full event history is tracked for later review and pattern analysis
 
