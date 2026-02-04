@@ -40,6 +40,17 @@ type NotificationPayload =
   | CustomNotification
   | TestNotification;
 
+const timeframeLabels: Record<string, string> = {
+  "1min": "1 Min",
+  "5min": "5 Min",
+  "15min": "15 Min",
+  "30min": "30 Min",
+  "1H": "1 Hour",
+  "4H": "4 Hour",
+  "1D": "Daily",
+  "1W": "Weekly",
+};
+
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
@@ -90,19 +101,44 @@ Deno.serve(async (req) => {
         }
 
         const targets = trade.targets || [];
-        const targetsStr = targets.map((t: number) => `₹${t}`).join(", ");
+        const targetsStr = targets.length > 0 
+          ? targets.map((t: number, i: number) => `T${i + 1}: ₹${t.toLocaleString()}`).join(" | ")
+          : "Not set";
 
-        message = `🚀 *New Trade*
+        // Calculate SL percentage
+        const slPercent = trade.stop_loss 
+          ? (((trade.entry_price - trade.stop_loss) / trade.entry_price) * 100 * (trade.trade_type === "BUY" ? 1 : -1)).toFixed(1)
+          : null;
 
-*${trade.trade_type}* ${trade.quantity} × *${trade.symbol}* at ₹${trade.entry_price}
+        // Build TSL info
+        let tslInfo = "";
+        if (trade.trailing_sl_enabled) {
+          const tslValue = trade.trailing_sl_percent 
+            ? `${trade.trailing_sl_percent}%` 
+            : `${trade.trailing_sl_points} pts`;
+          const triggerInfo = trade.trailing_sl_trigger_price 
+            ? `activates at ₹${trade.trailing_sl_trigger_price.toLocaleString()}`
+            : "on T1";
+          tslInfo = `🔄 *TSL:* ${tslValue} (${triggerInfo})\n`;
+        }
 
-📊 *Segment:* ${trade.segment.replace("_", " ")}
-🎯 *Targets:* ${targetsStr || "Not set"}
-🛑 *Stop-Loss:* ₹${trade.stop_loss || "Not set"}
+        // Build timeframe/holding period info
+        let timeInfo = "";
+        if (trade.timeframe || trade.holding_period) {
+          const tf = trade.timeframe ? timeframeLabels[trade.timeframe] || trade.timeframe : "";
+          const hp = trade.holding_period || "";
+          timeInfo = `⏱ *${[tf, hp].filter(Boolean).join(" | ")}*\n`;
+        }
 
-⭐ Rating: ${trade.rating}/10 | Confidence: ${trade.confidence_score}/5
-
-${trade.notes ? `📝 ${trade.notes}` : ""}`;
+        message = `🚀 *New Research Trade*\n\n` +
+          `*${trade.trade_type}* *${trade.symbol}* at ₹${trade.entry_price.toLocaleString()}\n` +
+          `📊 ${trade.segment.replace("_", " ")}\n` +
+          timeInfo +
+          `🛑 *SL:* ₹${trade.stop_loss?.toLocaleString() || "Not set"}${slPercent ? ` (${slPercent}%)` : ""}\n` +
+          tslInfo +
+          `🎯 *Targets:* ${targetsStr}\n\n` +
+          `⭐ Rating: ${trade.rating || "N/A"}/10 | Confidence: ${trade.confidence_score || "N/A"}/5` +
+          (trade.notes ? `\n\n📝 ${trade.notes}` : "");
         break;
       }
 
@@ -132,22 +168,26 @@ ${trade.notes ? `📝 ${trade.notes}` : ""}`;
         const latestEvent = trade.trade_events?.[0];
         const eventType = latestEvent?.event_type || "UPDATE";
         const pnlPercent =
-          trade.pnl_percent >= 0 ? `+${trade.pnl_percent}%` : `${trade.pnl_percent}%`;
+          trade.pnl_percent >= 0 ? `+${trade.pnl_percent.toFixed(2)}%` : `${trade.pnl_percent.toFixed(2)}%`;
 
         let emoji = "📊";
         if (eventType.includes("TARGET")) emoji = "🎯";
         if (eventType === "SL_HIT") emoji = "🛑";
-        if (eventType === "SL_MODIFIED") emoji = "🔄";
+        if (eventType === "TSL_HIT") emoji = "🔄";
+        if (eventType === "TSL_UPDATED") emoji = "🔄";
+        if (eventType === "SL_MODIFIED") emoji = "✏️";
 
-        message = `${emoji} *Trade Update*
+        const eventLabel = eventType.replace(/_/g, " ");
 
-*${trade.symbol}* ${eventType.replace("_", " ")}
-
-💰 Current P&L: ₹${trade.pnl} (${pnlPercent})
-📍 Current Price: ₹${trade.current_price}
-🛑 Stop-Loss: ₹${trade.stop_loss}
-
-${latestEvent?.notes ? `📝 ${latestEvent.notes}` : ""}`;
+        message = `${emoji} *Trade Update*\n\n` +
+          `*${trade.symbol}* - ${eventLabel}\n` +
+          `💰 P&L: ₹${trade.pnl?.toFixed(2) || 0} (${pnlPercent})\n` +
+          `📍 Current: ₹${trade.current_price?.toFixed(2) || trade.entry_price}\n` +
+          `🛑 SL: ₹${trade.stop_loss || "Not set"}` +
+          (trade.trailing_sl_active && trade.trailing_sl_current 
+            ? `\n🔄 TSL: ₹${trade.trailing_sl_current.toFixed(2)} (active)` 
+            : "") +
+          (latestEvent?.notes ? `\n\n📝 ${latestEvent.notes}` : "");
         break;
       }
 
@@ -171,21 +211,31 @@ ${latestEvent?.notes ? `📝 ${latestEvent.notes}` : ""}`;
           chatId = trade.user_settings.telegram_chat_id;
         }
 
-        const isProfit = trade.pnl >= 0;
+        const isProfit = (trade.pnl || 0) >= 0;
         const emoji = isProfit ? "✅" : "❌";
-        const pnlStr = isProfit ? `+₹${trade.pnl}` : `-₹${Math.abs(trade.pnl)}`;
-        const pnlPercent =
-          trade.pnl_percent >= 0 ? `+${trade.pnl_percent}%` : `${trade.pnl_percent}%`;
+        const pnl = trade.pnl || 0;
+        const pnlStr = isProfit ? `+₹${pnl.toFixed(2)}` : `-₹${Math.abs(pnl).toFixed(2)}`;
+        const pnlPercent = trade.pnl_percent || 0;
+        const pnlPercentStr =
+          pnlPercent >= 0 ? `+${pnlPercent.toFixed(2)}%` : `${pnlPercent.toFixed(2)}%`;
 
-        message = `${emoji} *Trade Closed*
+        // Determine closure reason label
+        const reasonLabels: Record<string, string> = {
+          SL_HIT: "Stop Loss",
+          TSL_HIT: "Trailing SL",
+          TARGET1_HIT: "Target 1",
+          TARGET2_HIT: "Target 2",
+          TARGET3_HIT: "Target 3",
+          MANUAL: "Manual",
+        };
+        const reasonLabel = reasonLabels[trade.closure_reason || ""] || trade.closure_reason || "Manual";
 
-*${trade.symbol}* - ${trade.trade_type}
-Entry: ₹${trade.entry_price} → Exit: ₹${trade.current_price}
-
-💰 *P&L:* ${pnlStr} (${pnlPercent})
-📊 Reason: ${trade.closure_reason || "Manual"}
-
-${trade.notes ? `📝 ${trade.notes}` : ""}`;
+        message = `${emoji} *Trade Closed*\n\n` +
+          `*${trade.symbol}* - ${trade.trade_type}\n` +
+          `Entry: ₹${trade.entry_price.toLocaleString()} → Exit: ₹${trade.current_price?.toFixed(2) || "N/A"}\n\n` +
+          `💰 *P&L:* ${pnlStr} (${pnlPercentStr})\n` +
+          `📊 Reason: ${reasonLabel}` +
+          (trade.notes ? `\n\n📝 ${trade.notes}` : "");
         break;
       }
 
@@ -220,13 +270,11 @@ ${trade.notes ? `📝 ${trade.notes}` : ""}`;
 
         const condition = conditionMap[alert.condition_type] || alert.condition_type;
 
-        message = `🔔 *ALERT TRIGGERED*
-
-*${alert.symbol}* ${condition} ₹${alert.threshold}
-
-📍 Current Price: ₹${payload.current_price}
-🔁 Recurrence: ${alert.recurrence}
-📊 Trigger Count: ${alert.trigger_count + 1}`;
+        message = `🔔 *ALERT TRIGGERED*\n\n` +
+          `*${alert.symbol}* ${condition} ₹${alert.threshold}\n\n` +
+          `📍 Current Price: ₹${payload.current_price.toFixed(2)}\n` +
+          `🔁 Recurrence: ${alert.recurrence}\n` +
+          `📊 Trigger Count: ${(alert.trigger_count || 0) + 1}`;
         break;
       }
 
@@ -250,11 +298,11 @@ ${trade.notes ? `📝 ${trade.notes}` : ""}`;
           chatId = report.user_settings.telegram_chat_id;
         }
 
-        const pnlEmoji = report.total_pnl >= 0 ? "📈" : "📉";
-        const pnlStr =
-          report.total_pnl >= 0
-            ? `+₹${report.total_pnl}`
-            : `-₹${Math.abs(report.total_pnl)}`;
+        const totalPnl = report.total_pnl || 0;
+        const pnlEmoji = totalPnl >= 0 ? "📈" : "📉";
+        const pnlStr = totalPnl >= 0
+            ? `+₹${totalPnl.toFixed(2)}`
+            : `-₹${Math.abs(totalPnl).toFixed(2)}`;
 
         const topSetups = report.top_setups || [];
         const topSetupsStr =
@@ -274,22 +322,16 @@ ${trade.notes ? `📝 ${trade.notes}` : ""}`;
                 .join("\n")
             : "None";
 
-        message = `📊 *Weekly Report – ${report.segment.replace("_", " ")}*
-Week: ${report.week_start} to ${report.week_end}
-
-📈 *Performance*
-• Total Trades: ${report.total_trades}
-• Win Rate: ${report.win_rate}%
-• Net P&L: ${pnlStr}
-
-🎯 *Top Setups*
-${topSetupsStr}
-
-⚠️ *Common Mistakes*
-${mistakesStr}
-
-${pnlEmoji} Best Trade: ₹${report.best_trade_pnl}
-${report.worst_trade_pnl < 0 ? "📉" : ""} Worst Trade: ₹${report.worst_trade_pnl}`;
+        message = `📊 *Weekly Report – ${report.segment.replace("_", " ")}*\n` +
+          `Week: ${report.week_start} to ${report.week_end}\n\n` +
+          `📈 *Performance*\n` +
+          `• Total Trades: ${report.total_trades || 0}\n` +
+          `• Win Rate: ${(report.win_rate || 0).toFixed(1)}%\n` +
+          `• Net P&L: ${pnlStr}\n\n` +
+          `🎯 *Top Setups*\n${topSetupsStr}\n\n` +
+          `⚠️ *Common Mistakes*\n${mistakesStr}\n\n` +
+          `${pnlEmoji} Best Trade: ₹${report.best_trade_pnl || 0}\n` +
+          `${(report.worst_trade_pnl || 0) < 0 ? "📉" : ""} Worst Trade: ₹${report.worst_trade_pnl || 0}`;
         break;
       }
 

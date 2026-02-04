@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -21,9 +22,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChartImageUpload } from "@/components/ui/chart-image-upload";
-import { createTradeSchema, type CreateTradeInput, marketSegments, tradeTypes } from "@/lib/schemas";
+import { createTradeSchema, type CreateTradeInput, marketSegments, tradeTypes, timeframes } from "@/lib/schemas";
 import { useTrades } from "@/hooks/useTrades";
-import { Loader2 } from "lucide-react";
+import { Loader2, TrendingUp } from "lucide-react";
 
 interface CreateTradeModalProps {
   open: boolean;
@@ -35,6 +36,8 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
   const [rating, setRating] = useState(8);
   const [confidence, setConfidence] = useState(3);
   const [chartImages, setChartImages] = useState<string[]>([]);
+  const [trailingSlEnabled, setTrailingSlEnabled] = useState(false);
+  const [trailingSlType, setTrailingSlType] = useState<"percent" | "points">("percent");
 
   const {
     register,
@@ -48,11 +51,14 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
     defaultValues: {
       rating: 8,
       confidence_score: 3,
+      quantity: 1,
+      trailing_sl_enabled: false,
     },
   });
 
   const segment = watch("segment");
   const tradeType = watch("trade_type");
+  const timeframe = watch("timeframe");
 
   const onSubmit = async (data: CreateTradeInput) => {
     const targets = data.targets || [];
@@ -61,7 +67,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
       symbol: data.symbol,
       segment: data.segment,
       trade_type: data.trade_type,
-      quantity: data.quantity,
+      quantity: data.quantity || 1,
       entry_price: data.entry_price,
       stop_loss: data.stop_loss,
       targets: targets,
@@ -72,12 +78,19 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
       status: "OPEN",
       entry_time: new Date().toISOString(),
       chart_images: chartImages,
+      timeframe: data.timeframe,
+      holding_period: data.holding_period,
+      trailing_sl_enabled: data.trailing_sl_enabled,
+      trailing_sl_percent: trailingSlType === "percent" ? data.trailing_sl_percent : undefined,
+      trailing_sl_points: trailingSlType === "points" ? data.trailing_sl_points : undefined,
+      trailing_sl_trigger_price: data.trailing_sl_trigger_price,
     });
 
     reset();
     setChartImages([]);
     setRating(8);
     setConfidence(3);
+    setTrailingSlEnabled(false);
     onOpenChange(false);
   };
 
@@ -86,6 +99,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
     setChartImages([]);
     setRating(8);
     setConfidence(3);
+    setTrailingSlEnabled(false);
     onOpenChange(false);
   };
 
@@ -97,13 +111,24 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
     Commodities: "Commodities",
   };
 
+  const timeframeLabels: Record<string, string> = {
+    "1min": "1 Min",
+    "5min": "5 Min",
+    "15min": "15 Min",
+    "30min": "30 Min",
+    "1H": "1 Hour",
+    "4H": "4 Hour",
+    "1D": "Daily",
+    "1W": "Weekly",
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create New Trade</DialogTitle>
+          <DialogTitle>Create Research Trade</DialogTitle>
           <DialogDescription>
-            Log a new trade with entry details, risk parameters, and chart images.
+            Log a trade idea with entry, targets, SL, and trailing stop loss configuration.
           </DialogDescription>
         </DialogHeader>
 
@@ -168,21 +193,8 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
             </div>
           </div>
 
-          {/* Quantity & Entry Price */}
+          {/* Entry Price & Timeframe */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="quantity">Quantity *</Label>
-              <Input
-                id="quantity"
-                type="number"
-                placeholder="100"
-                {...register("quantity", { valueAsNumber: true })}
-              />
-              {errors.quantity && (
-                <p className="text-sm text-destructive">{errors.quantity.message}</p>
-              )}
-            </div>
-
             <div className="space-y-2">
               <Label htmlFor="entry_price">Entry Price *</Label>
               <Input
@@ -196,6 +208,35 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
                 <p className="text-sm text-destructive">{errors.entry_price.message}</p>
               )}
             </div>
+
+            <div className="space-y-2">
+              <Label>Timeframe</Label>
+              <Select
+                value={timeframe}
+                onValueChange={(val) => setValue("timeframe", val as any)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select timeframe" />
+                </SelectTrigger>
+                <SelectContent>
+                  {timeframes.map((tf) => (
+                    <SelectItem key={tf} value={tf}>
+                      {timeframeLabels[tf] || tf}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Holding Period */}
+          <div className="space-y-2">
+            <Label htmlFor="holding_period">Expected Holding Period</Label>
+            <Input
+              id="holding_period"
+              placeholder="e.g., Intraday, 2-3 days, Swing"
+              {...register("holding_period")}
+            />
           </div>
 
           {/* Stop Loss */}
@@ -210,6 +251,87 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
             />
             {errors.stop_loss && (
               <p className="text-sm text-destructive">{errors.stop_loss.message}</p>
+            )}
+          </div>
+
+          {/* Trailing Stop Loss Section */}
+          <div className="space-y-3 p-4 rounded-lg bg-accent/50 border">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-profit" />
+                <Label htmlFor="trailing_sl" className="font-medium">
+                  Trailing Stop Loss
+                </Label>
+              </div>
+              <Switch
+                id="trailing_sl"
+                checked={trailingSlEnabled}
+                onCheckedChange={(checked) => {
+                  setTrailingSlEnabled(checked);
+                  setValue("trailing_sl_enabled", checked);
+                }}
+              />
+            </div>
+
+            {trailingSlEnabled && (
+              <div className="space-y-3 pt-2">
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant={trailingSlType === "percent" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setTrailingSlType("percent")}
+                  >
+                    Percentage
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={trailingSlType === "points" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setTrailingSlType("points")}
+                  >
+                    Points
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {trailingSlType === "percent" ? (
+                    <div className="space-y-1">
+                      <Label className="text-xs">Trail Distance (%)</Label>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        placeholder="2.0"
+                        {...register("trailing_sl_percent", { valueAsNumber: true })}
+                      />
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      <Label className="text-xs">Trail Distance (Points)</Label>
+                      <Input
+                        type="number"
+                        step="0.5"
+                        placeholder="50"
+                        {...register("trailing_sl_points", { valueAsNumber: true })}
+                      />
+                    </div>
+                  )}
+
+                  <div className="space-y-1">
+                    <Label className="text-xs">Trigger Price (activate TSL)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="2450.00"
+                      {...register("trailing_sl_trigger_price", { valueAsNumber: true })}
+                    />
+                  </div>
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  TSL activates when price reaches the trigger price, then trails behind the price.
+                </p>
+              </div>
             )}
           </div>
 
@@ -232,7 +354,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
           {/* Rating */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label>Rating (min 8)</Label>
+              <Label>Setup Rating</Label>
               <span className="text-sm font-medium">{rating}/10</span>
             </div>
             <Slider

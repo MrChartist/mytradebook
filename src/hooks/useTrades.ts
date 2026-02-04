@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { notifyNewTrade, notifyTradeClosed } from "@/lib/telegram";
 import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 
 export type Trade = Tables<"trades">;
@@ -68,12 +69,15 @@ export function useTrades(filters?: TradeFilters) {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: ["trades"] });
       toast({
         title: "Trade created",
         description: "Your trade has been logged successfully.",
       });
+      
+      // Send Telegram notification (fire and forget)
+      notifyNewTrade(data.id).catch(console.error);
     },
     onError: (error) => {
       toast({
@@ -158,13 +162,16 @@ export function useTrades(filters?: TradeFilters) {
       if (error) throw error;
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: ["trades"] });
       const pnlText = data.pnl && data.pnl >= 0 ? `+₹${data.pnl.toLocaleString()}` : `-₹${Math.abs(data.pnl || 0).toLocaleString()}`;
       toast({
         title: "Trade closed",
         description: `Trade closed with P&L: ${pnlText}`,
       });
+      
+      // Send Telegram notification (fire and forget)
+      notifyTradeClosed(data.id).catch(console.error);
     },
     onError: (error) => {
       toast({
