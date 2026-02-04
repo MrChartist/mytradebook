@@ -122,6 +122,96 @@ async function getUserChatId(supabase: any, userId: string): Promise<string | nu
   return data?.telegram_chat_id || null;
 }
 
+// Helper function to send Telegram photo with caption
+async function sendTelegramPhoto(
+  token: string,
+  chatId: string,
+  photoUrl: string,
+  caption: string
+): Promise<{ success: boolean; messageId?: number }> {
+  try {
+    // Truncate caption to Telegram's 1024 character limit
+    const truncatedCaption = caption.length > 1024 
+      ? caption.substring(0, 1021) + "..." 
+      : caption;
+
+    const response = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        photo: photoUrl,
+        caption: truncatedCaption,
+        parse_mode: "Markdown",
+      }),
+    });
+
+    const result = await response.json();
+    
+    if (!response.ok) {
+      console.error("Telegram sendPhoto error:", result);
+      return { success: false };
+    }
+
+    return { success: true, messageId: result.result?.message_id };
+  } catch (e) {
+    console.error("Failed to send Telegram photo:", e);
+    return { success: false };
+  }
+}
+
+// Helper function to send Telegram message
+async function sendTelegramMessage(
+  token: string,
+  chatId: string,
+  message: string
+): Promise<{ success: boolean; messageId?: number }> {
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+        parse_mode: "Markdown",
+        disable_web_page_preview: true,
+      }),
+    });
+
+    const result = await response.json();
+    
+    if (!response.ok) {
+      console.error("Telegram sendMessage error:", result);
+      return { success: false };
+    }
+
+    return { success: true, messageId: result.result?.message_id };
+  } catch (e) {
+    console.error("Failed to send Telegram message:", e);
+    return { success: false };
+  }
+}
+
+// Helper function to get first chart image URL from trade
+function getFirstChartImage(trade: any): string | null {
+  if (!trade.chart_images || !Array.isArray(trade.chart_images)) {
+    return null;
+  }
+  
+  // chart_images can be array of strings (URLs) or objects with url property
+  const firstImage = trade.chart_images[0];
+  
+  if (typeof firstImage === 'string') {
+    return firstImage;
+  }
+  
+  if (typeof firstImage === 'object' && firstImage?.url) {
+    return firstImage.url;
+  }
+  
+  return null;
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
@@ -147,6 +237,7 @@ Deno.serve(async (req) => {
 
     let message = "";
     let chatId = DEFAULT_CHAT_ID;
+    let imageUrl: string | null = null;
 
     switch (payload.type) {
       case "new_trade": {
@@ -170,6 +261,9 @@ Deno.serve(async (req) => {
         if (userChatId) {
           chatId = userChatId;
         }
+
+        // Get chart image if available
+        imageUrl = getFirstChartImage(trade);
 
         const targets = trade.targets || [];
         const targetsStr = targets.length > 0 
@@ -235,6 +329,9 @@ Deno.serve(async (req) => {
           chatId = userChatId;
         }
 
+        // Get chart image if available
+        imageUrl = getFirstChartImage(trade);
+
         // Fetch latest trade event
         const { data: events } = await supabase
           .from("trade_events")
@@ -290,6 +387,9 @@ Deno.serve(async (req) => {
         if (userChatId) {
           chatId = userChatId;
         }
+
+        // Get chart image if available
+        imageUrl = getFirstChartImage(trade);
 
         const isProfit = (trade.pnl || 0) >= 0;
         const emoji = isProfit ? "✅" : "❌";
@@ -589,32 +689,32 @@ Deno.serve(async (req) => {
       throw new Error("No Telegram chat ID configured");
     }
 
-    // Send to Telegram
-    const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-    const telegramResponse = await fetch(telegramUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: message,
-        parse_mode: "Markdown",
-        disable_web_page_preview: true,
-      }),
-    });
+    // Send to Telegram - use photo if available, otherwise message
+    let result: { success: boolean; messageId?: number };
+    
+    if (imageUrl) {
+      // Try to send with photo first
+      result = await sendTelegramPhoto(TELEGRAM_BOT_TOKEN, chatId, imageUrl, message);
+      
+      // If photo fails, fall back to text message
+      if (!result.success) {
+        console.log("Photo send failed, falling back to text message");
+        result = await sendTelegramMessage(TELEGRAM_BOT_TOKEN, chatId, message);
+      }
+    } else {
+      result = await sendTelegramMessage(TELEGRAM_BOT_TOKEN, chatId, message);
+    }
 
-    const telegramResult = await telegramResponse.json();
-
-    if (!telegramResponse.ok) {
-      throw new Error(
-        `Telegram API error: ${JSON.stringify(telegramResult)}`
-      );
+    if (!result.success) {
+      throw new Error("Failed to send Telegram notification");
     }
 
     return new Response(
       JSON.stringify({
         success: true,
-        message_id: telegramResult.result?.message_id,
+        message_id: result.messageId,
         chat_id: chatId,
+        with_image: !!imageUrl,
       }),
       {
         status: 200,
