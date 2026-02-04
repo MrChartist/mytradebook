@@ -8,6 +8,7 @@ import {
   Star,
   Eye,
   Loader2,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { useTrades, type TradeFilters } from "@/hooks/useTrades";
 import { CreateTradeModal } from "@/components/modals/CreateTradeModal";
 import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
+import { useDhanIntegration } from "@/hooks/useDhanIntegration";
 import type { Trade } from "@/hooks/useTrades";
 
 const segmentLabels: Record<string, string> = {
@@ -47,6 +49,7 @@ export default function Trades() {
   };
 
   const { trades, isLoading, summary } = useTrades(filters);
+  const { syncPortfolio, monitorTrades, isSyncing } = useDhanIntegration();
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -59,7 +62,20 @@ export default function Trades() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="border-border">
+          <Button 
+            variant="outline" 
+            className="border-border"
+            onClick={() => {
+              syncPortfolio.mutate();
+              monitorTrades.mutate();
+            }}
+            disabled={isSyncing}
+          >
+            {isSyncing ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <RefreshCw className="w-4 h-4 mr-2" />
+            )}
             Sync with Dhan
           </Button>
           <Button 
