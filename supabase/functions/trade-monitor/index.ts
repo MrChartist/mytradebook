@@ -22,6 +22,16 @@ interface Trade {
   status: string;
   segment: string;
   dhan_order_id: string | null;
+  timeframe: string | null;
+  holding_period: string | null;
+  trailing_sl_enabled: boolean;
+  trailing_sl_percent: number | null;
+  trailing_sl_points: number | null;
+  trailing_sl_current: number | null;
+  trailing_sl_trigger_price: number | null;
+  trailing_sl_active: boolean;
+  rating: number | null;
+  confidence_score: number | null;
 }
 
 serve(async (req) => {
@@ -63,6 +73,8 @@ serve(async (req) => {
     const results = {
       monitored: openTrades.length,
       slHits: [] as string[],
+      tslHits: [] as string[],
+      tslUpdates: [] as string[],
       targetHits: [] as string[],
       priceUpdates: 0,
     };
@@ -74,41 +86,81 @@ serve(async (req) => {
       
       if (!currentPrice) continue;
 
-      // Calculate P&L
+      // Calculate P&L (using quantity 1 for research trades if not set)
+      const qty = trade.quantity || 1;
       const pnlMultiplier = trade.trade_type === "BUY" ? 1 : -1;
-      const pnl = (currentPrice - trade.entry_price) * trade.quantity * pnlMultiplier;
+      const pnl = (currentPrice - trade.entry_price) * qty * pnlMultiplier;
       const pnlPercent = ((currentPrice - trade.entry_price) / trade.entry_price) * 100 * pnlMultiplier;
+
+      // Prepare update object
+      const updateData: Record<string, unknown> = {
+        current_price: currentPrice,
+        pnl: pnl,
+        pnl_percent: pnlPercent,
+        updated_at: new Date().toISOString(),
+      };
+
+      // Check and update Trailing Stop Loss
+      if (trade.trailing_sl_enabled) {
+        const tslResult = await processTrailingStopLoss(
+          trade,
+          currentPrice,
+          pnl,
+          pnlPercent,
+          supabase,
+          TELEGRAM_BOT_TOKEN,
+          TELEGRAM_CHAT_ID
+        );
+
+        if (tslResult.tslHit) {
+          results.tslHits.push(trade.symbol);
+          continue; // Skip other checks if TSL hit
+        }
+
+        if (tslResult.tslUpdated) {
+          results.tslUpdates.push(trade.symbol);
+          updateData.trailing_sl_current = tslResult.newTslValue;
+          updateData.trailing_sl_active = tslResult.tslActive;
+        }
+      }
 
       // Update current price in database
       await supabase
         .from("trades")
-        .update({
-          current_price: currentPrice,
-          pnl: pnl,
-          pnl_percent: pnlPercent,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq("id", trade.id);
 
       results.priceUpdates++;
 
-      // Check Stop Loss
-      if (trade.stop_loss) {
+      // Check Stop Loss (only if TSL is not active or not enabled)
+      const effectiveSL = trade.trailing_sl_active && trade.trailing_sl_current 
+        ? trade.trailing_sl_current 
+        : trade.stop_loss;
+
+      if (effectiveSL) {
         const slHit = trade.trade_type === "BUY" 
-          ? currentPrice <= trade.stop_loss
-          : currentPrice >= trade.stop_loss;
+          ? currentPrice <= effectiveSL
+          : currentPrice >= effectiveSL;
 
         if (slHit) {
-          results.slHits.push(trade.symbol);
+          const isTslHit = trade.trailing_sl_active && trade.trailing_sl_current === effectiveSL;
+          const eventType = isTslHit ? "TSL_HIT" : "SL_HIT";
+          const reason = isTslHit ? "TSL_HIT" : "SL_HIT";
+
+          if (isTslHit) {
+            results.tslHits.push(trade.symbol);
+          } else {
+            results.slHits.push(trade.symbol);
+          }
           
-          // Log SL hit event
+          // Log SL/TSL hit event
           await supabase.from("trade_events").insert({
             trade_id: trade.id,
-            event_type: "SL_HIT",
+            event_type: eventType,
             price: currentPrice,
-            quantity: trade.quantity,
+            quantity: qty,
             pnl_realized: pnl,
-            notes: `Stop loss hit at ₹${currentPrice}`,
+            notes: `${isTslHit ? "Trailing stop loss" : "Stop loss"} hit at ₹${currentPrice.toFixed(2)}`,
           });
 
           // Close trade
@@ -117,30 +169,37 @@ serve(async (req) => {
             .update({
               status: "CLOSED",
               closed_at: new Date().toISOString(),
-              closure_reason: "SL_HIT",
+              closure_reason: reason,
               pnl: pnl,
               pnl_percent: pnlPercent,
+              current_price: currentPrice,
             })
             .eq("id", trade.id);
 
           // Send notification
           if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
             const emoji = pnl >= 0 ? "✅" : "🛑";
-            const message = `${emoji} *Stop Loss Hit!*\n\n` +
+            const slType = isTslHit ? "Trailing Stop Loss" : "Stop Loss";
+            const lockedGain = isTslHit && pnl > 0 
+              ? `\n💰 Locked Gain: +₹${pnl.toFixed(2)} (+${pnlPercent.toFixed(2)}%)` 
+              : "";
+
+            const message = `${emoji} *${slType} Hit!*\n\n` +
               `Symbol: *${trade.symbol}*\n` +
-              `Entry: ₹${trade.entry_price}\n` +
-              `Exit: ₹${currentPrice}\n` +
-              `P&L: ${pnl >= 0 ? "+" : ""}₹${pnl.toFixed(2)} (${pnlPercent.toFixed(2)}%)`;
+              `Type: ${trade.trade_type}\n` +
+              `Entry: ₹${trade.entry_price.toLocaleString()}\n` +
+              `Exit: ₹${currentPrice.toFixed(2)}\n` +
+              `P&L: ${pnl >= 0 ? "+" : ""}₹${pnl.toFixed(2)} (${pnlPercent >= 0 ? "+" : ""}${pnlPercent.toFixed(2)}%)${lockedGain}`;
 
             await sendTelegramMessage(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, message);
           }
 
           // Auto-execute via Dhan if configured
           if (DHAN_ACCESS_TOKEN && DHAN_CLIENT_ID) {
-            await executeExitOrder(trade, currentPrice, "SL_HIT", DHAN_ACCESS_TOKEN, DHAN_CLIENT_ID);
+            await executeExitOrder(trade, currentPrice, reason, DHAN_ACCESS_TOKEN, DHAN_CLIENT_ID);
           }
 
-          continue; // Skip target checks if SL hit
+          continue; // Skip target checks if SL/TSL hit
         }
       }
 
@@ -171,17 +230,41 @@ serve(async (req) => {
                 trade_id: trade.id,
                 event_type: eventType,
                 price: currentPrice,
-                notes: `Target ${targetNum} hit at ₹${currentPrice}`,
+                notes: `Target ${targetNum} hit at ₹${currentPrice.toFixed(2)}`,
               });
+
+              // If target 1 hit and TSL is configured but not active, activate it
+              if (targetNum === 1 && trade.trailing_sl_enabled && !trade.trailing_sl_active) {
+                const newTslValue = calculateTrailingStopLoss(trade, currentPrice);
+                await supabase
+                  .from("trades")
+                  .update({
+                    trailing_sl_active: true,
+                    trailing_sl_current: newTslValue,
+                  })
+                  .eq("id", trade.id);
+
+                // Log TSL activation
+                await supabase.from("trade_events").insert({
+                  trade_id: trade.id,
+                  event_type: "TSL_UPDATED",
+                  price: currentPrice,
+                  notes: `Trailing SL activated at ₹${newTslValue.toFixed(2)}`,
+                });
+              }
 
               // Send notification
               if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
+                const tslInfo = trade.trailing_sl_enabled
+                  ? `\n🔄 TSL: ${trade.trailing_sl_active ? "Active" : "Activating"}`
+                  : "";
+
                 const message = `🎯 *Target ${targetNum} Hit!*\n\n` +
                   `Symbol: *${trade.symbol}*\n` +
-                  `Entry: ₹${trade.entry_price}\n` +
-                  `Target: ₹${target}\n` +
-                  `Current: ₹${currentPrice}\n` +
-                  `P&L: +₹${pnl.toFixed(2)} (+${pnlPercent.toFixed(2)}%)`;
+                  `Entry: ₹${trade.entry_price.toLocaleString()}\n` +
+                  `Target: ₹${target.toLocaleString()}\n` +
+                  `Current: ₹${currentPrice.toFixed(2)}\n` +
+                  `P&L: +₹${pnl.toFixed(2)} (+${pnlPercent.toFixed(2)}%)${tslInfo}`;
 
                 await sendTelegramMessage(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, message);
               }
@@ -207,6 +290,106 @@ serve(async (req) => {
     );
   }
 });
+
+function calculateTrailingStopLoss(trade: Trade, currentPrice: number): number {
+  const isBuy = trade.trade_type === "BUY";
+  
+  if (trade.trailing_sl_percent) {
+    const distance = trade.entry_price * (trade.trailing_sl_percent / 100);
+    return isBuy ? currentPrice - distance : currentPrice + distance;
+  } else if (trade.trailing_sl_points) {
+    return isBuy ? currentPrice - trade.trailing_sl_points : currentPrice + trade.trailing_sl_points;
+  }
+  
+  return isBuy ? currentPrice * 0.98 : currentPrice * 1.02; // Default 2%
+}
+
+async function processTrailingStopLoss(
+  trade: Trade,
+  currentPrice: number,
+  pnl: number,
+  pnlPercent: number,
+  // deno-lint-ignore no-explicit-any
+  supabase: any,
+  telegramToken: string | undefined,
+  chatId: string | undefined
+): Promise<{ tslHit: boolean; tslUpdated: boolean; newTslValue: number | null; tslActive: boolean }> {
+  const isBuy = trade.trade_type === "BUY";
+  
+  // Check if TSL should be activated
+  if (!trade.trailing_sl_active && trade.trailing_sl_trigger_price) {
+    const shouldActivate = isBuy 
+      ? currentPrice >= trade.trailing_sl_trigger_price
+      : currentPrice <= trade.trailing_sl_trigger_price;
+    
+    if (shouldActivate) {
+      const newTslValue = calculateTrailingStopLoss(trade, currentPrice);
+      
+      // Log activation event
+      await supabase.from("trade_events").insert({
+        trade_id: trade.id,
+        event_type: "TSL_UPDATED",
+        price: currentPrice,
+        notes: `Trailing SL activated at ₹${newTslValue.toFixed(2)} (trigger: ₹${trade.trailing_sl_trigger_price})`,
+      });
+
+      // Send notification
+      if (telegramToken && chatId) {
+        const message = `🔄 *Trailing SL Activated!*\n\n` +
+          `Symbol: *${trade.symbol}*\n` +
+          `Entry: ₹${trade.entry_price.toLocaleString()}\n` +
+          `Current: ₹${currentPrice.toFixed(2)}\n` +
+          `TSL: ₹${newTslValue.toFixed(2)}\n` +
+          `Trigger Price: ₹${trade.trailing_sl_trigger_price}\n` +
+          `P&L: ${pnl >= 0 ? "+" : ""}₹${pnl.toFixed(2)} (${pnlPercent >= 0 ? "+" : ""}${pnlPercent.toFixed(2)}%)`;
+
+        await sendTelegramMessage(telegramToken, chatId, message);
+      }
+
+      return { tslHit: false, tslUpdated: true, newTslValue, tslActive: true };
+    }
+  }
+  
+  // Check if TSL should be updated (price moved favorably)
+  if (trade.trailing_sl_active && trade.trailing_sl_current) {
+    const newTslValue = calculateTrailingStopLoss(trade, currentPrice);
+    const shouldUpdate = isBuy 
+      ? newTslValue > trade.trailing_sl_current
+      : newTslValue < trade.trailing_sl_current;
+    
+    if (shouldUpdate) {
+      const oldTsl = trade.trailing_sl_current;
+      const lockedGain = isBuy 
+        ? (newTslValue - trade.entry_price)
+        : (trade.entry_price - newTslValue);
+      const lockedPercent = (lockedGain / trade.entry_price) * 100;
+
+      // Log update event
+      await supabase.from("trade_events").insert({
+        trade_id: trade.id,
+        event_type: "TSL_UPDATED",
+        price: currentPrice,
+        notes: `TSL moved from ₹${oldTsl.toFixed(2)} to ₹${newTslValue.toFixed(2)}`,
+      });
+
+      // Send notification
+      if (telegramToken && chatId) {
+        const message = `🔄 *Trailing SL Moved*\n\n` +
+          `Symbol: *${trade.symbol}*\n` +
+          `Entry: ₹${trade.entry_price.toLocaleString()}\n` +
+          `Current: ₹${currentPrice.toFixed(2)}\n` +
+          `TSL: ₹${oldTsl.toFixed(2)} → ₹${newTslValue.toFixed(2)}\n` +
+          `💰 Locked Gain: ${lockedGain >= 0 ? "+" : ""}₹${lockedGain.toFixed(2)} (${lockedPercent >= 0 ? "+" : ""}${lockedPercent.toFixed(2)}%)`;
+
+        await sendTelegramMessage(telegramToken, chatId, message);
+      }
+
+      return { tslHit: false, tslUpdated: true, newTslValue, tslActive: true };
+    }
+  }
+
+  return { tslHit: false, tslUpdated: false, newTslValue: null, tslActive: trade.trailing_sl_active };
+}
 
 async function getCurrentPrice(symbol: string, dhanToken: string | undefined): Promise<number | null> {
   // Mock prices for testing - in production, use Dhan LTP API
@@ -263,7 +446,7 @@ async function executeExitOrder(
       validity: "DAY",
       tradingSymbol: trade.symbol,
       securityId: trade.dhan_order_id || "",
-      quantity: trade.quantity,
+      quantity: trade.quantity || 1,
       price: 0,
       triggerPrice: 0,
       disclosedQuantity: 0,

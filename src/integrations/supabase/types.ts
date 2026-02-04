@@ -372,6 +372,7 @@ export type Database = {
           dhan_order_id: string | null
           entry_price: number
           entry_time: string
+          holding_period: string | null
           id: string
           notes: string | null
           pnl: number | null
@@ -384,7 +385,14 @@ export type Database = {
           study_id: string | null
           symbol: string
           targets: Json | null
+          timeframe: string | null
           trade_type: Database["public"]["Enums"]["trade_type"]
+          trailing_sl_active: boolean | null
+          trailing_sl_current: number | null
+          trailing_sl_enabled: boolean | null
+          trailing_sl_percent: number | null
+          trailing_sl_points: number | null
+          trailing_sl_trigger_price: number | null
           updated_at: string | null
           user_id: string
         }
@@ -398,6 +406,7 @@ export type Database = {
           dhan_order_id?: string | null
           entry_price: number
           entry_time?: string
+          holding_period?: string | null
           id?: string
           notes?: string | null
           pnl?: number | null
@@ -410,7 +419,14 @@ export type Database = {
           study_id?: string | null
           symbol: string
           targets?: Json | null
+          timeframe?: string | null
           trade_type: Database["public"]["Enums"]["trade_type"]
+          trailing_sl_active?: boolean | null
+          trailing_sl_current?: number | null
+          trailing_sl_enabled?: boolean | null
+          trailing_sl_percent?: number | null
+          trailing_sl_points?: number | null
+          trailing_sl_trigger_price?: number | null
           updated_at?: string | null
           user_id: string
         }
@@ -424,6 +440,7 @@ export type Database = {
           dhan_order_id?: string | null
           entry_price?: number
           entry_time?: string
+          holding_period?: string | null
           id?: string
           notes?: string | null
           pnl?: number | null
@@ -436,7 +453,14 @@ export type Database = {
           study_id?: string | null
           symbol?: string
           targets?: Json | null
+          timeframe?: string | null
           trade_type?: Database["public"]["Enums"]["trade_type"]
+          trailing_sl_active?: boolean | null
+          trailing_sl_current?: number | null
+          trailing_sl_enabled?: boolean | null
+          trailing_sl_percent?: number | null
+          trailing_sl_points?: number | null
+          trailing_sl_trigger_price?: number | null
           updated_at?: string | null
           user_id?: string
         }
@@ -639,6 +663,8 @@ export type Database = {
         | "SL_MODIFIED"
         | "TARGET_MODIFIED"
         | "CLOSED"
+        | "TSL_UPDATED"
+        | "TSL_HIT"
       trade_status: "PENDING" | "OPEN" | "CLOSED" | "CANCELLED"
       trade_type: "BUY" | "SELL"
     }
@@ -802,6 +828,8 @@ export const Constants = {
         "SL_MODIFIED",
         "TARGET_MODIFIED",
         "CLOSED",
+        "TSL_UPDATED",
+        "TSL_HIT",
       ],
       trade_status: ["PENDING", "OPEN", "CLOSED", "CANCELLED"],
       trade_type: ["BUY", "SELL"],

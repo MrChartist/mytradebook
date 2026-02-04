@@ -42,6 +42,17 @@ export const marketSegments = [
 
 export const tradeTypes = ["BUY", "SELL"] as const;
 
+export const timeframes = [
+  "1min",
+  "5min",
+  "15min",
+  "30min",
+  "1H",
+  "4H",
+  "1D",
+  "1W",
+] as const;
+
 export const createTradeSchema = z.object({
   symbol: z
     .string()
@@ -58,7 +69,9 @@ export const createTradeSchema = z.object({
   quantity: z
     .number({ invalid_type_error: "Quantity must be a number" })
     .int("Quantity must be a whole number")
-    .positive("Quantity must be positive"),
+    .positive("Quantity must be positive")
+    .optional()
+    .default(1),
   entry_price: z
     .number({ invalid_type_error: "Entry price must be a number" })
     .positive("Entry price must be positive"),
@@ -78,6 +91,22 @@ export const createTradeSchema = z.object({
     .int()
     .min(1, "Confidence must be at least 1")
     .max(5, "Confidence must be at most 5")
+    .optional(),
+  timeframe: z.enum(timeframes).optional(),
+  holding_period: z.string().max(50).optional(),
+  trailing_sl_enabled: z.boolean().default(false),
+  trailing_sl_percent: z
+    .number()
+    .positive("Trailing SL percent must be positive")
+    .max(50, "Trailing SL percent must be at most 50%")
+    .optional(),
+  trailing_sl_points: z
+    .number()
+    .positive("Trailing SL points must be positive")
+    .optional(),
+  trailing_sl_trigger_price: z
+    .number()
+    .positive("Trigger price must be positive")
     .optional(),
   notes: z.string().max(1000, "Notes must be less than 1000 characters").optional(),
   study_id: z.string().uuid().optional(),

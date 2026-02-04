@@ -40,6 +40,8 @@ import {
   Pencil,
   CheckCircle2,
   XCircle,
+  TrendingUp,
+  Clock,
 } from "lucide-react";
 import type { Trade } from "@/hooks/useTrades";
 import { useTrades } from "@/hooks/useTrades";
@@ -55,6 +57,8 @@ interface TradeDetailModalProps {
 const eventIcons: Record<string, React.ReactNode> = {
   ENTRY: <Circle className="w-3 h-3 text-profit fill-profit" />,
   SL_HIT: <XCircle className="w-3 h-3 text-loss" />,
+  TSL_HIT: <XCircle className="w-3 h-3 text-warning" />,
+  TSL_UPDATED: <TrendingUp className="w-3 h-3 text-profit" />,
   TARGET1_HIT: <CheckCircle2 className="w-3 h-3 text-profit" />,
   TARGET2_HIT: <CheckCircle2 className="w-3 h-3 text-profit" />,
   TARGET3_HIT: <CheckCircle2 className="w-3 h-3 text-profit" />,
@@ -67,6 +71,8 @@ const eventIcons: Record<string, React.ReactNode> = {
 const eventLabels: Record<string, string> = {
   ENTRY: "Entry",
   SL_HIT: "SL Hit",
+  TSL_HIT: "Trailing SL Hit",
+  TSL_UPDATED: "Trailing SL Updated",
   TARGET1_HIT: "Target 1 Hit",
   TARGET2_HIT: "Target 2 Hit",
   TARGET3_HIT: "Target 3 Hit",
@@ -102,6 +108,16 @@ export function TradeDetailModal({
   const pnl = trade.pnl || 0;
   const pnlPercent = trade.pnl_percent || 0;
   const targets = (trade.targets as number[]) || [];
+
+  // Type-safe access to new fields
+  const trailingSlEnabled = (trade as any).trailing_sl_enabled;
+  const trailingSlActive = (trade as any).trailing_sl_active;
+  const trailingSlCurrent = (trade as any).trailing_sl_current;
+  const trailingSlPercent = (trade as any).trailing_sl_percent;
+  const trailingSlPoints = (trade as any).trailing_sl_points;
+  const trailingSlTriggerPrice = (trade as any).trailing_sl_trigger_price;
+  const timeframe = (trade as any).timeframe;
+  const holdingPeriod = (trade as any).holding_period;
 
   const handleClose = async () => {
     if (!exitPrice) return;
@@ -155,6 +171,17 @@ export function TradeDetailModal({
     Commodities: "Commodities",
   };
 
+  const timeframeLabels: Record<string, string> = {
+    "1min": "1 Min",
+    "5min": "5 Min",
+    "15min": "15 Min",
+    "30min": "30 Min",
+    "1H": "1 Hour",
+    "4H": "4 Hour",
+    "1D": "Daily",
+    "1W": "Weekly",
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
@@ -178,8 +205,6 @@ export function TradeDetailModal({
                 <Badge variant="outline" className="text-xs">
                   {trade.trade_type}
                 </Badge>
-                <span>{trade.quantity} qty</span>
-                <span>•</span>
                 <span>{segmentLabels[trade.segment] || trade.segment}</span>
                 <span>•</span>
                 <Badge
@@ -236,6 +261,24 @@ export function TradeDetailModal({
             </p>
           </div>
         </div>
+
+        {/* Timeframe & Holding Period */}
+        {(timeframe || holdingPeriod) && (
+          <div className="flex items-center gap-4 text-sm">
+            {timeframe && (
+              <div className="flex items-center gap-1">
+                <Clock className="w-4 h-4 text-muted-foreground" />
+                <span>Timeframe: <strong>{timeframeLabels[timeframe] || timeframe}</strong></span>
+              </div>
+            )}
+            {holdingPeriod && (
+              <div className="flex items-center gap-1">
+                <Calendar className="w-4 h-4 text-muted-foreground" />
+                <span>Hold: <strong>{holdingPeriod}</strong></span>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Rating & Confidence */}
         <div className="flex items-center gap-6">
@@ -315,6 +358,40 @@ export function TradeDetailModal({
                 </div>
               )}
             </div>
+
+            {/* Trailing Stop Loss */}
+            {trailingSlEnabled && (
+              <div className={cn(
+                "flex items-center justify-between p-3 rounded-lg border",
+                trailingSlActive 
+                  ? "bg-profit/5 border-profit/20" 
+                  : "bg-warning/5 border-warning/20"
+              )}>
+                <div className="flex items-center gap-2">
+                  <TrendingUp className={cn(
+                    "w-4 h-4",
+                    trailingSlActive ? "text-profit" : "text-warning"
+                  )} />
+                  <div>
+                    <span className="text-sm font-medium">Trailing SL</span>
+                    <p className="text-xs text-muted-foreground">
+                      {trailingSlActive ? "Active" : `Activates at ₹${trailingSlTriggerPrice?.toLocaleString()}`}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  {trailingSlCurrent ? (
+                    <span className="font-mono text-profit">
+                      ₹{trailingSlCurrent.toLocaleString()}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">
+                      {trailingSlPercent ? `${trailingSlPercent}%` : `${trailingSlPoints} pts`}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Targets */}
             {targets.map((target, index) => (
@@ -598,18 +675,6 @@ export function TradeDetailModal({
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <Label className="text-xs">Quantity (optional)</Label>
-                  <Input
-                    type="number"
-                    value={newEventQty}
-                    onChange={(e) => setNewEventQty(e.target.value)}
-                    className="h-8"
-                    placeholder="Qty"
-                  />
-                </div>
-              </div>
               <div className="space-y-1">
                 <Label className="text-xs">Notes (optional)</Label>
                 <Textarea
@@ -658,11 +723,6 @@ export function TradeDetailModal({
                       <span className="text-sm font-mono">
                         @ ₹{event.price.toLocaleString()}
                       </span>
-                      {event.quantity && (
-                        <span className="text-xs text-muted-foreground">
-                          ({event.quantity} qty)
-                        </span>
-                      )}
                     </div>
                     {event.notes && (
                       <p className="text-xs text-muted-foreground mt-1">
