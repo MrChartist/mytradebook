@@ -28,11 +28,17 @@ interface CustomNotification {
   chat_id?: string;
 }
 
+interface TestNotification {
+  type: "test";
+  message?: string;
+}
+
 type NotificationPayload =
   | TradeNotification
   | AlertNotification
   | ReportNotification
-  | CustomNotification;
+  | CustomNotification
+  | TestNotification;
 
 Deno.serve(async (req) => {
   // Handle CORS preflight
@@ -292,6 +298,11 @@ ${report.worst_trade_pnl < 0 ? "📉" : ""} Worst Trade: ₹${report.worst_trade
         if (payload.chat_id) {
           chatId = payload.chat_id;
         }
+        break;
+      }
+
+      case "test": {
+        message = payload.message || `🔔 *Test Notification*\n\nYour Telegram integration is working correctly!\n\n✅ TradeSync is connected.`;
         break;
       }
 
