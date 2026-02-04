@@ -1,164 +1,195 @@
 
-# Comprehensive Telegram Notifications Plan
 
-## Current State Analysis
+# Comprehensive Implementation Plan: Login Fix + Image Notifications + Automated SL/Target Alerts
 
-After reviewing the codebase, I found that while the notification infrastructure exists, several critical events are **not triggering Telegram notifications**:
+## Summary
 
-### What's Already Working (Backend Automation)
-| Event | Edge Function | Telegram Notification |
-|-------|--------------|----------------------|
-| SL Hit | trade-monitor | Yes - Direct send |
-| TSL Hit | trade-monitor | Yes - Direct send |
-| TSL Activated | trade-monitor | Yes - Direct send |
-| TSL Moved | trade-monitor | Yes - Direct send |
-| Target 1/2/3 Hit | trade-monitor | Yes - Direct send |
-| Alert Triggered | evaluate-alerts | Yes - Direct send |
-
-### What's Missing Notifications
-
-| Event | Location | Status |
-|-------|----------|--------|
-| New Trade Created | useTrades.ts | Calls `notifyNewTrade()` but fires and forgets |
-| Trade Closed Manually | useTrades.ts | Calls `notifyTradeClosed()` but fires and forgets |
-| Trade Updated (manual SL change) | useTrades.ts | **NO notification** |
-| Alert Created | useAlerts.ts | **NO notification** |
-| Alert Deleted | useAlerts.ts | **NO notification** |
-| Alert Paused/Resumed | useAlerts.ts | **NO notification** |
-| Trade Event Added | useTradeEvents.ts | **NO notification** |
+This plan addresses three issues:
+1. **Login not working on published app** - The Google OAuth redirect URL needs to include the published domain
+2. **Send images with Telegram notifications** - Enhance the telegram-notify edge function to send chart images along with trade messages
+3. **Automated alerts for SL/Target/TSL** - Already working via `trade-monitor` cron job, but needs to use user-specific chat IDs
 
 ---
 
-## Implementation Plan
+## Issue 1: Login Not Working on Published App
 
-### 1. Add New Notification Types to telegram-notify Edge Function
+### Problem Analysis
+The Google OAuth is configured with `redirect_uri: window.location.origin`, which works correctly for both preview and published domains. However, the published domain `mytradebook.lovable.app` needs to be configured in Lovable Cloud's Authentication Settings.
 
-Update the edge function to support these new notification types:
-- `trade_sl_modified` - When SL is manually changed
-- `alert_created` - When a new alert is created
-- `alert_paused` - When an alert is paused/resumed
-- `alert_deleted` - When an alert is deleted
-- `trade_event_added` - When a manual event is added to a trade
-
-### 2. Update src/lib/telegram.ts Helper Functions
-
-Add new convenience functions:
-```text
-notifySLModified(tradeId, oldSL, newSL)
-notifyAlertCreated(alertId)
-notifyAlertPaused(alertId, isPaused)
-notifyAlertDeleted(symbol, condition)
-notifyTradeEventAdded(tradeId, eventType)
-```
-
-### 3. Hook into Frontend Actions
-
-Update these hooks to trigger notifications:
-
-**useTrades.ts:**
-- `updateTrade` mutation - Send notification when SL is modified
-
-**useAlerts.ts:**
-- `createAlert` mutation - Send notification when alert is created
-- `toggleAlert` mutation - Send notification when alert is paused/resumed
-- `deleteAlert` mutation - Send notification when alert is deleted
-
-**useTradeEvents.ts:**
-- `addEvent` mutation - Send notification for significant events
-
-### 4. Improve Error Handling
-
-Currently notifications use "fire and forget" - they should:
-- Log failures properly
-- Show user-friendly toast if notification fails
-- Not block the main action if notification fails
-
----
-
-## Technical Implementation
+### Solution
+Since Lovable Cloud manages Google OAuth automatically, the published domain should already be supported. The issue might be:
+1. A caching issue after recent domain setup
+2. The redirect URL not being properly set after OAuth callback
 
 ### Files to Modify
+| File | Change |
+|------|--------|
+| `src/contexts/AuthContext.tsx` | Add better error handling and logging for OAuth callback |
 
-| File | Changes |
-|------|---------|
-| `supabase/functions/telegram-notify/index.ts` | Add 5 new notification types |
-| `src/lib/telegram.ts` | Add 5 new helper functions |
-| `src/hooks/useTrades.ts` | Add notification on SL update |
-| `src/hooks/useAlerts.ts` | Add notifications for create/toggle/delete |
-| `src/hooks/useTradeEvents.ts` | Add notification for event creation |
+### Implementation Details
+- Add console logging to track OAuth flow
+- Ensure the redirect callback properly handles the published domain
+- The managed Google OAuth should automatically support all Lovable domains
 
-### New Notification Message Formats
+---
 
-**SL Modified:**
+## Issue 2: Send Chart Images with Telegram Notifications
+
+### Current State
+- Chart images are already stored in `trade-charts` Supabase Storage bucket
+- Images are stored as public URLs in the `chart_images` JSONB column of trades table
+- Telegram supports `sendPhoto` API for sending images with captions
+
+### Solution Architecture
+Enhance the `telegram-notify` edge function to:
+1. Check if the trade has chart images
+2. Use Telegram's `sendPhoto` API for trades with images
+3. Include the trade details as caption (with Markdown formatting)
+4. Fall back to `sendMessage` for trades without images
+
+### Telegram API for Images
+
 ```text
-✏️ *Stop Loss Modified*
-
-Symbol: *RELIANCE*
-Old SL: ₹2350 → New SL: ₹2380
-Current P&L: +₹500 (+2.1%)
+POST https://api.telegram.org/bot{token}/sendPhoto
+{
+  "chat_id": "-1003109328674",
+  "photo": "https://nuilpmoipiazjafpjaft.supabase.co/storage/v1/object/public/trade-charts/user-id/image.jpg",
+  "caption": "🚀 *New Research Trade*\n\nBUY RELIANCE at ₹2400...",
+  "parse_mode": "Markdown"
+}
 ```
 
-**Alert Created:**
-```text
-🔔 *New Alert Created*
+### Files to Modify
+| File | Change |
+|------|--------|
+| `supabase/functions/telegram-notify/index.ts` | Add `sendTelegramPhoto` function and use it for trades with images |
 
-Symbol: *RELIANCE*
-Condition: Price Above ₹2500
-Recurrence: One-time
+### Implementation Details
+
+**New Helper Function:**
+```text
+async function sendTelegramPhoto(
+  token: string, 
+  chatId: string, 
+  photoUrl: string, 
+  caption: string
+): Promise<void>
 ```
 
-**Alert Paused:**
-```text
-⏸️ *Alert Paused*
+**Modified Notification Logic:**
+- For `new_trade`: Check `trade.chart_images` array
+- If images exist, send first image with full trade details as caption
+- If multiple images, send additional images without caption (media group)
+- Telegram caption limit is 1024 characters
 
-Symbol: *RELIANCE*
-Condition: Price Above ₹2500
+### Notification Types That Will Include Images
+- New Trade Created (if chart_images exist)
+- Trade Closed (if chart_images exist)
+- Trade Update (if chart_images exist)
+
+---
+
+## Issue 3: Automated SL/Target/TSL Alerts
+
+### Current State Analysis
+The `trade-monitor` edge function already:
+- Monitors all open trades every minute (cron job)
+- Checks SL hits, TSL hits, Target hits
+- Sends Telegram notifications for each event
+- Auto-executes exit orders via Dhan API
+
+### The Problem
+The `trade-monitor` uses the **global** `TELEGRAM_CHAT_ID` secret instead of the **user-specific** chat ID from `user_settings` table.
+
+### Solution
+Update `trade-monitor` to:
+1. Fetch each user's `telegram_chat_id` from `user_settings`
+2. Use user-specific chat ID for notifications
+3. Fall back to global `TELEGRAM_CHAT_ID` if not set
+
+### Files to Modify
+| File | Change |
+|------|--------|
+| `supabase/functions/trade-monitor/index.ts` | Fetch user-specific chat ID for each trade's user |
+
+### Implementation Details
+
+**Add helper function (same as in telegram-notify):**
+```text
+async function getUserChatId(supabase, userId): Promise<string | null>
 ```
 
-**Alert Deleted:**
+**Modify notification calls:**
+Before:
 ```text
-🗑️ *Alert Deleted*
-
-Symbol: *RELIANCE*
-Condition: Price Above ₹2500
+await sendTelegramMessage(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, message);
 ```
 
-**Trade Event Added:**
+After:
 ```text
-📝 *Trade Event Added*
-
-Symbol: *RELIANCE*
-Event: Partial Exit
-Price: ₹2480
-Notes: Booked 50% at target 1
+const userChatId = await getUserChatId(supabase, trade.user_id);
+const chatId = userChatId || TELEGRAM_CHAT_ID;
+await sendTelegramMessage(TELEGRAM_BOT_TOKEN, chatId, message);
 ```
 
 ---
 
-## Execution Summary
+## Technical Implementation Summary
 
-1. **Update telegram-notify edge function** - Add 5 new notification handlers
-2. **Update telegram.ts** - Add 5 new helper functions with proper types
-3. **Update useTrades.ts** - Add SL modification notification
-4. **Update useAlerts.ts** - Add create/toggle/delete notifications
-5. **Update useTradeEvents.ts** - Add event notification
-6. **Deploy edge function** - Re-deploy telegram-notify
-7. **Test all flows** - Verify each notification type works
+### Step 1: Fix trade-monitor User-Specific Chat IDs
+Update `supabase/functions/trade-monitor/index.ts`:
+- Add `getUserChatId` helper function
+- Update all `sendTelegramMessage` calls to use user-specific chat ID
+- Keep global `TELEGRAM_CHAT_ID` as fallback
+
+### Step 2: Add Image Support to telegram-notify
+Update `supabase/functions/telegram-notify/index.ts`:
+- Add `sendTelegramPhoto` function
+- Modify `new_trade`, `trade_closed`, `trade_update` cases to send images when available
+- Truncate captions to 1024 characters if needed
+
+### Step 3: Improve OAuth Error Handling
+Update `src/contexts/AuthContext.tsx`:
+- Add better error logging for OAuth callback debugging
+- Ensure proper redirect handling for published domain
+
+### Step 4: Deploy and Test
+- Deploy both edge functions
+- Create a test trade with chart image
+- Verify notification includes the image
+- Verify automated SL/Target alerts use correct chat ID
 
 ---
 
 ## Expected Outcome
 
-After implementation, users will receive Telegram notifications for:
-- Every new trade created
-- Every trade closed (manual or automatic)
-- Every SL modification
-- Every target hit (automatic)
-- Every TSL activation/movement (automatic)
-- Every alert created
-- Every alert triggered (automatic)
-- Every alert paused/resumed
-- Every alert deleted
-- Manual trade events (partial exits, notes, etc.)
+After implementation:
 
-This creates a complete audit trail on Telegram for all trading activity.
+| Event | Notification Type | Image Included |
+|-------|------------------|----------------|
+| New Trade Created | Telegram Photo (if images) or Message | Yes (first image) |
+| Trade Closed | Telegram Photo (if images) or Message | Yes (first image) |
+| SL Hit (automated) | Telegram Message | No (could add) |
+| TSL Hit (automated) | Telegram Message | No (could add) |
+| TSL Moved (automated) | Telegram Message | No |
+| Target Hit (automated) | Telegram Message | No |
+| Alert Triggered | Telegram Message | N/A |
+| Alert Created/Deleted | Telegram Message | N/A |
+
+---
+
+## Files to be Modified
+
+1. `supabase/functions/trade-monitor/index.ts` - Add user-specific chat ID support
+2. `supabase/functions/telegram-notify/index.ts` - Add image sending capability
+3. `src/contexts/AuthContext.tsx` - Improve OAuth error handling
+
+---
+
+## Notes
+
+- Telegram photo captions are limited to 1024 characters (vs 4096 for messages)
+- For multiple images, Telegram's `sendMediaGroup` could be used (optional enhancement)
+- The trade-monitor cron job must be running for automated alerts to work
+- The published app login issue may require checking Lovable Cloud's Authentication Settings to ensure the domain is properly configured
+
