@@ -1,1 +1,16 @@
 project_id = "nuilpmoipiazjafpjaft"
+
+[functions.telegram-notify]
+verify_jwt = false
+
+[functions.dhan-sync]
+verify_jwt = false
+
+[functions.dhan-execute]
+verify_jwt = false
+
+[functions.evaluate-alerts]
+verify_jwt = false
+
+[functions.trade-monitor]
+verify_jwt = false
