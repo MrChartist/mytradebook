@@ -6,8 +6,6 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Star,
-  Target,
-  AlertTriangle,
   Eye,
   Loader2,
 } from "lucide-react";
@@ -26,14 +24,6 @@ import { useTrades, type TradeFilters } from "@/hooks/useTrades";
 import { CreateTradeModal } from "@/components/modals/CreateTradeModal";
 import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
 import type { Trade } from "@/hooks/useTrades";
-
-const segmentColors: Record<string, string> = {
-  Equity_Intraday: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  Equity_Positional: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  Futures: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-  Options: "bg-pink-500/10 text-pink-400 border-pink-500/20",
-  Commodities: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-};
 
 const segmentLabels: Record<string, string> = {
   Equity_Intraday: "Equity Intraday",
@@ -184,10 +174,16 @@ export default function Trades() {
               <thead>
                 <tr className="border-b border-border">
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+                    Date
+                  </th>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">
                     Symbol
                   </th>
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                    Segment
+                    Type
+                  </th>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+                    Qty
                   </th>
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">
                     Entry
@@ -196,13 +192,13 @@ export default function Trades() {
                     Current
                   </th>
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                    SL / Target
-                  </th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">
                     Rating
                   </th>
                   <th className="text-right p-4 text-sm font-medium text-muted-foreground">
                     P&L
+                  </th>
+                  <th className="text-center p-4 text-sm font-medium text-muted-foreground">
+                    Status
                   </th>
                   <th className="text-right p-4 text-sm font-medium text-muted-foreground">
                     Actions
@@ -212,12 +208,21 @@ export default function Trades() {
               <tbody>
                 {trades.map((trade) => {
                   const targets = (trade.targets as number[]) || [];
+                  const entryDate = new Date(trade.entry_time);
                   return (
                     <tr
                       key={trade.id}
                       className="border-b border-border/50 hover:bg-accent/50 transition-colors cursor-pointer"
                       onClick={() => setSelectedTrade(trade)}
                     >
+                      {/* Date */}
+                      <td className="p-4 text-sm text-muted-foreground whitespace-nowrap">
+                        {entryDate.toLocaleDateString("en-IN", { 
+                          day: "2-digit", 
+                          month: "short" 
+                        })}
+                      </td>
+                      {/* Symbol */}
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <div
@@ -237,62 +242,92 @@ export default function Trades() {
                           <div>
                             <p className="font-medium">{trade.symbol}</p>
                             <p className="text-xs text-muted-foreground">
-                              {trade.quantity} qty
+                              {segmentLabels[trade.segment] || trade.segment}
                             </p>
                           </div>
                         </div>
                       </td>
+                      {/* Type */}
                       <td className="p-4">
                         <span
                           className={cn(
-                            "px-2 py-1 rounded-md text-xs font-medium border",
-                            segmentColors[trade.segment]
+                            "px-2 py-1 rounded-md text-xs font-medium",
+                            trade.trade_type === "BUY"
+                              ? "bg-profit/10 text-profit"
+                              : "bg-loss/10 text-loss"
                           )}
                         >
-                          {segmentLabels[trade.segment] || trade.segment}
+                          {trade.trade_type}
                         </span>
                       </td>
-                      <td className="p-4 font-mono">
+                      {/* Qty */}
+                      <td className="p-4 font-mono text-sm">
+                        {trade.quantity}
+                      </td>
+                      {/* Entry */}
+                      <td className="p-4 font-mono text-sm">
                         ₹{trade.entry_price.toLocaleString()}
                       </td>
-                      <td className="p-4 font-mono">
+                      {/* Current */}
+                      <td className="p-4 font-mono text-sm">
                         ₹{(trade.current_price || trade.entry_price).toLocaleString()}
                       </td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-2 text-sm">
-                          <span className="text-loss flex items-center gap-1">
-                            <AlertTriangle className="w-3 h-3" />
-                            {trade.stop_loss || "—"}
-                          </span>
-                          <span className="text-muted-foreground">/</span>
-                          <span className="text-profit flex items-center gap-1">
-                            <Target className="w-3 h-3" />
-                            {targets[0] || "—"}
-                          </span>
-                        </div>
-                      </td>
+                      {/* Rating */}
                       <td className="p-4">
                         <div className="flex items-center gap-1">
                           <Star className="w-4 h-4 text-warning fill-warning" />
-                          <span className="font-medium">{trade.rating || "—"}</span>
-                          {trade.confidence_score && (
-                            <span className="text-muted-foreground text-sm">
-                              / {trade.confidence_score}
-                            </span>
-                          )}
+                          <span className="font-medium">{trade.rating || "—"}/10</span>
                         </div>
                       </td>
+                      {/* P&L */}
                       <td className="p-4 text-right">
-                        <p
+                        <div>
+                          <p
+                            className={cn(
+                              "font-semibold",
+                              (trade.pnl || 0) >= 0 ? "text-profit" : "text-loss"
+                            )}
+                          >
+                            {(trade.pnl || 0) >= 0 ? "+" : ""}₹
+                            {Math.abs(trade.pnl || 0).toLocaleString()}
+                          </p>
+                          <p
+                            className={cn(
+                              "text-xs",
+                              (trade.pnl_percent || 0) >= 0 ? "text-profit" : "text-loss"
+                            )}
+                          >
+                            {(trade.pnl_percent || 0) >= 0 ? "+" : ""}
+                            {(trade.pnl_percent || 0).toFixed(2)}%
+                          </p>
+                        </div>
+                      </td>
+                      {/* Status */}
+                      <td className="p-4 text-center">
+                        <span
                           className={cn(
-                            "font-semibold",
-                            (trade.pnl || 0) >= 0 ? "text-profit" : "text-loss"
+                            "px-2 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1",
+                            trade.status === "OPEN"
+                              ? "bg-profit/10 text-profit"
+                              : trade.status === "CLOSED"
+                              ? "bg-muted text-muted-foreground"
+                              : "bg-warning/10 text-warning"
                           )}
                         >
-                          {(trade.pnl || 0) >= 0 ? "+" : ""}₹
-                          {(trade.pnl || 0).toLocaleString()}
-                        </p>
+                          <span
+                            className={cn(
+                              "w-1.5 h-1.5 rounded-full",
+                              trade.status === "OPEN"
+                                ? "bg-profit"
+                                : trade.status === "CLOSED"
+                                ? "bg-muted-foreground"
+                                : "bg-warning"
+                            )}
+                          />
+                          {trade.status}
+                        </span>
                       </td>
+                      {/* Actions */}
                       <td className="p-4 text-right">
                         <Button 
                           variant="ghost" 
