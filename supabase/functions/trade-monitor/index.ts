@@ -407,7 +407,42 @@ async function processTrailingStopLoss(
 }
 
 async function getCurrentPrice(symbol: string, dhanToken: string | undefined): Promise<number | null> {
-  // Mock prices for testing - in production, use Dhan LTP API
+  // Try to fetch real price from Dhan API if token is available
+  if (dhanToken) {
+    try {
+      const response = await fetch(`${DHAN_API_URL}/marketfeed/ltp`, {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "access-token": dhanToken,
+        },
+        body: JSON.stringify({
+          NSE_EQ: [symbol],
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Dhan returns: { data: { NSE_EQ: { "SYMBOL": { last_price: 123.45 } } } }
+        const quote = data?.data?.NSE_EQ?.[symbol];
+        if (quote?.last_price) {
+          return quote.last_price;
+        }
+        if (quote?.ltp) {
+          return quote.ltp;
+        }
+      }
+    } catch (e) {
+      console.warn(`Could not fetch LTP for ${symbol} from Dhan:`, e);
+    }
+  }
+
+  // Fallback to mock prices for testing
+  return getMockPrice(symbol);
+}
+
+function getMockPrice(symbol: string): number {
   const basePrices: Record<string, number> = {
     RELIANCE: 2450,
     TATASTEEL: 155,
@@ -419,9 +454,14 @@ async function getCurrentPrice(symbol: string, dhanToken: string | undefined): P
     BHARTIARTL: 1380,
     WIPRO: 480,
     KOTAKBANK: 1850,
+    NIFTY: 22500,
+    BANKNIFTY: 48000,
+    ADANIENT: 2800,
+    LT: 3450,
+    MARUTI: 11200,
   };
 
-  const base = basePrices[symbol] || 1000;
+  const base = basePrices[symbol.toUpperCase()] || 1000;
   // Simulate small price movements
   return base * (1 + (Math.random() - 0.5) * 0.03);
 }
