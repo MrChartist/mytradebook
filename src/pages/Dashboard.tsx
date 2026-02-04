@@ -9,8 +9,22 @@ import {
   Target,
   AlertCircle,
 } from "lucide-react";
+import { useTrades } from "@/hooks/useTrades";
+import { useAlerts } from "@/hooks/useAlerts";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Dashboard() {
+  const { trades, summary, isLoading: tradesLoading } = useTrades();
+  const { alerts, isLoading: alertsLoading } = useAlerts({ active: true });
+
+  const openTrades = trades.filter((t) => t.status === "OPEN");
+  const capitalAtRisk = openTrades.reduce(
+    (acc, t) => acc + t.entry_price * t.quantity,
+    0
+  );
+
+  const triggeredAlerts = alerts.filter((a) => a.last_triggered).length;
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
@@ -29,38 +43,49 @@ export default function Dashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Portfolio Value"
-          value="₹14,25,000"
-          change="+₹42,000 (3.04%)"
-          changeType="profit"
-          icon={Wallet}
-          subtitle="All segments"
-        />
-        <StatCard
-          title="Today's P&L"
-          value="+₹18,500"
-          change="+1.32% today"
-          changeType="profit"
-          icon={TrendingUp}
-          subtitle="5 trades executed"
-        />
-        <StatCard
-          title="Open Positions"
-          value="8"
-          change="₹2,85,000 at risk"
-          changeType="neutral"
-          icon={Target}
-          subtitle="Across 3 segments"
-        />
-        <StatCard
-          title="Active Alerts"
-          value="12"
-          change="2 triggered"
-          changeType="loss"
-          icon={AlertCircle}
-          subtitle="Price & technical"
-        />
+        {tradesLoading ? (
+          <>
+            <Skeleton className="h-28" />
+            <Skeleton className="h-28" />
+            <Skeleton className="h-28" />
+            <Skeleton className="h-28" />
+          </>
+        ) : (
+          <>
+            <StatCard
+              title="Total P&L"
+              value={`${summary.totalPnl >= 0 ? "+" : ""}₹${summary.totalPnl.toLocaleString()}`}
+              change={`${summary.winRate.toFixed(1)}% win rate`}
+              changeType={summary.totalPnl >= 0 ? "profit" : "loss"}
+              icon={Wallet}
+              subtitle="All segments"
+            />
+            <StatCard
+              title="Open Positions"
+              value={String(summary.openPositions)}
+              change={`₹${capitalAtRisk.toLocaleString()} at risk`}
+              changeType="neutral"
+              icon={Target}
+              subtitle={`${trades.length} total trades`}
+            />
+            <StatCard
+              title="Win Rate"
+              value={`${summary.winRate.toFixed(1)}%`}
+              change={`${summary.closedToday} closed today`}
+              changeType={summary.winRate >= 50 ? "profit" : "loss"}
+              icon={TrendingUp}
+              subtitle="Closed trades"
+            />
+            <StatCard
+              title="Active Alerts"
+              value={String(alerts.length)}
+              change={triggeredAlerts > 0 ? `${triggeredAlerts} triggered` : "Monitoring"}
+              changeType={triggeredAlerts > 0 ? "loss" : "neutral"}
+              icon={AlertCircle}
+              subtitle="Price & technical"
+            />
+          </>
+        )}
       </div>
 
       {/* Main Content Grid */}
