@@ -324,14 +324,14 @@ async function processTrailingStopLoss(
   if (!trade.trailing_sl_active) {
     const hasTrigger = !!trade.trailing_sl_trigger_price;
 
-    // If user set trigger price → activate when trigger is crossed.
-    // If trigger is empty AND there are no targets → activate immediately.
-    // If trigger is empty AND targets exist → activate on Target 1 hit (handled elsewhere).
+    // TSL should activate immediately unless a specific trigger price is set.
+    // If trigger price is set -> wait until crossed.
+    // Otherwise -> activate immediately from the first price check.
     const shouldActivate = hasTrigger
       ? (isBuy
           ? currentPrice >= (trade.trailing_sl_trigger_price as number)
           : currentPrice <= (trade.trailing_sl_trigger_price as number))
-      : !trade.targets || trade.targets.length === 0;
+      : true; // Immediately activate
 
     if (shouldActivate) {
       const newTslValue = calculateTrailingStopLoss(trade, currentPrice);
