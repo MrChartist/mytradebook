@@ -59,6 +59,27 @@ export type Database = {
         }
         Relationships: []
       }
+      candlestick_tags: {
+        Row: {
+          bullish: boolean | null
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          bullish?: boolean | null
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          bullish?: boolean | null
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       mistake_tags: {
         Row: {
           id: string
@@ -176,6 +197,36 @@ export type Database = {
         }
         Relationships: []
       }
+      trade_candlesticks: {
+        Row: {
+          candlestick_id: string
+          trade_id: string
+        }
+        Insert: {
+          candlestick_id: string
+          trade_id: string
+        }
+        Update: {
+          candlestick_id?: string
+          trade_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trade_candlesticks_candlestick_id_fkey"
+            columns: ["candlestick_id"]
+            isOneToOne: false
+            referencedRelation: "candlestick_tags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trade_candlesticks_trade_id_fkey"
+            columns: ["trade_id"]
+            isOneToOne: false
+            referencedRelation: "trades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trade_events: {
         Row: {
           created_at: string | null
@@ -276,6 +327,36 @@ export type Database = {
             columns: ["trade_id"]
             isOneToOne: false
             referencedRelation: "trades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trade_volume: {
+        Row: {
+          trade_id: string
+          volume_id: string
+        }
+        Insert: {
+          trade_id: string
+          volume_id: string
+        }
+        Update: {
+          trade_id?: string
+          volume_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trade_volume_trade_id_fkey"
+            columns: ["trade_id"]
+            isOneToOne: false
+            referencedRelation: "trades"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trade_volume_volume_id_fkey"
+            columns: ["volume_id"]
+            isOneToOne: false
+            referencedRelation: "volume_tags"
             referencedColumns: ["id"]
           },
         ]
@@ -426,6 +507,24 @@ export type Database = {
           timezone?: string | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      volume_tags: {
+        Row: {
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          name?: string
         }
         Relationships: []
       }
