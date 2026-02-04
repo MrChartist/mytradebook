@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   TrendingUp,
   Plus,
@@ -9,6 +9,7 @@ import {
   Eye,
   Loader2,
   RefreshCw,
+  Radio,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +26,7 @@ import { useTrades, type TradeFilters } from "@/hooks/useTrades";
 import { CreateTradeModal } from "@/components/modals/CreateTradeModal";
 import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
 import { useDhanIntegration } from "@/hooks/useDhanIntegration";
+import { useLivePrices } from "@/hooks/useLivePrices";
 import type { Trade } from "@/hooks/useTrades";
 
 const segmentLabels: Record<string, string> = {
@@ -50,6 +52,15 @@ export default function Trades() {
 
   const { trades, isLoading, summary } = useTrades(filters);
   const { syncPortfolio, monitorTrades, isSyncing } = useDhanIntegration();
+
+  // Get symbols for open trades to poll live prices
+  const openTradeSymbols = useMemo(() => {
+    return trades
+      .filter((t) => t.status === "OPEN")
+      .map((t) => t.symbol);
+  }, [trades]);
+
+  const { prices, isPolling, lastUpdated, refresh } = useLivePrices(openTradeSymbols, 30000);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -122,13 +133,28 @@ export default function Trades() {
           )}
         </div>
         <div className="glass-card p-4">
-          <p className="text-sm text-muted-foreground">Win Rate</p>
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">Win Rate</p>
+            {isPolling && openTradeSymbols.length > 0 && (
+              <span className="flex items-center gap-1 text-xs text-profit">
+                <Radio className="w-3 h-3 animate-pulse" />
+                Live
+              </span>
+            )}
+          </div>
           {isLoading ? (
             <Skeleton className="h-8 w-20 mt-1" />
           ) : (
-            <p className="text-2xl font-bold text-warning">
-              {summary.winRate.toFixed(1)}%
-            </p>
+            <>
+              <p className="text-2xl font-bold text-warning">
+                {summary.winRate.toFixed(1)}%
+              </p>
+              {lastUpdated && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Updated {lastUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                </p>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -277,9 +303,24 @@ export default function Trades() {
                       <td className="p-4 font-mono text-sm">
                         ₹{trade.entry_price.toLocaleString()}
                       </td>
-                      {/* Current */}
+                      {/* Current - with live price */}
                       <td className="p-4 font-mono text-sm">
-                        ₹{(trade.current_price || trade.entry_price).toLocaleString()}
+                        {trade.status === "OPEN" && prices[trade.symbol] ? (
+                          <div className="flex items-center gap-1">
+                            <span>₹{prices[trade.symbol].ltp.toLocaleString()}</span>
+                            <span
+                              className={cn(
+                                "text-xs",
+                                prices[trade.symbol].changePercent >= 0 ? "text-profit" : "text-loss"
+                              )}
+                            >
+                              ({prices[trade.symbol].changePercent >= 0 ? "+" : ""}
+                              {prices[trade.symbol].changePercent.toFixed(2)}%)
+                            </span>
+                          </div>
+                        ) : (
+                          <span>₹{(trade.current_price || trade.entry_price).toLocaleString()}</span>
+                        )}
                       </td>
                       {/* Rating */}
                       <td className="p-4">

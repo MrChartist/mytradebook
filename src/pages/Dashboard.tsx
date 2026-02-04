@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { EquityCurve } from "@/components/dashboard/EquityCurve";
 import { RecentTrades } from "@/components/dashboard/RecentTrades";
@@ -8,9 +9,11 @@ import {
   TrendingUp,
   Target,
   AlertCircle,
+  Radio,
 } from "lucide-react";
 import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
+import { useLivePrices } from "@/hooks/useLivePrices";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Dashboard() {
@@ -18,10 +21,19 @@ export default function Dashboard() {
   const { alerts, isLoading: alertsLoading } = useAlerts({ active: true });
 
   const openTrades = trades.filter((t) => t.status === "OPEN");
-  const capitalAtRisk = openTrades.reduce(
-    (acc, t) => acc + t.entry_price * t.quantity,
-    0
-  );
+  
+  // Get symbols for open trades to poll live prices
+  const openTradeSymbols = useMemo(() => {
+    return openTrades.map((t) => t.symbol);
+  }, [openTrades]);
+
+  const { prices, isPolling, lastUpdated } = useLivePrices(openTradeSymbols, 30000);
+
+  // Calculate capital at risk with live prices when available
+  const capitalAtRisk = openTrades.reduce((acc, t) => {
+    const currentPrice = prices[t.symbol]?.ltp || t.current_price || t.entry_price;
+    return acc + currentPrice * t.quantity;
+  }, 0);
 
   const triggeredAlerts = alerts.filter((a) => a.last_triggered).length;
 
@@ -36,8 +48,20 @@ export default function Dashboard() {
           </p>
         </div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="w-2 h-2 rounded-full bg-profit animate-pulse" />
-          Market Open • NSE
+          {isPolling && openTradeSymbols.length > 0 ? (
+            <>
+              <Radio className="w-3 h-3 text-profit animate-pulse" />
+              <span className="text-profit">Live</span>
+              {lastUpdated && (
+                <span>• {lastUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span>
+              )}
+            </>
+          ) : (
+            <>
+              <span className="w-2 h-2 rounded-full bg-profit animate-pulse" />
+              Market Open • NSE
+            </>
+          )}
         </div>
       </div>
 

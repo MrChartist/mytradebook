@@ -75,30 +75,42 @@ serve(async (req) => {
 
     // Fetch current prices from Dhan (if configured)
     if (DHAN_ACCESS_TOKEN) {
-      for (const symbol of symbolsToCheck) {
-        try {
-          // Note: Dhan requires securityId for quotes, using symbol as fallback
-          const quoteResponse = await fetch(`${DHAN_API_URL}/marketfeed/ltp`, {
-            method: "POST",
-            headers: {
-              "Accept": "application/json",
-              "Content-Type": "application/json",
-              "access-token": DHAN_ACCESS_TOKEN,
-            },
-            body: JSON.stringify({
-              NSE_EQ: [symbol], // Simplified - in production, map to security IDs
-            }),
-          });
+      try {
+        const quoteResponse = await fetch(`${DHAN_API_URL}/marketfeed/ltp`, {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "access-token": DHAN_ACCESS_TOKEN,
+          },
+          body: JSON.stringify({
+            NSE_EQ: symbolsToCheck,
+          }),
+        });
 
-          if (quoteResponse.ok) {
-            const quoteData = await quoteResponse.json();
-            if (quoteData.data && quoteData.data[symbol]) {
-              priceData[symbol] = quoteData.data[symbol];
+        if (quoteResponse.ok) {
+          const quoteData = await quoteResponse.json();
+          if (quoteData?.data?.NSE_EQ) {
+            for (const symbol of symbolsToCheck) {
+              const quote = quoteData.data.NSE_EQ[symbol];
+              if (quote) {
+                priceData[symbol] = {
+                  open: quote.open || 0,
+                  high: quote.high || 0,
+                  low: quote.low || 0,
+                  close: quote.close || 0,
+                  ltp: quote.last_price || quote.ltp || 0,
+                  volume: quote.volume || 0,
+                  sellQuantity: quote.sell_quantity || 0,
+                  buyQuantity: quote.buy_quantity || 0,
+                  previousClose: quote.prev_close || quote.previousClose || 0,
+                };
+              }
             }
           }
-        } catch (e) {
-          console.error(`Failed to fetch price for ${symbol}:`, e);
         }
+      } catch (e) {
+        console.error("Failed to fetch prices from Dhan:", e);
       }
     }
 

@@ -18,10 +18,12 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useAlerts } from "@/hooks/useAlerts";
 import { CreateAlertModal } from "@/components/modals/CreateAlertModal";
+import { EditAlertModal } from "@/components/modals/EditAlertModal";
 import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Database } from "@/integrations/supabase/types";
 
+type Alert = Database["public"]["Tables"]["alerts"]["Row"];
 type AlertCondition = Database["public"]["Enums"]["alert_condition"];
 
 const conditionLabels: Record<AlertCondition, string> = {
@@ -45,8 +47,10 @@ const conditionIcons: Record<AlertCondition, typeof TrendingUp> = {
 export default function Alerts() {
   const [searchQuery, setSearchQuery] = useState("");
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedAlertId, setSelectedAlertId] = useState<string | null>(null);
+  const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
 
   const { alerts, isLoading, toggleAlert, deleteAlert } = useAlerts();
 
@@ -59,6 +63,11 @@ export default function Alerts() {
 
   const handleToggleAlert = (id: string, currentActive: boolean) => {
     toggleAlert.mutate({ id, active: !currentActive });
+  };
+
+  const handleEditClick = (alert: Alert) => {
+    setSelectedAlert(alert);
+    setEditModalOpen(true);
   };
 
   const handleDeleteClick = (id: string) => {
@@ -237,7 +246,10 @@ export default function Alerts() {
                         <ToggleLeft className="w-6 h-6 text-muted-foreground" />
                       )}
                     </button>
-                    <button className="p-2 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground">
+                    <button
+                      onClick={() => handleEditClick(alert)}
+                      className="p-2 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+                    >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
@@ -273,6 +285,11 @@ export default function Alerts() {
 
       {/* Modals */}
       <CreateAlertModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
+      <EditAlertModal
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        alert={selectedAlert}
+      />
       <ConfirmDeleteModal
         open={deleteModalOpen}
         onOpenChange={setDeleteModalOpen}
