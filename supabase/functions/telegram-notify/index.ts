@@ -112,6 +112,16 @@ const eventTypeLabels: Record<string, string> = {
   TSL_HIT: "TSL Hit",
 };
 
+// Helper function to get user's telegram chat ID
+async function getUserChatId(supabase: any, userId: string): Promise<string | null> {
+  const { data } = await supabase
+    .from("user_settings")
+    .select("telegram_chat_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  return data?.telegram_chat_id || null;
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
@@ -142,13 +152,7 @@ Deno.serve(async (req) => {
       case "new_trade": {
         const { data: trade, error } = await supabase
           .from("trades")
-          .select(
-            `
-            *,
-            profiles:user_id (name),
-            user_settings:user_id (telegram_chat_id)
-          `
-          )
+          .select("*")
           .eq("id", payload.trade_id)
           .maybeSingle();
 
@@ -161,9 +165,10 @@ Deno.serve(async (req) => {
           );
         }
 
-        // Use user's telegram_chat_id if available
-        if (trade.user_settings?.telegram_chat_id) {
-          chatId = trade.user_settings.telegram_chat_id;
+        // Get user's telegram chat ID
+        const userChatId = await getUserChatId(supabase, trade.user_id);
+        if (userChatId) {
+          chatId = userChatId;
         }
 
         const targets = trade.targets || [];
@@ -211,16 +216,8 @@ Deno.serve(async (req) => {
       case "trade_update": {
         const { data: trade, error } = await supabase
           .from("trades")
-          .select(
-            `
-            *,
-            user_settings:user_id (telegram_chat_id),
-            trade_events (*)
-          `
-          )
+          .select("*")
           .eq("id", payload.trade_id)
-          .order("timestamp", { foreignTable: "trade_events", ascending: false })
-          .limit(1, { foreignTable: "trade_events" })
           .maybeSingle();
 
         if (error) throw error;
@@ -232,11 +229,21 @@ Deno.serve(async (req) => {
           );
         }
 
-        if (trade.user_settings?.telegram_chat_id) {
-          chatId = trade.user_settings.telegram_chat_id;
+        // Get user's telegram chat ID
+        const userChatId = await getUserChatId(supabase, trade.user_id);
+        if (userChatId) {
+          chatId = userChatId;
         }
 
-        const latestEvent = trade.trade_events?.[0];
+        // Fetch latest trade event
+        const { data: events } = await supabase
+          .from("trade_events")
+          .select("*")
+          .eq("trade_id", trade.id)
+          .order("timestamp", { ascending: false })
+          .limit(1);
+        
+        const latestEvent = events?.[0];
         const eventType = latestEvent?.event_type || "UPDATE";
         const pnlPercent =
           trade.pnl_percent >= 0 ? `+${trade.pnl_percent.toFixed(2)}%` : `${trade.pnl_percent.toFixed(2)}%`;
@@ -265,12 +272,7 @@ Deno.serve(async (req) => {
       case "trade_closed": {
         const { data: trade, error } = await supabase
           .from("trades")
-          .select(
-            `
-            *,
-            user_settings:user_id (telegram_chat_id)
-          `
-          )
+          .select("*")
           .eq("id", payload.trade_id)
           .maybeSingle();
 
@@ -283,8 +285,10 @@ Deno.serve(async (req) => {
           );
         }
 
-        if (trade.user_settings?.telegram_chat_id) {
-          chatId = trade.user_settings.telegram_chat_id;
+        // Get user's telegram chat ID
+        const userChatId = await getUserChatId(supabase, trade.user_id);
+        if (userChatId) {
+          chatId = userChatId;
         }
 
         const isProfit = (trade.pnl || 0) >= 0;
@@ -318,12 +322,7 @@ Deno.serve(async (req) => {
       case "trade_sl_modified": {
         const { data: trade, error } = await supabase
           .from("trades")
-          .select(
-            `
-            *,
-            user_settings:user_id (telegram_chat_id)
-          `
-          )
+          .select("*")
           .eq("id", payload.trade_id)
           .maybeSingle();
 
@@ -336,8 +335,10 @@ Deno.serve(async (req) => {
           );
         }
 
-        if (trade.user_settings?.telegram_chat_id) {
-          chatId = trade.user_settings.telegram_chat_id;
+        // Get user's telegram chat ID
+        const userChatId = await getUserChatId(supabase, trade.user_id);
+        if (userChatId) {
+          chatId = userChatId;
         }
 
         const pnl = trade.pnl || 0;
@@ -359,12 +360,7 @@ Deno.serve(async (req) => {
       case "alert_triggered": {
         const { data: alert, error } = await supabase
           .from("alerts")
-          .select(
-            `
-            *,
-            user_settings:user_id (telegram_chat_id)
-          `
-          )
+          .select("*")
           .eq("id", payload.alert_id)
           .maybeSingle();
 
@@ -377,8 +373,10 @@ Deno.serve(async (req) => {
           );
         }
 
-        if (alert.user_settings?.telegram_chat_id) {
-          chatId = alert.user_settings.telegram_chat_id;
+        // Get user's telegram chat ID
+        const userChatId = await getUserChatId(supabase, alert.user_id);
+        if (userChatId) {
+          chatId = userChatId;
         }
 
         const conditionMap: Record<string, string> = {
@@ -403,12 +401,7 @@ Deno.serve(async (req) => {
       case "alert_created": {
         const { data: alert, error } = await supabase
           .from("alerts")
-          .select(
-            `
-            *,
-            user_settings:user_id (telegram_chat_id)
-          `
-          )
+          .select("*")
           .eq("id", payload.alert_id)
           .maybeSingle();
 
@@ -421,8 +414,10 @@ Deno.serve(async (req) => {
           );
         }
 
-        if (alert.user_settings?.telegram_chat_id) {
-          chatId = alert.user_settings.telegram_chat_id;
+        // Get user's telegram chat ID
+        const userChatId = await getUserChatId(supabase, alert.user_id);
+        if (userChatId) {
+          chatId = userChatId;
         }
 
         const conditionLabel = conditionLabels[alert.condition_type] || alert.condition_type;
@@ -443,12 +438,7 @@ Deno.serve(async (req) => {
       case "alert_paused": {
         const { data: alert, error } = await supabase
           .from("alerts")
-          .select(
-            `
-            *,
-            user_settings:user_id (telegram_chat_id)
-          `
-          )
+          .select("*")
           .eq("id", payload.alert_id)
           .maybeSingle();
 
@@ -461,8 +451,10 @@ Deno.serve(async (req) => {
           );
         }
 
-        if (alert.user_settings?.telegram_chat_id) {
-          chatId = alert.user_settings.telegram_chat_id;
+        // Get user's telegram chat ID
+        const userChatId = await getUserChatId(supabase, alert.user_id);
+        if (userChatId) {
+          chatId = userChatId;
         }
 
         const conditionLabel = conditionLabels[alert.condition_type] || alert.condition_type;
@@ -488,12 +480,7 @@ Deno.serve(async (req) => {
       case "trade_event_added": {
         const { data: trade, error } = await supabase
           .from("trades")
-          .select(
-            `
-            *,
-            user_settings:user_id (telegram_chat_id)
-          `
-          )
+          .select("*")
           .eq("id", payload.trade_id)
           .maybeSingle();
 
@@ -506,8 +493,10 @@ Deno.serve(async (req) => {
           );
         }
 
-        if (trade.user_settings?.telegram_chat_id) {
-          chatId = trade.user_settings.telegram_chat_id;
+        // Get user's telegram chat ID
+        const userChatId = await getUserChatId(supabase, trade.user_id);
+        if (userChatId) {
+          chatId = userChatId;
         }
 
         const eventLabel = eventTypeLabels[payload.event_type] || payload.event_type.replace(/_/g, " ");
@@ -523,12 +512,7 @@ Deno.serve(async (req) => {
       case "weekly_report": {
         const { data: report, error } = await supabase
           .from("weekly_reports")
-          .select(
-            `
-            *,
-            user_settings:user_id (telegram_chat_id)
-          `
-          )
+          .select("*")
           .eq("id", payload.report_id)
           .maybeSingle();
 
@@ -541,8 +525,10 @@ Deno.serve(async (req) => {
           );
         }
 
-        if (report.user_settings?.telegram_chat_id) {
-          chatId = report.user_settings.telegram_chat_id;
+        // Get user's telegram chat ID
+        const userChatId = await getUserChatId(supabase, report.user_id);
+        if (userChatId) {
+          chatId = userChatId;
         }
 
         const totalPnl = report.total_pnl || 0;
