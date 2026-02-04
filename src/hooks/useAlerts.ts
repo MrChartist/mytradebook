@@ -8,22 +8,35 @@ type Alert = Database["public"]["Tables"]["alerts"]["Row"];
 type AlertInsert = Database["public"]["Tables"]["alerts"]["Insert"];
 type AlertUpdate = Database["public"]["Tables"]["alerts"]["Update"];
 
-export function useAlerts() {
+export interface AlertFilters {
+  active?: boolean;
+  symbol?: string;
+}
+
+export function useAlerts(filters?: AlertFilters) {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const alertsQuery = useQuery({
-    queryKey: ["alerts", user?.id],
+    queryKey: ["alerts", user?.id, filters],
     queryFn: async () => {
       if (!user) return [];
 
-      const { data, error } = await supabase
+      let query = supabase
         .from("alerts")
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
+      if (filters?.active !== undefined) {
+        query = query.eq("active", filters.active);
+      }
+      if (filters?.symbol) {
+        query = query.ilike("symbol", `%${filters.symbol}%`);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data as Alert[];
     },
