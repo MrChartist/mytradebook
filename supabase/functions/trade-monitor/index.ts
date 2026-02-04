@@ -34,6 +34,16 @@ interface Trade {
   confidence_score: number | null;
 }
 
+// Helper function to get user's telegram chat ID
+async function getUserChatId(supabase: any, userId: string): Promise<string | null> {
+  const { data } = await supabase
+    .from("user_settings")
+    .select("telegram_chat_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  return data?.telegram_chat_id || null;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -45,7 +55,7 @@ serve(async (req) => {
     const DHAN_ACCESS_TOKEN = Deno.env.get("DHAN_ACCESS_TOKEN");
     const DHAN_CLIENT_ID = Deno.env.get("DHAN_CLIENT_ID");
     const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
-    const TELEGRAM_CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID");
+    const DEFAULT_TELEGRAM_CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID");
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       throw new Error("Supabase credentials not configured");
@@ -81,6 +91,10 @@ serve(async (req) => {
 
     // Process each open trade
     for (const trade of openTrades as Trade[]) {
+      // Get user-specific chat ID for this trade
+      const userChatId = await getUserChatId(supabase, trade.user_id);
+      const chatId = userChatId || DEFAULT_TELEGRAM_CHAT_ID;
+
       // Get current price (mock for now, real implementation would use Dhan LTP API)
       const currentPrice = await getCurrentPrice(trade.symbol, DHAN_ACCESS_TOKEN);
       
@@ -112,7 +126,7 @@ serve(async (req) => {
           pnlPercent,
           supabase,
           TELEGRAM_BOT_TOKEN,
-          TELEGRAM_CHAT_ID
+          chatId
         );
 
         if (tslResult.tslHit) {
@@ -180,8 +194,8 @@ serve(async (req) => {
             })
             .eq("id", trade.id);
 
-          // Send notification
-          if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
+          // Send notification with user-specific chat ID
+          if (TELEGRAM_BOT_TOKEN && chatId) {
             const emoji = pnl >= 0 ? "✅" : "🛑";
             const slType = isTslHit ? "Trailing Stop Loss" : "Stop Loss";
             const lockedGain = isTslHit && pnl > 0 
@@ -195,7 +209,7 @@ serve(async (req) => {
               `Exit: ₹${currentPrice.toFixed(2)}\n` +
               `P&L: ${pnl >= 0 ? "+" : ""}₹${pnl.toFixed(2)} (${pnlPercent >= 0 ? "+" : ""}${pnlPercent.toFixed(2)}%)${lockedGain}`;
 
-            await sendTelegramMessage(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, message);
+            await sendTelegramMessage(TELEGRAM_BOT_TOKEN, chatId, message);
           }
 
           // Auto-execute via Dhan if configured
@@ -257,8 +271,8 @@ serve(async (req) => {
                 });
               }
 
-              // Send notification
-              if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
+              // Send notification with user-specific chat ID
+              if (TELEGRAM_BOT_TOKEN && chatId) {
                 const tslInfo = trade.trailing_sl_enabled
                   ? `\n🔄 TSL: ${trade.trailing_sl_active ? "Active" : "Activating"}`
                   : "";
@@ -270,7 +284,7 @@ serve(async (req) => {
                   `Current: ₹${currentPrice.toFixed(2)}\n` +
                   `P&L: +₹${pnl.toFixed(2)} (+${pnlPercent.toFixed(2)}%)${tslInfo}`;
 
-                await sendTelegramMessage(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, message);
+                await sendTelegramMessage(TELEGRAM_BOT_TOKEN, chatId, message);
               }
             }
           }
