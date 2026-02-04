@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -14,6 +14,8 @@ import {
   Menu,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MobileDrawer } from "./MobileDrawer";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -27,7 +29,15 @@ const navItems = [
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/login");
+  };
 
   return (
     <>
@@ -39,10 +49,13 @@ export function Sidebar() {
           </div>
           <span className="font-bold text-lg">TradeSync</span>
         </div>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" onClick={() => setMobileOpen(true)}>
           <Menu className="w-5 h-5" />
         </Button>
       </div>
+
+      {/* Mobile Drawer */}
+      <MobileDrawer open={mobileOpen} onOpenChange={setMobileOpen} />
 
       {/* Desktop Sidebar */}
       <aside
@@ -109,7 +122,10 @@ export function Sidebar() {
             />
             {!collapsed && <span className="font-medium text-sm">Collapse</span>}
           </button>
-          <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:text-loss hover:bg-loss/10 transition-all duration-200 w-full">
+          <button 
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:text-loss hover:bg-loss/10 transition-all duration-200 w-full"
+          >
             <LogOut className="w-5 h-5 flex-shrink-0" />
             {!collapsed && <span className="font-medium text-sm">Logout</span>}
           </button>
