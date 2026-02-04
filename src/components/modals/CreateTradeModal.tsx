@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ChartImageUpload } from "@/components/ui/chart-image-upload";
 import { createTradeSchema, type CreateTradeInput, marketSegments, tradeTypes } from "@/lib/schemas";
 import { useTrades } from "@/hooks/useTrades";
 import { Loader2 } from "lucide-react";
@@ -33,6 +34,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
   const { createTrade } = useTrades();
   const [rating, setRating] = useState(8);
   const [confidence, setConfidence] = useState(3);
+  const [chartImages, setChartImages] = useState<string[]>([]);
 
   const {
     register,
@@ -53,7 +55,6 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
   const tradeType = watch("trade_type");
 
   const onSubmit = async (data: CreateTradeInput) => {
-    // Parse targets from comma-separated string
     const targets = data.targets || [];
     
     await createTrade.mutateAsync({
@@ -70,9 +71,21 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
       study_id: data.study_id,
       status: "OPEN",
       entry_time: new Date().toISOString(),
+      chart_images: chartImages,
     });
 
     reset();
+    setChartImages([]);
+    setRating(8);
+    setConfidence(3);
+    onOpenChange(false);
+  };
+
+  const handleClose = () => {
+    reset();
+    setChartImages([]);
+    setRating(8);
+    setConfidence(3);
     onOpenChange(false);
   };
 
@@ -85,12 +98,12 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Trade</DialogTitle>
           <DialogDescription>
-            Log a new trade with entry details and risk parameters.
+            Log a new trade with entry details, risk parameters, and chart images.
           </DialogDescription>
         </DialogHeader>
 
@@ -200,7 +213,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
             )}
           </div>
 
-          {/* Targets - simple text for now, parsed as numbers */}
+          {/* Targets */}
           <div className="space-y-2">
             <Label htmlFor="targets">Targets (comma-separated)</Label>
             <Input
@@ -255,6 +268,17 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
             />
           </div>
 
+          {/* Chart Images Upload */}
+          <div className="space-y-2">
+            <Label>Chart Images</Label>
+            <ChartImageUpload
+              images={chartImages}
+              onImagesChange={setChartImages}
+              bucket="trade-charts"
+              maxImages={5}
+            />
+          </div>
+
           {/* Notes */}
           <div className="space-y-2">
             <Label htmlFor="notes">Notes</Label>
@@ -270,7 +294,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
             <Button
               type="button"
               variant="outline"
-              onClick={() => onOpenChange(false)}
+              onClick={handleClose}
             >
               Cancel
             </Button>
