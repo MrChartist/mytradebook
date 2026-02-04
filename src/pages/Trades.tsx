@@ -199,9 +199,6 @@ export default function Trades() {
                     Type
                   </th>
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                    Qty
-                  </th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">
                     Entry
                   </th>
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">
@@ -275,10 +272,6 @@ export default function Trades() {
                         >
                           {trade.trade_type}
                         </span>
-                      </td>
-                      {/* Qty */}
-                      <td className="p-4 font-mono text-sm">
-                        {trade.quantity}
                       </td>
                       {/* Entry */}
                       <td className="p-4 font-mono text-sm">

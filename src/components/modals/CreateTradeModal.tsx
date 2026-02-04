@@ -60,6 +60,10 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
   const tradeType = watch("trade_type");
   const timeframe = watch("timeframe");
 
+  const segmentValue = segment ?? "";
+  const tradeTypeValue = tradeType ?? "";
+  const timeframeValue = timeframe ?? "";
+
   const onSubmit = async (data: CreateTradeInput) => {
     const targets = data.targets || [];
     
@@ -132,7 +136,10 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4"
+        >
           {/* Symbol */}
           <div className="space-y-2">
             <Label htmlFor="symbol">Symbol *</Label>
@@ -151,8 +158,13 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
             <div className="space-y-2">
               <Label>Segment *</Label>
               <Select
-                value={segment}
-                onValueChange={(val) => setValue("segment", val as any)}
+                value={segmentValue}
+                onValueChange={(val) =>
+                  setValue("segment", val as any, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select segment" />
@@ -173,8 +185,13 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
             <div className="space-y-2">
               <Label>Trade Type *</Label>
               <Select
-                value={tradeType}
-                onValueChange={(val) => setValue("trade_type", val as any)}
+                value={tradeTypeValue}
+                onValueChange={(val) =>
+                  setValue("trade_type", val as any, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="BUY/SELL" />
@@ -212,8 +229,13 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
             <div className="space-y-2">
               <Label>Timeframe</Label>
               <Select
-                value={timeframe}
-                onValueChange={(val) => setValue("timeframe", val as any)}
+                value={timeframeValue}
+                onValueChange={(val) =>
+                  setValue("timeframe", val as any, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select timeframe" />
@@ -268,7 +290,10 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
                 checked={trailingSlEnabled}
                 onCheckedChange={(checked) => {
                   setTrailingSlEnabled(checked);
-                  setValue("trailing_sl_enabled", checked);
+                  setValue("trailing_sl_enabled", checked, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  });
                 }}
               />
             </div>
@@ -329,7 +354,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
                 </div>
 
                 <p className="text-xs text-muted-foreground">
-                  TSL activates when price reaches the trigger price, then trails behind the price.
+                  If Trigger Price is empty, TSL activates on Target 1 hit.
                 </p>
               </div>
             )}
@@ -346,7 +371,10 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
                   .split(",")
                   .map((v) => parseFloat(v.trim()))
                   .filter((v) => !isNaN(v));
-                setValue("targets", values);
+                setValue("targets", values, {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                });
               }}
             />
           </div>
@@ -361,7 +389,10 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
               value={[rating]}
               onValueChange={([val]) => {
                 setRating(val);
-                setValue("rating", val);
+                setValue("rating", val, {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                });
               }}
               min={1}
               max={10}
@@ -382,7 +413,10 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
               value={[confidence]}
               onValueChange={([val]) => {
                 setConfidence(val);
-                setValue("confidence_score", val);
+                setValue("confidence_score", val, {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                });
               }}
               min={1}
               max={5}

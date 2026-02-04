@@ -100,6 +100,9 @@ serve(async (req) => {
         updated_at: new Date().toISOString(),
       };
 
+      let tslActiveNow = trade.trailing_sl_active;
+      let tslCurrentNow = trade.trailing_sl_current;
+
       // Check and update Trailing Stop Loss
       if (trade.trailing_sl_enabled) {
         const tslResult = await processTrailingStopLoss(
@@ -121,6 +124,9 @@ serve(async (req) => {
           results.tslUpdates.push(trade.symbol);
           updateData.trailing_sl_current = tslResult.newTslValue;
           updateData.trailing_sl_active = tslResult.tslActive;
+
+          tslActiveNow = tslResult.tslActive;
+          tslCurrentNow = tslResult.newTslValue;
         }
       }
 
@@ -132,10 +138,8 @@ serve(async (req) => {
 
       results.priceUpdates++;
 
-      // Check Stop Loss (only if TSL is not active or not enabled)
-      const effectiveSL = trade.trailing_sl_active && trade.trailing_sl_current 
-        ? trade.trailing_sl_current 
-        : trade.stop_loss;
+      // Check Stop Loss / Trailing Stop Loss
+      const effectiveSL = tslActiveNow && tslCurrentNow ? tslCurrentNow : trade.stop_loss;
 
       if (effectiveSL) {
         const slHit = trade.trade_type === "BUY" 
@@ -143,7 +147,7 @@ serve(async (req) => {
           : currentPrice >= effectiveSL;
 
         if (slHit) {
-          const isTslHit = trade.trailing_sl_active && trade.trailing_sl_current === effectiveSL;
+          const isTslHit = !!(tslActiveNow && tslCurrentNow && effectiveSL === tslCurrentNow);
           const eventType = isTslHit ? "TSL_HIT" : "SL_HIT";
           const reason = isTslHit ? "TSL_HIT" : "SL_HIT";
 
@@ -317,20 +321,31 @@ async function processTrailingStopLoss(
   const isBuy = trade.trade_type === "BUY";
   
   // Check if TSL should be activated
-  if (!trade.trailing_sl_active && trade.trailing_sl_trigger_price) {
-    const shouldActivate = isBuy 
-      ? currentPrice >= trade.trailing_sl_trigger_price
-      : currentPrice <= trade.trailing_sl_trigger_price;
-    
+  if (!trade.trailing_sl_active) {
+    const hasTrigger = !!trade.trailing_sl_trigger_price;
+
+    // If user set trigger price → activate when trigger is crossed.
+    // If trigger is empty AND there are no targets → activate immediately.
+    // If trigger is empty AND targets exist → activate on Target 1 hit (handled elsewhere).
+    const shouldActivate = hasTrigger
+      ? (isBuy
+          ? currentPrice >= (trade.trailing_sl_trigger_price as number)
+          : currentPrice <= (trade.trailing_sl_trigger_price as number))
+      : !trade.targets || trade.targets.length === 0;
+
     if (shouldActivate) {
       const newTslValue = calculateTrailingStopLoss(trade, currentPrice);
-      
+
+      const activationReason = hasTrigger
+        ? `trigger: ₹${trade.trailing_sl_trigger_price}`
+        : "no trigger & no targets";
+
       // Log activation event
       await supabase.from("trade_events").insert({
         trade_id: trade.id,
         event_type: "TSL_UPDATED",
         price: currentPrice,
-        notes: `Trailing SL activated at ₹${newTslValue.toFixed(2)} (trigger: ₹${trade.trailing_sl_trigger_price})`,
+        notes: `Trailing SL activated at ₹${newTslValue.toFixed(2)} (${activationReason})`,
       });
 
       // Send notification
@@ -340,7 +355,7 @@ async function processTrailingStopLoss(
           `Entry: ₹${trade.entry_price.toLocaleString()}\n` +
           `Current: ₹${currentPrice.toFixed(2)}\n` +
           `TSL: ₹${newTslValue.toFixed(2)}\n` +
-          `Trigger Price: ₹${trade.trailing_sl_trigger_price}\n` +
+          (hasTrigger ? `Trigger Price: ₹${trade.trailing_sl_trigger_price}\n` : "") +
           `P&L: ${pnl >= 0 ? "+" : ""}₹${pnl.toFixed(2)} (${pnlPercent >= 0 ? "+" : ""}${pnlPercent.toFixed(2)}%)`;
 
         await sendTelegramMessage(telegramToken, chatId, message);
