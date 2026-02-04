@@ -11,10 +11,43 @@ interface TradeNotification {
   trade_id: string;
 }
 
+interface SLModifiedNotification {
+  type: "trade_sl_modified";
+  trade_id: string;
+  old_sl: number;
+  new_sl: number;
+}
+
 interface AlertNotification {
   type: "alert_triggered";
   alert_id: string;
   current_price: number;
+}
+
+interface AlertCreatedNotification {
+  type: "alert_created";
+  alert_id: string;
+}
+
+interface AlertPausedNotification {
+  type: "alert_paused";
+  alert_id: string;
+  is_paused: boolean;
+}
+
+interface AlertDeletedNotification {
+  type: "alert_deleted";
+  symbol: string;
+  condition_type: string;
+  threshold: number | null;
+}
+
+interface TradeEventAddedNotification {
+  type: "trade_event_added";
+  trade_id: string;
+  event_type: string;
+  price: number;
+  notes?: string;
 }
 
 interface ReportNotification {
@@ -35,7 +68,12 @@ interface TestNotification {
 
 type NotificationPayload =
   | TradeNotification
+  | SLModifiedNotification
   | AlertNotification
+  | AlertCreatedNotification
+  | AlertPausedNotification
+  | AlertDeletedNotification
+  | TradeEventAddedNotification
   | ReportNotification
   | CustomNotification
   | TestNotification;
@@ -49,6 +87,29 @@ const timeframeLabels: Record<string, string> = {
   "4H": "4 Hour",
   "1D": "Daily",
   "1W": "Weekly",
+};
+
+const conditionLabels: Record<string, string> = {
+  PRICE_GT: "Price Above",
+  PRICE_LT: "Price Below",
+  PERCENT_CHANGE_GT: "Gain Above",
+  PERCENT_CHANGE_LT: "Loss Above",
+  VOLUME_SPIKE: "Volume Spike",
+  CUSTOM: "Custom",
+};
+
+const eventTypeLabels: Record<string, string> = {
+  ENTRY: "Entry",
+  SL_HIT: "Stop Loss Hit",
+  TARGET1_HIT: "Target 1 Hit",
+  TARGET2_HIT: "Target 2 Hit",
+  TARGET3_HIT: "Target 3 Hit",
+  PARTIAL_EXIT: "Partial Exit",
+  SL_MODIFIED: "SL Modified",
+  TARGET_MODIFIED: "Target Modified",
+  CLOSED: "Closed",
+  TSL_UPDATED: "TSL Updated",
+  TSL_HIT: "TSL Hit",
 };
 
 Deno.serve(async (req) => {
@@ -239,6 +300,42 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case "trade_sl_modified": {
+        const { data: trade, error } = await supabase
+          .from("trades")
+          .select(
+            `
+            *,
+            user_settings:user_id (telegram_chat_id)
+          `
+          )
+          .eq("id", payload.trade_id)
+          .single();
+
+        if (error || !trade) {
+          throw new Error(`Trade not found: ${payload.trade_id}`);
+        }
+
+        if (trade.user_settings?.telegram_chat_id) {
+          chatId = trade.user_settings.telegram_chat_id;
+        }
+
+        const pnl = trade.pnl || 0;
+        const pnlPercent = trade.pnl_percent || 0;
+        const pnlStr = pnl >= 0 
+          ? `+₹${pnl.toLocaleString()}` 
+          : `-₹${Math.abs(pnl).toLocaleString()}`;
+        const pnlPercentStr = pnlPercent >= 0 
+          ? `+${pnlPercent.toFixed(1)}%` 
+          : `${pnlPercent.toFixed(1)}%`;
+
+        message = `✏️ *Stop Loss Modified*\n\n` +
+          `Symbol: *${trade.symbol}*\n` +
+          `Old SL: ₹${payload.old_sl.toLocaleString()} → New SL: ₹${payload.new_sl.toLocaleString()}\n` +
+          `Current P&L: ${pnlStr} (${pnlPercentStr})`;
+        break;
+      }
+
       case "alert_triggered": {
         const { data: alert, error } = await supabase
           .from("alerts")
@@ -275,6 +372,111 @@ Deno.serve(async (req) => {
           `📍 Current Price: ₹${payload.current_price.toFixed(2)}\n` +
           `🔁 Recurrence: ${alert.recurrence}\n` +
           `📊 Trigger Count: ${(alert.trigger_count || 0) + 1}`;
+        break;
+      }
+
+      case "alert_created": {
+        const { data: alert, error } = await supabase
+          .from("alerts")
+          .select(
+            `
+            *,
+            user_settings:user_id (telegram_chat_id)
+          `
+          )
+          .eq("id", payload.alert_id)
+          .single();
+
+        if (error || !alert) {
+          throw new Error(`Alert not found: ${payload.alert_id}`);
+        }
+
+        if (alert.user_settings?.telegram_chat_id) {
+          chatId = alert.user_settings.telegram_chat_id;
+        }
+
+        const conditionLabel = conditionLabels[alert.condition_type] || alert.condition_type;
+        const recurrenceLabels: Record<string, string> = {
+          ONCE: "One-time",
+          DAILY: "Daily",
+          CONTINUOUS: "Continuous",
+        };
+        const recurrence = recurrenceLabels[alert.recurrence || "ONCE"] || alert.recurrence;
+
+        message = `🔔 *New Alert Created*\n\n` +
+          `Symbol: *${alert.symbol}*\n` +
+          `Condition: ${conditionLabel} ₹${alert.threshold?.toLocaleString() || "N/A"}\n` +
+          `Recurrence: ${recurrence}`;
+        break;
+      }
+
+      case "alert_paused": {
+        const { data: alert, error } = await supabase
+          .from("alerts")
+          .select(
+            `
+            *,
+            user_settings:user_id (telegram_chat_id)
+          `
+          )
+          .eq("id", payload.alert_id)
+          .single();
+
+        if (error || !alert) {
+          throw new Error(`Alert not found: ${payload.alert_id}`);
+        }
+
+        if (alert.user_settings?.telegram_chat_id) {
+          chatId = alert.user_settings.telegram_chat_id;
+        }
+
+        const conditionLabel = conditionLabels[alert.condition_type] || alert.condition_type;
+        const emoji = payload.is_paused ? "⏸️" : "▶️";
+        const statusText = payload.is_paused ? "Paused" : "Resumed";
+
+        message = `${emoji} *Alert ${statusText}*\n\n` +
+          `Symbol: *${alert.symbol}*\n` +
+          `Condition: ${conditionLabel} ₹${alert.threshold?.toLocaleString() || "N/A"}`;
+        break;
+      }
+
+      case "alert_deleted": {
+        // For deleted alerts, we use the passed data directly since the alert no longer exists
+        const conditionLabel = conditionLabels[payload.condition_type] || payload.condition_type;
+
+        message = `🗑️ *Alert Deleted*\n\n` +
+          `Symbol: *${payload.symbol}*\n` +
+          `Condition: ${conditionLabel} ₹${payload.threshold?.toLocaleString() || "N/A"}`;
+        break;
+      }
+
+      case "trade_event_added": {
+        const { data: trade, error } = await supabase
+          .from("trades")
+          .select(
+            `
+            *,
+            user_settings:user_id (telegram_chat_id)
+          `
+          )
+          .eq("id", payload.trade_id)
+          .single();
+
+        if (error || !trade) {
+          throw new Error(`Trade not found: ${payload.trade_id}`);
+        }
+
+        if (trade.user_settings?.telegram_chat_id) {
+          chatId = trade.user_settings.telegram_chat_id;
+        }
+
+        const eventLabel = eventTypeLabels[payload.event_type] || payload.event_type.replace(/_/g, " ");
+
+        message = `📝 *Trade Event Added*\n\n` +
+          `Symbol: *${trade.symbol}*\n` +
+          `Event: ${eventLabel}\n` +
+          `Price: ₹${payload.price.toLocaleString()}` +
+          (payload.notes ? `\nNotes: ${payload.notes}` : "");
         break;
       }
 

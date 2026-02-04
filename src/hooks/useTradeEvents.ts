@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { notifyTradeEventAdded } from "@/lib/telegram";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 
 export type TradeEvent = Tables<"trade_events">;
@@ -40,12 +41,22 @@ export function useTradeEvents(tradeId: string | null) {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: ["trade-events", tradeId] });
       toast({
         title: "Event added",
         description: "Trade event has been logged.",
       });
+      
+      // Send Telegram notification
+      if (tradeId) {
+        notifyTradeEventAdded(
+          tradeId, 
+          data.event_type, 
+          data.price, 
+          data.notes || undefined
+        ).catch(console.error);
+      }
     },
     onError: (error) => {
       toast({
