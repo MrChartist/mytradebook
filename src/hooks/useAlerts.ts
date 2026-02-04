@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { notifyAlertCreated, notifyAlertPaused, notifyAlertDeleted } from "@/lib/telegram";
 import type { Database } from "@/integrations/supabase/types";
 
 type Alert = Database["public"]["Tables"]["alerts"]["Row"];
@@ -61,12 +62,15 @@ export function useAlerts(filters?: AlertFilters) {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: ["alerts"] });
       toast({
         title: "Alert created",
         description: "Your alert has been created successfully.",
       });
+      
+      // Send Telegram notification
+      notifyAlertCreated(data.id).catch(console.error);
     },
     onError: (error) => {
       toast({
@@ -120,12 +124,15 @@ export function useAlerts(filters?: AlertFilters) {
       if (error) throw error;
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: ["alerts"] });
       toast({
         title: data.active ? "Alert activated" : "Alert paused",
         description: `Alert for ${data.symbol} has been ${data.active ? "activated" : "paused"}.`,
       });
+      
+      // Send Telegram notification
+      notifyAlertPaused(data.id, !data.active).catch(console.error);
     },
     onError: (error) => {
       toast({
@@ -138,16 +145,34 @@ export function useAlerts(filters?: AlertFilters) {
 
   const deleteAlert = useMutation({
     mutationFn: async (id: string) => {
+      // Fetch alert data before deleting for notification
+      const { data: alert } = await supabase
+        .from("alerts")
+        .select("symbol, condition_type, threshold")
+        .eq("id", id)
+        .single();
+      
       const { error } = await supabase.from("alerts").delete().eq("id", id);
 
       if (error) throw error;
+      
+      return alert;
     },
-    onSuccess: () => {
+    onSuccess: async (deletedAlert) => {
       queryClient.invalidateQueries({ queryKey: ["alerts"] });
       toast({
         title: "Alert deleted",
         description: "Your alert has been deleted.",
       });
+      
+      // Send Telegram notification with alert details
+      if (deletedAlert) {
+        notifyAlertDeleted(
+          deletedAlert.symbol, 
+          deletedAlert.condition_type, 
+          deletedAlert.threshold
+        ).catch(console.error);
+      }
     },
     onError: (error) => {
       toast({

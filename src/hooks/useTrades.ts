@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { notifyNewTrade, notifyTradeClosed } from "@/lib/telegram";
+import { notifyNewTrade, notifyTradeClosed, notifySLModified } from "@/lib/telegram";
 import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 
 export type Trade = Tables<"trades">;
@@ -90,6 +90,13 @@ export function useTrades(filters?: TradeFilters) {
 
   const updateTrade = useMutation({
     mutationFn: async ({ id, ...updates }: TradeUpdate & { id: string }) => {
+      // Fetch current trade to compare SL changes
+      const { data: currentTrade } = await supabase
+        .from("trades")
+        .select("stop_loss")
+        .eq("id", id)
+        .single();
+
       const { data, error } = await supabase
         .from("trades")
         .update(updates)
@@ -98,14 +105,25 @@ export function useTrades(filters?: TradeFilters) {
         .single();
 
       if (error) throw error;
-      return data;
+      
+      // Return both the updated trade and old SL for notification
+      return { 
+        trade: data, 
+        oldSL: currentTrade?.stop_loss,
+        newSL: updates.stop_loss 
+      };
     },
-    onSuccess: () => {
+    onSuccess: async (result) => {
       queryClient.invalidateQueries({ queryKey: ["trades"] });
       toast({
         title: "Trade updated",
         description: "Trade has been updated successfully.",
       });
+      
+      // Send notification if SL was modified
+      if (result.oldSL !== undefined && result.newSL !== undefined && result.oldSL !== result.newSL) {
+        notifySLModified(result.trade.id, result.oldSL, result.newSL).catch(console.error);
+      }
     },
     onError: (error) => {
       toast({
