@@ -1,281 +1,253 @@
+import { useState } from "react";
+import { Calendar, AlertTriangle, Download, LayoutDashboard, CalendarIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  FileText,
-  Calendar,
-  TrendingUp,
-  TrendingDown,
-  Target,
-  AlertTriangle,
-  Award,
-  XCircle,
-} from "lucide-react";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar as CalendarUI } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
+import { format, subDays } from "date-fns";
 
-const performanceByPattern = [
-  { name: "Cup & Handle", trades: 12, winRate: 75, pnl: 45000 },
-  { name: "Double Bottom", trades: 8, winRate: 62.5, pnl: 22000 },
-  { name: "Breakout", trades: 15, winRate: 60, pnl: 35000 },
-  { name: "Pullback", trades: 10, winRate: 70, pnl: 28000 },
-  { name: "Gap & Go", trades: 6, winRate: 50, pnl: 8000 },
+import { useJournalAnalytics, useTradesWithMistakes, type JournalFilters } from "@/hooks/useJournalAnalytics";
+import { JournalSummaryCards } from "@/components/journal/JournalSummaryCards";
+import { JournalEquityCurve } from "@/components/journal/JournalEquityCurve";
+import { JournalPerformanceTables } from "@/components/journal/JournalPerformanceTables";
+import { JournalPatternsAndMistakes } from "@/components/journal/JournalPatternsAndMistakes";
+import { JournalCalendarView } from "@/components/journal/JournalCalendarView";
+import { JournalKanbanBoard } from "@/components/journal/JournalKanbanBoard";
+import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
+import type { Trade } from "@/hooks/useTrades";
+
+const segmentOptions = [
+  { value: "ALL", label: "All Segments" },
+  { value: "Equity_Intraday", label: "Equity Intraday" },
+  { value: "Equity_Positional", label: "Equity Positional" },
+  { value: "Futures", label: "Futures" },
+  { value: "Options", label: "Options" },
+  { value: "Commodities", label: "Commodities" },
 ];
 
-const mistakeAnalysis = [
-  { name: "FOMO Entry", count: 8, impact: -25000 },
-  { name: "Moved SL", count: 5, impact: -18000 },
-  { name: "Early Exit", count: 4, impact: -12000 },
-  { name: "Oversize", count: 3, impact: -15000 },
-  { name: "No Plan", count: 2, impact: -8000 },
-];
-
-const winLossData = [
-  { name: "Wins", value: 68, color: "hsl(142, 71%, 45%)" },
-  { name: "Losses", value: 32, color: "hsl(0, 84%, 60%)" },
-];
-
-const weeklyData = [
-  { week: "W1", pnl: 25000 },
-  { week: "W2", pnl: -8000 },
-  { week: "W3", pnl: 32000 },
-  { week: "W4", pnl: 18000 },
-  { week: "W5", pnl: -12000 },
-  { week: "W6", pnl: 45000 },
+const dateRangeOptions = [
+  { value: "30", label: "Last 30 days" },
+  { value: "60", label: "Last 60 days" },
+  { value: "90", label: "Last 90 days" },
+  { value: "custom", label: "Custom range" },
 ];
 
 export default function Journal() {
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [segment, setSegment] = useState("ALL");
+  const [dateRange, setDateRange] = useState("30");
+  const [customFromDate, setCustomFromDate] = useState<Date | undefined>(subDays(new Date(), 30));
+  const [customToDate, setCustomToDate] = useState<Date | undefined>(new Date());
+  const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
+
+  // Calculate date filters
+  const getDateFilters = (): JournalFilters => {
+    const toDate = new Date();
+    let fromDate: Date;
+
+    if (dateRange === "custom" && customFromDate) {
+      fromDate = customFromDate;
+    } else {
+      const days = parseInt(dateRange) || 30;
+      fromDate = subDays(toDate, days);
+    }
+
+    return {
+      fromDate,
+      toDate: dateRange === "custom" && customToDate ? customToDate : toDate,
+      segment,
+    };
+  };
+
+  const filters = getDateFilters();
+  const analytics = useJournalAnalytics(filters);
+  const { data: tradesWithMistakes = [], isLoading: mistakesLoading } = useTradesWithMistakes();
+
+  const handleTradeClick = (trade: any) => {
+    setSelectedTrade(trade as Trade);
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold">Journal</h1>
+          <h1 className="text-2xl lg:text-3xl font-bold">Trade Journal</h1>
           <p className="text-muted-foreground">
             Analyze your trading performance and patterns
           </p>
         </div>
-        <div className="flex gap-2">
-          <button className="px-4 py-2 text-sm font-medium rounded-lg bg-primary/10 text-primary border border-primary/20">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Segment Filter */}
+          <Select value={segment} onValueChange={setSegment}>
+            <SelectTrigger className="w-[160px] border-border">
+              <SelectValue placeholder="Segment" />
+            </SelectTrigger>
+            <SelectContent>
+              {segmentOptions.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Date Range */}
+          <Select value={dateRange} onValueChange={setDateRange}>
+            <SelectTrigger className="w-[140px] border-border">
+              <SelectValue placeholder="Date Range" />
+            </SelectTrigger>
+            <SelectContent>
+              {dateRangeOptions.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Custom Date Pickers */}
+          {dateRange === "custom" && (
+            <>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm" className="border-border">
+                    <CalendarIcon className="w-4 h-4 mr-2" />
+                    {customFromDate ? format(customFromDate, "dd MMM") : "From"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <CalendarUI
+                    mode="single"
+                    selected={customFromDate}
+                    onSelect={setCustomFromDate}
+                    initialFocus
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm" className="border-border">
+                    <CalendarIcon className="w-4 h-4 mr-2" />
+                    {customToDate ? format(customToDate, "dd MMM") : "To"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <CalendarUI
+                    mode="single"
+                    selected={customToDate}
+                    onSelect={setCustomToDate}
+                    initialFocus
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
+            </>
+          )}
+
+          {/* Export */}
+          <Button variant="outline" className="border-border">
+            <Download className="w-4 h-4 mr-2" />
+            Export
+          </Button>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="bg-card border border-border">
+          <TabsTrigger value="dashboard" className="gap-2">
+            <LayoutDashboard className="w-4 h-4" />
             Dashboard
-          </button>
-          <button className="px-4 py-2 text-sm font-medium rounded-lg text-muted-foreground hover:bg-accent transition-colors">
-            <Calendar className="w-4 h-4 inline mr-2" />
+          </TabsTrigger>
+          <TabsTrigger value="calendar" className="gap-2">
+            <Calendar className="w-4 h-4" />
             Calendar
-          </button>
-          <button className="px-4 py-2 text-sm font-medium rounded-lg text-muted-foreground hover:bg-accent transition-colors">
-            <AlertTriangle className="w-4 h-4 inline mr-2" />
-            Mistakes
-          </button>
-        </div>
-      </div>
+          </TabsTrigger>
+          <TabsTrigger value="mistakes" className="gap-2">
+            <AlertTriangle className="w-4 h-4" />
+            Mistakes Review
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="glass-card p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <TrendingUp className="w-4 h-4 text-profit" />
-            <p className="text-sm text-muted-foreground">Total Profit</p>
-          </div>
-          <p className="text-2xl font-bold text-profit">+₹1,38,000</p>
-          <p className="text-xs text-muted-foreground mt-1">Last 30 days</p>
-        </div>
-        <div className="glass-card p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Target className="w-4 h-4 text-primary" />
-            <p className="text-sm text-muted-foreground">Win Rate</p>
-          </div>
-          <p className="text-2xl font-bold">68%</p>
-          <p className="text-xs text-muted-foreground mt-1">34/50 trades</p>
-        </div>
-        <div className="glass-card p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Award className="w-4 h-4 text-warning" />
-            <p className="text-sm text-muted-foreground">Best Pattern</p>
-          </div>
-          <p className="text-2xl font-bold">Cup & Handle</p>
-          <p className="text-xs text-profit mt-1">75% win rate</p>
-        </div>
-        <div className="glass-card p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <XCircle className="w-4 h-4 text-loss" />
-            <p className="text-sm text-muted-foreground">Top Mistake</p>
-          </div>
-          <p className="text-2xl font-bold">FOMO Entry</p>
-          <p className="text-xs text-loss mt-1">-₹25,000 impact</p>
-        </div>
-      </div>
+        {/* Dashboard Tab */}
+        <TabsContent value="dashboard" className="space-y-6 mt-6">
+          {/* Summary Cards */}
+          <JournalSummaryCards
+            totalPnl={analytics.totalPnl}
+            winRate={analytics.winRate}
+            totalTrades={analytics.totalTrades}
+            avgHoldingTimeMinutes={analytics.avgHoldingTimeMinutes}
+            bestPattern={analytics.bestPattern}
+            topMistake={analytics.topMistake}
+            isLoading={analytics.isLoading}
+          />
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Win/Loss Ratio */}
-        <div className="glass-card p-5">
-          <h3 className="font-semibold mb-4">Win/Loss Ratio</h3>
-          <div className="h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={winLossData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {winLossData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="flex justify-center gap-6 mt-4">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-profit" />
-              <span className="text-sm text-muted-foreground">
-                Wins (68%)
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-loss" />
-              <span className="text-sm text-muted-foreground">
-                Losses (32%)
-              </span>
-            </div>
-          </div>
-        </div>
+          {/* Equity Curve */}
+          <JournalEquityCurve
+            data={analytics.equityCurve}
+            isLoading={analytics.isLoading}
+          />
 
-        {/* Weekly P&L */}
-        <div className="glass-card p-5 lg:col-span-2">
-          <h3 className="font-semibold mb-4">Weekly P&L</h3>
-          <div className="h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={weeklyData}>
-                <XAxis
-                  dataKey="week"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "hsl(215, 20%, 55%)", fontSize: 12 }}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "hsl(215, 20%, 55%)", fontSize: 12 }}
-                  tickFormatter={(value) =>
-                    `${value >= 0 ? "+" : ""}₹${(value / 1000).toFixed(0)}k`
-                  }
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(222, 47%, 10%)",
-                    border: "1px solid hsl(222, 47%, 16%)",
-                    borderRadius: "8px",
-                  }}
-                  formatter={(value: number) => [
-                    `₹${value.toLocaleString()}`,
-                    "P&L",
-                  ]}
-                />
-                <Bar
-                  dataKey="pnl"
-                  radius={[4, 4, 0, 0]}
-                  fill="hsl(217, 91%, 60%)"
-                >
-                  {weeklyData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={
-                        entry.pnl >= 0
-                          ? "hsl(142, 71%, 45%)"
-                          : "hsl(0, 84%, 60%)"
-                      }
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
+          {/* Performance by Rating & Confidence */}
+          <JournalPerformanceTables
+            performanceByRating={analytics.performanceByRating}
+            performanceByConfidence={analytics.performanceByConfidence}
+            isLoading={analytics.isLoading}
+          />
 
-      {/* Pattern Performance & Mistakes */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Pattern Performance */}
-        <div className="glass-card p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold">Pattern Performance</h3>
-            <span className="text-sm text-muted-foreground">Last 30 days</span>
-          </div>
-          <div className="space-y-3">
-            {performanceByPattern.map((pattern) => (
-              <div
-                key={pattern.name}
-                className="flex items-center justify-between p-3 rounded-lg bg-accent/50"
-              >
-                <div className="flex items-center gap-3">
-                  <TrendingUp className="w-4 h-4 text-primary" />
-                  <div>
-                    <p className="font-medium">{pattern.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {pattern.trades} trades
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p
-                    className={cn(
-                      "font-semibold",
-                      pattern.winRate >= 60 ? "text-profit" : "text-warning"
-                    )}
-                  >
-                    {pattern.winRate}%
-                  </p>
-                  <p className="text-xs text-profit">
-                    +₹{pattern.pnl.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+          {/* Patterns & Mistakes */}
+          <JournalPatternsAndMistakes
+            patternPerformance={analytics.patternPerformance}
+            mistakeImpact={analytics.mistakeImpact}
+            isLoading={analytics.isLoading}
+          />
+        </TabsContent>
 
-        {/* Mistake Analysis */}
-        <div className="glass-card p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold">Mistake Analysis</h3>
-            <span className="text-sm text-muted-foreground">Impact</span>
+        {/* Calendar Tab */}
+        <TabsContent value="calendar" className="mt-6">
+          <JournalCalendarView
+            calendarData={analytics.calendarData}
+            isLoading={analytics.isLoading}
+            onTradeClick={handleTradeClick}
+          />
+        </TabsContent>
+
+        {/* Mistakes Review Tab (Kanban) */}
+        <TabsContent value="mistakes" className="mt-6">
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold">Mistakes Review Board</h3>
+            <p className="text-sm text-muted-foreground">
+              Review trades with mistakes, grouped by severity level
+            </p>
           </div>
-          <div className="space-y-3">
-            {mistakeAnalysis.map((mistake) => (
-              <div
-                key={mistake.name}
-                className="flex items-center justify-between p-3 rounded-lg bg-loss/5 border border-loss/10"
-              >
-                <div className="flex items-center gap-3">
-                  <AlertTriangle className="w-4 h-4 text-loss" />
-                  <div>
-                    <p className="font-medium">{mistake.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {mistake.count} occurrences
-                    </p>
-                  </div>
-                </div>
-                <p className="font-semibold text-loss">
-                  ₹{Math.abs(mistake.impact).toLocaleString()}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+          <JournalKanbanBoard
+            tradesWithMistakes={tradesWithMistakes}
+            isLoading={mistakesLoading}
+            onTradeClick={handleTradeClick}
+          />
+        </TabsContent>
+      </Tabs>
+
+      {/* Trade Detail Modal */}
+      <TradeDetailModal
+        trade={selectedTrade}
+        open={!!selectedTrade}
+        onOpenChange={(open) => !open && setSelectedTrade(null)}
+      />
     </div>
   );
 }
