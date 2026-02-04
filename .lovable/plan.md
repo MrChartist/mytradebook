@@ -1,220 +1,391 @@
 
+# Complete Trade Journal Enhancement Plan
 
-# Research Trade Journal with Trailing Stop Loss and Telegram Alerts
+## Executive Summary
 
-## Overview
+This plan implements 6 critical features to make the research trade journal fully functional:
 
-This plan transforms the existing trade tracking system into a **research-focused trade journal** that:
-1. Removes the concept of "quantity" (since this is for research/analysis, not actual trading)
-2. Adds **Trailing Stop Loss** functionality
-3. Sends automatic Telegram notifications for all trade events (entry, SL hit, TSL updates, target hits)
-4. Connects the Trade Journal and all alerts with Telegram
-
----
-
-## Current State Analysis
-
-**Existing Features:**
-- Trade creation with symbol, entry price, stop loss, targets (up to 3), rating, confidence
-- Trade events tracking (SL_HIT, TARGET1_HIT, etc.)
-- Basic trade-monitor edge function that checks SL and targets
-- Telegram notifications already working for trade updates
-
-**What Needs to Change:**
-- Make quantity optional (default to 1 for research trades)
-- Add trailing stop loss configuration and tracking
-- Add timeframe/holding period field
-- Connect all trade journal events to Telegram
-- Auto-trigger alerts based on price movements
+1. **Cron Jobs** - Automated scheduling for trade-monitor and evaluate-alerts
+2. **Real Dhan API Price Fetching** - Replace mock prices with live market data
+3. **TSL Activation Fix** - Ensure TSL activates immediately as configured
+4. **Edit Alert Modal** - Complete alerts management UI
+5. **Weekly Report Generation** - Auto-generate and send via Telegram
+6. **Real-time Price Polling** - Show live prices in the UI
 
 ---
 
-## Implementation Plan
+## Feature 1: Set Up Cron Jobs (Critical)
 
-### Phase 1: Database Schema Updates
+**Why needed:** Edge functions `trade-monitor` and `evaluate-alerts` exist but never run automatically.
 
-Add new columns to the `trades` table:
+### Implementation
 
-```text
-+-------------------------------+-------------------+----------------------------------+
-| Column                        | Type              | Description                      |
-+-------------------------------+-------------------+----------------------------------+
-| trailing_sl_enabled           | boolean           | Enable trailing stop loss        |
-| trailing_sl_percent           | numeric           | Trailing SL distance as %        |
-| trailing_sl_points            | numeric           | Trailing SL distance in points   |
-| trailing_sl_current           | numeric           | Current trailing SL price        |
-| trailing_sl_trigger_price     | numeric           | Price at which TSL activates     |
-| timeframe                     | varchar           | e.g., "15min", "1H", "4H", "1D"  |
-| holding_period                | varchar           | Expected hold duration           |
-+-------------------------------+-------------------+----------------------------------+
+1. **Enable pg_cron and pg_net extensions** via SQL migration
+
+2. **Create cron job for trade-monitor (every 30 seconds)**
+   - For 30-second frequency, we'll use a workaround since pg_cron minimum is 1 minute
+   - Run every minute with offset logic, or run every minute (acceptable for research trades)
+
+3. **Create cron job for evaluate-alerts (every 5 minutes)**
+
+4. **Create cron job for weekly-report (Monday 6 AM IST)**
+
+### SQL to execute (via migration):
+```sql
+-- Enable extensions
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+CREATE EXTENSION IF NOT EXISTS pg_net;
+
+-- Trade monitor - every minute
+SELECT cron.schedule(
+  'trade-monitor-job',
+  '* * * * *',
+  $$
+  SELECT net.http_post(
+    url := 'https://nuilpmoipiazjafpjaft.supabase.co/functions/v1/trade-monitor',
+    headers := '{"Content-Type": "application/json", "Authorization": "Bearer ANON_KEY"}'::jsonb,
+    body := '{}'::jsonb
+  );
+  $$
+);
+
+-- Alert evaluator - every 5 minutes
+SELECT cron.schedule(
+  'evaluate-alerts-job', 
+  '*/5 * * * *',
+  $$
+  SELECT net.http_post(
+    url := 'https://nuilpmoipiazjafpjaft.supabase.co/functions/v1/evaluate-alerts',
+    headers := '{"Content-Type": "application/json", "Authorization": "Bearer ANON_KEY"}'::jsonb,
+    body := '{}'::jsonb
+  );
+  $$
+);
+
+-- Weekly report - Monday 6 AM IST (00:30 UTC)
+SELECT cron.schedule(
+  'weekly-report-job',
+  '30 0 * * 1',
+  $$
+  SELECT net.http_post(
+    url := 'https://nuilpmoipiazjafpjaft.supabase.co/functions/v1/generate-weekly-report',
+    headers := '{"Content-Type": "application/json", "Authorization": "Bearer ANON_KEY"}'::jsonb,
+    body := '{}'::jsonb
+  );
+  $$
+);
 ```
 
-Add new event type for trailing stop loss:
-- `TSL_UPDATED` - When trailing SL is adjusted
+---
 
-### Phase 2: UI Updates
+## Feature 2: Real Dhan API Price Fetching
 
-**Create Trade Modal Changes:**
-- Make quantity field optional (default 1 for research)
-- Add "Timeframe" dropdown (1min, 5min, 15min, 1H, 4H, 1D, 1W)
-- Add "Expected Holding Period" field
-- Add "Trailing Stop Loss" section:
-  - Toggle to enable/disable
-  - Choice: Percentage-based or Points-based
-  - Trigger price (when TSL activates, e.g., after reaching first target)
+**Why needed:** Current code uses mock prices that don't reflect actual market movements.
 
-**Trade Detail Modal Changes:**
-- Display trailing SL status and current value
-- Show TSL update history in events timeline
-- Visual indicator when TSL is active vs pending
+### Implementation
 
-### Phase 3: Trade Monitor Edge Function Enhancements
+**Update `trade-monitor/index.ts`:**
 
-Update `trade-monitor/index.ts` to:
-
-1. **Check and Update Trailing Stop Loss:**
-   - When price moves favorably, update trailing SL
-   - For BUY trades: TSL trails below current price
-   - For SELL trades: TSL trails above current price
-   - Only activate TSL after trigger price is hit
-
-2. **Send Telegram Notifications for:**
-   - New trade created (ENTRY)
-   - Stop Loss hit
-   - Trailing Stop Loss hit
-   - Trailing Stop Loss updated (moved in favorable direction)
-   - Each target hit (T1, T2, T3)
-   - Trade closed manually
-
-3. **Enhanced notification format:**
-```text
-Example TSL Update Notification:
---------------------------------
-🔄 *Trailing SL Updated*
-
-Symbol: *RELIANCE*
-Entry: ₹2,400
-Current: ₹2,520
-New TSL: ₹2,470 (was ₹2,350)
-
-Locked Gain: +₹70 (+2.9%)
-```
-
-### Phase 4: Create Telegram Notification Triggers
-
-Modify `useTrades.ts` hook to send Telegram notifications when:
-- Trade is created (call telegram-notify with type: "new_trade")
-- Trade is closed manually (call telegram-notify with type: "trade_closed")
-
-The trade-monitor edge function already handles:
-- SL/TSL hits
-- Target hits
-
-### Phase 5: Enhanced Trade Form Schema
-
-Update `src/lib/schemas.ts`:
+Replace `getCurrentPrice()` function with real Dhan LTP API call:
 
 ```typescript
-// New fields for research trades
-timeframes: ["1min", "5min", "15min", "30min", "1H", "4H", "1D", "1W"] as const
+async function getCurrentPrice(
+  symbol: string, 
+  dhanToken: string | undefined
+): Promise<number | null> {
+  if (!dhanToken) {
+    // Fallback to mock for testing
+    return getMockPrice(symbol);
+  }
 
-createTradeSchema = z.object({
-  symbol: z.string().required(),
-  segment: z.enum(marketSegments).required(),
-  trade_type: z.enum(tradeTypes).required(),
-  quantity: z.number().optional().default(1), // Now optional
-  entry_price: z.number().required(),
-  stop_loss: z.number().optional(),
-  targets: z.array(z.number()).max(3).optional(),
-  rating: z.number().min(1).max(10).optional(),
-  confidence_score: z.number().min(1).max(5).optional(),
-  timeframe: z.enum(timeframes).optional(),
-  holding_period: z.string().optional(),
-  trailing_sl_enabled: z.boolean().default(false),
-  trailing_sl_percent: z.number().positive().optional(),
-  trailing_sl_trigger_price: z.number().optional(),
-  notes: z.string().optional(),
-  // ... other existing fields
-})
+  try {
+    // Dhan Market Quote API for LTP
+    const response = await fetch(`${DHAN_API_URL}/marketfeed/ltp`, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "access-token": dhanToken,
+      },
+      body: JSON.stringify({
+        NSE_EQ: [symbol],
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      // Dhan returns: { data: { NSE_EQ: { "SYMBOL": { last_price: 123.45 } } } }
+      const quote = data?.data?.NSE_EQ?.[symbol];
+      if (quote?.last_price) {
+        return quote.last_price;
+      }
+    }
+    
+    // Fallback to mock if API fails
+    console.warn(`Could not fetch LTP for ${symbol}, using mock`);
+    return getMockPrice(symbol);
+  } catch (e) {
+    console.error(`Error fetching price for ${symbol}:`, e);
+    return getMockPrice(symbol);
+  }
+}
+```
+
+**Also update `evaluate-alerts/index.ts`** with similar real price fetching logic.
+
+---
+
+## Feature 3: Verify TSL Activation Flow
+
+**Current status:** TSL logic already set to activate immediately if no trigger price is set.
+
+### Verification Steps
+
+1. Add logging to confirm TSL activates on first run
+2. Ensure `trailing_sl_active` gets set to `true` in database
+3. Ensure `trailing_sl_current` is calculated correctly
+
+### Enhancement
+
+Add a debug response in trade-monitor to show TSL status:
+
+```typescript
+// In results object
+tslActivations: [] as string[],
+
+// When TSL activates
+if (tslResult.tslUpdated && !trade.trailing_sl_active) {
+  results.tslActivations.push(trade.symbol);
+}
 ```
 
 ---
 
-## Technical Details
+## Feature 4: Edit Alert Modal
 
-### Trailing Stop Loss Logic
+**Why needed:** Edit button in Alerts page does nothing currently.
 
-```text
-For BUY trades:
-1. User sets entry at ₹100, SL at ₹95, TSL 2% trailing, trigger at ₹105
-2. When price reaches ₹105, TSL activates
-3. TSL = Current Price - (Entry Price * TSL%)
-4. If price goes to ₹110, TSL becomes ₹108 (110 - 2%)
-5. If price drops to ₹108, TSL is hit -> close trade
+### Implementation
 
-For SELL trades:
-1. User shorts at ₹100, SL at ₹105, TSL 2% trailing, trigger at ₹95
-2. When price reaches ₹95, TSL activates
-3. TSL = Current Price + (Entry Price * TSL%)
-4. If price drops to ₹90, TSL becomes ₹92 (90 + 2%)
-5. If price rises to ₹92, TSL is hit -> close trade
+**Create `src/components/modals/EditAlertModal.tsx`:**
+
+```typescript
+interface EditAlertModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  alert: Alert | null;
+}
+
+export function EditAlertModal({ open, onOpenChange, alert }: EditAlertModalProps) {
+  const { updateAlert } = useAlerts();
+  
+  const form = useForm<CreateAlertInput>({
+    resolver: zodResolver(createAlertSchema),
+    defaultValues: {
+      symbol: alert?.symbol || "",
+      condition_type: alert?.condition_type || "PRICE_GT",
+      threshold: alert?.threshold || 0,
+      recurrence: alert?.recurrence || "ONCE",
+    },
+  });
+
+  useEffect(() => {
+    if (alert) {
+      form.reset({
+        symbol: alert.symbol,
+        condition_type: alert.condition_type,
+        threshold: alert.threshold,
+        recurrence: alert.recurrence,
+      });
+    }
+  }, [alert]);
+
+  const onSubmit = async (data: CreateAlertInput) => {
+    if (!alert) return;
+    await updateAlert.mutateAsync({
+      id: alert.id,
+      symbol: data.symbol,
+      condition_type: data.condition_type,
+      threshold: data.threshold,
+      recurrence: data.recurrence,
+    });
+    onOpenChange(false);
+  };
+
+  // ... form UI similar to CreateAlertModal
+}
 ```
 
-### Telegram Message Templates
+**Update `src/pages/Alerts.tsx`:**
 
-```text
-Entry:
-🚀 *New Research Trade*
-*BUY* *RELIANCE* at ₹2,400
-Timeframe: 4H | Hold: Intraday
-🛑 SL: ₹2,350 (-2.1%)
-🔄 TSL: 1.5% (activates at ₹2,450)
-🎯 T1: ₹2,480 | T2: ₹2,560
-⭐ Rating: 8/10 | Confidence: 4/5
-
-SL/TSL Hit:
-🛑 *Stop Loss Hit!*
-*RELIANCE* closed at ₹2,350
-Entry: ₹2,400 → Exit: ₹2,350
-P&L: -₹50 (-2.1%)
-Reason: SL_HIT
-
-Target Hit:
-🎯 *Target 1 Hit!*
-*RELIANCE* reached ₹2,480
-Entry: ₹2,400 | Current: ₹2,485
-P&L: +₹85 (+3.5%)
-🔄 TSL now active at ₹2,440
-
-TSL Update:
-🔄 *Trailing SL Moved*
-*RELIANCE* TSL: ₹2,440 → ₹2,475
-Price: ₹2,520
-Locked Gain: +₹75 (+3.1%)
-```
+- Add state for `editModalOpen` and `selectedAlert`
+- Wire up Edit button to open modal with selected alert
+- Pass alert data to EditAlertModal
 
 ---
 
-## Files to Modify/Create
+## Feature 5: Weekly Report Generation
+
+**Why needed:** Reports page shows mock data; no actual report generation exists.
+
+### Implementation
+
+**Create new edge function `supabase/functions/generate-weekly-report/index.ts`:**
+
+```typescript
+// Aggregate trades from past week by segment
+// Calculate: total P&L, win rate, best/worst trades, top setups, common mistakes
+// Insert into weekly_reports table
+// Send Telegram notification
+
+async function generateWeeklyReport(supabase, segment, weekStart, weekEnd) {
+  // Query trades for this segment in date range
+  const { data: trades } = await supabase
+    .from("trades")
+    .select(`
+      *,
+      trade_patterns(pattern_id, pattern_tags(*)),
+      trade_mistakes(mistake_id, mistake_tags(*))
+    `)
+    .eq("segment", segment)
+    .eq("status", "CLOSED")
+    .gte("closed_at", weekStart)
+    .lte("closed_at", weekEnd);
+
+  // Calculate metrics
+  const totalTrades = trades.length;
+  const winningTrades = trades.filter(t => t.pnl > 0);
+  const losingTrades = trades.filter(t => t.pnl < 0);
+  const totalPnl = trades.reduce((sum, t) => sum + (t.pnl || 0), 0);
+  const winRate = totalTrades > 0 ? (winningTrades.length / totalTrades) * 100 : 0;
+  
+  // Find top setups and common mistakes
+  // ...
+
+  // Insert report
+  const { data: report } = await supabase
+    .from("weekly_reports")
+    .insert({
+      user_id: userId,
+      segment,
+      week_start: weekStart,
+      week_end: weekEnd,
+      total_trades: totalTrades,
+      winning_trades: winningTrades.length,
+      losing_trades: losingTrades.length,
+      total_pnl: totalPnl,
+      win_rate: winRate,
+      // ... other fields
+    })
+    .select()
+    .single();
+
+  // Send Telegram notification
+  await sendTelegramNotification(report);
+}
+```
+
+**Update `src/pages/Reports.tsx`:**
+
+- Fetch real reports from database
+- Add "Generate Report" functionality
+- Connect "Send to Telegram" button
+
+---
+
+## Feature 6: Real-time Price Polling in UI
+
+**Why needed:** Users must manually refresh to see updated prices.
+
+### Implementation
+
+**Create `src/hooks/useLivePrices.ts`:**
+
+```typescript
+export function useLivePrices(symbols: string[], intervalMs = 30000) {
+  const [prices, setPrices] = useState<Record<string, number>>({});
+  const [isPolling, setIsPolling] = useState(true);
+
+  useEffect(() => {
+    if (symbols.length === 0 || !isPolling) return;
+
+    const fetchPrices = async () => {
+      try {
+        const { data } = await supabase.functions.invoke("get-live-prices", {
+          body: { symbols },
+        });
+        if (data?.prices) {
+          setPrices(data.prices);
+        }
+      } catch (e) {
+        console.error("Price polling error:", e);
+      }
+    };
+
+    // Initial fetch
+    fetchPrices();
+
+    // Poll every interval
+    const interval = setInterval(fetchPrices, intervalMs);
+    return () => clearInterval(interval);
+  }, [symbols.join(","), intervalMs, isPolling]);
+
+  return { prices, isPolling, setIsPolling };
+}
+```
+
+**Create `supabase/functions/get-live-prices/index.ts`:**
+
+```typescript
+// Accept array of symbols
+// Fetch LTP from Dhan for each
+// Return price map: { RELIANCE: 2450, TCS: 3850, ... }
+```
+
+**Update Dashboard and Trades pages:**
+
+- Use `useLivePrices` hook with open trade symbols
+- Display live price with visual indicator
+- Show last update timestamp
+- Add "Live" badge when polling is active
+
+---
+
+## Files to Create/Modify
 
 | File | Action | Description |
 |------|--------|-------------|
-| Database migration | Create | Add trailing SL columns, timeframe, make quantity nullable |
-| `src/lib/schemas.ts` | Modify | Add new fields, make quantity optional |
-| `src/components/modals/CreateTradeModal.tsx` | Modify | Add TSL, timeframe, holding period fields |
-| `src/components/modals/TradeDetailModal.tsx` | Modify | Show TSL status and history |
-| `src/hooks/useTrades.ts` | Modify | Send Telegram on create/close, handle new fields |
-| `supabase/functions/trade-monitor/index.ts` | Modify | Add TSL logic and enhanced notifications |
-| `supabase/functions/telegram-notify/index.ts` | Modify | Add TSL notification templates |
+| Database (SQL) | Execute | Enable pg_cron, pg_net, schedule cron jobs |
+| `supabase/functions/trade-monitor/index.ts` | Modify | Add real Dhan LTP API call |
+| `supabase/functions/evaluate-alerts/index.ts` | Modify | Add real Dhan price fetching |
+| `supabase/functions/generate-weekly-report/index.ts` | Create | Weekly report generation logic |
+| `supabase/functions/get-live-prices/index.ts` | Create | Fetch live prices endpoint |
+| `supabase/config.toml` | Modify | Add new function configs |
+| `src/components/modals/EditAlertModal.tsx` | Create | Edit alert modal UI |
+| `src/pages/Alerts.tsx` | Modify | Wire up edit modal |
+| `src/hooks/useLivePrices.ts` | Create | Client-side price polling |
+| `src/pages/Dashboard.tsx` | Modify | Show live prices for open positions |
+| `src/pages/Trades.tsx` | Modify | Show live prices in trade list |
+| `src/pages/Reports.tsx` | Modify | Connect to real data, add generation |
 
 ---
 
-## Summary
+## Execution Order
 
-This plan creates a complete **research trade journaling system** where:
-- You log trade ideas with entry, SL, targets, timeframe, and confidence
-- Trailing stop loss automatically adjusts as price moves favorably  
-- All events (entry, SL/TSL hits, target hits, manual close) send Telegram alerts
-- No need to specify quantity since this is research/analysis focused
-- Full event history is tracked for later review and pattern analysis
+1. **Phase 1: Database** - Enable extensions and schedule cron jobs
+2. **Phase 2: Edge Functions** - Update price fetching, create new functions
+3. **Phase 3: UI Components** - Create EditAlertModal, wire up alerts
+4. **Phase 4: Live Prices** - Implement polling hook and update pages
+5. **Phase 5: Reports** - Connect real data and generation
 
+---
+
+## Expected Outcome
+
+After implementation:
+- Trade monitor runs every minute, checking SL/TSL/targets automatically
+- Alerts evaluate every 5 minutes with real prices
+- Weekly reports generate automatically on Mondays
+- Users can edit existing alerts
+- Dashboard shows live prices for open trades
+- Telegram notifications fire for all trade events
