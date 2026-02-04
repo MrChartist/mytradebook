@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -21,10 +22,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { ChartImageUpload } from "@/components/ui/chart-image-upload";
 import { createTradeSchema, type CreateTradeInput, marketSegments, tradeTypes, timeframes } from "@/lib/schemas";
 import { useTrades } from "@/hooks/useTrades";
-import { Loader2, TrendingUp } from "lucide-react";
+import { useAvailableTags } from "@/hooks/useAvailableTags";
+import { Loader2, TrendingUp, Plus, X, Tag } from "lucide-react";
 
 interface CreateTradeModalProps {
   open: boolean;
@@ -33,11 +40,19 @@ interface CreateTradeModalProps {
 
 export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) {
   const { createTrade } = useTrades();
+  const availableTags = useAvailableTags();
+  
   const [rating, setRating] = useState(8);
   const [confidence, setConfidence] = useState(3);
   const [chartImages, setChartImages] = useState<string[]>([]);
   const [trailingSlEnabled, setTrailingSlEnabled] = useState(false);
   const [trailingSlType, setTrailingSlType] = useState<"percent" | "points">("percent");
+  
+  // Selected tags (stored as IDs, linked after trade creation)
+  const [selectedPatterns, setSelectedPatterns] = useState<string[]>([]);
+  const [selectedCandlesticks, setSelectedCandlesticks] = useState<string[]>([]);
+  const [selectedVolumes, setSelectedVolumes] = useState<string[]>([]);
+  const [selectedMistakes, setSelectedMistakes] = useState<string[]>([]);
 
   const {
     register,
@@ -67,7 +82,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
   const onSubmit = async (data: CreateTradeInput) => {
     const targets = data.targets || [];
     
-    await createTrade.mutateAsync({
+    const newTrade = await createTrade.mutateAsync({
       symbol: data.symbol,
       segment: data.segment,
       trade_type: data.trade_type,
@@ -90,20 +105,69 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
       trailing_sl_trigger_price: data.trailing_sl_trigger_price,
     });
 
-    reset();
-    setChartImages([]);
-    setRating(8);
-    setConfidence(3);
-    setTrailingSlEnabled(false);
+    // Link selected tags to the new trade
+    if (newTrade?.id) {
+      const { supabase } = await import("@/integrations/supabase/client");
+      
+      // Link patterns
+      if (selectedPatterns.length > 0) {
+        await supabase.from("trade_patterns").insert(
+          selectedPatterns.map((patternId) => ({
+            trade_id: newTrade.id,
+            pattern_id: patternId,
+          }))
+        );
+      }
+      
+      // Link candlesticks
+      if (selectedCandlesticks.length > 0) {
+        await supabase.from("trade_candlesticks").insert(
+          selectedCandlesticks.map((candlestickId) => ({
+            trade_id: newTrade.id,
+            candlestick_id: candlestickId,
+          }))
+        );
+      }
+      
+      // Link volumes
+      if (selectedVolumes.length > 0) {
+        await supabase.from("trade_volume").insert(
+          selectedVolumes.map((volumeId) => ({
+            trade_id: newTrade.id,
+            volume_id: volumeId,
+          }))
+        );
+      }
+      
+      // Link mistakes
+      if (selectedMistakes.length > 0) {
+        await supabase.from("trade_mistakes").insert(
+          selectedMistakes.map((mistakeId) => ({
+            trade_id: newTrade.id,
+            mistake_id: mistakeId,
+          }))
+        );
+      }
+    }
+
+    resetForm();
     onOpenChange(false);
   };
 
-  const handleClose = () => {
+  const resetForm = () => {
     reset();
     setChartImages([]);
     setRating(8);
     setConfidence(3);
     setTrailingSlEnabled(false);
+    setSelectedPatterns([]);
+    setSelectedCandlesticks([]);
+    setSelectedVolumes([]);
+    setSelectedMistakes([]);
+  };
+
+  const handleClose = () => {
+    resetForm();
     onOpenChange(false);
   };
 
@@ -126,20 +190,30 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
     "1W": "Weekly",
   };
 
+  // Helper to toggle tag selection
+  const toggleTag = (
+    id: string,
+    selected: string[],
+    setSelected: React.Dispatch<React.SetStateAction<string[]>>
+  ) => {
+    if (selected.includes(id)) {
+      setSelected(selected.filter((t) => t !== id));
+    } else {
+      setSelected([...selected, id]);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create Research Trade</DialogTitle>
           <DialogDescription>
-            Log a trade idea with entry, targets, SL, and trailing stop loss configuration.
+            Log a trade idea with entry, targets, SL, tags, and trailing stop loss.
           </DialogDescription>
         </DialogHeader>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Symbol */}
           <div className="space-y-2">
             <Label htmlFor="symbol">Symbol *</Label>
@@ -160,10 +234,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
               <Select
                 value={segmentValue}
                 onValueChange={(val) =>
-                  setValue("segment", val as any, {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  })
+                  setValue("segment", val as any, { shouldDirty: true, shouldValidate: true })
                 }
               >
                 <SelectTrigger>
@@ -187,10 +258,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
               <Select
                 value={tradeTypeValue}
                 onValueChange={(val) =>
-                  setValue("trade_type", val as any, {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  })
+                  setValue("trade_type", val as any, { shouldDirty: true, shouldValidate: true })
                 }
               >
                 <SelectTrigger>
@@ -231,10 +299,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
               <Select
                 value={timeframeValue}
                 onValueChange={(val) =>
-                  setValue("timeframe", val as any, {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  })
+                  setValue("timeframe", val as any, { shouldDirty: true, shouldValidate: true })
                 }
               >
                 <SelectTrigger>
@@ -290,10 +355,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
                 checked={trailingSlEnabled}
                 onCheckedChange={(checked) => {
                   setTrailingSlEnabled(checked);
-                  setValue("trailing_sl_enabled", checked, {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  });
+                  setValue("trailing_sl_enabled", checked, { shouldDirty: true, shouldValidate: true });
                 }}
               />
             </div>
@@ -343,18 +405,18 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
                   )}
 
                   <div className="space-y-1">
-                    <Label className="text-xs">Trigger Price (activate TSL)</Label>
+                    <Label className="text-xs">Trigger Price (optional)</Label>
                     <Input
                       type="number"
                       step="0.01"
-                      placeholder="2450.00"
+                      placeholder="Leave empty to start immediately"
                       {...register("trailing_sl_trigger_price", { valueAsNumber: true })}
                     />
                   </div>
                 </div>
 
                 <p className="text-xs text-muted-foreground">
-                  If Trigger Price is empty, TSL activates on Target 1 hit.
+                  TSL activates immediately if Trigger Price is empty.
                 </p>
               </div>
             )}
@@ -371,12 +433,235 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
                   .split(",")
                   .map((v) => parseFloat(v.trim()))
                   .filter((v) => !isNaN(v));
-                setValue("targets", values, {
-                  shouldDirty: true,
-                  shouldValidate: true,
-                });
+                setValue("targets", values, { shouldDirty: true, shouldValidate: true });
               }}
             />
+          </div>
+
+          {/* Tags Section */}
+          <div className="space-y-3 p-4 rounded-lg bg-accent/50 border">
+            <div className="flex items-center gap-2">
+              <Tag className="w-4 h-4 text-primary" />
+              <Label className="font-medium">Trade Tags</Label>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              {/* Patterns */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Patterns</span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-6 px-2">
+                        <Plus className="w-3 h-3 mr-1" />
+                        Add
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-48 p-2 max-h-48 overflow-y-auto">
+                      <div className="space-y-1">
+                        {availableTags.patterns
+                          .filter((p) => !selectedPatterns.includes(p.id))
+                          .map((pattern) => (
+                            <Button
+                              key={pattern.id}
+                              variant="ghost"
+                              size="sm"
+                              className="w-full justify-start text-xs"
+                              onClick={() => toggleTag(pattern.id, selectedPatterns, setSelectedPatterns)}
+                            >
+                              {pattern.name}
+                            </Button>
+                          ))}
+                        {availableTags.patterns.length === 0 && (
+                          <p className="text-xs text-muted-foreground p-2">No patterns available</p>
+                        )}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {selectedPatterns.map((id) => {
+                    const pattern = availableTags.patterns.find((p) => p.id === id);
+                    return pattern ? (
+                      <Badge
+                        key={id}
+                        variant="secondary"
+                        className="text-xs cursor-pointer hover:bg-destructive/20"
+                        onClick={() => toggleTag(id, selectedPatterns, setSelectedPatterns)}
+                      >
+                        {pattern.name}
+                        <X className="w-3 h-3 ml-1" />
+                      </Badge>
+                    ) : null;
+                  })}
+                  {selectedPatterns.length === 0 && (
+                    <span className="text-xs text-muted-foreground">None selected</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Candlesticks */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Candlesticks</span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-6 px-2">
+                        <Plus className="w-3 h-3 mr-1" />
+                        Add
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-48 p-2 max-h-48 overflow-y-auto">
+                      <div className="space-y-1">
+                        {availableTags.candlesticks
+                          .filter((c) => !selectedCandlesticks.includes(c.id))
+                          .map((cs) => (
+                            <Button
+                              key={cs.id}
+                              variant="ghost"
+                              size="sm"
+                              className="w-full justify-start text-xs"
+                              onClick={() => toggleTag(cs.id, selectedCandlesticks, setSelectedCandlesticks)}
+                            >
+                              {cs.name}
+                            </Button>
+                          ))}
+                        {availableTags.candlesticks.length === 0 && (
+                          <p className="text-xs text-muted-foreground p-2">No candlesticks available</p>
+                        )}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {selectedCandlesticks.map((id) => {
+                    const cs = availableTags.candlesticks.find((c) => c.id === id);
+                    return cs ? (
+                      <Badge
+                        key={id}
+                        variant="secondary"
+                        className="text-xs cursor-pointer hover:bg-destructive/20"
+                        onClick={() => toggleTag(id, selectedCandlesticks, setSelectedCandlesticks)}
+                      >
+                        {cs.name}
+                        <X className="w-3 h-3 ml-1" />
+                      </Badge>
+                    ) : null;
+                  })}
+                  {selectedCandlesticks.length === 0 && (
+                    <span className="text-xs text-muted-foreground">None selected</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Volume */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Volume</span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-6 px-2">
+                        <Plus className="w-3 h-3 mr-1" />
+                        Add
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-48 p-2 max-h-48 overflow-y-auto">
+                      <div className="space-y-1">
+                        {availableTags.volumes
+                          .filter((v) => !selectedVolumes.includes(v.id))
+                          .map((vol) => (
+                            <Button
+                              key={vol.id}
+                              variant="ghost"
+                              size="sm"
+                              className="w-full justify-start text-xs"
+                              onClick={() => toggleTag(vol.id, selectedVolumes, setSelectedVolumes)}
+                            >
+                              {vol.name}
+                            </Button>
+                          ))}
+                        {availableTags.volumes.length === 0 && (
+                          <p className="text-xs text-muted-foreground p-2">No volume tags available</p>
+                        )}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {selectedVolumes.map((id) => {
+                    const vol = availableTags.volumes.find((v) => v.id === id);
+                    return vol ? (
+                      <Badge
+                        key={id}
+                        variant="secondary"
+                        className="text-xs cursor-pointer hover:bg-destructive/20"
+                        onClick={() => toggleTag(id, selectedVolumes, setSelectedVolumes)}
+                      >
+                        {vol.name}
+                        <X className="w-3 h-3 ml-1" />
+                      </Badge>
+                    ) : null;
+                  })}
+                  {selectedVolumes.length === 0 && (
+                    <span className="text-xs text-muted-foreground">None selected</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Mistakes */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Mistakes</span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-6 px-2">
+                        <Plus className="w-3 h-3 mr-1" />
+                        Add
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-48 p-2 max-h-48 overflow-y-auto">
+                      <div className="space-y-1">
+                        {availableTags.mistakes
+                          .filter((m) => !selectedMistakes.includes(m.id))
+                          .map((mistake) => (
+                            <Button
+                              key={mistake.id}
+                              variant="ghost"
+                              size="sm"
+                              className="w-full justify-start text-xs"
+                              onClick={() => toggleTag(mistake.id, selectedMistakes, setSelectedMistakes)}
+                            >
+                              {mistake.name}
+                            </Button>
+                          ))}
+                        {availableTags.mistakes.length === 0 && (
+                          <p className="text-xs text-muted-foreground p-2">No mistakes available</p>
+                        )}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {selectedMistakes.map((id) => {
+                    const mistake = availableTags.mistakes.find((m) => m.id === id);
+                    return mistake ? (
+                      <Badge
+                        key={id}
+                        variant="destructive"
+                        className="text-xs cursor-pointer"
+                        onClick={() => toggleTag(id, selectedMistakes, setSelectedMistakes)}
+                      >
+                        {mistake.name}
+                        <X className="w-3 h-3 ml-1" />
+                      </Badge>
+                    ) : null;
+                  })}
+                  {selectedMistakes.length === 0 && (
+                    <span className="text-xs text-muted-foreground">None selected</span>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Rating */}
@@ -389,10 +674,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
               value={[rating]}
               onValueChange={([val]) => {
                 setRating(val);
-                setValue("rating", val, {
-                  shouldDirty: true,
-                  shouldValidate: true,
-                });
+                setValue("rating", val, { shouldDirty: true, shouldValidate: true });
               }}
               min={1}
               max={10}
@@ -413,10 +695,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
               value={[confidence]}
               onValueChange={([val]) => {
                 setConfidence(val);
-                setValue("confidence_score", val, {
-                  shouldDirty: true,
-                  shouldValidate: true,
-                });
+                setValue("confidence_score", val, { shouldDirty: true, shouldValidate: true });
               }}
               min={1}
               max={5}
@@ -437,27 +716,22 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
 
           {/* Notes */}
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes</Label>
+            <Label htmlFor="notes">Notes / Setup Reason</Label>
             <Textarea
               id="notes"
-              placeholder="Reason for entry, setup details..."
+              placeholder="Reason for entry, setup details, analysis..."
+              rows={3}
               {...register("notes")}
             />
           </div>
 
           {/* Actions */}
           <div className="flex justify-end gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-            >
+            <Button type="button" variant="outline" onClick={handleClose}>
               Cancel
             </Button>
             <Button type="submit" disabled={createTrade.isPending}>
-              {createTrade.isPending && (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              )}
+              {createTrade.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Create Trade
             </Button>
           </div>
