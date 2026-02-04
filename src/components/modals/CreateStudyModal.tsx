@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ChartImageUpload } from "@/components/ui/chart-image-upload";
 import { createStudySchema, type CreateStudyInput, studyCategories } from "@/lib/schemas";
 import { useStudies } from "@/hooks/useStudies";
 import { Loader2 } from "lucide-react";
@@ -31,6 +32,7 @@ interface CreateStudyModalProps {
 export function CreateStudyModal({ open, onOpenChange }: CreateStudyModalProps) {
   const { createStudy } = useStudies();
   const [tagsInput, setTagsInput] = useState("");
+  const [attachments, setAttachments] = useState<string[]>([]);
 
   const {
     register,
@@ -61,20 +63,29 @@ export function CreateStudyModal({ open, onOpenChange }: CreateStudyModalProps) 
       notes: data.notes,
       tags,
       analysis_date: new Date().toISOString().split("T")[0],
+      attachments: attachments,
     });
 
     reset();
     setTagsInput("");
+    setAttachments([]);
+    onOpenChange(false);
+  };
+
+  const handleClose = () => {
+    reset();
+    setTagsInput("");
+    setAttachments([]);
     onOpenChange(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Study</DialogTitle>
           <DialogDescription>
-            Log a market analysis or trading idea for future reference.
+            Log a market analysis with notes and chart images.
           </DialogDescription>
         </DialogHeader>
 
@@ -151,12 +162,23 @@ export function CreateStudyModal({ open, onOpenChange }: CreateStudyModalProps) 
             />
           </div>
 
+          {/* Chart Images Upload */}
+          <div className="space-y-2">
+            <Label>Chart Images</Label>
+            <ChartImageUpload
+              images={attachments}
+              onImagesChange={setAttachments}
+              bucket="study-attachments"
+              maxImages={5}
+            />
+          </div>
+
           {/* Actions */}
           <div className="flex justify-end gap-3 pt-4">
             <Button
               type="button"
               variant="outline"
-              onClick={() => onOpenChange(false)}
+              onClick={handleClose}
             >
               Cancel
             </Button>

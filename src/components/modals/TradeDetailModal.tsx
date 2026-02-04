@@ -694,6 +694,33 @@ export function TradeDetailModal({
           </div>
         </div>
 
+        {/* Chart Images */}
+        {trade.chart_images && Array.isArray(trade.chart_images) && trade.chart_images.length > 0 && (
+          <>
+            <Separator />
+            <div className="space-y-3">
+              <h4 className="font-medium">Chart Images</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {(trade.chart_images as string[]).map((url, index) => (
+                  <a
+                    key={index}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block aspect-video rounded-lg overflow-hidden border border-border bg-accent hover:opacity-80 transition-opacity"
+                  >
+                    <img
+                      src={url}
+                      alt={`Chart ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
         {/* Notes */}
         {trade.notes && (
           <>

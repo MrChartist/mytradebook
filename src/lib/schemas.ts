@@ -81,6 +81,7 @@ export const createTradeSchema = z.object({
     .optional(),
   notes: z.string().max(1000, "Notes must be less than 1000 characters").optional(),
   study_id: z.string().uuid().optional(),
+  chart_images: z.array(z.string().url()).max(5).optional(),
 });
 
 export type CreateTradeInput = z.infer<typeof createTradeSchema>;

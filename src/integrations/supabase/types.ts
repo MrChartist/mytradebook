@@ -363,6 +363,7 @@ export type Database = {
       }
       trades: {
         Row: {
+          chart_images: Json | null
           closed_at: string | null
           closure_reason: string | null
           confidence_score: number | null
@@ -388,6 +389,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          chart_images?: Json | null
           closed_at?: string | null
           closure_reason?: string | null
           confidence_score?: number | null
@@ -413,6 +415,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          chart_images?: Json | null
           closed_at?: string | null
           closure_reason?: string | null
           confidence_score?: number | null
