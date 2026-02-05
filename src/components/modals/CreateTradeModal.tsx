@@ -269,42 +269,31 @@
            />
  
            {/* Entry Price with Fetch LTP + Quantity */}
-           <div className="grid grid-cols-2 gap-4">
-             <div className="space-y-2">
-               <div className="flex items-center justify-between">
-                 <Label htmlFor="entry_price">Entry Price</Label>
-                 {selectedInstrument && (
-                   <Button
-                     type="button"
-                     variant="ghost"
-                     size="sm"
-                     onClick={fetchAndFillLtp}
-                     disabled={isFetchingLtp}
-                     className="h-6 px-2 text-xs"
-                   >
-                     {isFetchingLtp ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
-                     <span className="ml-1">Fetch LTP</span>
-                   </Button>
-                 )}
-               </div>
-               <Input
-                 id="entry_price"
-                 type="number"
-                 step="0.01"
-                 placeholder="Optional"
-                 {...register("entry_price", { valueAsNumber: true })}
-               />
+            {/* Entry Price with Fetch LTP */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="entry_price">Entry Price</Label>
+                {selectedInstrument && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={fetchAndFillLtp}
+                    disabled={isFetchingLtp}
+                    className="h-6 px-2 text-xs"
+                  >
+                    {isFetchingLtp ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
+                    <span className="ml-1">Fetch LTP</span>
+                  </Button>
+                )}
              </div>
- 
-             <div className="space-y-2">
-               <Label htmlFor="quantity">Quantity</Label>
-               <Input
-                 id="quantity"
-                 type="number"
-                 placeholder="1"
-                 {...register("quantity", { valueAsNumber: true })}
-               />
-             </div>
+              <Input
+                id="entry_price"
+                type="number"
+                step="0.01"
+                placeholder="Optional"
+                {...register("entry_price", { valueAsNumber: true })}
+              />
            </div>
  
            {/* Stop Loss and Timeframe */}
