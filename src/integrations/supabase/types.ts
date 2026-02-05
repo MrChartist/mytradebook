@@ -363,10 +363,12 @@ export type Database = {
       }
       trades: {
         Row: {
+          auto_track_enabled: boolean | null
           chart_images: Json | null
           closed_at: string | null
           closure_reason: string | null
           confidence_score: number | null
+          contract_key: string | null
           created_at: string | null
           current_price: number | null
           dhan_order_id: string | null
@@ -374,6 +376,7 @@ export type Database = {
           entry_time: string
           holding_period: string | null
           id: string
+          instrument_token: string | null
           notes: string | null
           pnl: number | null
           pnl_percent: number | null
@@ -385,6 +388,7 @@ export type Database = {
           study_id: string | null
           symbol: string
           targets: Json | null
+          telegram_post_enabled: boolean | null
           timeframe: string | null
           trade_type: Database["public"]["Enums"]["trade_type"]
           trailing_sl_active: boolean | null
@@ -397,10 +401,12 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          auto_track_enabled?: boolean | null
           chart_images?: Json | null
           closed_at?: string | null
           closure_reason?: string | null
           confidence_score?: number | null
+          contract_key?: string | null
           created_at?: string | null
           current_price?: number | null
           dhan_order_id?: string | null
@@ -408,6 +414,7 @@ export type Database = {
           entry_time?: string
           holding_period?: string | null
           id?: string
+          instrument_token?: string | null
           notes?: string | null
           pnl?: number | null
           pnl_percent?: number | null
@@ -419,6 +426,7 @@ export type Database = {
           study_id?: string | null
           symbol: string
           targets?: Json | null
+          telegram_post_enabled?: boolean | null
           timeframe?: string | null
           trade_type: Database["public"]["Enums"]["trade_type"]
           trailing_sl_active?: boolean | null
@@ -431,10 +439,12 @@ export type Database = {
           user_id: string
         }
         Update: {
+          auto_track_enabled?: boolean | null
           chart_images?: Json | null
           closed_at?: string | null
           closure_reason?: string | null
           confidence_score?: number | null
+          contract_key?: string | null
           created_at?: string | null
           current_price?: number | null
           dhan_order_id?: string | null
@@ -442,6 +452,7 @@ export type Database = {
           entry_time?: string
           holding_period?: string | null
           id?: string
+          instrument_token?: string | null
           notes?: string | null
           pnl?: number | null
           pnl_percent?: number | null
@@ -453,6 +464,7 @@ export type Database = {
           study_id?: string | null
           symbol?: string
           targets?: Json | null
+          telegram_post_enabled?: boolean | null
           timeframe?: string | null
           trade_type?: Database["public"]["Enums"]["trade_type"]
           trailing_sl_active?: boolean | null

@@ -32,6 +32,8 @@ interface Trade {
   trailing_sl_active: boolean;
   rating: number | null;
   confidence_score: number | null;
+   auto_track_enabled: boolean;
+   telegram_post_enabled: boolean;
 }
 
 // Helper function to get user's telegram chat ID
@@ -63,11 +65,12 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Fetch all open trades
+     // Fetch all open trades with auto_track_enabled
     const { data: openTrades, error: tradesError } = await supabase
       .from("trades")
       .select("*")
-      .eq("status", "OPEN");
+       .eq("status", "OPEN")
+       .eq("auto_track_enabled", true);
 
     if (tradesError) {
       throw new Error(`Failed to fetch trades: ${tradesError.message}`);
@@ -93,7 +96,10 @@ serve(async (req) => {
     for (const trade of openTrades as Trade[]) {
       // Get user-specific chat ID for this trade
       const userChatId = await getUserChatId(supabase, trade.user_id);
-      const chatId = userChatId || DEFAULT_TELEGRAM_CHAT_ID;
+       // Only use user-specific chat ID if telegram posting is enabled for this trade
+       const chatId = trade.telegram_post_enabled 
+         ? (userChatId || DEFAULT_TELEGRAM_CHAT_ID)
+         : undefined;
 
       // Get current price (mock for now, real implementation would use Dhan LTP API)
       const currentPrice = await getCurrentPrice(trade.symbol, DHAN_ACCESS_TOKEN);
@@ -194,8 +200,8 @@ serve(async (req) => {
             })
             .eq("id", trade.id);
 
-          // Send notification with user-specific chat ID
-          if (TELEGRAM_BOT_TOKEN && chatId) {
+           // Send notification only if telegram is enabled and chat ID is available
+         if (TELEGRAM_BOT_TOKEN && chatId && trade.telegram_post_enabled) {
             const emoji = pnl >= 0 ? "✅" : "🛑";
             const slType = isTslHit ? "Trailing Stop Loss" : "Stop Loss";
             const lockedGain = isTslHit && pnl > 0 
@@ -271,8 +277,8 @@ serve(async (req) => {
                 });
               }
 
-              // Send notification with user-specific chat ID
-              if (TELEGRAM_BOT_TOKEN && chatId) {
+               // Send notification only if telegram is enabled
+               if (TELEGRAM_BOT_TOKEN && chatId && trade.telegram_post_enabled) {
                 const tslInfo = trade.trailing_sl_enabled
                   ? `\n🔄 TSL: ${trade.trailing_sl_active ? "Active" : "Activating"}`
                   : "";

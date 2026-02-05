@@ -77,7 +77,10 @@ export function useTrades(filters?: TradeFilters) {
       });
       
       // Send Telegram notification (fire and forget)
-      notifyNewTrade(data.id).catch(console.error);
+       // Only send if telegram posting is enabled for this trade
+       if (data.telegram_post_enabled) {
+         notifyNewTrade(data.id).catch(console.error);
+       }
     },
     onError: (error) => {
       toast({
@@ -189,7 +192,10 @@ export function useTrades(filters?: TradeFilters) {
       });
       
       // Send Telegram notification (fire and forget)
-      notifyTradeClosed(data.id).catch(console.error);
+       // Only send if telegram posting was enabled for this trade
+       if (data.telegram_post_enabled) {
+         notifyTradeClosed(data.id).catch(console.error);
+       }
     },
     onError: (error) => {
       toast({
