@@ -21,6 +21,13 @@
    tick_size: number | null;
  }
  
+ // Dhan scrip master CSV URLs
+ const DHAN_CSV_URLS = {
+   NSE_EQ: "https://images.dhan.co/api-data/api-scrip-master-equity.csv",
+   NSE_FNO: "https://images.dhan.co/api-data/api-scrip-master-detailed.csv",
+ };
+ 
+ // Parse CSV line handling quoted fields
  function parseCSVLine(line: string): string[] {
    const result: string[] = [];
    let current = "";
@@ -41,6 +48,7 @@
    return result;
  }
  
+ // Map Dhan exchange segment codes to our format
  function mapExchangeSegment(segment: string): { exchange: string; segment: string } {
    const mapping: Record<string, { exchange: string; segment: string }> = {
      NSE_EQ: { exchange: "NSE", segment: "NSE_EQ" },
@@ -56,6 +64,7 @@
    return mapping[segment] || { exchange: segment.split("_")[0], segment };
  }
  
+ // Map Dhan instrument types to our simplified format
  function mapInstrumentType(instrType: string): string {
    const mapping: Record<string, string> = {
      EQUITY: "EQ",
@@ -67,6 +76,7 @@
      OPTSTK: "OPT",
      OPTIDX: "OPT",
      OPTCUR: "OPT",
+     OPTFUT: "OPT",
      OPTCOM: "OPT",
      INDEX: "INDEX",
      COMMODITY: "COMMODITY",
@@ -74,194 +84,222 @@
    return mapping[instrType] || instrType;
  }
  
-// Generate comprehensive instrument list for NSE + NFO + MCX
-function generateInstrumentMaster(): InstrumentRow[] {
-  const instruments: InstrumentRow[] = [];
-  
-  // NSE Equity - Comprehensive list of ~500 stocks
-  const NSE_STOCKS = [
-    // Nifty 50
-    "RELIANCE", "TCS", "HDFCBANK", "INFY", "ICICIBANK", "HINDUNILVR", "ITC", "SBIN", "BHARTIARTL", "KOTAKBANK",
-    "LT", "AXISBANK", "ASIANPAINT", "MARUTI", "TITAN", "BAJFINANCE", "SUNPHARMA", "WIPRO", "HCLTECH", "NTPC",
-    "TATAMOTORS", "ULTRACEMCO", "POWERGRID", "NESTLEIND", "ONGC", "ADANIENT", "ADANIPORTS", "JSWSTEEL", "COALINDIA", "BAJAJFINSV",
-    "TATASTEEL", "HINDALCO", "DRREDDY", "GRASIM", "TECHM", "BPCL", "EICHERMOT", "DIVISLAB", "CIPLA", "BRITANNIA",
-    "HEROMOTOCO", "M&M", "BAJAJ-AUTO", "INDUSINDBK", "TATACONSUM", "APOLLOHOSP", "SBILIFE", "HDFCLIFE", "LTIM", "UPL",
-    // Nifty Next 50
-    "ADANIGREEN", "AMBUJACEM", "AUROPHARMA", "BAJAJHLDNG", "BANKBARODA", "BEL", "BERGEPAINT", "BIOCON", "BOSCHLTD", "CANBK",
-    "CHOLAFIN", "COLPAL", "CONCOR", "DABUR", "DLF", "DMART", "GAIL", "GODREJCP", "HAVELLS", "HINDZINC",
-    "ICICIPRULI", "ICICIGI", "IDEA", "IDFCFIRSTB", "IGL", "INDIGO", "IOC", "IRCTC", "JINDALSTEL", "JSWENERGY",
-    "LICI", "LUPIN", "MARICO", "MCDOWELL-N", "MPHASIS", "MUTHOOTFIN", "NAUKRI", "OBEROIRLTY", "OFSS", "PAGEIND",
-    "PAYTM", "PGHH", "PIDILITIND", "PNB", "POLYCAB", "RECLTD", "SAIL", "SBICARD", "SHREECEM", "SHRIRAMFIN",
-    "SIEMENS", "SRF", "TATAPOWER", "TORNTPHARM", "TRENT", "UNIONBANK", "VEDL", "VBL", "VOLTAS", "ZOMATO",
-    // Nifty Midcap Select + Popular stocks
-    "ABCAPITAL", "ACC", "AARTIIND", "ABB", "ABBOTINDIA", "AUBANK", "BALKRISIND", "BALRAMCHIN", "BANDHANBNK", "BATAINDIA",
-    "BHARATFORG", "BHEL", "BLUEDART", "CANFINHOME", "CESC", "CGPOWER", "CHAMBLFERT", "CUMMINSIND", "DEEPAKNTR", "DIXON",
-    "ESCORTS", "EXIDEIND", "FEDERALBNK", "FLUOROCHEM", "FORTIS", "GLENMARK", "GMRINFRA", "GODREJPROP", "GRANULES", "GSPL",
-    "GUJGASLTD", "HAL", "HATSUN", "HINDCOPPER", "HINDPETRO", "HONAUT", "IPCALAB", "IRFC", "ISEC", "JKCEMENT",
-    "JSL", "JUBLFOOD", "KAJARIACER", "KEI", "KPITTECH", "LAURUSLABS", "LICHSGFIN", "LTTS", "MANAPPURAM", "MAXHEALTH",
-    "MCX", "METROPOLIS", "MFSL", "MGL", "MOTHERSON", "MRF", "NATIONALUM", "NAVINFLUOR", "NBCC", "NCC",
-    "NHPC", "NMDC", "PATANJALI", "PERSISTENT", "PETRONET", "PIIND", "PFC", "PHOENIXLTD", "PRESTIGE", "PVRINOX",
-    "RAMCOCEM", "RBLBANK", "RELAXO", "RVNL", "SOLARINDS", "SONACOMS", "STARHEALTH", "SUMICHEM", "SUNDARMFIN", "SUNTV",
-    "SUPREMEIND", "SYNGENE", "TATACHEM", "TATACOMM", "TATAELXSI", "TATAINVEST", "TVSMOTOR", "THERMAX", "TIMKEN", "TIINDIA",
-    "TORNTPOWER", "TTML", "UBL", "WHIRLPOOL", "ZEEL", "ZYDUSLIFE", "SJVN", "COCHINSHIP", "GRSE", "MAZAGONDOCK",
-    // Additional popular stocks
-    "APOLLOTYRE", "ASHOKLEY", "ASTRAL", "ATUL", "BASF", "BSE", "CDSL", "CLEAN", "COFORGE", "CROMPTON",
-    "CYIENT", "DELHIVERY", "ECLERX", "ELGIEQUIP", "EMAMILTD", "ENDURANCE", "EQUITASBNK", "FSL", "GICRE", "GNFC",
-    "GRAPHITE", "GRINDWELL", "HEG", "HFCL", "HOMEFIRST", "INDHOTEL", "INDUSTOWER", "INTELLECT", "IRB", "IRCON",
-    "JAMNAAUTO", "JINDALSAW", "JKTYRE", "JSWINFRA", "KALPATPOWR", "KALYANKJIL", "KANSAINER", "KEC", "KFINTECH", "KIOCL",
-    "KIRLOSENG", "LALPATHLAB", "LATENTVIEW", "LEMONTREE", "LINDEINDIA", "LODHA", "LTFOODS", "MAPMYINDIA", "MAZDOCK", "METROBRAND",
-    "MMTC", "MOIL", "MOTILALOFS", "NATCOPHARM", "NETWORK18", "NLCINDIA", "OLECTRA", "ORIENTELEC", "PNBHOUSING", "POWERINDIA",
-    "PTC", "RADICO", "RAIN", "RAYMOND", "REDINGTON", "RHIM", "ROSSARI", "ROUTE", "SAFARI", "SANOFI",
-    "SCHAEFFLER", "SHOPERSTOP", "SKFINDIA", "SOBHA", "SONATSOFTW", "SPARC", "STAR", "SUNDRMFAST", "SUZLON", "SYMPHONY",
-    "TANLA", "TATATECH", "TEAMLEASE", "TEJASNET", "THYROCARE", "TITAGARH", "TRIDENT", "TRIVENI", "UCOBANK", "UJJIVANSFB",
-    "UTIAMC", "VGUARD", "VINATIORGA", "WOCKPHARMA", "YESBANK", "ZEEMEDIA", "ZENSARTECH", "HUDCO", "RAILTEL", "RITES",
-    "NBCC", "IRCON", "EXIDEIND", "AMARARAJA", "BALKRISIND", "CEAT", "PAGEIND", "ARVIND", "ABFRL", "JUBLFOOD",
-    "BATA", "MARICO", "DABUR", "COLPAL", "PGHH", "ATGL", "MGL", "PETRONET", "GSPL", "HPCL", "CASTROLIND",
-    "PIIND", "BAYERCROP", "RALLIS", "DHANUKA", "GSFC", "FACT", "CHAMBAL", "COROMANDEL", "DEEPAKFERT", "FINEORG",
-    "AARTIIND", "TATACHEM", "ALKYLAMINE", "ATUL", "SUDARSCHEM", "ANURAS", "BIOCON", "SYNGENE", "GLAND", "ALKEM",
-    "TORNTPHARM", "LUPIN", "GLENMARK", "LAURUSLABS", "GRANULES", "ABBOTINDIA", "PFIZER", "GLAXO"
-  ];
-  
-  // Remove duplicates
-  const uniqueNseStocks = [...new Set(NSE_STOCKS)];
-  
-  // Add NSE Equity stocks
-  uniqueNseStocks.forEach((symbol, idx) => {
-    instruments.push({
-      security_id: `NSE_EQ_${idx + 1}`,
-      exchange_segment: "NSE_EQ",
-      exchange: "NSE",
-      instrument_type: "EQ",
-      trading_symbol: symbol,
-      display_name: symbol,
-      underlying_symbol: null,
-      expiry: null,
-      strike: null,
-      option_type: null,
-      lot_size: 1,
-      tick_size: 0.05,
-    });
-  });
-  
-  // Add Indices
-  const INDICES = [
-    { symbol: "NIFTY", name: "Nifty 50" },
-    { symbol: "BANKNIFTY", name: "Bank Nifty" },
-    { symbol: "FINNIFTY", name: "Fin Nifty" },
-    { symbol: "MIDCPNIFTY", name: "Midcap Nifty" },
-    { symbol: "NIFTYNXT50", name: "Nifty Next 50" },
-  ];
-  
-  INDICES.forEach((idx, i) => {
-    instruments.push({
-      security_id: `IDX_${i + 1}`,
-      exchange_segment: "IDX_I",
-      exchange: "NSE",
-      instrument_type: "INDEX",
-      trading_symbol: idx.symbol,
-      display_name: idx.name,
-      underlying_symbol: null,
-      expiry: null,
-      strike: null,
-      option_type: null,
-      lot_size: 1,
-      tick_size: 0.05,
-    });
-  });
-  
-  // NFO Underlyings (F&O eligible stocks)
-  const NFO_STOCKS = [
-    "RELIANCE", "TCS", "HDFCBANK", "INFY", "ICICIBANK", "SBIN", "BHARTIARTL", "KOTAKBANK", "LT", "AXISBANK",
-    "ASIANPAINT", "MARUTI", "TITAN", "BAJFINANCE", "SUNPHARMA", "WIPRO", "HCLTECH", "NTPC", "TATAMOTORS", "ULTRACEMCO",
-    "POWERGRID", "ONGC", "ADANIENT", "JSWSTEEL", "COALINDIA", "TATASTEEL", "HINDALCO", "DRREDDY", "TECHM", "BPCL",
-    "EICHERMOT", "DIVISLAB", "CIPLA", "BRITANNIA", "HEROMOTOCO", "M&M", "BAJAJ-AUTO", "INDUSINDBK", "TATACONSUM", "APOLLOHOSP",
-    "SBILIFE", "HDFCLIFE", "RECLTD", "PFC", "IRFC", "NHPC", "SJVN", "BEL", "HAL", "BHEL", "GAIL", "IOC",
-    "VEDL", "SAIL", "NMDC", "BANKBARODA", "CANBK", "PNB", "IDEA", "ZEEL", "TATAPOWER", "TATAELXSI", "PERSISTENT",
-    "COFORGE", "MPHASIS", "NAUKRI", "ZOMATO", "IRCTC", "RVNL", "DLF", "GODREJPROP", "OBEROIRLTY", "POLYCAB",
-    "HAVELLS", "SIEMENS", "ABB", "CGPOWER", "DIXON", "ESCORTS", "MOTHERSON", "BALKRISIND", "MRF", "APOLLOTYRE",
-    "TVSMOTOR", "JUBLFOOD", "MARICO", "DABUR", "COLPAL", "BERGEPAINT", "INDIGO", "GMRINFRA", "ADANIGREEN", "MGL",
-    "IGL", "PETRONET", "PIIND", "GNFC", "DEEPAKNTR", "SRF", "AARTIIND", "TATACHEM", "AUROPHARMA", "BIOCON",
-    "LUPIN", "IPCALAB", "ALKEM", "TORNTPHARM", "LAURUSLABS", "GRANULES", "CHOLAFIN", "MUTHOOTFIN", "LICHSGFIN", "MANAPPURAM",
-    "FEDERALBNK", "AUBANK", "IDFCFIRSTB", "RBLBANK", "BANDHANBNK", "SHRIRAMFIN", "VOLTAS", "CROMPTON", "WHIRLPOOL", "TRENT"
-  ];
-  
-  const uniqueNfoStocks = [...new Set(NFO_STOCKS)];
-  
-  // Add NFO equity underlyings
-  uniqueNfoStocks.forEach((symbol, idx) => {
-    instruments.push({
-      security_id: `NFO_UND_${idx + 1}`,
-      exchange_segment: "NSE_FNO",
-      exchange: "NFO",
-      instrument_type: "EQ",
-      trading_symbol: symbol,
-      display_name: `${symbol} (F&O)`,
-      underlying_symbol: symbol,
-      expiry: null,
-      strike: null,
-      option_type: null,
-      lot_size: null,
-      tick_size: 0.05,
-    });
-  });
-  
-  // Add Index underlyings for NFO
-  INDICES.forEach((idx, i) => {
-    instruments.push({
-      security_id: `NFO_IDX_${i + 1}`,
-      exchange_segment: "NSE_FNO",
-      exchange: "NFO",
-      instrument_type: "INDEX",
-      trading_symbol: idx.symbol,
-      display_name: `${idx.name} (F&O)`,
-      underlying_symbol: idx.symbol,
-      expiry: null,
-      strike: null,
-      option_type: null,
-      lot_size: idx.symbol === "BANKNIFTY" ? 15 : idx.symbol === "NIFTY" ? 25 : 25,
-      tick_size: 0.05,
-    });
-  });
-  
-  // MCX Commodities
-  const MCX_COMMODITIES = [
-    { symbol: "GOLD", name: "Gold", lotSize: 100 },
-    { symbol: "GOLDM", name: "Gold Mini", lotSize: 10 },
-    { symbol: "GOLDPETAL", name: "Gold Petal", lotSize: 1 },
-    { symbol: "SILVER", name: "Silver", lotSize: 30 },
-    { symbol: "SILVERM", name: "Silver Mini", lotSize: 5 },
-    { symbol: "SILVERMIC", name: "Silver Micro", lotSize: 1 },
-    { symbol: "CRUDEOIL", name: "Crude Oil", lotSize: 100 },
-    { symbol: "CRUDEOILM", name: "Crude Oil Mini", lotSize: 10 },
-    { symbol: "NATURALGAS", name: "Natural Gas", lotSize: 1250 },
-    { symbol: "COPPER", name: "Copper", lotSize: 2500 },
-    { symbol: "ZINC", name: "Zinc", lotSize: 5000 },
-    { symbol: "ALUMINIUM", name: "Aluminium", lotSize: 5000 },
-    { symbol: "LEAD", name: "Lead", lotSize: 5000 },
-    { symbol: "NICKEL", name: "Nickel", lotSize: 1500 },
-    { symbol: "MENTHAOIL", name: "Mentha Oil", lotSize: 360 },
-    { symbol: "COTTON", name: "Cotton", lotSize: 25 },
-  ];
-  
-  MCX_COMMODITIES.forEach((comm, idx) => {
-    instruments.push({
-      security_id: `MCX_${idx + 1}`,
-      exchange_segment: "MCX_COMM",
-      exchange: "MCX",
-      instrument_type: "COMMODITY",
-      trading_symbol: comm.symbol,
-      display_name: comm.name,
-      underlying_symbol: comm.symbol,
-      expiry: null,
-      strike: null,
-      option_type: null,
-      lot_size: comm.lotSize,
-      tick_size: 1,
-    });
-  });
-  
-  return instruments;
-}
+ // Fetch and parse Dhan equity CSV
+ async function fetchEquityCSV(): Promise<InstrumentRow[]> {
+   const instruments: InstrumentRow[] = [];
+   
+   console.log("Fetching NSE equity CSV from Dhan...");
+   const response = await fetch(DHAN_CSV_URLS.NSE_EQ);
+   
+   if (!response.ok) {
+     throw new Error(`Failed to fetch equity CSV: ${response.status}`);
+   }
+   
+   const csvText = await response.text();
+   const lines = csvText.split("\n").filter((line) => line.trim());
+   
+   if (lines.length < 2) {
+     throw new Error("Equity CSV appears empty");
+   }
+   
+   // Parse header
+   const header = parseCSVLine(lines[0]);
+   const colIndex: Record<string, number> = {};
+   header.forEach((col, idx) => {
+     colIndex[col.toUpperCase().replace(/[^A-Z0-9_]/g, "_")] = idx;
+   });
+   
+   console.log("Equity CSV columns:", Object.keys(colIndex).slice(0, 15));
+   
+   // Dhan equity CSV columns (typical):
+   // SEM_EXM_EXCH_ID, SEM_SEGMENT, SEM_SMST_SECURITY_ID, SEM_INSTRUMENT_NAME, 
+   // SEM_EXPIRY_CODE, SEM_EXPIRY_DATE, SEM_STRIKE_PRICE, SEM_OPTION_TYPE,
+   // SEM_TRADING_SYMBOL, SEM_CUSTOM_SYMBOL, SEM_LOT_UNITS, SEM_TICK_SIZE
+   
+   for (let i = 1; i < lines.length; i++) {
+     try {
+       const row = parseCSVLine(lines[i]);
+       if (row.length < 5) continue;
+       
+       // Get security ID - the key identifier for Dhan API
+       const securityId = row[colIndex["SEM_SMST_SECURITY_ID"]] || row[2];
+       if (!securityId || securityId === "0") continue;
+       
+       // Get segment - filter for NSE_EQ only
+       const segment = row[colIndex["SEM_SEGMENT"]] || row[1];
+       if (segment !== "E") continue; // E = Equity segment
+       
+       // Get exchange
+       const exchangeCode = row[colIndex["SEM_EXM_EXCH_ID"]] || row[0];
+       if (exchangeCode !== "NSE") continue; // Only NSE for now
+       
+       const tradingSymbol = row[colIndex["SEM_TRADING_SYMBOL"]] || row[8] || "";
+       const customSymbol = row[colIndex["SEM_CUSTOM_SYMBOL"]] || row[9] || tradingSymbol;
+       const instrumentName = row[colIndex["SEM_INSTRUMENT_NAME"]] || row[3] || "EQUITY";
+       const lotSize = parseInt(row[colIndex["SEM_LOT_UNITS"]] || row[10]) || 1;
+       const tickSize = parseFloat(row[colIndex["SEM_TICK_SIZE"]] || row[11]) || 0.05;
+       
+       if (!tradingSymbol) continue;
+       
+       instruments.push({
+         security_id: securityId,
+         exchange_segment: "NSE_EQ",
+         exchange: "NSE",
+         instrument_type: mapInstrumentType(instrumentName),
+         trading_symbol: tradingSymbol.replace(/-EQ$/, ""),
+         display_name: customSymbol || tradingSymbol,
+         underlying_symbol: null,
+         expiry: null,
+         strike: null,
+         option_type: null,
+         lot_size: lotSize,
+         tick_size: tickSize,
+       });
+     } catch (e) {
+       console.warn(`Row ${i} parse error:`, e);
+     }
+   }
+   
+   console.log(`Parsed ${instruments.length} NSE equity instruments`);
+   return instruments;
+ }
+ 
+ // Fetch and parse Dhan F&O detailed CSV
+ async function fetchFNOCSV(): Promise<InstrumentRow[]> {
+   const instruments: InstrumentRow[] = [];
+   
+   console.log("Fetching F&O CSV from Dhan...");
+   const response = await fetch(DHAN_CSV_URLS.NSE_FNO);
+   
+   if (!response.ok) {
+     throw new Error(`Failed to fetch FNO CSV: ${response.status}`);
+   }
+   
+   const csvText = await response.text();
+   const lines = csvText.split("\n").filter((line) => line.trim());
+   
+   if (lines.length < 2) {
+     throw new Error("FNO CSV appears empty");
+   }
+   
+   // Parse header
+   const header = parseCSVLine(lines[0]);
+   const colIndex: Record<string, number> = {};
+   header.forEach((col, idx) => {
+     colIndex[col.toUpperCase().replace(/[^A-Z0-9_]/g, "_")] = idx;
+   });
+   
+   console.log("F&O CSV columns:", Object.keys(colIndex).slice(0, 15));
+   
+   // Track current date for filtering expired contracts
+   const today = new Date();
+   today.setHours(0, 0, 0, 0);
+   
+   for (let i = 1; i < lines.length; i++) {
+     try {
+       const row = parseCSVLine(lines[i]);
+       if (row.length < 5) continue;
+       
+       const securityId = row[colIndex["SEM_SMST_SECURITY_ID"]] || row[2];
+       if (!securityId || securityId === "0") continue;
+       
+       const segment = row[colIndex["SEM_SEGMENT"]] || row[1];
+       const exchangeCode = row[colIndex["SEM_EXM_EXCH_ID"]] || row[0];
+       
+       // Filter for NSE F&O and MCX
+       let exchangeSegment = "";
+       let exchange = "";
+       
+       if (exchangeCode === "NSE" && (segment === "D" || segment === "E")) {
+         // D = Derivatives, E = Equity (for indices)
+         exchangeSegment = "NSE_FNO";
+         exchange = "NFO";
+       } else if (exchangeCode === "MCX") {
+         exchangeSegment = "MCX_COMM";
+         exchange = "MCX";
+       } else if (exchangeCode === "NSE" && segment === "I") {
+         // I = Index
+         exchangeSegment = "IDX_I";
+         exchange = "NSE";
+       } else {
+         continue; // Skip other segments
+       }
+       
+       const tradingSymbol = row[colIndex["SEM_TRADING_SYMBOL"]] || row[8] || "";
+       const customSymbol = row[colIndex["SEM_CUSTOM_SYMBOL"]] || row[9] || tradingSymbol;
+       const instrumentName = row[colIndex["SEM_INSTRUMENT_NAME"]] || row[3] || "";
+       const expiryStr = row[colIndex["SEM_EXPIRY_DATE"]] || row[5] || "";
+       const strikeStr = row[colIndex["SEM_STRIKE_PRICE"]] || row[6] || "";
+       const optionType = row[colIndex["SEM_OPTION_TYPE"]] || row[7] || "";
+       const lotSize = parseInt(row[colIndex["SEM_LOT_UNITS"]] || row[10]) || 1;
+       const tickSize = parseFloat(row[colIndex["SEM_TICK_SIZE"]] || row[11]) || 0.05;
+       const underlyingSymbol = row[colIndex["SM_SYMBOL_NAME"]] || customSymbol?.split(" ")[0] || tradingSymbol;
+       
+       if (!tradingSymbol) continue;
+       
+       // Parse expiry date and filter expired contracts
+       let expiry: string | null = null;
+       if (expiryStr && expiryStr !== "0" && expiryStr !== "") {
+         try {
+          // Dhan uses various formats: "2026-02-27", "27-Feb-2026", or timestamp
+          let expiryDate: Date | null = null;
+          
+          // Check if it's a pure number (likely wrong data, skip)
+          if (/^\d+$/.test(expiryStr) && expiryStr.length > 10) {
+            // Skip extremely large numbers that are likely garbage
+            expiry = null;
+          } else if (expiryStr.includes("-") && expiryStr.length === 10) {
+            // ISO format: YYYY-MM-DD
+            expiryDate = new Date(expiryStr + "T00:00:00Z");
+          } else if (expiryStr.includes("-") && /[A-Za-z]/.test(expiryStr)) {
+            // Format: DD-Mon-YYYY
+            expiryDate = new Date(expiryStr);
+          } else if (/^\d{8}$/.test(expiryStr)) {
+            // Format: YYYYMMDD
+            const y = expiryStr.slice(0, 4);
+            const m = expiryStr.slice(4, 6);
+            const d = expiryStr.slice(6, 8);
+            expiryDate = new Date(`${y}-${m}-${d}T00:00:00Z`);
+          }
+          
+          if (expiryDate && !isNaN(expiryDate.getTime())) {
+            const year = expiryDate.getFullYear();
+            // Sanity check: year should be reasonable (2020-2100)
+            if (year >= 2020 && year <= 2100) {
+              // Skip expired contracts
+              if (expiryDate < today) continue;
+              expiry = expiryDate.toISOString().split("T")[0];
+            }
+           }
+         } catch {
+           // Keep null if parse fails
+         }
+       }
+       
+       const strike = strikeStr && strikeStr !== "0" ? parseFloat(strikeStr) : null;
+       
+       instruments.push({
+         security_id: securityId,
+         exchange_segment: exchangeSegment,
+         exchange: exchange,
+         instrument_type: mapInstrumentType(instrumentName),
+         trading_symbol: tradingSymbol,
+         display_name: customSymbol || tradingSymbol,
+         underlying_symbol: underlyingSymbol || null,
+         expiry: expiry,
+         strike: strike,
+         option_type: optionType || null,
+         lot_size: lotSize,
+         tick_size: tickSize,
+       });
+     } catch (e) {
+       console.warn(`Row ${i} parse error:`, e);
+     }
+   }
+   
+   console.log(`Parsed ${instruments.length} F&O instruments`);
+   return instruments;
+ }
  
  Deno.serve(async (req) => {
    if (req.method === "OPTIONS") {
@@ -273,7 +311,8 @@ function generateInstrumentMaster(): InstrumentRow[] {
    const supabase = createClient(supabaseUrl, supabaseServiceKey);
  
    try {
-     console.log("Starting instrument sync...");
+    console.log("Starting instrument sync from Dhan scrip master...");
+    const startTime = Date.now();
      
      // Create sync log entry
      const { data: logEntry, error: logError } = await supabase
@@ -288,17 +327,33 @@ function generateInstrumentMaster(): InstrumentRow[] {
      
      const logId = logEntry?.id;
      
-    // Generate comprehensive instrument list
-    const instruments = generateInstrumentMaster();
-     console.log(`Parsed ${instruments.length} instruments from CSV`);
+    // Fetch instruments from Dhan CSVs in parallel
+    const [equityInstruments, fnoInstruments] = await Promise.all([
+      fetchEquityCSV().catch((e) => {
+        console.error("Equity CSV fetch failed:", e);
+        return [] as InstrumentRow[];
+      }),
+      fetchFNOCSV().catch((e) => {
+        console.error("F&O CSV fetch failed:", e);
+        return [] as InstrumentRow[];
+      }),
+    ]);
+    
+    const allInstruments = [...equityInstruments, ...fnoInstruments];
+    console.log(`Total instruments fetched: ${allInstruments.length}`);
+    
+    if (allInstruments.length === 0) {
+      throw new Error("No instruments fetched from Dhan CSVs");
+    }
      
      // Batch upsert in chunks of 500
      const BATCH_SIZE = 500;
      let inserted = 0;
      let updated = 0;
+    let errors = 0;
      
-    for (let i = 0; i < instruments.length; i += BATCH_SIZE) {
-      const batch = instruments.slice(i, i + BATCH_SIZE);
+    for (let i = 0; i < allInstruments.length; i += BATCH_SIZE) {
+      const batch = allInstruments.slice(i, i + BATCH_SIZE);
        
        const { error: upsertError } = await supabase
          .from("instrument_master")
@@ -312,14 +367,15 @@ function generateInstrumentMaster(): InstrumentRow[] {
        
        if (upsertError) {
          console.error(`Batch upsert error at ${i}:`, upsertError);
+        errors++;
        } else {
          inserted += batch.length;
        }
-       
-       // Small delay to avoid overwhelming the DB
-       await new Promise((resolve) => setTimeout(resolve, 100));
      }
      
+    const duration = Date.now() - startTime;
+    console.log(`Sync completed in ${duration}ms: ${inserted} instruments upserted, ${errors} batch errors`);
+    
      // Update sync log
      if (logId) {
        await supabase
@@ -327,26 +383,52 @@ function generateInstrumentMaster(): InstrumentRow[] {
          .update({
            status: "completed",
            completed_at: new Date().toISOString(),
-           total_rows: instruments.length,
+          total_rows: allInstruments.length,
            inserted_rows: inserted,
+          error_message: errors > 0 ? `${errors} batch errors` : null,
          })
          .eq("id", logId);
      }
      
-     console.log(`Sync completed: ${inserted} instruments upserted`);
-     
      return new Response(
        JSON.stringify({
          success: true,
-         message: `Synced ${inserted} instruments`,
-         total_parsed: instruments.length,
-         inserted: inserted,
+        message: `Synced ${inserted} instruments from Dhan`,
+        total_parsed: allInstruments.length,
+        equity_count: equityInstruments.length,
+        fno_count: fnoInstruments.length,
+        inserted: inserted,
+        errors: errors,
+        duration_ms: duration,
        }),
        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
      );
    } catch (error) {
      console.error("Instrument sync failed:", error);
      
+    // Update sync log with error
+    try {
+      const { data: logs } = await supabase
+        .from("instrument_sync_log")
+        .select("id")
+        .eq("status", "running")
+        .order("started_at", { ascending: false })
+        .limit(1);
+      
+      if (logs && logs[0]) {
+        await supabase
+          .from("instrument_sync_log")
+          .update({
+            status: "failed",
+            completed_at: new Date().toISOString(),
+            error_message: error instanceof Error ? error.message : "Unknown error",
+          })
+          .eq("id", logs[0].id);
+      }
+    } catch {
+      // Ignore log update errors
+    }
+    
      return new Response(
        JSON.stringify({
          success: false,
