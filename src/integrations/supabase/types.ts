@@ -20,6 +20,7 @@ export type Database = {
           condition_type: Database["public"]["Enums"]["alert_condition"]
           created_at: string | null
           exchange: string | null
+          exchange_segment: string | null
           expires_at: string | null
           id: string
           instrument_id: string | null
@@ -27,6 +28,7 @@ export type Database = {
           notes: string | null
           parameters: Json | null
           recurrence: Database["public"]["Enums"]["alert_recurrence"] | null
+          security_id: string | null
           symbol: string
           telegram_enabled: boolean | null
           threshold: number | null
@@ -38,6 +40,7 @@ export type Database = {
           condition_type: Database["public"]["Enums"]["alert_condition"]
           created_at?: string | null
           exchange?: string | null
+          exchange_segment?: string | null
           expires_at?: string | null
           id?: string
           instrument_id?: string | null
@@ -45,6 +48,7 @@ export type Database = {
           notes?: string | null
           parameters?: Json | null
           recurrence?: Database["public"]["Enums"]["alert_recurrence"] | null
+          security_id?: string | null
           symbol: string
           telegram_enabled?: boolean | null
           threshold?: number | null
@@ -56,6 +60,7 @@ export type Database = {
           condition_type?: Database["public"]["Enums"]["alert_condition"]
           created_at?: string | null
           exchange?: string | null
+          exchange_segment?: string | null
           expires_at?: string | null
           id?: string
           instrument_id?: string | null
@@ -63,6 +68,7 @@ export type Database = {
           notes?: string | null
           parameters?: Json | null
           recurrence?: Database["public"]["Enums"]["alert_recurrence"] | null
+          security_id?: string | null
           symbol?: string
           telegram_enabled?: boolean | null
           threshold?: number | null
@@ -89,6 +95,90 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string
+        }
+        Relationships: []
+      }
+      instrument_master: {
+        Row: {
+          display_name: string | null
+          exchange: string
+          exchange_segment: string
+          expiry: string | null
+          instrument_type: string
+          lot_size: number | null
+          option_type: string | null
+          security_id: string
+          strike: number | null
+          tick_size: number | null
+          trading_symbol: string
+          underlying_symbol: string | null
+          updated_at: string
+        }
+        Insert: {
+          display_name?: string | null
+          exchange: string
+          exchange_segment: string
+          expiry?: string | null
+          instrument_type: string
+          lot_size?: number | null
+          option_type?: string | null
+          security_id: string
+          strike?: number | null
+          tick_size?: number | null
+          trading_symbol: string
+          underlying_symbol?: string | null
+          updated_at?: string
+        }
+        Update: {
+          display_name?: string | null
+          exchange?: string
+          exchange_segment?: string
+          expiry?: string | null
+          instrument_type?: string
+          lot_size?: number | null
+          option_type?: string | null
+          security_id?: string
+          strike?: number | null
+          tick_size?: number | null
+          trading_symbol?: string
+          underlying_symbol?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      instrument_sync_log: {
+        Row: {
+          completed_at: string | null
+          error_message: string | null
+          id: string
+          inserted_rows: number | null
+          started_at: string
+          status: string
+          sync_type: string | null
+          total_rows: number | null
+          updated_rows: number | null
+        }
+        Insert: {
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          inserted_rows?: number | null
+          started_at?: string
+          status?: string
+          sync_type?: string | null
+          total_rows?: number | null
+          updated_rows?: number | null
+        }
+        Update: {
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          inserted_rows?: number | null
+          started_at?: string
+          status?: string
+          sync_type?: string | null
+          total_rows?: number | null
+          updated_rows?: number | null
         }
         Relationships: []
       }
@@ -384,8 +474,9 @@ export type Database = {
           created_at: string | null
           current_price: number | null
           dhan_order_id: string | null
-          entry_price: number
+          entry_price: number | null
           entry_time: string
+          exchange_segment: string | null
           holding_period: string | null
           id: string
           instrument_token: string | null
@@ -394,6 +485,7 @@ export type Database = {
           pnl_percent: number | null
           quantity: number
           rating: number | null
+          security_id: string | null
           segment: Database["public"]["Enums"]["market_segment"]
           status: Database["public"]["Enums"]["trade_status"] | null
           stop_loss: number | null
@@ -422,8 +514,9 @@ export type Database = {
           created_at?: string | null
           current_price?: number | null
           dhan_order_id?: string | null
-          entry_price: number
+          entry_price?: number | null
           entry_time?: string
+          exchange_segment?: string | null
           holding_period?: string | null
           id?: string
           instrument_token?: string | null
@@ -432,6 +525,7 @@ export type Database = {
           pnl_percent?: number | null
           quantity: number
           rating?: number | null
+          security_id?: string | null
           segment: Database["public"]["Enums"]["market_segment"]
           status?: Database["public"]["Enums"]["trade_status"] | null
           stop_loss?: number | null
@@ -460,8 +554,9 @@ export type Database = {
           created_at?: string | null
           current_price?: number | null
           dhan_order_id?: string | null
-          entry_price?: number
+          entry_price?: number | null
           entry_time?: string
+          exchange_segment?: string | null
           holding_period?: string | null
           id?: string
           instrument_token?: string | null
@@ -470,6 +565,7 @@ export type Database = {
           pnl_percent?: number | null
           quantity?: number
           rating?: number | null
+          security_id?: string | null
           segment?: Database["public"]["Enums"]["market_segment"]
           status?: Database["public"]["Enums"]["trade_status"] | null
           stop_loss?: number | null

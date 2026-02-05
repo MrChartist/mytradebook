@@ -20,3 +20,9 @@ verify_jwt = false
 
 [functions.get-live-prices]
 verify_jwt = false
+
+[functions.instrument-sync]
+verify_jwt = false
+
+[functions.instrument-search]
+verify_jwt = false
