@@ -66,51 +66,42 @@ export const createTradeSchema = z.object({
   trade_type: z.enum(tradeTypes, {
     required_error: "Trade type is required",
   }),
-  quantity: z
-    .number({ invalid_type_error: "Quantity must be a number" })
-    .int("Quantity must be a whole number")
-    .positive("Quantity must be positive")
-    .optional()
-    .default(1),
-  entry_price: z
-    .number({ invalid_type_error: "Entry price must be a number" })
-    .positive("Entry price must be positive")
-    .optional()
-    .nullable(),
-  stop_loss: z
-    .number({ invalid_type_error: "Stop loss must be a number" })
-    .positive("Stop loss must be positive")
-    .optional()
-    .nullable(),
+  quantity: z.preprocess(
+    (val) => (val === "" || val === undefined || val === null ? 1 : Number(val)),
+    z.number().int().positive().optional().default(1)
+  ),
+  entry_price: z.preprocess(
+    (val) => (val === "" || val === undefined || val === null || Number.isNaN(Number(val)) ? null : Number(val)),
+    z.number().positive().nullable().optional()
+  ),
+  stop_loss: z.preprocess(
+    (val) => (val === "" || val === undefined || val === null || Number.isNaN(Number(val)) ? null : Number(val)),
+    z.number().positive().nullable().optional()
+  ),
   targets: z.array(z.number().positive()).max(5).optional().nullable(),
-  rating: z
-    .number()
-    .int()
-    .min(1, "Rating must be at least 1")
-    .max(10, "Rating must be at most 10")
-    .optional(),
-  confidence_score: z
-    .number()
-    .int()
-    .min(1, "Confidence must be at least 1")
-    .max(5, "Confidence must be at most 5")
-    .optional(),
+  rating: z.preprocess(
+    (val) => (val === "" || val === undefined || val === null || Number.isNaN(Number(val)) ? null : Number(val)),
+    z.number().int().min(1).max(10).nullable().optional()
+  ),
+  confidence_score: z.preprocess(
+    (val) => (val === "" || val === undefined || val === null || Number.isNaN(Number(val)) ? null : Number(val)),
+    z.number().int().min(1).max(5).nullable().optional()
+  ),
   timeframe: z.enum(timeframes).optional(),
   holding_period: z.string().max(50).optional(),
   trailing_sl_enabled: z.boolean().default(false),
-  trailing_sl_percent: z
-    .number()
-    .positive("Trailing SL percent must be positive")
-    .max(50, "Trailing SL percent must be at most 50%")
-    .optional(),
-  trailing_sl_points: z
-    .number()
-    .positive("Trailing SL points must be positive")
-    .optional(),
-  trailing_sl_trigger_price: z
-    .number()
-    .positive("Trigger price must be positive")
-    .optional(),
+  trailing_sl_percent: z.preprocess(
+    (val) => (val === "" || val === undefined || val === null || Number.isNaN(Number(val)) ? null : Number(val)),
+    z.number().positive().max(50).nullable().optional()
+  ),
+  trailing_sl_points: z.preprocess(
+    (val) => (val === "" || val === undefined || val === null || Number.isNaN(Number(val)) ? null : Number(val)),
+    z.number().positive().nullable().optional()
+  ),
+  trailing_sl_trigger_price: z.preprocess(
+    (val) => (val === "" || val === undefined || val === null || Number.isNaN(Number(val)) ? null : Number(val)),
+    z.number().positive().nullable().optional()
+  ),
   notes: z.string().max(1000, "Notes must be less than 1000 characters").optional(),
   study_id: z.string().uuid().optional(),
   chart_images: z.array(z.string().url()).max(5).optional(),
