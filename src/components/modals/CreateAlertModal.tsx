@@ -28,7 +28,7 @@
  import { Textarea } from "@/components/ui/textarea";
  import { Switch } from "@/components/ui/switch";
  import { Alert, AlertDescription } from "@/components/ui/alert";
- import { Loader2, Search, AlertCircle, Star, Clock, Send } from "lucide-react";
+ import { Loader2, AlertCircle, Send } from "lucide-react";
  import {
    createAlertSchema,
    type CreateAlertInput,
@@ -36,8 +36,7 @@
    alertRecurrenceTypes,
  } from "@/lib/schemas";
  import { useAlerts } from "@/hooks/useAlerts";
- import { useInstrumentSearch, type Instrument } from "@/hooks/useInstrumentSearch";
- import { cn } from "@/lib/utils";
+ import { InstrumentPicker, type SelectedInstrument } from "@/components/trade/InstrumentPicker";
  
  interface CreateAlertModalProps {
    open: boolean;
@@ -61,22 +60,8 @@
  
  export function CreateAlertModal({ open, onOpenChange }: CreateAlertModalProps) {
    const { createAlert } = useAlerts();
-   const [selectedTab, setSelectedTab] = useState<"search" | "recent" | "favorites">("search");
-   const [exchangeFilter, setExchangeFilter] = useState<"ALL" | "NSE" | "NFO" | "MCX">("ALL");
-   const [selectedInstrument, setSelectedInstrument] = useState<Instrument | null>(null);
+   const [selectedInstrument, setSelectedInstrument] = useState<SelectedInstrument | null>(null);
    const [submitError, setSubmitError] = useState<string | null>(null);
- 
-   const {
-     query,
-     setQuery,
-     instruments,
-     isLoading,
-     recentInstruments,
-     favoriteInstruments,
-     addToRecent,
-     toggleFavorite,
-     isFavorite,
-   } = useInstrumentSearch({ exchange: exchangeFilter, limit: 50 });
  
    const form = useForm<CreateAlertInput>({
      resolver: zodResolver(createAlertSchema),
@@ -91,18 +76,11 @@
      },
    });
  
-   const handleSelectInstrument = (instrument: Instrument) => {
+   const handleInstrumentSelect = (instrument: SelectedInstrument) => {
      setSelectedInstrument(instrument);
-     form.setValue("symbol", instrument.trading_symbol);
+     form.setValue("symbol", instrument.symbol);
      form.setValue("exchange", instrument.exchange as "NSE" | "NFO" | "MCX");
-     form.setValue("instrument_id", instrument.security_id);
-     addToRecent(instrument);
-     setQuery("");
-   };
- 
-   const handleToggleFavorite = (instrument: Instrument, e: React.MouseEvent) => {
-     e.stopPropagation();
-     toggleFavorite(instrument);
+     form.setValue("instrument_id", instrument.security_id || undefined);
    };
  
    const selectedCondition = form.watch("condition_type");
@@ -143,13 +121,14 @@
          expires_at: data.expires_at || null,
          notes: data.notes || null,
          telegram_enabled: data.telegram_enabled || false,
-         instrument_id: selectedInstrument.security_id,
+         instrument_id: selectedInstrument.security_id || undefined,
          exchange: data.exchange || "NSE",
+         exchange_segment: selectedInstrument.exchange_segment,
+         security_id: selectedInstrument.security_id || undefined,
        });
  
        form.reset();
        setSelectedInstrument(null);
-       setQuery("");
        onOpenChange(false);
      } catch (error) {
        const message = error instanceof Error ? error.message : "Failed to create alert";
@@ -157,57 +136,15 @@
      }
    };
  
-   const renderInstrumentList = (instrumentList: Instrument[]) => (
-     <div className="max-h-48 overflow-y-auto space-y-1">
-       {isLoading && selectedTab === "search" ? (
-         <div className="flex items-center justify-center py-4">
-           <Loader2 className="w-4 h-4 animate-spin mr-2" />
-           <span className="text-sm text-muted-foreground">Searching...</span>
-         </div>
-       ) : instrumentList.length === 0 ? (
-         <p className="text-sm text-muted-foreground text-center py-4">
-           {selectedTab === "search" ? "No instruments found. Try syncing instrument master." : 
-            selectedTab === "recent" ? "No recent instruments" : "No favorites yet"}
-         </p>
-       ) : (
-         instrumentList.map((instrument) => (
-           <div
-             key={instrument.security_id}
-             onClick={() => handleSelectInstrument(instrument)}
-             className={cn(
-               "flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors",
-               selectedInstrument?.security_id === instrument.security_id
-                 ? "bg-primary/20 border border-primary/50"
-                 : "hover:bg-accent"
-             )}
-           >
-             <div>
-               <span className="font-medium">{instrument.trading_symbol}</span>
-               <span className="ml-2 text-xs text-muted-foreground">
-                 {instrument.exchange} • {instrument.instrument_type}
-               </span>
-             </div>
-             <button
-               onClick={(e) => handleToggleFavorite(instrument, e)}
-               className="p-1 hover:bg-background rounded"
-             >
-               <Star
-                 className={cn(
-                   "w-4 h-4",
-                   isFavorite(instrument.security_id)
-                     ? "fill-warning text-warning"
-                     : "text-muted-foreground"
-                 )}
-               />
-             </button>
-           </div>
-         ))
-       )}
-     </div>
-   );
+   const handleClose = () => {
+     form.reset();
+     setSelectedInstrument(null);
+     setSubmitError(null);
+     onOpenChange(false);
+   };
  
    return (
-     <Dialog open={open} onOpenChange={onOpenChange}>
+     <Dialog open={open} onOpenChange={handleClose}>
        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
          <DialogHeader>
            <DialogTitle>Create New Alert</DialogTitle>
@@ -225,108 +162,11 @@
                </Alert>
              )}
  
-             {/* Instrument Selection */}
-             <div className="space-y-2">
-               <FormLabel>Symbol *</FormLabel>
-               
-               {selectedInstrument ? (
-                 <div className="flex items-center justify-between p-3 bg-accent rounded-lg">
-                   <div>
-                     <span className="font-semibold">{selectedInstrument.trading_symbol}</span>
-                     <span className="ml-2 text-sm text-muted-foreground">
-                       {selectedInstrument.exchange}
-                     </span>
-                   </div>
-                   <Button
-                     type="button"
-                     variant="ghost"
-                     size="sm"
-                     onClick={() => setSelectedInstrument(null)}
-                   >
-                     Change
-                   </Button>
-                 </div>
-               ) : (
-                 <div className="space-y-2">
-                   {/* Exchange Filter */}
-                   <div className="flex gap-1">
-                     {(["ALL", "NSE", "NFO", "MCX"] as const).map((ex) => (
-                       <Button
-                         key={ex}
-                         type="button"
-                         variant={exchangeFilter === ex ? "default" : "outline"}
-                         size="sm"
-                         onClick={() => setExchangeFilter(ex)}
-                         className="text-xs"
-                       >
-                         {ex}
-                       </Button>
-                     ))}
-                   </div>
- 
-                   {/* Tabs */}
-                   <div className="flex gap-1 border-b">
-                     <button
-                       type="button"
-                       onClick={() => setSelectedTab("search")}
-                       className={cn(
-                         "px-3 py-1.5 text-sm transition-colors",
-                         selectedTab === "search"
-                           ? "border-b-2 border-primary text-primary"
-                           : "text-muted-foreground"
-                       )}
-                     >
-                       <Search className="w-3 h-3 inline mr-1" />
-                       Search
-                     </button>
-                     <button
-                       type="button"
-                       onClick={() => setSelectedTab("recent")}
-                       className={cn(
-                         "px-3 py-1.5 text-sm transition-colors",
-                         selectedTab === "recent"
-                           ? "border-b-2 border-primary text-primary"
-                           : "text-muted-foreground"
-                       )}
-                     >
-                       <Clock className="w-3 h-3 inline mr-1" />
-                       Recent
-                     </button>
-                     <button
-                       type="button"
-                       onClick={() => setSelectedTab("favorites")}
-                       className={cn(
-                         "px-3 py-1.5 text-sm transition-colors",
-                         selectedTab === "favorites"
-                           ? "border-b-2 border-primary text-primary"
-                           : "text-muted-foreground"
-                       )}
-                     >
-                       <Star className="w-3 h-3 inline mr-1" />
-                       Favorites
-                     </button>
-                   </div>
- 
-                   {/* Search Input */}
-                   {selectedTab === "search" && (
-                     <div className="relative">
-                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                       <Input
-                         placeholder="Search symbols..."
-                         value={query}
-                         onChange={(e) => setQuery(e.target.value)}
-                         className="pl-10"
-                       />
-                     </div>
-                   )}
- 
-                   {/* Instrument List */}
-                   {selectedTab === "search" && renderInstrumentList(instruments)}
-                   {selectedTab === "recent" && renderInstrumentList(recentInstruments)}
-                   {selectedTab === "favorites" && renderInstrumentList(favoriteInstruments)}
-                 </div>
-               )}
-             </div>
+             {/* Instrument Picker */}
+             <InstrumentPicker
+               onSelect={handleInstrumentSelect}
+               showLtpFetch={false}
+             />
  
              {/* Condition Type */}
              <FormField
@@ -463,7 +303,7 @@
                <Button
                  type="button"
                  variant="outline"
-                 onClick={() => onOpenChange(false)}
+                 onClick={handleClose}
                >
                  Cancel
                </Button>
