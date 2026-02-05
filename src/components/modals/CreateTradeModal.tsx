@@ -94,6 +94,13 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
    const tradeTypeValue = tradeType ?? "";
    const timeframeValue = timeframe ?? "";
  
+  // Helper to safely convert to number or null (avoiding NaN)
+  const toNumberOrNull = (value: unknown): number | null => {
+    if (value === undefined || value === null || value === "") return null;
+    const num = Number(value);
+    return Number.isNaN(num) ? null : num;
+  };
+
   const onSubmit = async (data: CreateTradeInput) => {
     // Validate minimum required fields
     const symbolToUse = data.symbol || watch("symbol");
@@ -102,32 +109,42 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
       return;
     }
 
+    // Sanitize all numeric fields to avoid NaN
+    const sanitizedEntryPrice = toNumberOrNull(data.entry_price);
+    const sanitizedStopLoss = toNumberOrNull(data.stop_loss);
+    const sanitizedRating = toNumberOrNull(data.rating);
+    const sanitizedConfidence = toNumberOrNull(data.confidence_score);
+    const sanitizedTrailingPercent = toNumberOrNull(data.trailing_sl_percent);
+    const sanitizedTrailingPoints = toNumberOrNull(data.trailing_sl_points);
+    const sanitizedTriggerPrice = toNumberOrNull(data.trailing_sl_trigger_price);
+    const sanitizedQuantity = toNumberOrNull(data.quantity) || 1;
+
     try {
       // Determine status: PENDING if missing key fields, OPEN otherwise
-      const hasKeyFields = data.entry_price && data.entry_price > 0;
+      const hasKeyFields = sanitizedEntryPrice && sanitizedEntryPrice > 0;
       const tradeStatus = hasKeyFields ? "OPEN" : "PENDING";
 
       const newTrade = await createTrade.mutateAsync({
         symbol: symbolToUse,
         segment: data.segment,
         trade_type: data.trade_type,
-        quantity: data.quantity || 1,
-        entry_price: data.entry_price || 0, // DB requires a value
-        stop_loss: data.stop_loss || null,
+        quantity: sanitizedQuantity,
+        entry_price: sanitizedEntryPrice || 0, // DB requires a value
+        stop_loss: sanitizedStopLoss,
         targets: targets.length > 0 ? targets : null,
-        rating: data.rating || null,
-        confidence_score: data.confidence_score || null,
-        notes: data.notes || null,
+        rating: sanitizedRating,
+        confidence_score: sanitizedConfidence,
+        notes: data.notes?.trim() || null,
         study_id: data.study_id || null,
         status: tradeStatus,
         entry_time: new Date().toISOString(),
         chart_images: chartImages.length > 0 ? chartImages : null,
         timeframe: data.timeframe || null,
-        holding_period: data.holding_period || null,
+        holding_period: data.holding_period?.trim() || null,
         trailing_sl_enabled: data.trailing_sl_enabled || false,
-        trailing_sl_percent: trailingSlType === "percent" ? data.trailing_sl_percent : null,
-        trailing_sl_points: trailingSlType === "points" ? data.trailing_sl_points : null,
-        trailing_sl_trigger_price: data.trailing_sl_trigger_price || null,
+        trailing_sl_percent: trailingSlType === "percent" ? sanitizedTrailingPercent : null,
+        trailing_sl_points: trailingSlType === "points" ? sanitizedTrailingPoints : null,
+        trailing_sl_trigger_price: sanitizedTriggerPrice,
         auto_track_enabled: autoTrackEnabled,
         telegram_post_enabled: telegramPostEnabled,
         contract_key: contractKey || null,

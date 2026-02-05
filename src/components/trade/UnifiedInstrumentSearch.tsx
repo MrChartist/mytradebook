@@ -1,4 +1,4 @@
- import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
  import { Input } from "@/components/ui/input";
  import { Label } from "@/components/ui/label";
  import { Button } from "@/components/ui/button";
@@ -37,23 +37,82 @@
  }
  
  // Instrument master data
- const NSE_EQUITY = [
-   "RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK", "SBIN", "BHARTIARTL",
-   "HINDUNILVR", "ITC", "LT", "KOTAKBANK", "AXISBANK", "MARUTI", "TITAN",
-   "WIPRO", "ADANIENT", "TATAMOTORS", "SUNPHARMA", "BAJFINANCE", "HCLTECH",
-   "NESTLEIND", "ULTRACEMCO", "POWERGRID", "NTPC", "ONGC", "COALINDIA",
-   "TATASTEEL", "JSWSTEEL", "HINDALCO", "GRASIM", "DRREDDY", "DIVISLAB",
-   "CIPLA", "APOLLOHOSP", "TECHM", "BPCL", "INDUSINDBK", "EICHERMOT",
-   "ASIANPAINT", "BRITANNIA", "HEROMOTOCO", "M&M", "BAJAJ-AUTO", "TATACONSUM"
- ];
- 
- const NFO_UNDERLYINGS = [
-   "NIFTY", "BANKNIFTY", "FINNIFTY", "MIDCPNIFTY",
-   "RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK", "SBIN", "BHARTIARTL",
-   "HINDUNILVR", "ITC", "LT", "KOTAKBANK", "AXISBANK", "MARUTI", "TITAN",
-   "WIPRO", "ADANIENT", "TATAMOTORS", "SUNPHARMA", "BAJFINANCE", "HCLTECH",
-   "TATASTEEL", "JSWSTEEL", "HINDALCO", "M&M", "BAJAJ-AUTO"
- ];
+// Complete NSE EQUITY list - All Nifty 500 + active stocks
+const NSE_EQUITY = [
+  // Nifty 50
+  "RELIANCE", "TCS", "HDFCBANK", "INFY", "ICICIBANK", "HINDUNILVR", "ITC", "SBIN", "BHARTIARTL", "KOTAKBANK",
+  "LT", "AXISBANK", "ASIANPAINT", "MARUTI", "TITAN", "BAJFINANCE", "SUNPHARMA", "WIPRO", "HCLTECH", "NTPC",
+  "TATAMOTORS", "ULTRACEMCO", "POWERGRID", "NESTLEIND", "ONGC", "ADANIENT", "ADANIPORTS", "JSWSTEEL", "COALINDIA", "BAJAJFINSV",
+  "TATASTEEL", "HINDALCO", "DRREDDY", "GRASIM", "TECHM", "BPCL", "EICHERMOT", "DIVISLAB", "CIPLA", "BRITANNIA",
+  "HEROMOTOCO", "M&M", "BAJAJ-AUTO", "INDUSINDBK", "TATACONSUM", "APOLLOHOSP", "SBILIFE", "HDFCLIFE", "LTIM", "UPL",
+  // Nifty Next 50
+  "ADANIGREEN", "AMBUJACEM", "AUROPHARMA", "BAJAJHLDNG", "BANKBARODA", "BEL", "BERGEPAINT", "BIOCON", "BOSCHLTD", "CANBK",
+  "CHOLAFIN", "COLPAL", "CONCOR", "DABUR", "DLF", "DMART", "GAIL", "GODREJCP", "HAVELLS", "HINDZINC",
+  "ICICIPRULI", "ICICIGI", "IDEA", "IDFCFIRSTB", "IGL", "INDIGO", "IOC", "IRCTC", "JINDALSTEL", "JSWENERGY",
+  "LICI", "LUPIN", "MARICO", "MCDOWELL-N", "MPHASIS", "MUTHOOTFIN", "NAUKRI", "OBEROIRLTY", "OFSS", "PAGEIND",
+  "PAYTM", "PGHH", "PIDILITIND", "PNB", "POLYCAB", "RECLTD", "SAIL", "SBICARD", "SHREECEM", "SHRIRAMFIN",
+  "SIEMENS", "SRF", "TATAPOWER", "TORNTPHARM", "TRENT", "UNIONBANK", "VEDL", "VBL", "VOLTAS", "ZOMATO",
+  // Nifty Midcap Select
+  "ABCAPITAL", "ACC", "AARTIIND", "ABB", "ABBOTINDIA", "AUBANK", "BALKRISIND", "BALRAMCHIN", "BANDHANBNK", "BATAINDIA",
+  "BHARATFORG", "BHEL", "BLUEDART", "CANFINHOME", "CESC", "CGPOWER", "CHAMBLFERT", "CUMMINSIND", "DEEPAKNTR", "DIXON",
+  "ESCORTS", "EXIDEIND", "FEDERALBNK", "FLUOROCHEM", "FORTIS", "GLENMARK", "GMRINFRA", "GODREJPROP", "GRANULES", "GSPL",
+  "GUJGASLTD", "HAL", "HATSUN", "HINDCOPPER", "HINDPETRO", "HONAUT", "IPCALAB", "IRFC", "ISEC", "JKCEMENT",
+  "JSL", "JUBLFOOD", "KAJARIACER", "KEI", "KPITTECH", "L&TFH", "LAURUSLABS", "LICHSGFIN", "LTTS", "MANAPPURAM",
+  "MAXHEALTH", "MCX", "METROPOLIS", "MFSL", "MGL", "MOTHERSON", "MRF", "NATIONALUM", "NAVINFLUOR", "NBCC",
+  "NCC", "NHPC", "NMDC", "PATANJALI", "PERSISTENT", "PETRONET", "PIIND", "PFC", "PHOENIXLTD", "PRESTIGE",
+  "PVRINOX", "RAMCOCEM", "RBLBANK", "RELAXO", "RVNL", "SOLARINDS", "SONACOMS", "STARHEALTH", "SUMICHEM", "SUNDARMFIN",
+  "SUNTV", "SUPREMEIND", "SYNGENE", "TATACHEM", "TATACOMM", "TATAELXSI", "TATAINVEST", "TVSMOTOR", "THERMAX", "TIMKEN",
+  "TIINDIA", "TORNTPOWER", "TTML", "UBL", "WHIRLPOOL", "ZEEL", "ZYDUSLIFE",
+  // Popular Mid & Small caps
+  "360ONE", "3MINDIA", "AARTIDRUGS", "AFFLE", "AIAENG", "AJANTPHARM", "ALKEM", "ALLCARGO", "AMARAJABAT", "ANURAS",
+  "APOLLOTYRE", "APTUS", "ASHOKLEY", "ASAHIINDIA", "ASTRAL", "ATUL", "BASF", "BAYERCROP", "BEML", "BLS",
+  "BLUESTARCO", "BRIGADE", "BSE", "CARBORUNIV", "CASTROLIND", "CDSL", "CENTRALBK", "CENTURYTEX", "CERA", "CHALET",
+  "CLEAN", "COCHINSHIP", "COFORGE", "CROMPTON", "CYIENT", "DATAPATTNS", "DCMSHRIRAM", "DELTACORP", "DEVYANI", "DELHIVERY",
+  "ECLERX", "EIDPARRY", "ELECON", "ELGIEQUIP", "EMAMILTD", "ENDURANCE", "ENGINERSIN", "EPIGRAL", "EQUITASBNK", "ERIS",
+  "FINCABLES", "FINPIPE", "FIVESTAR", "FSL", "GICRE", "GILLETTE", "GLAXO", "GNFC", "GPPL", "GRAPHITE",
+  "GRINDWELL", "GRINFRA", "GSFC", "HAPPSTMNDS", "HCC", "HEG", "HFCL", "HOMEFIRST", "IBREALEST", "IDFC",
+  "IIFL", "INDHOTEL", "INDUSTOWER", "INFIBEAM", "INGERRAND", "INTELLECT", "IRB", "ITEOSW", "ITI", "J&KBANK",
+  "JAMNAAUTO", "JBCHEPHARM", "JINDALSAW", "JKTYRE", "JMFINANCIL", "JSWINFRA", "JTEKTINDIA", "KALPATPOWR", "KALYANKJIL", "KANSAINER",
+  "KEC", "KFINTECH", "KIOCL", "KIRLOSENG", "KRBL", "KSB", "LALPATHLAB", "LATENTVIEW", "LEMONTREE", "LINDEINDIA",
+  "LLOYDSME", "LODHA", "LTFOODS", "MAHINDCIE", "MAHLIFE", "MAHSEAMLES", "MAPMYINDIA", "MAZDOCK", "METROBRAND", "MINDACORP",
+  "MMTC", "MOIL", "MOTILALOFS", "NAM-INDIA", "NATCOPHARM", "NESCO", "NETWORK18", "NH", "NLCINDIA", "NSLNISP",
+  "NUCLEUS", "OLECTRA", "ORIENTELEC", "PNBHOUSING", "POLYMED", "POONAWALLA", "POWERINDIA", "PRINCEPIPE", "PRSMJOHNSN", "PTC",
+  "QUESS", "RADICO", "RAIN", "RAJESHEXPO", "RKFORGE", "RAYMOND", "REDINGTON", "RELINFRA", "RENUKA", "RHIM",
+  "ROSSARI", "ROUTE", "RPOWER", "RTNINDIA", "SAFARI", "SANOFI", "SAPPHIRE", "SCHAEFFLER", "SCHNEIDER", "SEQUENT",
+  "SHILPAMED", "SHOPERSTOP", "SJVN", "SKFINDIA", "SOBHA", "SOLARA", "SONATSOFTW", "SOUTHBANK", "SPARC", "SPLPETRO",
+  "SRHHYPOLTD", "STAR", "SUNDRMFAST", "SUVEN", "SUZLON", "SYMPHONY", "TANLA", "TASTYBITE", "TATACOFFEE", "TATATECH",
+  "TEAMLEASE", "TEJASNET", "THYROCARE", "TITAGARH", "TRIDENT", "TRITURBINE", "TRIVENI", "TV18BRDCST", "UCOBANK", "UJJIVANSFB",
+  "UTIAMC", "VGUARD", "VINATIORGA", "WIPRO", "WOCKPHARMA", "YESBANK", "ZEEMEDIA", "ZENTEC", "ZFCVINDIA", "ZENSARTECH"
+].sort();
+
+// NFO Underlyings - All F&O eligible stocks + indices
+const NFO_UNDERLYINGS = [
+  // Index Options
+  "NIFTY", "BANKNIFTY", "FINNIFTY", "MIDCPNIFTY", "SENSEX", "BANKEX",
+  // Nifty 50 F&O
+  "RELIANCE", "TCS", "HDFCBANK", "INFY", "ICICIBANK", "HINDUNILVR", "ITC", "SBIN", "BHARTIARTL", "KOTAKBANK",
+  "LT", "AXISBANK", "ASIANPAINT", "MARUTI", "TITAN", "BAJFINANCE", "SUNPHARMA", "WIPRO", "HCLTECH", "NTPC",
+  "TATAMOTORS", "ULTRACEMCO", "POWERGRID", "NESTLEIND", "ONGC", "ADANIENT", "ADANIPORTS", "JSWSTEEL", "COALINDIA", "BAJAJFINSV",
+  "TATASTEEL", "HINDALCO", "DRREDDY", "GRASIM", "TECHM", "BPCL", "EICHERMOT", "DIVISLAB", "CIPLA", "BRITANNIA",
+  "HEROMOTOCO", "M&M", "BAJAJ-AUTO", "INDUSINDBK", "TATACONSUM", "APOLLOHOSP", "SBILIFE", "HDFCLIFE", "LTIM", "UPL",
+  // Additional F&O stocks
+  "AARTIIND", "ABB", "ABBOTINDIA", "ABCAPITAL", "ABFRL", "ACC", "ADANIGREEN", "ALKEM", "AMBUJACEM", "APOLLOTYRE",
+  "ASHOKLEY", "ASTRAL", "ATUL", "AUBANK", "AUROPHARMA", "BALKRISIND", "BANDHANBNK", "BANKBARODA", "BATAINDIA", "BEL",
+  "BERGEPAINT", "BHARATFORG", "BHEL", "BIOCON", "BOSCHLTD", "CANBK", "CANFINHOME", "CGPOWER", "CHAMBLFERT", "CHOLAFIN",
+  "COFORGE", "COLPAL", "CONCOR", "COROMANDEL", "CROMPTON", "CUB", "CUMMINSIND", "DALBHARAT", "DEEPAKNTR", "DELTACORP",
+  "DIXON", "DLF", "ESCORTS", "EXIDEIND", "FEDERALBNK", "GAIL", "GLENMARK", "GMRINFRA", "GNFC", "GODREJCP",
+  "GODREJPROP", "GRANULES", "GRASIM", "GUJGASLTD", "HAL", "HAVELLS", "HINDCOPPER", "HINDPETRO", "HINDZINC", "HONAUT",
+  "IBULHSGFIN", "ICICIPRULI", "IDEA", "IDFCFIRSTB", "IEX", "IGL", "INDHOTEL", "INDIGO", "INDUSTOWER", "INTELLECT",
+  "IOC", "IPCALAB", "IRCTC", "ISEC", "JINDALSTEL", "JKCEMENT", "JSWENERGY", "JUBLFOOD", "KEI", "KPITTECH",
+  "L&TFH", "LALPATHLAB", "LAURUSLABS", "LICHSGFIN", "LTTS", "LUPIN", "M&MFIN", "MANAPPURAM", "MARICO", "MAXHEALTH",
+  "MCX", "METROPOLIS", "MFSL", "MGL", "MOTHERSON", "MPHASIS", "MRF", "MUTHOOTFIN", "NAM-INDIA", "NATIONALUM",
+  "NAUKRI", "NAVINFLUOR", "NBCC", "NCC", "NHPC", "NMDC", "OBEROIRLTY", "OFSS", "PAGEIND", "PATANJALI",
+  "PERSISTENT", "PETRONET", "PFC", "PIDILITIND", "PIIND", "PNB", "POLYCAB", "PVRINOX", "RAMCOCEM", "RBLBANK",
+  "RECLTD", "RELAXO", "SAIL", "SBICARD", "SHREECEM", "SHRIRAMFIN", "SIEMENS", "SRF", "STAR", "SUNDARMFIN",
+  "SUNTV", "SYNGENE", "TATACHEM", "TATACOMM", "TATAELXSI", "TATAPOWER", "TRENT", "TRIDENT", "TVSMOTOR", "UBL",
+  "UNIONBANK", "UNITDSPR", "UPL", "VEDL", "VOLTAS", "WHIRLPOOL", "ZEEL", "ZOMATO", "ZYDUSLIFE"
+].sort();
+
  
  const MCX_COMMODITIES = [
    { symbol: "GOLD", name: "Gold", lotSize: 100 },
@@ -187,6 +246,7 @@
  
  export function UnifiedInstrumentSearch({ segment, onSelect, className }: UnifiedInstrumentSearchProps) {
    const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
    const [selectedSymbol, setSelectedSymbol] = useState("");
    const [exchange, setExchange] = useState<"NSE" | "NFO" | "MCX">("NSE");
    const [instrumentType, setInstrumentType] = useState<"equity" | "futures" | "options">("equity");
@@ -203,6 +263,15 @@
    const [recentInstruments, setRecentInstruments] = useState<string[]>([]);
    const [favorites, setFavorites] = useState<string[]>([]);
    const [isConfirmed, setIsConfirmed] = useState(false);
+  
+  // Debounce search query
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => {
+    debounceRef.current = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 150);
+    return () => clearTimeout(debounceRef.current);
+  }, [searchQuery]);
    
    // Load recent/favorites on mount
    useEffect(() => {
@@ -239,11 +308,12 @@
    
    // Filter instruments based on search
    const filteredInstruments = useMemo(() => {
-     if (!searchQuery) return instruments.slice(0, 20);
+      if (!debouncedQuery.trim()) return instruments.slice(0, 30);
+      const query = debouncedQuery.toUpperCase().trim();
      return instruments.filter(s => 
-       s.toLowerCase().includes(searchQuery.toLowerCase())
-     ).slice(0, 20);
-   }, [instruments, searchQuery]);
+        s.includes(query) || s.startsWith(query)
+      ).slice(0, 50);
+    }, [instruments, debouncedQuery]);
    
    const optionExpiries = useMemo(() => generateExpiryDates(), []);
    const futuresExpiries = useMemo(() => generateFuturesExpiries(), []);
@@ -422,7 +492,11 @@
            <TabsContent value="all" className="mt-2">
              <ScrollArea className="h-28">
                <div className="flex flex-wrap gap-1.5">
-                 {filteredInstruments.map((sym) => (
+                  {filteredInstruments.length === 0 ? (
+                    <p className="text-xs text-muted-foreground py-2">
+                      No instruments found for "{debouncedQuery}". Try a different search term.
+                    </p>
+                  ) : filteredInstruments.map((sym) => (
                    <Badge
                      key={sym}
                      variant="outline"
