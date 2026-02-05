@@ -57,9 +57,9 @@ export const createTradeSchema = z.object({
   symbol: z
     .string()
     .trim()
-    .min(1, "Symbol is required")
-    .max(20, "Symbol must be less than 20 characters")
-    .toUpperCase(),
+    .max(50, "Symbol must be less than 50 characters")
+    .toUpperCase()
+    .optional(),
   segment: z.enum(marketSegments, {
     required_error: "Segment is required",
   }),
@@ -74,12 +74,15 @@ export const createTradeSchema = z.object({
     .default(1),
   entry_price: z
     .number({ invalid_type_error: "Entry price must be a number" })
-    .positive("Entry price must be positive"),
+    .positive("Entry price must be positive")
+    .optional()
+    .nullable(),
   stop_loss: z
     .number({ invalid_type_error: "Stop loss must be a number" })
     .positive("Stop loss must be positive")
-    .optional(),
-  targets: z.array(z.number().positive()).max(3).optional(),
+    .optional()
+    .nullable(),
+  targets: z.array(z.number().positive()).max(5).optional().nullable(),
   rating: z
     .number()
     .int()
@@ -111,6 +114,11 @@ export const createTradeSchema = z.object({
   notes: z.string().max(1000, "Notes must be less than 1000 characters").optional(),
   study_id: z.string().uuid().optional(),
   chart_images: z.array(z.string().url()).max(5).optional(),
+  // New automation fields
+  auto_track_enabled: z.boolean().optional().default(false),
+  telegram_post_enabled: z.boolean().optional().default(false),
+  instrument_token: z.string().optional().nullable(),
+  contract_key: z.string().optional().nullable(),
 });
 
 export type CreateTradeInput = z.infer<typeof createTradeSchema>;
