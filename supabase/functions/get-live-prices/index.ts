@@ -8,38 +8,6 @@ const corsHeaders = {
 
 const DHAN_API_URL = "https://api.dhan.co/v2";
 
-// Mock prices for testing when Dhan API is not available
-const basePrices: Record<string, number> = {
-  RELIANCE: 2450,
-  TATASTEEL: 155,
-  INFY: 1520,
-  TCS: 3850,
-  HDFCBANK: 1680,
-  ICICIBANK: 1120,
-  SBIN: 780,
-  BHARTIARTL: 1380,
-  WIPRO: 480,
-  KOTAKBANK: 1850,
-  NIFTY: 22500,
-  BANKNIFTY: 48000,
-  ADANIENT: 2800,
-  LT: 3450,
-  MARUTI: 11200,
-  SUNPHARMA: 1780,
-  AXISBANK: 1150,
-  TITAN: 3650,
-  ASIANPAINT: 2900,
-  ULTRACEMCO: 11500,
-   RECLTD: 520,
-   GOLD: 72000,
-   SILVER: 85000,
-   CRUDEOIL: 5800,
-   NATURALGAS: 220,
-   COPPER: 780,
-   FINNIFTY: 21500,
-   MIDCPNIFTY: 11200,
-};
-
  interface InstrumentInput {
    symbol: string;
    security_id?: string | null;
@@ -159,30 +127,15 @@ serve(async (req) => {
       }
     }
 
-    // Fill in mock prices for any symbols not retrieved from Dhan
-    for (const symbol of symbols) {
-      if (!prices[symbol]) {
-        const base = basePrices[symbol.toUpperCase()] || 1000;
-        // Add some random variation to simulate price movement
-        const variation = (Math.random() - 0.5) * 0.02;
-        const ltp = base * (1 + variation);
-        const change = base * variation;
-        const changePercent = variation * 100;
-        
-        prices[symbol] = {
-          ltp: parseFloat(ltp.toFixed(2)),
-          change: parseFloat(change.toFixed(2)),
-          changePercent: parseFloat(changePercent.toFixed(2)),
-        };
-      }
-    }
+    // Note: Symbols without real Dhan data will NOT have prices returned
+    // This ensures we never show fake/mock prices to users
 
     return new Response(
       JSON.stringify({
         success: true,
         prices,
         timestamp: new Date().toISOString(),
-        source: DHAN_ACCESS_TOKEN ? "dhan" : "mock",
+        source: DHAN_ACCESS_TOKEN ? "dhan" : "unavailable",
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

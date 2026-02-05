@@ -218,13 +218,17 @@
        
        if (data?.success && data?.prices?.[instrument.symbol]) {
          const ltp = data.prices[instrument.symbol].ltp;
-         setLtpResult({ price: ltp, error: null });
-         // Update selection with LTP
-         const updated = { ...instrument, ltp };
-         setSelected(updated);
-         onSelect(updated);
+          if (ltp && ltp > 0) {
+            setLtpResult({ price: ltp, error: null });
+            // Update selection with LTP
+            const updated = { ...instrument, ltp };
+            setSelected(updated);
+            onSelect(updated);
+          } else {
+            setLtpResult({ price: null, error: "Price unavailable. Enter manually." });
+          }
        } else {
-         setLtpResult({ price: null, error: "Price not available" });
+          setLtpResult({ price: null, error: "Price unavailable. Enter manually." });
        }
      } catch (err) {
        console.error("LTP fetch error:", err);
