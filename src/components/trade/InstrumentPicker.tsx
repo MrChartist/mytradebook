@@ -73,7 +73,14 @@
    
    // LTP fetch state
    const [isFetchingLtp, setIsFetchingLtp] = useState(false);
-   const [ltpResult, setLtpResult] = useState<{ price: number | null; error: string | null }>({ price: null, error: null });
+  const [ltpResult, setLtpResult] = useState<{ 
+    price: number | null; 
+    error: string | null;
+    source?: string;
+    timestamp?: string;
+    change?: number;
+    changePercent?: number;
+  }>({ price: null, error: null });
    
    // Selection state
    const [selected, setSelected] = useState<SelectedInstrument | null>(null);
@@ -217,22 +224,30 @@
        if (error) throw error;
        
        if (data?.success && data?.prices?.[instrument.symbol]) {
-         const ltp = data.prices[instrument.symbol].ltp;
-          if (ltp && ltp > 0) {
-            setLtpResult({ price: ltp, error: null });
+        const priceData = data.prices[instrument.symbol];
+        const ltp = priceData.ltp;
+        if (ltp && ltp > 0) {
+          setLtpResult({ 
+            price: ltp, 
+            error: null,
+            source: priceData.source || data.source || "dhan",
+            timestamp: priceData.timestamp || data.timestamp,
+            change: priceData.change,
+            changePercent: priceData.changePercent,
+          });
             // Update selection with LTP
             const updated = { ...instrument, ltp };
             setSelected(updated);
             onSelect(updated);
-          } else {
-            setLtpResult({ price: null, error: "Price unavailable. Enter manually." });
-          }
-       } else {
+        } else {
           setLtpResult({ price: null, error: "Price unavailable. Enter manually." });
+        }
+      } else {
+        setLtpResult({ price: null, error: "Price unavailable. Enter manually." });
        }
      } catch (err) {
        console.error("LTP fetch error:", err);
-       setLtpResult({ price: null, error: "Price not available. Enter manually." });
+      setLtpResult({ price: null, error: "Failed to fetch price. Enter manually." });
      } finally {
        setIsFetchingLtp(false);
      }
@@ -317,9 +332,19 @@
                {selected.exchange} • {selected.instrument_type}
              </span>
              {ltpResult.price && (
-               <span className="ml-2 text-sm text-profit font-medium">
-                 LTP: ₹{ltpResult.price.toLocaleString()}
-               </span>
+                <div className="mt-1 flex items-center gap-2 flex-wrap">
+                  <span className="text-sm font-medium text-profit">
+                    LTP: ₹{ltpResult.price.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                  </span>
+                  {ltpResult.changePercent !== undefined && (
+                    <span className={`text-xs ${ltpResult.changePercent >= 0 ? "text-profit" : "text-loss"}`}>
+                      ({ltpResult.changePercent >= 0 ? "+" : ""}{ltpResult.changePercent.toFixed(2)}%)
+                    </span>
+                  )}
+                  <span className="text-xs text-muted-foreground">
+                    • {ltpResult.source} • {ltpResult.timestamp ? new Date(ltpResult.timestamp).toLocaleTimeString() : ""}
+                  </span>
+                </div>
              )}
            </div>
            <div className="flex items-center gap-2">
