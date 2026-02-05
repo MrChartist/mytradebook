@@ -5,7 +5,12 @@ import { useToast } from "@/hooks/use-toast";
 import { notifyAlertCreated, notifyAlertPaused, notifyAlertDeleted } from "@/lib/telegram";
 import type { Database } from "@/integrations/supabase/types";
 
-type Alert = Database["public"]["Tables"]["alerts"]["Row"];
+type Alert = Database["public"]["Tables"]["alerts"]["Row"] & {
+  notes?: string | null;
+  telegram_enabled?: boolean | null;
+  instrument_id?: string | null;
+  exchange?: string | null;
+};
 type AlertInsert = Database["public"]["Tables"]["alerts"]["Insert"];
 type AlertUpdate = Database["public"]["Tables"]["alerts"]["Update"];
 
@@ -39,38 +44,53 @@ export function useAlerts(filters?: AlertFilters) {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as Alert[];
+      return (data || []) as Alert[];
     },
     enabled: !!user,
   });
 
   const createAlert = useMutation({
     mutationFn: async (
-      input: Omit<AlertInsert, "user_id" | "id" | "created_at">
+      input: Omit<AlertInsert, "user_id" | "id" | "created_at"> & {
+        notes?: string | null;
+        telegram_enabled?: boolean;
+        instrument_id?: string | null;
+        exchange?: string;
+      }
     ) => {
       if (!user) throw new Error("Not authenticated");
 
       const { data, error } = await supabase
         .from("alerts")
         .insert({
-          ...input,
+          symbol: input.symbol,
+          condition_type: input.condition_type,
+          threshold: input.threshold,
+          recurrence: input.recurrence || "ONCE",
+          expires_at: input.expires_at || null,
+          notes: input.notes || null,
+          telegram_enabled: input.telegram_enabled || false,
+          instrument_id: input.instrument_id || null,
+          exchange: input.exchange || "NSE",
           user_id: user.id,
-        })
+        } as any)
         .select()
         .single();
 
       if (error) throw error;
       return data;
     },
-    onSuccess: async (data) => {
+    onSuccess: async (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["alerts"] });
       toast({
         title: "Alert created",
         description: "Your alert has been created successfully.",
       });
       
-      // Send Telegram notification
-      notifyAlertCreated(data.id).catch(console.error);
+      // Send Telegram notification if enabled
+      if (data.telegram_enabled) {
+        notifyAlertCreated(data.id).catch(console.error);
+      }
     },
     onError: (error) => {
       toast({
@@ -85,10 +105,16 @@ export function useAlerts(filters?: AlertFilters) {
     mutationFn: async ({
       id,
       ...updates
-    }: AlertUpdate & { id: string }) => {
+    }: AlertUpdate & { 
+      id: string;
+      notes?: string | null;
+      telegram_enabled?: boolean;
+      instrument_id?: string | null;
+      exchange?: string;
+    }) => {
       const { data, error } = await supabase
         .from("alerts")
-        .update(updates)
+        .update(updates as any)
         .eq("id", id)
         .select()
         .single();

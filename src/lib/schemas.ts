@@ -12,21 +12,28 @@ export const alertConditionTypes = [
 
 export const alertRecurrenceTypes = ["ONCE", "DAILY", "CONTINUOUS"] as const;
 
+export const exchangeTypes = ["NSE", "NFO", "MCX"] as const;
+
 export const createAlertSchema = z.object({
   symbol: z
     .string()
     .trim()
     .min(1, "Symbol is required")
-    .max(20, "Symbol must be less than 20 characters")
+    .max(50, "Symbol must be less than 50 characters")
     .toUpperCase(),
   condition_type: z.enum(alertConditionTypes, {
     required_error: "Condition type is required",
   }),
-  threshold: z
-    .number({ invalid_type_error: "Threshold must be a number" })
-    .positive("Threshold must be positive"),
+  threshold: z.preprocess(
+    (val) => (val === "" || val === undefined || val === null || Number.isNaN(Number(val)) ? null : Number(val)),
+    z.number().positive("Threshold must be positive").nullable()
+  ),
   recurrence: z.enum(alertRecurrenceTypes).default("ONCE"),
   expires_at: z.string().optional(),
+  notes: z.string().max(1000, "Notes must be less than 1000 characters").optional().nullable(),
+  telegram_enabled: z.boolean().default(false),
+  instrument_id: z.string().optional().nullable(),
+  exchange: z.enum(exchangeTypes).default("NSE"),
 });
 
 export type CreateAlertInput = z.infer<typeof createAlertSchema>;

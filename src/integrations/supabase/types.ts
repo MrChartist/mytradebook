@@ -19,12 +19,16 @@ export type Database = {
           active: boolean | null
           condition_type: Database["public"]["Enums"]["alert_condition"]
           created_at: string | null
+          exchange: string | null
           expires_at: string | null
           id: string
+          instrument_id: string | null
           last_triggered: string | null
+          notes: string | null
           parameters: Json | null
           recurrence: Database["public"]["Enums"]["alert_recurrence"] | null
           symbol: string
+          telegram_enabled: boolean | null
           threshold: number | null
           trigger_count: number | null
           user_id: string
@@ -33,12 +37,16 @@ export type Database = {
           active?: boolean | null
           condition_type: Database["public"]["Enums"]["alert_condition"]
           created_at?: string | null
+          exchange?: string | null
           expires_at?: string | null
           id?: string
+          instrument_id?: string | null
           last_triggered?: string | null
+          notes?: string | null
           parameters?: Json | null
           recurrence?: Database["public"]["Enums"]["alert_recurrence"] | null
           symbol: string
+          telegram_enabled?: boolean | null
           threshold?: number | null
           trigger_count?: number | null
           user_id: string
@@ -47,12 +55,16 @@ export type Database = {
           active?: boolean | null
           condition_type?: Database["public"]["Enums"]["alert_condition"]
           created_at?: string | null
+          exchange?: string | null
           expires_at?: string | null
           id?: string
+          instrument_id?: string | null
           last_triggered?: string | null
+          notes?: string | null
           parameters?: Json | null
           recurrence?: Database["public"]["Enums"]["alert_recurrence"] | null
           symbol?: string
+          telegram_enabled?: boolean | null
           threshold?: number | null
           trigger_count?: number | null
           user_id?: string

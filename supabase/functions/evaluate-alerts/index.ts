@@ -20,6 +20,9 @@ interface Alert {
   recurrence: string;
   last_triggered: string | null;
   trigger_count: number;
+  notes: string | null;
+  telegram_enabled: boolean;
+  exchange: string | null;
 }
 
 interface MarketQuote {
@@ -176,19 +179,65 @@ serve(async (req) => {
 
         // Build notification message
         const emoji = alert.condition_type.includes("GT") ? "📈" : "📉";
+        const exchange = alert.exchange || "NSE";
+        const timestamp = new Date().toLocaleString("en-IN", { 
+          timeZone: "Asia/Kolkata",
+          dateStyle: "short",
+          timeStyle: "short"
+        });
+        
         notifications.push(
-          `${emoji} *${alert.symbol}*\n` +
+          `${emoji} *${alert.symbol}* (${exchange})\n` +
           `Condition: ${conditionDesc}\n` +
-          `Current Price: ₹${price.toLocaleString()}`
+          `Current Price: ₹${price.toLocaleString()}\n` +
+          `Time: ${timestamp}` +
+          (alert.notes ? `\n📝 Notes: ${alert.notes}` : "")
         );
       }
     }
 
-    // Send Telegram notification if alerts triggered
-    if (notifications.length > 0 && TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
-      const message = `🔔 *Alert Triggered!*\n\n${notifications.join("\n\n")}`;
+    // Send Telegram notification for alerts that have telegram_enabled
+    const telegramAlerts = triggeredAlerts.filter(a => a.telegram_enabled);
+    
+    if (telegramAlerts.length > 0 && TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
+      // Group notifications for alerts with telegram enabled
+      const telegramNotifications = telegramAlerts.map(alert => {
+        const price = priceData[alert.symbol]?.ltp || getMockPrice(alert.symbol);
+        const emoji = alert.condition_type.includes("GT") ? "📈" : "📉";
+        const exchange = alert.exchange || "NSE";
+        const timestamp = new Date().toLocaleString("en-IN", { 
+          timeZone: "Asia/Kolkata",
+          dateStyle: "short",
+          timeStyle: "short"
+        });
+        
+        let conditionDesc = "";
+        switch (alert.condition_type) {
+          case "PRICE_GT":
+            conditionDesc = `Price ${price.toFixed(2)} > ${alert.threshold}`;
+            break;
+          case "PRICE_LT":
+            conditionDesc = `Price ${price.toFixed(2)} < ${alert.threshold}`;
+            break;
+          case "PERCENT_CHANGE_GT":
+          case "PERCENT_CHANGE_LT":
+            conditionDesc = `Change met threshold ${alert.threshold}%`;
+            break;
+          case "VOLUME_SPIKE":
+            conditionDesc = `Volume spike > ${alert.threshold}`;
+            break;
+        }
+        
+        return `${emoji} *${alert.symbol}* (${exchange})\n` +
+          `Condition: ${conditionDesc}\n` +
+          `Current Price: ₹${price.toLocaleString()}\n` +
+          `Time: ${timestamp}` +
+          (alert.notes ? `\n📝 Notes: ${alert.notes}` : "");
+      });
+      
+      const message = `🔔 *Alert Triggered!*\n\n${telegramNotifications.join("\n\n")}`;
 
-      await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      const telegramResponse = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -197,6 +246,11 @@ serve(async (req) => {
           parse_mode: "Markdown",
         }),
       });
+      
+      if (!telegramResponse.ok) {
+        const errorData = await telegramResponse.text();
+        console.error("Failed to send Telegram notification:", errorData);
+      }
     }
 
     return new Response(

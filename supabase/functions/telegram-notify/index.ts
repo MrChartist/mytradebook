@@ -473,6 +473,15 @@ Deno.serve(async (req) => {
           );
         }
 
+        // Check if telegram is enabled for this alert
+        if (!(alert as any).telegram_enabled) {
+          console.log(`Telegram disabled for alert: ${payload.alert_id}, skipping notification`);
+          return new Response(
+            JSON.stringify({ success: true, skipped: true, reason: "Telegram disabled" }),
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
         // Get user's telegram chat ID
         const userChatId = await getUserChatId(supabase, alert.user_id);
         if (userChatId) {
@@ -489,12 +498,22 @@ Deno.serve(async (req) => {
         };
 
         const condition = conditionMap[alert.condition_type] || alert.condition_type;
+        const alertNotes = (alert as any).notes;
+        const exchange = (alert as any).exchange || "NSE";
+        const timestamp = new Date().toLocaleString("en-IN", { 
+          timeZone: "Asia/Kolkata",
+          dateStyle: "short",
+          timeStyle: "short"
+        });
 
         message = `🔔 *ALERT TRIGGERED*\n\n` +
-          `*${alert.symbol}* ${condition} ₹${alert.threshold}\n\n` +
+          `*${alert.symbol}* (${exchange})\n` +
+          `${condition} ₹${alert.threshold?.toLocaleString() || "N/A"}\n\n` +
           `📍 Current Price: ₹${payload.current_price.toFixed(2)}\n` +
+          `🕐 Time: ${timestamp}\n` +
           `🔁 Recurrence: ${alert.recurrence}\n` +
-          `📊 Trigger Count: ${(alert.trigger_count || 0) + 1}`;
+          `📊 Trigger Count: ${(alert.trigger_count || 0) + 1}` +
+          (alertNotes ? `\n\n📝 *Notes:* ${alertNotes}` : "");
         break;
       }
 
@@ -514,6 +533,15 @@ Deno.serve(async (req) => {
           );
         }
 
+        // Check if telegram is enabled for this alert
+        if (!(alert as any).telegram_enabled) {
+          console.log(`Telegram disabled for alert: ${payload.alert_id}, skipping notification`);
+          return new Response(
+            JSON.stringify({ success: true, skipped: true, reason: "Telegram disabled" }),
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
         // Get user's telegram chat ID
         const userChatId = await getUserChatId(supabase, alert.user_id);
         if (userChatId) {
@@ -527,11 +555,14 @@ Deno.serve(async (req) => {
           CONTINUOUS: "Continuous",
         };
         const recurrence = recurrenceLabels[alert.recurrence || "ONCE"] || alert.recurrence;
+        const alertNotes = (alert as any).notes;
+        const exchange = (alert as any).exchange || "NSE";
 
         message = `🔔 *New Alert Created*\n\n` +
-          `Symbol: *${alert.symbol}*\n` +
+          `Symbol: *${alert.symbol}* (${exchange})\n` +
           `Condition: ${conditionLabel} ₹${alert.threshold?.toLocaleString() || "N/A"}\n` +
-          `Recurrence: ${recurrence}`;
+          `Recurrence: ${recurrence}` +
+          (alertNotes ? `\n\n📝 *Notes:* ${alertNotes}` : "");
         break;
       }
 
