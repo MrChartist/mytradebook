@@ -621,9 +621,17 @@ export type Database = {
           auto_sync_portfolio: boolean | null
           created_at: string | null
           default_sl_percent: number | null
+          dhan_access_token: string | null
+          dhan_account_name: string | null
           dhan_client_id: string | null
+          dhan_enabled: boolean | null
+          dhan_verified_at: string | null
           id: string
           telegram_chat_id: string | null
+          telegram_enabled: boolean | null
+          telegram_link_code: string | null
+          telegram_link_expires_at: string | null
+          telegram_verified_at: string | null
           theme: string | null
           timezone: string | null
           updated_at: string | null
@@ -634,9 +642,17 @@ export type Database = {
           auto_sync_portfolio?: boolean | null
           created_at?: string | null
           default_sl_percent?: number | null
+          dhan_access_token?: string | null
+          dhan_account_name?: string | null
           dhan_client_id?: string | null
+          dhan_enabled?: boolean | null
+          dhan_verified_at?: string | null
           id?: string
           telegram_chat_id?: string | null
+          telegram_enabled?: boolean | null
+          telegram_link_code?: string | null
+          telegram_link_expires_at?: string | null
+          telegram_verified_at?: string | null
           theme?: string | null
           timezone?: string | null
           updated_at?: string | null
@@ -647,9 +663,17 @@ export type Database = {
           auto_sync_portfolio?: boolean | null
           created_at?: string | null
           default_sl_percent?: number | null
+          dhan_access_token?: string | null
+          dhan_account_name?: string | null
           dhan_client_id?: string | null
+          dhan_enabled?: boolean | null
+          dhan_verified_at?: string | null
           id?: string
           telegram_chat_id?: string | null
+          telegram_enabled?: boolean | null
+          telegram_link_code?: string | null
+          telegram_link_expires_at?: string | null
+          telegram_verified_at?: string | null
           theme?: string | null
           timezone?: string | null
           updated_at?: string | null

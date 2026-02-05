@@ -12,7 +12,15 @@ interface UserSettings {
   theme: string | null;
   timezone: string | null;
   telegram_chat_id: string | null;
+  telegram_link_code: string | null;
+  telegram_link_expires_at: string | null;
+  telegram_verified_at: string | null;
+  telegram_enabled: boolean | null;
   dhan_client_id: string | null;
+  dhan_access_token: string | null;
+  dhan_verified_at: string | null;
+  dhan_enabled: boolean | null;
+  dhan_account_name: string | null;
   created_at: string | null;
   updated_at: string | null;
 }

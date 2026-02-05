@@ -4,7 +4,7 @@
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 const DHAN_API_URL = "https://api.dhan.co/v2";
@@ -22,6 +22,8 @@ const DHAN_API_URL = "https://api.dhan.co/v2";
    source: "dhan" | "unavailable";
    timestamp: string;
    security_id?: string;
+  exchange_segment?: string;
+  warning?: string;
  }
  
 serve(async (req) => {
@@ -37,12 +39,13 @@ serve(async (req) => {
     console.log("LTP Request - Dhan token present:", !!DHAN_ACCESS_TOKEN);
     
      const body = await req.json();
+      const userId = body.user_id; // Optional: for per-user Dhan token
      
      // Support both old format (symbols array) and new format (instruments array)
      const symbols: string[] = body.symbols || [];
      const instruments: InstrumentInput[] = body.instruments || [];
      
-    console.log("LTP Request - symbols:", symbols, "instruments:", instruments.length);
+    console.log("LTP Request - symbols:", symbols.length, "instruments:", instruments.length);
     
      // Convert instruments to symbols for backward compatibility
      if (instruments.length > 0) {
@@ -63,31 +66,59 @@ serve(async (req) => {
     const prices: Record<string, PriceResult> = {};
     const timestamp = new Date().toISOString();
      
-     // Build security ID to symbol mapping for precise API calls
-     const securityIdMap: Record<string, { symbol: string; exchangeSegment: string }> = {};
-     instruments.forEach((inst) => {
-       if (inst.security_id) {
-         securityIdMap[inst.security_id] = {
-           symbol: inst.symbol,
-           exchangeSegment: inst.exchange_segment || "NSE_EQ",
-         };
-       }
-     });
+    // Get user's Dhan token if user_id provided
+    let userDhanToken: string | null = null;
+    const supabase = SUPABASE_URL && SUPABASE_SERVICE_KEY 
+      ? createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+      : null;
     
-    // If instruments don't have security_id, try to look them up from instrument_master
-    if (SUPABASE_URL && SUPABASE_SERVICE_KEY) {
-      const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+    if (userId && supabase) {
+      const { data: userSettings } = await supabase
+        .from("user_settings")
+        .select("dhan_access_token, dhan_enabled")
+        .eq("user_id", userId)
+        .single();
       
-      const symbolsNeedingLookup = instruments.filter((i) => !i.security_id).map((i) => i.symbol);
-      if (symbolsNeedingLookup.length > 0) {
-        console.log("Looking up security_ids for:", symbolsNeedingLookup);
+      if (userSettings?.dhan_access_token && userSettings?.dhan_enabled) {
+        userDhanToken = userSettings.dhan_access_token;
+        console.log("Using per-user Dhan token");
+      }
+    }
+    
+    // Use user token if available, else fall back to global
+    const activeToken = userDhanToken || DHAN_ACCESS_TOKEN;
+    
+    // Build security ID to symbol mapping for precise API calls
+    const securityIdMap: Record<string, { symbol: string; exchangeSegment: string }> = {};
+    instruments.forEach((inst) => {
+      if (inst.security_id) {
+        securityIdMap[inst.security_id] = {
+          symbol: inst.symbol,
+          exchangeSegment: inst.exchange_segment || "NSE_EQ",
+        };
+      }
+    });
+    
+    // Look up security_ids from instrument_master for symbols that don't have them
+    if (supabase) {
+      // For instruments without security_id
+      const symbolsNeedingLookup = instruments
+        .filter((i) => !i.security_id)
+        .map((i) => i.symbol);
+      
+      // Also include raw symbols that might not be in instruments array
+      const rawSymbols = symbols.filter((s) => !instruments.find((i) => i.symbol === s));
+      symbolsNeedingLookup.push(...rawSymbols);
+      
+      const uniqueSymbols = [...new Set(symbolsNeedingLookup)];
+      
+      if (uniqueSymbols.length > 0) {
+        console.log("Looking up security_ids for:", uniqueSymbols);
         
         const { data: lookupData } = await supabase
           .from("instrument_master")
           .select("security_id, trading_symbol, exchange_segment")
-          .in("trading_symbol", symbolsNeedingLookup)
-          .eq("exchange", "NSE")
-          .eq("instrument_type", "EQ");
+          .in("trading_symbol", uniqueSymbols);
         
         if (lookupData) {
           lookupData.forEach((row) => {
@@ -103,7 +134,7 @@ serve(async (req) => {
       }
     }
     
-    if (DHAN_ACCESS_TOKEN) {
+    if (activeToken) {
       try {
          // Build request body grouped by exchange segment
          const requestBody: Record<string, string[]> = {};
@@ -130,14 +161,18 @@ serve(async (req) => {
          
          // Only call Dhan if we have security IDs
          if (Object.keys(requestBody).some((k) => requestBody[k].length > 0)) {
-          console.log("Dhan API request body:", JSON.stringify(requestBody));
+          // Log what we're requesting
+          const requestSummary = Object.entries(requestBody)
+            .map(([seg, ids]) => `${seg}: ${ids.length} instruments`)
+            .join(", ");
+          console.log("Dhan API request:", requestSummary);
           
            const response = await fetch(`${DHAN_API_URL}/marketfeed/ltp`, {
              method: "POST",
              headers: {
                "Accept": "application/json",
                "Content-Type": "application/json",
-               "access-token": DHAN_ACCESS_TOKEN,
+               "access-token": activeToken,
              },
              body: JSON.stringify(requestBody),
            });
@@ -146,7 +181,7 @@ serve(async (req) => {
 
            if (response.ok) {
              const data = await response.json();
-            console.log("Dhan API response:", JSON.stringify(data).slice(0, 500));
+            console.log("Dhan API success, data keys:", Object.keys(data?.data || {}));
              
              // Process Dhan response for each exchange segment
              for (const segment of Object.keys(requestBody)) {
@@ -161,6 +196,13 @@ serve(async (req) => {
                      const change = ltp - prevClose;
                      const changePercent = prevClose > 0 ? (change / prevClose) * 100 : 0;
                      
+                      // Sanity check: detect potential mismatch
+                      let warning: string | undefined;
+                      if (prevClose > 0 && Math.abs(changePercent) > 50) {
+                        warning = "Large price change detected - verify symbol mapping";
+                        console.warn(`Warning for ${info.symbol}: ${changePercent.toFixed(1)}% change`);
+                      }
+                      
                      prices[info.symbol] = {
                        ltp,
                        change: parseFloat(change.toFixed(2)),
@@ -168,6 +210,8 @@ serve(async (req) => {
                        source: "dhan",
                        timestamp,
                        security_id: secId,
+                        exchange_segment: segment,
+                        warning,
                      };
                    }
                  }
@@ -175,20 +219,19 @@ serve(async (req) => {
             }
            } else {
              const errorText = await response.text();
-             console.error("Dhan API request failed:", response.status, errorText);
+              console.error("Dhan API error:", response.status, errorText);
           }
         }
       } catch (e) {
-        console.error("Error fetching from Dhan API:", e);
+        console.error("Dhan API exception:", e);
       }
     }
     
-    // Mark symbols that couldn't be fetched
-    symbols.forEach((symbol) => {
-      if (!prices[symbol]) {
-        console.log(`Price unavailable for ${symbol} - not in Dhan response`);
-      }
-    });
+    // Log unfetched symbols
+    const unfetched = symbols.filter((s) => !prices[s]);
+    if (unfetched.length > 0) {
+      console.log(`Prices unavailable for: ${unfetched.join(", ")}`);
+    }
 
     // Note: Symbols without real Dhan data will NOT have prices returned
     // This ensures we never show fake/mock prices to users
@@ -198,9 +241,10 @@ serve(async (req) => {
         success: true,
         prices,
         timestamp,
-        source: DHAN_ACCESS_TOKEN ? "dhan" : "unavailable",
+        source: activeToken ? "dhan" : "unavailable",
         fetched_count: Object.keys(prices).length,
         requested_count: symbols.length,
+        using_user_token: !!userDhanToken,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

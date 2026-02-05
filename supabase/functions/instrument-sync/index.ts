@@ -3,7 +3,7 @@
  const corsHeaders = {
    "Access-Control-Allow-Origin": "*",
    "Access-Control-Allow-Headers":
-     "authorization, x-client-info, apikey, content-type",
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
  };
  
  interface InstrumentRow {
@@ -21,11 +21,9 @@
    tick_size: number | null;
  }
  
- // Dhan scrip master CSV URLs
- const DHAN_CSV_URLS = {
-   NSE_EQ: "https://images.dhan.co/api-data/api-scrip-master-equity.csv",
-   NSE_FNO: "https://images.dhan.co/api-data/api-scrip-master-detailed.csv",
- };
+// Dhan scrip master compact CSV - single file with all instruments
+// This is the correct working URL (the separate equity URL returns 403)
+const DHAN_COMPACT_CSV_URL = "https://images.dhan.co/api-data/api-scrip-master.csv";
  
  // Parse CSV line handling quoted fields
  function parseCSVLine(line: string): string[] {
@@ -84,22 +82,31 @@
    return mapping[instrType] || instrType;
  }
  
- // Fetch and parse Dhan equity CSV
- async function fetchEquityCSV(): Promise<InstrumentRow[]> {
+// Fetch and parse Dhan compact CSV (contains all instruments)
+async function fetchDhanCompactCSV(): Promise<InstrumentRow[]> {
    const instruments: InstrumentRow[] = [];
+  const equityCount = { nse: 0, bse: 0 };
+  const fnoCount = { nse: 0, mcx: 0 };
    
-   console.log("Fetching NSE equity CSV from Dhan...");
-   const response = await fetch(DHAN_CSV_URLS.NSE_EQ);
+  console.log("Fetching compact CSV from Dhan:", DHAN_COMPACT_CSV_URL);
+  const response = await fetch(DHAN_COMPACT_CSV_URL, {
+    headers: {
+      "User-Agent": "Lovable-TradeBook/1.0",
+      "Accept": "text/csv,*/*",
+    },
+  });
    
    if (!response.ok) {
-     throw new Error(`Failed to fetch equity CSV: ${response.status}`);
+    throw new Error(`Failed to fetch compact CSV: ${response.status} ${response.statusText}`);
    }
    
    const csvText = await response.text();
+  console.log(`Downloaded CSV size: ${(csvText.length / 1024 / 1024).toFixed(2)} MB`);
+  
    const lines = csvText.split("\n").filter((line) => line.trim());
    
    if (lines.length < 2) {
-     throw new Error("Equity CSV appears empty");
+    throw new Error("CSV appears empty");
    }
    
    // Parse header
@@ -109,144 +116,99 @@
      colIndex[col.toUpperCase().replace(/[^A-Z0-9_]/g, "_")] = idx;
    });
    
-   console.log("Equity CSV columns:", Object.keys(colIndex).slice(0, 15));
+  console.log("CSV columns:", Object.keys(colIndex).join(", "));
+  console.log(`Total rows to process: ${lines.length - 1}`);
    
-   // Dhan equity CSV columns (typical):
-   // SEM_EXM_EXCH_ID, SEM_SEGMENT, SEM_SMST_SECURITY_ID, SEM_INSTRUMENT_NAME, 
-   // SEM_EXPIRY_CODE, SEM_EXPIRY_DATE, SEM_STRIKE_PRICE, SEM_OPTION_TYPE,
-   // SEM_TRADING_SYMBOL, SEM_CUSTOM_SYMBOL, SEM_LOT_UNITS, SEM_TICK_SIZE
-   
-   for (let i = 1; i < lines.length; i++) {
-     try {
-       const row = parseCSVLine(lines[i]);
-       if (row.length < 5) continue;
-       
-       // Get security ID - the key identifier for Dhan API
-       const securityId = row[colIndex["SEM_SMST_SECURITY_ID"]] || row[2];
-       if (!securityId || securityId === "0") continue;
-       
-       // Get segment - filter for NSE_EQ only
-       const segment = row[colIndex["SEM_SEGMENT"]] || row[1];
-       if (segment !== "E") continue; // E = Equity segment
-       
-       // Get exchange
-       const exchangeCode = row[colIndex["SEM_EXM_EXCH_ID"]] || row[0];
-       if (exchangeCode !== "NSE") continue; // Only NSE for now
-       
-       const tradingSymbol = row[colIndex["SEM_TRADING_SYMBOL"]] || row[8] || "";
-       const customSymbol = row[colIndex["SEM_CUSTOM_SYMBOL"]] || row[9] || tradingSymbol;
-       const instrumentName = row[colIndex["SEM_INSTRUMENT_NAME"]] || row[3] || "EQUITY";
-       const lotSize = parseInt(row[colIndex["SEM_LOT_UNITS"]] || row[10]) || 1;
-       const tickSize = parseFloat(row[colIndex["SEM_TICK_SIZE"]] || row[11]) || 0.05;
-       
-       if (!tradingSymbol) continue;
-       
-       instruments.push({
-         security_id: securityId,
-         exchange_segment: "NSE_EQ",
-         exchange: "NSE",
-         instrument_type: mapInstrumentType(instrumentName),
-         trading_symbol: tradingSymbol.replace(/-EQ$/, ""),
-         display_name: customSymbol || tradingSymbol,
-         underlying_symbol: null,
-         expiry: null,
-         strike: null,
-         option_type: null,
-         lot_size: lotSize,
-         tick_size: tickSize,
-       });
-     } catch (e) {
-       console.warn(`Row ${i} parse error:`, e);
-     }
-   }
-   
-   console.log(`Parsed ${instruments.length} NSE equity instruments`);
-   return instruments;
- }
- 
- // Fetch and parse Dhan F&O detailed CSV
- async function fetchFNOCSV(): Promise<InstrumentRow[]> {
-   const instruments: InstrumentRow[] = [];
-   
-   console.log("Fetching F&O CSV from Dhan...");
-   const response = await fetch(DHAN_CSV_URLS.NSE_FNO);
-   
-   if (!response.ok) {
-     throw new Error(`Failed to fetch FNO CSV: ${response.status}`);
-   }
-   
-   const csvText = await response.text();
-   const lines = csvText.split("\n").filter((line) => line.trim());
-   
-   if (lines.length < 2) {
-     throw new Error("FNO CSV appears empty");
-   }
-   
-   // Parse header
-   const header = parseCSVLine(lines[0]);
-   const colIndex: Record<string, number> = {};
-   header.forEach((col, idx) => {
-     colIndex[col.toUpperCase().replace(/[^A-Z0-9_]/g, "_")] = idx;
-   });
-   
-   console.log("F&O CSV columns:", Object.keys(colIndex).slice(0, 15));
-   
-   // Track current date for filtering expired contracts
+  // Compact CSV columns:
+  // SEM_EXM_EXCH_ID, SEM_SEGMENT, SEM_SMST_SECURITY_ID, SEM_INSTRUMENT_NAME,
+  // SEM_EXPIRY_CODE, SEM_EXPIRY_DATE, SEM_STRIKE_PRICE, SEM_OPTION_TYPE,
+  // SEM_TRADING_SYMBOL, SEM_CUSTOM_SYMBOL, SEM_LOT_UNITS, SEM_TICK_SIZE
+  
+  // Get column indices
+  const idx = {
+    exchange: colIndex["SEM_EXM_EXCH_ID"] ?? 0,
+    segment: colIndex["SEM_SEGMENT"] ?? 1,
+    securityId: colIndex["SEM_SMST_SECURITY_ID"] ?? 2,
+    instrumentName: colIndex["SEM_INSTRUMENT_NAME"] ?? 3,
+    expiryCode: colIndex["SEM_EXPIRY_CODE"] ?? 4,
+    expiryDate: colIndex["SEM_EXPIRY_DATE"] ?? 5,
+    strikePrice: colIndex["SEM_STRIKE_PRICE"] ?? 6,
+    optionType: colIndex["SEM_OPTION_TYPE"] ?? 7,
+    tradingSymbol: colIndex["SEM_TRADING_SYMBOL"] ?? 8,
+    customSymbol: colIndex["SEM_CUSTOM_SYMBOL"] ?? 9,
+    lotUnits: colIndex["SEM_LOT_UNITS"] ?? 10,
+    tickSize: colIndex["SEM_TICK_SIZE"] ?? 11,
+  };
+  
    const today = new Date();
    today.setHours(0, 0, 0, 0);
    
+  let skippedExpired = 0;
+  let skippedOther = 0;
+  
    for (let i = 1; i < lines.length; i++) {
      try {
        const row = parseCSVLine(lines[i]);
-       if (row.length < 5) continue;
+      if (row.length < 10) continue;
        
-       const securityId = row[colIndex["SEM_SMST_SECURITY_ID"]] || row[2];
-       if (!securityId || securityId === "0") continue;
+      const exchangeCode = row[idx.exchange]?.trim();
+      const segment = row[idx.segment]?.trim();
+      const securityId = row[idx.securityId]?.trim();
        
-       const segment = row[colIndex["SEM_SEGMENT"]] || row[1];
-       const exchangeCode = row[colIndex["SEM_EXM_EXCH_ID"]] || row[0];
+      // Skip invalid security IDs
+      if (!securityId || securityId === "0" || securityId === "") continue;
        
-       // Filter for NSE F&O and MCX
+      // Determine exchange segment and filter
        let exchangeSegment = "";
        let exchange = "";
        
-       if (exchangeCode === "NSE" && (segment === "D" || segment === "E")) {
-         // D = Derivatives, E = Equity (for indices)
-         exchangeSegment = "NSE_FNO";
-         exchange = "NFO";
-       } else if (exchangeCode === "MCX") {
-         exchangeSegment = "MCX_COMM";
+      if (exchangeCode === "NSE" && segment === "E") {
+        // NSE Equity
+        exchangeSegment = "NSE_EQ";
+        exchange = "NSE";
+        equityCount.nse++;
+      } else if (exchangeCode === "NSE" && segment === "D") {
+        // NSE Derivatives (F&O)
+        exchangeSegment = "NSE_FNO";
+        exchange = "NFO";
+        fnoCount.nse++;
+      } else if (exchangeCode === "MCX" && (segment === "D" || segment === "M")) {
+        // MCX Commodities
+        exchangeSegment = "MCX_COMM";
          exchange = "MCX";
-       } else if (exchangeCode === "NSE" && segment === "I") {
-         // I = Index
+        fnoCount.mcx++;
+      } else if (exchangeCode === "NSE" && segment === "I") {
+        // NSE Index
          exchangeSegment = "IDX_I";
          exchange = "NSE";
        } else {
-         continue; // Skip other segments
+        // Skip BSE, Currency, etc. for now
+        skippedOther++;
+        continue;
        }
        
-       const tradingSymbol = row[colIndex["SEM_TRADING_SYMBOL"]] || row[8] || "";
-       const customSymbol = row[colIndex["SEM_CUSTOM_SYMBOL"]] || row[9] || tradingSymbol;
-       const instrumentName = row[colIndex["SEM_INSTRUMENT_NAME"]] || row[3] || "";
-       const expiryStr = row[colIndex["SEM_EXPIRY_DATE"]] || row[5] || "";
-       const strikeStr = row[colIndex["SEM_STRIKE_PRICE"]] || row[6] || "";
-       const optionType = row[colIndex["SEM_OPTION_TYPE"]] || row[7] || "";
-       const lotSize = parseInt(row[colIndex["SEM_LOT_UNITS"]] || row[10]) || 1;
-       const tickSize = parseFloat(row[colIndex["SEM_TICK_SIZE"]] || row[11]) || 0.05;
-       const underlyingSymbol = row[colIndex["SM_SYMBOL_NAME"]] || customSymbol?.split(" ")[0] || tradingSymbol;
+      const tradingSymbol = row[idx.tradingSymbol]?.trim() || "";
+      const customSymbol = row[idx.customSymbol]?.trim() || tradingSymbol;
+      const instrumentName = row[idx.instrumentName]?.trim() || "";
+      const expiryStr = row[idx.expiryDate]?.trim() || "";
+      const strikeStr = row[idx.strikePrice]?.trim() || "";
+      const optionType = row[idx.optionType]?.trim() || "";
+      const lotSize = parseInt(row[idx.lotUnits]) || 1;
+      const tickSize = parseFloat(row[idx.tickSize]) || 0.05;
        
        if (!tradingSymbol) continue;
        
+      // Extract underlying symbol from custom symbol (e.g., "NIFTY 27FEB25 23000 CE" -> "NIFTY")
+      const underlyingSymbol = customSymbol?.split(" ")[0] || tradingSymbol.split(/\d/)[0] || tradingSymbol;
+      
        // Parse expiry date and filter expired contracts
        let expiry: string | null = null;
        if (expiryStr && expiryStr !== "0" && expiryStr !== "") {
          try {
-          // Dhan uses various formats: "2026-02-27", "27-Feb-2026", or timestamp
           let expiryDate: Date | null = null;
           
-          // Check if it's a pure number (likely wrong data, skip)
           if (/^\d+$/.test(expiryStr) && expiryStr.length > 10) {
-            // Skip extremely large numbers that are likely garbage
+            // Very large numbers - garbage, skip expiry
             expiry = null;
           } else if (expiryStr.includes("-") && expiryStr.length === 10) {
             // ISO format: YYYY-MM-DD
@@ -264,13 +226,15 @@
           
           if (expiryDate && !isNaN(expiryDate.getTime())) {
             const year = expiryDate.getFullYear();
-            // Sanity check: year should be reasonable (2020-2100)
             if (year >= 2020 && year <= 2100) {
               // Skip expired contracts
-              if (expiryDate < today) continue;
+              if (expiryDate < today) {
+                skippedExpired++;
+                continue;
+              }
               expiry = expiryDate.toISOString().split("T")[0];
             }
-           }
+          }
          } catch {
            // Keep null if parse fails
          }
@@ -278,12 +242,17 @@
        
        const strike = strikeStr && strikeStr !== "0" ? parseFloat(strikeStr) : null;
        
+      // Clean up trading symbol for equities (remove -EQ suffix)
+      const cleanTradingSymbol = segment === "E" 
+        ? tradingSymbol.replace(/-EQ$/, "") 
+        : tradingSymbol;
+      
        instruments.push({
          security_id: securityId,
          exchange_segment: exchangeSegment,
          exchange: exchange,
          instrument_type: mapInstrumentType(instrumentName),
-         trading_symbol: tradingSymbol,
+        trading_symbol: cleanTradingSymbol,
          display_name: customSymbol || tradingSymbol,
          underlying_symbol: underlyingSymbol || null,
          expiry: expiry,
@@ -297,7 +266,14 @@
      }
    }
    
-   console.log(`Parsed ${instruments.length} F&O instruments`);
+  console.log(`Parsing complete:
+    - NSE Equity: ${equityCount.nse}
+    - NSE F&O: ${fnoCount.nse}
+    - MCX: ${fnoCount.mcx}
+    - Skipped expired: ${skippedExpired}
+    - Skipped other segments: ${skippedOther}
+    - Total instruments: ${instruments.length}`);
+  
    return instruments;
  }
  
@@ -327,27 +303,17 @@
      
      const logId = logEntry?.id;
      
-    // Fetch instruments from Dhan CSVs in parallel
-    const [equityInstruments, fnoInstruments] = await Promise.all([
-      fetchEquityCSV().catch((e) => {
-        console.error("Equity CSV fetch failed:", e);
-        return [] as InstrumentRow[];
-      }),
-      fetchFNOCSV().catch((e) => {
-        console.error("F&O CSV fetch failed:", e);
-        return [] as InstrumentRow[];
-      }),
-    ]);
+    // Fetch all instruments from single compact CSV
+    const allInstruments = await fetchDhanCompactCSV();
     
-    const allInstruments = [...equityInstruments, ...fnoInstruments];
-    console.log(`Total instruments fetched: ${allInstruments.length}`);
+    console.log(`Total instruments to sync: ${allInstruments.length}`);
     
     if (allInstruments.length === 0) {
-      throw new Error("No instruments fetched from Dhan CSVs");
+      throw new Error("No instruments parsed from Dhan CSV");
     }
      
-     // Batch upsert in chunks of 500
-     const BATCH_SIZE = 500;
+    // Batch upsert in smaller chunks to avoid timeout
+    const BATCH_SIZE = 200;
      let inserted = 0;
      let updated = 0;
     let errors = 0;
@@ -366,11 +332,16 @@
          );
        
        if (upsertError) {
-         console.error(`Batch upsert error at ${i}:`, upsertError);
+        console.error(`Batch upsert error at row ${i}:`, upsertError.message);
         errors++;
        } else {
          inserted += batch.length;
        }
+      
+      // Log progress every 10 batches
+      if ((i / BATCH_SIZE) % 10 === 0) {
+        console.log(`Progress: ${i + batch.length}/${allInstruments.length} rows processed`);
+      }
      }
      
     const duration = Date.now() - startTime;
@@ -381,7 +352,7 @@
        await supabase
          .from("instrument_sync_log")
          .update({
-           status: "completed",
+          status: errors > 0 ? "partial" : "completed",
            completed_at: new Date().toISOString(),
           total_rows: allInstruments.length,
            inserted_rows: inserted,
@@ -395,8 +366,6 @@
          success: true,
         message: `Synced ${inserted} instruments from Dhan`,
         total_parsed: allInstruments.length,
-        equity_count: equityInstruments.length,
-        fno_count: fnoInstruments.length,
         inserted: inserted,
         errors: errors,
         duration_ms: duration,

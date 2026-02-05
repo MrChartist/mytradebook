@@ -26,3 +26,9 @@ verify_jwt = false
 
 [functions.instrument-search]
 verify_jwt = false
+
+[functions.telegram-verify]
+verify_jwt = false
+
+[functions.dhan-verify]
+verify_jwt = false
