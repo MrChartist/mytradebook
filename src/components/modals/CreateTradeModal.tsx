@@ -25,12 +25,13 @@
  import { createTradeSchema, type CreateTradeInput, marketSegments, tradeTypes, timeframes } from "@/lib/schemas";
  import { useTrades } from "@/hooks/useTrades";
  import { useAvailableTags } from "@/hooks/useAvailableTags";
- import { Loader2, TrendingUp, Tag } from "lucide-react";
+import { Loader2, TrendingUp, Tag, AlertCircle } from "lucide-react";
  import { TagSearchPicker } from "@/components/trade/TagSearchPicker";
  import { TargetChipsInput } from "@/components/trade/TargetChipsInput";
  import { TradeAutomationControls } from "@/components/trade/TradeAutomationControls";
- import { OptionChainSelector } from "@/components/trade/OptionChainSelector";
- import { FuturesContractPicker } from "@/components/trade/FuturesContractPicker";
+import { UnifiedInstrumentSearch } from "@/components/trade/UnifiedInstrumentSearch";
+import { toast } from "sonner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
  
  interface CreateTradeModalProps {
    open: boolean;
@@ -78,6 +79,8 @@
        confidence_score: 3,
        quantity: 1,
        trailing_sl_enabled: false,
+      auto_track_enabled: false,
+      telegram_post_enabled: false,
      },
    });
  
@@ -91,77 +94,93 @@
    const tradeTypeValue = tradeType ?? "";
    const timeframeValue = timeframe ?? "";
  
-   const onSubmit = async (data: CreateTradeInput) => {
-     const newTrade = await createTrade.mutateAsync({
-       symbol: data.symbol,
-       segment: data.segment,
-       trade_type: data.trade_type,
-       quantity: data.quantity || 1,
-       entry_price: data.entry_price,
-       stop_loss: data.stop_loss,
-       targets: targets,
-       rating: data.rating,
-       confidence_score: data.confidence_score,
-       notes: data.notes,
-       study_id: data.study_id,
-       status: "OPEN",
-       entry_time: new Date().toISOString(),
-       chart_images: chartImages,
-       timeframe: data.timeframe,
-       holding_period: data.holding_period,
-       trailing_sl_enabled: data.trailing_sl_enabled,
-       trailing_sl_percent: trailingSlType === "percent" ? data.trailing_sl_percent : undefined,
-       trailing_sl_points: trailingSlType === "points" ? data.trailing_sl_points : undefined,
-       trailing_sl_trigger_price: data.trailing_sl_trigger_price,
-       auto_track_enabled: autoTrackEnabled,
-       telegram_post_enabled: telegramPostEnabled,
-       contract_key: contractKey,
-       instrument_token: instrumentToken,
-     });
+  const onSubmit = async (data: CreateTradeInput) => {
+    // Validate minimum required fields
+    const symbolToUse = data.symbol || watch("symbol");
+    if (!symbolToUse || symbolToUse.trim() === "") {
+      toast.error("Please select an instrument or enter a symbol");
+      return;
+    }
+
+    try {
+      // Determine status: PENDING if missing key fields, OPEN otherwise
+      const hasKeyFields = data.entry_price && data.entry_price > 0;
+      const tradeStatus = hasKeyFields ? "OPEN" : "PENDING";
+
+      const newTrade = await createTrade.mutateAsync({
+        symbol: symbolToUse,
+        segment: data.segment,
+        trade_type: data.trade_type,
+        quantity: data.quantity || 1,
+        entry_price: data.entry_price || 0, // DB requires a value
+        stop_loss: data.stop_loss || null,
+        targets: targets.length > 0 ? targets : null,
+        rating: data.rating || null,
+        confidence_score: data.confidence_score || null,
+        notes: data.notes || null,
+        study_id: data.study_id || null,
+        status: tradeStatus,
+        entry_time: new Date().toISOString(),
+        chart_images: chartImages.length > 0 ? chartImages : null,
+        timeframe: data.timeframe || null,
+        holding_period: data.holding_period || null,
+        trailing_sl_enabled: data.trailing_sl_enabled || false,
+        trailing_sl_percent: trailingSlType === "percent" ? data.trailing_sl_percent : null,
+        trailing_sl_points: trailingSlType === "points" ? data.trailing_sl_points : null,
+        trailing_sl_trigger_price: data.trailing_sl_trigger_price || null,
+        auto_track_enabled: autoTrackEnabled,
+        telegram_post_enabled: telegramPostEnabled,
+        contract_key: contractKey || null,
+        instrument_token: instrumentToken || null,
+      });
+
+      // Link selected tags to the new trade
+      if (newTrade?.id) {
+        const { supabase } = await import("@/integrations/supabase/client");
+        
+        if (selectedPatterns.length > 0) {
+          await supabase.from("trade_patterns").insert(
+            selectedPatterns.map((patternId) => ({
+              trade_id: newTrade.id,
+              pattern_id: patternId,
+            }))
+          );
+        }
+        
+        if (selectedCandlesticks.length > 0) {
+          await supabase.from("trade_candlesticks").insert(
+            selectedCandlesticks.map((candlestickId) => ({
+              trade_id: newTrade.id,
+              candlestick_id: candlestickId,
+            }))
+          );
+        }
+        
+        if (selectedVolumes.length > 0) {
+          await supabase.from("trade_volume").insert(
+            selectedVolumes.map((volumeId) => ({
+              trade_id: newTrade.id,
+              volume_id: volumeId,
+            }))
+          );
+        }
+        
+        if (selectedMistakes.length > 0) {
+          await supabase.from("trade_mistakes").insert(
+            selectedMistakes.map((mistakeId) => ({
+              trade_id: newTrade.id,
+              mistake_id: mistakeId,
+            }))
+          );
+        }
+       }
  
-     // Link selected tags to the new trade
-     if (newTrade?.id) {
-       const { supabase } = await import("@/integrations/supabase/client");
-       
-       if (selectedPatterns.length > 0) {
-         await supabase.from("trade_patterns").insert(
-           selectedPatterns.map((patternId) => ({
-             trade_id: newTrade.id,
-             pattern_id: patternId,
-           }))
-         );
-       }
-       
-       if (selectedCandlesticks.length > 0) {
-         await supabase.from("trade_candlesticks").insert(
-           selectedCandlesticks.map((candlestickId) => ({
-             trade_id: newTrade.id,
-             candlestick_id: candlestickId,
-           }))
-         );
-       }
-       
-       if (selectedVolumes.length > 0) {
-         await supabase.from("trade_volume").insert(
-           selectedVolumes.map((volumeId) => ({
-             trade_id: newTrade.id,
-             volume_id: volumeId,
-           }))
-         );
-       }
-       
-       if (selectedMistakes.length > 0) {
-         await supabase.from("trade_mistakes").insert(
-           selectedMistakes.map((mistakeId) => ({
-             trade_id: newTrade.id,
-             mistake_id: mistakeId,
-           }))
-         );
-       }
-     }
- 
-     resetForm();
-     onOpenChange(false);
+      resetForm();
+      onOpenChange(false);
+    } catch (error: any) {
+      console.error("Trade creation failed:", error);
+      toast.error(error?.message || "Failed to create trade. Please try again.");
+    }
    };
  
    const resetForm = () => {
@@ -205,15 +224,18 @@
      "1W": "Weekly",
    };
  
-   // Handle contract selection from Option Chain or Futures picker
+  // Handle contract selection from unified instrument search
    const handleContractSelect = useCallback((contract: {
      symbol: string;
      ltp: number;
      instrumentToken?: string;
      contractKey: string;
+    exchange?: string;
    }) => {
      setValue("symbol", contract.symbol, { shouldValidate: true });
-     setValue("entry_price", contract.ltp, { shouldValidate: true });
+    if (contract.ltp > 0) {
+      setValue("entry_price", contract.ltp, { shouldValidate: true });
+    }
      setContractKey(contract.contractKey);
      if (contract.instrumentToken) {
        setInstrumentToken(contract.instrumentToken);
@@ -247,15 +269,27 @@
  
    return (
      <Dialog open={open} onOpenChange={handleClose}>
-       <DialogContent className="sm:max-w-[650px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
          <DialogHeader>
            <DialogTitle>Create Research Trade</DialogTitle>
            <DialogDescription>
-             Log a trade idea with entry, targets, SL, tags, and automation options.
+            Log a trade idea quickly. Only Segment, Trade Type, and Symbol are required.
            </DialogDescription>
          </DialogHeader>
  
          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Error display */}
+          {Object.keys(errors).length > 0 && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                {Object.values(errors).map((e, i) => (
+                  <span key={i} className="block text-sm">{e.message}</span>
+                ))}
+              </AlertDescription>
+            </Alert>
+          )}
+
            {/* Segment & Trade Type */}
            <div className="grid grid-cols-2 gap-4">
              <div className="space-y-2">
@@ -307,29 +341,16 @@
              </div>
            </div>
  
-           {/* Symbol - Conditional based on segment */}
-           {segment === "Options" ? (
-             <OptionChainSelector onSelect={handleContractSelect} />
-           ) : segment === "Futures" ? (
-             <FuturesContractPicker onSelect={handleContractSelect} />
-           ) : (
-             <div className="space-y-2">
-               <Label htmlFor="symbol">Symbol *</Label>
-               <Input
-                 id="symbol"
-                 placeholder="e.g., RELIANCE, TATASTEEL"
-                 {...register("symbol")}
-               />
-               {errors.symbol && (
-                 <p className="text-sm text-destructive">{errors.symbol.message}</p>
-               )}
-             </div>
-           )}
+          {/* Unified Instrument Search - Always visible */}
+          <UnifiedInstrumentSearch
+            segment={segment}
+            onSelect={handleContractSelect}
+          />
  
-           {/* Entry Price & Timeframe */}
+          {/* Entry Price & Timeframe (Optional) */}
            <div className="grid grid-cols-2 gap-4">
              <div className="space-y-2">
-               <Label htmlFor="entry_price">Entry Price *</Label>
+              <Label htmlFor="entry_price">Entry Price</Label>
                <Input
                  id="entry_price"
                  type="number"
@@ -364,29 +385,26 @@
              </div>
            </div>
  
-           {/* Holding Period */}
-           <div className="space-y-2">
-             <Label htmlFor="holding_period">Expected Holding Period</Label>
-             <Input
-               id="holding_period"
-               placeholder="e.g., Intraday, 2-3 days, Swing"
-               {...register("holding_period")}
-             />
-           </div>
- 
-           {/* Stop Loss */}
-           <div className="space-y-2">
-             <Label htmlFor="stop_loss">Stop Loss</Label>
-             <Input
-               id="stop_loss"
-               type="number"
-               step="0.01"
-               placeholder="2350.00"
-               {...register("stop_loss", { valueAsNumber: true })}
-             />
-             {errors.stop_loss && (
-               <p className="text-sm text-destructive">{errors.stop_loss.message}</p>
-             )}
+          {/* Holding Period & Stop Loss (Optional) */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="holding_period">Holding Period</Label>
+              <Input
+                id="holding_period"
+                placeholder="e.g., Intraday, 2-3 days"
+                {...register("holding_period")}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="stop_loss">Stop Loss</Label>
+              <Input
+                id="stop_loss"
+                type="number"
+                step="0.01"
+                placeholder="Optional"
+                {...register("stop_loss", { valueAsNumber: true })}
+              />
+            </div>
            </div>
  
            {/* Targets - Chip-based input with R:R preview */}
