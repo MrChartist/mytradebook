@@ -12,6 +12,8 @@ import {
   Edit2,
   Loader2,
   Zap,
+  Send,
+  MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +25,11 @@ import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Database } from "@/integrations/supabase/types";
 
-type Alert = Database["public"]["Tables"]["alerts"]["Row"];
+type Alert = Database["public"]["Tables"]["alerts"]["Row"] & {
+  notes?: string | null;
+  telegram_enabled?: boolean | null;
+  exchange?: string | null;
+};
 type AlertCondition = Database["public"]["Enums"]["alert_condition"];
 
 const conditionLabels: Record<AlertCondition, string> = {
@@ -204,6 +210,11 @@ export default function Alerts() {
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold">{alert.symbol}</h3>
+                      {alert.exchange && (
+                        <span className="text-xs text-muted-foreground">
+                          {alert.exchange}
+                        </span>
+                      )}
                       {isTriggered && (
                         <span className="px-2 py-0.5 rounded-full bg-warning/20 text-warning text-xs font-medium">
                           TRIGGERED
@@ -214,6 +225,12 @@ export default function Alerts() {
                           ({alert.trigger_count}x)
                         </span>
                       )}
+                      {alert.telegram_enabled && (
+                        <Send className="w-3 h-3 text-primary" />
+                      )}
+                      {alert.notes && (
+                        <MessageSquare className="w-3 h-3 text-muted-foreground" />
+                      )}
                     </div>
                     <p className="text-sm text-muted-foreground">
                       {conditionLabels[alert.condition_type]}:{" "}
@@ -221,6 +238,11 @@ export default function Alerts() {
                         ? `${alert.threshold}%`
                         : `₹${alert.threshold?.toLocaleString()}`}
                     </p>
+                    {alert.notes && (
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
+                        📝 {alert.notes}
+                      </p>
+                    )}
                   </div>
                 </div>
 

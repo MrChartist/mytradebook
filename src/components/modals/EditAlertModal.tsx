@@ -15,6 +15,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import {
   Select,
@@ -25,7 +26,9 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Loader2, Send } from "lucide-react";
 import {
   createAlertSchema,
   type CreateAlertInput,
@@ -35,7 +38,11 @@ import {
 import { useAlerts } from "@/hooks/useAlerts";
 import type { Database } from "@/integrations/supabase/types";
 
-type Alert = Database["public"]["Tables"]["alerts"]["Row"];
+type Alert = Database["public"]["Tables"]["alerts"]["Row"] & {
+  notes?: string | null;
+  telegram_enabled?: boolean | null;
+  exchange?: string | null;
+};
 
 interface EditAlertModalProps {
   open: boolean;
@@ -53,9 +60,9 @@ const conditionLabels: Record<string, string> = {
 };
 
 const recurrenceLabels: Record<string, string> = {
-  ONCE: "One-time",
-  DAILY: "Daily",
-  CONTINUOUS: "Continuous",
+  ONCE: "One-time (triggers once, then deactivates)",
+  DAILY: "Daily (resets and checks each day)",
+  CONTINUOUS: "Continuous (triggers every time condition met)",
 };
 
 export function EditAlertModal({ open, onOpenChange, alert }: EditAlertModalProps) {
@@ -66,8 +73,11 @@ export function EditAlertModal({ open, onOpenChange, alert }: EditAlertModalProp
     defaultValues: {
       symbol: "",
       condition_type: "PRICE_GT",
-      threshold: 0,
+      threshold: undefined,
       recurrence: "ONCE",
+      notes: "",
+      telegram_enabled: false,
+      exchange: "NSE",
     },
   });
 
@@ -77,8 +87,11 @@ export function EditAlertModal({ open, onOpenChange, alert }: EditAlertModalProp
       form.reset({
         symbol: alert.symbol,
         condition_type: alert.condition_type,
-        threshold: alert.threshold ?? 0,
+        threshold: alert.threshold ?? undefined,
         recurrence: alert.recurrence ?? "ONCE",
+        notes: alert.notes || "",
+        telegram_enabled: alert.telegram_enabled || false,
+        exchange: (alert.exchange as "NSE" | "NFO" | "MCX") || "NSE",
       });
     }
   }, [alert, form]);
@@ -90,8 +103,10 @@ export function EditAlertModal({ open, onOpenChange, alert }: EditAlertModalProp
       id: alert.id,
       symbol: data.symbol,
       condition_type: data.condition_type,
-      threshold: data.threshold,
+      threshold: data.threshold || null,
       recurrence: data.recurrence,
+      notes: data.notes || null,
+      telegram_enabled: data.telegram_enabled || false,
     });
 
     onOpenChange(false);
@@ -101,14 +116,15 @@ export function EditAlertModal({ open, onOpenChange, alert }: EditAlertModalProp
   const isPercentCondition =
     selectedCondition === "PERCENT_CHANGE_GT" ||
     selectedCondition === "PERCENT_CHANGE_LT";
+  const isVolumeCondition = selectedCondition === "VOLUME_SPIKE";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Alert</DialogTitle>
           <DialogDescription>
-            Modify the alert conditions for {alert?.symbol}.
+            Modify the alert conditions for {alert?.symbol} ({alert?.exchange || "NSE"}).
           </DialogDescription>
         </DialogHeader>
 
@@ -125,6 +141,7 @@ export function EditAlertModal({ open, onOpenChange, alert }: EditAlertModalProp
                       placeholder="e.g., RELIANCE, NIFTY 50"
                       {...field}
                       className="uppercase"
+                      disabled
                     />
                   </FormControl>
                   <FormMessage />
@@ -163,16 +180,20 @@ export function EditAlertModal({ open, onOpenChange, alert }: EditAlertModalProp
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {isPercentCondition ? "Percentage (%)" : "Price (₹)"}
+                    {isPercentCondition ? "Percentage (%)" : 
+                     isVolumeCondition ? "Volume Threshold" : "Trigger Price (₹)"}
                   </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       step={isPercentCondition ? "0.1" : "0.01"}
-                      placeholder={isPercentCondition ? "e.g., 2.5" : "e.g., 2500"}
-                      {...field}
-                      value={field.value}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                      placeholder={isPercentCondition ? "e.g., 2.5" : 
+                                  isVolumeCondition ? "e.g., 1000000" : "e.g., 2500"}
+                      value={field.value ?? ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        field.onChange(val === "" ? null : parseFloat(val));
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -201,6 +222,52 @@ export function EditAlertModal({ open, onOpenChange, alert }: EditAlertModalProp
                     </SelectContent>
                   </Select>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Notes */}
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Notes / Reason</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Why did you set this alert? (optional)"
+                      className="resize-none"
+                      rows={3}
+                      {...field}
+                      value={field.value || ""}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Telegram Toggle */}
+            <FormField
+              control={form.control}
+              name="telegram_enabled"
+              render={({ field }) => (
+                <FormItem className="flex items-center justify-between rounded-lg border p-3">
+                  <div className="space-y-0.5">
+                    <FormLabel className="flex items-center gap-2">
+                      <Send className="w-4 h-4" />
+                      Send to Telegram
+                    </FormLabel>
+                    <FormDescription className="text-xs">
+                      Get notified on Telegram when alert triggers
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
                 </FormItem>
               )}
             />
