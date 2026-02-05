@@ -15,7 +15,6 @@
    FormItem,
    FormLabel,
    FormMessage,
-   FormDescription,
  } from "@/components/ui/form";
  import {
    Select,
@@ -37,6 +36,7 @@
    alertRecurrenceTypes,
  } from "@/lib/schemas";
  import { useAlerts } from "@/hooks/useAlerts";
+ import { useInstrumentSearch, type Instrument } from "@/hooks/useInstrumentSearch";
  import { cn } from "@/lib/utils";
  
  interface CreateAlertModalProps {
@@ -54,149 +54,29 @@
  };
  
  const recurrenceLabels: Record<string, string> = {
-   ONCE: "One-time (triggers once, then deactivates)",
-   DAILY: "Daily (resets and checks each day)",
-   CONTINUOUS: "Continuous (triggers every time condition met)",
+   ONCE: "One-time (triggers once)",
+   DAILY: "Daily (resets each day)",
+   CONTINUOUS: "Continuous (every trigger)",
  };
- 
- // Instrument master data (same as trade module)
- const NSE_EQUITY = [
-   "RELIANCE", "TCS", "HDFCBANK", "ICICIBANK", "INFY", "HINDUNILVR", "SBIN", "BHARTIARTL",
-   "KOTAKBANK", "ITC", "LT", "AXISBANK", "BAJFINANCE", "ASIANPAINT", "MARUTI", "TITAN",
-   "SUNPHARMA", "ULTRACEMCO", "WIPRO", "HCLTECH", "NESTLEIND", "TATAMOTORS", "POWERGRID",
-   "NTPC", "M&M", "JSWSTEEL", "TATASTEEL", "TECHM", "ADANIPORTS", "BAJAJFINSV", "ONGC",
-   "COALINDIA", "GRASIM", "DIVISLAB", "DRREDDY", "CIPLA", "APOLLOHOSP", "EICHERMOT",
-   "HINDALCO", "BPCL", "INDUSINDBK", "SBILIFE", "HDFCLIFE", "BRITANNIA", "HEROMOTOCO",
-   "TATACONSUM", "LTIM", "ADANIENT", "RECLTD", "PFC", "IRFC", "NHPC", "SJVN", "BEL",
-   "HAL", "BHEL", "GAIL", "IOC", "VEDL", "SAIL", "NMDC", "UNIONBANK", "BANKBARODA",
-   "CANBK", "PNB", "IDEA", "ZEEL", "TATAPOWER", "TATAELXSI", "PERSISTENT", "COFORGE",
-   "MPHASIS", "MINDTREE", "NAUKRI", "ZOMATO", "PAYTM", "POLICYBZR", "DELHIVERY",
-   "IRCTC", "RVNL", "COCHINSHIP", "GRSE", "MAZAGONDOCK", "NBCC", "RAILTEL", "RITES",
-   "IRCON", "HUDCO", "EXIDEIND", "AMARARAJA", "MOTHERSON", "BALKRISIND", "MRF",
-   "APOLLOTYRE", "CEAT", "TVSMOTORS", "BAJAJ-AUTO", "ESCORTS", "ASHOKLEY", "TVSMOTOR",
-   "PAGEIND", "RAYMOND", "ARVIND", "ABFRL", "TRENT", "SHOPERSTOP", "JUBLFOOD", "DMART",
-   "RELAXO", "BATA", "VBL", "MARICO", "DABUR", "GODREJCP", "COLPAL", "PGHH", "BERGEPAINT",
-   "KANSAINER", "INDIGO", "SPICEJET", "GMRINFRA", "ADANIGREEN", "ADANITRANS", "TORNTPOWER",
-   "TATACOMM", "ATGL", "MGL", "IGL", "PETRONET", "GSPL", "HPCL", "CASTROLIND",
-   "PIIND", "UPL", "BAYERCROP", "RALLIS", "DHANUKA", "GNFC", "GSFC", "FACT", "CHAMBAL",
-   "COROMANDEL", "DEEPAKFERT", "DEEPAKNITRI", "FINEORG", "NAVINFLUOR", "SRF", "AARTIIND",
-   "TATACHEM", "ALKYLAMINE", "ATUL", "SUDARSCHEM", "CLEAN", "ANURAS", "AUROPHARMA",
-   "BIOCON", "LALPATHLAB", "METROPOLIS", "THYROCARE", "SYNGENE", "GLAND", "NATCOPHARM",
-   "ALKEM", "TORNTPHARM", "IPCALAB", "LUPIN", "CADILAHC", "GLENMARK", "ZYDUSWELL",
-   "LAURUSLABS", "GRANULES", "ABBOTINDIA", "PFIZER", "GLAXO", "SANOFI",
- ].sort();
- 
- const NFO_UNDERLYINGS = [
-   "NIFTY", "BANKNIFTY", "FINNIFTY", "MIDCPNIFTY", "NIFTYNXT50",
-   ...NSE_EQUITY.slice(0, 100),
- ];
- 
- const MCX_COMMODITIES = [
-   "GOLD", "GOLDM", "GOLDPETAL", "SILVER", "SILVERM", "SILVERMIC",
-   "CRUDEOIL", "CRUDEOILM", "NATURALGAS", "COPPER", "ZINC", "LEAD",
-   "ALUMINIUM", "NICKEL", "COTTON", "MENTHAOIL",
- ].sort();
- 
- type InstrumentItem = {
-   symbol: string;
-   display_name: string;
-   exchange: "NSE" | "NFO" | "MCX";
-   instrument_type: "EQ" | "FUT" | "OPT" | "INDEX" | "COMMODITY";
- };
- 
- function getAllInstruments(): InstrumentItem[] {
-   const instruments: InstrumentItem[] = [];
-   
-   NSE_EQUITY.forEach(symbol => {
-     instruments.push({
-       symbol,
-       display_name: `${symbol}`,
-       exchange: "NSE",
-       instrument_type: "EQ",
-     });
-   });
-   
-   NFO_UNDERLYINGS.forEach(symbol => {
-     if (!instruments.find(i => i.symbol === symbol && i.exchange === "NFO")) {
-       const isIndex = ["NIFTY", "BANKNIFTY", "FINNIFTY", "MIDCPNIFTY", "NIFTYNXT50"].includes(symbol);
-       instruments.push({
-         symbol,
-         display_name: `${symbol} (F&O)`,
-         exchange: "NFO",
-         instrument_type: isIndex ? "INDEX" : "EQ",
-       });
-     }
-   });
-   
-   MCX_COMMODITIES.forEach(symbol => {
-     instruments.push({
-       symbol,
-       display_name: `${symbol}`,
-       exchange: "MCX",
-       instrument_type: "COMMODITY",
-     });
-   });
-   
-   return instruments;
- }
- 
- const STORAGE_KEY_RECENT = "alert_recent_instruments";
- const STORAGE_KEY_FAVORITES = "alert_favorite_instruments";
- 
- function getRecentInstruments(): string[] {
-   try {
-     const stored = localStorage.getItem(STORAGE_KEY_RECENT);
-     return stored ? JSON.parse(stored) : [];
-   } catch {
-     return [];
-   }
- }
- 
- function addRecentInstrument(symbol: string) {
-   try {
-     const recent = getRecentInstruments().filter(s => s !== symbol);
-     recent.unshift(symbol);
-     localStorage.setItem(STORAGE_KEY_RECENT, JSON.stringify(recent.slice(0, 10)));
-   } catch {}
- }
- 
- function getFavoriteInstruments(): string[] {
-   try {
-     const stored = localStorage.getItem(STORAGE_KEY_FAVORITES);
-     return stored ? JSON.parse(stored) : [];
-   } catch {
-     return [];
-   }
- }
- 
- function toggleFavoriteInstrument(symbol: string): boolean {
-   try {
-     const favorites = getFavoriteInstruments();
-     const index = favorites.indexOf(symbol);
-     if (index >= 0) {
-       favorites.splice(index, 1);
-       localStorage.setItem(STORAGE_KEY_FAVORITES, JSON.stringify(favorites));
-       return false;
-     } else {
-       favorites.unshift(symbol);
-       localStorage.setItem(STORAGE_KEY_FAVORITES, JSON.stringify(favorites));
-       return true;
-     }
-   } catch {
-     return false;
-   }
- }
  
  export function CreateAlertModal({ open, onOpenChange }: CreateAlertModalProps) {
    const { createAlert } = useAlerts();
-   const [searchQuery, setSearchQuery] = useState("");
    const [selectedTab, setSelectedTab] = useState<"search" | "recent" | "favorites">("search");
    const [exchangeFilter, setExchangeFilter] = useState<"ALL" | "NSE" | "NFO" | "MCX">("ALL");
-   const [selectedInstrument, setSelectedInstrument] = useState<InstrumentItem | null>(null);
-   const [favorites, setFavorites] = useState<string[]>(getFavoriteInstruments());
+   const [selectedInstrument, setSelectedInstrument] = useState<Instrument | null>(null);
    const [submitError, setSubmitError] = useState<string | null>(null);
  
-   const allInstruments = useMemo(() => getAllInstruments(), []);
+   const {
+     query,
+     setQuery,
+     instruments,
+     isLoading,
+     recentInstruments,
+     favoriteInstruments,
+     addToRecent,
+     toggleFavorite,
+     isFavorite,
+   } = useInstrumentSearch({ exchange: exchangeFilter, limit: 50 });
  
    const form = useForm<CreateAlertInput>({
      resolver: zodResolver(createAlertSchema),
@@ -211,59 +91,30 @@
      },
    });
  
-   const filteredInstruments = useMemo(() => {
-     let instruments = allInstruments;
-     
-     if (exchangeFilter !== "ALL") {
-       instruments = instruments.filter(i => i.exchange === exchangeFilter);
-     }
-     
-     if (searchQuery.trim()) {
-       const query = searchQuery.toLowerCase();
-       instruments = instruments.filter(i => 
-         i.symbol.toLowerCase().includes(query) ||
-         i.display_name.toLowerCase().includes(query)
-       );
-     }
-     
-     return instruments.slice(0, 50);
-   }, [allInstruments, exchangeFilter, searchQuery]);
- 
-   const recentInstruments = useMemo(() => {
-     const recent = getRecentInstruments();
-     return allInstruments.filter(i => recent.includes(i.symbol)).slice(0, 10);
-   }, [allInstruments]);
- 
-   const favoriteInstruments = useMemo(() => {
-     return allInstruments.filter(i => favorites.includes(i.symbol));
-   }, [allInstruments, favorites]);
- 
-   const handleSelectInstrument = (instrument: InstrumentItem) => {
+   const handleSelectInstrument = (instrument: Instrument) => {
      setSelectedInstrument(instrument);
-     form.setValue("symbol", instrument.symbol);
-     form.setValue("exchange", instrument.exchange);
-     form.setValue("instrument_id", `${instrument.exchange}:${instrument.symbol}`);
-     addRecentInstrument(instrument.symbol);
-     setSearchQuery("");
+     form.setValue("symbol", instrument.trading_symbol);
+     form.setValue("exchange", instrument.exchange as "NSE" | "NFO" | "MCX");
+     form.setValue("instrument_id", instrument.security_id);
+     addToRecent(instrument);
+     setQuery("");
    };
  
-   const handleToggleFavorite = (symbol: string, e: React.MouseEvent) => {
+   const handleToggleFavorite = (instrument: Instrument, e: React.MouseEvent) => {
      e.stopPropagation();
-     const isFavorite = toggleFavoriteInstrument(symbol);
-     setFavorites(getFavoriteInstruments());
+     toggleFavorite(instrument);
    };
  
    const selectedCondition = form.watch("condition_type");
    const thresholdValue = form.watch("threshold");
-   const isPercentCondition = selectedCondition === "PERCENT_CHANGE_GT" || selectedCondition === "PERCENT_CHANGE_LT";
    const isPriceCondition = selectedCondition === "PRICE_GT" || selectedCondition === "PRICE_LT";
+   const isPercentCondition = selectedCondition === "PERCENT_CHANGE_GT" || selectedCondition === "PERCENT_CHANGE_LT";
    const isVolumeCondition = selectedCondition === "VOLUME_SPIKE";
  
-   // Validation: price conditions require threshold > 0
    const thresholdError = useMemo(() => {
      if ((isPriceCondition || isPercentCondition || isVolumeCondition) && 
          (thresholdValue === null || thresholdValue === undefined || thresholdValue <= 0)) {
-       return "Enter a valid trigger value greater than 0";
+       return "Enter a value greater than 0";
      }
      return null;
    }, [isPriceCondition, isPercentCondition, isVolumeCondition, thresholdValue]);
@@ -292,13 +143,13 @@
          expires_at: data.expires_at || null,
          notes: data.notes || null,
          telegram_enabled: data.telegram_enabled || false,
-         instrument_id: data.instrument_id || null,
+         instrument_id: selectedInstrument.security_id,
          exchange: data.exchange || "NSE",
        });
  
        form.reset();
        setSelectedInstrument(null);
-       setSearchQuery("");
+       setQuery("");
        onOpenChange(false);
      } catch (error) {
        const message = error instanceof Error ? error.message : "Failed to create alert";
@@ -306,39 +157,44 @@
      }
    };
  
-   const renderInstrumentList = (instruments: InstrumentItem[]) => (
+   const renderInstrumentList = (instrumentList: Instrument[]) => (
      <div className="max-h-48 overflow-y-auto space-y-1">
-       {instruments.length === 0 ? (
+       {isLoading && selectedTab === "search" ? (
+         <div className="flex items-center justify-center py-4">
+           <Loader2 className="w-4 h-4 animate-spin mr-2" />
+           <span className="text-sm text-muted-foreground">Searching...</span>
+         </div>
+       ) : instrumentList.length === 0 ? (
          <p className="text-sm text-muted-foreground text-center py-4">
-           {selectedTab === "search" ? "No instruments found" : 
+           {selectedTab === "search" ? "No instruments found. Try syncing instrument master." : 
             selectedTab === "recent" ? "No recent instruments" : "No favorites yet"}
          </p>
        ) : (
-         instruments.map((instrument) => (
+         instrumentList.map((instrument) => (
            <div
-             key={`${instrument.exchange}-${instrument.symbol}`}
+             key={instrument.security_id}
              onClick={() => handleSelectInstrument(instrument)}
              className={cn(
                "flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors",
-               selectedInstrument?.symbol === instrument.symbol && selectedInstrument?.exchange === instrument.exchange
+               selectedInstrument?.security_id === instrument.security_id
                  ? "bg-primary/20 border border-primary/50"
                  : "hover:bg-accent"
              )}
            >
              <div>
-               <span className="font-medium">{instrument.symbol}</span>
+               <span className="font-medium">{instrument.trading_symbol}</span>
                <span className="ml-2 text-xs text-muted-foreground">
-                 {instrument.exchange}
+                 {instrument.exchange} • {instrument.instrument_type}
                </span>
              </div>
              <button
-               onClick={(e) => handleToggleFavorite(instrument.symbol, e)}
+               onClick={(e) => handleToggleFavorite(instrument, e)}
                className="p-1 hover:bg-background rounded"
              >
                <Star
                  className={cn(
                    "w-4 h-4",
-                   favorites.includes(instrument.symbol)
+                   isFavorite(instrument.security_id)
                      ? "fill-warning text-warning"
                      : "text-muted-foreground"
                  )}
@@ -356,12 +212,19 @@
          <DialogHeader>
            <DialogTitle>Create New Alert</DialogTitle>
            <DialogDescription>
-             Get notified when a price or condition is met.
+             Get notified when price or condition is met.
            </DialogDescription>
          </DialogHeader>
  
          <Form {...form}>
            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+             {submitError && (
+               <Alert variant="destructive">
+                 <AlertCircle className="h-4 w-4" />
+                 <AlertDescription>{submitError}</AlertDescription>
+               </Alert>
+             )}
+ 
              {/* Instrument Selection */}
              <div className="space-y-2">
                <FormLabel>Symbol *</FormLabel>
@@ -369,7 +232,7 @@
                {selectedInstrument ? (
                  <div className="flex items-center justify-between p-3 bg-accent rounded-lg">
                    <div>
-                     <span className="font-semibold">{selectedInstrument.symbol}</span>
+                     <span className="font-semibold">{selectedInstrument.trading_symbol}</span>
                      <span className="ml-2 text-sm text-muted-foreground">
                        {selectedInstrument.exchange}
                      </span>
@@ -450,15 +313,15 @@
                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                        <Input
                          placeholder="Search symbols..."
-                         value={searchQuery}
-                         onChange={(e) => setSearchQuery(e.target.value)}
+                         value={query}
+                         onChange={(e) => setQuery(e.target.value)}
                          className="pl-10"
                        />
                      </div>
                    )}
  
                    {/* Instrument List */}
-                   {selectedTab === "search" && renderInstrumentList(filteredInstruments)}
+                   {selectedTab === "search" && renderInstrumentList(instruments)}
                    {selectedTab === "recent" && renderInstrumentList(recentInstruments)}
                    {selectedTab === "favorites" && renderInstrumentList(favoriteInstruments)}
                  </div>
@@ -472,7 +335,7 @@
                render={({ field }) => (
                  <FormItem>
                    <FormLabel>Condition *</FormLabel>
-                   <Select onValueChange={field.onChange} value={field.value}>
+                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                      <FormControl>
                        <SelectTrigger>
                          <SelectValue placeholder="Select condition" />
@@ -481,7 +344,7 @@
                      <SelectContent>
                        {alertConditionTypes.map((type) => (
                          <SelectItem key={type} value={type}>
-                           {conditionLabels[type]}
+                           {conditionLabels[type] || type}
                          </SelectItem>
                        ))}
                      </SelectContent>
@@ -498,21 +361,21 @@
                render={({ field }) => (
                  <FormItem>
                    <FormLabel>
-                     {isPercentCondition ? "Percentage (%) *" : 
-                      isVolumeCondition ? "Volume Threshold *" : "Trigger Price (₹) *"}
+                     {isPriceCondition ? "Trigger Price *" : 
+                      isPercentCondition ? "% Threshold *" : 
+                      isVolumeCondition ? "Volume Multiple *" : "Value"}
                    </FormLabel>
                    <FormControl>
                      <Input
                        type="number"
-                       step={isPercentCondition ? "0.1" : "0.01"}
-                       placeholder={isPercentCondition ? "e.g., 2.5" : 
-                                   isVolumeCondition ? "e.g., 1000000" : "e.g., 2500"}
-                       value={field.value ?? ""}
+                       step="0.01"
+                       placeholder={isPriceCondition ? "e.g., 2500.00" : "e.g., 5"}
+                       {...field}
                        onChange={(e) => {
                          const val = e.target.value;
                          field.onChange(val === "" ? null : parseFloat(val));
                        }}
-                       className={cn(thresholdError && "border-destructive")}
+                       value={field.value ?? ""}
                      />
                    </FormControl>
                    {thresholdError && (
@@ -530,16 +393,16 @@
                render={({ field }) => (
                  <FormItem>
                    <FormLabel>Recurrence</FormLabel>
-                   <Select onValueChange={field.onChange} value={field.value}>
+                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                      <FormControl>
                        <SelectTrigger>
-                         <SelectValue placeholder="Select recurrence" />
+                         <SelectValue />
                        </SelectTrigger>
                      </FormControl>
                      <SelectContent>
                        {alertRecurrenceTypes.map((type) => (
                          <SelectItem key={type} value={type}>
-                           {recurrenceLabels[type]}
+                           {recurrenceLabels[type] || type}
                          </SelectItem>
                        ))}
                      </SelectContent>
@@ -558,11 +421,11 @@
                    <FormLabel>Notes / Reason</FormLabel>
                    <FormControl>
                      <Textarea
-                       placeholder="Why are you setting this alert? (optional)"
+                       placeholder="Why this alert matters..."
                        className="resize-none"
-                       rows={3}
+                       rows={2}
                        {...field}
-                       value={field.value || ""}
+                       value={field.value ?? ""}
                      />
                    </FormControl>
                    <FormMessage />
@@ -581,9 +444,9 @@
                        <Send className="w-4 h-4" />
                        Send to Telegram
                      </FormLabel>
-                     <FormDescription className="text-xs">
-                       Get notified on Telegram when alert triggers
-                     </FormDescription>
+                     <p className="text-xs text-muted-foreground">
+                       Notify via Telegram when triggered
+                     </p>
                    </div>
                    <FormControl>
                      <Switch
@@ -595,16 +458,8 @@
                )}
              />
  
-             {/* Error Display */}
-             {submitError && (
-               <Alert variant="destructive">
-                 <AlertCircle className="h-4 w-4" />
-                 <AlertDescription>{submitError}</AlertDescription>
-               </Alert>
-             )}
- 
-             {/* Actions */}
-             <div className="flex justify-end gap-3 pt-4">
+             {/* Submit */}
+             <div className="flex justify-end gap-2 pt-2">
                <Button
                  type="button"
                  variant="outline"
@@ -612,19 +467,11 @@
                >
                  Cancel
                </Button>
-               <Button
-                 type="submit"
-                 className="bg-gradient-primary"
-                 disabled={!canSubmit}
-               >
-                 {createAlert.isPending ? (
-                   <>
-                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                     Creating...
-                   </>
-                 ) : (
-                   "Create Alert"
+               <Button type="submit" disabled={!canSubmit}>
+                 {createAlert.isPending && (
+                   <Loader2 className="w-4 h-4 animate-spin mr-2" />
                  )}
+                 Create Alert
                </Button>
              </div>
            </form>
