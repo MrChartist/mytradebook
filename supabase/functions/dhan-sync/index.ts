@@ -81,6 +81,7 @@ serve(async (req) => {
         "Accept": "application/json",
         "Content-Type": "application/json",
         "access-token": DHAN_ACCESS_TOKEN,
+        "client-id": DHAN_CLIENT_ID,
       },
     });
 

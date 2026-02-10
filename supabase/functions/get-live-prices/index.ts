@@ -32,7 +32,8 @@ serve(async (req) => {
   }
 
   try {
-    const DHAN_ACCESS_TOKEN = Deno.env.get("DHAN_ACCESS_TOKEN");
+     const DHAN_ACCESS_TOKEN = Deno.env.get("DHAN_ACCESS_TOKEN");
+    const DHAN_CLIENT_ID = Deno.env.get("DHAN_CLIENT_ID");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     
@@ -67,7 +68,8 @@ serve(async (req) => {
     const timestamp = new Date().toISOString();
      
     // Get user's Dhan token if user_id provided
-    let userDhanToken: string | null = null;
+     let userDhanToken: string | null = null;
+    let userDhanClientId: string | null = null;
     const supabase = SUPABASE_URL && SUPABASE_SERVICE_KEY 
       ? createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
       : null;
@@ -75,19 +77,20 @@ serve(async (req) => {
     if (userId && supabase) {
       const { data: userSettings } = await supabase
         .from("user_settings")
-        .select("dhan_access_token, dhan_enabled")
+        .select("dhan_access_token, dhan_client_id, dhan_enabled")
         .eq("user_id", userId)
         .single();
       
-      if (userSettings?.dhan_access_token && userSettings?.dhan_enabled) {
+      if (userSettings?.dhan_access_token && userSettings?.dhan_client_id && userSettings?.dhan_enabled) {
         userDhanToken = userSettings.dhan_access_token;
+        userDhanClientId = userSettings.dhan_client_id;
         console.log("Using per-user Dhan token");
       }
     }
     
     // Use user token if available, else fall back to global
-    const activeToken = userDhanToken || DHAN_ACCESS_TOKEN;
-    
+     const activeToken = userDhanToken || DHAN_ACCESS_TOKEN;
+    const activeClientId = userDhanClientId || DHAN_CLIENT_ID;
     // Build security ID to symbol mapping for precise API calls
     const securityIdMap: Record<string, { symbol: string; exchangeSegment: string }> = {};
     instruments.forEach((inst) => {
@@ -134,7 +137,7 @@ serve(async (req) => {
       }
     }
     
-    if (activeToken) {
+    if (activeToken && activeClientId) {
       try {
          // Build request body grouped by exchange segment
          const requestBody: Record<string, string[]> = {};
@@ -167,13 +170,14 @@ serve(async (req) => {
             .join(", ");
           console.log("Dhan API request:", requestSummary);
           
-           const response = await fetch(`${DHAN_API_URL}/marketfeed/ltp`, {
-             method: "POST",
-             headers: {
-               "Accept": "application/json",
-               "Content-Type": "application/json",
-               "access-token": activeToken,
-             },
+            const response = await fetch(`${DHAN_API_URL}/marketfeed/ltp`, {
+              method: "POST",
+              headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "access-token": activeToken,
+                "client-id": activeClientId,
+              },
              body: JSON.stringify(requestBody),
            });
           
