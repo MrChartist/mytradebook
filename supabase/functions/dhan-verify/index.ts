@@ -34,14 +34,15 @@
        console.log(`Verifying Dhan credentials for user ${user_id}, client ${client_id}`);
  
        // Call Dhan profile API to verify token
-       const response = await fetch(`${DHAN_API_URL}/profile`, {
-         method: "GET",
-         headers: {
-           "Accept": "application/json",
-           "Content-Type": "application/json",
-           "access-token": access_token,
-         },
-       });
+        const response = await fetch(`${DHAN_API_URL}/profile`, {
+          method: "GET",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "access-token": access_token,
+            "client-id": client_id,
+          },
+        });
  
        console.log("Dhan profile API response status:", response.status);
  
