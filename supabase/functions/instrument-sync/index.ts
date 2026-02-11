@@ -88,7 +88,7 @@ Deno.serve(async (req) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const cutoff = new Date(today);
-    cutoff.setDate(cutoff.getDate() + 60); // 60 days for derivatives
+    cutoff.setDate(cutoff.getDate() + 45); // 45 days for derivatives
 
     interface InstrRow {
       security_id: string;
@@ -157,6 +157,14 @@ Deno.serve(async (req) => {
       const tradingSymbol = row[idxTradSym]?.trim() || "";
       if (!tradingSymbol) continue;
 
+      // Skip OPTIONS entirely — they're 90%+ of FNO rows and searched on-demand
+      const instrumentName = row[idxInstr]?.trim() || "";
+      const mappedType = mapInstrumentType(instrumentName);
+      if (mappedType === "OPT") {
+        stats.skipped++;
+        continue;
+      }
+
       const expiryStr = row[idxExpDate]?.trim() || "";
 
       // Parse expiry and filter derivatives
@@ -184,7 +192,6 @@ Deno.serve(async (req) => {
       if (exchangeSegment === "MCX_COMM") stats.mcx++;
 
       const customSymbol = row[idxCustomSym]?.trim() || tradingSymbol;
-      const instrumentName = row[idxInstr]?.trim() || "";
       const strikeStr = row[idxStrike]?.trim() || "";
       const optionType = row[idxOptType]?.trim() || "";
       const lotSize = parseInt(row[idxLot]) || 1;
@@ -198,7 +205,7 @@ Deno.serve(async (req) => {
         security_id: securityId,
         exchange_segment: exchangeSegment,
         exchange,
-        instrument_type: mapInstrumentType(instrumentName),
+        instrument_type: mappedType,
         trading_symbol: cleanSymbol,
         display_name: customSymbol || tradingSymbol,
         underlying_symbol: underlying || null,
@@ -214,14 +221,20 @@ Deno.serve(async (req) => {
 
     if (instruments.length === 0) throw new Error("No instruments parsed");
 
+    // Deduplicate by security_id (last wins)
+    const deduped = new Map<string, InstrRow>();
+    for (const inst of instruments) deduped.set(inst.security_id, inst);
+    const uniqueInstruments = Array.from(deduped.values());
+    console.log(`Unique instruments after dedup: ${uniqueInstruments.length}`);
+
     // Batch upsert
     const BATCH = 1000;
     let inserted = 0;
     let errors = 0;
     const now = new Date().toISOString();
 
-    for (let i = 0; i < instruments.length; i += BATCH) {
-      const batch = instruments.slice(i, i + BATCH);
+    for (let i = 0; i < uniqueInstruments.length; i += BATCH) {
+      const batch = uniqueInstruments.slice(i, i + BATCH);
       const { error } = await supabase
         .from("instrument_master")
         .upsert(
@@ -237,7 +250,7 @@ Deno.serve(async (req) => {
     }
 
     const duration = Date.now() - startTime;
-    console.log(`Done: ${inserted} upserted, ${errors} errors, ${duration}ms`);
+    console.log(`Done: ${inserted} upserted, ${errors} errors, ${duration}ms (${uniqueInstruments.length} unique)`);
 
     if (logId) {
       await supabase.from("instrument_sync_log").update({
