@@ -140,35 +140,31 @@ serve(async (req) => {
     if (activeToken && activeClientId) {
       try {
          // Build request body grouped by exchange segment
-         const requestBody: Record<string, string[]> = {};
+         // IMPORTANT: Dhan API requires security_ids as INTEGERS, not strings
+         const requestBody: Record<string, number[]> = {};
          
-         // Add instruments with security_id by exchange segment
+         // Add instruments with numeric security_id by exchange segment
          Object.entries(securityIdMap).forEach(([secId, info]) => {
+           const numericId = parseInt(secId, 10);
+           // Skip non-numeric security_ids (e.g., NFO_UND_1, NFO_UND_26)
+           if (isNaN(numericId)) {
+             console.log(`Skipping non-numeric security_id: ${secId} for ${info.symbol}`);
+             return;
+           }
            const segment = info.exchangeSegment;
            if (!requestBody[segment]) {
              requestBody[segment] = [];
            }
-           requestBody[segment].push(secId);
+           requestBody[segment].push(numericId);
          });
-         
-         // Fallback: add symbols without security_id to NSE_EQ
-         const symbolsWithoutSecId = symbols.filter(
-           (s) => !instruments.find((i) => i.symbol === s && i.security_id)
-         );
-         if (symbolsWithoutSecId.length > 0) {
-           if (!requestBody["NSE_EQ"]) {
-             requestBody["NSE_EQ"] = [];
-           }
-           // For symbols without security_id, we can't reliably fetch - skip Dhan API
-         }
          
          // Only call Dhan if we have security IDs
          if (Object.keys(requestBody).some((k) => requestBody[k].length > 0)) {
           // Log what we're requesting
           const requestSummary = Object.entries(requestBody)
-            .map(([seg, ids]) => `${seg}: ${ids.length} instruments`)
+            .map(([seg, ids]) => `${seg}: [${ids.join(",")}]`)
             .join(", ");
-          console.log("Dhan API request:", requestSummary);
+          console.log("Dhan API request body:", requestSummary);
           
             const response = await fetch(`${DHAN_API_URL}/marketfeed/ltp`, {
               method: "POST",
@@ -185,7 +181,7 @@ serve(async (req) => {
 
            if (response.ok) {
              const data = await response.json();
-            console.log("Dhan API success, data keys:", Object.keys(data?.data || {}));
+             console.log("Dhan API success, data keys:", Object.keys(data?.data || {}));
              
              // Process Dhan response for each exchange segment
              for (const segment of Object.keys(requestBody)) {
