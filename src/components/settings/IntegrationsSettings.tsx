@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { 
-  Loader2, Send, RefreshCw, CheckCircle, XCircle, 
-  Smartphone, Database, Clock, AlertTriangle, Copy, 
+  Loader2, Send, RefreshCw, CheckCircle, 
+  Smartphone, Database, Clock, AlertTriangle, 
   MessageCircle, Unplug, Key, Eye, EyeOff
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,9 +17,8 @@ export default function IntegrationsSettings() {
   const { settings, isLoading, updateSettings } = useUserSettings();
   
   // Telegram state
-  const [telegramCode, setTelegramCode] = useState<string | null>(null);
-  const [telegramCodeExpiry, setTelegramCodeExpiry] = useState<Date | null>(null);
-  const [generatingCode, setGeneratingCode] = useState(false);
+  const [telegramChatId, setTelegramChatId] = useState("");
+  const [savingTelegram, setSavingTelegram] = useState(false);
   const [testingTelegram, setTestingTelegram] = useState(false);
   const [disconnectingTelegram, setDisconnectingTelegram] = useState(false);
   
@@ -89,80 +88,42 @@ export default function IntegrationsSettings() {
   }, [fetchSyncStatus]);
 
   // === TELEGRAM HANDLERS ===
-  const handleGenerateTelegramCode = async () => {
-    if (!user?.id) return;
-    setGeneratingCode(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("telegram-verify", {
-        body: { action: "generate", user_id: user.id },
-      });
-      
-      if (error) throw error;
-      if (data?.success) {
-        setTelegramCode(data.code);
-        setTelegramCodeExpiry(new Date(data.expires_at));
-        toast.success("Verification code generated! Send it to the bot.");
-      } else {
-        throw new Error(data?.error || "Failed to generate code");
-      }
-    } catch (e) {
-      console.error("Generate code error:", e);
-      toast.error(e instanceof Error ? e.message : "Failed to generate code");
-    } finally {
-      setGeneratingCode(false);
+  const handleSaveTelegram = async () => {
+    if (!user?.id || !telegramChatId.trim()) {
+      toast.error("Please enter your Telegram Chat ID");
+      return;
     }
-  };
-
-  const handleTestTelegram = async () => {
-    if (!settings?.telegram_chat_id) return;
-    setTestingTelegram(true);
+    setSavingTelegram(true);
     try {
+      // Test the connection first
       const { data, error } = await supabase.functions.invoke("telegram-notify", {
         body: {
           type: "custom",
-          message: "✅ Test successful! Your Telegram notifications are working.",
-          chat_id: settings.telegram_chat_id,
+          message: "✅ Connected! You'll now receive trade alerts here.",
+          chat_id: telegramChatId.trim(),
         },
       });
-      
       if (error) throw error;
-      if (data?.success) {
-        toast.success("Test message sent!");
-      } else {
-        toast.error(data?.error || "Test failed");
-      }
-    } catch (e) {
-      toast.error("Failed to send test message");
-    } finally {
-      setTestingTelegram(false);
-    }
-  };
+      if (!data?.success) throw new Error(data?.error || "Could not send message to this Chat ID");
 
-  const handleDisconnectTelegram = async () => {
-    if (!user?.id) return;
-    setDisconnectingTelegram(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("telegram-verify", {
-        body: { action: "disconnect", user_id: user.id },
-      });
-      
-      if (error) throw error;
-      if (data?.success) {
-        toast.success("Telegram disconnected");
-        // Refresh settings
-        window.location.reload();
-      }
-    } catch (e) {
-      toast.error("Failed to disconnect");
-    } finally {
-      setDisconnectingTelegram(false);
-    }
-  };
+      // Save to user settings
+      const { error: updateError } = await supabase
+        .from("user_settings")
+        .update({
+          telegram_chat_id: telegramChatId.trim(),
+          telegram_verified_at: new Date().toISOString(),
+          telegram_enabled: true,
+        })
+        .eq("user_id", user.id);
+      if (updateError) throw updateError;
 
-  const copyCodeToClipboard = () => {
-    if (telegramCode) {
-      navigator.clipboard.writeText(telegramCode);
-      toast.success("Code copied to clipboard");
+      toast.success("Telegram connected successfully!");
+      window.location.reload();
+    } catch (e) {
+      console.error("Telegram save error:", e);
+      toast.error(e instanceof Error ? e.message : "Failed to connect. Check your Chat ID.");
+    } finally {
+      setSavingTelegram(false);
     }
   };
 
@@ -308,69 +269,83 @@ export default function IntegrationsSettings() {
               <div className="flex gap-2">
                 <Button
                   variant="outline"
-                  onClick={handleTestTelegram}
+                  onClick={async () => {
+                    setTestingTelegram(true);
+                    try {
+                      const { data, error } = await supabase.functions.invoke("telegram-notify", {
+                        body: { type: "custom", message: "✅ Test successful! Notifications are working.", chat_id: settings?.telegram_chat_id },
+                      });
+                      if (error) throw error;
+                      data?.success ? toast.success("Test message sent!") : toast.error(data?.error || "Test failed");
+                    } catch { toast.error("Failed to send test message"); }
+                    finally { setTestingTelegram(false); }
+                  }}
                   disabled={testingTelegram}
                 >
-                  {testingTelegram ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <Send className="w-4 h-4 mr-2" />
-                  )}
+                  {testingTelegram ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
                   Send Test
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={handleDisconnectTelegram}
+                  onClick={async () => {
+                    if (!user?.id) return;
+                    setDisconnectingTelegram(true);
+                    try {
+                      await supabase.from("user_settings").update({
+                        telegram_chat_id: null, telegram_verified_at: null, telegram_enabled: false,
+                      }).eq("user_id", user.id);
+                      toast.success("Telegram disconnected");
+                      window.location.reload();
+                    } catch { toast.error("Failed to disconnect"); }
+                    finally { setDisconnectingTelegram(false); }
+                  }}
                   disabled={disconnectingTelegram}
                   className="text-loss hover:text-loss"
                 >
-                  {disconnectingTelegram ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <Unplug className="w-4 h-4 mr-2" />
-                  )}
+                  {disconnectingTelegram ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Unplug className="w-4 h-4 mr-2" />}
                   Disconnect
                 </Button>
               </div>
             </>
-          ) : telegramCode ? (
-            <>
-              <div className="p-4 rounded-lg bg-accent border border-border">
-                <Label className="text-xs text-muted-foreground">Your Verification Code</Label>
-                <div className="flex items-center gap-2 mt-2">
-                  <code className="text-2xl font-mono font-bold tracking-wider text-primary">
-                    {telegramCode}
-                  </code>
-                  <Button variant="ghost" size="sm" onClick={copyCodeToClipboard}>
-                    <Copy className="w-4 h-4" />
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground mt-2">
-                  Send <code>/verify {telegramCode}</code> to @YourTradebookBot
-                </p>
-                {telegramCodeExpiry && (
-                  <p className="text-xs text-yellow-500 mt-1">
-                    Expires in 5 minutes
-                  </p>
-                )}
-              </div>
-              <Button variant="outline" onClick={handleGenerateTelegramCode} disabled={generatingCode}>
-                {generatingCode ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
-                Generate New Code
-              </Button>
-            </>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                Connect your Telegram to receive trade alerts, target/SL notifications, and weekly reports.
+                Enter your Telegram Chat ID to receive trade alerts, target/SL notifications, and weekly reports.
               </p>
-              <Button onClick={handleGenerateTelegramCode} disabled={generatingCode}>
-                {generatingCode ? (
+              
+              <div className="p-4 rounded-lg bg-accent/50 border border-border space-y-3">
+                <p className="text-sm font-medium">How to get your Chat ID:</p>
+                <ol className="text-sm text-muted-foreground space-y-1.5 list-decimal list-inside">
+                  <li>Open Telegram and search for <code className="bg-accent px-1.5 py-0.5 rounded text-xs font-mono">@userinfobot</code></li>
+                  <li>Start the bot — it will reply with your <strong>Chat ID</strong></li>
+                  <li>Paste the ID below and click Connect</li>
+                </ol>
+                <p className="text-xs text-muted-foreground">
+                  For a <strong>channel</strong>, forward any message from the channel to <code className="bg-accent px-1.5 py-0.5 rounded text-xs font-mono">@userinfobot</code> to get the channel ID (starts with <code>-100</code>).
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="telegram-chat-id">Chat ID</Label>
+                <Input
+                  id="telegram-chat-id"
+                  value={telegramChatId}
+                  onChange={(e) => setTelegramChatId(e.target.value)}
+                  className="bg-accent border-border"
+                  placeholder="e.g. 123456789 or -1001234567890"
+                />
+              </div>
+
+              <Button
+                onClick={handleSaveTelegram}
+                disabled={savingTelegram || !telegramChatId.trim()}
+              >
+                {savingTelegram ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 ) : (
                   <MessageCircle className="w-4 h-4 mr-2" />
                 )}
-                Connect Telegram
+                Connect & Test
               </Button>
             </div>
           )}
