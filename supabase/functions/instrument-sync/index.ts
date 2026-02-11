@@ -8,25 +8,6 @@ const corsHeaders = {
 
 const DHAN_CSV_URL = "https://images.dhan.co/api-data/api-scrip-master.csv";
 
-function parseCSVLine(line: string): string[] {
-  const result: string[] = [];
-  let current = "";
-  let inQuotes = false;
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    if (char === '"') {
-      inQuotes = !inQuotes;
-    } else if (char === "," && !inQuotes) {
-      result.push(current.trim());
-      current = "";
-    } else {
-      current += char;
-    }
-  }
-  result.push(current.trim());
-  return result;
-}
-
 function mapInstrumentType(instrType: string): string {
   const m: Record<string, string> = {
     EQUITY: "EQ", EQ: "EQ",
@@ -37,27 +18,17 @@ function mapInstrumentType(instrType: string): string {
   return m[instrType] || instrType;
 }
 
-// Parse various date formats from Dhan CSV
 function parseExpiryDate(dateStr: string): Date | null {
-  if (!dateStr || dateStr === "0" || dateStr === "NA" || dateStr === "") return null;
-  
-  // Try YYYY-MM-DD
+  if (!dateStr || dateStr === "0" || dateStr === "NA") return null;
   if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
     const d = new Date(dateStr + "T00:00:00Z");
     return isNaN(d.getTime()) ? null : d;
   }
-  // Try DD-Mon-YYYY or DD/Mon/YYYY 
-  if (/^\d{1,2}[-\/][A-Za-z]{3}[-\/]\d{4}$/.test(dateStr)) {
-    const d = new Date(dateStr);
-    return isNaN(d.getTime()) ? null : d;
-  }
-  // Try epoch milliseconds (large numbers)
   if (/^\d{10,13}$/.test(dateStr)) {
     const ts = parseInt(dateStr);
     const d = new Date(ts > 9999999999 ? ts : ts * 1000);
     return isNaN(d.getTime()) ? null : d;
   }
-  // Try generic Date parse
   const d = new Date(dateStr);
   return isNaN(d.getTime()) ? null : d;
 }
@@ -75,7 +46,6 @@ Deno.serve(async (req) => {
     console.log("Starting instrument sync...");
     const startTime = Date.now();
 
-    // Create sync log
     const { data: logEntry } = await supabase
       .from("instrument_sync_log")
       .insert({ status: "running", sync_type: "manual" })
@@ -83,7 +53,6 @@ Deno.serve(async (req) => {
       .single();
     const logId = logEntry?.id;
 
-    // Fetch CSV
     console.log("Fetching CSV from:", DHAN_CSV_URL);
     const response = await fetch(DHAN_CSV_URL, {
       headers: { "User-Agent": "TradeBook/1.0", "Accept": "text/csv,*/*" },
@@ -93,14 +62,14 @@ Deno.serve(async (req) => {
     const csvText = await response.text();
     console.log(`CSV size: ${(csvText.length / 1024 / 1024).toFixed(1)} MB`);
 
-    const lines = csvText.split("\n").filter((l) => l.trim());
+    // Split lines once
+    const lines = csvText.split("\n");
     if (lines.length < 2) throw new Error("CSV empty");
 
-    // Parse header to get column indices
-    const header = parseCSVLine(lines[0]);
+    // Parse header using simple split (no quoted commas in Dhan CSV)
+    const header = lines[0].split(",").map(h => h.trim());
     const col: Record<string, number> = {};
-    header.forEach((c, i) => { col[c.trim()] = i; });
-    console.log("Columns:", header.join(", "));
+    header.forEach((c, i) => { col[c] = i; });
 
     const idxExch = col["SEM_EXM_EXCH_ID"] ?? 0;
     const idxSeg = col["SEM_SEGMENT"] ?? 1;
@@ -116,11 +85,10 @@ Deno.serve(async (req) => {
     const idxSeries = col["SEM_SERIES"];
     const idxSymName = col["SM_SYMBOL_NAME"];
 
-    // Calculate cutoff: keep derivatives expiring within next 90 days only
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const cutoff = new Date(today);
-    cutoff.setDate(cutoff.getDate() + 90);
+    cutoff.setDate(cutoff.getDate() + 60); // 60 days for derivatives
 
     interface InstrRow {
       security_id: string;
@@ -141,125 +109,123 @@ Deno.serve(async (req) => {
     let stats = { nseEq: 0, nseFno: 0, mcx: 0, expired: 0, skipped: 0 };
 
     for (let i = 1; i < lines.length; i++) {
-      try {
-        const row = parseCSVLine(lines[i]);
-        if (row.length < 8) continue;
+      const line = lines[i];
+      if (!line || line.length < 10) continue;
 
-        const exchCode = row[idxExch]?.trim();
-        const segment = row[idxSeg]?.trim();
-        const securityId = row[idxSecId]?.trim();
+      // FAST: use split instead of character-by-character parsing
+      const row = line.split(",");
+      if (row.length < 8) continue;
 
-        if (!securityId || securityId === "0") continue;
+      // EARLY FILTER: check exchange/segment first to skip 95%+ of rows instantly
+      const exchCode = row[idxExch]?.trim();
+      const segment = row[idxSeg]?.trim();
 
-        // Determine exchange segment - only keep NSE EQ, NSE FNO, MCX
-        let exchangeSegment = "";
-        let exchange = "";
+      if (exchCode !== "NSE" && exchCode !== "MCX") {
+        stats.skipped++;
+        continue;
+      }
 
-        if (exchCode === "NSE" && segment === "E") {
-          // NSE Equity - only keep EQ series (not BE, BL, etc.)
-          const series = idxSeries !== undefined ? row[idxSeries]?.trim() : "";
-          if (series && series !== "EQ" && series !== "") {
-            stats.skipped++;
-            continue;
-          }
-          exchangeSegment = "NSE_EQ";
-          exchange = "NSE";
-          stats.nseEq++;
-        } else if (exchCode === "NSE" && segment === "D") {
-          exchangeSegment = "NSE_FNO";
-          exchange = "NFO";
-        } else if (exchCode === "MCX" && (segment === "D" || segment === "M")) {
-          exchangeSegment = "MCX_COMM";
-          exchange = "MCX";
-        } else if (exchCode === "NSE" && segment === "I") {
-          exchangeSegment = "IDX_I";
-          exchange = "NSE";
-          // Indexes - always keep
-        } else {
+      const securityId = row[idxSecId]?.trim();
+      if (!securityId || securityId === "0") continue;
+
+      let exchangeSegment = "";
+      let exchange = "";
+
+      if (exchCode === "NSE" && segment === "E") {
+        const series = idxSeries !== undefined ? row[idxSeries]?.trim() : "";
+        if (series && series !== "EQ") {
           stats.skipped++;
           continue;
         }
+        exchangeSegment = "NSE_EQ";
+        exchange = "NSE";
+        stats.nseEq++;
+      } else if (exchCode === "NSE" && segment === "D") {
+        exchangeSegment = "NSE_FNO";
+        exchange = "NFO";
+      } else if (exchCode === "MCX" && (segment === "D" || segment === "M")) {
+        exchangeSegment = "MCX_COMM";
+        exchange = "MCX";
+      } else if (exchCode === "NSE" && segment === "I") {
+        exchangeSegment = "IDX_I";
+        exchange = "NSE";
+      } else {
+        stats.skipped++;
+        continue;
+      }
 
-        const tradingSymbol = row[idxTradSym]?.trim() || "";
-        const customSymbol = row[idxCustomSym]?.trim() || tradingSymbol;
-        const instrumentName = row[idxInstr]?.trim() || "";
-        const expiryStr = row[idxExpDate]?.trim() || "";
-        const strikeStr = row[idxStrike]?.trim() || "";
-        const optionType = row[idxOptType]?.trim() || "";
-        const lotSize = parseInt(row[idxLot]) || 1;
-        const tickSize = parseFloat(row[idxTick]) || 0.05;
+      const tradingSymbol = row[idxTradSym]?.trim() || "";
+      if (!tradingSymbol) continue;
 
-        if (!tradingSymbol) continue;
+      const expiryStr = row[idxExpDate]?.trim() || "";
 
-        // Parse expiry and aggressively filter derivatives
-        let expiry: string | null = null;
-        if (expiryStr && expiryStr !== "0" && expiryStr !== "NA") {
-          const expiryDate = parseExpiryDate(expiryStr);
-          if (expiryDate) {
-            const year = expiryDate.getFullYear();
-            if (year >= 2020 && year <= 2100) {
-              // Skip expired contracts
-              if (expiryDate < today) {
-                stats.expired++;
-                continue;
-              }
-              // For F&O/MCX: only keep next 90 days
-              if ((exchangeSegment === "NSE_FNO" || exchangeSegment === "MCX_COMM") && expiryDate > cutoff) {
-                stats.skipped++;
-                continue;
-              }
-              expiry = expiryDate.toISOString().split("T")[0];
+      // Parse expiry and filter derivatives
+      let expiry: string | null = null;
+      if (expiryStr && expiryStr !== "0" && expiryStr !== "NA") {
+        const expiryDate = parseExpiryDate(expiryStr);
+        if (expiryDate) {
+          const year = expiryDate.getFullYear();
+          if (year >= 2020 && year <= 2100) {
+            if (expiryDate < today) { stats.expired++; continue; }
+            if ((exchangeSegment === "NSE_FNO" || exchangeSegment === "MCX_COMM") && expiryDate > cutoff) {
+              stats.skipped++;
+              continue;
             }
-          }
-          // If derivative has no parseable expiry, skip it (likely garbage)
-          if (!expiry && (exchangeSegment === "NSE_FNO" || exchangeSegment === "MCX_COMM")) {
-            stats.skipped++;
-            continue;
+            expiry = expiryDate.toISOString().split("T")[0];
           }
         }
-
-        if (exchangeSegment === "NSE_FNO") stats.nseFno++;
-        if (exchangeSegment === "MCX_COMM") stats.mcx++;
-
-        const strike = strikeStr && strikeStr !== "0" && strikeStr !== "0.00" ? parseFloat(strikeStr) : null;
-        const cleanSymbol = segment === "E" ? tradingSymbol.replace(/-EQ$/, "") : tradingSymbol;
-        const symName = idxSymName !== undefined ? row[idxSymName]?.trim() : null;
-        const underlying = symName || customSymbol?.split(" ")[0] || cleanSymbol.split(/\d/)[0] || cleanSymbol;
-
-        instruments.push({
-          security_id: securityId,
-          exchange_segment: exchangeSegment,
-          exchange,
-          instrument_type: mapInstrumentType(instrumentName),
-          trading_symbol: cleanSymbol,
-          display_name: customSymbol || tradingSymbol,
-          underlying_symbol: underlying || null,
-          expiry,
-          strike,
-          option_type: optionType || null,
-          lot_size: lotSize,
-          tick_size: tickSize,
-        });
-      } catch {
-        // Skip bad rows silently
+        if (!expiry && (exchangeSegment === "NSE_FNO" || exchangeSegment === "MCX_COMM")) {
+          stats.skipped++;
+          continue;
+        }
       }
+
+      if (exchangeSegment === "NSE_FNO") stats.nseFno++;
+      if (exchangeSegment === "MCX_COMM") stats.mcx++;
+
+      const customSymbol = row[idxCustomSym]?.trim() || tradingSymbol;
+      const instrumentName = row[idxInstr]?.trim() || "";
+      const strikeStr = row[idxStrike]?.trim() || "";
+      const optionType = row[idxOptType]?.trim() || "";
+      const lotSize = parseInt(row[idxLot]) || 1;
+      const tickSize = parseFloat(row[idxTick]) || 0.05;
+      const strike = strikeStr && strikeStr !== "0" && strikeStr !== "0.00" ? parseFloat(strikeStr) : null;
+      const cleanSymbol = segment === "E" ? tradingSymbol.replace(/-EQ$/, "") : tradingSymbol;
+      const symName = idxSymName !== undefined ? row[idxSymName]?.trim() : null;
+      const underlying = symName || customSymbol?.split(" ")[0] || cleanSymbol.split(/\d/)[0] || cleanSymbol;
+
+      instruments.push({
+        security_id: securityId,
+        exchange_segment: exchangeSegment,
+        exchange,
+        instrument_type: mapInstrumentType(instrumentName),
+        trading_symbol: cleanSymbol,
+        display_name: customSymbol || tradingSymbol,
+        underlying_symbol: underlying || null,
+        expiry,
+        strike,
+        option_type: optionType || null,
+        lot_size: lotSize,
+        tick_size: tickSize,
+      });
     }
 
     console.log(`Parsed: NSE_EQ=${stats.nseEq}, NSE_FNO=${stats.nseFno}, MCX=${stats.mcx}, Expired=${stats.expired}, Skipped=${stats.skipped}, Total=${instruments.length}`);
 
     if (instruments.length === 0) throw new Error("No instruments parsed");
 
-    // Batch upsert - larger batches for speed
-    const BATCH = 500;
+    // Batch upsert
+    const BATCH = 1000;
     let inserted = 0;
     let errors = 0;
+    const now = new Date().toISOString();
 
     for (let i = 0; i < instruments.length; i += BATCH) {
       const batch = instruments.slice(i, i + BATCH);
       const { error } = await supabase
         .from("instrument_master")
         .upsert(
-          batch.map((inst) => ({ ...inst, updated_at: new Date().toISOString() })),
+          batch.map((inst) => ({ ...inst, updated_at: now })),
           { onConflict: "security_id" }
         );
       if (error) {
@@ -289,7 +255,6 @@ Deno.serve(async (req) => {
     );
   } catch (error) {
     console.error("Sync failed:", error);
-    // Mark any running logs as failed
     try {
       const { data: logs } = await supabase.from("instrument_sync_log")
         .select("id").eq("status", "running").order("started_at", { ascending: false }).limit(1);
