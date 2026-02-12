@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Trading Platform Design System - Dark Theme */
+/* Trading Platform Design System - Glassmorphism Dark Theme */
 
 @layer base {
   :root {
-    --background: 222 47% 6%;
+    --background: 222 47% 5%;
     --foreground: 210 40% 98%;
 
     --card: 222 47% 8%;
@@ -30,7 +30,7 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 222 47% 16%;
+    --border: 215 25% 18%;
     --input: 222 47% 14%;
     --ring: 217 91% 60%;
 
@@ -44,33 +44,44 @@
     --warning: 38 92% 50%;
     --warning-foreground: 38 92% 10%;
 
+    /* Glass tokens */
+    --glass-bg: 222 47% 10%;
+    --glass-border: 215 25% 22%;
+    --glass-shine: 217 91% 70%;
+    --glass-blur: 20px;
+    --glass-opacity: 0.6;
+
     /* Gradient tokens */
     --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(263 70% 50%) 100%);
     --gradient-profit: linear-gradient(135deg, hsl(142 71% 45%) 0%, hsl(142 71% 35%) 100%);
     --gradient-loss: linear-gradient(135deg, hsl(0 84% 60%) 0%, hsl(0 84% 50%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(222 47% 10%) 0%, hsl(222 47% 8%) 100%);
-    --gradient-surface: linear-gradient(135deg, hsl(222 47% 12%) 0%, hsl(222 47% 8%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(222 47% 12% / 0.8) 0%, hsl(222 47% 7% / 0.6) 100%);
+    --gradient-surface: linear-gradient(135deg, hsl(222 47% 14% / 0.7) 0%, hsl(222 47% 8% / 0.5) 100%);
+    --gradient-glass: linear-gradient(135deg, hsl(215 25% 22% / 0.15) 0%, hsl(222 47% 8% / 0.05) 100%);
+    --gradient-glass-border: linear-gradient(135deg, hsl(215 25% 30% / 0.5) 0%, hsl(215 25% 15% / 0.2) 100%);
 
     /* Shadows */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
-    --shadow-glow: 0 0 20px hsl(217 91% 60% / 0.3);
-    --shadow-profit-glow: 0 0 20px hsl(142 71% 45% / 0.4);
-    --shadow-loss-glow: 0 0 20px hsl(0 84% 60% / 0.4);
+    --shadow-glow: 0 0 20px hsl(217 91% 60% / 0.25), 0 0 60px hsl(217 91% 60% / 0.08);
+    --shadow-profit-glow: 0 0 20px hsl(142 71% 45% / 0.35);
+    --shadow-loss-glow: 0 0 20px hsl(0 84% 60% / 0.35);
+    --shadow-glass: 0 8px 32px rgb(0 0 0 / 0.35), inset 0 1px 0 hsl(215 25% 30% / 0.15);
+    --shadow-glass-hover: 0 8px 32px rgb(0 0 0 / 0.4), 0 0 20px hsl(217 91% 60% / 0.15), inset 0 1px 0 hsl(215 25% 30% / 0.2);
 
-    --sidebar-background: 222 47% 6%;
+    --sidebar-background: 222 47% 5%;
     --sidebar-foreground: 210 40% 90%;
     --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 222 47% 6%;
     --sidebar-accent: 222 47% 12%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222 47% 14%;
+    --sidebar-border: 215 25% 14%;
     --sidebar-ring: 217 91% 60%;
   }
 
   .dark {
-    --background: 222 47% 6%;
+    --background: 222 47% 5%;
     --foreground: 210 40% 98%;
     --card: 222 47% 8%;
     --card-foreground: 210 40% 98%;
@@ -86,7 +97,7 @@
     --accent-foreground: 210 40% 98%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
-    --border: 222 47% 16%;
+    --border: 215 25% 18%;
     --input: 222 47% 14%;
     --ring: 217 91% 60%;
   }
@@ -108,27 +119,42 @@
 
   /* Custom scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-background;
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-muted rounded-full;
+    @apply rounded-full;
+    background: hsl(var(--muted-foreground) / 0.2);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/50;
+    background: hsl(var(--muted-foreground) / 0.4);
   }
 }
 
 @layer components {
+  /* ── Glassmorphism Core ─────────────────────────────── */
+
+  .glass {
+    background: hsl(var(--glass-bg) / var(--glass-opacity));
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid hsl(var(--glass-border) / 0.3);
+    box-shadow: var(--shadow-glass);
+  }
+
   .glass-card {
-    @apply bg-card/80 backdrop-blur-xl border border-border/50 rounded-xl;
-    box-shadow: var(--shadow-md);
+    @apply glass rounded-xl;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--glass-bg) / 0.7) 0%,
+      hsl(var(--glass-bg) / 0.4) 100%
+    );
   }
 
   .glass-card-hover {
@@ -136,10 +162,58 @@
   }
 
   .glass-card-hover:hover {
-    @apply border-primary/30;
-    box-shadow: var(--shadow-glow);
+    border-color: hsl(var(--glass-shine) / 0.25);
+    box-shadow: var(--shadow-glass-hover);
+    transform: translateY(-1px);
   }
 
+  .glass-sidebar {
+    @apply glass;
+    background: linear-gradient(
+      180deg,
+      hsl(var(--sidebar-background) / 0.85) 0%,
+      hsl(var(--sidebar-background) / 0.95) 100%
+    );
+    border-right: 1px solid hsl(var(--glass-border) / 0.2);
+  }
+
+  .glass-topbar {
+    @apply glass;
+    background: hsl(var(--background) / 0.75);
+    border-bottom: 1px solid hsl(var(--glass-border) / 0.2);
+  }
+
+  .glass-input {
+    background: hsl(var(--glass-bg) / 0.4);
+    border: 1px solid hsl(var(--glass-border) / 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+  }
+
+  .glass-input:focus {
+    border-color: hsl(var(--primary) / 0.5);
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.1), var(--shadow-sm);
+  }
+
+  /* ── Shine line (top edge of glass cards) ─────────── */
+  .glass-shine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--glass-shine) / 0.3) 50%,
+      transparent 100%
+    );
+    border-radius: 1px;
+  }
+
+  /* ── Trading colors ─────────────────────────────────── */
   .profit-text {
     @apply text-profit font-semibold;
   }
@@ -149,7 +223,22 @@
   }
 
   .stat-card {
-    @apply glass-card p-4 space-y-2;
+    @apply glass-card p-4 space-y-2 relative overflow-hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 15%;
+    right: 15%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--glass-shine) / 0.2),
+      transparent
+    );
   }
 
   .gradient-text {
@@ -170,6 +259,41 @@
 
   .glow-button:hover::before {
     @apply opacity-50;
+  }
+
+  /* ── Ambient orbs for pages ─────────────────────────── */
+  .ambient-orb {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(100px);
+    opacity: 0.12;
+    z-index: 0;
+  }
+
+  .ambient-orb-primary {
+    @apply ambient-orb;
+    width: 500px;
+    height: 500px;
+    background: hsl(var(--primary));
+    top: -150px;
+    right: -100px;
+  }
+
+  .ambient-orb-profit {
+    @apply ambient-orb;
+    width: 300px;
+    height: 300px;
+    background: hsl(var(--profit));
+    bottom: -80px;
+    left: -50px;
+  }
+
+  /* Active nav item glass pill */
+  .glass-nav-active {
+    background: hsl(var(--primary) / 0.12);
+    border: 1px solid hsl(var(--primary) / 0.2);
+    box-shadow: 0 0 12px hsl(var(--primary) / 0.15), inset 0 1px 0 hsl(var(--primary) / 0.1);
   }
 }
 

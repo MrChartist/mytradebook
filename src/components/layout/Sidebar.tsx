@@ -42,7 +42,7 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-16 bg-background/95 backdrop-blur-xl border-b border-border flex items-center justify-between px-4">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-16 glass-topbar flex items-center justify-between px-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
             <TrendingUp className="w-5 h-5 text-primary-foreground" />
@@ -60,7 +60,7 @@ export function Sidebar() {
       {/* Desktop Sidebar */}
       <aside
         className={cn(
-          "hidden lg:flex fixed left-0 top-0 z-40 h-screen flex-col border-r border-border bg-sidebar transition-all duration-300",
+          "hidden lg:flex fixed left-0 top-0 z-40 h-screen flex-col glass-sidebar transition-all duration-300",
           collapsed ? "w-20" : "w-64"
         )}
       >
@@ -88,8 +88,8 @@ export function Sidebar() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group",
                   isActive
-                    ? "bg-primary/10 text-primary border border-primary/20 shadow-glow"
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                    ? "glass-nav-active text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                 )}
               >
                 <item.icon

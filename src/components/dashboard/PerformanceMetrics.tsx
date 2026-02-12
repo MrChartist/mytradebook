@@ -28,10 +28,10 @@ export function PerformanceMetrics() {
           <div
             key={metric.label}
             className={cn(
-              "p-3 rounded-lg",
+              "p-3 rounded-lg transition-all duration-200",
               metric.highlight
-                ? "bg-primary/10 border border-primary/20"
-                : "bg-accent/50"
+                ? "glass-nav-active"
+                : "bg-accent/30 hover:bg-accent/50 border border-transparent hover:border-border/30"
             )}
           >
             <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
