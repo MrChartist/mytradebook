@@ -43,7 +43,7 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="left" className="w-72 p-0 bg-sidebar border-border">
+      <SheetContent side="left" className="w-72 p-0 glass-sidebar border-border">
         <SheetHeader className="p-4 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
@@ -85,8 +85,8 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
                   isActive
-                    ? "bg-primary/10 text-primary border border-primary/20 shadow-glow"
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                    ? "glass-nav-active text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                 )}
               >
                 <item.icon className={cn("w-5 h-5", isActive && "text-primary")} />

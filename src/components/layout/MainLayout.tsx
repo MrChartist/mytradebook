@@ -6,9 +6,13 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Ambient glow orbs */}
+      <div className="ambient-orb-primary" />
+      <div className="ambient-orb-profit" />
+
       <Sidebar />
-      <main className="lg:ml-64 min-h-screen pt-16 lg:pt-0">
+      <main className="lg:ml-64 min-h-screen pt-16 lg:pt-0 relative z-10">
         <div className="p-4 lg:p-6">{children}</div>
       </main>
     </div>

@@ -88,10 +88,13 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex relative overflow-hidden">
+      {/* Ambient background */}
+      <div className="ambient-orb-primary" />
+      <div className="ambient-orb-profit" />
+
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-background via-card to-background relative overflow-hidden">
-        {/* Grid Pattern */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-background via-card/50 to-background relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
           <div
             className="h-full w-full"
@@ -158,7 +161,8 @@ export default function Login() {
             <span className="text-2xl font-bold">TradeSync</span>
           </div>
 
-          <div className="glass-card p-8">
+          <div className="glass-card p-8 relative overflow-hidden">
+            <div className="absolute top-0 left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-[hsl(var(--glass-shine)/0.3)] to-transparent" />
             <div className="text-center mb-8">
               <h3 className="text-2xl font-bold mb-2">
                 {authMode === "login" ? "Welcome Back" : "Create Account"}
@@ -207,7 +211,7 @@ export default function Login() {
                     placeholder="Enter your name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="h-12 bg-accent border-border"
+                    className="h-12 glass-input rounded-lg bg-accent/30 border-border/40"
                   />
                 </div>
               )}
@@ -221,8 +225,8 @@ export default function Login() {
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-12 bg-accent border-border"
-                  required
+                    className="h-12 glass-input rounded-lg bg-accent/30 border-border/40 focus:border-primary/50"
+                    required
                 />
               </div>
 
@@ -236,7 +240,7 @@ export default function Login() {
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="h-12 bg-accent border-border pr-12"
+                    className="h-12 glass-input rounded-lg bg-accent/30 border-border/40 pr-12"
                     required
                     minLength={6}
                   />

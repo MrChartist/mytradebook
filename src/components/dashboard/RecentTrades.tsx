@@ -47,7 +47,7 @@ export function RecentTrades() {
           {openTrades.map((trade) => (
             <div
               key={trade.id}
-              className="flex items-center justify-between p-3 rounded-lg bg-accent/50 hover:bg-accent transition-colors"
+              className="flex items-center justify-between p-3 rounded-lg bg-accent/30 hover:bg-accent/50 border border-transparent hover:border-border/30 transition-all duration-200"
             >
               <div className="flex items-center gap-3">
                 <div

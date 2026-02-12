@@ -70,7 +70,7 @@ export function AlertsWidget() {
                   "flex items-center justify-between p-3 rounded-lg transition-colors",
                   isTriggered
                     ? "bg-warning/10 border border-warning/20"
-                    : "bg-accent/50 hover:bg-accent"
+                    : "bg-accent/30 hover:bg-accent/50 border border-transparent hover:border-border/30"
                 )}
               >
                 <div className="flex items-center gap-3">
