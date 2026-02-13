@@ -1,10 +1,16 @@
 import { BarChart3, TrendingUp, TrendingDown, Target, Activity } from "lucide-react";
 import { useTrades } from "@/hooks/useTrades";
+import { useUserSettings } from "@/hooks/useUserSettings";
 import { StatCard } from "@/components/dashboard/StatCard";
+import { EquityCurveDrawdown } from "@/components/analytics/EquityCurveDrawdown";
+import { RiskRewardAnalytics } from "@/components/analytics/RiskRewardAnalytics";
 
 export default function Analytics() {
   const { trades, summary } = useTrades();
+  const { settings } = useUserSettings();
   const closed = trades.filter((t) => t.status === "CLOSED");
+
+  const startingCapital = (settings as any)?.starting_capital ?? 500000;
 
   const totalPnl = closed.reduce((a, t) => a + (t.pnl || 0), 0);
   const wins = closed.filter((t) => (t.pnl || 0) > 0);
@@ -36,6 +42,12 @@ export default function Analytics() {
         <StatCard title="Best Trade" value={`₹${bestTrade.toLocaleString("en-IN")}`} change="Single trade" changeType="profit" icon={TrendingUp} subtitle="Max profit" />
         <StatCard title="Worst Trade" value={`₹${worstTrade.toLocaleString("en-IN")}`} change="Single trade" changeType="loss" icon={TrendingDown} subtitle="Max loss" />
       </div>
+
+      {/* Equity Curve & Drawdown */}
+      <EquityCurveDrawdown trades={trades} startingCapital={startingCapital} />
+
+      {/* Risk-Reward Analytics */}
+      <RiskRewardAnalytics trades={trades} />
 
       {closed.length === 0 && (
         <div className="surface-card p-12 text-center">

@@ -29,6 +29,7 @@ export type Database = {
           id: string
           instrument_id: string | null
           last_triggered: string | null
+          linked_study_id: string | null
           notes: string | null
           parameters: Json | null
           previous_ltp: number | null
@@ -59,6 +60,7 @@ export type Database = {
           id?: string
           instrument_id?: string | null
           last_triggered?: string | null
+          linked_study_id?: string | null
           notes?: string | null
           parameters?: Json | null
           previous_ltp?: number | null
@@ -89,6 +91,7 @@ export type Database = {
           id?: string
           instrument_id?: string | null
           last_triggered?: string | null
+          linked_study_id?: string | null
           notes?: string | null
           parameters?: Json | null
           previous_ltp?: number | null
@@ -106,6 +109,13 @@ export type Database = {
           webhook_enabled?: boolean | null
         }
         Relationships: [
+          {
+            foreignKeyName: "alerts_linked_study_id_fkey"
+            columns: ["linked_study_id"]
+            isOneToOne: false
+            referencedRelation: "studies"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "alerts_scanner_id_fkey"
             columns: ["scanner_id"]
@@ -391,6 +401,54 @@ export type Database = {
           },
         ]
       }
+      strategy_trades: {
+        Row: {
+          closed_at: string | null
+          combined_pnl: number | null
+          combined_pnl_percent: number | null
+          created_at: string | null
+          id: string
+          name: string
+          notes: string | null
+          segment: string
+          status: string
+          strategy_type: string
+          symbol: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          closed_at?: string | null
+          combined_pnl?: number | null
+          combined_pnl_percent?: number | null
+          created_at?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          segment?: string
+          status?: string
+          strategy_type?: string
+          symbol: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          closed_at?: string | null
+          combined_pnl?: number | null
+          combined_pnl_percent?: number | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          segment?: string
+          status?: string
+          strategy_type?: string
+          symbol?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       studies: {
         Row: {
           analysis_date: string | null
@@ -648,6 +706,7 @@ export type Database = {
           confidence_score: number | null
           contract_key: string | null
           created_at: string | null
+          created_from_alert_id: string | null
           current_price: number | null
           dhan_order_id: string | null
           entry_price: number | null
@@ -661,10 +720,17 @@ export type Database = {
           pnl_percent: number | null
           quantity: number
           rating: number | null
+          review_execution_quality: number | null
+          review_rating: number | null
+          review_rules_followed: boolean | null
+          review_what_failed: string | null
+          review_what_worked: string | null
+          reviewed_at: string | null
           security_id: string | null
           segment: Database["public"]["Enums"]["market_segment"]
           status: Database["public"]["Enums"]["trade_status"] | null
           stop_loss: number | null
+          strategy_id: string | null
           study_id: string | null
           symbol: string
           targets: Json | null
@@ -688,6 +754,7 @@ export type Database = {
           confidence_score?: number | null
           contract_key?: string | null
           created_at?: string | null
+          created_from_alert_id?: string | null
           current_price?: number | null
           dhan_order_id?: string | null
           entry_price?: number | null
@@ -701,10 +768,17 @@ export type Database = {
           pnl_percent?: number | null
           quantity: number
           rating?: number | null
+          review_execution_quality?: number | null
+          review_rating?: number | null
+          review_rules_followed?: boolean | null
+          review_what_failed?: string | null
+          review_what_worked?: string | null
+          reviewed_at?: string | null
           security_id?: string | null
           segment: Database["public"]["Enums"]["market_segment"]
           status?: Database["public"]["Enums"]["trade_status"] | null
           stop_loss?: number | null
+          strategy_id?: string | null
           study_id?: string | null
           symbol: string
           targets?: Json | null
@@ -728,6 +802,7 @@ export type Database = {
           confidence_score?: number | null
           contract_key?: string | null
           created_at?: string | null
+          created_from_alert_id?: string | null
           current_price?: number | null
           dhan_order_id?: string | null
           entry_price?: number | null
@@ -741,10 +816,17 @@ export type Database = {
           pnl_percent?: number | null
           quantity?: number
           rating?: number | null
+          review_execution_quality?: number | null
+          review_rating?: number | null
+          review_rules_followed?: boolean | null
+          review_what_failed?: string | null
+          review_what_worked?: string | null
+          reviewed_at?: string | null
           security_id?: string | null
           segment?: Database["public"]["Enums"]["market_segment"]
           status?: Database["public"]["Enums"]["trade_status"] | null
           stop_loss?: number | null
+          strategy_id?: string | null
           study_id?: string | null
           symbol?: string
           targets?: Json | null
@@ -761,6 +843,20 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "trades_created_from_alert_id_fkey"
+            columns: ["created_from_alert_id"]
+            isOneToOne: false
+            referencedRelation: "alerts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trades_strategy_id_fkey"
+            columns: ["strategy_id"]
+            isOneToOne: false
+            referencedRelation: "strategy_trades"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "trades_study_id_fkey"
             columns: ["study_id"]
@@ -805,6 +901,7 @@ export type Database = {
           id: string
           ra_disclaimer: string | null
           ra_public_mode: boolean | null
+          starting_capital: number | null
           telegram_chat_id: string | null
           telegram_enabled: boolean | null
           telegram_link_code: string | null
@@ -830,6 +927,7 @@ export type Database = {
           id?: string
           ra_disclaimer?: string | null
           ra_public_mode?: boolean | null
+          starting_capital?: number | null
           telegram_chat_id?: string | null
           telegram_enabled?: boolean | null
           telegram_link_code?: string | null
@@ -855,6 +953,7 @@ export type Database = {
           id?: string
           ra_disclaimer?: string | null
           ra_public_mode?: boolean | null
+          starting_capital?: number | null
           telegram_chat_id?: string | null
           telegram_enabled?: boolean | null
           telegram_link_code?: string | null

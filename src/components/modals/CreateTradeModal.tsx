@@ -26,10 +26,12 @@ import { useTrades } from "@/hooks/useTrades";
 import { Loader2, AlertCircle, Zap, ChevronDown, TrendingUp, Shield, Target, FileText, Send, Radio, Activity } from "lucide-react";
 import { TargetChipsInput } from "@/components/trade/TargetChipsInput";
 import { InstrumentPicker, type SelectedInstrument } from "@/components/trade/InstrumentPicker";
+import { PositionSizingCalculator } from "@/components/trade/PositionSizingCalculator";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { supabase } from "@/integrations/supabase/client";
+import { useUserSettings } from "@/hooks/useUserSettings";
 import { cn } from "@/lib/utils";
 
 interface CreateTradeModalProps {
@@ -107,6 +109,8 @@ function getSegmentDefaults(segment: string) {
 
 export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) {
   const { createTrade } = useTrades();
+  const { settings } = useUserSettings();
+  const startingCapital = (settings as any)?.starting_capital ?? 500000;
   
   const [selectedInstrument, setSelectedInstrument] = useState<SelectedInstrument | null>(null);
   const [targets, setTargets] = useState<number[]>([]);
@@ -481,6 +485,15 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
               />
             </div>
           </div>
+
+          {/* Position Sizing Calculator */}
+          <PositionSizingCalculator
+            entryPrice={entryPrice}
+            stopLoss={stopLoss}
+            tradeType={tradeType}
+            accountSize={startingCapital}
+            onQuantitySuggested={(qty) => setValue("quantity", qty, { shouldValidate: true })}
+          />
 
           {/* Targets */}
           <TargetChipsInput

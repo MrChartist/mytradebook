@@ -12,6 +12,7 @@ import {
   Radio,
   Shield,
   Target,
+  Layers,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,7 @@ import { CreateTradeModal } from "@/components/modals/CreateTradeModal";
 import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
 import { useDhanIntegration } from "@/hooks/useDhanIntegration";
 import { useLivePrices } from "@/hooks/useLivePrices";
+import { MultiLegStrategyModal } from "@/components/trade/MultiLegStrategyModal";
 import type { Trade } from "@/hooks/useTrades";
 
 const segmentLabels: Record<string, string> = {
@@ -55,6 +57,7 @@ export default function Trades() {
   const [segmentFilter, setSegmentFilter] = useState<string>("ALL");
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
+  const [strategyModalOpen, setStrategyModalOpen] = useState(false);
 
   const filters: TradeFilters = {
     ...(statusFilter !== "ALL" && { status: statusFilter }),
@@ -98,6 +101,13 @@ export default function Trades() {
           >
             {isSyncing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
             Sync with Dhan
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setStrategyModalOpen(true)}
+          >
+            <Layers className="w-4 h-4 mr-2" />
+            Multi-Leg
           </Button>
           <Button
             className="bg-gradient-primary hover:opacity-90 transition-opacity"
@@ -348,6 +358,7 @@ export default function Trades() {
 
       <CreateTradeModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
       <TradeDetailModal trade={selectedTrade} open={!!selectedTrade} onOpenChange={(open) => !open && setSelectedTrade(null)} />
+      <MultiLegStrategyModal open={strategyModalOpen} onOpenChange={setStrategyModalOpen} />
     </div>
   );
 }

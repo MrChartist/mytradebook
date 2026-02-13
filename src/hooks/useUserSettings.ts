@@ -23,6 +23,7 @@ interface UserSettings {
   dhan_account_name: string | null;
   ra_public_mode: boolean | null;
   ra_disclaimer: string | null;
+  starting_capital: number | null;
   created_at: string | null;
   updated_at: string | null;
 }
