@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Eye, Plus, Search, Trash2, MoreHorizontal, Edit2,
-  List, Star, Bell, ChevronRight, X, Palette,
+  List, Star, Bell, X, Palette, TrendingUp, CircleDot,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,13 +18,45 @@ import {
 import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 import { InstrumentPicker, type SelectedInstrument } from "@/components/trade/InstrumentPicker";
 import { CreateAlertModal } from "@/components/modals/CreateAlertModal";
-import { useWatchlists, useWatchlistItems, type Watchlist } from "@/hooks/useWatchlists";
+import { CreateTradeModal } from "@/components/modals/CreateTradeModal";
+import { SortSelect } from "@/components/ui/sort-select";
+import { useWatchlists, useWatchlistItems, type Watchlist, type WatchlistItem } from "@/hooks/useWatchlists";
+import { useLivePrices } from "@/hooks/useLivePrices";
 import { cn } from "@/lib/utils";
 
 const listColors = [
   "#6366f1", "#8b5cf6", "#ec4899", "#ef4444", "#f97316",
   "#eab308", "#22c55e", "#06b6d4", "#3b82f6", "#64748b",
 ];
+
+// ── Utilities ──────────────────────────────────────────────────
+
+function formatIndianPrice(n: number | undefined): string {
+  if (n == null || isNaN(n)) return "—";
+  return n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function formatVolume(vol: number | undefined): string {
+  if (vol == null || isNaN(vol) || vol === 0) return "—";
+  if (vol >= 10000000) return `${(vol / 10000000).toFixed(1)}Cr`;
+  if (vol >= 100000) return `${(vol / 100000).toFixed(1)}L`;
+  if (vol >= 1000) return `${(vol / 1000).toFixed(1)}K`;
+  return vol.toString();
+}
+
+function formatTime(d: Date | null): string {
+  if (!d) return "";
+  return d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+}
+
+const sortOptions = [
+  { value: "change_pct", label: "% Change" },
+  { value: "volume", label: "Volume" },
+  { value: "ltp", label: "LTP" },
+  { value: "alphabetical", label: "A → Z" },
+];
+
+// ── Page ───────────────────────────────────────────────────────
 
 export default function WatchlistPage() {
   const { watchlists, isLoading, createWatchlist, updateWatchlist, deleteWatchlist } = useWatchlists();
@@ -223,7 +255,8 @@ export default function WatchlistPage() {
   );
 }
 
-// Watchlist detail panel
+// ── Watchlist Detail Panel ───────────────────────────────────────
+
 function WatchlistDetail({
   watchlist,
   searchQuery,
@@ -237,16 +270,57 @@ function WatchlistDetail({
   const [addingSymbol, setAddingSymbol] = useState(false);
   const [alertModalOpen, setAlertModalOpen] = useState(false);
   const [alertPrefill, setAlertPrefill] = useState<{ symbol: string; exchange: string } | null>(null);
+  const [tradeModalOpen, setTradeModalOpen] = useState(false);
+  const [tradePrefill, setTradePrefill] = useState<string>("");
+  const [sortBy, setSortBy] = useState("change_pct");
 
+  // Build instruments array for live prices
+  const instruments = useMemo(
+    () =>
+      items.map((i) => ({
+        symbol: i.symbol,
+        security_id: i.security_id,
+        exchange_segment: i.exchange_segment || undefined,
+      })),
+    [items]
+  );
+
+  const symbolList = useMemo(() => items.map((i) => i.symbol), [items]);
+
+  const { prices, isPolling, lastUpdated, isLoading: pricesLoading } = useLivePrices(symbolList, 30000);
+
+  // Check market closed: all prices have ltp 0 or no prices fetched
+  const allUnavailable = items.length > 0 && Object.keys(prices).length === 0 && !pricesLoading;
+
+  // Filter
   const filteredItems = searchQuery
-    ? items.filter(i => i.symbol.toLowerCase().includes(searchQuery.toLowerCase()))
+    ? items.filter((i) => i.symbol.toLowerCase().includes(searchQuery.toLowerCase()))
     : items;
 
+  // Sort
+  const sortedItems = useMemo(() => {
+    const arr = [...filteredItems];
+    arr.sort((a, b) => {
+      const pa = prices[a.symbol];
+      const pb = prices[b.symbol];
+      switch (sortBy) {
+        case "change_pct":
+          return (pb?.changePercent ?? -Infinity) - (pa?.changePercent ?? -Infinity);
+        case "volume":
+          return (pb?.volume ?? 0) - (pa?.volume ?? 0);
+        case "ltp":
+          return (pb?.ltp ?? 0) - (pa?.ltp ?? 0);
+        case "alphabetical":
+          return a.symbol.localeCompare(b.symbol);
+        default:
+          return 0;
+      }
+    });
+    return arr;
+  }, [filteredItems, prices, sortBy]);
+
   const handleAddInstrument = async (instrument: SelectedInstrument) => {
-    // Check duplicate
-    if (items.some(i => i.symbol === instrument.symbol && i.exchange === instrument.exchange)) {
-      return;
-    }
+    if (items.some((i) => i.symbol === instrument.symbol && i.exchange === instrument.exchange)) return;
     await addItem.mutateAsync({
       watchlist_id: watchlist.id,
       symbol: instrument.symbol,
@@ -260,24 +334,52 @@ function WatchlistDetail({
   return (
     <div className="surface-card">
       {/* Header */}
-      <div className="p-4 border-b border-border flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: watchlist.color || "#6366f1" }} />
-          <div>
-            <h2 className="font-semibold">{watchlist.name}</h2>
-            <p className="text-xs text-muted-foreground">{items.length} instruments</p>
+      <div className="p-4 border-b border-border">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: watchlist.color || "#6366f1" }} />
+            <div>
+              <h2 className="font-semibold">{watchlist.name}</h2>
+              <p className="text-xs text-muted-foreground">{items.length} instruments</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Live indicator */}
+            {isPolling && items.length > 0 && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                {allUnavailable ? (
+                  <Badge variant="outline" className="text-[10px] h-5 px-1.5 border-muted-foreground/30">
+                    Market Closed
+                  </Badge>
+                ) : (
+                  <>
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-profit opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-profit" />
+                    </span>
+                    <span>Live</span>
+                  </>
+                )}
+                {lastUpdated && (
+                  <span className="text-[10px] text-muted-foreground/60 ml-1">
+                    {formatTime(lastUpdated)}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </div>
-        <div className="flex gap-2">
-          <div className="relative">
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
             <Input
               placeholder="Filter..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-8 h-8 w-40 text-xs"
+              className="pl-8 h-8 text-xs"
             />
           </div>
+          <SortSelect value={sortBy} onValueChange={setSortBy} options={sortOptions} className="w-[130px]" />
           <Button size="sm" variant="outline" onClick={() => setAddingSymbol(!addingSymbol)}>
             <Plus className="w-3.5 h-3.5 mr-1" /> Add
           </Button>
@@ -294,9 +396,9 @@ function WatchlistDetail({
       {/* Items */}
       {isLoading ? (
         <div className="p-4 space-y-2">
-          {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-12" />)}
+          {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-16" />)}
         </div>
-      ) : filteredItems.length === 0 ? (
+      ) : sortedItems.length === 0 ? (
         <div className="p-8 text-center">
           <Star className="w-8 h-8 mx-auto text-muted-foreground/30 mb-2" />
           <p className="text-sm text-muted-foreground">
@@ -305,48 +407,126 @@ function WatchlistDetail({
         </div>
       ) : (
         <div className="divide-y divide-border">
-          {filteredItems.map((item) => (
-            <div key={item.id} className="flex items-center justify-between px-4 py-3 hover:bg-accent/30 transition-colors group">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                  {item.symbol.slice(0, 2)}
-                </div>
-                <div>
-                  <p className="font-medium text-sm">{item.symbol}</p>
-                  <p className="text-[10px] text-muted-foreground font-mono">{item.exchange || "NSE"}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  title="Create alert for this symbol"
-                  onClick={() => { setAlertPrefill({ symbol: item.symbol, exchange: item.exchange || "NSE" }); setAlertModalOpen(true); }}
-                >
-                  <Bell className="w-3.5 h-3.5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 text-destructive"
-                  onClick={() => removeItem.mutate(item.id)}
-                >
-                  <X className="w-3.5 h-3.5" />
-                </Button>
-              </div>
-            </div>
+          {sortedItems.map((item) => (
+            <WatchlistRow
+              key={item.id}
+              item={item}
+              price={prices[item.symbol]}
+              onAlert={() => {
+                setAlertPrefill({ symbol: item.symbol, exchange: item.exchange || "NSE" });
+                setAlertModalOpen(true);
+              }}
+              onTrade={() => {
+                setTradePrefill(item.symbol);
+                setTradeModalOpen(true);
+              }}
+              onRemove={() => removeItem.mutate(item.id)}
+            />
           ))}
         </div>
       )}
 
-      {/* Quick Alert Modal */}
+      {/* Modals */}
       <CreateAlertModal
         open={alertModalOpen}
         onOpenChange={setAlertModalOpen}
         prefillSymbol={alertPrefill?.symbol}
         prefillExchange={alertPrefill?.exchange}
       />
+      <CreateTradeModal
+        open={tradeModalOpen}
+        onOpenChange={setTradeModalOpen}
+      />
     </div>
+  );
+}
+
+// ── Single Row ───────────────────────────────────────────────────
+
+function WatchlistRow({
+  item,
+  price,
+  onAlert,
+  onTrade,
+  onRemove,
+}: {
+  item: WatchlistItem;
+  price?: { ltp: number; change: number; changePercent: number; open?: number; high?: number; low?: number; prevClose?: number; volume?: number };
+  onAlert: () => void;
+  onTrade: () => void;
+  onRemove: () => void;
+}) {
+  const hasPrice = price && price.ltp > 0;
+  const isPositive = (price?.changePercent ?? 0) >= 0;
+
+  return (
+    <div className="flex flex-col md:flex-row md:items-center justify-between px-4 py-3 hover:bg-accent/30 transition-colors group gap-2">
+      {/* Left: Avatar + Symbol */}
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">
+          {item.symbol.slice(0, 2)}
+        </div>
+        <div className="min-w-0">
+          <p className="font-semibold text-sm truncate">{item.symbol}</p>
+          <p className="text-[10px] text-muted-foreground font-mono">{item.exchange || "NSE"}</p>
+        </div>
+      </div>
+
+      {/* Middle: LTP + Change */}
+      <div className="flex items-center gap-3 md:min-w-[180px]">
+        <span className="font-mono font-bold text-base tabular-nums">
+          {hasPrice ? formatIndianPrice(price.ltp) : "—"}
+        </span>
+        {hasPrice && (
+          <span
+            className={cn(
+              "text-[11px] font-medium px-2 py-0.5 rounded-full tabular-nums",
+              isPositive
+                ? "bg-profit/15 text-profit"
+                : "bg-loss/15 text-loss"
+            )}
+          >
+            {isPositive ? "+" : ""}
+            {price.change.toFixed(2)} ({isPositive ? "+" : ""}
+            {price.changePercent.toFixed(2)}%)
+          </span>
+        )}
+      </div>
+
+      {/* Right: OHLC + Volume */}
+      <div className="flex items-center gap-1.5 flex-wrap text-[10px] text-muted-foreground font-mono tabular-nums">
+        <OhlcChip label="O" value={price?.open} />
+        <OhlcChip label="H" value={price?.high} />
+        <OhlcChip label="L" value={price?.low} />
+        <OhlcChip label="C" value={price?.prevClose} />
+        <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-accent/50 text-muted-foreground">
+          Vol {formatVolume(price?.volume)}
+        </span>
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0">
+        <Button variant="ghost" size="icon" className="h-7 w-7" title="Create alert" onClick={onAlert}>
+          <Bell className="w-3.5 h-3.5" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-7 w-7" title="Quick trade" onClick={onTrade}>
+          <TrendingUp className="w-3.5 h-3.5" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" title="Remove" onClick={onRemove}>
+          <X className="w-3.5 h-3.5" />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function OhlcChip({ label, value }: { label: string; value?: number }) {
+  return (
+    <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-accent/50">
+      <span className="text-muted-foreground/70">{label}</span>{" "}
+      {value != null && !isNaN(value) && value > 0
+        ? value.toLocaleString("en-IN", { maximumFractionDigits: 2 })
+        : "—"}
+    </span>
   );
 }
