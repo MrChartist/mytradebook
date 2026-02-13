@@ -205,23 +205,46 @@ serve(async (req) => {
 
           const chatId = settings?.telegram_chat_id;
           if (chatId) {
-            const emoji = alert.condition_type.includes("GT") || alert.condition_type.includes("ABOVE") ? "📈" : "📉";
-            const exchange = alert.exchange || "NSE";
+            const ct = alert.condition_type;
+            const isCross = ct.startsWith("PRICE_CROSS");
+            const isPct = ct.includes("PERCENT_CHANGE");
+            const isVol = ct === "VOLUME_SPIKE";
+
+            const emojiMap: Record<string, string> = {
+              PRICE_GT: "📈", PRICE_LT: "📉",
+              PRICE_CROSS_ABOVE: "⚡", PRICE_CROSS_BELOW: "⚡",
+              PERCENT_CHANGE_GT: "📊", PERCENT_CHANGE_LT: "📊",
+              VOLUME_SPIKE: "🔊", CUSTOM: "🚨",
+            };
+            const headerMap: Record<string, string> = {
+              PRICE_GT: "PRICE ABOVE HIT", PRICE_LT: "PRICE BELOW HIT",
+              PRICE_CROSS_ABOVE: "CROSS ABOVE CONFIRMED", PRICE_CROSS_BELOW: "CROSS BELOW CONFIRMED",
+              PERCENT_CHANGE_GT: "DAY % CHANGE ABOVE", PERCENT_CHANGE_LT: "DAY % CHANGE BELOW",
+              VOLUME_SPIKE: "VOLUME SPIKE", CUSTOM: "CUSTOM ALERT",
+            };
+
+            const emoji = emojiMap[ct] || "🚨";
+            const header = headerMap[ct] || "ALERT TRIGGERED";
+            const exchangeMap: Record<string, string> = {
+              NSE: "NSE·EQ", BSE: "BSE·EQ", NFO: "NSE·F&O", MCX: "MCX",
+            };
+            const tag = exchangeMap[alert.exchange || "NSE"] || alert.exchange || "NSE·EQ";
             const ts = now.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "short", timeStyle: "short" });
+            const modeLabel = alert.recurrence === "ONCE" ? "One-time" : alert.recurrence === "DAILY" ? "Repeating (Daily)" : "Repeating";
 
-            const isCross = alert.condition_type.startsWith("PRICE_CROSS");
-            const crossLabel = isCross ? " (Cross Detection)" : "";
+            let triggerText = "";
+            if (isPct) triggerText = `Triggered: Day % ${ct.includes("GT") ? "above" : "below"} ${alert.threshold}%`;
+            else if (isVol) triggerText = `Spike Triggered ✅`;
+            else if (isCross) triggerText = `Crossed: ₹${alert.threshold.toLocaleString()}`;
+            else triggerText = `Level: ${ct.includes("GT") ? "Above" : "Below"} ₹${alert.threshold.toLocaleString()}`;
 
-            const message =
-              `🔔 *ALERT TRIGGERED${crossLabel}*\n\n` +
-              `${emoji} *${alert.symbol}* (${exchange})\n` +
-              `Condition: ${conditionDesc}\n` +
-              `LTP: ₹${price.toLocaleString()}\n` +
-              `Time: ${ts}\n` +
-              (alert.notes ? `📝 ${alert.notes}\n` : "") +
-              (alert.recurrence !== "ONCE" && alert.cooldown_minutes
-                ? `⏱ Cooldown: ${alert.cooldown_minutes}m\n` : "") +
-              (isCross && prevLtp ? `📊 Previous: ₹${prevLtp.toFixed(2)}\n` : "");
+            let message = `${emoji} *${header}*\n`;
+            message += `*${alert.symbol}* (${tag})\n\n`;
+            message += `${triggerText}\n`;
+            message += `Now: LTP ₹${price.toLocaleString()}\n`;
+            message += `Mode: ${modeLabel}\n`;
+            if (alert.notes) message += `Reason: ${alert.notes}\n`;
+            message += `\n⏱ ${ts}`;
 
             try {
               await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
