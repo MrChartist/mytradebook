@@ -102,6 +102,10 @@ export function TradeDetailModal({
   const [newSL, setNewSL] = useState("");
   const [showReview, setShowReview] = useState(false);
   
+  // Edit mode state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState<Record<string, any>>({});
+
   // Add event state
   const [addingEvent, setAddingEvent] = useState(false);
   const [newEventType, setNewEventType] = useState<string>("");
@@ -110,6 +114,60 @@ export function TradeDetailModal({
   const [newEventNotes, setNewEventNotes] = useState("");
 
   if (!trade) return null;
+
+  const startEditing = () => {
+    setEditForm({
+      symbol: trade.symbol,
+      entry_price: trade.entry_price ?? "",
+      quantity: trade.quantity,
+      stop_loss: trade.stop_loss ?? "",
+      targets: JSON.stringify((trade.targets as number[]) || []),
+      notes: trade.notes ?? "",
+      segment: trade.segment,
+      trade_type: trade.trade_type,
+      entry_time: trade.entry_time ? new Date(trade.entry_time).toISOString().slice(0, 16) : "",
+      status: trade.status ?? "PENDING",
+      timeframe: (trade as any).timeframe ?? "",
+      holding_period: (trade as any).holding_period ?? "",
+      chart_link: (trade as any).chart_link ?? "",
+      rating: trade.rating ?? "",
+      confidence_score: trade.confidence_score ?? "",
+      current_price: trade.current_price ?? "",
+    });
+    setIsEditing(true);
+  };
+
+  const handleSaveEdit = async () => {
+    let parsedTargets: number[] = [];
+    try {
+      const raw = editForm.targets;
+      if (raw) {
+        parsedTargets = typeof raw === "string" ? JSON.parse(raw) : raw;
+        if (!Array.isArray(parsedTargets)) parsedTargets = [];
+      }
+    } catch { parsedTargets = []; }
+
+    await updateTrade.mutateAsync({
+      id: trade.id,
+      symbol: editForm.symbol,
+      entry_price: editForm.entry_price ? parseFloat(editForm.entry_price) : null,
+      quantity: parseInt(editForm.quantity) || trade.quantity,
+      stop_loss: editForm.stop_loss ? parseFloat(editForm.stop_loss) : null,
+      targets: parsedTargets,
+      notes: editForm.notes || null,
+      segment: editForm.segment,
+      trade_type: editForm.trade_type,
+      entry_time: editForm.entry_time ? new Date(editForm.entry_time).toISOString() : trade.entry_time,
+      status: editForm.status,
+      timeframe: editForm.timeframe || null,
+      holding_period: editForm.holding_period || null,
+      chart_link: editForm.chart_link || null,
+      rating: editForm.rating ? parseInt(editForm.rating) : null,
+      confidence_score: editForm.confidence_score ? parseInt(editForm.confidence_score) : null,
+      current_price: editForm.current_price ? parseFloat(editForm.current_price) : null,
+    });
+    setIsEditing(false);
+  };
 
   const pnl = trade.pnl || 0;
   const pnlPercent = trade.pnl_percent || 0;
@@ -228,21 +286,136 @@ export function TradeDetailModal({
                 </Badge>
               </div>
             </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="ml-auto h-8 w-8"
+              onClick={isEditing ? () => setIsEditing(false) : startEditing}
+            >
+              {isEditing ? <X className="w-4 h-4" /> : <Edit className="w-4 h-4" />}
+            </Button>
           </DialogTitle>
         </DialogHeader>
 
+        {/* Edit Mode */}
+        {isEditing ? (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label className="text-xs">Symbol</Label>
+                <Input value={editForm.symbol} onChange={(e) => setEditForm({ ...editForm, symbol: e.target.value })} className="h-8" />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Segment</Label>
+                <Select value={editForm.segment} onValueChange={(v) => setEditForm({ ...editForm, segment: v })}>
+                  <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(segmentLabels).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Trade Type</Label>
+                <Select value={editForm.trade_type} onValueChange={(v) => setEditForm({ ...editForm, trade_type: v })}>
+                  <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="BUY">BUY</SelectItem>
+                    <SelectItem value="SELL">SELL</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Status</Label>
+                <Select value={editForm.status} onValueChange={(v) => setEditForm({ ...editForm, status: v })}>
+                  <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PENDING">Planned</SelectItem>
+                    <SelectItem value="OPEN">Open</SelectItem>
+                    <SelectItem value="CLOSED">Closed</SelectItem>
+                    <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Entry Price</Label>
+                <Input type="number" step="0.01" value={editForm.entry_price} onChange={(e) => setEditForm({ ...editForm, entry_price: e.target.value })} className="h-8" />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Current Price</Label>
+                <Input type="number" step="0.01" value={editForm.current_price} onChange={(e) => setEditForm({ ...editForm, current_price: e.target.value })} className="h-8" />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Quantity</Label>
+                <Input type="number" value={editForm.quantity} onChange={(e) => setEditForm({ ...editForm, quantity: e.target.value })} className="h-8" />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Stop Loss</Label>
+                <Input type="number" step="0.01" value={editForm.stop_loss} onChange={(e) => setEditForm({ ...editForm, stop_loss: e.target.value })} className="h-8" />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Entry Date & Time</Label>
+                <Input type="datetime-local" value={editForm.entry_time} onChange={(e) => setEditForm({ ...editForm, entry_time: e.target.value })} className="h-8" />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Timeframe</Label>
+                <Select value={editForm.timeframe || "__none__"} onValueChange={(v) => setEditForm({ ...editForm, timeframe: v === "__none__" ? "" : v })}>
+                  <SelectTrigger className="h-8"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">None</SelectItem>
+                    <SelectItem value="1min">1 Min</SelectItem>
+                    <SelectItem value="5min">5 Min</SelectItem>
+                    <SelectItem value="15min">15 Min</SelectItem>
+                    <SelectItem value="30min">30 Min</SelectItem>
+                    <SelectItem value="1H">1 Hour</SelectItem>
+                    <SelectItem value="4H">4 Hour</SelectItem>
+                    <SelectItem value="1D">Daily</SelectItem>
+                    <SelectItem value="1W">Weekly</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Rating (1-10)</Label>
+                <Input type="number" min="1" max="10" value={editForm.rating} onChange={(e) => setEditForm({ ...editForm, rating: e.target.value })} className="h-8" />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Confidence (1-5)</Label>
+                <Input type="number" min="1" max="5" value={editForm.confidence_score} onChange={(e) => setEditForm({ ...editForm, confidence_score: e.target.value })} className="h-8" />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Targets (JSON array, e.g. [100, 110, 120])</Label>
+              <Input value={editForm.targets} onChange={(e) => setEditForm({ ...editForm, targets: e.target.value })} className="h-8 font-mono text-xs" />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Chart Link</Label>
+              <Input value={editForm.chart_link} onChange={(e) => setEditForm({ ...editForm, chart_link: e.target.value })} className="h-8" />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Notes</Label>
+              <Textarea value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} className="h-20" />
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={handleSaveEdit} disabled={updateTrade.isPending} className="flex-1">
+                {updateTrade.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                Save Changes
+              </Button>
+              <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+            </div>
+          </div>
+        ) : (
+        <>
         {/* Trade Summary */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-lg bg-accent/50">
           <div>
             <p className="text-sm text-muted-foreground">Entry Price</p>
             <p className="text-lg font-semibold font-mono">
-              ₹{trade.entry_price.toLocaleString()}
+              ₹{trade.entry_price?.toLocaleString() ?? "—"}
             </p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Current Price</p>
             <p className="text-lg font-semibold font-mono">
-              ₹{(trade.current_price || trade.entry_price).toLocaleString()}
+              ₹{(trade.current_price || trade.entry_price || 0).toLocaleString()}
             </p>
           </div>
           <div>
@@ -950,6 +1123,8 @@ export function TradeDetailModal({
               </Button>
             )}
           </div>
+        )}
+        </>
         )}
 
         {/* Delete Trade Button */}
