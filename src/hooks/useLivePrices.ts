@@ -55,9 +55,19 @@ export function useLivePrices(
         return;
       }
 
-      if (data?.success && data?.prices) {
-        setPrices(data.prices);
-        setLastUpdated(new Date());
+      if (data?.success && data?.prices && Object.keys(data.prices).length > 0) {
+        // Only update prices that have valid LTP values (> 0)
+        const validPrices: Record<string, PriceData> = {};
+        for (const [sym, priceData] of Object.entries(data.prices)) {
+          const p = priceData as any;
+          if (p && p.ltp && p.ltp > 0) {
+            validPrices[sym] = p;
+          }
+        }
+        if (Object.keys(validPrices).length > 0) {
+          setPrices(validPrices);
+          setLastUpdated(new Date());
+        }
       } else if (data?.error) {
         throw new Error(data.error);
       }
