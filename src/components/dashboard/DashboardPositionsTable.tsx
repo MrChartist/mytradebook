@@ -1,16 +1,18 @@
 import { useDashboard } from "@/pages/Dashboard";
 import { cn } from "@/lib/utils";
-import { useMemo } from "react";
-import { ArrowUpRight, ArrowDownRight, ExternalLink } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { QuickClosePopover } from "@/components/trade/QuickClosePopover";
+import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
+import type { Trade } from "@/hooks/useTrades";
 
 const fmt = (v: number) =>
   `${v >= 0 ? "+" : ""}₹${Math.abs(v).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
 
 export function DashboardPositionsTable() {
   const { openTrades, prices } = useDashboard();
+  const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
 
   const positions = useMemo(() => openTrades.map((t) => {
     const ltp = prices[t.symbol]?.ltp || t.current_price || t.entry_price || 0;
@@ -37,7 +39,7 @@ export function DashboardPositionsTable() {
           <h3 className="font-semibold">Open Positions</h3>
           <p className="text-xs text-muted-foreground mt-0.5">{positions.length} positions • Live prices</p>
         </div>
-        <Link to="/trades" className="text-xs text-primary hover:underline font-medium">View All →</Link>
+        <Link to="/trades?status=OPEN" className="text-xs text-primary hover:underline font-medium">View All →</Link>
       </div>
 
       {/* Summary strip */}
@@ -65,11 +67,7 @@ export function DashboardPositionsTable() {
       {positions.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-sm text-muted-foreground mb-3">No open positions</p>
-          <div className="flex gap-2 justify-center">
-            <Link to="/trades">
-              <Button size="sm" variant="outline" className="text-xs h-8">Create a trade</Button>
-            </Link>
-          </div>
+          <Link to="/trades" className="text-xs text-primary hover:underline font-medium">Create a trade →</Link>
         </div>
       ) : (
         <div className="overflow-x-auto -mx-5 px-5">
@@ -90,7 +88,15 @@ export function DashboardPositionsTable() {
             </thead>
             <tbody className="divide-y divide-border/30">
               {positions.map((p) => (
-                <tr key={p.id} className="hover:bg-muted/30 transition-colors">
+                <tr
+                  key={p.id}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${p.symbol} position - click for details`}
+                  className="hover:bg-primary/5 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  onClick={() => setSelectedTrade(p)}
+                  onKeyDown={(e) => { if (e.key === "Enter") setSelectedTrade(p); }}
+                >
                   <td className="py-2 font-medium">{p.symbol}</td>
                   <td className="py-2 hidden md:table-cell">
                     <span className="text-[9px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
@@ -128,7 +134,7 @@ export function DashboardPositionsTable() {
                       </span>
                     ) : "—"}
                   </td>
-                  <td className="py-2 text-right">
+                  <td className="py-2 text-right" onClick={(e) => e.stopPropagation()}>
                     <QuickClosePopover
                       tradeId={p.id}
                       symbol={p.symbol}
@@ -144,6 +150,12 @@ export function DashboardPositionsTable() {
           </table>
         </div>
       )}
+
+      <TradeDetailModal
+        trade={selectedTrade}
+        open={!!selectedTrade}
+        onOpenChange={(open) => !open && setSelectedTrade(null)}
+      />
     </div>
   );
 }

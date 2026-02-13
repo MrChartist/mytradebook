@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   TrendingUp,
   Plus,
@@ -71,8 +72,15 @@ const sortOptions: SortOption[] = [
 ];
 
 export default function Trades() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(() => {
+    const urlStatus = searchParams.get("status");
+    if (urlStatus && ["PENDING", "OPEN", "CLOSED", "CANCELLED"].includes(urlStatus)) {
+      return urlStatus as StatusFilter;
+    }
+    return "ALL";
+  });
   const [segmentFilter, setSegmentFilter] = useState<string>("ALL");
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [sortBy, setSortBy] = useState("latest");
@@ -81,6 +89,7 @@ export default function Trades() {
   const [strategyModalOpen, setStrategyModalOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkMode, setBulkMode] = useState(false);
+  const [activeStatFilter, setActiveStatFilter] = useState<string | null>(null);
 
   const filters: TradeFilters = {
     ...(statusFilter !== "ALL" && { status: statusFilter }),
@@ -226,9 +235,36 @@ export default function Trades() {
         </div>
       )}
 
+      {/* Active filter chip */}
+      {activeStatFilter && (
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">Filtered by:</span>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-6 text-xs gap-1 border-primary/30 text-primary"
+            onClick={() => {
+              setActiveStatFilter(null);
+              setStatusFilter("ALL");
+              setSortBy("latest");
+            }}
+          >
+            {activeStatFilter}
+            <X className="w-3 h-3" />
+          </Button>
+        </div>
+      )}
+
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="glass-card p-4">
+        <div
+          role="button"
+          tabIndex={0}
+          className="glass-card p-4 cursor-pointer hover:border-primary/20 hover:shadow-md transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          onClick={() => { setSortBy("pnl_high"); setStatusFilter("ALL"); setActiveStatFilter("Total P&L"); }}
+          onKeyDown={(e) => { if (e.key === "Enter") { setSortBy("pnl_high"); setStatusFilter("ALL"); setActiveStatFilter("Total P&L"); } }}
+          aria-label="Sort by Total P&L"
+        >
           <p className="text-sm text-muted-foreground">Total P&L</p>
           {isLoading ? <Skeleton className="h-8 w-24 mt-1" /> : (
             <p className={cn("text-2xl font-bold", summary.totalPnl >= 0 ? "text-profit" : "text-loss")}>
@@ -236,25 +272,53 @@ export default function Trades() {
             </p>
           )}
         </div>
-        <div className="glass-card p-4">
+        <div
+          role="button"
+          tabIndex={0}
+          className="glass-card p-4 cursor-pointer hover:border-primary/20 hover:shadow-md transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          onClick={() => { setStatusFilter("OPEN"); setActiveStatFilter("Open"); }}
+          onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("OPEN"); setActiveStatFilter("Open"); } }}
+          aria-label="Filter to Open trades"
+        >
           <p className="text-sm text-muted-foreground">Open</p>
           {isLoading ? <Skeleton className="h-8 w-16 mt-1" /> : (
             <p className="text-2xl font-bold text-profit">{statusCounts.OPEN}</p>
           )}
         </div>
-        <div className="glass-card p-4">
+        <div
+          role="button"
+          tabIndex={0}
+          className="glass-card p-4 cursor-pointer hover:border-primary/20 hover:shadow-md transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          onClick={() => { setStatusFilter("PENDING"); setActiveStatFilter("Planned"); }}
+          onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("PENDING"); setActiveStatFilter("Planned"); } }}
+          aria-label="Filter to Planned trades"
+        >
           <p className="text-sm text-muted-foreground">Planned</p>
           {isLoading ? <Skeleton className="h-8 w-16 mt-1" /> : (
             <p className="text-2xl font-bold text-warning">{statusCounts.PENDING}</p>
           )}
         </div>
-        <div className="glass-card p-4">
+        <div
+          role="button"
+          tabIndex={0}
+          className="glass-card p-4 cursor-pointer hover:border-primary/20 hover:shadow-md transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          onClick={() => { setStatusFilter("CLOSED"); setActiveStatFilter("Closed Today"); }}
+          onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("CLOSED"); setActiveStatFilter("Closed Today"); } }}
+          aria-label="Filter to Closed trades"
+        >
           <p className="text-sm text-muted-foreground">Closed Today</p>
           {isLoading ? <Skeleton className="h-8 w-16 mt-1" /> : (
             <p className="text-2xl font-bold">{summary.closedToday}</p>
           )}
         </div>
-        <div className="glass-card p-4">
+        <div
+          role="button"
+          tabIndex={0}
+          className="glass-card p-4 cursor-pointer hover:border-primary/20 hover:shadow-md transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          onClick={() => { setStatusFilter("CLOSED"); setActiveStatFilter("Win Rate"); }}
+          onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("CLOSED"); setActiveStatFilter("Win Rate"); } }}
+          aria-label="Filter to show Win Rate"
+        >
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">Win Rate</p>
             {isPolling && openTradeSymbols.length > 0 && (
