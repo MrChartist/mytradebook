@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { notifyNewTrade, notifyTradeClosed, notifySLModified } from "@/lib/telegram";
+import { fireProfitConfetti } from "@/lib/confetti";
 import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 
 export type Trade = Tables<"trades">;
@@ -190,6 +191,11 @@ export function useTrades(filters?: TradeFilters) {
         title: "Trade closed",
         description: `Trade closed with P&L: ${pnlText}`,
       });
+      
+      // 🎉 Confetti on profitable close
+      if (data.pnl && data.pnl > 0) {
+        fireProfitConfetti();
+      }
       
       // Send Telegram notification (fire and forget)
        // Only send if telegram posting was enabled for this trade
