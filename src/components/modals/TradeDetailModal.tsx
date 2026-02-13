@@ -45,6 +45,8 @@ import {
   TrendingUp,
   Clock,
   ExternalLink,
+  Activity,
+  Send,
 } from "lucide-react";
 import type { Trade } from "@/hooks/useTrades";
 import { useTrades } from "@/hooks/useTrades";
@@ -134,6 +136,14 @@ export function TradeDetailModal({
       rating: trade.rating ?? "",
       confidence_score: trade.confidence_score ?? "",
       current_price: trade.current_price ?? "",
+      // TSL fields
+      trailing_sl_enabled: trade.trailing_sl_enabled ?? false,
+      trailing_sl_percent: trade.trailing_sl_percent ?? "",
+      trailing_sl_points: trade.trailing_sl_points ?? "",
+      trailing_sl_trigger_price: trade.trailing_sl_trigger_price ?? "",
+      // Automation
+      auto_track_enabled: trade.auto_track_enabled ?? false,
+      telegram_post_enabled: trade.telegram_post_enabled ?? false,
     });
     setIsEditing(true);
   };
@@ -166,6 +176,12 @@ export function TradeDetailModal({
       rating: editForm.rating ? parseInt(editForm.rating) : null,
       confidence_score: editForm.confidence_score ? parseInt(editForm.confidence_score) : null,
       current_price: editForm.current_price ? parseFloat(editForm.current_price) : null,
+      trailing_sl_enabled: editForm.trailing_sl_enabled,
+      trailing_sl_percent: editForm.trailing_sl_percent ? parseFloat(editForm.trailing_sl_percent) : null,
+      trailing_sl_points: editForm.trailing_sl_points ? parseFloat(editForm.trailing_sl_points) : null,
+      trailing_sl_trigger_price: editForm.trailing_sl_trigger_price ? parseFloat(editForm.trailing_sl_trigger_price) : null,
+      auto_track_enabled: editForm.auto_track_enabled,
+      telegram_post_enabled: editForm.telegram_post_enabled,
     });
     setIsEditing(false);
   };
@@ -300,107 +316,233 @@ export function TradeDetailModal({
 
         {/* Edit Mode */}
         {isEditing ? (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <Label className="text-xs">Symbol</Label>
-                <Input value={editForm.symbol} onChange={(e) => setEditForm({ ...editForm, symbol: e.target.value })} className="h-8" />
+          <div className="space-y-5">
+            {/* Section: Core Details */}
+            <div className="rounded-xl border border-border bg-accent/30 p-4 space-y-4">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Core Details</h4>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium">Symbol</Label>
+                  <Input value={editForm.symbol} onChange={(e) => setEditForm({ ...editForm, symbol: e.target.value })} className="bg-background" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium">Segment</Label>
+                  <Select value={editForm.segment} onValueChange={(v) => setEditForm({ ...editForm, segment: v })}>
+                    <SelectTrigger className="bg-background"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(segmentLabels).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium">Trade Type</Label>
+                  <Select value={editForm.trade_type} onValueChange={(v) => setEditForm({ ...editForm, trade_type: v })}>
+                    <SelectTrigger className="bg-background"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="BUY">BUY</SelectItem>
+                      <SelectItem value="SELL">SELL</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium">Status</Label>
+                  <Select value={editForm.status} onValueChange={(v) => setEditForm({ ...editForm, status: v })}>
+                    <SelectTrigger className="bg-background"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PENDING">Planned</SelectItem>
+                      <SelectItem value="OPEN">Open</SelectItem>
+                      <SelectItem value="CLOSED">Closed</SelectItem>
+                      <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Segment</Label>
-                <Select value={editForm.segment} onValueChange={(v) => setEditForm({ ...editForm, segment: v })}>
-                  <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(segmentLabels).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+            </div>
+
+            {/* Section: Pricing */}
+            <div className="rounded-xl border border-border bg-accent/30 p-4 space-y-4">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pricing & Quantity</h4>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium">Entry Price</Label>
+                  <Input type="number" step="0.01" value={editForm.entry_price} onChange={(e) => setEditForm({ ...editForm, entry_price: e.target.value })} className="bg-background font-mono" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium">Current Price</Label>
+                  <Input type="number" step="0.01" value={editForm.current_price} onChange={(e) => setEditForm({ ...editForm, current_price: e.target.value })} className="bg-background font-mono" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium">Quantity</Label>
+                  <Input type="number" value={editForm.quantity} onChange={(e) => setEditForm({ ...editForm, quantity: e.target.value })} className="bg-background font-mono" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium">Stop Loss</Label>
+                  <Input type="number" step="0.01" value={editForm.stop_loss} onChange={(e) => setEditForm({ ...editForm, stop_loss: e.target.value })} className="bg-background font-mono" />
+                </div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Trade Type</Label>
-                <Select value={editForm.trade_type} onValueChange={(v) => setEditForm({ ...editForm, trade_type: v })}>
-                  <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="BUY">BUY</SelectItem>
-                    <SelectItem value="SELL">SELL</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Status</Label>
-                <Select value={editForm.status} onValueChange={(v) => setEditForm({ ...editForm, status: v })}>
-                  <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PENDING">Planned</SelectItem>
-                    <SelectItem value="OPEN">Open</SelectItem>
-                    <SelectItem value="CLOSED">Closed</SelectItem>
-                    <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Entry Price</Label>
-                <Input type="number" step="0.01" value={editForm.entry_price} onChange={(e) => setEditForm({ ...editForm, entry_price: e.target.value })} className="h-8" />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Current Price</Label>
-                <Input type="number" step="0.01" value={editForm.current_price} onChange={(e) => setEditForm({ ...editForm, current_price: e.target.value })} className="h-8" />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Quantity</Label>
-                <Input type="number" value={editForm.quantity} onChange={(e) => setEditForm({ ...editForm, quantity: e.target.value })} className="h-8" />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Stop Loss</Label>
-                <Input type="number" step="0.01" value={editForm.stop_loss} onChange={(e) => setEditForm({ ...editForm, stop_loss: e.target.value })} className="h-8" />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Entry Date & Time</Label>
-                <DateTimePicker
-                  value={editForm.entry_time ? new Date(editForm.entry_time) : null}
-                  onChange={(d) => setEditForm({ ...editForm, entry_time: d ? d.toISOString().slice(0, 16) : "" })}
-                  maxDate={new Date()}
-                  className="h-8"
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium">Targets (comma-separated, e.g. 100, 110, 120)</Label>
+                <Input
+                  value={(() => {
+                    try {
+                      const arr = typeof editForm.targets === "string" ? JSON.parse(editForm.targets) : editForm.targets;
+                      return Array.isArray(arr) ? arr.join(", ") : editForm.targets;
+                    } catch { return editForm.targets; }
+                  })()}
+                  onChange={(e) => {
+                    const parts = e.target.value.split(",").map(s => s.trim()).filter(Boolean).map(Number).filter(n => !isNaN(n));
+                    setEditForm({ ...editForm, targets: JSON.stringify(parts) });
+                  }}
+                  placeholder="e.g. 100, 110, 120"
+                  className="bg-background font-mono text-sm"
                 />
               </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Timeframe</Label>
-                <Select value={editForm.timeframe || "__none__"} onValueChange={(v) => setEditForm({ ...editForm, timeframe: v === "__none__" ? "" : v })}>
-                  <SelectTrigger className="h-8"><SelectValue placeholder="Select" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__none__">None</SelectItem>
-                    <SelectItem value="1min">1 Min</SelectItem>
-                    <SelectItem value="5min">5 Min</SelectItem>
-                    <SelectItem value="15min">15 Min</SelectItem>
-                    <SelectItem value="30min">30 Min</SelectItem>
-                    <SelectItem value="1H">1 Hour</SelectItem>
-                    <SelectItem value="4H">4 Hour</SelectItem>
-                    <SelectItem value="1D">Daily</SelectItem>
-                    <SelectItem value="1W">Weekly</SelectItem>
-                  </SelectContent>
-                </Select>
+            </div>
+
+            {/* Section: Risk Management – TSL */}
+            <div className="rounded-xl border border-border bg-accent/30 p-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Trailing Stop Loss</h4>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <span className="text-xs text-muted-foreground">{editForm.trailing_sl_enabled ? "Enabled" : "Disabled"}</span>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={editForm.trailing_sl_enabled}
+                    className={cn(
+                      "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors",
+                      editForm.trailing_sl_enabled ? "bg-profit" : "bg-muted"
+                    )}
+                    onClick={() => setEditForm({ ...editForm, trailing_sl_enabled: !editForm.trailing_sl_enabled })}
+                  >
+                    <span className={cn(
+                      "pointer-events-none inline-block h-4 w-4 rounded-full bg-background shadow-lg transition-transform",
+                      editForm.trailing_sl_enabled ? "translate-x-4" : "translate-x-0"
+                    )} />
+                  </button>
+                </label>
               </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Rating (1-10)</Label>
-                <Input type="number" min="1" max="10" value={editForm.rating} onChange={(e) => setEditForm({ ...editForm, rating: e.target.value })} className="h-8" />
+              {editForm.trailing_sl_enabled && (
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium">TSL %</Label>
+                    <Input type="number" step="0.1" value={editForm.trailing_sl_percent} onChange={(e) => setEditForm({ ...editForm, trailing_sl_percent: e.target.value })} className="bg-background font-mono" placeholder="e.g. 1.5" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium">TSL Points</Label>
+                    <Input type="number" step="0.5" value={editForm.trailing_sl_points} onChange={(e) => setEditForm({ ...editForm, trailing_sl_points: e.target.value })} className="bg-background font-mono" placeholder="e.g. 10" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium">Trigger Price</Label>
+                    <Input type="number" step="0.01" value={editForm.trailing_sl_trigger_price} onChange={(e) => setEditForm({ ...editForm, trailing_sl_trigger_price: e.target.value })} className="bg-background font-mono" placeholder="₹" />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Section: Timing & Setup */}
+            <div className="rounded-xl border border-border bg-accent/30 p-4 space-y-4">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Timing & Setup</h4>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium">Entry Date & Time</Label>
+                  <DateTimePicker
+                    value={editForm.entry_time ? new Date(editForm.entry_time) : null}
+                    onChange={(d) => setEditForm({ ...editForm, entry_time: d ? d.toISOString().slice(0, 16) : "" })}
+                    maxDate={new Date()}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium">Timeframe</Label>
+                  <Select value={editForm.timeframe || "__none__"} onValueChange={(v) => setEditForm({ ...editForm, timeframe: v === "__none__" ? "" : v })}>
+                    <SelectTrigger className="bg-background"><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">None</SelectItem>
+                      {Object.entries(timeframeLabels).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium">Rating (1–10)</Label>
+                  <Input type="number" min="1" max="10" value={editForm.rating} onChange={(e) => setEditForm({ ...editForm, rating: e.target.value })} className="bg-background font-mono" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium">Confidence (1–5)</Label>
+                  <Input type="number" min="1" max="5" value={editForm.confidence_score} onChange={(e) => setEditForm({ ...editForm, confidence_score: e.target.value })} className="bg-background font-mono" />
+                </div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Confidence (1-5)</Label>
-                <Input type="number" min="1" max="5" value={editForm.confidence_score} onChange={(e) => setEditForm({ ...editForm, confidence_score: e.target.value })} className="h-8" />
+            </div>
+
+            {/* Section: Automation */}
+            <div className="rounded-xl border border-border bg-accent/30 p-4 space-y-3">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Automation & Alerts</h4>
+              <div className="flex flex-col gap-3">
+                <label className="flex items-center justify-between cursor-pointer p-2 rounded-lg hover:bg-accent/50 transition-colors">
+                  <div className="flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-profit" />
+                    <div>
+                      <p className="text-sm font-medium">Auto Track (Live Price Sync)</p>
+                      <p className="text-xs text-muted-foreground">Monitor price for SL/TSL/Target triggers</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={editForm.auto_track_enabled}
+                    className={cn(
+                      "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors",
+                      editForm.auto_track_enabled ? "bg-profit" : "bg-muted"
+                    )}
+                    onClick={() => setEditForm({ ...editForm, auto_track_enabled: !editForm.auto_track_enabled })}
+                  >
+                    <span className={cn(
+                      "pointer-events-none inline-block h-4 w-4 rounded-full bg-background shadow-lg transition-transform",
+                      editForm.auto_track_enabled ? "translate-x-4" : "translate-x-0"
+                    )} />
+                  </button>
+                </label>
+                <label className="flex items-center justify-between cursor-pointer p-2 rounded-lg hover:bg-accent/50 transition-colors">
+                  <div className="flex items-center gap-2">
+                    <Send className="w-4 h-4 text-primary" />
+                    <div>
+                      <p className="text-sm font-medium">Post to Telegram</p>
+                      <p className="text-xs text-muted-foreground">Send updates to your linked channels</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={editForm.telegram_post_enabled}
+                    className={cn(
+                      "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors",
+                      editForm.telegram_post_enabled ? "bg-primary" : "bg-muted"
+                    )}
+                    onClick={() => setEditForm({ ...editForm, telegram_post_enabled: !editForm.telegram_post_enabled })}
+                  >
+                    <span className={cn(
+                      "pointer-events-none inline-block h-4 w-4 rounded-full bg-background shadow-lg transition-transform",
+                      editForm.telegram_post_enabled ? "translate-x-4" : "translate-x-0"
+                    )} />
+                  </button>
+                </label>
               </div>
             </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Targets (JSON array, e.g. [100, 110, 120])</Label>
-              <Input value={editForm.targets} onChange={(e) => setEditForm({ ...editForm, targets: e.target.value })} className="h-8 font-mono text-xs" />
+
+            {/* Section: Additional Info */}
+            <div className="rounded-xl border border-border bg-accent/30 p-4 space-y-3">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Additional Info</h4>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium">Chart Link</Label>
+                <Input value={editForm.chart_link} onChange={(e) => setEditForm({ ...editForm, chart_link: e.target.value })} className="bg-background" placeholder="https://..." />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium">Notes</Label>
+                <Textarea value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} className="bg-background min-h-[80px]" placeholder="Trade notes..." />
+              </div>
             </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Chart Link</Label>
-              <Input value={editForm.chart_link} onChange={(e) => setEditForm({ ...editForm, chart_link: e.target.value })} className="h-8" />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Notes</Label>
-              <Textarea value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} className="h-20" />
-            </div>
-            <div className="flex gap-2">
+
+            {/* Save / Cancel */}
+            <div className="flex gap-2 sticky bottom-0 bg-background pt-2 pb-1">
               <Button onClick={handleSaveEdit} disabled={updateTrade.isPending} className="flex-1">
                 {updateTrade.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 Save Changes
