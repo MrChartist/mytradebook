@@ -117,8 +117,12 @@ export default function Trades() {
     return list;
   }, [trades, sortBy]);
 
-  const openTradeSymbols = useMemo(() => trades.filter(t => t.status === "OPEN").map(t => t.symbol), [trades]);
-  const { prices, isPolling, lastUpdated } = useLivePrices(openTradeSymbols, 30000);
+  const openTradeInstruments = useMemo(() => trades.filter(t => t.status === "OPEN").map(t => ({
+    symbol: t.symbol,
+    security_id: t.security_id,
+    exchange_segment: t.exchange_segment,
+  })), [trades]);
+  const { prices, isPolling, lastUpdated } = useLivePrices(openTradeInstruments, 30000);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -318,7 +322,7 @@ export default function Trades() {
         >
           <div className="flex items-center justify-between">
             <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Win Rate</p>
-            {isPolling && openTradeSymbols.length > 0 && (
+            {isPolling && openTradeInstruments.length > 0 && (
               <span className="flex items-center gap-1 text-xs text-profit">
                 <Radio className="w-3 h-3 animate-pulse" /> Live
               </span>
