@@ -163,7 +163,21 @@ Deno.serve(async (req) => {
         const profileData = await profileRes.json();
         const profile = profileData?.data || profileData;
         accountName = profile?.name || accountName;
-        tokenExpiry = profile?.tokenValidity || null;
+        // Parse Dhan's date format (DD/MM/YYYY HH:mm) to ISO format
+        const rawExpiry = profile?.tokenValidity;
+        if (rawExpiry) {
+          try {
+            const parts = rawExpiry.match(/(\d{2})\/(\d{2})\/(\d{4})\s*(\d{2}):(\d{2})/);
+            if (parts) {
+              tokenExpiry = new Date(`${parts[3]}-${parts[2]}-${parts[1]}T${parts[4]}:${parts[5]}:00Z`).toISOString();
+            } else {
+              tokenExpiry = new Date(rawExpiry).toISOString();
+            }
+          } catch {
+            console.warn("Could not parse token expiry:", rawExpiry);
+            tokenExpiry = null;
+          }
+        }
       }
 
       // Save everything to user_settings
