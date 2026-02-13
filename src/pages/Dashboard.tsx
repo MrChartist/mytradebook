@@ -1,138 +1,159 @@
-import { useMemo } from "react";
-import { StatCard } from "@/components/dashboard/StatCard";
-import { EquityCurve } from "@/components/dashboard/EquityCurve";
-import { AlertsWidget } from "@/components/dashboard/AlertsWidget";
-import { PerformanceMetrics } from "@/components/dashboard/PerformanceMetrics";
-import { TodaysPnl } from "@/components/dashboard/TodaysPnl";
-import { SegmentBreakdown } from "@/components/dashboard/SegmentBreakdown";
-import { OpenPositionsTable } from "@/components/dashboard/OpenPositionsTable";
-import { CalendarHeatmap } from "@/components/dashboard/CalendarHeatmap";
-import { StreakDiscipline } from "@/components/dashboard/StreakDiscipline";
+import { useState, useMemo, createContext, useContext } from "react";
+import { DashboardKPICards } from "@/components/dashboard/DashboardKPICards";
+import { DailySectorChart } from "@/components/dashboard/DailySectorChart";
+import { DashboardAlertsPanel } from "@/components/dashboard/DashboardAlertsPanel";
+import { DashboardPositionsTable } from "@/components/dashboard/DashboardPositionsTable";
+import { DashboardMonthlyMetrics } from "@/components/dashboard/DashboardMonthlyMetrics";
 import { QuickActions } from "@/components/dashboard/QuickActions";
-import {
-  Wallet,
-  TrendingUp,
-  Target,
-  AlertCircle,
-  Radio,
-} from "lucide-react";
 import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useLivePrices } from "@/hooks/useLivePrices";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Radio } from "lucide-react";
+import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
+
+type Segment = "All" | "Equity_Intraday" | "Equity_Positional" | "Futures" | "Options" | "Commodities";
+
+const SEGMENT_OPTIONS: { label: string; value: Segment }[] = [
+  { label: "All", value: "All" },
+  { label: "Intraday", value: "Equity_Intraday" },
+  { label: "Positional", value: "Equity_Positional" },
+  { label: "Futures", value: "Futures" },
+  { label: "Options", value: "Options" },
+  { label: "Commodities", value: "Commodities" },
+];
+
+export interface DashboardContextValue {
+  selectedMonth: Date;
+  setSelectedMonth: (d: Date) => void;
+  segment: Segment;
+  trades: ReturnType<typeof useTrades>["trades"];
+  monthTrades: ReturnType<typeof useTrades>["trades"];
+  openTrades: ReturnType<typeof useTrades>["trades"];
+  prices: Record<string, { ltp: number }>;
+  isPolling: boolean;
+  lastUpdated: Date | null;
+}
+
+export const DashboardContext = createContext<DashboardContextValue | null>(null);
+export const useDashboard = () => useContext(DashboardContext)!;
 
 export default function Dashboard() {
-  const { trades, summary, isLoading: tradesLoading } = useTrades();
-  const { alerts, isLoading: alertsLoading } = useAlerts({ active: true });
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
+  const [segment, setSegment] = useState<Segment>("All");
 
-  const openTrades = trades.filter((t) => t.status === "OPEN");
-  
-  const openTradeSymbols = useMemo(() => {
-    return openTrades.map((t) => t.symbol);
-  }, [openTrades]);
+  const { trades: allTrades, isLoading: tradesLoading } = useTrades();
+  const { alerts } = useAlerts({ active: true });
 
-  const { prices, isPolling, lastUpdated } = useLivePrices(openTradeSymbols, 30000);
+  // Filter by segment
+  const trades = useMemo(() => {
+    if (segment === "All") return allTrades;
+    return allTrades.filter((t) => t.segment === segment);
+  }, [allTrades, segment]);
 
-  const capitalAtRisk = openTrades.reduce((acc, t) => {
-    const currentPrice = prices[t.symbol]?.ltp || t.current_price || t.entry_price;
-    return acc + currentPrice * t.quantity;
-  }, 0);
+  // Month-filtered trades
+  const monthStart = startOfMonth(selectedMonth);
+  const monthEnd = endOfMonth(selectedMonth);
+  const monthTrades = useMemo(() => {
+    return trades.filter((t) => {
+      const d = new Date(t.entry_time);
+      return d >= monthStart && d <= monthEnd;
+    });
+  }, [trades, monthStart, monthEnd]);
 
-  const triggeredAlerts = alerts.filter((a) => a.last_triggered).length;
+  // Open positions
+  const openTrades = useMemo(() => trades.filter((t) => t.status === "OPEN"), [trades]);
+  const openSymbols = useMemo(() => openTrades.map((t) => t.symbol), [openTrades]);
+  const { prices, isPolling, lastUpdated } = useLivePrices(openSymbols, 30000);
+
+  const ctx: DashboardContextValue = {
+    selectedMonth, setSelectedMonth, segment,
+    trades, monthTrades, openTrades,
+    prices: prices as Record<string, { ltp: number }>,
+    isPolling, lastUpdated,
+  };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground text-sm">
-            Welcome back! Here's your trading overview.
-          </p>
-        </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          {isPolling && openTradeSymbols.length > 0 ? (
-            <>
-              <Radio className="w-3 h-3 text-profit animate-pulse" />
-              <span className="text-profit">Live</span>
-              {lastUpdated && (
-                <span>• {lastUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span>
+    <DashboardContext.Provider value={ctx}>
+      <div className="space-y-5 animate-fade-in">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 className="text-xl font-bold">Dashboard</h1>
+            <p className="text-muted-foreground text-sm">
+              {format(selectedMonth, "MMMM yyyy")} overview
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            {/* Month selector */}
+            <div className="flex gap-1 bg-muted rounded-lg p-0.5">
+              {[subMonths(new Date(), 2), subMonths(new Date(), 1), new Date()].map((m) => (
+                <button
+                  key={m.toISOString()}
+                  onClick={() => setSelectedMonth(m)}
+                  className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+                    format(selectedMonth, "MMM yy") === format(m, "MMM yy")
+                      ? "bg-background shadow-sm text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {format(m, "MMM")}
+                </button>
+              ))}
+            </div>
+            {/* Live indicator */}
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              {isPolling && openSymbols.length > 0 ? (
+                <>
+                  <Radio className="w-3 h-3 text-profit animate-pulse" />
+                  <span className="text-profit font-medium">Live</span>
+                  {lastUpdated && <span>• {format(lastUpdated, "h:mm a")}</span>}
+                </>
+              ) : (
+                <>
+                  <span className="w-1.5 h-1.5 rounded-full bg-profit" />
+                  <span>Market Open</span>
+                </>
               )}
-            </>
-          ) : (
-            <>
-              <span className="w-2 h-2 rounded-full bg-profit animate-pulse" />
-              Market Open • NSE
-            </>
-          )}
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Top Row: Today's P&L + Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {tradesLoading ? (
-          <>
-            <Skeleton className="h-36" />
-            <Skeleton className="h-28" />
-            <Skeleton className="h-28" />
-            <Skeleton className="h-28" />
-          </>
-        ) : (
-          <>
-            <TodaysPnl />
-            <StatCard
-              title="Open Positions"
-              value={String(summary.openPositions)}
-              change={`₹${capitalAtRisk.toLocaleString()} at risk`}
-              changeType="neutral"
-              icon={Target}
-              subtitle={`${trades.length} total trades`}
-            />
-            <StatCard
-              title="Win Rate"
-              value={`${summary.winRate.toFixed(1)}%`}
-              change={`${summary.closedToday} closed today`}
-              changeType={summary.winRate >= 50 ? "profit" : "loss"}
-              icon={TrendingUp}
-              subtitle="Closed trades"
-            />
-            <StatCard
-              title="Active Alerts"
-              value={String(alerts.length)}
-              change={triggeredAlerts > 0 ? `${triggeredAlerts} triggered` : "Monitoring"}
-              changeType={triggeredAlerts > 0 ? "loss" : "neutral"}
-              icon={AlertCircle}
-              subtitle="Price & technical"
-            />
-          </>
-        )}
-      </div>
-
-      {/* Equity Curve + Segment Breakdown */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <EquityCurve />
+        {/* Segment filter */}
+        <div className="flex gap-1.5 flex-wrap">
+          {SEGMENT_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setSegment(opt.value)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
+                segment === opt.value
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/20"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
         </div>
-        <div>
-          <SegmentBreakdown />
+
+        {/* KPI Cards */}
+        <DashboardKPICards alerts={alerts} />
+
+        {/* Main Chart + Alerts Panel */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div className="lg:col-span-2">
+            <DailySectorChart />
+          </div>
+          <DashboardAlertsPanel alerts={alerts} />
         </div>
+
+        {/* Open Positions */}
+        <DashboardPositionsTable />
+
+        {/* Monthly Metrics */}
+        <DashboardMonthlyMetrics />
+
+        <QuickActions />
       </div>
-
-      {/* Open Positions Table */}
-      <OpenPositionsTable />
-
-      {/* Calendar + Streak + Alerts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <CalendarHeatmap />
-        <StreakDiscipline />
-        <AlertsWidget />
-      </div>
-
-      {/* Performance Metrics */}
-      <PerformanceMetrics />
-
-      {/* Quick Actions FAB */}
-      <QuickActions />
-    </div>
+    </DashboardContext.Provider>
   );
 }
