@@ -201,8 +201,9 @@ export default function IntegrationsSettings() {
       if (data?.success && data?.auth_url) {
         // Store consent ID for callback
         localStorage.setItem("dhan_consent_id", data.consent_id);
-        // Redirect to Dhan authorization page
-        window.location.href = data.auth_url;
+        // Open Dhan authorization in a new tab (iframe can't redirect to external sites)
+        window.open(data.auth_url, "_blank");
+        toast.info("Dhan authorization opened in a new tab. Complete it there and you'll be redirected back.");
       } else {
         toast.error(data?.error || "Failed to initiate Dhan authorization");
       }
