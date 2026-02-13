@@ -34,7 +34,10 @@
     --input: 225 15% 92%;
     --ring: 240 60% 60%;
 
-    --radius: 0.875rem;
+    --radius: 1.25rem;
+
+    /* Inner panel bg */
+    --card-inner: 230 20% 95%;
 
     /* Trading-specific colors */
     --profit: 152 60% 42%;
@@ -70,6 +73,7 @@
 
   .dark {
     --background: 222 47% 5%;
+    --card-inner: 222 47% 10%;
     --foreground: 210 40% 98%;
     --card: 222 47% 8%;
     --card-foreground: 210 40% 98%;
@@ -148,6 +152,33 @@
   .surface-card-hover:hover {
     box-shadow: var(--shadow-md);
     border-color: hsl(var(--primary) / 0.15);
+  }
+
+  /* ── Premium Card (rich, layered) ──────────────────── */
+  .premium-card {
+    @apply bg-card rounded-[20px] border border-border p-6 relative overflow-hidden;
+    box-shadow: var(--shadow-sm), 0 0 0 1px hsl(var(--border) / 0.5);
+  }
+
+  .premium-card-hover {
+    @apply premium-card transition-all duration-300;
+  }
+
+  .premium-card-hover:hover {
+    box-shadow: var(--shadow-lg), 0 0 0 1px hsl(var(--primary) / 0.12);
+    transform: translateY(-2px);
+  }
+
+  /* ── Inner Panel (nested depth) ────────────────────── */
+  .inner-panel {
+    background: hsl(var(--card-inner));
+    @apply rounded-xl border border-border/50 p-3;
+  }
+
+  /* ── Dot Pattern (decorative) ──────────────────────── */
+  .dot-pattern {
+    background-image: radial-gradient(circle, hsl(var(--muted-foreground) / 0.08) 1px, transparent 1px);
+    background-size: 16px 16px;
   }
 
   /* Legacy aliases */

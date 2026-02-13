@@ -12,28 +12,28 @@ interface ViewToggleProps {
 
 export function ViewToggle({ view, onViewChange, className }: ViewToggleProps) {
   return (
-    <div className={cn("flex items-center rounded-lg border border-border p-0.5", className)}>
+    <div className={cn("flex items-center rounded-xl border border-border p-0.5 bg-card", className)}>
       <Button
         variant="ghost"
         size="sm"
         className={cn(
-          "h-7 w-7 p-0 rounded-md",
-          view === "list" && "bg-primary/10 text-primary"
+          "h-8 w-8 p-0 rounded-lg transition-all duration-200",
+          view === "list" && "bg-primary/10 text-primary shadow-sm"
         )}
         onClick={() => onViewChange("list")}
       >
-        <List className="w-3.5 h-3.5" />
+        <List className="w-4 h-4" />
       </Button>
       <Button
         variant="ghost"
         size="sm"
         className={cn(
-          "h-7 w-7 p-0 rounded-md",
-          view === "grid" && "bg-primary/10 text-primary"
+          "h-8 w-8 p-0 rounded-lg transition-all duration-200",
+          view === "grid" && "bg-primary/10 text-primary shadow-sm"
         )}
         onClick={() => onViewChange("grid")}
       >
-        <LayoutGrid className="w-3.5 h-3.5" />
+        <LayoutGrid className="w-4 h-4" />
       </Button>
     </div>
   );

@@ -49,7 +49,7 @@ export function DashboardKPICards({ alerts }: Props) {
   const priceAlerts = alerts.filter((a) => ["PRICE_GT", "PRICE_LT"].includes(a.condition_type)).length;
   const techAlerts = alerts.length - priceAlerts;
 
-  const cardBase = "surface-card-hover p-4 block cursor-pointer transition-all duration-200 hover:border-primary/20 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98]";
+  const cardBase = "premium-card-hover !p-5 block cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98]";
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -62,23 +62,24 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/reports")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/reports"); }}
       >
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">MTD P&L</span>
-          <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", realizedPnl + unrealizedPnl >= 0 ? "bg-profit/8" : "bg-loss/8")}>
+        <div className="flex items-center justify-between mb-3 relative">
+          <div className="absolute -top-5 -right-5 w-16 h-16 dot-pattern opacity-30 rounded-bl-2xl" />
+          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">MTD P&L</span>
+          <div className={cn("inner-panel !p-2 !rounded-xl", realizedPnl + unrealizedPnl >= 0 ? "!bg-profit/8 !border-profit/15" : "!bg-loss/8 !border-loss/15")}>
             <Wallet className={cn("w-4 h-4", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")} />
           </div>
         </div>
-        <p className={cn("text-2xl font-bold", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>
+        <p className={cn("text-2xl font-bold font-mono", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>
           {fmt(realizedPnl + unrealizedPnl)}
         </p>
         <div className="flex gap-3 mt-2">
           <div>
             <p className="text-[10px] text-muted-foreground">Realized</p>
-            <p className={cn("text-xs font-semibold", realizedPnl >= 0 ? "text-profit" : "text-loss")}>{fmt(realizedPnl)}</p>
+            <p className={cn("text-xs font-bold font-mono", realizedPnl >= 0 ? "text-profit" : "text-loss")}>{fmt(realizedPnl)}</p>
           </div>
           <div>
             <p className="text-[10px] text-muted-foreground">Unrealized</p>
-            <p className={cn("text-xs font-semibold", unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>{fmt(unrealizedPnl)}</p>
+            <p className={cn("text-xs font-bold font-mono", unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>{fmt(unrealizedPnl)}</p>
           </div>
         </div>
         <div className="flex items-center gap-1 mt-2 text-[10px] text-muted-foreground">
@@ -98,13 +99,14 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/trades?status=OPEN")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/trades?status=OPEN"); }}
       >
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Open Positions</span>
-          <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center">
+        <div className="flex items-center justify-between mb-3 relative">
+          <div className="absolute -top-5 -right-5 w-16 h-16 dot-pattern opacity-30 rounded-bl-2xl" />
+          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Open Positions</span>
+          <div className="inner-panel !p-2 !rounded-xl !bg-primary/8 !border-primary/15">
             <Target className="w-4 h-4 text-primary" />
           </div>
         </div>
-        <p className="text-2xl font-bold">{openTrades.length}</p>
+        <p className="text-2xl font-bold font-mono">{openTrades.length}</p>
         <p className="text-xs text-muted-foreground mt-1">
           ₹{riskAtSL.toLocaleString("en-IN", { maximumFractionDigits: 0 })} at risk (to SL)
         </p>
@@ -120,14 +122,15 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/analytics")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/analytics"); }}
       >
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Win Rate</span>
-          <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", winRate >= 50 ? "bg-profit/8" : "bg-loss/8")}>
+        <div className="flex items-center justify-between mb-3 relative">
+          <div className="absolute -top-5 -right-5 w-16 h-16 dot-pattern opacity-30 rounded-bl-2xl" />
+          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Win Rate</span>
+          <div className={cn("inner-panel !p-2 !rounded-xl", winRate >= 50 ? "!bg-profit/8 !border-profit/15" : "!bg-loss/8 !border-loss/15")}>
             <TrendingUp className={cn("w-4 h-4", winRate >= 50 ? "text-profit" : "text-loss")} />
           </div>
         </div>
         <div className="flex items-baseline gap-2">
-          <p className={cn("text-2xl font-bold", winRate >= 50 ? "text-profit" : "text-loss")}>{winRate.toFixed(1)}%</p>
+          <p className={cn("text-2xl font-bold font-mono", winRate >= 50 ? "text-profit" : "text-loss")}>{winRate.toFixed(1)}%</p>
           <span className={cn(
             "text-[10px] font-medium px-1.5 py-0.5 rounded-full",
             expectancy >= 0 ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss"
@@ -149,14 +152,15 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/alerts")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/alerts"); }}
       >
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Active Alerts</span>
-          <div className="w-8 h-8 rounded-lg bg-warning/8 flex items-center justify-center">
+        <div className="flex items-center justify-between mb-3 relative">
+          <div className="absolute -top-5 -right-5 w-16 h-16 dot-pattern opacity-30 rounded-bl-2xl" />
+          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Active Alerts</span>
+          <div className="inner-panel !p-2 !rounded-xl !bg-warning/8 !border-warning/15">
             <Bell className="w-4 h-4 text-warning" />
           </div>
         </div>
         <div className="flex items-baseline gap-2">
-          <p className="text-2xl font-bold">{alerts.length}</p>
+          <p className="text-2xl font-bold font-mono">{alerts.length}</p>
           {triggeredToday > 0 && (
             <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-warning/10 text-warning">
               {triggeredToday} triggered today
