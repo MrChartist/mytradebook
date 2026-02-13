@@ -23,6 +23,10 @@ interface Alert {
   notes: string | null;
   telegram_enabled: boolean;
   exchange: string | null;
+  cooldown_minutes: number | null;
+  active_hours_only: boolean | null;
+  snooze_until: string | null;
+  expires_at: string | null;
 }
 
 interface MarketQuote {
@@ -47,13 +51,21 @@ serve(async (req) => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const DHAN_ACCESS_TOKEN = Deno.env.get("DHAN_ACCESS_TOKEN");
     const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
-    const TELEGRAM_CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID");
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       throw new Error("Supabase credentials not configured");
     }
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const now = new Date();
+
+    // Check if within market hours (IST 09:15 - 15:30)
+    const istHour = now.getUTCHours() + 5;
+    const istMinute = now.getUTCMinutes() + 30;
+    const istTimeMinutes = (istHour >= 24 ? istHour - 24 : istHour) * 60 + istMinute;
+    const marketOpen = 9 * 60 + 15; // 09:15
+    const marketClose = 15 * 60 + 30; // 15:30
+    const isMarketHours = istTimeMinutes >= marketOpen && istTimeMinutes <= marketClose;
 
     // Fetch all active alerts
     const { data: alerts, error: alertsError } = await supabase
@@ -72,12 +84,37 @@ serve(async (req) => {
       );
     }
 
-    // Group alerts by symbol for efficient API calls
-    const symbolsToCheck = [...new Set(alerts.map((a: Alert) => a.symbol))];
+    // Filter alerts: skip expired, snoozed, active-hours-only outside market, cooldown
+    const eligibleAlerts = (alerts as Alert[]).filter(alert => {
+      // Skip expired
+      if (alert.expires_at && new Date(alert.expires_at) < now) {
+        return false;
+      }
+      // Skip snoozed
+      if (alert.snooze_until && new Date(alert.snooze_until) > now) {
+        return false;
+      }
+      // Skip if active hours only and not market hours
+      if (alert.active_hours_only && !isMarketHours) {
+        return false;
+      }
+      // Skip if within cooldown
+      if (alert.last_triggered && alert.cooldown_minutes && alert.cooldown_minutes > 0) {
+        const lastTriggered = new Date(alert.last_triggered);
+        const cooldownEnd = new Date(lastTriggered.getTime() + alert.cooldown_minutes * 60 * 1000);
+        if (now < cooldownEnd) {
+          return false;
+        }
+      }
+      return true;
+    });
+
+    // Group by symbol for efficient API calls
+    const symbolsToCheck = [...new Set(eligibleAlerts.map(a => a.symbol))];
     const priceData: Record<string, MarketQuote> = {};
 
     // Fetch current prices from Dhan (if configured)
-    if (DHAN_ACCESS_TOKEN) {
+    if (DHAN_ACCESS_TOKEN && symbolsToCheck.length > 0) {
       try {
         const quoteResponse = await fetch(`${DHAN_API_URL}/marketfeed/ltp`, {
           method: "POST",
@@ -86,9 +123,7 @@ serve(async (req) => {
             "Content-Type": "application/json",
             "access-token": DHAN_ACCESS_TOKEN,
           },
-          body: JSON.stringify({
-            NSE_EQ: symbolsToCheck,
-          }),
+          body: JSON.stringify({ NSE_EQ: symbolsToCheck }),
         });
 
         if (quoteResponse.ok) {
@@ -119,146 +154,128 @@ serve(async (req) => {
 
     // Evaluate each alert
     const triggeredAlerts: Alert[] = [];
-    const notifications: string[] = [];
 
-    for (const alert of alerts as Alert[]) {
+    for (const alert of eligibleAlerts) {
       const currentPrice = priceData[alert.symbol]?.ltp;
-      
-      // Skip if we couldn't get price data (use mock for demo)
       const price = currentPrice || getMockPrice(alert.symbol);
-      
+
       let isTriggered = false;
       let conditionDesc = "";
 
       switch (alert.condition_type) {
         case "PRICE_GT":
           isTriggered = price > alert.threshold;
-          conditionDesc = `Price ${price} > ${alert.threshold}`;
+          conditionDesc = `Price ₹${price.toFixed(2)} > ₹${alert.threshold}`;
           break;
         case "PRICE_LT":
           isTriggered = price < alert.threshold;
-          conditionDesc = `Price ${price} < ${alert.threshold}`;
+          conditionDesc = `Price ₹${price.toFixed(2)} < ₹${alert.threshold}`;
           break;
-        case "PERCENT_CHANGE_GT":
+        case "PERCENT_CHANGE_GT": {
           const prevClose = priceData[alert.symbol]?.previousClose || price * 0.98;
-          const percentChange = ((price - prevClose) / prevClose) * 100;
-          isTriggered = percentChange > alert.threshold;
-          conditionDesc = `Change ${percentChange.toFixed(2)}% > ${alert.threshold}%`;
+          const pctChange = ((price - prevClose) / prevClose) * 100;
+          isTriggered = pctChange > alert.threshold;
+          conditionDesc = `Day change ${pctChange.toFixed(2)}% > ${alert.threshold}%`;
           break;
-        case "PERCENT_CHANGE_LT":
+        }
+        case "PERCENT_CHANGE_LT": {
           const prevClose2 = priceData[alert.symbol]?.previousClose || price * 1.02;
-          const percentChange2 = ((price - prevClose2) / prevClose2) * 100;
-          isTriggered = percentChange2 < -alert.threshold;
-          conditionDesc = `Change ${percentChange2.toFixed(2)}% < -${alert.threshold}%`;
+          const pctChange2 = ((price - prevClose2) / prevClose2) * 100;
+          isTriggered = pctChange2 < -alert.threshold;
+          conditionDesc = `Day change ${pctChange2.toFixed(2)}% < -${alert.threshold}%`;
           break;
-        case "VOLUME_SPIKE":
+        }
+        case "VOLUME_SPIKE": {
           const volume = priceData[alert.symbol]?.volume || 0;
           isTriggered = volume > alert.threshold;
-          conditionDesc = `Volume ${volume} > ${alert.threshold}`;
+          conditionDesc = `Volume ${volume.toLocaleString()} > ${alert.threshold.toLocaleString()}`;
           break;
+        }
       }
 
       if (isTriggered) {
         triggeredAlerts.push(alert);
-        
+
         // Update alert in database
         const updates: Record<string, unknown> = {
-          last_triggered: new Date().toISOString(),
+          last_triggered: now.toISOString(),
           trigger_count: (alert.trigger_count || 0) + 1,
         };
 
-        // Deactivate if one-time alert
         if (alert.recurrence === "ONCE") {
           updates.active = false;
         }
 
-        await supabase
-          .from("alerts")
-          .update(updates)
-          .eq("id", alert.id);
+        await supabase.from("alerts").update(updates).eq("id", alert.id);
 
-        // Build notification message
-        const emoji = alert.condition_type.includes("GT") ? "📈" : "📉";
-        const exchange = alert.exchange || "NSE";
-        const timestamp = new Date().toLocaleString("en-IN", { 
-          timeZone: "Asia/Kolkata",
-          dateStyle: "short",
-          timeStyle: "short"
-        });
-        
-        notifications.push(
-          `${emoji} *${alert.symbol}* (${exchange})\n` +
-          `Condition: ${conditionDesc}\n` +
-          `Current Price: ₹${price.toLocaleString()}\n` +
-          `Time: ${timestamp}` +
-          (alert.notes ? `\n📝 Notes: ${alert.notes}` : "")
-        );
+        // Send Telegram notification if enabled
+        if (alert.telegram_enabled && TELEGRAM_BOT_TOKEN) {
+          // Fetch user's telegram_chat_id
+          const { data: settings } = await supabase
+            .from("user_settings")
+            .select("telegram_chat_id")
+            .eq("user_id", alert.user_id)
+            .maybeSingle();
+
+          const chatId = settings?.telegram_chat_id;
+          if (chatId) {
+            const emoji = alert.condition_type.includes("GT") ? "📈" : "📉";
+            const exchange = alert.exchange || "NSE";
+            const timestamp = now.toLocaleString("en-IN", {
+              timeZone: "Asia/Kolkata",
+              dateStyle: "short",
+              timeStyle: "short",
+            });
+
+            const message =
+              `🔔 *ALERT TRIGGERED*\n\n` +
+              `${emoji} *${alert.symbol}* (${exchange})\n` +
+              `Condition: ${conditionDesc}\n` +
+              `LTP: ₹${price.toLocaleString()}\n` +
+              `Time: ${timestamp}\n` +
+              (alert.notes ? `📝 ${alert.notes}\n` : "") +
+              (alert.recurrence !== "ONCE" && alert.cooldown_minutes
+                ? `\n⏱ Cooldown: ${alert.cooldown_minutes}m`
+                : "");
+
+            try {
+              await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  chat_id: chatId,
+                  text: message,
+                  parse_mode: "Markdown",
+                }),
+              });
+            } catch (e) {
+              console.error(`Telegram send failed for alert ${alert.id}:`, e);
+            }
+          }
+        }
       }
     }
 
-    // Send Telegram notification for alerts that have telegram_enabled
-    const telegramAlerts = triggeredAlerts.filter(a => a.telegram_enabled);
-    
-    if (telegramAlerts.length > 0 && TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
-      // Group notifications for alerts with telegram enabled
-      const telegramNotifications = telegramAlerts.map(alert => {
-        const price = priceData[alert.symbol]?.ltp || getMockPrice(alert.symbol);
-        const emoji = alert.condition_type.includes("GT") ? "📈" : "📉";
-        const exchange = alert.exchange || "NSE";
-        const timestamp = new Date().toLocaleString("en-IN", { 
-          timeZone: "Asia/Kolkata",
-          dateStyle: "short",
-          timeStyle: "short"
-        });
-        
-        let conditionDesc = "";
-        switch (alert.condition_type) {
-          case "PRICE_GT":
-            conditionDesc = `Price ${price.toFixed(2)} > ${alert.threshold}`;
-            break;
-          case "PRICE_LT":
-            conditionDesc = `Price ${price.toFixed(2)} < ${alert.threshold}`;
-            break;
-          case "PERCENT_CHANGE_GT":
-          case "PERCENT_CHANGE_LT":
-            conditionDesc = `Change met threshold ${alert.threshold}%`;
-            break;
-          case "VOLUME_SPIKE":
-            conditionDesc = `Volume spike > ${alert.threshold}`;
-            break;
-        }
-        
-        return `${emoji} *${alert.symbol}* (${exchange})\n` +
-          `Condition: ${conditionDesc}\n` +
-          `Current Price: ₹${price.toLocaleString()}\n` +
-          `Time: ${timestamp}` +
-          (alert.notes ? `\n📝 Notes: ${alert.notes}` : "");
-      });
-      
-      const message = `🔔 *Alert Triggered!*\n\n${telegramNotifications.join("\n\n")}`;
+    // Auto-deactivate expired alerts
+    const expiredIds = (alerts as Alert[])
+      .filter(a => a.expires_at && new Date(a.expires_at) < now && a.active)
+      .map(a => a.id);
 
-      const telegramResponse = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: TELEGRAM_CHAT_ID,
-          text: message,
-          parse_mode: "Markdown",
-        }),
-      });
-      
-      if (!telegramResponse.ok) {
-        const errorData = await telegramResponse.text();
-        console.error("Failed to send Telegram notification:", errorData);
-      }
+    if (expiredIds.length > 0) {
+      await supabase
+        .from("alerts")
+        .update({ active: false })
+        .in("id", expiredIds);
     }
 
     return new Response(
       JSON.stringify({
         success: true,
-        evaluated: alerts.length,
+        evaluated: eligibleAlerts.length,
         triggered: triggeredAlerts.length,
-        alerts: triggeredAlerts.map((a) => ({
+        skipped: alerts.length - eligibleAlerts.length,
+        expired_deactivated: expiredIds.length,
+        alerts: triggeredAlerts.map(a => ({
           id: a.id,
           symbol: a.symbol,
           condition: a.condition_type,
@@ -276,22 +293,12 @@ serve(async (req) => {
   }
 });
 
-// Mock price generator for testing when Dhan API not available
 function getMockPrice(symbol: string): number {
   const basePrices: Record<string, number> = {
-    RELIANCE: 2450,
-    TATASTEEL: 155,
-    INFY: 1520,
-    TCS: 3850,
-    HDFCBANK: 1680,
-    ICICIBANK: 1120,
-    SBIN: 780,
-    BHARTIARTL: 1380,
-    WIPRO: 480,
-    KOTAKBANK: 1850,
+    RELIANCE: 2450, TATASTEEL: 155, INFY: 1520, TCS: 3850,
+    HDFCBANK: 1680, ICICIBANK: 1120, SBIN: 780, BHARTIARTL: 1380,
+    WIPRO: 480, KOTAKBANK: 1850,
   };
-  
   const base = basePrices[symbol] || 1000;
-  // Add small random variation
   return base * (1 + (Math.random() - 0.5) * 0.02);
 }
