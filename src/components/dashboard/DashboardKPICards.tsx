@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { useDashboard } from "@/pages/Dashboard";
 import { cn } from "@/lib/utils";
-import { Wallet, Target, TrendingUp, Bell, Plus, ArrowUpRight, ArrowDownRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Wallet, Target, TrendingUp, Bell, Plus } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 const fmt = (v: number) =>
   `${v >= 0 ? "+" : ""}₹${Math.abs(v).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
@@ -13,6 +13,7 @@ interface Props {
 
 export function DashboardKPICards({ alerts }: Props) {
   const { monthTrades, openTrades, prices } = useDashboard();
+  const navigate = useNavigate();
 
   const closedMonth = useMemo(() => monthTrades.filter((t) => t.status === "CLOSED"), [monthTrades]);
   const wins = closedMonth.filter((t) => (t.pnl || 0) > 0);
@@ -48,10 +49,19 @@ export function DashboardKPICards({ alerts }: Props) {
   const priceAlerts = alerts.filter((a) => ["PRICE_GT", "PRICE_LT"].includes(a.condition_type)).length;
   const techAlerts = alerts.length - priceAlerts;
 
+  const cardBase = "surface-card-hover p-4 block cursor-pointer transition-all duration-200 hover:border-primary/20 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98]";
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* Total P&L */}
-      <Link to="/trades" className="surface-card-hover p-4 block">
+      {/* Total P&L → Reports */}
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={`MTD P&L: ${fmt(realizedPnl + unrealizedPnl)}`}
+        className={cardBase}
+        onClick={() => navigate("/reports")}
+        onKeyDown={(e) => { if (e.key === "Enter") navigate("/reports"); }}
+      >
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">MTD P&L</span>
           <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", realizedPnl + unrealizedPnl >= 0 ? "bg-profit/8" : "bg-loss/8")}>
@@ -77,10 +87,17 @@ export function DashboardKPICards({ alerts }: Props) {
           <span className="mx-1">•</span>
           <span>Closed: {closedMonth.length} | Open: {openTrades.length}</span>
         </div>
-      </Link>
+      </div>
 
-      {/* Open Positions */}
-      <Link to="/trades" className="surface-card-hover p-4 block">
+      {/* Open Positions → /trades?status=OPEN */}
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={`Open Positions: ${openTrades.length}`}
+        className={cardBase}
+        onClick={() => navigate("/trades?status=OPEN")}
+        onKeyDown={(e) => { if (e.key === "Enter") navigate("/trades?status=OPEN"); }}
+      >
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Open Positions</span>
           <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center">
@@ -92,10 +109,17 @@ export function DashboardKPICards({ alerts }: Props) {
           ₹{riskAtSL.toLocaleString("en-IN", { maximumFractionDigits: 0 })} at risk (to SL)
         </p>
         <p className="text-[10px] text-muted-foreground mt-1.5">{monthTrades.length} total trades this month</p>
-      </Link>
+      </div>
 
-      {/* Win Rate */}
-      <div className="surface-card p-4">
+      {/* Win Rate → /analytics */}
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={`Win Rate: ${winRate.toFixed(1)}%`}
+        className={cardBase}
+        onClick={() => navigate("/analytics")}
+        onKeyDown={(e) => { if (e.key === "Enter") navigate("/analytics"); }}
+      >
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Win Rate</span>
           <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", winRate >= 50 ? "bg-profit/8" : "bg-loss/8")}>
@@ -116,8 +140,15 @@ export function DashboardKPICards({ alerts }: Props) {
         </p>
       </div>
 
-      {/* Active Alerts */}
-      <div className="surface-card p-4">
+      {/* Active Alerts → /alerts?status=active */}
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={`Active Alerts: ${alerts.length}`}
+        className={cardBase}
+        onClick={() => navigate("/alerts")}
+        onKeyDown={(e) => { if (e.key === "Enter") navigate("/alerts"); }}
+      >
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Active Alerts</span>
           <div className="w-8 h-8 rounded-lg bg-warning/8 flex items-center justify-center">
@@ -135,9 +166,9 @@ export function DashboardKPICards({ alerts }: Props) {
         <p className="text-[10px] text-muted-foreground mt-2">
           Price: {priceAlerts} | Technical: {techAlerts}
         </p>
-        <Link to="/alerts" className="mt-2 inline-flex items-center gap-1 text-[10px] text-primary font-medium hover:underline">
+        <span className="mt-2 inline-flex items-center gap-1 text-[10px] text-primary font-medium">
           <Plus className="w-3 h-3" /> Create alert
-        </Link>
+        </span>
       </div>
     </div>
   );

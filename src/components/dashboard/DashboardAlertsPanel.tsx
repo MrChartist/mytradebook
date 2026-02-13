@@ -1,9 +1,9 @@
-import { Bell, TrendingUp, TrendingDown, AlertTriangle, Plus, Pause, Play } from "lucide-react";
+import { Bell, TrendingUp, TrendingDown, AlertTriangle, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { format } from "date-fns";
+import { EditAlertModal } from "@/components/modals/EditAlertModal";
 
 interface Alert {
   id: string;
@@ -22,6 +22,7 @@ interface Props {
 
 export function DashboardAlertsPanel({ alerts }: Props) {
   const [showActiveOnly, setShowActiveOnly] = useState(true);
+  const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
 
   const displayed = showActiveOnly ? alerts.filter((a) => a.active) : alerts;
 
@@ -73,21 +74,26 @@ export function DashboardAlertsPanel({ alerts }: Props) {
       {/* Alert list */}
       <div className="flex-1 space-y-1.5 overflow-y-auto max-h-[320px]">
         {displayed.length === 0 ? (
-          <div className="text-center py-8">
+          <Link to="/alerts" className="block text-center py-8 cursor-pointer hover:bg-primary/5 rounded-lg transition-colors">
             <Bell className="w-8 h-8 mx-auto text-muted-foreground/30 mb-2" />
             <p className="text-xs text-muted-foreground">No alerts</p>
-            <Link to="/alerts" className="text-xs text-primary hover:underline">Create one →</Link>
-          </div>
+            <span className="text-xs text-primary font-medium">Create one →</span>
+          </Link>
         ) : (
           displayed.map((alert) => (
             <div
               key={alert.id}
+              role="button"
+              tabIndex={0}
+              aria-label={`${alert.symbol} alert - click to edit`}
               className={cn(
-                "p-2.5 rounded-lg border transition-colors",
+                "p-2.5 rounded-lg border transition-all cursor-pointer hover:border-primary/20 hover:shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring active:scale-[0.99]",
                 alert.last_triggered && new Date(alert.last_triggered).toDateString() === new Date().toDateString()
                   ? "border-warning/20 bg-warning/5"
                   : "border-border/50 hover:border-border"
               )}
+              onClick={() => setSelectedAlert(alert)}
+              onKeyDown={(e) => { if (e.key === "Enter") setSelectedAlert(alert); }}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -115,6 +121,12 @@ export function DashboardAlertsPanel({ alerts }: Props) {
           ))
         )}
       </div>
+
+      <EditAlertModal
+        open={!!selectedAlert}
+        onOpenChange={(open) => !open && setSelectedAlert(null)}
+        alert={selectedAlert as any}
+      />
     </div>
   );
 }

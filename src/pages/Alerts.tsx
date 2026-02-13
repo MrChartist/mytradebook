@@ -197,19 +197,47 @@ export default function Alerts() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="surface-card p-4">
+          <div
+            role="button"
+            tabIndex={0}
+            className="surface-card p-4 cursor-pointer hover:border-primary/20 hover:shadow-md transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            onClick={() => setActiveTab("all")}
+            onKeyDown={(e) => { if (e.key === "Enter") setActiveTab("all"); }}
+            aria-label="Show all alerts"
+          >
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total</p>
             <p className="text-2xl font-bold">{alerts.length}</p>
           </div>
-          <div className="surface-card p-4">
+          <div
+            role="button"
+            tabIndex={0}
+            className="surface-card p-4 cursor-pointer hover:border-primary/20 hover:shadow-md transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            onClick={() => setActiveTab("active")}
+            onKeyDown={(e) => { if (e.key === "Enter") setActiveTab("active"); }}
+            aria-label="Show active alerts"
+          >
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Active</p>
             <p className="text-2xl font-bold text-profit">{activeCount}</p>
           </div>
-          <div className="surface-card p-4">
+          <div
+            role="button"
+            tabIndex={0}
+            className="surface-card p-4 cursor-pointer hover:border-primary/20 hover:shadow-md transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            onClick={() => setActiveTab("triggered")}
+            onKeyDown={(e) => { if (e.key === "Enter") setActiveTab("triggered"); }}
+            aria-label="Show triggered alerts"
+          >
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Triggered Today</p>
             <p className="text-2xl font-bold text-warning">{triggeredTodayCount}</p>
           </div>
-          <div className="surface-card p-4">
+          <div
+            role="button"
+            tabIndex={0}
+            className="surface-card p-4 cursor-pointer hover:border-primary/20 hover:shadow-md transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            onClick={() => setActiveTab("paused")}
+            onKeyDown={(e) => { if (e.key === "Enter") setActiveTab("paused"); }}
+            aria-label="Show paused alerts"
+          >
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Paused</p>
             <p className="text-2xl font-bold text-muted-foreground">{pausedCount}</p>
           </div>
