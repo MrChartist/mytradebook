@@ -50,6 +50,11 @@ export function useLivePrices(
         throw new Error(fnError.message);
       }
 
+      if (data?.error === "token_expired") {
+        setError("Dhan token expired — update in Settings");
+        return;
+      }
+
       if (data?.success && data?.prices) {
         setPrices(data.prices);
         setLastUpdated(new Date());

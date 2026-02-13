@@ -1030,6 +1030,7 @@ export type Database = {
           dhan_account_name: string | null
           dhan_client_id: string | null
           dhan_enabled: boolean | null
+          dhan_token_expiry: string | null
           dhan_verified_at: string | null
           id: string
           ra_disclaimer: string | null
@@ -1057,6 +1058,7 @@ export type Database = {
           dhan_account_name?: string | null
           dhan_client_id?: string | null
           dhan_enabled?: boolean | null
+          dhan_token_expiry?: string | null
           dhan_verified_at?: string | null
           id?: string
           ra_disclaimer?: string | null
@@ -1084,6 +1086,7 @@ export type Database = {
           dhan_account_name?: string | null
           dhan_client_id?: string | null
           dhan_enabled?: boolean | null
+          dhan_token_expiry?: string | null
           dhan_verified_at?: string | null
           id?: string
           ra_disclaimer?: string | null

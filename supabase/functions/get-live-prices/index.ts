@@ -87,7 +87,6 @@ async function buildSecurityIdMap(
               symbol: row.trading_symbol,
               exchangeSegment: row.exchange_segment,
             };
-            console.log(`Resolved ${row.trading_symbol} -> ${row.security_id} (${row.exchange_segment})`);
           }
         });
       }
@@ -100,10 +99,7 @@ function buildRequestBody(securityIdMap: Record<string, { symbol: string; exchan
   const requestBody: Record<string, number[]> = {};
   Object.entries(securityIdMap).forEach(([secId, info]) => {
     const numericId = parseInt(secId, 10);
-    if (isNaN(numericId)) {
-      console.log(`Skipping non-numeric security_id: ${secId} for ${info.symbol}`);
-      return;
-    }
+    if (isNaN(numericId)) return;
     const seg = info.exchangeSegment;
     if (!requestBody[seg]) requestBody[seg] = [];
     requestBody[seg].push(numericId);
@@ -133,16 +129,11 @@ serve(async (req) => {
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-    console.log("LTP Request - Dhan token present:", !!DHAN_ACCESS_TOKEN);
-
     const body = await req.json();
     const userId = body.user_id;
 
-    // Support both old format (symbols array) and new format (instruments array)
     const symbols: string[] = body.symbols || [];
     const instruments: InstrumentInput[] = body.instruments || [];
-
-    console.log("LTP Request - symbols:", symbols.length, "instruments:", instruments.length);
 
     if (instruments.length > 0) {
       instruments.forEach((inst) => {
@@ -163,60 +154,81 @@ serve(async (req) => {
     const supabase =
       SUPABASE_URL && SUPABASE_SERVICE_KEY ? createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY) : null;
 
-    // Resolve tokens
     const userCreds = await resolveUserToken(userId, supabase);
     const activeToken = userCreds.token || DHAN_ACCESS_TOKEN;
     const activeClientId = userCreds.clientId || DHAN_CLIENT_ID;
 
-    // Build security-id map
     const securityIdMap = await buildSecurityIdMap(instruments, symbols, supabase);
     const requestBody = buildRequestBody(securityIdMap);
 
-    if (activeToken && activeClientId && Object.keys(requestBody).some((k) => requestBody[k].length > 0)) {
+    const hasIds = Object.keys(requestBody).some((k) => requestBody[k].length > 0);
+
+    if (activeToken && activeClientId && hasIds) {
       const headers = dhanHeaders(activeToken, activeClientId);
       const bodyStr = JSON.stringify(requestBody);
 
-      const summary = Object.entries(requestBody)
-        .map(([seg, ids]) => `${seg}: [${ids.join(",")}]`)
-        .join(", ");
-      console.log("Dhan API request body:", summary);
+      // Use single /marketfeed/quote call — returns LTP + OHLC + Volume + depth
+      // This avoids dual calls that hit Dhan's 1 req/sec rate limit
+      console.log("Calling /marketfeed/quote for", Object.values(requestBody).flat().length, "instruments");
 
-      // Fetch LTP and OHLC in parallel
-      const [ltpRes, ohlcRes] = await Promise.all([
-        fetch(`${DHAN_API_URL}/marketfeed/ltp`, { method: "POST", headers, body: bodyStr }),
-        fetch(`${DHAN_API_URL}/marketfeed/ohlc`, { method: "POST", headers, body: bodyStr }),
-      ]);
+      let retries = 0;
+      let quoteRes: Response | null = null;
 
-      console.log("Dhan LTP status:", ltpRes.status, "OHLC status:", ohlcRes.status);
+      while (retries < 3) {
+        quoteRes = await fetch(`${DHAN_API_URL}/marketfeed/quote`, {
+          method: "POST",
+          headers,
+          body: bodyStr,
+        });
 
-      // Process LTP
-      if (ltpRes.ok) {
-        const ltpData = await ltpRes.json();
-        console.log("LTP data keys:", Object.keys(ltpData?.data || {}));
+        if (quoteRes.status === 429) {
+          retries++;
+          const waitMs = 1000 * retries; // 1s, 2s, 3s backoff
+          console.warn(`Rate limited (429), retry ${retries}/3 after ${waitMs}ms`);
+          await new Promise((r) => setTimeout(r, waitMs));
+          continue;
+        }
+        break;
+      }
+
+      if (quoteRes && quoteRes.ok) {
+        const quoteData = await quoteRes.json();
 
         for (const segment of Object.keys(requestBody)) {
-          const segData = ltpData?.data?.[segment];
+          const segData = quoteData?.data?.[segment];
           if (!segData) continue;
+
           for (const [secId, quote] of Object.entries(segData)) {
             const info = securityIdMap[secId];
             if (!info || !quote) continue;
-            const q = quote as Record<string, number>;
+            const q = quote as Record<string, any>;
+
             const ltp = q.last_price || q.ltp || 0;
-            const prevClose = q.prev_close || ltp;
-            const change = ltp - prevClose;
-            const changePercent = prevClose > 0 ? (change / prevClose) * 100 : 0;
+            const ohlc = q.ohlc || {};
+            const open = ohlc.open || undefined;
+            const high = ohlc.high || undefined;
+            const low = ohlc.low || undefined;
+            const prevClose = ohlc.close || q.prev_close || undefined;
+            const volume = q.volume || undefined;
+            const netChange = q.net_change;
+
+            const change = netChange != null ? parseFloat(Number(netChange).toFixed(2)) : (prevClose ? parseFloat((ltp - prevClose).toFixed(2)) : 0);
+            const changePercent = prevClose && prevClose > 0 ? parseFloat(((change / prevClose) * 100).toFixed(2)) : 0;
 
             let warning: string | undefined;
-            if (prevClose > 0 && Math.abs(changePercent) > 50) {
+            if (prevClose && prevClose > 0 && Math.abs(changePercent) > 50) {
               warning = "Large price change detected - verify symbol mapping";
-              console.warn(`Warning for ${info.symbol}: ${changePercent.toFixed(1)}% change`);
             }
 
             prices[info.symbol] = {
               ltp,
-              change: parseFloat(change.toFixed(2)),
-              changePercent: parseFloat(changePercent.toFixed(2)),
-              prevClose: prevClose !== ltp ? parseFloat(prevClose.toFixed(2)) : undefined,
+              change,
+              changePercent,
+              open,
+              high,
+              low,
+              prevClose: prevClose ? parseFloat(Number(prevClose).toFixed(2)) : undefined,
+              volume,
               source: "dhan",
               timestamp,
               security_id: secId,
@@ -225,42 +237,26 @@ serve(async (req) => {
             };
           }
         }
-      } else {
-        const errText = await ltpRes.text();
-        console.error("Dhan LTP error:", ltpRes.status, errText);
-      }
+      } else if (quoteRes) {
+        const errText = await quoteRes.text();
+        console.error("Dhan quote error:", quoteRes.status, errText);
 
-      // Process OHLC – merge into existing prices
-      if (ohlcRes.ok) {
-        const ohlcData = await ohlcRes.json();
-        console.log("OHLC data keys:", Object.keys(ohlcData?.data || {}));
-
-        for (const segment of Object.keys(requestBody)) {
-          const segData = ohlcData?.data?.[segment];
-          if (!segData) continue;
-          for (const [secId, quote] of Object.entries(segData)) {
-            const info = securityIdMap[secId];
-            if (!info || !quote) continue;
-            const q = quote as Record<string, number>;
-
-            if (prices[info.symbol]) {
-              prices[info.symbol].open = q.open || undefined;
-              prices[info.symbol].high = q.high || undefined;
-              prices[info.symbol].low = q.low || undefined;
-              prices[info.symbol].volume = q.volume || undefined;
-              // Use prev_close from OHLC if we didn't get it from LTP
-              if (!prices[info.symbol].prevClose && q.close) {
-                prices[info.symbol].prevClose = parseFloat(q.close.toFixed(2));
-              }
-            }
-          }
+        // If 401, mark token as potentially expired
+        if (quoteRes.status === 401) {
+          return new Response(
+            JSON.stringify({
+              success: false,
+              error: "token_expired",
+              message: "Dhan access token is invalid or expired. Update it in Settings.",
+              prices: {},
+              timestamp,
+            }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
         }
-      } else {
-        console.error("Dhan OHLC error:", ohlcRes.status);
       }
     }
 
-    // Log unfetched
     const unfetched = symbols.filter((s) => !prices[s]);
     if (unfetched.length > 0) console.log(`Prices unavailable for: ${unfetched.join(", ")}`);
 
