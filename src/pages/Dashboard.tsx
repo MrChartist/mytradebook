@@ -45,8 +45,8 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground text-sm">
             Welcome back! Here's your trading overview.
           </p>
         </div>
