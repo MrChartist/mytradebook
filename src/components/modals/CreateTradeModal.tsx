@@ -22,6 +22,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { supabase } from "@/integrations/supabase/client";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { cn } from "@/lib/utils";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { TradingRulesChecklist } from "@/components/trade/TradingRulesChecklist";
 
 interface CreateTradeModalProps {
@@ -122,7 +123,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
   // Pre-trade checklist
   const [checkedRules, setCheckedRules] = useState<Set<string>>(new Set());
   const [chartLink, setChartLink] = useState("");
-  const [entryDate, setEntryDate] = useState("");
+  const [entryDate, setEntryDate] = useState<Date | null>(null);
 
   const {
     register,
@@ -215,7 +216,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
         targets: targets.length > 0 ? targets : null,
         notes: finalNotes || null,
         status: tradeStatus,
-        entry_time: entryDate ? new Date(entryDate).toISOString() : new Date().toISOString(),
+        entry_time: entryDate ? entryDate.toISOString() : new Date().toISOString(),
         timeframe: data.timeframe || null,
         holding_period: data.holding_period?.trim() || null,
         trailing_sl_enabled: trailingSlEnabled,
@@ -254,7 +255,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
     setSlInvalidationNote("");
     setCheckedRules(new Set());
     setChartLink("");
-    setEntryDate("");
+    setEntryDate(null);
   };
 
   const handleClose = () => {
@@ -391,14 +392,12 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
 
           {/* Entry Date */}
           <div className="space-y-2">
-            <Label htmlFor="entry_date">Entry Date & Time</Label>
-            <Input
-              id="entry_date"
-              type="datetime-local"
+            <Label>Entry Date & Time</Label>
+            <DateTimePicker
               value={entryDate}
-              onChange={(e) => setEntryDate(e.target.value)}
-              max={new Date().toISOString().slice(0, 16)}
-              className="bg-background"
+              onChange={setEntryDate}
+              maxDate={new Date()}
+              placeholder="Now (leave blank for current time)"
             />
             <p className="text-xs text-muted-foreground">Leave blank for current time. Select a past date to backfill trades.</p>
           </div>
