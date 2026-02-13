@@ -264,7 +264,12 @@ export type Database = {
           category: Database["public"]["Enums"]["study_category"] | null
           created_at: string | null
           id: string
+          links: Json | null
           notes: string | null
+          pattern_duration: string | null
+          pattern_end_date: string | null
+          pattern_start_date: string | null
+          status: string | null
           symbol: string
           tags: string[] | null
           title: string
@@ -277,7 +282,12 @@ export type Database = {
           category?: Database["public"]["Enums"]["study_category"] | null
           created_at?: string | null
           id?: string
+          links?: Json | null
           notes?: string | null
+          pattern_duration?: string | null
+          pattern_end_date?: string | null
+          pattern_start_date?: string | null
+          status?: string | null
           symbol: string
           tags?: string[] | null
           title: string
@@ -290,11 +300,43 @@ export type Database = {
           category?: Database["public"]["Enums"]["study_category"] | null
           created_at?: string | null
           id?: string
+          links?: Json | null
           notes?: string | null
+          pattern_duration?: string | null
+          pattern_end_date?: string | null
+          pattern_start_date?: string | null
+          status?: string | null
           symbol?: string
           tags?: string[] | null
           title?: string
           updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      study_duration_categories: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_system: boolean | null
+          name: string
+          sort_order: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_system?: boolean | null
+          name: string
+          sort_order?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_system?: boolean | null
+          name?: string
+          sort_order?: number | null
           user_id?: string
         }
         Relationships: []
