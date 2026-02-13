@@ -2,13 +2,7 @@
  import { Input } from "@/components/ui/input";
  import { Label } from "@/components/ui/label";
  import { Button } from "@/components/ui/button";
- import {
-   Select,
-   SelectContent,
-   SelectItem,
-   SelectTrigger,
-   SelectValue,
- } from "@/components/ui/select";
+// Native <select> used instead of Radix Select to avoid infinite re-render loop inside Dialog
  import { Switch } from "@/components/ui/switch";
  import { Loader2, Search, Star, Clock, Zap, Keyboard } from "lucide-react";
  import { supabase } from "@/integrations/supabase/client";
@@ -488,29 +482,27 @@
            <div className="grid grid-cols-2 gap-2">
              <div className="space-y-1">
                <Label className="text-xs">Exchange</Label>
-               <Select value={manualExchange} onValueChange={(v) => setManualExchange(v as "NSE" | "NFO" | "MCX")}>
-                 <SelectTrigger className="h-8 text-sm">
-                   <SelectValue />
-                 </SelectTrigger>
-                 <SelectContent>
-                   <SelectItem value="NSE">NSE</SelectItem>
-                   <SelectItem value="NFO">NFO</SelectItem>
-                   <SelectItem value="MCX">MCX</SelectItem>
-                 </SelectContent>
-               </Select>
+                <select
+                  value={manualExchange}
+                  onChange={(e) => setManualExchange(e.target.value as "NSE" | "NFO" | "MCX")}
+                  className="h-8 w-full rounded-md border border-input bg-background px-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                >
+                  <option value="NSE">NSE</option>
+                  <option value="NFO">NFO</option>
+                  <option value="MCX">MCX</option>
+                </select>
              </div>
              <div className="space-y-1">
                <Label className="text-xs">Type</Label>
-               <Select value={manualType} onValueChange={(v) => setManualType(v as "EQ" | "FUT" | "OPT")}>
-                 <SelectTrigger className="h-8 text-sm">
-                   <SelectValue />
-                 </SelectTrigger>
-                 <SelectContent>
-                   <SelectItem value="EQ">Equity</SelectItem>
-                   <SelectItem value="FUT">Futures</SelectItem>
-                   <SelectItem value="OPT">Options</SelectItem>
-                 </SelectContent>
-               </Select>
+                <select
+                  value={manualType}
+                  onChange={(e) => setManualType(e.target.value as "EQ" | "FUT" | "OPT")}
+                  className="h-8 w-full rounded-md border border-input bg-background px-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                >
+                  <option value="EQ">Equity</option>
+                  <option value="FUT">Futures</option>
+                  <option value="OPT">Options</option>
+                </select>
              </div>
            </div>
            
