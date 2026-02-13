@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { ArrowUpRight, ArrowDownRight, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { QuickClosePopover } from "@/components/trade/QuickClosePopover";
 
 const fmt = (v: number) =>
   `${v >= 0 ? "+" : ""}₹${Math.abs(v).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
@@ -84,6 +85,7 @@ export function DashboardPositionsTable() {
                 <th className="text-right pb-2 font-medium">P&L</th>
                 <th className="text-right pb-2 font-medium hidden sm:table-cell">SL</th>
                 <th className="text-right pb-2 font-medium hidden sm:table-cell">SL Dist.</th>
+                <th className="text-right pb-2 font-medium w-8"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/30">
@@ -125,6 +127,16 @@ export function DashboardPositionsTable() {
                         {p.slDist.toFixed(1)}%
                       </span>
                     ) : "—"}
+                  </td>
+                  <td className="py-2 text-right">
+                    <QuickClosePopover
+                      tradeId={p.id}
+                      symbol={p.symbol}
+                      ltp={p.ltp}
+                      entryPrice={p.entry_price || 0}
+                      tradeType={p.trade_type}
+                      quantity={p.quantity}
+                    />
                   </td>
                 </tr>
               ))}

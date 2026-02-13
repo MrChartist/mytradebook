@@ -667,6 +667,66 @@ export type Database = {
           },
         ]
       }
+      trade_templates: {
+        Row: {
+          auto_track_enabled: boolean | null
+          created_at: string | null
+          default_sl_percent: number | null
+          holding_period: string | null
+          id: string
+          name: string
+          notes_template: string | null
+          segment: string
+          tags: string[] | null
+          telegram_post_enabled: boolean | null
+          timeframe: string | null
+          trade_type: string
+          trailing_sl_enabled: boolean | null
+          trailing_sl_percent: number | null
+          trailing_sl_points: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          auto_track_enabled?: boolean | null
+          created_at?: string | null
+          default_sl_percent?: number | null
+          holding_period?: string | null
+          id?: string
+          name: string
+          notes_template?: string | null
+          segment: string
+          tags?: string[] | null
+          telegram_post_enabled?: boolean | null
+          timeframe?: string | null
+          trade_type?: string
+          trailing_sl_enabled?: boolean | null
+          trailing_sl_percent?: number | null
+          trailing_sl_points?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          auto_track_enabled?: boolean | null
+          created_at?: string | null
+          default_sl_percent?: number | null
+          holding_period?: string | null
+          id?: string
+          name?: string
+          notes_template?: string | null
+          segment?: string
+          tags?: string[] | null
+          telegram_post_enabled?: boolean | null
+          timeframe?: string | null
+          trade_type?: string
+          trailing_sl_enabled?: boolean | null
+          trailing_sl_percent?: number | null
+          trailing_sl_points?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       trade_volume: {
         Row: {
           trade_id: string
@@ -892,6 +952,7 @@ export type Database = {
           alert_frequency_minutes: number | null
           auto_sync_portfolio: boolean | null
           created_at: string | null
+          dashboard_layout: Json | null
           default_sl_percent: number | null
           dhan_access_token: string | null
           dhan_account_name: string | null
@@ -918,6 +979,7 @@ export type Database = {
           alert_frequency_minutes?: number | null
           auto_sync_portfolio?: boolean | null
           created_at?: string | null
+          dashboard_layout?: Json | null
           default_sl_percent?: number | null
           dhan_access_token?: string | null
           dhan_account_name?: string | null
@@ -944,6 +1006,7 @@ export type Database = {
           alert_frequency_minutes?: number | null
           auto_sync_portfolio?: boolean | null
           created_at?: string | null
+          dashboard_layout?: Json | null
           default_sl_percent?: number | null
           dhan_access_token?: string | null
           dhan_account_name?: string | null
