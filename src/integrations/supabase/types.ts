@@ -17,8 +17,11 @@ export type Database = {
       alerts: {
         Row: {
           active: boolean | null
+          active_hours_only: boolean | null
           condition_type: Database["public"]["Enums"]["alert_condition"]
+          cooldown_minutes: number | null
           created_at: string | null
+          delivery_in_app: boolean | null
           exchange: string | null
           exchange_segment: string | null
           expires_at: string | null
@@ -29,16 +32,21 @@ export type Database = {
           parameters: Json | null
           recurrence: Database["public"]["Enums"]["alert_recurrence"] | null
           security_id: string | null
+          snooze_until: string | null
           symbol: string
           telegram_enabled: boolean | null
           threshold: number | null
           trigger_count: number | null
           user_id: string
+          webhook_enabled: boolean | null
         }
         Insert: {
           active?: boolean | null
+          active_hours_only?: boolean | null
           condition_type: Database["public"]["Enums"]["alert_condition"]
+          cooldown_minutes?: number | null
           created_at?: string | null
+          delivery_in_app?: boolean | null
           exchange?: string | null
           exchange_segment?: string | null
           expires_at?: string | null
@@ -49,16 +57,21 @@ export type Database = {
           parameters?: Json | null
           recurrence?: Database["public"]["Enums"]["alert_recurrence"] | null
           security_id?: string | null
+          snooze_until?: string | null
           symbol: string
           telegram_enabled?: boolean | null
           threshold?: number | null
           trigger_count?: number | null
           user_id: string
+          webhook_enabled?: boolean | null
         }
         Update: {
           active?: boolean | null
+          active_hours_only?: boolean | null
           condition_type?: Database["public"]["Enums"]["alert_condition"]
+          cooldown_minutes?: number | null
           created_at?: string | null
+          delivery_in_app?: boolean | null
           exchange?: string | null
           exchange_segment?: string | null
           expires_at?: string | null
@@ -69,11 +82,13 @@ export type Database = {
           parameters?: Json | null
           recurrence?: Database["public"]["Enums"]["alert_recurrence"] | null
           security_id?: string | null
+          snooze_until?: string | null
           symbol?: string
           telegram_enabled?: boolean | null
           threshold?: number | null
           trigger_count?: number | null
           user_id?: string
+          webhook_enabled?: boolean | null
         }
         Relationships: []
       }
@@ -680,6 +695,8 @@ export type Database = {
           timezone: string | null
           updated_at: string | null
           user_id: string
+          webhook_secret: string | null
+          webhook_url: string | null
         }
         Insert: {
           alert_frequency_minutes?: number | null
@@ -703,6 +720,8 @@ export type Database = {
           timezone?: string | null
           updated_at?: string | null
           user_id: string
+          webhook_secret?: string | null
+          webhook_url?: string | null
         }
         Update: {
           alert_frequency_minutes?: number | null
@@ -726,6 +745,8 @@ export type Database = {
           timezone?: string | null
           updated_at?: string | null
           user_id?: string
+          webhook_secret?: string | null
+          webhook_url?: string | null
         }
         Relationships: []
       }
