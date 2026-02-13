@@ -14,6 +14,10 @@ import Trades from "./pages/Trades";
 import Journal from "./pages/Journal";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
+import Watchlist from "./pages/Watchlist";
+import Calendar from "./pages/Calendar";
+import Mistakes from "./pages/Mistakes";
+import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,66 +39,28 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/studies"
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Studies />
-                  </MainLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/alerts"
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Alerts />
-                  </MainLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/trades"
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Trades />
-                  </MainLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/journal"
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Journal />
-                  </MainLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/reports"
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Reports />
-                  </MainLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Settings />
-                  </MainLayout>
-                </ProtectedRoute>
-              }
-            />
+            {[
+              { path: "/studies", element: <Studies /> },
+              { path: "/alerts", element: <Alerts /> },
+              { path: "/trades", element: <Trades /> },
+              { path: "/journal", element: <Journal /> },
+              { path: "/reports", element: <Reports /> },
+              { path: "/settings", element: <Settings /> },
+              { path: "/watchlist", element: <Watchlist /> },
+              { path: "/calendar", element: <Calendar /> },
+              { path: "/mistakes", element: <Mistakes /> },
+              { path: "/analytics", element: <Analytics /> },
+            ].map(({ path, element }) => (
+              <Route
+                key={path}
+                path={path}
+                element={
+                  <ProtectedRoute>
+                    <MainLayout>{element}</MainLayout>
+                  </ProtectedRoute>
+                }
+              />
+            ))}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
