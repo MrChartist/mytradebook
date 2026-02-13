@@ -10,9 +10,12 @@ import {
   Loader2,
   RefreshCw,
   Radio,
+  Shield,
+  Target,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -37,9 +40,18 @@ const segmentLabels: Record<string, string> = {
   Commodities: "Commodities",
 };
 
+const statusConfig: Record<string, { label: string; color: string; dot: string }> = {
+  PENDING: { label: "Planned", color: "bg-warning/10 text-warning", dot: "bg-warning" },
+  OPEN: { label: "Open", color: "bg-profit/10 text-profit", dot: "bg-profit" },
+  CLOSED: { label: "Closed", color: "bg-muted text-muted-foreground", dot: "bg-muted-foreground" },
+  CANCELLED: { label: "Cancelled", color: "bg-destructive/10 text-destructive", dot: "bg-destructive" },
+};
+
+type StatusFilter = "ALL" | "PENDING" | "OPEN" | "CLOSED" | "CANCELLED";
+
 export default function Trades() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"ALL" | "OPEN" | "CLOSED">("ALL");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
   const [segmentFilter, setSegmentFilter] = useState<string>("ALL");
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
@@ -53,11 +65,18 @@ export default function Trades() {
   const { trades, isLoading, summary } = useTrades(filters);
   const { syncPortfolio, monitorTrades, isSyncing } = useDhanIntegration();
 
-  // Get symbols for open trades to poll live prices
+  // Get all trades (no filter) for status counts
+  const { trades: allTrades } = useTrades();
+  const statusCounts = useMemo(() => ({
+    ALL: allTrades.length,
+    PENDING: allTrades.filter(t => t.status === "PENDING").length,
+    OPEN: allTrades.filter(t => t.status === "OPEN").length,
+    CLOSED: allTrades.filter(t => t.status === "CLOSED").length,
+    CANCELLED: allTrades.filter(t => t.status === "CANCELLED").length,
+  }), [allTrades]);
+
   const openTradeSymbols = useMemo(() => {
-    return trades
-      .filter((t) => t.status === "OPEN")
-      .map((t) => t.symbol);
+    return trades.filter((t) => t.status === "OPEN").map((t) => t.symbol);
   }, [trades]);
 
   const { prices, isPolling, lastUpdated, refresh } = useLivePrices(openTradeSymbols, 30000);
@@ -68,28 +87,19 @@ export default function Trades() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold">Trades</h1>
-          <p className="text-muted-foreground">
-            Track and manage your positions
-          </p>
+          <p className="text-muted-foreground">Track and manage your positions</p>
         </div>
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="border-border"
-            onClick={() => {
-              syncPortfolio.mutate();
-              monitorTrades.mutate();
-            }}
+            onClick={() => { syncPortfolio.mutate(); monitorTrades.mutate(); }}
             disabled={isSyncing}
           >
-            {isSyncing ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            ) : (
-              <RefreshCw className="w-4 h-4 mr-2" />
-            )}
+            {isSyncing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
             Sync with Dhan
           </Button>
-          <Button 
+          <Button
             className="bg-gradient-primary hover:opacity-90 transition-opacity"
             onClick={() => setCreateModalOpen(true)}
           >
@@ -100,35 +110,30 @@ export default function Trades() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="glass-card p-4">
           <p className="text-sm text-muted-foreground">Total P&L</p>
-          {isLoading ? (
-            <Skeleton className="h-8 w-24 mt-1" />
-          ) : (
-            <p
-              className={cn(
-                "text-2xl font-bold",
-                summary.totalPnl >= 0 ? "text-profit" : "text-loss"
-              )}
-            >
+          {isLoading ? <Skeleton className="h-8 w-24 mt-1" /> : (
+            <p className={cn("text-2xl font-bold", summary.totalPnl >= 0 ? "text-profit" : "text-loss")}>
               {summary.totalPnl >= 0 ? "+" : ""}₹{summary.totalPnl.toLocaleString()}
             </p>
           )}
         </div>
         <div className="glass-card p-4">
-          <p className="text-sm text-muted-foreground">Open Positions</p>
-          {isLoading ? (
-            <Skeleton className="h-8 w-16 mt-1" />
-          ) : (
-            <p className="text-2xl font-bold">{summary.openPositions}</p>
+          <p className="text-sm text-muted-foreground">Open</p>
+          {isLoading ? <Skeleton className="h-8 w-16 mt-1" /> : (
+            <p className="text-2xl font-bold text-profit">{statusCounts.OPEN}</p>
           )}
         </div>
         <div className="glass-card p-4">
-          <p className="text-sm text-muted-foreground">Trades Today</p>
-          {isLoading ? (
-            <Skeleton className="h-8 w-16 mt-1" />
-          ) : (
+          <p className="text-sm text-muted-foreground">Planned</p>
+          {isLoading ? <Skeleton className="h-8 w-16 mt-1" /> : (
+            <p className="text-2xl font-bold text-warning">{statusCounts.PENDING}</p>
+          )}
+        </div>
+        <div className="glass-card p-4">
+          <p className="text-sm text-muted-foreground">Closed Today</p>
+          {isLoading ? <Skeleton className="h-8 w-16 mt-1" /> : (
             <p className="text-2xl font-bold">{summary.closedToday}</p>
           )}
         </div>
@@ -137,18 +142,13 @@ export default function Trades() {
             <p className="text-sm text-muted-foreground">Win Rate</p>
             {isPolling && openTradeSymbols.length > 0 && (
               <span className="flex items-center gap-1 text-xs text-profit">
-                <Radio className="w-3 h-3 animate-pulse" />
-                Live
+                <Radio className="w-3 h-3 animate-pulse" /> Live
               </span>
             )}
           </div>
-          {isLoading ? (
-            <Skeleton className="h-8 w-20 mt-1" />
-          ) : (
+          {isLoading ? <Skeleton className="h-8 w-20 mt-1" /> : (
             <>
-              <p className="text-2xl font-bold text-warning">
-                {summary.winRate.toFixed(1)}%
-              </p>
+              <p className="text-2xl font-bold text-warning">{summary.winRate.toFixed(1)}%</p>
               {lastUpdated && (
                 <p className="text-xs text-muted-foreground mt-1">
                   Updated {lastUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
@@ -159,33 +159,41 @@ export default function Trades() {
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Status Tabs + Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Search trades..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-card border-border"
-          />
-        </div>
-        <div className="flex gap-2">
-          {(["ALL", "OPEN", "CLOSED"] as const).map((status) => (
+        <div className="flex gap-1 flex-wrap">
+          {(["ALL", "PENDING", "OPEN", "CLOSED", "CANCELLED"] as StatusFilter[]).map((status) => (
             <Button
               key={status}
               variant="outline"
               size="sm"
               onClick={() => setStatusFilter(status)}
               className={cn(
-                "border-border",
-                statusFilter === status &&
-                  "bg-primary/10 border-primary/20 text-primary"
+                "border-border text-xs",
+                statusFilter === status && (
+                  status === "ALL" ? "bg-primary/10 border-primary/20 text-primary" :
+                  status === "OPEN" ? "bg-profit/10 border-profit/30 text-profit" :
+                  status === "PENDING" ? "bg-warning/10 border-warning/30 text-warning" :
+                  status === "CANCELLED" ? "bg-destructive/10 border-destructive/30 text-destructive" :
+                  "bg-muted border-muted-foreground/20"
+                )
               )}
             >
-              {status === "ALL" ? "All" : status.charAt(0) + status.slice(1).toLowerCase()}
+              {status === "ALL" ? "All" : statusConfig[status]?.label || status}
+              <span className="ml-1 text-muted-foreground">({statusCounts[status]})</span>
             </Button>
           ))}
+        </div>
+        <div className="flex gap-2 flex-1">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search trades..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 bg-card border-border"
+            />
+          </div>
           <Select value={segmentFilter} onValueChange={setSegmentFilter}>
             <SelectTrigger className="w-[160px] border-border">
               <SelectValue placeholder="Segment" />
@@ -193,9 +201,7 @@ export default function Trades() {
             <SelectContent>
               <SelectItem value="ALL">All Segments</SelectItem>
               {Object.entries(segmentLabels).map(([key, label]) => (
-                <SelectItem key={key} value={key}>
-                  {label}
-                </SelectItem>
+                <SelectItem key={key} value={key}>{label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -205,9 +211,7 @@ export default function Trades() {
       {/* Trades Table */}
       {isLoading ? (
         <div className="glass-card p-6 space-y-4">
-          {[...Array(5)].map((_, i) => (
-            <Skeleton key={i} className="h-16 w-full" />
-          ))}
+          {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-16 w-full" />)}
         </div>
       ) : trades.length > 0 ? (
         <div className="glass-card overflow-hidden">
@@ -215,63 +219,36 @@ export default function Trades() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                    Date
-                  </th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                    Symbol
-                  </th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                    Type
-                  </th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                    Entry
-                  </th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                    Current
-                  </th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                    Rating
-                  </th>
-                  <th className="text-right p-4 text-sm font-medium text-muted-foreground">
-                    P&L
-                  </th>
-                  <th className="text-center p-4 text-sm font-medium text-muted-foreground">
-                    Status
-                  </th>
-                  <th className="text-right p-4 text-sm font-medium text-muted-foreground">
-                    Actions
-                  </th>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Date</th>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Symbol</th>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Type</th>
+                  <th className="text-right p-4 text-sm font-medium text-muted-foreground">Qty</th>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Entry</th>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">SL</th>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Current</th>
+                  <th className="text-right p-4 text-sm font-medium text-muted-foreground">P&L</th>
+                  <th className="text-center p-4 text-sm font-medium text-muted-foreground">Status</th>
+                  <th className="text-right p-4 text-sm font-medium text-muted-foreground">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {trades.map((trade) => {
                   const targets = (trade.targets as number[]) || [];
                   const entryDate = new Date(trade.entry_time);
+                  const sc = statusConfig[trade.status || "PENDING"];
                   return (
                     <tr
                       key={trade.id}
                       className="border-b border-border/50 hover:bg-accent/50 transition-colors cursor-pointer"
                       onClick={() => setSelectedTrade(trade)}
                     >
-                      {/* Date */}
                       <td className="p-4 text-sm text-muted-foreground whitespace-nowrap">
-                        {entryDate.toLocaleDateString("en-IN", { 
-                          day: "2-digit", 
-                          month: "short" 
-                        })}
+                        {entryDate.toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}
                       </td>
-                      {/* Symbol */}
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <div
-                            className={cn(
-                              "w-8 h-8 rounded-lg flex items-center justify-center",
-                              trade.trade_type === "BUY"
-                                ? "bg-profit/10"
-                                : "bg-loss/10"
-                            )}
-                          >
+                          <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center",
+                            trade.trade_type === "BUY" ? "bg-profit/10" : "bg-loss/10")}>
                             {trade.trade_type === "BUY" ? (
                               <ArrowUpRight className="w-4 h-4 text-profit" />
                             ) : (
@@ -286,109 +263,69 @@ export default function Trades() {
                           </div>
                         </div>
                       </td>
-                      {/* Type */}
                       <td className="p-4">
-                        <span
-                          className={cn(
-                            "px-2 py-1 rounded-md text-xs font-medium",
-                            trade.trade_type === "BUY"
-                              ? "bg-profit/10 text-profit"
-                              : "bg-loss/10 text-loss"
-                          )}
-                        >
+                        <span className={cn("px-2 py-1 rounded-md text-xs font-medium",
+                          trade.trade_type === "BUY" ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss")}>
                           {trade.trade_type}
                         </span>
                       </td>
-                      {/* Entry */}
-                      <td className="p-4 font-mono text-sm">
-                        ₹{trade.entry_price.toLocaleString()}
+                      <td className="p-4 text-right font-mono text-sm">
+                        {trade.quantity}
                       </td>
-                      {/* Current - with live price */}
+                      <td className="p-4 font-mono text-sm">
+                        {trade.entry_price ? `₹${trade.entry_price.toLocaleString()}` : "—"}
+                      </td>
+                      <td className="p-4 font-mono text-sm">
+                        {trade.stop_loss ? (
+                          <span className="text-loss flex items-center gap-1">
+                            <Shield className="w-3 h-3" />
+                            ₹{trade.stop_loss.toLocaleString()}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                      </td>
                       <td className="p-4 font-mono text-sm">
                         {trade.status === "OPEN" && prices[trade.symbol] ? (
                           <div className="flex items-center gap-1">
                             <span>₹{prices[trade.symbol].ltp.toLocaleString()}</span>
-                            <span
-                              className={cn(
-                                "text-xs",
-                                prices[trade.symbol].changePercent >= 0 ? "text-profit" : "text-loss"
-                              )}
-                            >
-                              ({prices[trade.symbol].changePercent >= 0 ? "+" : ""}
-                              {prices[trade.symbol].changePercent.toFixed(2)}%)
+                            <span className={cn("text-xs",
+                              prices[trade.symbol].changePercent >= 0 ? "text-profit" : "text-loss")}>
+                              ({prices[trade.symbol].changePercent >= 0 ? "+" : ""}{prices[trade.symbol].changePercent.toFixed(2)}%)
                             </span>
                           </div>
                         ) : (
-                          <span>₹{(trade.current_price || trade.entry_price).toLocaleString()}</span>
+                          <span>{trade.current_price ? `₹${trade.current_price.toLocaleString()}` : "—"}</span>
                         )}
                       </td>
-                      {/* Rating */}
-                      <td className="p-4">
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 text-warning fill-warning" />
-                          <span className="font-medium">{trade.rating || "—"}/10</span>
-                        </div>
-                      </td>
-                      {/* P&L */}
                       <td className="p-4 text-right">
                         <div>
-                          <p
-                            className={cn(
-                              "font-semibold",
-                              (trade.pnl || 0) >= 0 ? "text-profit" : "text-loss"
-                            )}
-                          >
-                            {(trade.pnl || 0) >= 0 ? "+" : ""}₹
-                            {Math.abs(trade.pnl || 0).toLocaleString()}
+                          <p className={cn("font-semibold", (trade.pnl || 0) >= 0 ? "text-profit" : "text-loss")}>
+                            {(trade.pnl || 0) >= 0 ? "+" : ""}₹{Math.abs(trade.pnl || 0).toLocaleString()}
                           </p>
-                          <p
-                            className={cn(
-                              "text-xs",
-                              (trade.pnl_percent || 0) >= 0 ? "text-profit" : "text-loss"
-                            )}
-                          >
-                            {(trade.pnl_percent || 0) >= 0 ? "+" : ""}
-                            {(trade.pnl_percent || 0).toFixed(2)}%
+                          <p className={cn("text-xs", (trade.pnl_percent || 0) >= 0 ? "text-profit" : "text-loss")}>
+                            {(trade.pnl_percent || 0) >= 0 ? "+" : ""}{(trade.pnl_percent || 0).toFixed(2)}%
                           </p>
                         </div>
                       </td>
-                      {/* Status */}
                       <td className="p-4 text-center">
-                        <span
-                          className={cn(
-                            "px-2 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1",
-                            trade.status === "OPEN"
-                              ? "bg-profit/10 text-profit"
-                              : trade.status === "CLOSED"
-                              ? "bg-muted text-muted-foreground"
-                              : "bg-warning/10 text-warning"
-                          )}
-                        >
-                          <span
-                            className={cn(
-                              "w-1.5 h-1.5 rounded-full",
-                              trade.status === "OPEN"
-                                ? "bg-profit"
-                                : trade.status === "CLOSED"
-                                ? "bg-muted-foreground"
-                                : "bg-warning"
-                            )}
-                          />
-                          {trade.status}
+                        <span className={cn("px-2 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1", sc?.color)}>
+                          <span className={cn("w-1.5 h-1.5 rounded-full", sc?.dot)} />
+                          {sc?.label || trade.status}
                         </span>
                       </td>
-                      {/* Actions */}
                       <td className="p-4 text-right">
-                        <Button 
-                          variant="ghost" 
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedTrade(trade);
-                          }}
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
+                        <div className="flex items-center justify-end gap-1">
+                          {targets.length > 0 && (
+                            <Badge variant="outline" className="text-[10px] gap-0.5">
+                              <Target className="w-2.5 h-2.5" />
+                              {targets.length}
+                            </Badge>
+                          )}
+                          <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); setSelectedTrade(trade); }}>
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -401,29 +338,16 @@ export default function Trades() {
         <div className="glass-card p-12 text-center">
           <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="font-semibold text-lg mb-2">No trades found</h3>
-          <p className="text-muted-foreground mb-4">
-            Start tracking your trades to build your journal
-          </p>
-          <Button 
-            className="bg-gradient-primary"
-            onClick={() => setCreateModalOpen(true)}
-          >
+          <p className="text-muted-foreground mb-4">Start tracking your trades to build your journal</p>
+          <Button className="bg-gradient-primary" onClick={() => setCreateModalOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Add Trade
           </Button>
         </div>
       )}
 
-      {/* Modals */}
-      <CreateTradeModal 
-        open={createModalOpen} 
-        onOpenChange={setCreateModalOpen} 
-      />
-      <TradeDetailModal
-        trade={selectedTrade}
-        open={!!selectedTrade}
-        onOpenChange={(open) => !open && setSelectedTrade(null)}
-      />
+      <CreateTradeModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
+      <TradeDetailModal trade={selectedTrade} open={!!selectedTrade} onOpenChange={(open) => !open && setSelectedTrade(null)} />
     </div>
   );
 }
