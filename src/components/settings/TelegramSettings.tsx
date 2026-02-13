@@ -19,6 +19,9 @@ export default function TelegramSettings() {
   // Add chat form
   const [newChatId, setNewChatId] = useState("");
   const [newLabel, setNewLabel] = useState("");
+  const [newBotToken, setNewBotToken] = useState("");
+  const [newBotUsername, setNewBotUsername] = useState("");
+  const [showCustomBot, setShowCustomBot] = useState(false);
   const [adding, setAdding] = useState(false);
 
   // Testing state
@@ -33,9 +36,14 @@ export default function TelegramSettings() {
       await addChat.mutateAsync({
         chat_id: newChatId.trim(),
         label: newLabel.trim() || `Chat ${newChatId.trim()}`,
+        bot_token: newBotToken.trim() || undefined,
+        bot_username: newBotUsername.trim() || undefined,
       });
       setNewChatId("");
       setNewLabel("");
+      setNewBotToken("");
+      setNewBotUsername("");
+      setShowCustomBot(false);
     } finally {
       setAdding(false);
     }
@@ -137,6 +145,11 @@ export default function TelegramSettings() {
                   <div>
                     <p className="text-sm font-medium">{chat.label}</p>
                     <p className="text-xs text-muted-foreground font-mono">{chat.chat_id}</p>
+                    {chat.bot_token && (
+                      <p className="text-xs text-primary">
+                        Custom Bot{chat.bot_username ? `: @${chat.bot_username}` : ""}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
@@ -216,10 +229,46 @@ export default function TelegramSettings() {
             </Button>
           </div>
 
+          {/* Custom Bot Toggle */}
+          <div className="mt-3">
+            <button
+              type="button"
+              onClick={() => setShowCustomBot(!showCustomBot)}
+              className="text-xs text-primary hover:underline"
+            >
+              {showCustomBot ? "− Hide custom bot settings" : "+ Use your own bot (optional)"}
+            </button>
+            {showCustomBot && (
+              <div className="mt-2 space-y-2 p-3 rounded-lg border border-border bg-card">
+                <p className="text-xs text-muted-foreground">
+                  Create a bot via <a href="https://t.me/BotFather" target="_blank" rel="noopener" className="text-primary hover:underline">@BotFather</a>, then paste the token here. This bot will be used only for this chat destination.
+                </p>
+                <div className="space-y-2">
+                  <Label className="text-xs">Bot Token</Label>
+                  <Input
+                    value={newBotToken}
+                    onChange={(e) => setNewBotToken(e.target.value)}
+                    placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+                    className="bg-accent border-border text-xs font-mono"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs">Bot Username (optional)</Label>
+                  <Input
+                    value={newBotUsername}
+                    onChange={(e) => setNewBotUsername(e.target.value)}
+                    placeholder="@MyTradingBot"
+                    className="bg-accent border-border text-xs"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className="mt-3 text-xs text-muted-foreground space-y-1">
             <p>How to find your Chat ID:</p>
             <ul className="list-disc list-inside space-y-0.5 ml-2">
-              <li><strong>Personal:</strong> Send /start to your bot, it will show your ID</li>
+              <li><strong>Personal:</strong> Send /start to your bot, then message <a href="https://t.me/userinfobot" target="_blank" rel="noopener" className="text-primary hover:underline">@userinfobot</a> to get your ID</li>
               <li><strong>Group:</strong> Add the bot to your group, send any message, then use <a href="https://api.telegram.org" target="_blank" rel="noopener" className="text-primary hover:underline">getUpdates</a></li>
               <li><strong>Channel:</strong> Add the bot as admin, use the channel's Chat ID (starts with -100)</li>
             </ul>
