@@ -32,8 +32,10 @@ interface Trade {
   trailing_sl_active: boolean;
   rating: number | null;
   confidence_score: number | null;
-   auto_track_enabled: boolean;
-   telegram_post_enabled: boolean;
+  auto_track_enabled: boolean;
+  telegram_post_enabled: boolean;
+  security_id: string | null;
+  exchange_segment: string | null;
 }
 
 // Helper function to get user's telegram chat ID
@@ -92,19 +94,39 @@ serve(async (req) => {
       priceUpdates: 0,
     };
 
-    // Process each open trade
+    // Group trades by user to resolve per-user Dhan tokens
+    const tradesByUser: Record<string, Trade[]> = {};
     for (const trade of openTrades as Trade[]) {
+      if (!tradesByUser[trade.user_id]) tradesByUser[trade.user_id] = [];
+      tradesByUser[trade.user_id].push(trade);
+    }
+
+    for (const [userId, userTrades] of Object.entries(tradesByUser)) {
+      // Resolve user-specific Dhan token
+      const { data: userSettings } = await supabase
+        .from("user_settings")
+        .select("dhan_access_token, dhan_client_id, dhan_enabled")
+        .eq("user_id", userId)
+        .single();
+
+      const userToken = userSettings?.dhan_enabled ? userSettings.dhan_access_token : null;
+      const userClientId = userSettings?.dhan_enabled ? userSettings.dhan_client_id : null;
+      const activeToken = userToken || DHAN_ACCESS_TOKEN;
+      const activeClientId = userClientId || DHAN_CLIENT_ID;
+
+      // Batch fetch prices for all user trades using security_ids
+      const priceMap = await batchFetchPrices(userTrades, activeToken, activeClientId);
+
+    for (const trade of userTrades) {
       // Get user-specific chat ID for this trade
       const userChatId = await getUserChatId(supabase, trade.user_id);
-       // Only use user-specific chat ID if telegram posting is enabled for this trade
-       const chatId = trade.telegram_post_enabled 
-         ? (userChatId || DEFAULT_TELEGRAM_CHAT_ID)
-         : undefined;
+      const chatId = trade.telegram_post_enabled 
+        ? (userChatId || DEFAULT_TELEGRAM_CHAT_ID)
+        : undefined;
 
-      // Get current price (mock for now, real implementation would use Dhan LTP API)
-      const currentPrice = await getCurrentPrice(trade.symbol, DHAN_ACCESS_TOKEN);
-      
-      if (!currentPrice) continue;
+      // Get price from batch result - skip if no valid price
+      const currentPrice = priceMap[trade.symbol];
+      if (!currentPrice || currentPrice <= 0) continue;
 
       // Calculate P&L (using quantity 1 for research trades if not set)
       const qty = trade.quantity || 1;
@@ -296,6 +318,7 @@ serve(async (req) => {
           }
         }
       }
+    } // end user loop
     }
 
     return new Response(
@@ -426,64 +449,80 @@ async function processTrailingStopLoss(
   return { tslHit: false, tslUpdated: false, newTslValue: null, tslActive: trade.trailing_sl_active };
 }
 
-async function getCurrentPrice(symbol: string, dhanToken: string | undefined): Promise<number | null> {
-  // Try to fetch real price from Dhan API if token is available
-  if (dhanToken) {
-    try {
-      const response = await fetch(`${DHAN_API_URL}/marketfeed/ltp`, {
-        method: "POST",
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-          "access-token": dhanToken,
-        },
-        body: JSON.stringify({
-          NSE_EQ: [symbol],
-        }),
-      });
+async function batchFetchPrices(
+  trades: Trade[],
+  dhanToken: string | undefined,
+  dhanClientId: string | undefined
+): Promise<Record<string, number>> {
+  const priceMap: Record<string, number> = {};
 
-      if (response.ok) {
-        const data = await response.json();
-        // Dhan returns: { data: { NSE_EQ: { "SYMBOL": { last_price: 123.45 } } } }
-        const quote = data?.data?.NSE_EQ?.[symbol];
-        if (quote?.last_price) {
-          return quote.last_price;
-        }
-        if (quote?.ltp) {
-          return quote.ltp;
-        }
-      }
-    } catch (e) {
-      console.warn(`Could not fetch LTP for ${symbol} from Dhan:`, e);
-    }
+  if (!dhanToken || !dhanClientId) return priceMap;
+
+  // Build request body grouped by exchange_segment using security_ids
+  const requestBody: Record<string, number[]> = {};
+  const secIdToSymbol: Record<string, string> = {};
+
+  for (const trade of trades) {
+    if (!trade.security_id) continue;
+    const numericId = parseInt(trade.security_id, 10);
+    if (isNaN(numericId)) continue;
+
+    const seg = trade.exchange_segment || "NSE_EQ";
+    if (!requestBody[seg]) requestBody[seg] = [];
+    requestBody[seg].push(numericId);
+    secIdToSymbol[trade.security_id] = trade.symbol;
   }
 
-  // Fallback to mock prices for testing
-  return getMockPrice(symbol);
-}
+  const hasIds = Object.keys(requestBody).some((k) => requestBody[k].length > 0);
+  if (!hasIds) return priceMap;
 
-function getMockPrice(symbol: string): number {
-  const basePrices: Record<string, number> = {
-    RELIANCE: 2450,
-    TATASTEEL: 155,
-    INFY: 1520,
-    TCS: 3850,
-    HDFCBANK: 1680,
-    ICICIBANK: 1120,
-    SBIN: 780,
-    BHARTIARTL: 1380,
-    WIPRO: 480,
-    KOTAKBANK: 1850,
-    NIFTY: 22500,
-    BANKNIFTY: 48000,
-    ADANIENT: 2800,
-    LT: 3450,
-    MARUTI: 11200,
-  };
+  try {
+    let retries = 0;
+    let res: Response | null = null;
 
-  const base = basePrices[symbol.toUpperCase()] || 1000;
-  // Simulate small price movements
-  return base * (1 + (Math.random() - 0.5) * 0.03);
+    while (retries < 3) {
+      res = await fetch(`${DHAN_API_URL}/marketfeed/ltp`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "access-token": dhanToken,
+          "client-id": dhanClientId,
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (res.status === 429) {
+        retries++;
+        await new Promise((r) => setTimeout(r, 1000 * retries));
+        continue;
+      }
+      break;
+    }
+
+    if (res && res.ok) {
+      const data = await res.json();
+      for (const seg of Object.keys(requestBody)) {
+        const segData = data?.data?.[seg];
+        if (!segData) continue;
+        for (const [secId, quote] of Object.entries(segData)) {
+          const sym = secIdToSymbol[secId];
+          if (!sym) continue;
+          const q = quote as Record<string, any>;
+          const ltp = q.last_price || q.ltp || 0;
+          if (ltp > 0) {
+            priceMap[sym] = ltp;
+          }
+        }
+      }
+    } else if (res) {
+      console.error("Dhan LTP batch error:", res.status, await res.text());
+    }
+  } catch (e) {
+    console.error("batchFetchPrices error:", e);
+  }
+
+  return priceMap;
 }
 
 async function sendTelegramMessage(token: string, chatId: string, message: string): Promise<void> {
