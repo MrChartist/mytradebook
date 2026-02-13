@@ -1,10 +1,11 @@
 import { useState, useRef } from "react";
-import { Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Upload, X, Image as ImageIcon, Loader2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { ChartAnnotationModal } from "@/components/trade/ChartAnnotationModal";
 
 interface ChartImageUploadProps {
   images: string[];
@@ -22,6 +23,7 @@ export function ChartImageUpload({
   const { user } = useAuth();
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [annotatingIndex, setAnnotatingIndex] = useState<number | null>(null);
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -91,6 +93,34 @@ export function ChartImageUpload({
     onImagesChange(newImages);
   };
 
+  const handleAnnotationSave = async (dataUrl: string) => {
+    if (annotatingIndex === null || !user) return;
+    // Convert data URL to blob and upload
+    setUploading(true);
+    try {
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      const fileName = `${user.id}/${Date.now()}-annotated.png`;
+      const { error: uploadError } = await supabase.storage
+        .from(bucket)
+        .upload(fileName, blob, { contentType: "image/png" });
+      if (uploadError) throw uploadError;
+      const { data: publicUrl } = supabase.storage.from(bucket).getPublicUrl(fileName);
+      if (publicUrl.publicUrl) {
+        const newImages = [...images];
+        newImages[annotatingIndex] = publicUrl.publicUrl;
+        onImagesChange(newImages);
+        toast.success("Annotated image saved");
+      }
+    } catch (err: any) {
+      console.error("Annotation save error:", err);
+      toast.error("Failed to save annotated image");
+    } finally {
+      setUploading(false);
+      setAnnotatingIndex(null);
+    }
+  };
+
   return (
     <div className="space-y-3">
       {/* Image Previews */}
@@ -106,13 +136,23 @@ export function ChartImageUpload({
                 alt={`Chart ${index + 1}`}
                 className="w-full h-full object-cover"
               />
-              <button
-                type="button"
-                onClick={() => handleRemove(index)}
-                className="absolute top-1 right-1 p-1 rounded-full bg-background/80 text-foreground opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive hover:text-destructive-foreground"
-              >
-                <X className="w-3 h-3" />
-              </button>
+              <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  type="button"
+                  onClick={() => setAnnotatingIndex(index)}
+                  className="p-1 rounded-full bg-background/80 text-foreground hover:bg-primary hover:text-primary-foreground"
+                  title="Annotate"
+                >
+                  <Pencil className="w-3 h-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleRemove(index)}
+                  className="p-1 rounded-full bg-background/80 text-foreground hover:bg-destructive hover:text-destructive-foreground"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -156,6 +196,16 @@ export function ChartImageUpload({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Annotation Modal */}
+      {annotatingIndex !== null && images[annotatingIndex] && (
+        <ChartAnnotationModal
+          open={annotatingIndex !== null}
+          onOpenChange={(open) => !open && setAnnotatingIndex(null)}
+          imageUrl={images[annotatingIndex]}
+          onSave={handleAnnotationSave}
+        />
       )}
     </div>
   );

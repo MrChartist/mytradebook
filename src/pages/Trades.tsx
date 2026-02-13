@@ -13,6 +13,11 @@ import {
   Shield,
   Target,
   Layers,
+  CheckSquare,
+  X,
+  Tag,
+  FileDown,
+  Bookmark,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,13 +30,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { useTrades, type TradeFilters } from "@/hooks/useTrades";
+import { useTradeTemplates } from "@/hooks/useTradeTemplates";
 import { CreateTradeModal } from "@/components/modals/CreateTradeModal";
 import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
 import { useDhanIntegration } from "@/hooks/useDhanIntegration";
 import { useLivePrices } from "@/hooks/useLivePrices";
 import { MultiLegStrategyModal } from "@/components/trade/MultiLegStrategyModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 import type { Trade } from "@/hooks/useTrades";
 
 const segmentLabels: Record<string, string> = {
@@ -58,6 +72,8 @@ export default function Trades() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
   const [strategyModalOpen, setStrategyModalOpen] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkMode, setBulkMode] = useState(false);
 
   const filters: TradeFilters = {
     ...(statusFilter !== "ALL" && { status: statusFilter }),
@@ -65,8 +81,9 @@ export default function Trades() {
     ...(searchQuery && { symbol: searchQuery }),
   };
 
-  const { trades, isLoading, summary } = useTrades(filters);
+  const { trades, isLoading, summary, closeTrade, updateTrade } = useTrades(filters);
   const { syncPortfolio, monitorTrades, isSyncing } = useDhanIntegration();
+  const { templates, createTemplate } = useTradeTemplates();
 
   // Get all trades (no filter) for status counts
   const { trades: allTrades } = useTrades();
@@ -84,6 +101,45 @@ export default function Trades() {
 
   const { prices, isPolling, lastUpdated, refresh } = useLivePrices(openTradeSymbols, 30000);
 
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const selectAll = () => {
+    if (selectedIds.size === trades.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(trades.map((t) => t.id)));
+    }
+  };
+
+  const bulkCancel = async () => {
+    for (const id of selectedIds) {
+      await updateTrade.mutateAsync({ id, status: "CANCELLED" });
+    }
+    setSelectedIds(new Set());
+    toast.success(`${selectedIds.size} trades cancelled`);
+  };
+
+  const bulkClose = async () => {
+    let closed = 0;
+    for (const id of selectedIds) {
+      const trade = trades.find((t) => t.id === id);
+      if (!trade || trade.status !== "OPEN") continue;
+      const exitPrice = prices[trade.symbol]?.ltp || trade.current_price || trade.entry_price || 0;
+      if (exitPrice > 0) {
+        await closeTrade.mutateAsync({ id, exitPrice, closureReason: "Bulk close" });
+        closed++;
+      }
+    }
+    setSelectedIds(new Set());
+    toast.success(`${closed} trades closed at market price`);
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
@@ -92,7 +148,16 @@ export default function Trades() {
           <h1 className="text-2xl lg:text-3xl font-bold">Trades</h1>
           <p className="text-muted-foreground">Track and manage your positions</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          <Button
+            variant="outline"
+            size="sm"
+            className={cn("border-border", bulkMode && "bg-primary/10 border-primary/30")}
+            onClick={() => { setBulkMode(!bulkMode); setSelectedIds(new Set()); }}
+          >
+            <CheckSquare className="w-4 h-4 mr-1.5" />
+            {bulkMode ? "Exit Bulk" : "Bulk"}
+          </Button>
           <Button
             variant="outline"
             className="border-border"
@@ -109,6 +174,31 @@ export default function Trades() {
             <Layers className="w-4 h-4 mr-2" />
             Multi-Leg
           </Button>
+
+          {/* Templates dropdown */}
+          {templates.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <Bookmark className="w-4 h-4 mr-1.5" />
+                  Templates
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {templates.map((t) => (
+                  <DropdownMenuItem key={t.id} onClick={() => {
+                    setCreateModalOpen(true);
+                    // Template will be applied via CreateTradeModal enhancement
+                  }}>
+                    <Bookmark className="w-3.5 h-3.5 mr-2 text-primary" />
+                    {t.name}
+                    <span className="ml-auto text-[10px] text-muted-foreground">{t.segment}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+
           <Button
             className="bg-gradient-primary hover:opacity-90 transition-opacity"
             onClick={() => setCreateModalOpen(true)}
@@ -118,6 +208,21 @@ export default function Trades() {
           </Button>
         </div>
       </div>
+
+      {/* Bulk Actions Bar */}
+      {bulkMode && selectedIds.size > 0 && (
+        <div className="flex items-center gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
+          <span className="text-sm font-medium">{selectedIds.size} selected</span>
+          <div className="flex gap-2 ml-auto">
+            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={bulkCancel}>
+              <X className="w-3 h-3 mr-1" /> Cancel Selected
+            </Button>
+            <Button size="sm" className="h-7 text-xs bg-loss hover:bg-loss/90 text-loss-foreground" onClick={bulkClose}>
+              Close at Market
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
@@ -229,6 +334,14 @@ export default function Trades() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
+                  {bulkMode && (
+                    <th className="p-4 w-10">
+                      <Checkbox
+                        checked={selectedIds.size === trades.length && trades.length > 0}
+                        onCheckedChange={selectAll}
+                      />
+                    </th>
+                  )}
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">Date</th>
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">Symbol</th>
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">Type</th>
@@ -249,9 +362,20 @@ export default function Trades() {
                   return (
                     <tr
                       key={trade.id}
-                      className="border-b border-border/50 hover:bg-accent/50 transition-colors cursor-pointer"
-                      onClick={() => setSelectedTrade(trade)}
+                      className={cn(
+                        "border-b border-border/50 hover:bg-accent/50 transition-colors cursor-pointer",
+                        selectedIds.has(trade.id) && "bg-primary/5"
+                      )}
+                      onClick={() => bulkMode ? toggleSelect(trade.id) : setSelectedTrade(trade)}
                     >
+                      {bulkMode && (
+                        <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                          <Checkbox
+                            checked={selectedIds.has(trade.id)}
+                            onCheckedChange={() => toggleSelect(trade.id)}
+                          />
+                        </td>
+                      )}
                       <td className="p-4 text-sm text-muted-foreground whitespace-nowrap">
                         {entryDate.toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}
                       </td>
