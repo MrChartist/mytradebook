@@ -53,6 +53,8 @@ interface EditAlertModalProps {
 const conditionLabels: Record<string, string> = {
   PRICE_GT: "Price Above",
   PRICE_LT: "Price Below",
+  PRICE_CROSS_ABOVE: "Price Crosses Above",
+  PRICE_CROSS_BELOW: "Price Crosses Below",
   PERCENT_CHANGE_GT: "% Change Above",
   PERCENT_CHANGE_LT: "% Change Below",
   VOLUME_SPIKE: "Volume Spike",

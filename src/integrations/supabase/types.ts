@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           active: boolean | null
           active_hours_only: boolean | null
+          batch_id: string | null
           condition_type: Database["public"]["Enums"]["alert_condition"]
           cooldown_minutes: number | null
           created_at: string | null
@@ -30,7 +31,10 @@ export type Database = {
           last_triggered: string | null
           notes: string | null
           parameters: Json | null
+          previous_ltp: number | null
           recurrence: Database["public"]["Enums"]["alert_recurrence"] | null
+          scanner_id: string | null
+          scope: string | null
           security_id: string | null
           snooze_until: string | null
           symbol: string
@@ -38,11 +42,13 @@ export type Database = {
           threshold: number | null
           trigger_count: number | null
           user_id: string
+          watchlist_id: string | null
           webhook_enabled: boolean | null
         }
         Insert: {
           active?: boolean | null
           active_hours_only?: boolean | null
+          batch_id?: string | null
           condition_type: Database["public"]["Enums"]["alert_condition"]
           cooldown_minutes?: number | null
           created_at?: string | null
@@ -55,7 +61,10 @@ export type Database = {
           last_triggered?: string | null
           notes?: string | null
           parameters?: Json | null
+          previous_ltp?: number | null
           recurrence?: Database["public"]["Enums"]["alert_recurrence"] | null
+          scanner_id?: string | null
+          scope?: string | null
           security_id?: string | null
           snooze_until?: string | null
           symbol: string
@@ -63,11 +72,13 @@ export type Database = {
           threshold?: number | null
           trigger_count?: number | null
           user_id: string
+          watchlist_id?: string | null
           webhook_enabled?: boolean | null
         }
         Update: {
           active?: boolean | null
           active_hours_only?: boolean | null
+          batch_id?: string | null
           condition_type?: Database["public"]["Enums"]["alert_condition"]
           cooldown_minutes?: number | null
           created_at?: string | null
@@ -80,7 +91,10 @@ export type Database = {
           last_triggered?: string | null
           notes?: string | null
           parameters?: Json | null
+          previous_ltp?: number | null
           recurrence?: Database["public"]["Enums"]["alert_recurrence"] | null
+          scanner_id?: string | null
+          scope?: string | null
           security_id?: string | null
           snooze_until?: string | null
           symbol?: string
@@ -88,9 +102,25 @@ export type Database = {
           threshold?: number | null
           trigger_count?: number | null
           user_id?: string
+          watchlist_id?: string | null
           webhook_enabled?: boolean | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "alerts_scanner_id_fkey"
+            columns: ["scanner_id"]
+            isOneToOne: false
+            referencedRelation: "scanner_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alerts_watchlist_id_fkey"
+            columns: ["watchlist_id"]
+            isOneToOne: false
+            referencedRelation: "watchlists"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       candlestick_tags: {
         Row: {
@@ -271,6 +301,95 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      scanner_definitions: {
+        Row: {
+          active: boolean | null
+          conditions: Json
+          created_at: string | null
+          description: string | null
+          exchange: string | null
+          id: string
+          is_system: boolean | null
+          last_result_count: number | null
+          last_run_at: string | null
+          name: string
+          run_interval_minutes: number | null
+          scan_type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          active?: boolean | null
+          conditions?: Json
+          created_at?: string | null
+          description?: string | null
+          exchange?: string | null
+          id?: string
+          is_system?: boolean | null
+          last_result_count?: number | null
+          last_run_at?: string | null
+          name: string
+          run_interval_minutes?: number | null
+          scan_type?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          active?: boolean | null
+          conditions?: Json
+          created_at?: string | null
+          description?: string | null
+          exchange?: string | null
+          id?: string
+          is_system?: boolean | null
+          last_result_count?: number | null
+          last_run_at?: string | null
+          name?: string
+          run_interval_minutes?: number | null
+          scan_type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      scanner_results: {
+        Row: {
+          exchange: string | null
+          id: string
+          matched_at: string | null
+          metadata: Json | null
+          scanner_id: string
+          security_id: string | null
+          symbol: string
+        }
+        Insert: {
+          exchange?: string | null
+          id?: string
+          matched_at?: string | null
+          metadata?: Json | null
+          scanner_id: string
+          security_id?: string | null
+          symbol: string
+        }
+        Update: {
+          exchange?: string | null
+          id?: string
+          matched_at?: string | null
+          metadata?: Json | null
+          scanner_id?: string
+          security_id?: string | null
+          symbol?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scanner_results_scanner_id_fkey"
+            columns: ["scanner_id"]
+            isOneToOne: false
+            referencedRelation: "scanner_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       studies: {
         Row: {
@@ -768,6 +887,80 @@ export type Database = {
         }
         Relationships: []
       }
+      watchlist_items: {
+        Row: {
+          added_at: string | null
+          exchange: string | null
+          exchange_segment: string | null
+          id: string
+          notes: string | null
+          security_id: string | null
+          sort_order: number | null
+          symbol: string
+          watchlist_id: string
+        }
+        Insert: {
+          added_at?: string | null
+          exchange?: string | null
+          exchange_segment?: string | null
+          id?: string
+          notes?: string | null
+          security_id?: string | null
+          sort_order?: number | null
+          symbol: string
+          watchlist_id: string
+        }
+        Update: {
+          added_at?: string | null
+          exchange?: string | null
+          exchange_segment?: string | null
+          id?: string
+          notes?: string | null
+          security_id?: string | null
+          sort_order?: number | null
+          symbol?: string
+          watchlist_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watchlist_items_watchlist_id_fkey"
+            columns: ["watchlist_id"]
+            isOneToOne: false
+            referencedRelation: "watchlists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      watchlists: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       weekly_reports: {
         Row: {
           avg_gain: number | null
@@ -852,6 +1045,8 @@ export type Database = {
         | "PERCENT_CHANGE_LT"
         | "VOLUME_SPIKE"
         | "CUSTOM"
+        | "PRICE_CROSS_ABOVE"
+        | "PRICE_CROSS_BELOW"
       alert_recurrence: "ONCE" | "DAILY" | "CONTINUOUS"
       app_role: "admin" | "client"
       market_segment:
@@ -1014,6 +1209,8 @@ export const Constants = {
         "PERCENT_CHANGE_LT",
         "VOLUME_SPIKE",
         "CUSTOM",
+        "PRICE_CROSS_ABOVE",
+        "PRICE_CROSS_BELOW",
       ],
       alert_recurrence: ["ONCE", "DAILY", "CONTINUOUS"],
       app_role: ["admin", "client"],
