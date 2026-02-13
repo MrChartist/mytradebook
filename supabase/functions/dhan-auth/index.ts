@@ -80,8 +80,8 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Build the authorization URL the user must visit
-      const authUrl = `${DHAN_AUTH_URL}/consent?consentId=${consentAppId}&redirect_url=${encodeURIComponent(redirect_url)}`;
+      // Build the authorization URL the user must visit (browser-based login)
+      const authUrl = `${DHAN_AUTH_URL}/login/consentApp-login?consentAppId=${consentAppId}`;
 
       return new Response(
         JSON.stringify({
@@ -114,17 +114,12 @@ Deno.serve(async (req) => {
 
       console.log(`Exchanging token for user ${user_id}, consent ${consent_id}`);
 
-      const tokenRes = await fetch(`${DHAN_AUTH_URL}/app/generate-token`, {
+      const tokenRes = await fetch(`${DHAN_AUTH_URL}/app/consumeApp-consent?tokenId=${encodeURIComponent(token_id)}`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           app_id: settings.dhan_api_key,
           app_secret: settings.dhan_api_secret,
         },
-        body: JSON.stringify({
-          consentId: consent_id,
-          tokenId: token_id,
-        }),
       });
 
       if (!tokenRes.ok) {
