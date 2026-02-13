@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
+import { NativeToggle } from "@/components/ui/native-toggle";
 import { Badge } from "@/components/ui/badge";
 // Native <select> used instead of Radix Select to avoid infinite re-render loop inside Dialog
 import { createTradeSchema, type CreateTradeInput, marketSegments, tradeTypes, timeframes } from "@/lib/schemas";
@@ -505,7 +505,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
                 <TrendingUp className="w-4 h-4 text-profit" />
                 <Label className="text-sm font-medium">Trailing Stop Loss</Label>
               </div>
-              <Switch
+              <NativeToggle
                 checked={trailingSlEnabled}
                 onCheckedChange={setTrailingSlEnabled}
               />
@@ -600,7 +600,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
                   <Radio className={cn("w-3.5 h-3.5", autoTrackEnabled ? "text-profit" : "text-muted-foreground")} />
                   <span className="text-xs font-medium">Auto Track</span>
                 </div>
-                <Switch checked={autoTrackEnabled} onCheckedChange={setAutoTrackEnabled}
+                <NativeToggle checked={autoTrackEnabled} onCheckedChange={setAutoTrackEnabled}
                   onClick={(e) => e.stopPropagation()} className="scale-75" />
               </div>
               <div
@@ -614,7 +614,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
                   <Send className={cn("w-3.5 h-3.5", telegramPostEnabled ? "text-primary" : "text-muted-foreground")} />
                   <span className="text-xs font-medium">Telegram</span>
                 </div>
-                <Switch checked={telegramPostEnabled} onCheckedChange={setTelegramPostEnabled}
+                <NativeToggle checked={telegramPostEnabled} onCheckedChange={setTelegramPostEnabled}
                   onClick={(e) => e.stopPropagation()} className="scale-75" />
               </div>
             </div>

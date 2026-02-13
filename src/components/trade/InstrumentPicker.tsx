@@ -3,7 +3,7 @@
  import { Label } from "@/components/ui/label";
  import { Button } from "@/components/ui/button";
 // Native <select> used instead of Radix Select to avoid infinite re-render loop inside Dialog
- import { Switch } from "@/components/ui/switch";
+ import { NativeToggle } from "@/components/ui/native-toggle";
  import { Loader2, Search, Star, Clock, Zap, Keyboard } from "lucide-react";
  import { supabase } from "@/integrations/supabase/client";
  import { cn } from "@/lib/utils";
@@ -379,11 +379,11 @@
              <Search className="w-3 h-3 inline mr-0.5" />
              Search
            </span>
-           <Switch
-             checked={mode === "manual"}
-             onCheckedChange={(checked) => setMode(checked ? "manual" : "search")}
-             className="scale-75"
-           />
+            <NativeToggle
+              checked={mode === "manual"}
+              onCheckedChange={(checked) => setMode(checked ? "manual" : "search")}
+              className="scale-75"
+            />
            <span className={cn(mode === "manual" ? "text-foreground" : "text-muted-foreground")}>
              <Keyboard className="w-3 h-3 inline mr-0.5" />
              Manual
