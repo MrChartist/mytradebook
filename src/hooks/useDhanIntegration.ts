@@ -2,16 +2,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+interface SyncUserResult {
+  imported: number;
+  closed: number;
+  priceUpdates: number;
+  importedTrades: Array<{ symbol: string; action: string; entryPrice: number; orderId: string }>;
+  updatedTrades: Array<{ symbol: string; action: string; exitPrice: number; pnl: number; orderId: string }>;
+}
+
 interface SyncResult {
   success: boolean;
   message: string;
-  positions: number;
-  synced: Array<{
-    symbol: string;
-    action: string;
-    currentPrice: number;
-    pnl: number;
-  }>;
+  results: SyncUserResult[];
 }
 
 interface MonitorResult {
@@ -38,21 +40,30 @@ interface ExecuteOrderParams {
 }
 
 export function useDhanIntegration() {
-  // Sync portfolio from Dhan
+  // Sync portfolio & orders from Dhan
   const syncPortfolio = useMutation({
     mutationFn: async (): Promise<SyncResult> => {
       const { data, error } = await supabase.functions.invoke("dhan-sync", {
-        method: "GET",
+        body: {},
       });
       
       if (error) throw error;
       return data;
     },
     onSuccess: (data) => {
-      if (data.positions > 0) {
-        toast.success(`Synced ${data.synced.length} positions from Dhan`);
+      const results = data?.results?.[0];
+      if (results) {
+        const parts: string[] = [];
+        if (results.imported > 0) parts.push(`${results.imported} imported`);
+        if (results.closed > 0) parts.push(`${results.closed} closed`);
+        if (results.priceUpdates > 0) parts.push(`${results.priceUpdates} prices updated`);
+        if (parts.length > 0) {
+          toast.success(`Dhan sync: ${parts.join(", ")}`);
+        } else {
+          toast.info("No new orders to sync from Dhan");
+        }
       } else {
-        toast.info("No positions to sync from Dhan");
+        toast.info("Sync completed");
       }
     },
     onError: (error: Error) => {
