@@ -3,25 +3,19 @@ import {
   TrendingUp,
   Plus,
   Search,
-  ArrowUpRight,
-  ArrowDownRight,
-  Star,
   Eye,
   Loader2,
   RefreshCw,
   Radio,
-  Shield,
-  Target,
   Layers,
   CheckSquare,
   X,
-  Tag,
-  FileDown,
   Bookmark,
+  Trash2,
+  XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -47,28 +41,41 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import type { Trade } from "@/hooks/useTrades";
+import { InsightCard, type InsightCardAction } from "@/components/ui/insight-card";
+import { ViewToggle, type ViewMode } from "@/components/ui/view-toggle";
+import { SortSelect, type SortOption } from "@/components/ui/sort-select";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const segmentLabels: Record<string, string> = {
-  Equity_Intraday: "Equity Intraday",
-  Equity_Positional: "Equity Positional",
+  Equity_Intraday: "Intraday",
+  Equity_Positional: "Positional",
   Futures: "Futures",
   Options: "Options",
-  Commodities: "Commodities",
+  Commodities: "MCX",
 };
 
 const statusConfig: Record<string, { label: string; color: string; dot: string }> = {
-  PENDING: { label: "Planned", color: "bg-warning/10 text-warning", dot: "bg-warning" },
-  OPEN: { label: "Open", color: "bg-profit/10 text-profit", dot: "bg-profit" },
-  CLOSED: { label: "Closed", color: "bg-muted text-muted-foreground", dot: "bg-muted-foreground" },
-  CANCELLED: { label: "Cancelled", color: "bg-destructive/10 text-destructive", dot: "bg-destructive" },
+  PENDING: { label: "Planned", color: "text-warning bg-warning/10", dot: "bg-warning" },
+  OPEN: { label: "Open", color: "text-profit bg-profit/10", dot: "bg-profit" },
+  CLOSED: { label: "Closed", color: "text-muted-foreground bg-muted", dot: "bg-muted-foreground" },
+  CANCELLED: { label: "Cancelled", color: "text-destructive bg-destructive/10", dot: "bg-destructive" },
 };
 
 type StatusFilter = "ALL" | "PENDING" | "OPEN" | "CLOSED" | "CANCELLED";
+
+const sortOptions: SortOption[] = [
+  { value: "latest", label: "Latest First" },
+  { value: "pnl_high", label: "Highest P&L" },
+  { value: "pnl_low", label: "Lowest P&L" },
+  { value: "symbol", label: "Symbol A–Z" },
+];
 
 export default function Trades() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
   const [segmentFilter, setSegmentFilter] = useState<string>("ALL");
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const [sortBy, setSortBy] = useState("latest");
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
   const [strategyModalOpen, setStrategyModalOpen] = useState(false);
@@ -83,9 +90,8 @@ export default function Trades() {
 
   const { trades, isLoading, summary, closeTrade, updateTrade } = useTrades(filters);
   const { syncPortfolio, monitorTrades, isSyncing } = useDhanIntegration();
-  const { templates, createTemplate } = useTradeTemplates();
+  const { templates } = useTradeTemplates();
 
-  // Get all trades (no filter) for status counts
   const { trades: allTrades } = useTrades();
   const statusCounts = useMemo(() => ({
     ALL: allTrades.length,
@@ -95,11 +101,19 @@ export default function Trades() {
     CANCELLED: allTrades.filter(t => t.status === "CANCELLED").length,
   }), [allTrades]);
 
-  const openTradeSymbols = useMemo(() => {
-    return trades.filter((t) => t.status === "OPEN").map((t) => t.symbol);
-  }, [trades]);
+  const sortedTrades = useMemo(() => {
+    let list = [...trades];
+    switch (sortBy) {
+      case "pnl_high": list.sort((a, b) => (b.pnl || 0) - (a.pnl || 0)); break;
+      case "pnl_low": list.sort((a, b) => (a.pnl || 0) - (b.pnl || 0)); break;
+      case "symbol": list.sort((a, b) => a.symbol.localeCompare(b.symbol)); break;
+      default: list.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+    }
+    return list;
+  }, [trades, sortBy]);
 
-  const { prices, isPolling, lastUpdated, refresh } = useLivePrices(openTradeSymbols, 30000);
+  const openTradeSymbols = useMemo(() => trades.filter(t => t.status === "OPEN").map(t => t.symbol), [trades]);
+  const { prices, isPolling, lastUpdated } = useLivePrices(openTradeSymbols, 30000);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -141,12 +155,12 @@ export default function Trades() {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold">Trades</h1>
-          <p className="text-muted-foreground">Track and manage your positions</p>
+          <p className="text-sm text-muted-foreground">Track and manage your positions</p>
         </div>
         <div className="flex gap-2 flex-wrap">
           <Button
@@ -160,36 +174,28 @@ export default function Trades() {
           </Button>
           <Button
             variant="outline"
-            className="border-border"
+            size="sm"
             onClick={() => { syncPortfolio.mutate(); monitorTrades.mutate(); }}
             disabled={isSyncing}
           >
             {isSyncing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
-            Sync with Dhan
+            Sync
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => setStrategyModalOpen(true)}
-          >
+          <Button variant="outline" size="sm" onClick={() => setStrategyModalOpen(true)}>
             <Layers className="w-4 h-4 mr-2" />
             Multi-Leg
           </Button>
-
-          {/* Templates dropdown */}
           {templates.length > 0 && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline">
+                <Button variant="outline" size="sm">
                   <Bookmark className="w-4 h-4 mr-1.5" />
                   Templates
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {templates.map((t) => (
-                  <DropdownMenuItem key={t.id} onClick={() => {
-                    setCreateModalOpen(true);
-                    // Template will be applied via CreateTradeModal enhancement
-                  }}>
+                  <DropdownMenuItem key={t.id} onClick={() => setCreateModalOpen(true)}>
                     <Bookmark className="w-3.5 h-3.5 mr-2 text-primary" />
                     {t.name}
                     <span className="ml-auto text-[10px] text-muted-foreground">{t.segment}</span>
@@ -198,11 +204,7 @@ export default function Trades() {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
-
-          <Button
-            className="bg-gradient-primary hover:opacity-90 transition-opacity"
-            onClick={() => setCreateModalOpen(true)}
-          >
+          <Button onClick={() => setCreateModalOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             New Trade
           </Button>
@@ -266,7 +268,7 @@ export default function Trades() {
               <p className="text-2xl font-bold text-warning">{summary.winRate.toFixed(1)}%</p>
               {lastUpdated && (
                 <p className="text-xs text-muted-foreground mt-1">
-                  Updated {lastUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                  {lastUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
                 </p>
               )}
             </>
@@ -274,8 +276,8 @@ export default function Trades() {
         </div>
       </div>
 
-      {/* Status Tabs + Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      {/* Status Tabs + Filters + Sort + View */}
+      <div className="space-y-3">
         <div className="flex gap-1 flex-wrap">
           {(["ALL", "PENDING", "OPEN", "CLOSED", "CANCELLED"] as StatusFilter[]).map((status) => (
             <Button
@@ -284,23 +286,20 @@ export default function Trades() {
               size="sm"
               onClick={() => setStatusFilter(status)}
               className={cn(
-                "border-border text-xs",
+                "border-border text-xs h-7",
                 statusFilter === status && (
                   status === "ALL" ? "bg-primary/10 border-primary/20 text-primary" :
-                  status === "OPEN" ? "bg-profit/10 border-profit/30 text-profit" :
-                  status === "PENDING" ? "bg-warning/10 border-warning/30 text-warning" :
-                  status === "CANCELLED" ? "bg-destructive/10 border-destructive/30 text-destructive" :
-                  "bg-muted border-muted-foreground/20"
+                  statusConfig[status]?.color
                 )
               )}
             >
-              {status === "ALL" ? "All" : statusConfig[status]?.label || status}
+              {status === "ALL" ? "All" : statusConfig[status]?.label}
               <span className="ml-1 text-muted-foreground">({statusCounts[status]})</span>
             </Button>
           ))}
         </div>
-        <div className="flex gap-2 flex-1">
-          <div className="relative flex-1 max-w-md">
+        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+          <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Search trades..."
@@ -309,175 +308,102 @@ export default function Trades() {
               className="pl-10 bg-card border-border"
             />
           </div>
-          <Select value={segmentFilter} onValueChange={setSegmentFilter}>
-            <SelectTrigger className="w-[160px] border-border">
-              <SelectValue placeholder="Segment" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Segments</SelectItem>
-              {Object.entries(segmentLabels).map(([key, label]) => (
-                <SelectItem key={key} value={key}>{label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2 items-center">
+            <Select value={segmentFilter} onValueChange={setSegmentFilter}>
+              <SelectTrigger className="w-[140px] h-8 text-xs border-border">
+                <SelectValue placeholder="Segment" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All Segments</SelectItem>
+                {Object.entries(segmentLabels).map(([key, label]) => (
+                  <SelectItem key={key} value={key}>{label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <SortSelect value={sortBy} onValueChange={setSortBy} options={sortOptions} />
+            <ViewToggle view={viewMode} onViewChange={setViewMode} />
+          </div>
         </div>
       </div>
 
-      {/* Trades Table */}
+      {/* Trades Grid/List */}
       {isLoading ? (
-        <div className="glass-card p-6 space-y-4">
-          {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-16 w-full" />)}
+        <div className={cn(
+          viewMode === "grid" ? "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4" : "space-y-2"
+        )}>
+          {[...Array(6)].map((_, i) => <Skeleton key={i} className={viewMode === "grid" ? "h-52" : "h-16"} />)}
         </div>
-      ) : trades.length > 0 ? (
-        <div className="glass-card overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  {bulkMode && (
-                    <th className="p-4 w-10">
-                      <Checkbox
-                        checked={selectedIds.size === trades.length && trades.length > 0}
-                        onCheckedChange={selectAll}
-                      />
-                    </th>
-                  )}
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Date</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Symbol</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Type</th>
-                  <th className="text-right p-4 text-sm font-medium text-muted-foreground">Qty</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Entry</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">SL</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Current</th>
-                  <th className="text-right p-4 text-sm font-medium text-muted-foreground">P&L</th>
-                  <th className="text-center p-4 text-sm font-medium text-muted-foreground">Status</th>
-                  <th className="text-right p-4 text-sm font-medium text-muted-foreground">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {trades.map((trade) => {
-                  const targets = (trade.targets as number[]) || [];
-                  const entryDate = new Date(trade.entry_time);
-                  const sc = statusConfig[trade.status || "PENDING"];
-                  return (
-                    <tr
-                      key={trade.id}
-                      className={cn(
-                        "border-b border-border/50 hover:bg-accent/50 transition-colors cursor-pointer",
-                        selectedIds.has(trade.id) && "bg-primary/5"
-                      )}
-                      onClick={() => bulkMode ? toggleSelect(trade.id) : setSelectedTrade(trade)}
-                    >
-                      {bulkMode && (
-                        <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                          <Checkbox
-                            checked={selectedIds.has(trade.id)}
-                            onCheckedChange={() => toggleSelect(trade.id)}
-                          />
-                        </td>
-                      )}
-                      <td className="p-4 text-sm text-muted-foreground whitespace-nowrap">
-                        {entryDate.toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center",
-                            trade.trade_type === "BUY" ? "bg-profit/10" : "bg-loss/10")}>
-                            {trade.trade_type === "BUY" ? (
-                              <ArrowUpRight className="w-4 h-4 text-profit" />
-                            ) : (
-                              <ArrowDownRight className="w-4 h-4 text-loss" />
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-medium">{trade.symbol}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {segmentLabels[trade.segment] || trade.segment}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <span className={cn("px-2 py-1 rounded-md text-xs font-medium",
-                          trade.trade_type === "BUY" ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss")}>
-                          {trade.trade_type}
-                        </span>
-                      </td>
-                      <td className="p-4 text-right font-mono text-sm">
-                        {trade.quantity}
-                      </td>
-                      <td className="p-4 font-mono text-sm">
-                        {trade.entry_price ? `₹${trade.entry_price.toLocaleString()}` : "—"}
-                      </td>
-                      <td className="p-4 font-mono text-sm">
-                        {trade.stop_loss ? (
-                          <span className="text-loss flex items-center gap-1">
-                            <Shield className="w-3 h-3" />
-                            ₹{trade.stop_loss.toLocaleString()}
-                          </span>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
-                      </td>
-                      <td className="p-4 font-mono text-sm">
-                        {trade.status === "OPEN" && prices[trade.symbol] ? (
-                          <div className="flex items-center gap-1">
-                            <span>₹{prices[trade.symbol].ltp.toLocaleString()}</span>
-                            <span className={cn("text-xs",
-                              prices[trade.symbol].changePercent >= 0 ? "text-profit" : "text-loss")}>
-                              ({prices[trade.symbol].changePercent >= 0 ? "+" : ""}{prices[trade.symbol].changePercent.toFixed(2)}%)
-                            </span>
-                          </div>
-                        ) : (
-                          <span>{trade.current_price ? `₹${trade.current_price.toLocaleString()}` : "—"}</span>
-                        )}
-                      </td>
-                      <td className="p-4 text-right">
-                        <div>
-                          <p className={cn("font-semibold", (trade.pnl || 0) >= 0 ? "text-profit" : "text-loss")}>
-                            {(trade.pnl || 0) >= 0 ? "+" : ""}₹{Math.abs(trade.pnl || 0).toLocaleString()}
-                          </p>
-                          <p className={cn("text-xs", (trade.pnl_percent || 0) >= 0 ? "text-profit" : "text-loss")}>
-                            {(trade.pnl_percent || 0) >= 0 ? "+" : ""}{(trade.pnl_percent || 0).toFixed(2)}%
-                          </p>
-                        </div>
-                      </td>
-                      <td className="p-4 text-center">
-                        <span className={cn("px-2 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1", sc?.color)}>
-                          <span className={cn("w-1.5 h-1.5 rounded-full", sc?.dot)} />
-                          {sc?.label || trade.status}
-                        </span>
-                      </td>
-                      <td className="p-4 text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          {targets.length > 0 && (
-                            <Badge variant="outline" className="text-[10px] gap-0.5">
-                              <Target className="w-2.5 h-2.5" />
-                              {targets.length}
-                            </Badge>
-                          )}
-                          <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); setSelectedTrade(trade); }}>
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+      ) : sortedTrades.length > 0 ? (
+        <div className={cn(
+          viewMode === "grid" ? "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4" : "space-y-2"
+        )}>
+          {sortedTrades.map((trade) => {
+            const targets = (trade.targets as number[]) || [];
+            const sc = statusConfig[trade.status || "PENDING"];
+            const livePrice = prices[trade.symbol];
+            const currentLtp = livePrice?.ltp || trade.current_price || undefined;
+            const dayChange = livePrice?.changePercent;
+
+            const levels = [
+              ...(trade.entry_price ? [{ label: "Entry", value: trade.entry_price }] : []),
+              ...(trade.stop_loss ? [{ label: "SL", value: trade.stop_loss, color: "text-loss" }] : []),
+              ...(targets.length > 0 ? [{ label: `T1${targets.length > 1 ? `–T${targets.length}` : ""}`, value: targets[0], color: "text-profit" }] : []),
+            ];
+
+            let potentialPercent: number | undefined;
+            let riskReward: string | undefined;
+            if (trade.entry_price && targets.length > 0) {
+              const reward = Math.abs(targets[0] - trade.entry_price);
+              potentialPercent = (reward / trade.entry_price) * 100 * (trade.trade_type === "BUY" ? 1 : -1);
+              if (trade.stop_loss) {
+                const risk = Math.abs(trade.entry_price - trade.stop_loss);
+                if (risk > 0) riskReward = `1:${(reward / risk).toFixed(1)}`;
+              }
+            }
+
+            const entryDate = new Date(trade.entry_time);
+
+            const menuActions: InsightCardAction[] = [
+              { label: "View Details", icon: Eye, onClick: () => setSelectedTrade(trade) },
+              ...(trade.status === "CANCELLED" ? [] : [
+                { label: "Cancel", icon: XCircle, onClick: () => updateTrade.mutate({ id: trade.id, status: "CANCELLED" }), variant: "destructive" as const },
+              ]),
+            ];
+
+            return (
+              <InsightCard
+                key={trade.id}
+                symbol={trade.symbol}
+                direction={trade.trade_type as "BUY" | "SELL"}
+                ltp={currentLtp}
+                dayChangePercent={dayChange}
+                typeLabel={segmentLabels[trade.segment] || trade.segment}
+                typeColor={trade.trade_type === "BUY" ? "text-profit bg-profit/10" : "text-loss bg-loss/10"}
+                status={sc?.label || trade.status || "Planned"}
+                statusColor={sc?.color}
+                levels={levels}
+                potentialPercent={potentialPercent}
+                riskReward={riskReward}
+                pnl={trade.pnl ?? undefined}
+                pnlPercent={trade.pnl_percent ?? undefined}
+                subtitle={`Qty: ${trade.quantity}`}
+                timestamp={entryDate.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "2-digit" })}
+                notes={trade.notes || undefined}
+                onView={() => setSelectedTrade(trade)}
+                menuActions={menuActions}
+                viewMode={viewMode}
+              />
+            );
+          })}
         </div>
       ) : (
-        <div className="glass-card p-12 text-center">
-          <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="font-semibold text-lg mb-2">No trades found</h3>
-          <p className="text-muted-foreground mb-4">Start tracking your trades to build your journal</p>
-          <Button className="bg-gradient-primary" onClick={() => setCreateModalOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Add Trade
-          </Button>
-        </div>
+        <EmptyState
+          icon={TrendingUp}
+          title="No trades found"
+          description="Start tracking your trades to build your journal and improve your edge."
+          createLabel="Add Trade"
+          onCreate={() => setCreateModalOpen(true)}
+        />
       )}
 
       <CreateTradeModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
