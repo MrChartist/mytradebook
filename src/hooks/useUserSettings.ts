@@ -21,6 +21,8 @@ interface UserSettings {
   dhan_verified_at: string | null;
   dhan_enabled: boolean | null;
   dhan_account_name: string | null;
+  ra_public_mode: boolean | null;
+  ra_disclaimer: string | null;
   created_at: string | null;
   updated_at: string | null;
 }
