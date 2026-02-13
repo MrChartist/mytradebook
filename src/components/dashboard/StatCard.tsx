@@ -14,18 +14,15 @@ interface StatCardProps {
 export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
   ({ title, value, change, changeType = "neutral", icon: Icon, subtitle }, ref) => {
     return (
-      <div ref={ref} className="glass-card-hover p-5 group relative overflow-hidden">
-        {/* Top shine line */}
-        <div className="absolute top-0 left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-[hsl(var(--glass-shine)/0.2)] to-transparent" />
-        
-        <div className="flex items-start justify-between relative z-10">
-          <div className="space-y-1">
-            <p className="text-sm text-muted-foreground font-medium">{title}</p>
+      <div ref={ref} className="surface-card-hover p-5 group">
+        <div className="flex items-start justify-between">
+          <div className="space-y-1.5">
+            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">{title}</p>
             <p className="text-2xl font-bold tracking-tight">{value}</p>
             {change && (
               <p
                 className={cn(
-                  "text-sm font-semibold flex items-center gap-1",
+                  "text-xs font-medium",
                   changeType === "profit" && "text-profit",
                   changeType === "loss" && "text-loss",
                   changeType === "neutral" && "text-muted-foreground"
@@ -35,20 +32,20 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
               </p>
             )}
             {subtitle && (
-              <p className="text-xs text-muted-foreground">{subtitle}</p>
+              <p className="text-[11px] text-muted-foreground/70">{subtitle}</p>
             )}
           </div>
           <div
             className={cn(
-              "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
-              changeType === "profit" && "bg-profit/10 group-hover:bg-profit/20",
-              changeType === "loss" && "bg-loss/10 group-hover:bg-loss/20",
-              changeType === "neutral" && "bg-primary/10 group-hover:bg-primary/20"
+              "w-10 h-10 rounded-xl flex items-center justify-center",
+              changeType === "profit" && "bg-profit/8",
+              changeType === "loss" && "bg-loss/8",
+              changeType === "neutral" && "bg-primary/8"
             )}
           >
             <Icon
               className={cn(
-                "w-6 h-6",
+                "w-5 h-5",
                 changeType === "profit" && "text-profit",
                 changeType === "loss" && "text-loss",
                 changeType === "neutral" && "text-primary"
@@ -56,16 +53,6 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
             />
           </div>
         </div>
-
-        {/* Ambient icon glow */}
-        <div
-          className={cn(
-            "absolute -bottom-4 -right-4 w-24 h-24 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-500",
-            changeType === "profit" && "bg-profit/10",
-            changeType === "loss" && "bg-loss/10",
-            changeType === "neutral" && "bg-primary/10"
-          )}
-        />
       </div>
     );
   }
