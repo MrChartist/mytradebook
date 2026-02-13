@@ -59,6 +59,7 @@ interface CustomNotification {
   type: "custom";
   message: string;
   chat_id?: string;
+  bot_token?: string;
 }
 
 interface TestNotification {
@@ -144,7 +145,6 @@ function getExchangeTag(exchange: string | null): string {
   }
 }
 
-// Safe number formatting
 function fmt(val: number | null | undefined, fallback = "—"): string {
   if (val === null || val === undefined || Number.isNaN(val)) return fallback;
   return `₹${val.toLocaleString("en-IN")}`;
@@ -171,7 +171,6 @@ const modeLabels: Record<string, string> = {
   ONCE: "One-time", DAILY: "Repeating (Daily)", CONTINUOUS: "Repeating",
 };
 
-// Get user settings including RA mode
 async function getUserSettings(supabase: any, userId: string) {
   const { data } = await supabase
     .from("user_settings")
@@ -179,6 +178,30 @@ async function getUserSettings(supabase: any, userId: string) {
     .eq("user_id", userId)
     .maybeSingle();
   return data || { telegram_chat_id: null, ra_public_mode: false, ra_disclaimer: null };
+}
+
+// Get all telegram_chats for a user, optionally filtered by segment
+async function getUserTelegramChats(
+  supabase: any,
+  userId: string,
+  segment?: string | null
+): Promise<Array<{ chat_id: string; bot_token: string | null }>> {
+  const { data } = await supabase
+    .from("telegram_chats")
+    .select("chat_id, bot_token, segments, enabled")
+    .eq("user_id", userId)
+    .eq("enabled", true);
+
+  if (!data || data.length === 0) return [];
+
+  // If segment provided, filter chats that include this segment
+  if (segment) {
+    return data
+      .filter((c: any) => c.segments && c.segments.includes(segment))
+      .map((c: any) => ({ chat_id: c.chat_id, bot_token: c.bot_token }));
+  }
+
+  return data.map((c: any) => ({ chat_id: c.chat_id, bot_token: c.bot_token }));
 }
 
 async function sendTelegramPhoto(
@@ -224,6 +247,41 @@ async function sendTelegramMessage(
   }
 }
 
+// Send to multiple chats
+async function sendToMultipleChats(
+  defaultToken: string,
+  chats: Array<{ chat_id: string; bot_token: string | null }>,
+  message: string,
+  imageUrl: string | null
+): Promise<{ successCount: number; failCount: number; messageIds: number[] }> {
+  let successCount = 0;
+  let failCount = 0;
+  const messageIds: number[] = [];
+
+  for (const chat of chats) {
+    const token = chat.bot_token || defaultToken;
+    let result: { success: boolean; messageId?: number };
+
+    if (imageUrl) {
+      result = await sendTelegramPhoto(token, chat.chat_id, imageUrl, message);
+      if (!result.success) {
+        result = await sendTelegramMessage(token, chat.chat_id, message);
+      }
+    } else {
+      result = await sendTelegramMessage(token, chat.chat_id, message);
+    }
+
+    if (result.success) {
+      successCount++;
+      if (result.messageId) messageIds.push(result.messageId);
+    } else {
+      failCount++;
+    }
+  }
+
+  return { successCount, failCount, messageIds };
+}
+
 function getFirstChartImage(trade: any): string | null {
   if (!trade.chart_images || !Array.isArray(trade.chart_images)) return null;
   const firstImage = trade.chart_images[0];
@@ -233,7 +291,7 @@ function getFirstChartImage(trade: any): string | null {
 }
 
 // ════════════════════════════════════════
-//  ALERT TRIGGERED TEMPLATES
+//  MESSAGE TEMPLATES (unchanged)
 // ════════════════════════════════════════
 
 function buildAlertTriggeredMessage(alert: any, ltp: number): string {
@@ -248,36 +306,19 @@ function buildAlertTriggeredMessage(alert: any, ltp: number): string {
   const isVol = ct === "VOLUME_SPIKE";
 
   let triggerText = "";
-  if (isPct) {
-    triggerText = `Day % ${ct.includes("GT") ? "above" : "below"} ${alert.threshold}%`;
-  } else if (isVol) {
-    triggerText = `Spike Triggered ✅`;
-  } else if (isCross) {
-    triggerText = `Crossed: ${fmt(alert.threshold)}`;
-  } else {
-    triggerText = `Level: ${ct.includes("GT") ? "Above" : "Below"} ${fmt(alert.threshold)}`;
-  }
+  if (isPct) triggerText = `Day % ${ct.includes("GT") ? "above" : "below"} ${alert.threshold}%`;
+  else if (isVol) triggerText = `Spike Triggered ✅`;
+  else if (isCross) triggerText = `Crossed: ${fmt(alert.threshold)}`;
+  else triggerText = `Level: ${ct.includes("GT") ? "Above" : "Below"} ${fmt(alert.threshold)}`;
 
-  let msg = `${emoji} *${header}*\n`;
-  msg += `*${alert.symbol}* (${tag})\n\n`;
-  msg += `${triggerText}\n`;
-
-  if (isPct) {
-    msg += `Now: ${fmtPct(ltp ? ((ltp - (alert.threshold || 0)) / (alert.threshold || 1)) * 100 : null)} | LTP: ${fmt(ltp)}\n`;
-  } else {
-    msg += `Now: LTP ${fmt(ltp)}\n`;
-  }
-
+  let msg = `${emoji} *${header}*\n*${alert.symbol}* (${tag})\n\n${triggerText}\n`;
+  if (isPct) msg += `Now: ${fmtPct(ltp ? ((ltp - (alert.threshold || 0)) / (alert.threshold || 1)) * 100 : null)} | LTP: ${fmt(ltp)}\n`;
+  else msg += `Now: LTP ${fmt(ltp)}\n`;
   msg += `Mode: ${mode}\n`;
   if (alert.notes) msg += `Reason: ${alert.notes}\n`;
   msg += `\n⏱ ${time}`;
-
   return msg;
 }
-
-// ════════════════════════════════════════
-//  ALERT LIFECYCLE TEMPLATES
-// ════════════════════════════════════════
 
 function buildAlertCreatedMessage(alert: any): string {
   const tag = getExchangeTag(alert.exchange);
@@ -285,19 +326,14 @@ function buildAlertCreatedMessage(alert: any): string {
   const mode = modeLabels[alert.recurrence || "ONCE"] || alert.recurrence;
   const isPct = alert.condition_type?.includes("PERCENT_CHANGE");
   const triggerText = isPct ? `${alert.threshold}%` : fmt(alert.threshold);
-
   const inApp = alert.delivery_in_app !== false ? "✅" : "❌";
   const tg = alert.telegram_enabled ? "✅" : "❌";
   const wh = alert.webhook_enabled ? "✅" : "❌";
 
-  let msg = `✅ *ALERT CREATED* | ${APP}\n`;
-  msg += `*${alert.symbol}* (${tag})\n\n`;
-  msg += `Condition: ${condLabel}\n`;
-  msg += `Trigger: ${triggerText}\n`;
-  msg += `Mode: ${mode}\n`;
+  let msg = `✅ *ALERT CREATED* | ${APP}\n*${alert.symbol}* (${tag})\n\n`;
+  msg += `Condition: ${condLabel}\nTrigger: ${triggerText}\nMode: ${mode}\n`;
   msg += `Delivery: In-App ${inApp} | Telegram ${tg} | Webhook ${wh}\n`;
   if (alert.notes) msg += `Reason: ${alert.notes}\n`;
-
   return msg;
 }
 
@@ -306,11 +342,9 @@ function buildAlertPausedMessage(alert: any, isPaused: boolean): string {
   const condLabel = conditionLabels[alert.condition_type] || alert.condition_type;
   const isPct = alert.condition_type?.includes("PERCENT_CHANGE");
   const triggerText = isPct ? `${alert.threshold}%` : fmt(alert.threshold);
-
-  if (isPaused) {
-    return `⏸ *ALERT PAUSED:* ${alert.symbol} (${tag}) | ${condLabel} ${triggerText}`;
-  }
-  return `▶️ *ALERT RESUMED:* ${alert.symbol} (${tag}) | ${condLabel} ${triggerText}`;
+  return isPaused
+    ? `⏸ *ALERT PAUSED:* ${alert.symbol} (${tag}) | ${condLabel} ${triggerText}`
+    : `▶️ *ALERT RESUMED:* ${alert.symbol} (${tag}) | ${condLabel} ${triggerText}`;
 }
 
 function buildAlertDeletedMessage(symbol: string, conditionType: string, threshold: number | null): string {
@@ -320,79 +354,52 @@ function buildAlertDeletedMessage(symbol: string, conditionType: string, thresho
   return `🗑️ *Alert Deleted:* ${symbol} | ${condLabel} ${triggerText}`;
 }
 
-// ════════════════════════════════════════
-//  TRADE TEMPLATES
-// ════════════════════════════════════════
-
 function buildNewTradeMessage(trade: any, isRaMode: boolean, disclaimer: string | null): string {
   const segment = trade.segment || "Equity_Intraday";
   const label = segmentLabels[segment] || segment;
   const tag = segmentTag[segment] || "NSE";
   const side = trade.trade_type || "BUY";
   const symbol = trade.symbol || "—";
-
   const targets = trade.targets || [];
-  const targetsStr = targets.length > 0
-    ? targets.map((t: number, i: number) => `T${i + 1}: ${fmt(t)}`).join(" / ")
-    : "—";
-
+  const targetsStr = targets.length > 0 ? targets.map((t: number, i: number) => `T${i + 1}: ${fmt(t)}`).join(" / ") : "—";
   const holdType = trade.holding_period || (segment === "Equity_Intraday" ? "Intraday" : "Positional");
   const tf = trade.timeframe ? (timeframeLabels[trade.timeframe] || trade.timeframe) : "";
-
   const slLine = trade.stop_loss ? `SL: ${fmt(trade.stop_loss)}` : "SL: —";
   const entryLine = trade.entry_price ? `Entry: ${fmt(trade.entry_price)}` : "Entry: At LTP";
 
   let tslLine = "";
   if (trade.trailing_sl_enabled) {
-    const tslVal = trade.trailing_sl_percent
-      ? `${trade.trailing_sl_percent}%`
-      : trade.trailing_sl_points ? `${trade.trailing_sl_points} pts` : "ON";
+    const tslVal = trade.trailing_sl_percent ? `${trade.trailing_sl_percent}%` : trade.trailing_sl_points ? `${trade.trailing_sl_points} pts` : "ON";
     tslLine = `\n🔄 TSL: ${tslVal}`;
   }
 
-  let headerEmoji = "🔔";
   let typeLabel = label;
   let riskNote = "";
-
   if (segment === "Options") {
     typeLabel = side === "SELL" ? "Options Sell" : "Options Buy";
-    riskNote = side === "SELL"
-      ? "\n⚠️ _Option selling needs defined risk. Prefer hedge._"
-      : "\n⚠️ _Options are high risk. Use strict SL._";
+    riskNote = side === "SELL" ? "\n⚠️ _Option selling needs defined risk. Prefer hedge._" : "\n⚠️ _Options are high risk. Use strict SL._";
   } else if (segment === "Commodities") {
     typeLabel = "Commodity";
   }
 
-  let msg = `${headerEmoji} *NEW TRADE (${typeLabel})* | ${tag}\n`;
-  msg += `*${side} ${symbol}* (${tag})\n\n`;
-  msg += `${entryLine}\n`;
-  msg += `${slLine}`;
+  let msg = `🔔 *NEW TRADE (${typeLabel})* | ${tag}\n*${side} ${symbol}* (${tag})\n\n`;
+  msg += `${entryLine}\n${slLine}`;
   if (trade.stop_loss && trade.entry_price) {
     const slPct = ((trade.entry_price - trade.stop_loss) / trade.entry_price * 100 * (side === "BUY" ? 1 : -1));
     if (!Number.isNaN(slPct)) msg += ` (${Math.abs(slPct).toFixed(1)}%)`;
   }
   msg += "\n";
-
-  if (!isRaMode && trade.quantity && trade.quantity > 1) {
-    msg += `Qty: ${fmtNum(trade.quantity)}\n`;
-  }
-
-  msg += `Targets: ${targetsStr}\n`;
-  msg += `Hold: ${holdType}`;
+  if (!isRaMode && trade.quantity && trade.quantity > 1) msg += `Qty: ${fmtNum(trade.quantity)}\n`;
+  msg += `Targets: ${targetsStr}\nHold: ${holdType}`;
   if (tf) msg += ` | TF: ${tf}`;
   msg += "\n";
-
   if (trade.notes) msg += `\n📝 ${trade.notes}\n`;
-  msg += tslLine;
-  msg += riskNote;
-
+  msg += tslLine + riskNote;
   msg += `\n\n⏱ ${istTimestamp()}`;
-
   if (isRaMode) {
     msg += "\n\n⚠️ _Position sizing as per your risk plan. Quantity not shared publicly._";
     if (disclaimer) msg += `\n\n🧾 _${disclaimer}_`;
   }
-
   return msg;
 }
 
@@ -401,43 +408,19 @@ function buildTradeClosedMessage(trade: any, isRaMode: boolean, disclaimer: stri
   const tag = segmentTag[segment] || "NSE";
   const side = trade.trade_type || "BUY";
   const symbol = trade.symbol || "—";
-
   const pnl = trade.pnl || 0;
   const emoji = pnl >= 0 ? "✅" : "❌";
   const outcome = pnl > 0 ? "WIN" : pnl < 0 ? "LOSS" : "BREAKEVEN";
-
-  const reasonLabels: Record<string, string> = {
-    SL_HIT: "Stop Loss", TSL_HIT: "Trailing SL",
-    TARGET1_HIT: "Target 1", TARGET2_HIT: "Target 2", TARGET3_HIT: "Target 3",
-    MANUAL: "Manual",
-  };
+  const reasonLabels: Record<string, string> = { SL_HIT: "Stop Loss", TSL_HIT: "Trailing SL", TARGET1_HIT: "Target 1", TARGET2_HIT: "Target 2", TARGET3_HIT: "Target 3", MANUAL: "Manual" };
   const reasonLabel = reasonLabels[trade.closure_reason || ""] || trade.closure_reason || "Manual";
 
-  let msg = `📒 *TRADE CLOSED* ${emoji}\n`;
-  msg += `Instrument: *${symbol}* | ${tag}\n`;
-  msg += `Side: ${side}\n\n`;
-
-  if (!isRaMode && trade.quantity && trade.quantity > 1) {
-    msg += `Qty: ${fmtNum(trade.quantity)}\n`;
-  }
-
-  msg += `Entry: ${fmt(trade.entry_price)}\n`;
-  msg += `Exit: ${fmt(trade.current_price)}\n`;
-
-  if (!isRaMode) {
-    msg += `P&L: ${fmt(pnl)} (${fmtPct(trade.pnl_percent)})\n`;
-  }
-
-  msg += `Outcome: *${outcome}*\n`;
-  msg += `Reason: ${reasonLabel}\n`;
-  msg += `\n⏱ ${istTimestamp()}`;
-
+  let msg = `📒 *TRADE CLOSED* ${emoji}\nInstrument: *${symbol}* | ${tag}\nSide: ${side}\n\n`;
+  if (!isRaMode && trade.quantity && trade.quantity > 1) msg += `Qty: ${fmtNum(trade.quantity)}\n`;
+  msg += `Entry: ${fmt(trade.entry_price)}\nExit: ${fmt(trade.current_price)}\n`;
+  if (!isRaMode) msg += `P&L: ${fmt(pnl)} (${fmtPct(trade.pnl_percent)})\n`;
+  msg += `Outcome: *${outcome}*\nReason: ${reasonLabel}\n\n⏱ ${istTimestamp()}`;
   if (trade.notes) msg += `\n\n📝 ${trade.notes}`;
-
-  if (isRaMode && disclaimer) {
-    msg += `\n\n🧾 _${disclaimer}_`;
-  }
-
+  if (isRaMode && disclaimer) msg += `\n\n🧾 _${disclaimer}_`;
   return msg;
 }
 
@@ -447,73 +430,53 @@ function buildTradeUpdateMessage(trade: any, latestEvent: any, isRaMode: boolean
 
   if (eventType.includes("TARGET") && eventType !== "TARGET_MODIFIED") {
     const targetNum = eventType.replace("TARGET", "T").replace("_HIT", "");
-    let msg = `🎯 *TARGET HIT: ${symbol}*\n`;
-    msg += `Target Achieved: ${targetNum} ✅\n\n`;
-    msg += `LTP: ${fmt(trade.current_price)}\n`;
+    let msg = `🎯 *TARGET HIT: ${symbol}*\nTarget Achieved: ${targetNum} ✅\n\nLTP: ${fmt(trade.current_price)}\n`;
     if (!isRaMode) msg += `P&L: ${fmt(trade.pnl)} (${fmtPct(trade.pnl_percent)})\n`;
     msg += `\nAction: Partial booking suggested`;
     if (trade.trailing_sl_current) msg += ` + SL trail to ${fmt(trade.trailing_sl_current)}`;
     msg += `\n\n⏱ ${istTimestamp()}`;
     return msg;
   }
-
   if (eventType === "SL_HIT") {
-    let msg = `🛑 *SL HIT: ${symbol}*\n`;
-    msg += `SL: ${fmt(trade.stop_loss)} Triggered ✅\n`;
-    msg += `Exit done as per plan.\n`;
+    let msg = `🛑 *SL HIT: ${symbol}*\nSL: ${fmt(trade.stop_loss)} Triggered ✅\nExit done as per plan.\n`;
     if (!isRaMode) msg += `\nP&L: ${fmt(trade.pnl)} (${fmtPct(trade.pnl_percent)})`;
     if (latestEvent?.notes) msg += `\n\n📝 ${latestEvent.notes}`;
     msg += `\n\n⏱ ${istTimestamp()}\nNext: wait for fresh setup.`;
     return msg;
   }
-
   if (eventType === "TSL_UPDATED") {
-    let msg = `🧲 *TSL UPDATE: ${symbol}*\n`;
-    msg += `New TSL: ${fmt(trade.trailing_sl_current)}\n`;
+    let msg = `🧲 *TSL UPDATE: ${symbol}*\nNew TSL: ${fmt(trade.trailing_sl_current)}\n`;
     if (trade.trailing_sl_active) msg += `Status: Active ✅`;
     if (latestEvent?.notes) msg += `\n\n📝 ${latestEvent.notes}`;
     msg += `\n\n⏱ ${istTimestamp()}`;
     return msg;
   }
-
   if (eventType === "TSL_HIT") {
-    let msg = `🔄 *TSL HIT: ${symbol}*\n`;
-    msg += `Trailing SL triggered at ${fmt(latestEvent?.price)}\n`;
+    let msg = `🔄 *TSL HIT: ${symbol}*\nTrailing SL triggered at ${fmt(latestEvent?.price)}\n`;
     if (!isRaMode) msg += `P&L: ${fmt(trade.pnl)} (${fmtPct(trade.pnl_percent)})`;
     msg += `\n\n⏱ ${istTimestamp()}`;
     return msg;
   }
-
   if (eventType === "SL_MODIFIED") {
-    let msg = `✏️ *SL MODIFIED: ${symbol}*\n`;
-    msg += `New SL: ${fmt(latestEvent?.price)}\n`;
-    msg += `LTP: ${fmt(trade.current_price)}`;
+    let msg = `✏️ *SL MODIFIED: ${symbol}*\nNew SL: ${fmt(latestEvent?.price)}\nLTP: ${fmt(trade.current_price)}`;
     if (latestEvent?.notes) msg += `\nReason: ${latestEvent.notes}`;
     msg += `\n\n⏱ ${istTimestamp()}`;
     return msg;
   }
 
-  // Generic update
   let emoji = "📊";
   if (eventType === "PARTIAL_EXIT") emoji = "🎯";
-  let msg = `${emoji} *Trade Update*\n\n`;
-  msg += `*${symbol}* — ${eventType.replace(/_/g, " ")}\n`;
-  msg += `LTP: ${fmt(trade.current_price)}\n`;
+  let msg = `${emoji} *Trade Update*\n\n*${symbol}* — ${eventType.replace(/_/g, " ")}\nLTP: ${fmt(trade.current_price)}\n`;
   if (!isRaMode) msg += `P&L: ${fmt(trade.pnl)} (${fmtPct(trade.pnl_percent)})\n`;
   msg += `SL: ${fmt(trade.stop_loss)}`;
-  if (trade.trailing_sl_active && trade.trailing_sl_current) {
-    msg += `\nTSL: ${fmt(trade.trailing_sl_current)} (active)`;
-  }
+  if (trade.trailing_sl_active && trade.trailing_sl_current) msg += `\nTSL: ${fmt(trade.trailing_sl_current)} (active)`;
   if (latestEvent?.notes) msg += `\n\n📝 ${latestEvent.notes}`;
   msg += `\n\n⏱ ${istTimestamp()}`;
-
   return msg;
 }
 
 function buildSLModifiedMessage(trade: any, oldSL: number, newSL: number): string {
-  let msg = `🧲 *TSL UPDATE: ${trade.symbol}*\n`;
-  msg += `Old SL: ${fmt(oldSL)} → New SL: ${fmt(newSL)}\n`;
-  msg += `Current P&L: ${fmt(trade.pnl)} (${fmtPct(trade.pnl_percent)})`;
+  let msg = `🧲 *TSL UPDATE: ${trade.symbol}*\nOld SL: ${fmt(oldSL)} → New SL: ${fmt(newSL)}\nCurrent P&L: ${fmt(trade.pnl)} (${fmtPct(trade.pnl_percent)})`;
   msg += `\n\n⏱ ${istTimestamp()}`;
   return msg;
 }
@@ -521,18 +484,14 @@ function buildSLModifiedMessage(trade: any, oldSL: number, newSL: number): strin
 function buildTradeEventMessage(trade: any, eventType: string, price: number, notes?: string): string {
   const eventLabel = eventTypeLabels[eventType] || eventType.replace(/_/g, " ");
   const tag = segmentTag[trade.segment] || "NSE";
-  let msg = `📝 *TRADE EVENT* | ${APP}\n`;
-  msg += `Instrument: *${trade.symbol}* (${tag})\n\n`;
-  msg += `Event: ${eventLabel}\n`;
-  msg += `Price: ${fmt(price)}\n`;
-  msg += `LTP: ${fmt(trade.current_price)}\n`;
+  let msg = `📝 *TRADE EVENT* | ${APP}\nInstrument: *${trade.symbol}* (${tag})\n\nEvent: ${eventLabel}\nPrice: ${fmt(price)}\nLTP: ${fmt(trade.current_price)}\n`;
   if (notes) msg += `Notes: ${notes}\n`;
   msg += `\n⏱ ${istTimestamp()}`;
   return msg;
 }
 
 // ════════════════════════════════════════
-//  MAIN HANDLER
+//  MAIN HANDLER — Multi-chat routing
 // ════════════════════════════════════════
 
 Deno.serve(async (req) => {
@@ -552,193 +511,173 @@ Deno.serve(async (req) => {
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
     const payload: NotificationPayload = await req.json();
 
+    // For "custom" with explicit chat_id — direct send (used by Test button)
+    if (payload.type === "custom" && payload.chat_id) {
+      const token = (payload as any).bot_token || TELEGRAM_BOT_TOKEN;
+      const result = await sendTelegramMessage(token, payload.chat_id, payload.message);
+      if (!result.success) throw new Error("Failed to send message");
+      return jsonOk({ success: true, message_id: result.messageId, chat_id: payload.chat_id });
+    }
+
+    // For "test" — direct send to default
+    if (payload.type === "test") {
+      const message = payload.message || `🔔 *Test Notification* | ${APP}\n\nYour Telegram integration is working correctly!\n\n✅ ${APP} is connected.\n⏱ ${istTimestamp()}`;
+      if (!DEFAULT_CHAT_ID) throw new Error("No default chat ID configured");
+      const result = await sendTelegramMessage(TELEGRAM_BOT_TOKEN, DEFAULT_CHAT_ID, message);
+      if (!result.success) throw new Error("Failed to send test message");
+      return jsonOk({ success: true, message_id: result.messageId });
+    }
+
+    // === Multi-chat routing for all other types ===
     let message = "";
-    let chatId = DEFAULT_CHAT_ID;
     let imageUrl: string | null = null;
+    let userId: string | null = null;
+    let segment: string | null = null;
 
     switch (payload.type) {
       case "new_trade": {
-        const { data: trade, error } = await supabase
-          .from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
+        const { data: trade, error } = await supabase.from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
         if (error) throw error;
         if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
-
+        userId = trade.user_id;
+        segment = trade.segment;
         const settings = await getUserSettings(supabase, trade.user_id);
-        if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
         imageUrl = getFirstChartImage(trade);
         message = buildNewTradeMessage(trade, settings.ra_public_mode, settings.ra_disclaimer);
         break;
       }
-
       case "trade_update": {
-        const { data: trade, error } = await supabase
-          .from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
+        const { data: trade, error } = await supabase.from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
         if (error) throw error;
         if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
-
+        userId = trade.user_id;
+        segment = trade.segment;
         const settings = await getUserSettings(supabase, trade.user_id);
-        if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
         imageUrl = getFirstChartImage(trade);
-
-        const { data: events } = await supabase
-          .from("trade_events").select("*")
-          .eq("trade_id", trade.id)
-          .order("timestamp", { ascending: false })
-          .limit(1);
+        const { data: events } = await supabase.from("trade_events").select("*").eq("trade_id", trade.id).order("timestamp", { ascending: false }).limit(1);
         message = buildTradeUpdateMessage(trade, events?.[0], settings.ra_public_mode);
         break;
       }
-
       case "trade_closed": {
-        const { data: trade, error } = await supabase
-          .from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
+        const { data: trade, error } = await supabase.from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
         if (error) throw error;
         if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
-
+        userId = trade.user_id;
+        segment = trade.segment;
         const settings = await getUserSettings(supabase, trade.user_id);
-        if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
         imageUrl = getFirstChartImage(trade);
         message = buildTradeClosedMessage(trade, settings.ra_public_mode, settings.ra_disclaimer);
         break;
       }
-
       case "trade_sl_modified": {
-        const { data: trade, error } = await supabase
-          .from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
+        const { data: trade, error } = await supabase.from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
         if (error) throw error;
         if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
-
-        const settings = await getUserSettings(supabase, trade.user_id);
-        if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
+        userId = trade.user_id;
+        segment = trade.segment;
         message = buildSLModifiedMessage(trade, payload.old_sl, payload.new_sl);
         break;
       }
-
       case "alert_triggered": {
-        const { data: alert, error } = await supabase
-          .from("alerts").select("*").eq("id", payload.alert_id).maybeSingle();
+        const { data: alert, error } = await supabase.from("alerts").select("*").eq("id", payload.alert_id).maybeSingle();
         if (error) throw error;
         if (!alert) return jsonOk({ success: true, skipped: true, reason: "Alert not found" });
         if (!(alert as any).telegram_enabled) return jsonOk({ success: true, skipped: true, reason: "Telegram disabled" });
-
-        const settings = await getUserSettings(supabase, alert.user_id);
-        if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
+        userId = alert.user_id;
         message = buildAlertTriggeredMessage(alert, payload.current_price);
         break;
       }
-
       case "alert_created": {
-        const { data: alert, error } = await supabase
-          .from("alerts").select("*").eq("id", payload.alert_id).maybeSingle();
+        const { data: alert, error } = await supabase.from("alerts").select("*").eq("id", payload.alert_id).maybeSingle();
         if (error) throw error;
         if (!alert) return jsonOk({ success: true, skipped: true, reason: "Alert not found" });
         if (!(alert as any).telegram_enabled) return jsonOk({ success: true, skipped: true, reason: "Telegram disabled" });
-
-        const settings = await getUserSettings(supabase, alert.user_id);
-        if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
+        userId = alert.user_id;
         message = buildAlertCreatedMessage(alert);
         break;
       }
-
       case "alert_paused": {
-        const { data: alert, error } = await supabase
-          .from("alerts").select("*").eq("id", payload.alert_id).maybeSingle();
+        const { data: alert, error } = await supabase.from("alerts").select("*").eq("id", payload.alert_id).maybeSingle();
         if (error) throw error;
         if (!alert) return jsonOk({ success: true, skipped: true, reason: "Alert not found" });
-
-        const settings = await getUserSettings(supabase, alert.user_id);
-        if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
+        userId = alert.user_id;
         message = buildAlertPausedMessage(alert, payload.is_paused);
         break;
       }
-
       case "alert_deleted": {
         message = buildAlertDeletedMessage(payload.symbol, payload.condition_type, payload.threshold);
+        // No userId context for deleted alerts — falls back to legacy
         break;
       }
-
       case "trade_event_added": {
-        const { data: trade, error } = await supabase
-          .from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
+        const { data: trade, error } = await supabase.from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
         if (error) throw error;
         if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
-
-        const settings = await getUserSettings(supabase, trade.user_id);
-        if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
+        userId = trade.user_id;
+        segment = trade.segment;
         message = buildTradeEventMessage(trade, payload.event_type, payload.price, payload.notes);
         break;
       }
-
       case "weekly_report": {
-        const { data: report, error } = await supabase
-          .from("weekly_reports").select("*").eq("id", payload.report_id).maybeSingle();
+        const { data: report, error } = await supabase.from("weekly_reports").select("*").eq("id", payload.report_id).maybeSingle();
         if (error) throw error;
         if (!report) return jsonOk({ success: true, skipped: true, reason: "Report not found" });
-
-        const settings = await getUserSettings(supabase, report.user_id);
-        if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
+        userId = report.user_id;
 
         const totalPnl = report.total_pnl || 0;
         const pnlEmoji = totalPnl >= 0 ? "📈" : "📉";
-
         const topSetups = report.top_setups || [];
-        const topSetupsStr = topSetups.length > 0
-          ? topSetups.slice(0, 3).map((s: any) => `• ${s.pattern}: ${fmt(s.pnl)}`).join("\n")
-          : "None";
-
+        const topSetupsStr = topSetups.length > 0 ? topSetups.slice(0, 3).map((s: any) => `• ${s.pattern}: ${fmt(s.pnl)}`).join("\n") : "None";
         const mistakes = report.common_mistakes || [];
-        const mistakesStr = mistakes.length > 0
-          ? mistakes.slice(0, 3).map((m: any) => `• ${m.mistake} (${m.count}x)`).join("\n")
-          : "None";
+        const mistakesStr = mistakes.length > 0 ? mistakes.slice(0, 3).map((m: any) => `• ${m.mistake} (${m.count}x)`).join("\n") : "None";
 
-        message = `📊 *Weekly Report – ${report.segment.replace("_", " ")}* | ${APP}\n` +
-          `Week: ${report.week_start} to ${report.week_end}\n\n` +
-          `📈 *Performance*\n` +
-          `• Total Trades: ${fmtNum(report.total_trades)}\n` +
-          `• Win Rate: ${fmtPct(report.win_rate)}\n` +
-          `• Net P&L: ${fmt(totalPnl)}\n\n` +
-          `🎯 *Top Setups*\n${topSetupsStr}\n\n` +
-          `⚠️ *Common Mistakes*\n${mistakesStr}\n\n` +
-          `${pnlEmoji} Best Trade: ${fmt(report.best_trade_pnl)}\n` +
-          `Worst Trade: ${fmt(report.worst_trade_pnl)}\n\n` +
-          `⏱ ${istTimestamp()}`;
+        message = `📊 *Weekly Report – ${report.segment.replace("_", " ")}* | ${APP}\nWeek: ${report.week_start} to ${report.week_end}\n\n📈 *Performance*\n• Total Trades: ${fmtNum(report.total_trades)}\n• Win Rate: ${fmtPct(report.win_rate)}\n• Net P&L: ${fmt(totalPnl)}\n\n🎯 *Top Setups*\n${topSetupsStr}\n\n⚠️ *Common Mistakes*\n${mistakesStr}\n\n${pnlEmoji} Best Trade: ${fmt(report.best_trade_pnl)}\nWorst Trade: ${fmt(report.worst_trade_pnl)}\n\n⏱ ${istTimestamp()}`;
         break;
       }
-
       case "custom": {
         message = payload.message;
-        if (payload.chat_id) chatId = payload.chat_id;
         break;
       }
-
-      case "test": {
-        message = payload.message || `🔔 *Test Notification* | ${APP}\n\nYour Telegram integration is working correctly!\n\n✅ ${APP} is connected.\n⏱ ${istTimestamp()}`;
-        break;
-      }
-
       default:
-        throw new Error(`Unknown notification type`);
+        throw new Error("Unknown notification type");
     }
 
-    if (!chatId) throw new Error("No Telegram chat ID configured");
+    // === Resolve target chats ===
+    let targetChats: Array<{ chat_id: string; bot_token: string | null }> = [];
 
-    let result: { success: boolean; messageId?: number };
-    if (imageUrl) {
-      result = await sendTelegramPhoto(TELEGRAM_BOT_TOKEN, chatId, imageUrl, message);
-      if (!result.success) {
-        console.log("Photo send failed, falling back to text message");
-        result = await sendTelegramMessage(TELEGRAM_BOT_TOKEN, chatId, message);
+    if (userId) {
+      // Try new multi-chat system first
+      targetChats = await getUserTelegramChats(supabase, userId, segment);
+
+      // Fallback to legacy single chat_id from user_settings
+      if (targetChats.length === 0) {
+        const settings = await getUserSettings(supabase, userId);
+        if (settings.telegram_chat_id) {
+          targetChats = [{ chat_id: settings.telegram_chat_id, bot_token: null }];
+        }
       }
-    } else {
-      result = await sendTelegramMessage(TELEGRAM_BOT_TOKEN, chatId, message);
     }
 
-    if (!result.success) throw new Error("Failed to send Telegram notification");
+    // Final fallback to env default
+    if (targetChats.length === 0 && DEFAULT_CHAT_ID) {
+      targetChats = [{ chat_id: DEFAULT_CHAT_ID, bot_token: null }];
+    }
 
-    return new Response(
-      JSON.stringify({ success: true, message_id: result.messageId, chat_id: chatId, with_image: !!imageUrl }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    if (targetChats.length === 0) {
+      throw new Error("No Telegram chat destinations configured");
+    }
+
+    const result = await sendToMultipleChats(TELEGRAM_BOT_TOKEN, targetChats, message, imageUrl);
+
+    if (result.successCount === 0) throw new Error("Failed to send to any chat destination");
+
+    return jsonOk({
+      success: true,
+      sent_to: result.successCount,
+      failed: result.failCount,
+      message_ids: result.messageIds,
+      with_image: !!imageUrl,
+    });
   } catch (error) {
     console.error("Telegram notification error:", error);
     const errorMessage = error instanceof Error ? error.message : "Unknown error";

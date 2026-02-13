@@ -13,6 +13,7 @@ import { useUserSettings } from "@/hooks/useUserSettings";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import TelegramSettings from "@/components/settings/TelegramSettings";
 
 export default function IntegrationsSettings() {
   const { user } = useAuth();
@@ -234,128 +235,8 @@ export default function IntegrationsSettings() {
 
   return (
     <div className="space-y-6">
-      {/* Telegram Integration */}
-      <div className="glass-card p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-lg bg-sky-500/10 flex items-center justify-center">
-            <MessageCircle className="w-5 h-5 text-sky-400" />
-          </div>
-          <div>
-            <h3 className="font-semibold">Telegram Notifications</h3>
-            <p className="text-sm text-muted-foreground">Get trade alerts on Telegram</p>
-          </div>
-          {isTelegramConnected && (
-            <div className="ml-auto flex items-center gap-2 text-profit">
-              <CheckCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">Connected</span>
-            </div>
-          )}
-        </div>
-
-        <div className="space-y-4">
-          {isTelegramConnected ? (
-            <>
-              <div className="p-3 rounded-lg bg-profit/10 border border-profit/20">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-profit" />
-                    <span className="text-sm text-profit font-medium">
-                      Chat ID: {settings?.telegram_chat_id}
-                    </span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    Connected {settings?.telegram_verified_at 
-                      ? new Date(settings.telegram_verified_at).toLocaleDateString() 
-                      : ""}
-                  </span>
-                </div>
-              </div>
-              
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={async () => {
-                    setTestingTelegram(true);
-                    try {
-                      const { data, error } = await supabase.functions.invoke("telegram-notify", {
-                        body: { type: "custom", message: "✅ Test successful! Notifications are working.", chat_id: settings?.telegram_chat_id },
-                      });
-                      if (error) throw error;
-                      data?.success ? toast.success("Test message sent!") : toast.error(data?.error || "Test failed");
-                    } catch { toast.error("Failed to send test message"); }
-                    finally { setTestingTelegram(false); }
-                  }}
-                  disabled={testingTelegram}
-                >
-                  {testingTelegram ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
-                  Send Test
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={async () => {
-                    if (!user?.id) return;
-                    setDisconnectingTelegram(true);
-                    try {
-                      await supabase.from("user_settings").update({
-                        telegram_chat_id: null, telegram_verified_at: null, telegram_enabled: false,
-                      }).eq("user_id", user.id);
-                      toast.success("Telegram disconnected");
-                      window.location.reload();
-                    } catch { toast.error("Failed to disconnect"); }
-                    finally { setDisconnectingTelegram(false); }
-                  }}
-                  disabled={disconnectingTelegram}
-                  className="text-loss hover:text-loss"
-                >
-                  {disconnectingTelegram ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Unplug className="w-4 h-4 mr-2" />}
-                  Disconnect
-                </Button>
-              </div>
-            </>
-          ) : (
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Enter your Telegram Chat ID to receive trade alerts, target/SL notifications, and weekly reports.
-              </p>
-              
-              <div className="p-4 rounded-lg bg-accent/50 border border-border space-y-3">
-                <p className="text-sm font-medium">How to get your Chat ID:</p>
-                <ol className="text-sm text-muted-foreground space-y-1.5 list-decimal list-inside">
-                  <li>Open Telegram and search for <code className="bg-accent px-1.5 py-0.5 rounded text-xs font-mono">@userinfobot</code></li>
-                  <li>Start the bot — it will reply with your <strong>Chat ID</strong></li>
-                  <li>Paste the ID below and click Connect</li>
-                </ol>
-                <p className="text-xs text-muted-foreground">
-                  For a <strong>channel</strong>, forward any message from the channel to <code className="bg-accent px-1.5 py-0.5 rounded text-xs font-mono">@userinfobot</code> to get the channel ID (starts with <code>-100</code>).
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="telegram-chat-id">Chat ID</Label>
-                <Input
-                  id="telegram-chat-id"
-                  value={telegramChatId}
-                  onChange={(e) => setTelegramChatId(e.target.value)}
-                  className="bg-accent border-border"
-                  placeholder="e.g. 123456789 or -1001234567890"
-                />
-              </div>
-
-              <Button
-                onClick={handleSaveTelegram}
-                disabled={savingTelegram || !telegramChatId.trim()}
-              >
-                {savingTelegram ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                )}
-                Connect & Test
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
+      {/* Telegram Integration — Multi-chat system */}
+      <TelegramSettings />
 
       {/* Dhan API Integration */}
       <div className="glass-card p-6">
