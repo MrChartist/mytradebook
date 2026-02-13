@@ -1,293 +1,190 @@
 
-# Comprehensive Fix Plan: Integrations + Instrument Master + Search/LTP
 
-## Current Issues Analysis
+# TradeBook -- Complete App Overhaul Plan
 
-### 1. Instrument Sync Failures
-- **Equity CSV returns 403**: The URL `https://images.dhan.co/api-data/api-scrip-master-equity.csv` is being blocked
-- **CPU Time exceeded**: Processing 172,906 F&O rows exceeds edge function limits
-- **Garbage data in DB**: ISINs stored as instrument_type, fake security IDs like "NSE_EQ_113"
-- **Sync stuck at "running"**: Logs show 2 syncs never completed
-
-### 2. LTP Fetch Failures
-- Security IDs in DB are fake (e.g., "NSE_EQ_113") instead of real Dhan IDs (e.g., "11536")
-- Without real security_id, Dhan API cannot return prices
-- Logs show "Price unavailable for RELIANCE - not in Dhan response"
-
-### 3. Single-Tenant Integration Design
-- Dhan credentials stored as global secrets, not per-user
-- Telegram chat ID stored per-user but no verification flow
-- Missing user-specific dhan_access_token storage
+This is a large-scale restructuring of the existing TradeSync app into the full "TradeBook" vision. The core backend (database, edge functions, auth, integrations) stays intact. The changes focus on **UI restructuring, new pages/modules, sidebar reorganization, and feature completions**.
 
 ---
 
-## Solution Architecture
+## What Already Exists (Keep Intact)
 
-### Phase A: Per-User Telegram Integration with Verification
-
-#### A.1 Database Schema Update
-Add new columns to `user_settings`:
-
-```text
-telegram_link_code: VARCHAR(12) - temporary verification code
-telegram_link_expires_at: TIMESTAMPTZ - code expiry (5 min)
-telegram_verified_at: TIMESTAMPTZ - when verified
-telegram_enabled: BOOLEAN - master on/off
-```
-
-#### A.2 Verification Flow
-1. User clicks "Connect Telegram"
-2. System generates unique code: `TS-XXXXXX` (6 random alphanumeric)
-3. Code stored in DB with 5-minute expiry
-4. User sends `/verify TS-XXXXXX` to bot OR clicks deep link
-5. Bot calls verification endpoint matching code to user
-6. On match: set `telegram_chat_id`, `telegram_verified_at`, clear code
-7. UI shows "Connected" with verified timestamp
-
-#### A.3 Bot Webhook Enhancement
-Create new edge function `telegram-webhook` that:
-- Handles `/start` and `/verify CODE` commands
-- Matches code to user_settings.telegram_link_code
-- Updates chat_id and marks verified
-- Responds with success/failure message
+- Authentication (email + Google OAuth)
+- Database schema (trades, alerts, studies, profiles, user_settings, weekly_reports, instrument_master, etc.)
+- Edge functions (telegram-notify, dhan-verify, instrument-sync, trade-monitor, evaluate-alerts, etc.)
+- Core hooks (useTrades, useAlerts, useStudies, useJournalAnalytics, useLivePrices, useDhanIntegration, etc.)
+- Settings page with Profile, Preferences, Security, Integrations tabs
+- Trade creation modal with instrument picker, automation controls
+- Reports page with weekly report generation
 
 ---
 
-### Phase B: Per-User Dhan API Integration
+## Phase 1: Theme + Design System Switch
 
-#### B.1 Database Schema Update
-Add new columns to `user_settings`:
+**Current**: Dark glassmorphism theme
+**Target**: Light theme with soft shadows, rounded cards (clean SaaS look)
 
-```text
-dhan_access_token: TEXT (encrypted in future) - per-user token
-dhan_verified_at: TIMESTAMPTZ
-dhan_enabled: BOOLEAN
-dhan_account_name: VARCHAR - display label
-```
-
-Note: For MVP, tokens stored as plain text. Future: use Supabase Vault.
-
-#### B.2 Connection Flow
-1. User enters Client ID + Access Token
-2. Click "Verify Connection"
-3. Backend calls Dhan profile API with user's token
-4. On success: store credentials, show account name
-5. Edge functions that need Dhan access will:
-   - First check user's dhan_access_token
-   - Fall back to global DHAN_ACCESS_TOKEN if not set (admin use)
-
-#### B.3 LTP Function Update
-Modify `get-live-prices` to:
-- Accept optional `user_id` parameter
-- Look up user's dhan_access_token from user_settings
-- Use user's token if available, else fall back to global
+Changes:
+- Update `index.css` CSS variables to define a light-first theme (white/gray backgrounds, soft shadows instead of glass/blur effects)
+- Keep dark mode as an option (the `.dark` class already exists) but make light the default
+- Replace `html { @apply dark }` with no default (or light)
+- Update glass-card classes to use soft-shadow card styles (`bg-white border border-gray-200 shadow-sm rounded-xl`)
+- Rename app from "TradeSync" to "TradeBook" throughout UI (sidebar logo, login page, page titles)
 
 ---
 
-### Phase C: Fix Instrument Master Sync
+## Phase 2: Sidebar Reorganization
 
-#### C.1 Root Cause Fix
-The current sync uses wrong CSV URL that returns 403. Dhan's correct URLs are:
-- **Compact (all instruments)**: `https://images.dhan.co/api-data/api-scrip-master.csv`
-- **Detailed (all instruments)**: `https://images.dhan.co/api-data/api-scrip-master-detailed.csv`
+**Current sidebar**: Dashboard, Studies, Alerts, Trades, Journal, Reports, Settings
+**Target sidebar**:
+- Dashboard
+- Trades
+- Alerts
+- Studies
+- Watchlist (NEW)
+- Section divider: "ANALYTICS"
+- Calendar (extracted from Journal)
+- Mistakes (extracted from Journal)
+- Analytics (NEW -- dedicated page)
+- Reports
+- Settings
+- Bottom: user profile info, plan badge, logout, collapse
 
-The `api-scrip-master-equity.csv` URL appears deprecated/blocked.
-
-#### C.2 New Sync Strategy
-Since the full CSV has 172K+ rows and causes CPU timeout:
-
-1. **Use compact CSV** (`api-scrip-master.csv`) - smaller, faster to parse
-2. **Filter aggressively** during parse:
-   - Only NSE_EQ, NSE_FNO, MCX_COMM segments
-   - Skip expired derivatives (expiry < today)
-   - Skip dummy/test instruments
-3. **Batch smaller** (200 rows per upsert)
-4. **Add timeout protection** - if approaching limit, save progress and complete
-
-#### C.3 Column Mapping Fix (Critical)
-The Compact CSV columns are:
-
-```text
-SEM_EXM_EXCH_ID, SEM_SEGMENT, SEM_SMST_SECURITY_ID, SEM_INSTRUMENT_NAME,
-SEM_EXPIRY_CODE, SEM_EXPIRY_DATE, SEM_STRIKE_PRICE, SEM_OPTION_TYPE,
-SEM_TRADING_SYMBOL, SEM_CUSTOM_SYMBOL, SEM_LOT_UNITS, SEM_TICK_SIZE
-```
-
-Key mapping:
-- `SEM_SMST_SECURITY_ID` = Dhan Security ID (the real one for API calls)
-- `SEM_TRADING_SYMBOL` = Trading symbol
-- `SEM_SEGMENT` = E (Equity), D (Derivatives), M (Commodity), C (Currency)
-
-#### C.4 Clear Bad Data
-Before sync, delete garbage rows:
-- instrument_type containing ISINs or "DUMMY"
-- security_id starting with "NSE_EQ_" (fake generated IDs)
-
-#### C.5 Sync Logging Enhancement
-- Always update sync log to "completed" or "failed" (never leave "running")
-- Store actual error messages
-- Show detailed status in UI
+Changes:
+- Update `Sidebar.tsx` and `MobileDrawer.tsx` nav items to match new structure
+- Add section divider support for "ANALYTICS" label
+- Add user profile avatar + name at bottom of sidebar
+- Add plan badge placeholder (Free/Premium)
+- Update `App.tsx` routes to add new routes: `/watchlist`, `/calendar`, `/mistakes`, `/analytics`
 
 ---
 
-### Phase D: Reliable LTP Fetch
+## Phase 3: New Pages
 
-#### D.1 Security ID Resolution
-With correct security_id from Dhan CSV:
-1. Search returns instruments with real `security_id` (e.g., "1333" for HDFC)
-2. LTP fetch uses these IDs grouped by exchange_segment
-3. Dhan API returns correct prices
+### 3a. Watchlist Page (`/watchlist`) -- NEW
+- Multiple named lists (tabs or sidebar within page)
+- Add symbols from instrument master
+- Show LTP, % change, sparkline per symbol
+- Quick actions: Create Alert, Create Study, Create Trade
+- Optional 1-line rationale per symbol
+- Database: New `watchlists` and `watchlist_items` tables with RLS
 
-#### D.2 Manual Symbol Resolution
-When user enters symbol manually (no security_id):
-1. Try to resolve from instrument_master by trading_symbol + exchange
-2. If found: use the resolved security_id
-3. If not found: return "Price unavailable" (no fake data)
+### 3b. Calendar Page (`/calendar`) -- Extracted from Journal
+- Move `JournalCalendarView` to its own page
+- Left: month grid calendar
+- Right: selected day panel with tabs (Trades, Alerts, Daily Journal)
+- Daily Journal: structured log (Mood, Discipline Score, Key Lesson, Market Summary)
+- Database: New `daily_journal` table with RLS
 
-#### D.3 LTP Response Enhancement
-Return comprehensive data:
+### 3c. Mistakes Page (`/mistakes`) -- Extracted from Journal
+- Move `JournalKanbanBoard` to its own page
+- 3-column layout: Low / Medium / High severity
+- Show impact amount per severity column
+- Trade cards with symbol, P&L, mistake tags
 
-```text
-{
-  ltp: 1234.50,
-  change: +15.30,
-  changePercent: +1.25,
-  source: "dhan",
-  timestamp: "2026-02-05T10:05:00Z",
-  security_id: "1333",
-  exchange_segment: "NSE_EQ"
-}
-```
-
-#### D.4 Mismatch Detection
-Add sanity check:
-- If LTP differs >50% from previous close, flag as potential mismatch
-- Log for debugging
-- Show warning in UI
+### 3d. Analytics Page (`/analytics`) -- NEW
+- Top KPI cards: Win rate, Total P&L, Avg win, Avg loss, Expectancy, Profit factor, Best trade, Worst trade
+- Streak tracker: Current streak, longest win/loss, recent trade dots
+- Monthly performance table: Month | Trades | Wins | Losses | Win Rate | P&L | Best | Worst
+- Filters: Date range, Segment, Setup type
+- Reuse computation logic from `useJournalAnalytics` and `useTrades`
 
 ---
 
-### Phase E: UI Improvements
+## Phase 4: Dashboard Redesign
 
-#### E.1 IntegrationsSettings Redesign
-Three distinct cards:
+Update `Dashboard.tsx` to match the spec:
+- Top 4 KPI cards: Total P&L (month), Open Positions (with risk at risk), Win Rate (month), Best Trade
+- "Daily P&L by Segment" stacked bar chart (replace current equity curve or add alongside)
+- Active Alerts widget (top 3 alerts with manage link)
+- Open Positions list (top 5)
+- Performance Metrics card
+- Month selector control (top right)
+- Segment filter
 
-1. **Telegram Integration**
-   - Generate Verification Code button
-   - Show code with instructions
-   - Status: Connected/Pending/Disconnected
-   - Test Send / Disconnect buttons
-
-2. **Dhan API Integration**
-   - Client ID input
-   - Access Token input (password field)
-   - Verify Connection button
-   - Status with account name if verified
-   - Disconnect button
-
-3. **Instrument Master**
-   - Total count by segment (NSE EQ: X, NFO: Y, MCX: Z)
-   - Last sync status with timestamp
-   - Error message if failed
-   - Sync Now button with progress
-
-#### E.2 InstrumentPicker Enhancement
-- Show "Last updated: X ago" for search results
-- Display LTP with source and timestamp
-- Better error messages for unavailable prices
+Keep existing widgets (TodaysPnl, CalendarHeatmap, StreakDiscipline, QuickActions) but rearrange layout.
 
 ---
 
-## Implementation Files
+## Phase 5: Trades Page Enhancements
 
-### Edge Functions
-1. **supabase/functions/instrument-sync/index.ts** - Complete rewrite
-   - Use correct CSV URL
-   - Proper column parsing
-   - Aggressive filtering
-   - Better error handling
-
-2. **supabase/functions/get-live-prices/index.ts** - Update
-   - Support per-user Dhan tokens
-   - Better logging
-   - Mismatch detection
-
-3. **supabase/functions/telegram-webhook/index.ts** - New
-   - Handle bot commands
-   - Verification flow
-
-4. **supabase/functions/dhan-verify/index.ts** - New
-   - Verify user's Dhan credentials
-   - Return account info
-
-### Database Migration
-1. Add columns to user_settings:
-   - telegram_link_code, telegram_link_expires_at, telegram_verified_at, telegram_enabled
-   - dhan_access_token, dhan_verified_at, dhan_enabled, dhan_account_name
-
-2. Clean up instrument_master:
-   - Delete rows with garbage data
-
-### Frontend Components
-1. **src/components/settings/IntegrationsSettings.tsx** - Major update
-   - Separate cards for each integration
-   - Telegram verification flow UI
-   - Dhan per-user connection UI
-   - Better sync status display
-
-2. **src/hooks/useUserSettings.ts** - Update
-   - Add methods for Telegram verification
-   - Add methods for Dhan verification
+- Add "Planned" status tab (PENDING maps to Planned)
+- Add Import buttons row: Sync, Import CSV, Import from Dhan (placeholders)
+- Add grid/list view toggle
+- Trade cards in grid view showing: symbol, segment tag, status badge, P&L, entry/SL/target, RR badge
+- Keep existing table as list view
 
 ---
 
-## Technical Details
+## Phase 6: Alerts Page Enhancements
 
-### Instrument Sync Optimization
-To avoid CPU timeout with large CSV:
-
-```text
-1. Stream parse: Read CSV line by line (not load entire file)
-2. Early filter: Skip rows immediately if segment not in [E, D, M]
-3. Skip expired: If expiry date < today, skip
-4. Batch 200: Smaller batches = more checkpoints
-5. Progress save: Update log every 5000 rows
-```
-
-### Telegram Verification Code Format
-- Format: `TS-XXXXXX` (6 chars: uppercase letters + digits)
-- Example: `TS-A7K3M9`
-- Expires: 5 minutes
-- One-time use
-
-### Dhan Token Storage
-For MVP: Plain text in user_settings
-Future enhancement: Use pg_crypto or Supabase Vault for encryption
+- Add "Snoozed" stat card
+- Add alert builder improvements: multiple alert levels via "+ Add Alert Level", cooldown dropdown, market hours toggle, expiry dropdown, test trigger button
+- These are modal changes in `CreateAlertModal`
 
 ---
 
-## Acceptance Criteria
+## Phase 7: Studies Page Enhancements
 
-### Telegram
-- [ ] User can generate verification code
-- [ ] Sending code to bot connects their chat
-- [ ] Notifications go to user's personal chat, not global
-- [ ] Disconnect clears chat_id
+- Remove glossary/random notes concept
+- Add structured fields: key levels, bias, hypothesis, plan, status (Open/Triggered/Invalidated/Completed)
+- Add "Convert to Alert" and "Convert to Trade" actions
+- Keep existing category tabs (Technical/Fundamental/News)
 
-### Dhan
-- [ ] User can enter their own API credentials
-- [ ] Verify shows account name on success
-- [ ] LTP fetch uses user's token when available
-- [ ] Multiple users can have separate Dhan accounts
+---
 
-### Instrument Master
-- [ ] Sync Now completes without timeout
-- [ ] NSE equities have real Dhan security_id
-- [ ] NFO contracts appear with correct expiry
-- [ ] Search finds RELIANCE, NIFTY, BANKNIFTY correctly
-- [ ] Last sync shows actual timestamp, not "Never"
+## Phase 8: Settings Enhancements
 
-### LTP
-- [ ] RELIANCE LTP matches real market price
-- [ ] Source and timestamp displayed
-- [ ] "Price unavailable" for unresolved symbols (no fake data)
+- Add to Integrations tab:
+  - Telegram: segment-based chat destinations (assign segments to chat IDs)
+  - RA Public Mode toggle (hide qty, add compliance disclaimer)
+  - Scheduled reports section
+- These build on the existing `IntegrationsSettings.tsx`
+
+---
+
+## Phase 9: Auth Routes
+
+- Add dedicated routes: `/auth/login`, `/auth/signup`, `/auth/forgot-password`
+- Current `/login` page already handles login/signup toggle -- refactor to separate routes
+- Add forgot password flow using Supabase `resetPasswordForEmail`
+- Keep existing two-column layout but update branding to "TradeBook"
+
+---
+
+## Phase 10: Quality Polish
+
+- Empty states with "Load Sample Data" button on Dashboard, Trades, Studies
+- Skeleton loaders on all pages (mostly already done)
+- Consistent currency formatting (INR with commas)
+- IST timezone default
+- Mobile responsive: sidebar collapses to bottom nav or hamburger (already partially done)
+- Fix any NaN display issues
+
+---
+
+## Database Changes Required
+
+New tables needed:
+1. **`watchlists`** -- id, user_id, name, created_at
+2. **`watchlist_items`** -- id, watchlist_id, symbol, security_id, exchange_segment, rationale, sort_order, created_at
+3. **`daily_journal`** -- id, user_id, date, mood, discipline_score, key_lesson, market_summary, created_at
+
+All with proper RLS policies (user can only access own data).
+
+---
+
+## Implementation Order
+
+1. Theme switch (light default) + rename to TradeBook
+2. Sidebar reorganization + new routes
+3. Database migrations (watchlists, daily_journal)
+4. New pages: Watchlist, Calendar, Mistakes, Analytics
+5. Dashboard redesign
+6. Trades page enhancements
+7. Alerts/Studies enhancements
+8. Settings enhancements (RA mode, scheduled reports)
+9. Auth route refactor (forgot password)
+10. Quality polish + sample data
+
+This is a significant amount of work. Due to the scope, it will be implemented incrementally across multiple iterations, starting with the structural changes (theme, sidebar, routes) and progressing through each module.
+
