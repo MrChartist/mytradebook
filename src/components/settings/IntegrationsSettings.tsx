@@ -31,6 +31,9 @@ export default function IntegrationsSettings() {
   const [verifyingDhan, setVerifyingDhan] = useState(false);
   const [disconnectingDhan, setDisconnectingDhan] = useState(false);
   
+  // Dhan sync state
+  const [syncingOrders, setSyncingOrders] = useState(false);
+
   // Instrument Master state
   const [syncingInstruments, setSyncingInstruments] = useState(false);
   const [syncStatus, setSyncStatus] = useState<{
@@ -390,20 +393,76 @@ export default function IntegrationsSettings() {
                   </span>
                 </div>
               </div>
-              
-              <Button
-                variant="outline"
-                onClick={handleDisconnectDhan}
-                disabled={disconnectingDhan}
-                className="text-loss hover:text-loss"
-              >
-                {disconnectingDhan ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <Unplug className="w-4 h-4 mr-2" />
-                )}
-                Disconnect
-              </Button>
+
+              {/* Auto-Sync Toggle */}
+              <div className="p-3 rounded-lg border border-border bg-accent/30 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <RefreshCw className="w-4 h-4 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium">Auto-Sync Orders</p>
+                    <p className="text-xs text-muted-foreground">
+                      Import executed orders every 5 min during market hours
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={settings?.auto_sync_portfolio ?? true}
+                  onCheckedChange={(checked) => {
+                    updateSettings.mutate({ auto_sync_portfolio: checked } as any);
+                  }}
+                />
+              </div>
+
+              {/* Manual Sync */}
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    setSyncingOrders(true);
+                    try {
+                      const { data, error } = await supabase.functions.invoke("dhan-sync", {
+                        body: { user_id: user?.id },
+                      });
+                      if (error) throw error;
+                      const r = data?.results?.[0];
+                      if (r) {
+                        const parts: string[] = [];
+                        if (r.imported > 0) parts.push(`${r.imported} imported`);
+                        if (r.closed > 0) parts.push(`${r.closed} closed`);
+                        if (r.priceUpdates > 0) parts.push(`${r.priceUpdates} prices updated`);
+                        toast.success(parts.length > 0 ? `Synced: ${parts.join(", ")}` : "No new orders");
+                      } else {
+                        toast.info("No new orders to sync");
+                      }
+                    } catch (e: any) {
+                      toast.error(e?.message || "Sync failed");
+                    } finally {
+                      setSyncingOrders(false);
+                    }
+                  }}
+                  disabled={syncingOrders}
+                >
+                  {syncingOrders ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                  )}
+                  Sync Now
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleDisconnectDhan}
+                  disabled={disconnectingDhan}
+                  className="text-loss hover:text-loss"
+                >
+                  {disconnectingDhan ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Unplug className="w-4 h-4 mr-2" />
+                  )}
+                  Disconnect
+                </Button>
+              </div>
             </>
           ) : (
             <>
