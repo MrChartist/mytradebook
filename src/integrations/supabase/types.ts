@@ -19,6 +19,7 @@ export type Database = {
           active: boolean | null
           active_hours_only: boolean | null
           batch_id: string | null
+          chain_children: Json | null
           condition_type: Database["public"]["Enums"]["alert_condition"]
           cooldown_minutes: number | null
           created_at: string | null
@@ -50,6 +51,7 @@ export type Database = {
           active?: boolean | null
           active_hours_only?: boolean | null
           batch_id?: string | null
+          chain_children?: Json | null
           condition_type: Database["public"]["Enums"]["alert_condition"]
           cooldown_minutes?: number | null
           created_at?: string | null
@@ -81,6 +83,7 @@ export type Database = {
           active?: boolean | null
           active_hours_only?: boolean | null
           batch_id?: string | null
+          chain_children?: Json | null
           condition_type?: Database["public"]["Enums"]["alert_condition"]
           cooldown_minutes?: number | null
           created_at?: string | null

@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
+import { Link2, Plus as PlusChain, X as XChain } from "lucide-react";
 import {
   Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 } from "@/components/ui/form";
@@ -35,6 +36,8 @@ import { supabase } from "@/integrations/supabase/client";
 interface CreateAlertModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  prefillSymbol?: string;
+  prefillExchange?: string;
 }
 
 const conditionLabels: Record<string, { label: string; desc: string }> = {
@@ -81,7 +84,7 @@ const ltpOffsets = [
   { label: "-2%", offset: -0.02 },
 ];
 
-export function CreateAlertModal({ open, onOpenChange }: CreateAlertModalProps) {
+export function CreateAlertModal({ open, onOpenChange, prefillSymbol, prefillExchange }: CreateAlertModalProps) {
   const { createAlert } = useAlerts();
   const [selectedInstrument, setSelectedInstrument] = useState<SelectedInstrument | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -94,19 +97,28 @@ export function CreateAlertModal({ open, onOpenChange }: CreateAlertModalProps) 
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [testingTrigger, setTestingTrigger] = useState(false);
   const [liveLtp, setLiveLtp] = useState<number | null>(null);
+  const [chainChildren, setChainChildren] = useState<Array<{ symbol: string; condition_type: string; threshold: number }>>([]);
 
   const form = useForm<CreateAlertInput>({
     resolver: zodResolver(createAlertSchema),
     defaultValues: {
-      symbol: "",
+      symbol: prefillSymbol || "",
       condition_type: "PRICE_GT",
       threshold: undefined,
       recurrence: "ONCE",
       notes: "",
       telegram_enabled: false,
-      exchange: "NSE",
+      exchange: (prefillExchange as "NSE" | "NFO" | "MCX") || "NSE",
     },
   });
+
+  // Apply prefill when it changes
+  // Apply prefill when modal opens with prefill data
+  const currentSymbol = form.watch("symbol");
+  if (prefillSymbol && open && !currentSymbol) {
+    form.setValue("symbol", prefillSymbol);
+    form.setValue("exchange", (prefillExchange as any) || "NSE");
+  }
 
   const handleInstrumentSelect = (instrument: SelectedInstrument) => {
     setSelectedInstrument(instrument);
@@ -230,11 +242,11 @@ export function CreateAlertModal({ open, onOpenChange }: CreateAlertModalProps) 
         exchange: data.exchange || "NSE",
         exchange_segment: selectedInstrument.exchange_segment,
         security_id: selectedInstrument.security_id || undefined,
-        // V2 fields
         cooldown_minutes: cooldown,
         active_hours_only: activeHoursOnly,
         webhook_enabled: webhookEnabled,
         delivery_in_app: deliveryInApp,
+        chain_children: chainChildren.length > 0 ? chainChildren : undefined,
       } as any);
 
       handleClose();
@@ -256,6 +268,7 @@ export function CreateAlertModal({ open, onOpenChange }: CreateAlertModalProps) 
     setDeliveryInApp(true);
     setAdvancedOpen(false);
     setLiveLtp(null);
+    setChainChildren([]);
     onOpenChange(false);
   };
 
@@ -504,6 +517,80 @@ export function CreateAlertModal({ open, onOpenChange }: CreateAlertModalProps) 
                     <p className="text-[10px] text-muted-foreground">09:15 – 15:30 IST</p>
                   </div>
                 </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* Alert Chains */}
+            <Collapsible>
+              <CollapsibleTrigger asChild>
+                <Button type="button" variant="ghost" size="sm" className="w-full justify-between">
+                  <span className="text-sm text-muted-foreground flex items-center gap-1.5">
+                    <Link2 className="w-3.5 h-3.5" /> Alert Chain ({chainChildren.length})
+                  </span>
+                  <ChevronDown className="w-4 h-4" />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2 pt-2">
+                <p className="text-[10px] text-muted-foreground">When this alert triggers, automatically create these follow-up alerts:</p>
+                {chainChildren.map((child, idx) => (
+                  <div key={idx} className="flex items-center gap-2 p-2 rounded-lg border border-border bg-accent/20">
+                    <Input
+                      placeholder="Symbol"
+                      value={child.symbol}
+                      onChange={(e) => {
+                        const next = [...chainChildren];
+                        next[idx] = { ...next[idx], symbol: e.target.value };
+                        setChainChildren(next);
+                      }}
+                      className="h-7 text-xs flex-1"
+                    />
+                    <Select
+                      value={child.condition_type}
+                      onValueChange={(v) => {
+                        const next = [...chainChildren];
+                        next[idx] = { ...next[idx], condition_type: v };
+                        setChainChildren(next);
+                      }}
+                    >
+                      <SelectTrigger className="h-7 text-xs w-28">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="PRICE_GT">Above</SelectItem>
+                        <SelectItem value="PRICE_LT">Below</SelectItem>
+                        <SelectItem value="PRICE_CROSS_ABOVE">Cross ↑</SelectItem>
+                        <SelectItem value="PRICE_CROSS_BELOW">Cross ↓</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      type="number"
+                      placeholder="₹"
+                      value={child.threshold || ""}
+                      onChange={(e) => {
+                        const next = [...chainChildren];
+                        next[idx] = { ...next[idx], threshold: Number(e.target.value) };
+                        setChainChildren(next);
+                      }}
+                      className="h-7 text-xs w-24 font-mono"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setChainChildren(chainChildren.filter((_, i) => i !== idx))}
+                      className="text-muted-foreground hover:text-destructive"
+                    >
+                      <XChain className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="w-full h-7 text-xs"
+                  onClick={() => setChainChildren([...chainChildren, { symbol: "", condition_type: "PRICE_GT", threshold: 0 }])}
+                >
+                  <PlusChain className="w-3 h-3 mr-1" /> Add Chain Alert
+                </Button>
               </CollapsibleContent>
             </Collapsible>
 
