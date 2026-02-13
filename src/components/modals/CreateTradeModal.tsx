@@ -285,16 +285,26 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
         },
       });
       if (error) throw error;
+      if (data?.error === "token_expired") {
+        toast.error("Dhan token expired — update in Settings → Integrations");
+        return;
+      }
       if (data?.success && data?.prices?.[selectedInstrument.symbol]) {
         const ltp = data.prices[selectedInstrument.symbol].ltp;
-        setValue("entry_price", ltp, { shouldValidate: true });
-        toast.success(`LTP: ₹${ltp.toLocaleString()}`);
+        if (ltp && ltp > 0) {
+          setValue("entry_price", ltp, { shouldValidate: true });
+          toast.success(`LTP: ₹${ltp.toLocaleString()}`);
+        } else {
+          toast.info("Price returned 0. Enter manually.");
+        }
+      } else if (data?.error) {
+        toast.error(`${data.error}. Enter price manually.`);
       } else {
-        toast.error("Price not available. Enter manually.");
+        toast.info("Price not available. Enter manually.");
       }
     } catch (err) {
       console.error("LTP fetch error:", err);
-      toast.error("Failed to fetch price");
+      toast.error("Failed to fetch price. Enter manually.");
     } finally {
       setIsFetchingLtp(false);
     }

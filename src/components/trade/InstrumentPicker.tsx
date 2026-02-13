@@ -199,53 +199,60 @@
      setQuery("");
    };
    
-   // Fetch LTP for manual or selected instrument
-   const fetchLtp = async (instrument: SelectedInstrument) => {
-     setIsFetchingLtp(true);
-     setLtpResult({ price: null, error: null });
-     
-     try {
-       const { data, error } = await supabase.functions.invoke("get-live-prices", {
-         body: {
-           instruments: [{
-             symbol: instrument.symbol,
-             security_id: instrument.security_id,
-             exchange_segment: instrument.exchange_segment,
-           }],
-         },
-       });
-       
-       if (error) throw error;
-       
-       if (data?.success && data?.prices?.[instrument.symbol]) {
-        const priceData = data.prices[instrument.symbol];
-        const ltp = priceData.ltp;
-        if (ltp && ltp > 0) {
-          setLtpResult({ 
-            price: ltp, 
-            error: null,
-            source: priceData.source || data.source || "dhan",
-            timestamp: priceData.timestamp || data.timestamp,
-            change: priceData.change,
-            changePercent: priceData.changePercent,
-          });
-            // Update selection with LTP
+    // Fetch LTP for manual or selected instrument
+    const fetchLtp = async (instrument: SelectedInstrument) => {
+      setIsFetchingLtp(true);
+      setLtpResult({ price: null, error: null });
+      
+      try {
+        const { data, error } = await supabase.functions.invoke("get-live-prices", {
+          body: {
+            instruments: [{
+              symbol: instrument.symbol,
+              security_id: instrument.security_id,
+              exchange_segment: instrument.exchange_segment,
+            }],
+          },
+        });
+        
+        if (error) throw error;
+
+        // Handle token expired gracefully
+        if (data?.error === "token_expired") {
+          setLtpResult({ price: null, error: "Dhan token expired — update in Settings → Integrations." });
+          return;
+        }
+        
+        if (data?.success && data?.prices?.[instrument.symbol]) {
+          const priceData = data.prices[instrument.symbol];
+          const ltp = priceData.ltp;
+          if (ltp && ltp > 0) {
+            setLtpResult({ 
+              price: ltp, 
+              error: null,
+              source: priceData.source || data.source || "dhan",
+              timestamp: priceData.timestamp || data.timestamp,
+              change: priceData.change,
+              changePercent: priceData.changePercent,
+            });
             const updated = { ...instrument, ltp };
             setSelected(updated);
             onSelect(updated);
+          } else {
+            setLtpResult({ price: null, error: "Price unavailable. Enter manually." });
+          }
+        } else if (data?.error) {
+          setLtpResult({ price: null, error: `${data.error}. Enter price manually.` });
         } else {
           setLtpResult({ price: null, error: "Price unavailable. Enter manually." });
         }
-      } else {
-        setLtpResult({ price: null, error: "Price unavailable. Enter manually." });
-       }
-     } catch (err) {
-       console.error("LTP fetch error:", err);
-      setLtpResult({ price: null, error: "Failed to fetch price. Enter manually." });
-     } finally {
-       setIsFetchingLtp(false);
-     }
-   };
+      } catch (err) {
+        console.error("LTP fetch error:", err);
+        setLtpResult({ price: null, error: "Failed to fetch price. Enter manually." });
+      } finally {
+        setIsFetchingLtp(false);
+      }
+    };
    
    // Handle manual entry confirmation
    const handleManualConfirm = () => {
