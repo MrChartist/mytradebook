@@ -14,13 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// Native <select> used instead of Radix Select to avoid infinite re-render loop inside Dialog
 import { createTradeSchema, type CreateTradeInput, marketSegments, tradeTypes, timeframes } from "@/lib/schemas";
 import { useTrades } from "@/hooks/useTrades";
 import { Loader2, AlertCircle, Zap, ChevronDown, TrendingUp, Shield, Target, FileText, Send, Radio, Activity, Link as LinkIcon } from "lucide-react";
@@ -343,39 +337,31 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Segment *</Label>
-              <Select
+              <select
                 value={segment ?? ""}
-                onValueChange={(val) => setValue("segment", val as CreateTradeInput["segment"], { shouldValidate: true })}
+                onChange={(e) => setValue("segment", e.target.value as CreateTradeInput["segment"], { shouldValidate: true })}
+                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select segment" />
-                </SelectTrigger>
-                <SelectContent>
-                  {marketSegments.map((seg) => (
-                    <SelectItem key={seg} value={seg}>
-                      {segmentLabels[seg] || seg}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <option value="" disabled>Select segment</option>
+                {marketSegments.map((seg) => (
+                  <option key={seg} value={seg}>{segmentLabels[seg] || seg}</option>
+                ))}
+              </select>
               {errors.segment && <p className="text-sm text-destructive">{errors.segment.message}</p>}
             </div>
 
             <div className="space-y-2">
               <Label>Trade Type *</Label>
-              <Select
+              <select
                 value={tradeType ?? ""}
-                onValueChange={(val) => setValue("trade_type", val as CreateTradeInput["trade_type"], { shouldValidate: true })}
+                onChange={(e) => setValue("trade_type", e.target.value as CreateTradeInput["trade_type"], { shouldValidate: true })}
+                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="BUY/SELL" />
-                </SelectTrigger>
-                <SelectContent>
-                  {tradeTypes.map((type) => (
-                    <SelectItem key={type} value={type}>{type === "BUY" ? "BUY (Long)" : "SELL (Short)"}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <option value="" disabled>BUY/SELL</option>
+                {tradeTypes.map((type) => (
+                  <option key={type} value={type}>{type === "BUY" ? "BUY (Long)" : "SELL (Short)"}</option>
+                ))}
+              </select>
               {errors.trade_type && <p className="text-sm text-destructive">{errors.trade_type.message}</p>}
             </div>
           </div>
@@ -465,21 +451,16 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Timeframe</Label>
-              <Select
+              <select
                 value={watch("timeframe") ?? ""}
-                onValueChange={(val) => setValue("timeframe", val as CreateTradeInput["timeframe"])}
+                onChange={(e) => setValue("timeframe", e.target.value as CreateTradeInput["timeframe"])}
+                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select timeframe" />
-                </SelectTrigger>
-                <SelectContent>
-                  {timeframes.map((tf) => (
-                    <SelectItem key={tf} value={tf}>
-                      {timeframeLabels[tf] || tf}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <option value="">Select timeframe</option>
+                {timeframes.map((tf) => (
+                  <option key={tf} value={tf}>{timeframeLabels[tf] || tf}</option>
+                ))}
+              </select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="quantity">Quantity / Lots</Label>
@@ -531,33 +512,27 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <Label className="text-xs text-muted-foreground">Method</Label>
-                    <Select value={trailingSlMethod} onValueChange={setTrailingSlMethod}>
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {trailingSlMethods.map((m) => (
-                          <SelectItem key={m.value} value={m.value} className="text-xs">
-                            {m.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <select
+                      value={trailingSlMethod}
+                      onChange={(e) => setTrailingSlMethod(e.target.value)}
+                      className="h-8 w-full rounded-md border border-input bg-background px-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    >
+                      {trailingSlMethods.map((m) => (
+                        <option key={m.value} value={m.value}>{m.label}</option>
+                      ))}
+                    </select>
                   </div>
                   <div className="space-y-1">
                     <Label className="text-xs text-muted-foreground">Activation</Label>
-                    <Select value={trailingSlActivationRule} onValueChange={setTrailingSlActivationRule}>
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {trailingSlActivation.map((a) => (
-                          <SelectItem key={a.value} value={a.value} className="text-xs">
-                            {a.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <select
+                      value={trailingSlActivationRule}
+                      onChange={(e) => setTrailingSlActivationRule(e.target.value)}
+                      className="h-8 w-full rounded-md border border-input bg-background px-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    >
+                      {trailingSlActivation.map((a) => (
+                        <option key={a.value} value={a.value}>{a.label}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
@@ -653,19 +628,16 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
               {/* Holding Period */}
               <div className="space-y-2">
                 <Label>Expected Holding Period</Label>
-                <Select
+                <select
                   value={watch("holding_period") ?? ""}
-                  onValueChange={(val) => setValue("holding_period", val)}
+                  onChange={(e) => setValue("holding_period", e.target.value)}
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select holding period" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {holdingPeriodOptions.map((hp) => (
-                      <SelectItem key={hp.value} value={hp.value}>{hp.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  <option value="">Select holding period</option>
+                  {holdingPeriodOptions.map((hp) => (
+                    <option key={hp.value} value={hp.value}>{hp.label}</option>
+                  ))}
+                </select>
               </div>
 
               {/* Rating & Confidence */}
