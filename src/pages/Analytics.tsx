@@ -4,6 +4,11 @@ import { useUserSettings } from "@/hooks/useUserSettings";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { EquityCurveDrawdown } from "@/components/analytics/EquityCurveDrawdown";
 import { RiskRewardAnalytics } from "@/components/analytics/RiskRewardAnalytics";
+import { SegmentPerformance } from "@/components/analytics/SegmentPerformance";
+import { TimeOfDayAnalysis } from "@/components/analytics/TimeOfDayAnalysis";
+import { DayOfWeekAnalysis } from "@/components/analytics/DayOfWeekAnalysis";
+import { StreakTracker } from "@/components/analytics/StreakTracker";
+import { SetupTagPerformance } from "@/components/analytics/SetupTagPerformance";
 
 export default function Analytics() {
   const { trades, summary } = useTrades();
@@ -45,6 +50,21 @@ export default function Analytics() {
 
       {/* Equity Curve & Drawdown */}
       <EquityCurveDrawdown trades={trades} startingCapital={startingCapital} />
+
+      {/* Segment Performance Breakdown */}
+      <SegmentPerformance trades={trades} />
+
+      {/* Time & Day Heatmaps */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <TimeOfDayAnalysis trades={trades} />
+        <DayOfWeekAnalysis trades={trades} />
+      </div>
+
+      {/* Streak & Tag Performance */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <StreakTracker trades={trades} />
+        <SetupTagPerformance trades={trades} />
+      </div>
 
       {/* Risk-Reward Analytics */}
       <RiskRewardAnalytics trades={trades} />
