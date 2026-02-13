@@ -316,6 +316,7 @@ function buildAlertTriggeredMessage(alert: any, ltp: number): string {
   else msg += `Now: LTP ${fmt(ltp)}\n`;
   msg += `Mode: ${mode}\n`;
   if (alert.notes) msg += `Reason: ${alert.notes}\n`;
+  if (alert.chart_link) msg += `📊 [Chart](${alert.chart_link})\n`;
   msg += `\n⏱ ${time}`;
   return msg;
 }
@@ -334,6 +335,7 @@ function buildAlertCreatedMessage(alert: any): string {
   msg += `Condition: ${condLabel}\nTrigger: ${triggerText}\nMode: ${mode}\n`;
   msg += `Delivery: In-App ${inApp} | Telegram ${tg} | Webhook ${wh}\n`;
   if (alert.notes) msg += `Reason: ${alert.notes}\n`;
+  if (alert.chart_link) msg += `📊 [Chart](${alert.chart_link})\n`;
   return msg;
 }
 
@@ -394,6 +396,7 @@ function buildNewTradeMessage(trade: any, isRaMode: boolean, disclaimer: string 
   if (tf) msg += ` | TF: ${tf}`;
   msg += "\n";
   if (trade.notes) msg += `\n📝 ${trade.notes}\n`;
+  if (trade.chart_link) msg += `\n📊 [Chart](${trade.chart_link})\n`;
   msg += tslLine + riskNote;
   msg += `\n\n⏱ ${istTimestamp()}`;
   if (isRaMode) {
@@ -420,6 +423,7 @@ function buildTradeClosedMessage(trade: any, isRaMode: boolean, disclaimer: stri
   if (!isRaMode) msg += `P&L: ${fmt(pnl)} (${fmtPct(trade.pnl_percent)})\n`;
   msg += `Outcome: *${outcome}*\nReason: ${reasonLabel}\n\n⏱ ${istTimestamp()}`;
   if (trade.notes) msg += `\n\n📝 ${trade.notes}`;
+  if (trade.chart_link) msg += `\n📊 [Chart](${trade.chart_link})`;
   if (isRaMode && disclaimer) msg += `\n\n🧾 _${disclaimer}_`;
   return msg;
 }

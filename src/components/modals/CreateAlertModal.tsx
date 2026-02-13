@@ -98,6 +98,7 @@ export function CreateAlertModal({ open, onOpenChange, prefillSymbol, prefillExc
   const [testingTrigger, setTestingTrigger] = useState(false);
   const [liveLtp, setLiveLtp] = useState<number | null>(null);
   const [chainChildren, setChainChildren] = useState<Array<{ symbol: string; condition_type: string; threshold: number }>>([]);
+  const [chartLink, setChartLink] = useState("");
 
   const form = useForm<CreateAlertInput>({
     resolver: zodResolver(createAlertSchema),
@@ -247,6 +248,7 @@ export function CreateAlertModal({ open, onOpenChange, prefillSymbol, prefillExc
         webhook_enabled: webhookEnabled,
         delivery_in_app: deliveryInApp,
         chain_children: chainChildren.length > 0 ? chainChildren : undefined,
+        chart_link: chartLink.trim() || null,
       } as any);
 
       handleClose();
@@ -269,6 +271,7 @@ export function CreateAlertModal({ open, onOpenChange, prefillSymbol, prefillExc
     setAdvancedOpen(false);
     setLiveLtp(null);
     setChainChildren([]);
+    setChartLink("");
     onOpenChange(false);
   };
 
@@ -438,6 +441,21 @@ export function CreateAlertModal({ open, onOpenChange, prefillSymbol, prefillExc
                 </FormItem>
               )}
             />
+
+            {/* Chart Link */}
+            <div className="space-y-2">
+              <FormLabel className="flex items-center gap-1.5">
+                <Link2 className="w-3.5 h-3.5 text-primary" />
+                Chart Link
+              </FormLabel>
+              <Input
+                type="url"
+                placeholder="Paste TradingView / chart URL (optional)"
+                value={chartLink}
+                onChange={(e) => setChartLink(e.target.value)}
+                className="text-sm"
+              />
+            </div>
 
             {/* Delivery Channels */}
             <div className="space-y-3 rounded-lg border border-border p-3">

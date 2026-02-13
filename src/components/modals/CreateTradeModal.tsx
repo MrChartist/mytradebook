@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/select";
 import { createTradeSchema, type CreateTradeInput, marketSegments, tradeTypes, timeframes } from "@/lib/schemas";
 import { useTrades } from "@/hooks/useTrades";
-import { Loader2, AlertCircle, Zap, ChevronDown, TrendingUp, Shield, Target, FileText, Send, Radio, Activity } from "lucide-react";
+import { Loader2, AlertCircle, Zap, ChevronDown, TrendingUp, Shield, Target, FileText, Send, Radio, Activity, Link as LinkIcon } from "lucide-react";
 import { TargetChipsInput } from "@/components/trade/TargetChipsInput";
 import { InstrumentPicker, type SelectedInstrument } from "@/components/trade/InstrumentPicker";
 import { PositionSizingCalculator } from "@/components/trade/PositionSizingCalculator";
@@ -132,6 +132,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
   
   // Pre-trade checklist
   const [checkedRules, setCheckedRules] = useState<Set<string>>(new Set());
+  const [chartLink, setChartLink] = useState("");
 
   const {
     register,
@@ -233,6 +234,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
         trailing_sl_trigger_price: trailingSlActivationRule === "after_percent" ? toNumberOrNull(data.trailing_sl_trigger_price) : null,
         auto_track_enabled: autoTrackEnabled,
         telegram_post_enabled: telegramPostEnabled,
+        chart_link: chartLink.trim() || null,
         security_id: selectedInstrument?.security_id || null,
         exchange_segment: selectedInstrument?.exchange_segment || null,
         rating: toNumberOrNull(data.rating),
@@ -261,6 +263,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
     setTrailingSlActivationRule("immediate");
     setSlInvalidationNote("");
     setCheckedRules(new Set());
+    setChartLink("");
   };
 
   const handleClose = () => {
@@ -582,6 +585,22 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
                 )}
               </div>
             )}
+          </div>
+
+          {/* Chart Link */}
+          <div className="space-y-2">
+            <Label htmlFor="chart_link" className="flex items-center gap-1.5">
+              <LinkIcon className="w-3.5 h-3.5 text-primary" />
+              Chart Link
+            </Label>
+            <Input
+              id="chart_link"
+              type="url"
+              placeholder="Paste TradingView / chart URL (optional)"
+              value={chartLink}
+              onChange={(e) => setChartLink(e.target.value)}
+              className="text-sm"
+            />
           </div>
 
           {/* Automation Controls */}

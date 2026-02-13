@@ -20,6 +20,7 @@ export type Database = {
           active_hours_only: boolean | null
           batch_id: string | null
           chain_children: Json | null
+          chart_link: string | null
           condition_type: Database["public"]["Enums"]["alert_condition"]
           cooldown_minutes: number | null
           created_at: string | null
@@ -52,6 +53,7 @@ export type Database = {
           active_hours_only?: boolean | null
           batch_id?: string | null
           chain_children?: Json | null
+          chart_link?: string | null
           condition_type: Database["public"]["Enums"]["alert_condition"]
           cooldown_minutes?: number | null
           created_at?: string | null
@@ -84,6 +86,7 @@ export type Database = {
           active_hours_only?: boolean | null
           batch_id?: string | null
           chain_children?: Json | null
+          chart_link?: string | null
           condition_type?: Database["public"]["Enums"]["alert_condition"]
           cooldown_minutes?: number | null
           created_at?: string | null
@@ -800,6 +803,7 @@ export type Database = {
         Row: {
           auto_track_enabled: boolean | null
           chart_images: Json | null
+          chart_link: string | null
           closed_at: string | null
           closure_reason: string | null
           confidence_score: number | null
@@ -848,6 +852,7 @@ export type Database = {
         Insert: {
           auto_track_enabled?: boolean | null
           chart_images?: Json | null
+          chart_link?: string | null
           closed_at?: string | null
           closure_reason?: string | null
           confidence_score?: number | null
@@ -896,6 +901,7 @@ export type Database = {
         Update: {
           auto_track_enabled?: boolean | null
           chart_images?: Json | null
+          chart_link?: string | null
           closed_at?: string | null
           closure_reason?: string | null
           confidence_score?: number | null

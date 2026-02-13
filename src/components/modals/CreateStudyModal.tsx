@@ -82,6 +82,7 @@ export function CreateStudyModal({ open, onOpenChange }: CreateStudyModalProps) 
   const [attachments, setAttachments] = useState<string[]>([]);
   const [links, setLinks] = useState<string[]>([]);
   const [linkInput, setLinkInput] = useState("");
+  const [chartLink, setChartLink] = useState("");
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [status, setStatus] = useState("Draft");
   const [patternDuration, setPatternDuration] = useState<string>("");
@@ -162,7 +163,10 @@ export function CreateStudyModal({ open, onOpenChange }: CreateStudyModalProps) 
         pattern_duration: patternDuration || null,
         pattern_start_date: patternStartDate || null,
         pattern_end_date: patternEndDate || null,
-        links: links.length > 0 ? links : [],
+        links: [
+          ...(chartLink.trim() ? [chartLink.trim()] : []),
+          ...links,
+        ],
       } as any);
 
       resetForm();
@@ -182,6 +186,7 @@ export function CreateStudyModal({ open, onOpenChange }: CreateStudyModalProps) 
     setAttachments([]);
     setLinks([]);
     setLinkInput("");
+    setChartLink("");
     setAdvancedOpen(false);
     setStatus("Draft");
     setPatternDuration("");
@@ -376,9 +381,25 @@ export function CreateStudyModal({ open, onOpenChange }: CreateStudyModalProps) 
             </div>
           </div>
 
-          {/* 7. Evidence: Charts + Links */}
+          {/* 7. Evidence: Chart Link + Charts + Links */}
           <div className="space-y-2">
             <Label>Evidence (Charts & Links)</Label>
+
+            {/* Dedicated Chart Link */}
+            <div className="space-y-1">
+              <div className="flex items-center gap-1.5">
+                <LinkIcon className="w-3.5 h-3.5 text-primary" />
+                <Label className="text-xs font-medium">Chart Link</Label>
+              </div>
+              <Input
+                type="url"
+                placeholder="Paste TradingView / chart URL (optional)"
+                value={chartLink}
+                onChange={(e) => setChartLink(e.target.value)}
+                className="text-xs h-8"
+              />
+            </div>
+
             <ChartImageUpload
               images={attachments}
               onImagesChange={setAttachments}
