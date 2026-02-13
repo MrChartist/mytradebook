@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -25,10 +25,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, Send } from "lucide-react";
+import { Loader2, Send, Link as LinkIcon } from "lucide-react";
 import {
   createAlertSchema,
   type CreateAlertInput,
@@ -42,6 +43,7 @@ type Alert = Database["public"]["Tables"]["alerts"]["Row"] & {
   notes?: string | null;
   telegram_enabled?: boolean | null;
   exchange?: string | null;
+  chart_link?: string | null;
 };
 
 interface EditAlertModalProps {
@@ -69,6 +71,7 @@ const recurrenceLabels: Record<string, string> = {
 
 export function EditAlertModal({ open, onOpenChange, alert }: EditAlertModalProps) {
   const { updateAlert } = useAlerts();
+  const [chartLink, setChartLink] = useState("");
 
   const form = useForm<CreateAlertInput>({
     resolver: zodResolver(createAlertSchema),
@@ -95,6 +98,7 @@ export function EditAlertModal({ open, onOpenChange, alert }: EditAlertModalProp
         telegram_enabled: alert.telegram_enabled || false,
         exchange: (alert.exchange as "NSE" | "NFO" | "MCX") || "NSE",
       });
+      setChartLink((alert as any).chart_link || "");
     }
   }, [alert, form]);
 
@@ -109,6 +113,7 @@ export function EditAlertModal({ open, onOpenChange, alert }: EditAlertModalProp
       recurrence: data.recurrence,
       notes: data.notes || null,
       telegram_enabled: data.telegram_enabled || false,
+      chart_link: chartLink.trim() || null,
     });
 
     onOpenChange(false);
@@ -248,6 +253,21 @@ export function EditAlertModal({ open, onOpenChange, alert }: EditAlertModalProp
                 </FormItem>
               )}
             />
+
+            {/* Chart Link */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-1.5">
+                <LinkIcon className="w-3.5 h-3.5 text-primary" />
+                Chart Link
+              </Label>
+              <Input
+                type="url"
+                placeholder="Paste TradingView / chart URL (optional)"
+                value={chartLink}
+                onChange={(e) => setChartLink(e.target.value)}
+                className="text-sm"
+              />
+            </div>
 
             {/* Telegram Toggle */}
             <FormField

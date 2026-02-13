@@ -43,6 +43,7 @@ import {
   XCircle,
   TrendingUp,
   Clock,
+  ExternalLink,
 } from "lucide-react";
 import type { Trade } from "@/hooks/useTrades";
 import { useTrades } from "@/hooks/useTrades";
@@ -120,6 +121,7 @@ export function TradeDetailModal({
   const trailingSlTriggerPrice = (trade as any).trailing_sl_trigger_price;
   const timeframe = (trade as any).timeframe;
   const holdingPeriod = (trade as any).holding_period;
+  const chartLink = (trade as any).chart_link;
 
   const handleClose = async () => {
     if (!exitPrice) return;
@@ -281,6 +283,19 @@ export function TradeDetailModal({
               </div>
             )}
           </div>
+        )}
+
+        {/* Chart Link */}
+        {chartLink && (
+          <a
+            href={chartLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-sm text-primary hover:underline p-2 rounded-lg bg-primary/5 border border-primary/20"
+          >
+            <ExternalLink className="w-4 h-4" />
+            <span className="truncate">{chartLink}</span>
+          </a>
         )}
 
         {/* Rating & Confidence */}
