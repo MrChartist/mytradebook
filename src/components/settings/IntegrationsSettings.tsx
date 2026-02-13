@@ -436,6 +436,19 @@ export default function IntegrationsSettings() {
                     </p>
                   </div>
 
+                  {/* Redirect URL instruction */}
+                  <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                    <p className="text-xs font-medium text-amber-700 dark:text-amber-400 mb-1">
+                      ⚠️ Important: Set this Redirect URL in your Dhan API Key settings
+                    </p>
+                    <code className="text-xs bg-accent px-2 py-1 rounded block break-all select-all">
+                      {window.location.origin}/dhan-callback
+                    </code>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Go to web.dhan.co → My Profile → Access DhanHQ APIs → API Key → Edit → Set Redirect URL to the above.
+                    </p>
+                  </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="dhan-client-id-ak">Client ID</Label>
                     <Input
@@ -504,8 +517,11 @@ export default function IntegrationsSettings() {
                     ) : (
                       <Key className="w-4 h-4 mr-2" />
                     )}
-                    Connect with API Key
+                    Authorize with Dhan (one-time login)
                   </Button>
+                  <p className="text-xs text-center text-muted-foreground">
+                    You'll be redirected to Dhan to log in once. After that, tokens auto-renew daily.
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-3">
