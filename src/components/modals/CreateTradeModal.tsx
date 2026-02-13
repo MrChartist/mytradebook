@@ -122,6 +122,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
   // Pre-trade checklist
   const [checkedRules, setCheckedRules] = useState<Set<string>>(new Set());
   const [chartLink, setChartLink] = useState("");
+  const [entryDate, setEntryDate] = useState("");
 
   const {
     register,
@@ -214,7 +215,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
         targets: targets.length > 0 ? targets : null,
         notes: finalNotes || null,
         status: tradeStatus,
-        entry_time: new Date().toISOString(),
+        entry_time: entryDate ? new Date(entryDate).toISOString() : new Date().toISOString(),
         timeframe: data.timeframe || null,
         holding_period: data.holding_period?.trim() || null,
         trailing_sl_enabled: trailingSlEnabled,
@@ -253,6 +254,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
     setSlInvalidationNote("");
     setCheckedRules(new Set());
     setChartLink("");
+    setEntryDate("");
   };
 
   const handleClose = () => {
@@ -387,7 +389,20 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
             showLtpFetch={true}
           />
 
-          {/* Entry Price with Fetch LTP */}
+          {/* Entry Date */}
+          <div className="space-y-2">
+            <Label htmlFor="entry_date">Entry Date & Time</Label>
+            <Input
+              id="entry_date"
+              type="datetime-local"
+              value={entryDate}
+              onChange={(e) => setEntryDate(e.target.value)}
+              max={new Date().toISOString().slice(0, 16)}
+              className="bg-background"
+            />
+            <p className="text-xs text-muted-foreground">Leave blank for current time. Select a past date to backfill trades.</p>
+          </div>
+
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="entry_price">Entry Price</Label>

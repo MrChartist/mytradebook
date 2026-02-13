@@ -49,6 +49,8 @@ import type { Trade } from "@/hooks/useTrades";
 import { useTrades } from "@/hooks/useTrades";
 import { useTradeEvents } from "@/hooks/useTradeEvents";
 import { useTradeTags } from "@/hooks/useTradeTags";
+import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
+import { Trash2 } from "lucide-react";
 
 interface TradeDetailModalProps {
   trade: Trade | null;
@@ -89,7 +91,8 @@ export function TradeDetailModal({
   open,
   onOpenChange,
 }: TradeDetailModalProps) {
-  const { closeTrade, updateTrade } = useTrades();
+  const { closeTrade, updateTrade, deleteTrade } = useTrades();
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const { events, addEvent } = useTradeEvents(trade?.id || null);
   const tags = useTradeTags(trade?.id || null);
 
@@ -949,6 +952,17 @@ export function TradeDetailModal({
           </div>
         )}
 
+        {/* Delete Trade Button */}
+        <Separator />
+        <Button
+          variant="outline"
+          className="w-full text-loss border-loss/30 hover:bg-loss/10"
+          onClick={() => setDeleteModalOpen(true)}
+        >
+          <Trash2 className="w-4 h-4 mr-2" />
+          Delete Trade
+        </Button>
+
         {/* Post Trade Review Modal */}
         <PostTradeReviewModal
           tradeId={trade.id}
@@ -959,6 +973,20 @@ export function TradeDetailModal({
           onComplete={() => {
             onOpenChange(false);
           }}
+        />
+
+        {/* Confirm Delete Modal */}
+        <ConfirmDeleteModal
+          open={deleteModalOpen}
+          onOpenChange={setDeleteModalOpen}
+          onConfirm={async () => {
+            await deleteTrade.mutateAsync(trade.id);
+            setDeleteModalOpen(false);
+            onOpenChange(false);
+          }}
+          isLoading={deleteTrade.isPending}
+          title="Delete Trade"
+          description={`Are you sure you want to delete the trade for "${trade.symbol}"? This action cannot be undone.`}
         />
       </DialogContent>
     </Dialog>

@@ -24,6 +24,7 @@ import { useTrades, type TradeFilters } from "@/hooks/useTrades";
 import { useTradeTemplates } from "@/hooks/useTradeTemplates";
 import { CreateTradeModal } from "@/components/modals/CreateTradeModal";
 import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
+import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 import { useDhanIntegration } from "@/hooks/useDhanIntegration";
 import { useLivePrices } from "@/hooks/useLivePrices";
 import { MultiLegStrategyModal } from "@/components/trade/MultiLegStrategyModal";
@@ -83,6 +84,8 @@ export default function Trades() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkMode, setBulkMode] = useState(false);
   const [activeStatFilter, setActiveStatFilter] = useState<string | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [tradeToDelete, setTradeToDelete] = useState<Trade | null>(null);
 
   const filters: TradeFilters = {
     ...(statusFilter !== "ALL" && { status: statusFilter }),
@@ -90,7 +93,7 @@ export default function Trades() {
     ...(searchQuery && { symbol: searchQuery }),
   };
 
-  const { trades, isLoading, summary, closeTrade, updateTrade } = useTrades(filters);
+  const { trades, isLoading, summary, closeTrade, updateTrade, deleteTrade } = useTrades(filters);
   const { syncPortfolio, monitorTrades, isSyncing } = useDhanIntegration();
   const { templates } = useTradeTemplates();
 
@@ -431,6 +434,7 @@ export default function Trades() {
               ...(trade.status === "CANCELLED" ? [] : [
                 { label: "Cancel", icon: XCircle, onClick: () => updateTrade.mutate({ id: trade.id, status: "CANCELLED" }), variant: "destructive" as const },
               ]),
+              { label: "Delete", icon: Trash2, onClick: () => { setTradeToDelete(trade); setDeleteModalOpen(true); }, variant: "destructive" as const },
             ];
 
             return (
@@ -472,6 +476,20 @@ export default function Trades() {
       <CreateTradeModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
       <TradeDetailModal trade={selectedTrade} open={!!selectedTrade} onOpenChange={(open) => !open && setSelectedTrade(null)} />
       <MultiLegStrategyModal open={strategyModalOpen} onOpenChange={setStrategyModalOpen} />
+      <ConfirmDeleteModal
+        open={deleteModalOpen}
+        onOpenChange={setDeleteModalOpen}
+        onConfirm={async () => {
+          if (tradeToDelete) {
+            await deleteTrade.mutateAsync(tradeToDelete.id);
+            setDeleteModalOpen(false);
+            setTradeToDelete(null);
+          }
+        }}
+        isLoading={deleteTrade.isPending}
+        title="Delete Trade"
+        description={`Are you sure you want to delete the trade for "${tradeToDelete?.symbol}"? This action cannot be undone.`}
+      />
     </div>
   );
 }
