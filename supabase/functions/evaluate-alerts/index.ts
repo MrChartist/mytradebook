@@ -28,6 +28,7 @@ interface Alert {
   snooze_until: string | null;
   expires_at: string | null;
   previous_ltp: number | null;
+  chain_children: Record<string, unknown>[] | null;
 }
 
 serve(async (req) => {
@@ -194,6 +195,28 @@ serve(async (req) => {
         if (alert.recurrence === "ONCE") updates.active = false;
 
         await supabase.from("alerts").update(updates).eq("id", alert.id);
+
+        // Alert Chains: create child alerts when parent triggers
+        if ((alert as any).chain_children) {
+          try {
+            const children = (alert as any).chain_children as Array<Record<string, unknown>>;
+            if (Array.isArray(children) && children.length > 0) {
+              const childInserts = children.map((child: any) => ({
+                user_id: alert.user_id,
+                symbol: child.symbol || alert.symbol,
+                condition_type: child.condition_type || "PRICE_GT",
+                threshold: child.threshold,
+                recurrence: child.recurrence || "ONCE",
+                notes: child.notes || `Chained from ${alert.symbol} alert`,
+                telegram_enabled: child.telegram_enabled ?? alert.telegram_enabled,
+                exchange: child.exchange || alert.exchange || "NSE",
+                active: true,
+              }));
+              await supabase.from("alerts").insert(childInserts);
+              console.log(`Created ${childInserts.length} chained alerts from ${alert.id}`);
+            }
+          } catch (e) { console.error(`Chain creation failed for ${alert.id}:`, e); }
+        }
 
         // Send Telegram
         if (alert.telegram_enabled && TELEGRAM_BOT_TOKEN) {

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 import { InstrumentPicker, type SelectedInstrument } from "@/components/trade/InstrumentPicker";
+import { CreateAlertModal } from "@/components/modals/CreateAlertModal";
 import { useWatchlists, useWatchlistItems, type Watchlist } from "@/hooks/useWatchlists";
 import { cn } from "@/lib/utils";
 
@@ -234,6 +235,8 @@ function WatchlistDetail({
 }) {
   const { items, isLoading, addItem, removeItem } = useWatchlistItems(watchlist.id);
   const [addingSymbol, setAddingSymbol] = useState(false);
+  const [alertModalOpen, setAlertModalOpen] = useState(false);
+  const [alertPrefill, setAlertPrefill] = useState<{ symbol: string; exchange: string } | null>(null);
 
   const filteredItems = searchQuery
     ? items.filter(i => i.symbol.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -314,7 +317,13 @@ function WatchlistDetail({
                 </div>
               </div>
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button variant="ghost" size="icon" className="h-7 w-7" title="Create alert for this symbol">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  title="Create alert for this symbol"
+                  onClick={() => { setAlertPrefill({ symbol: item.symbol, exchange: item.exchange || "NSE" }); setAlertModalOpen(true); }}
+                >
                   <Bell className="w-3.5 h-3.5" />
                 </Button>
                 <Button
@@ -330,6 +339,14 @@ function WatchlistDetail({
           ))}
         </div>
       )}
+
+      {/* Quick Alert Modal */}
+      <CreateAlertModal
+        open={alertModalOpen}
+        onOpenChange={setAlertModalOpen}
+        prefillSymbol={alertPrefill?.symbol}
+        prefillExchange={alertPrefill?.exchange}
+      />
     </div>
   );
 }
