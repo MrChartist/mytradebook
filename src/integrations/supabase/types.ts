@@ -536,6 +536,42 @@ export type Database = {
         }
         Relationships: []
       }
+      telegram_chats: {
+        Row: {
+          bot_token: string | null
+          bot_username: string | null
+          chat_id: string
+          created_at: string
+          enabled: boolean
+          id: string
+          label: string
+          segments: string[]
+          user_id: string
+        }
+        Insert: {
+          bot_token?: string | null
+          bot_username?: string | null
+          chat_id: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          label?: string
+          segments?: string[]
+          user_id: string
+        }
+        Update: {
+          bot_token?: string | null
+          bot_username?: string | null
+          chat_id?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          label?: string
+          segments?: string[]
+          user_id?: string
+        }
+        Relationships: []
+      }
       trade_candlesticks: {
         Row: {
           candlestick_id: string
