@@ -5,6 +5,11 @@ interface PriceData {
   ltp: number;
   change: number;
   changePercent: number;
+  open?: number;
+  high?: number;
+  low?: number;
+  prevClose?: number;
+  volume?: number;
 }
 
 interface UseLivePricesResult {
