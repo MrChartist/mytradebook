@@ -14,7 +14,7 @@ import Trades from "./pages/Trades";
 import Journal from "./pages/Journal";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
-import Watchlist from "./pages/Watchlist";
+
 import Calendar from "./pages/Calendar";
 import Mistakes from "./pages/Mistakes";
 import Analytics from "./pages/Analytics";
@@ -46,7 +46,7 @@ const App = () => (
               { path: "/journal", element: <Journal /> },
               { path: "/reports", element: <Reports /> },
               { path: "/settings", element: <Settings /> },
-              { path: "/watchlist", element: <Watchlist /> },
+              
               { path: "/calendar", element: <Calendar /> },
               { path: "/mistakes", element: <Mistakes /> },
               { path: "/analytics", element: <Analytics /> },

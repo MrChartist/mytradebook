@@ -5,7 +5,6 @@ import {
   TrendingUp,
   Bell,
   BookOpen,
-  Eye,
   CalendarDays,
   AlertTriangle,
   BarChart3,
@@ -22,7 +21,7 @@ const mainNavItems = [
   { icon: TrendingUp, label: "Trades", path: "/trades" },
   { icon: Bell, label: "Alerts", path: "/alerts" },
   { icon: BookOpen, label: "Studies", path: "/studies" },
-  { icon: Eye, label: "Watchlist", path: "/watchlist" },
+  
 ];
 
 const analyticsNavItems = [
