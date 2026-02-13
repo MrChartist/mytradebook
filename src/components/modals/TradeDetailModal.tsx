@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { PostTradeReviewModal } from "@/components/modals/PostTradeReviewModal";
 import {
   Dialog,
@@ -354,7 +355,12 @@ export function TradeDetailModal({
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Entry Date & Time</Label>
-                <Input type="datetime-local" value={editForm.entry_time} onChange={(e) => setEditForm({ ...editForm, entry_time: e.target.value })} className="h-8" />
+                <DateTimePicker
+                  value={editForm.entry_time ? new Date(editForm.entry_time) : null}
+                  onChange={(d) => setEditForm({ ...editForm, entry_time: d ? d.toISOString().slice(0, 16) : "" })}
+                  maxDate={new Date()}
+                  className="h-8"
+                />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Timeframe</Label>
