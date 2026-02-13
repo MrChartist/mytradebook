@@ -627,6 +627,8 @@ export type Database = {
           dhan_enabled: boolean | null
           dhan_verified_at: string | null
           id: string
+          ra_disclaimer: string | null
+          ra_public_mode: boolean | null
           telegram_chat_id: string | null
           telegram_enabled: boolean | null
           telegram_link_code: string | null
@@ -648,6 +650,8 @@ export type Database = {
           dhan_enabled?: boolean | null
           dhan_verified_at?: string | null
           id?: string
+          ra_disclaimer?: string | null
+          ra_public_mode?: boolean | null
           telegram_chat_id?: string | null
           telegram_enabled?: boolean | null
           telegram_link_code?: string | null
@@ -669,6 +673,8 @@ export type Database = {
           dhan_enabled?: boolean | null
           dhan_verified_at?: string | null
           id?: string
+          ra_disclaimer?: string | null
+          ra_public_mode?: boolean | null
           telegram_chat_id?: string | null
           telegram_enabled?: boolean | null
           telegram_link_code?: string | null

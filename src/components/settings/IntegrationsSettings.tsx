@@ -2,8 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import { 
   Loader2, Send, RefreshCw, CheckCircle, 
   Smartphone, Database, Clock, AlertTriangle, 
-  MessageCircle, Unplug, Key, Eye, EyeOff
+  MessageCircle, Unplug, Key, Eye, EyeOff, Shield
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -464,6 +466,55 @@ export default function IntegrationsSettings() {
                 Verify & Connect
               </Button>
             </>
+          )}
+        </div>
+      </div>
+
+      {/* RA Public Mode */}
+      <div className="surface-card p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
+            <Shield className="w-5 h-5 text-amber-500" />
+          </div>
+          <div>
+            <h3 className="font-semibold">RA Public Mode</h3>
+            <p className="text-sm text-muted-foreground">SEBI-compliant messaging for public channels</p>
+          </div>
+          <div className="ml-auto">
+            <Switch
+              checked={settings?.ra_public_mode ?? false}
+              onCheckedChange={(checked) => {
+                updateSettings.mutate({ ra_public_mode: checked } as any);
+              }}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="p-3 rounded-lg bg-accent/50 border border-border">
+            <p className="text-sm text-muted-foreground">
+              When enabled, all Telegram notifications will <strong>hide quantity/lots</strong> and append a compliance disclaimer. Use this for public channels and research distribution.
+            </p>
+          </div>
+
+          {settings?.ra_public_mode && (
+            <div className="space-y-2">
+              <Label htmlFor="ra-disclaimer">Custom Disclaimer (optional)</Label>
+              <Textarea
+                id="ra-disclaimer"
+                placeholder="e.g., Research/Education only. Not investment advice. RA: MyBrand | Reg No: INH... | Disclosures: link"
+                defaultValue={settings?.ra_disclaimer || ""}
+                className="resize-none text-sm"
+                rows={3}
+                onBlur={(e) => {
+                  const val = e.target.value.trim();
+                  updateSettings.mutate({ ra_disclaimer: val || null } as any);
+                }}
+              />
+              <p className="text-xs text-muted-foreground">
+                Leave blank for default: "For educational/research purpose only. Not a buy/sell recommendation."
+              </p>
+            </div>
           )}
         </div>
       </div>
