@@ -23,7 +23,7 @@ interface SortSelectProps {
 export function SortSelect({ value, onValueChange, options, className }: SortSelectProps) {
   return (
     <Select value={value} onValueChange={onValueChange}>
-      <SelectTrigger className={cn("w-[160px] h-8 text-xs border-border", className)}>
+      <SelectTrigger className={cn("w-[160px] h-8 text-xs border-border rounded-xl", className)}>
         <div className="flex items-center gap-1.5">
           <ArrowUpDown className="w-3 h-3 text-muted-foreground" />
           <SelectValue />

@@ -10,9 +10,7 @@ interface StatCardProps {
   changeType?: "profit" | "loss" | "neutral";
   icon: LucideIcon;
   subtitle?: string;
-  /** Navigation path when clicked */
   href?: string;
-  /** Click handler (alternative to href) */
   onClick?: () => void;
 }
 
@@ -21,11 +19,8 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
     const navigate = useNavigate();
 
     const handleClick = () => {
-      if (onClick) {
-        onClick();
-      } else if (href) {
-        navigate(href);
-      }
+      if (onClick) onClick();
+      else if (href) navigate(href);
     };
 
     const isClickable = !!href || !!onClick;
@@ -39,14 +34,17 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         onClick={isClickable ? handleClick : undefined}
         onKeyDown={isClickable ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleClick(); } } : undefined}
         className={cn(
-          "surface-card-hover p-5 group transition-all duration-200",
-          isClickable && "cursor-pointer hover:border-primary/20 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-[0.98]"
+          "premium-card-hover p-5 group",
+          isClickable && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-[0.98]"
         )}
       >
-        <div className="flex items-start justify-between">
-          <div className="space-y-1.5">
-            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">{title}</p>
-            <p className="text-2xl font-bold tracking-tight">{value}</p>
+        {/* Decorative dot pattern */}
+        <div className="absolute top-0 right-0 w-24 h-24 dot-pattern opacity-40 rounded-bl-3xl" />
+
+        <div className="flex items-start justify-between relative">
+          <div className="space-y-2">
+            <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">{title}</p>
+            <p className="text-2xl font-bold tracking-tight font-mono">{value}</p>
             {change && (
               <p
                 className={cn(
@@ -65,10 +63,10 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
           </div>
           <div
             className={cn(
-              "w-10 h-10 rounded-xl flex items-center justify-center",
-              changeType === "profit" && "bg-profit/8",
-              changeType === "loss" && "bg-loss/8",
-              changeType === "neutral" && "bg-primary/8"
+              "inner-panel !p-2.5 !rounded-xl",
+              changeType === "profit" && "!bg-profit/8 !border-profit/15",
+              changeType === "loss" && "!bg-loss/8 !border-loss/15",
+              changeType === "neutral" && "!bg-primary/8 !border-primary/15"
             )}
           >
             <Icon
