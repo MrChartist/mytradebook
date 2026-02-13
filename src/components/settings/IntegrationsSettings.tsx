@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import TelegramSettings from "@/components/settings/TelegramSettings";
+import { cn } from "@/lib/utils";
 
 export default function IntegrationsSettings() {
   const { user } = useAuth();
@@ -31,6 +32,13 @@ export default function IntegrationsSettings() {
   const [showDhanToken, setShowDhanToken] = useState(false);
   const [verifyingDhan, setVerifyingDhan] = useState(false);
   const [disconnectingDhan, setDisconnectingDhan] = useState(false);
+  const [dhanAuthMode, setDhanAuthMode] = useState<"token" | "apikey">("apikey");
+  
+  // API Key mode state
+  const [dhanApiKey, setDhanApiKey] = useState("");
+  const [dhanApiSecret, setDhanApiSecret] = useState("");
+  const [showApiSecret, setShowApiSecret] = useState(false);
+  const [connectingApiKey, setConnectingApiKey] = useState(false);
   
   // Dhan sync state
   const [syncingOrders, setSyncingOrders] = useState(false);
@@ -164,6 +172,45 @@ export default function IntegrationsSettings() {
       toast.error(e instanceof Error ? e.message : "Verification failed");
     } finally {
       setVerifyingDhan(false);
+    }
+  };
+
+  const handleConnectApiKey = async () => {
+    if (!user?.id || !dhanApiKey || !dhanApiSecret) {
+      toast.error("Please enter both API Key and API Secret");
+      return;
+    }
+    
+    setConnectingApiKey(true);
+    try {
+      const redirectUrl = `${window.location.origin}/dhan-callback`;
+      
+      const { data, error } = await supabase.functions.invoke("dhan-auth", {
+        body: {
+          action: "generate-consent",
+          user_id: user.id,
+          api_key: dhanApiKey,
+          api_secret: dhanApiSecret,
+          client_id: dhanClientId || "",
+          redirect_url: redirectUrl,
+        },
+      });
+      
+      if (error) throw error;
+      
+      if (data?.success && data?.auth_url) {
+        // Store consent ID for callback
+        localStorage.setItem("dhan_consent_id", data.consent_id);
+        // Redirect to Dhan authorization page
+        window.location.href = data.auth_url;
+      } else {
+        toast.error(data?.error || "Failed to initiate Dhan authorization");
+      }
+    } catch (e) {
+      console.error("Dhan API Key error:", e);
+      toast.error(e instanceof Error ? e.message : "Connection failed");
+    } finally {
+      setConnectingApiKey(false);
     }
   };
 
@@ -350,64 +397,182 @@ export default function IntegrationsSettings() {
             </>
           ) : (
             <>
-              <div className="grid gap-3">
-                <div className="space-y-2">
-                  <Label htmlFor="dhan-client-id">Client ID</Label>
-                  <Input
-                    id="dhan-client-id"
-                    value={dhanClientId}
-                    onChange={(e) => setDhanClientId(e.target.value)}
-                    className="bg-accent border-border"
-                    placeholder="Your Dhan Client ID"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="dhan-token">Access Token</Label>
-                  <div className="relative">
-                    <Input
-                      id="dhan-token"
-                      type={showDhanToken ? "text" : "password"}
-                      value={dhanAccessToken}
-                      onChange={(e) => setDhanAccessToken(e.target.value)}
-                      className="bg-accent border-border pr-10"
-                      placeholder="Your Dhan Access Token"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
-                      onClick={() => setShowDhanToken(!showDhanToken)}
-                    >
-                      {showDhanToken ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </Button>
+              {/* Auth mode tabs */}
+              <div className="flex gap-1 p-1 rounded-lg bg-accent">
+                <button
+                  type="button"
+                  onClick={() => setDhanAuthMode("apikey")}
+                  className={cn(
+                    "flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors",
+                    dhanAuthMode === "apikey"
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Key className="w-3.5 h-3.5 inline mr-1.5" />
+                  API Key (Recommended)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDhanAuthMode("token")}
+                  className={cn(
+                    "flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors",
+                    dhanAuthMode === "token"
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Shield className="w-3.5 h-3.5 inline mr-1.5" />
+                  Access Token
+                </button>
+              </div>
+
+              {dhanAuthMode === "apikey" ? (
+                <div className="space-y-3">
+                  <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+                    <p className="text-xs text-muted-foreground">
+                      <strong>API Key</strong> is valid for 12 months. After setup, your access token auto-renews daily — no manual paste needed.
+                    </p>
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="dhan-client-id-ak">Client ID</Label>
+                    <Input
+                      id="dhan-client-id-ak"
+                      value={dhanClientId}
+                      onChange={(e) => setDhanClientId(e.target.value)}
+                      className="bg-accent border-border"
+                      placeholder="Your Dhan Client ID"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="dhan-api-key">API Key</Label>
+                    <Input
+                      id="dhan-api-key"
+                      value={dhanApiKey}
+                      onChange={(e) => setDhanApiKey(e.target.value)}
+                      className="bg-accent border-border"
+                      placeholder="Your Dhan API Key"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="dhan-api-secret">API Secret</Label>
+                    <div className="relative">
+                      <Input
+                        id="dhan-api-secret"
+                        type={showApiSecret ? "text" : "password"}
+                        value={dhanApiSecret}
+                        onChange={(e) => setDhanApiSecret(e.target.value)}
+                        className="bg-accent border-border pr-10"
+                        placeholder="Your Dhan API Secret"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+                        onClick={() => setShowApiSecret(!showApiSecret)}
+                      >
+                        {showApiSecret ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </Button>
+                    </div>
+                  </div>
+
                   <p className="text-xs text-muted-foreground">
-                    Get your token from{" "}
-                    <a 
-                      href="https://login.dhan.co/register?brand=dhan&referral=AIQU0151" 
-                      target="_blank" 
+                    Generate API Key & Secret from{" "}
+                    <a
+                      href="https://web.dhan.co"
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline"
                     >
-                      Dhan API Portal
+                      web.dhan.co
                     </a>
+                    {" → My Profile → Access DhanHQ APIs → Toggle to 'API key'"}
                   </p>
+
+                  <Button
+                    onClick={handleConnectApiKey}
+                    disabled={connectingApiKey || !dhanApiKey || !dhanApiSecret}
+                    className="w-full"
+                  >
+                    {connectingApiKey ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <Key className="w-4 h-4 mr-2" />
+                    )}
+                    Connect with API Key
+                  </Button>
                 </div>
-              </div>
-              
-              <Button
-                onClick={handleVerifyDhan}
-                disabled={verifyingDhan || !dhanClientId || !dhanAccessToken}
-              >
-                {verifyingDhan ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <Key className="w-4 h-4 mr-2" />
-                )}
-                Verify & Connect
-              </Button>
+              ) : (
+                <div className="space-y-3">
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                    <p className="text-xs text-muted-foreground">
+                      Access tokens expire in <strong>24 hours</strong>. You'll need to paste a new token daily from Dhan Web.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="dhan-client-id-tk">Client ID</Label>
+                    <Input
+                      id="dhan-client-id-tk"
+                      value={dhanClientId}
+                      onChange={(e) => setDhanClientId(e.target.value)}
+                      className="bg-accent border-border"
+                      placeholder="Your Dhan Client ID"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="dhan-token">Access Token</Label>
+                    <div className="relative">
+                      <Input
+                        id="dhan-token"
+                        type={showDhanToken ? "text" : "password"}
+                        value={dhanAccessToken}
+                        onChange={(e) => setDhanAccessToken(e.target.value)}
+                        className="bg-accent border-border pr-10"
+                        placeholder="Your Dhan Access Token"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+                        onClick={() => setShowDhanToken(!showDhanToken)}
+                      >
+                        {showDhanToken ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Get your token from{" "}
+                      <a 
+                        href="https://login.dhan.co/register?brand=dhan&referral=AIQU0151" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        Dhan API Portal
+                      </a>
+                    </p>
+                  </div>
+                  
+                  <Button
+                    onClick={handleVerifyDhan}
+                    disabled={verifyingDhan || !dhanClientId || !dhanAccessToken}
+                    className="w-full"
+                  >
+                    {verifyingDhan ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <Key className="w-4 h-4 mr-2" />
+                    )}
+                    Verify & Connect
+                  </Button>
+                </div>
+              )}
             </>
           )}
         </div>

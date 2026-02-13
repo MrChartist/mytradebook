@@ -246,6 +246,8 @@ Deno.serve(async (req) => {
           dhan_enabled: false,
           dhan_account_name: null,
           dhan_token_expiry: null,
+          dhan_api_key: null,
+          dhan_api_secret: null,
         } as any)
         .eq("user_id", user_id);
 

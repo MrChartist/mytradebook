@@ -37,17 +37,25 @@ async function resolveUserToken(
   userId: string | undefined,
   supabase: ReturnType<typeof createClient> | null
 ) {
-  if (!userId || !supabase) return { token: null, clientId: null };
+  if (!userId || !supabase) return { token: null, clientId: null, hasApiKey: false };
   const { data } = await supabase
     .from("user_settings")
-    .select("dhan_access_token, dhan_client_id, dhan_enabled")
+    .select("dhan_access_token, dhan_client_id, dhan_enabled, dhan_api_key, dhan_api_secret")
     .eq("user_id", userId)
     .single();
   if (data?.dhan_access_token && data?.dhan_client_id && data?.dhan_enabled) {
     console.log("Using per-user Dhan token");
-    return { token: data.dhan_access_token, clientId: data.dhan_client_id };
+    return { 
+      token: data.dhan_access_token, 
+      clientId: data.dhan_client_id,
+      hasApiKey: !!(data.dhan_api_key && data.dhan_api_secret),
+    };
   }
-  return { token: null, clientId: null };
+  return { 
+    token: null, 
+    clientId: null, 
+    hasApiKey: !!(data?.dhan_api_key && data?.dhan_api_secret),
+  };
 }
 
 async function buildSecurityIdMap(
@@ -247,7 +255,10 @@ serve(async (req) => {
             JSON.stringify({
               success: false,
               error: "token_expired",
-              message: "Dhan access token is invalid or expired. Update it in Settings.",
+              message: userCreds.hasApiKey
+                ? "Dhan token expired. Go to Settings to re-authorize with your API Key."
+                : "Dhan access token is invalid or expired. Update it in Settings.",
+              has_api_key: userCreds.hasApiKey,
               prices: {},
               timestamp,
             }),

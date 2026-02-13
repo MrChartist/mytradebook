@@ -1028,6 +1028,8 @@ export type Database = {
           default_sl_percent: number | null
           dhan_access_token: string | null
           dhan_account_name: string | null
+          dhan_api_key: string | null
+          dhan_api_secret: string | null
           dhan_client_id: string | null
           dhan_enabled: boolean | null
           dhan_token_expiry: string | null
@@ -1056,6 +1058,8 @@ export type Database = {
           default_sl_percent?: number | null
           dhan_access_token?: string | null
           dhan_account_name?: string | null
+          dhan_api_key?: string | null
+          dhan_api_secret?: string | null
           dhan_client_id?: string | null
           dhan_enabled?: boolean | null
           dhan_token_expiry?: string | null
@@ -1084,6 +1088,8 @@ export type Database = {
           default_sl_percent?: number | null
           dhan_access_token?: string | null
           dhan_account_name?: string | null
+          dhan_api_key?: string | null
+          dhan_api_secret?: string | null
           dhan_client_id?: string | null
           dhan_enabled?: boolean | null
           dhan_token_expiry?: string | null
