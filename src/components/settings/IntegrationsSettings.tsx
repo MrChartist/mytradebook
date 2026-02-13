@@ -275,6 +275,9 @@ export default function IntegrationsSettings() {
                 </div>
               </div>
 
+              {/* Token validity display */}
+              <TokenValidityCard settings={settings} userId={user?.id} />
+
               {/* Auto-Sync Toggle */}
               <div className="p-3 rounded-lg border border-border bg-accent/30 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -553,6 +556,120 @@ export default function IntegrationsSettings() {
             Auto-syncs daily at 6 AM IST. Use "Sync Now" for new listings and F&O contracts.
           </p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Token Validity Card ──────────────────────────────────────────
+
+function TokenValidityCard({ settings, userId }: { settings: any; userId?: string }) {
+  const [testing, setTesting] = useState(false);
+  const [renewing, setRenewing] = useState(false);
+  const [tokenStatus, setTokenStatus] = useState<"active" | "expired" | "unknown">("unknown");
+  const [tokenExpiry, setTokenExpiry] = useState<string | null>(settings?.dhan_token_expiry || null);
+
+  useEffect(() => {
+    if (tokenExpiry) {
+      const exp = new Date(tokenExpiry);
+      setTokenStatus(exp > new Date() ? "active" : "expired");
+    }
+  }, [tokenExpiry]);
+
+  const handleTest = async () => {
+    if (!userId) return;
+    setTesting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("dhan-verify", {
+        body: { action: "test", user_id: userId },
+      });
+      if (error) throw error;
+      if (data?.success) {
+        setTokenStatus("active");
+        setTokenExpiry(data.token_expiry);
+        toast.success(`Token active${data.account_name ? ` — ${data.account_name}` : ""}`);
+      } else {
+        setTokenStatus("expired");
+        setTokenExpiry(null);
+        toast.error(data?.error || "Token check failed");
+      }
+    } catch (e: any) {
+      toast.error(e?.message || "Test failed");
+    } finally {
+      setTesting(false);
+    }
+  };
+
+  const handleRenew = async () => {
+    if (!userId) return;
+    setRenewing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("dhan-verify", {
+        body: { action: "renew", user_id: userId },
+      });
+      if (error) throw error;
+      if (data?.success) {
+        setTokenStatus("active");
+        setTokenExpiry(data.token_expiry);
+        toast.success("Token renewed! Valid for another 24 hours.");
+      } else {
+        toast.error(data?.error || "Renewal failed. Generate a new token from Dhan Web.");
+      }
+    } catch (e: any) {
+      toast.error(e?.message || "Renewal failed");
+    } finally {
+      setRenewing(false);
+    }
+  };
+
+  return (
+    <div className="p-3 rounded-lg border border-border bg-accent/30 space-y-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div
+            className={`w-2 h-2 rounded-full ${
+              tokenStatus === "active"
+                ? "bg-profit"
+                : tokenStatus === "expired"
+                ? "bg-loss"
+                : "bg-muted-foreground"
+            }`}
+          />
+          <span className="text-sm font-medium">
+            Token: {tokenStatus === "active" ? "Active" : tokenStatus === "expired" ? "Expired" : "Unknown"}
+          </span>
+        </div>
+        {tokenExpiry && tokenStatus === "active" && (
+          <span className="text-xs text-muted-foreground">
+            Expires: {new Date(tokenExpiry).toLocaleString()}
+          </span>
+        )}
+      </div>
+
+      {tokenStatus === "expired" && (
+        <p className="text-xs text-loss">
+          Token expired. Renew it below or generate a new token from{" "}
+          <a
+            href="https://login.dhan.co"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+          >
+            Dhan Web
+          </a>
+          .
+        </p>
+      )}
+
+      <div className="flex gap-2">
+        <Button variant="outline" size="sm" onClick={handleTest} disabled={testing}>
+          {testing ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5 mr-1" />}
+          Test Connection
+        </Button>
+        <Button variant="outline" size="sm" onClick={handleRenew} disabled={renewing}>
+          {renewing ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5 mr-1" />}
+          Renew Token
+        </Button>
       </div>
     </div>
   );
