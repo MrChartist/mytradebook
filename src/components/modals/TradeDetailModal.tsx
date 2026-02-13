@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { PostTradeReviewModal } from "@/components/modals/PostTradeReviewModal";
 import {
   Dialog,
   DialogContent,
@@ -95,6 +96,7 @@ export function TradeDetailModal({
   const [exitPrice, setExitPrice] = useState("");
   const [editingSL, setEditingSL] = useState(false);
   const [newSL, setNewSL] = useState("");
+  const [showReview, setShowReview] = useState(false);
   
   // Add event state
   const [addingEvent, setAddingEvent] = useState(false);
@@ -121,14 +123,15 @@ export function TradeDetailModal({
 
   const handleClose = async () => {
     if (!exitPrice) return;
-    await closeTrade.mutateAsync({
+    const result = await closeTrade.mutateAsync({
       id: trade.id,
       exitPrice: parseFloat(exitPrice),
       closureReason: "MANUAL",
     });
     setIsClosing(false);
     setExitPrice("");
-    onOpenChange(false);
+    // Show post-trade review prompt
+    setShowReview(true);
   };
 
   const handleUpdateSL = async () => {
@@ -872,15 +875,76 @@ export function TradeDetailModal({
         )}
 
         {trade.status === "CLOSED" && (
-          <div className="p-3 rounded-lg bg-muted text-center">
-            <span className="text-sm text-muted-foreground">
-              Trade closed on{" "}
-              {trade.closed_at &&
-                new Date(trade.closed_at).toLocaleDateString("en-IN")}
-              {trade.closure_reason && ` • ${trade.closure_reason}`}
-            </span>
+          <div className="space-y-3">
+            <div className="p-3 rounded-lg bg-muted text-center">
+              <span className="text-sm text-muted-foreground">
+                Trade closed on{" "}
+                {trade.closed_at &&
+                  new Date(trade.closed_at).toLocaleDateString("en-IN")}
+                {trade.closure_reason && ` • ${trade.closure_reason}`}
+              </span>
+            </div>
+
+            {/* Post-Trade Review Display */}
+            {(trade as any).reviewed_at ? (
+              <div className="p-4 rounded-lg border border-primary/20 bg-primary/5 space-y-3">
+                <h4 className="text-sm font-semibold flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-profit" />
+                  Post-Trade Review
+                </h4>
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div className="p-2 rounded bg-background text-center">
+                    <p className="text-muted-foreground">Rating</p>
+                    <p className="font-bold">{(trade as any).review_rating || "—"}/5</p>
+                  </div>
+                  <div className="p-2 rounded bg-background text-center">
+                    <p className="text-muted-foreground">Execution</p>
+                    <p className="font-bold">{(trade as any).review_execution_quality || "—"}/5</p>
+                  </div>
+                  <div className="p-2 rounded bg-background text-center">
+                    <p className="text-muted-foreground">Rules</p>
+                    <p className={cn("font-bold", (trade as any).review_rules_followed ? "text-profit" : "text-loss")}>
+                      {(trade as any).review_rules_followed ? "✓ Yes" : "✗ No"}
+                    </p>
+                  </div>
+                </div>
+                {(trade as any).review_what_worked && (
+                  <div>
+                    <p className="text-xs text-muted-foreground">What worked:</p>
+                    <p className="text-sm">{(trade as any).review_what_worked}</p>
+                  </div>
+                )}
+                {(trade as any).review_what_failed && (
+                  <div>
+                    <p className="text-xs text-muted-foreground">What failed:</p>
+                    <p className="text-sm">{(trade as any).review_what_failed}</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setShowReview(true)}
+              >
+                <Star className="w-4 h-4 mr-2" />
+                Add Post-Trade Review
+              </Button>
+            )}
           </div>
         )}
+
+        {/* Post Trade Review Modal */}
+        <PostTradeReviewModal
+          tradeId={trade.id}
+          symbol={trade.symbol}
+          pnl={pnl}
+          open={showReview}
+          onOpenChange={setShowReview}
+          onComplete={() => {
+            onOpenChange(false);
+          }}
+        />
       </DialogContent>
     </Dialog>
   );
