@@ -929,6 +929,33 @@ export type Database = {
           },
         ]
       }
+      trading_rules: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          id: string
+          rule_text: string
+          sort_order: number | null
+          user_id: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string
+          rule_text: string
+          sort_order?: number | null
+          user_id: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string
+          rule_text?: string
+          sort_order?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null

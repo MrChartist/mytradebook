@@ -1,10 +1,14 @@
 import { Sidebar } from "./Sidebar";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 export function MainLayout({ children }: MainLayoutProps) {
+  // Global keyboard shortcuts — modal triggers are handled at page level
+  useKeyboardShortcuts({});
+
   return (
     <div className="min-h-screen bg-background">
       <Sidebar />

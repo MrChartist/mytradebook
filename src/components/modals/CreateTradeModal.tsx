@@ -33,6 +33,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { supabase } from "@/integrations/supabase/client";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { cn } from "@/lib/utils";
+import { TradingRulesChecklist } from "@/components/trade/TradingRulesChecklist";
 
 interface CreateTradeModalProps {
   open: boolean;
@@ -128,6 +129,9 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
   
   // SL invalidation note
   const [slInvalidationNote, setSlInvalidationNote] = useState("");
+  
+  // Pre-trade checklist
+  const [checkedRules, setCheckedRules] = useState<Set<string>>(new Set());
 
   const {
     register,
@@ -256,6 +260,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
     setTrailingSlMethod("fixed_percent");
     setTrailingSlActivationRule("immediate");
     setSlInvalidationNote("");
+    setCheckedRules(new Set());
   };
 
   const handleClose = () => {
@@ -690,6 +695,18 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
               </div>
             </CollapsibleContent>
           </Collapsible>
+
+          {/* Pre-Trade Rules Checklist */}
+          <TradingRulesChecklist
+            checkedRules={checkedRules}
+            onToggleCheck={(id) => {
+              setCheckedRules((prev) => {
+                const next = new Set(prev);
+                next.has(id) ? next.delete(id) : next.add(id);
+                return next;
+              });
+            }}
+          />
 
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-4 border-t">

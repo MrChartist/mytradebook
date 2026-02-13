@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { MobileDrawer } from "./MobileDrawer";
 import { useAuth } from "@/contexts/AuthContext";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const mainNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -85,6 +86,7 @@ export function Sidebar() {
           <span className="font-bold text-[15px]">TradeBook</span>
         </div>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <Button variant="ghost" size="icon" className="h-9 w-9">
             <Search className="w-4 h-4" />
           </Button>
@@ -138,6 +140,13 @@ export function Sidebar() {
 
         {/* Bottom Section */}
         <div className="px-3 py-3 border-t border-border space-y-0.5">
+          {/* Theme toggle */}
+          {!collapsed && (
+            <div className="flex items-center justify-between px-3 py-1.5 mb-1">
+              <span className="text-[11px] text-muted-foreground">Theme</span>
+              <ThemeToggle />
+            </div>
+          )}
           {/* Profile */}
           {!collapsed && profile && (
             <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/50 rounded-xl">
