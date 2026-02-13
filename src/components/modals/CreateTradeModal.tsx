@@ -1,13 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -311,15 +306,24 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
     setValue("notes", newNotes);
   };
 
-  return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[640px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Create Research Trade</DialogTitle>
-          <DialogDescription>
-            Log a trade quickly. Only Segment, Trade Type, and Instrument are required.
-          </DialogDescription>
-        </DialogHeader>
+  if (!open) return null;
+
+  return createPortal(
+      <div className="fixed inset-0 z-50" onClick={handleClose}>
+        {/* Overlay */}
+        <div className="fixed inset-0 bg-black/80" />
+        {/* Content */}
+        <div className="fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] border bg-background p-6 shadow-lg sm:rounded-lg sm:max-w-[640px] max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="flex flex-col space-y-1.5 text-center sm:text-left">
+            <h2 className="text-lg font-semibold leading-none tracking-tight">Create Research Trade</h2>
+            <p className="text-sm text-muted-foreground">
+              Log a trade quickly. Only Segment, Trade Type, and Instrument are required.
+            </p>
+          </div>
+          <button onClick={handleClose} className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </button>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {Object.keys(errors).length > 0 && (
@@ -710,7 +714,8 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
-  );
+        </div>
+      </div>,
+      document.body
+    );
 }
