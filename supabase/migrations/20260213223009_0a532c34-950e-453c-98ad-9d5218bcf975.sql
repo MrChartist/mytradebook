@@ -1,0 +1,1 @@
+ALTER TABLE public.trades ALTER COLUMN symbol TYPE text;
