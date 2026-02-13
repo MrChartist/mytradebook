@@ -8,8 +8,10 @@ import { Link } from "react-router-dom";
 export function OpenPositionsTable() {
   const { trades, isLoading } = useTrades({ status: "OPEN" });
 
-  const symbols = useMemo(() => trades.map((t) => t.symbol), [trades]);
-  const { prices } = useLivePrices(symbols, 30000);
+  const instruments = useMemo(() => trades.map((t) => ({
+    symbol: t.symbol, security_id: t.security_id, exchange_segment: t.exchange_segment,
+  })), [trades]);
+  const { prices } = useLivePrices(instruments, 30000);
 
   const positions = trades.map((t) => {
     const ltp = prices[t.symbol]?.ltp || t.current_price || t.entry_price || 0;

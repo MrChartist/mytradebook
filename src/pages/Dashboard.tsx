@@ -67,8 +67,10 @@ export default function Dashboard() {
 
   // Open positions
   const openTrades = useMemo(() => trades.filter((t) => t.status === "OPEN"), [trades]);
-  const openSymbols = useMemo(() => openTrades.map((t) => t.symbol), [openTrades]);
-  const { prices, isPolling, lastUpdated } = useLivePrices(openSymbols, 30000);
+  const openInstruments = useMemo(() => openTrades.map((t) => ({
+    symbol: t.symbol, security_id: t.security_id, exchange_segment: t.exchange_segment,
+  })), [openTrades]);
+  const { prices, isPolling, lastUpdated } = useLivePrices(openInstruments, 30000);
 
   const ctx: DashboardContextValue = {
     selectedMonth, setSelectedMonth, segment,
@@ -107,7 +109,7 @@ export default function Dashboard() {
             </div>
             {/* Live indicator */}
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              {isPolling && openSymbols.length > 0 ? (
+              {isPolling && openInstruments.length > 0 ? (
                 <>
                   <Radio className="w-3 h-3 text-profit animate-pulse" />
                   <span className="text-profit font-medium">Live</span>

@@ -14,8 +14,12 @@ export function TodaysPnl() {
   );
   const openTrades = trades.filter((t) => t.status === "OPEN");
 
-  const openSymbols = useMemo(() => openTrades.map((t) => t.symbol), [openTrades]);
-  const { prices } = useLivePrices(openSymbols, 30000);
+  const openInstruments = useMemo(() => openTrades.map((t) => ({
+    symbol: t.symbol,
+    security_id: t.security_id,
+    exchange_segment: t.exchange_segment,
+  })), [openTrades]);
+  const { prices } = useLivePrices(openInstruments, 30000);
 
   const realizedPnl = closedToday.reduce((acc, t) => acc + (t.pnl || 0), 0);
 
