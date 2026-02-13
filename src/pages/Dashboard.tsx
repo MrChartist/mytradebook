@@ -1,9 +1,14 @@
 import { useMemo } from "react";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { EquityCurve } from "@/components/dashboard/EquityCurve";
-import { RecentTrades } from "@/components/dashboard/RecentTrades";
 import { AlertsWidget } from "@/components/dashboard/AlertsWidget";
 import { PerformanceMetrics } from "@/components/dashboard/PerformanceMetrics";
+import { TodaysPnl } from "@/components/dashboard/TodaysPnl";
+import { SegmentBreakdown } from "@/components/dashboard/SegmentBreakdown";
+import { OpenPositionsTable } from "@/components/dashboard/OpenPositionsTable";
+import { CalendarHeatmap } from "@/components/dashboard/CalendarHeatmap";
+import { StreakDiscipline } from "@/components/dashboard/StreakDiscipline";
+import { QuickActions } from "@/components/dashboard/QuickActions";
 import {
   Wallet,
   TrendingUp,
@@ -22,14 +27,12 @@ export default function Dashboard() {
 
   const openTrades = trades.filter((t) => t.status === "OPEN");
   
-  // Get symbols for open trades to poll live prices
   const openTradeSymbols = useMemo(() => {
     return openTrades.map((t) => t.symbol);
   }, [openTrades]);
 
   const { prices, isPolling, lastUpdated } = useLivePrices(openTradeSymbols, 30000);
 
-  // Calculate capital at risk with live prices when available
   const capitalAtRisk = openTrades.reduce((acc, t) => {
     const currentPrice = prices[t.symbol]?.ltp || t.current_price || t.entry_price;
     return acc + currentPrice * t.quantity;
@@ -65,25 +68,18 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* Top Row: Today's P&L + Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {tradesLoading ? (
           <>
-            <Skeleton className="h-28" />
+            <Skeleton className="h-36" />
             <Skeleton className="h-28" />
             <Skeleton className="h-28" />
             <Skeleton className="h-28" />
           </>
         ) : (
           <>
-            <StatCard
-              title="Total P&L"
-              value={`${summary.totalPnl >= 0 ? "+" : ""}₹${summary.totalPnl.toLocaleString()}`}
-              change={`${summary.winRate.toFixed(1)}% win rate`}
-              changeType={summary.totalPnl >= 0 ? "profit" : "loss"}
-              icon={Wallet}
-              subtitle="All segments"
-            />
+            <TodaysPnl />
             <StatCard
               title="Open Positions"
               value={String(summary.openPositions)}
@@ -112,24 +108,31 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Main Content Grid */}
+      {/* Equity Curve + Segment Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Equity Curve - Takes 2 columns */}
         <div className="lg:col-span-2">
           <EquityCurve />
         </div>
-
-        {/* Alerts Widget */}
         <div>
-          <AlertsWidget />
+          <SegmentBreakdown />
         </div>
       </div>
 
-      {/* Bottom Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentTrades />
-        <PerformanceMetrics />
+      {/* Open Positions Table */}
+      <OpenPositionsTable />
+
+      {/* Calendar + Streak + Alerts */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <CalendarHeatmap />
+        <StreakDiscipline />
+        <AlertsWidget />
       </div>
+
+      {/* Performance Metrics */}
+      <PerformanceMetrics />
+
+      {/* Quick Actions FAB */}
+      <QuickActions />
     </div>
   );
 }
