@@ -373,18 +373,23 @@ export default function Trades() {
               className="pl-10 bg-card border-border"
             />
           </div>
-          <div className="flex gap-2 items-center">
-            <Select value={segmentFilter} onValueChange={setSegmentFilter}>
-              <SelectTrigger className="w-[140px] h-8 text-xs border-border">
-                <SelectValue placeholder="Segment" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">All Segments</SelectItem>
-                {Object.entries(segmentLabels).map(([key, label]) => (
-                  <SelectItem key={key} value={key}>{label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex gap-2 items-center flex-wrap">
+            <div className="flex gap-1">
+              {[{ key: "ALL", label: "All Segments" }, ...Object.entries(segmentLabels).map(([key, label]) => ({ key, label }))].map((seg) => (
+                <Button
+                  key={seg.key}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSegmentFilter(seg.key)}
+                  className={cn(
+                    "border-border text-xs h-7",
+                    segmentFilter === seg.key && "bg-primary/10 border-primary/20 text-primary"
+                  )}
+                >
+                  {seg.label}
+                </Button>
+              ))}
+            </div>
             <SortSelect value={sortBy} onValueChange={setSortBy} options={sortOptions} />
             <ViewToggle view={viewMode} onViewChange={setViewMode} />
           </div>
