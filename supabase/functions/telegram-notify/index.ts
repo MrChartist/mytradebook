@@ -78,6 +78,8 @@ type NotificationPayload =
   | CustomNotification
   | TestNotification;
 
+const APP = "TradeBook";
+
 const timeframeLabels: Record<string, string> = {
   "1min": "1 Min", "5min": "5 Min", "15min": "15 Min", "30min": "30 Min",
   "1H": "1 Hour", "4H": "4 Hour", "1D": "Daily", "1W": "Weekly",
@@ -85,8 +87,27 @@ const timeframeLabels: Record<string, string> = {
 
 const conditionLabels: Record<string, string> = {
   PRICE_GT: "Price Above", PRICE_LT: "Price Below",
-  PERCENT_CHANGE_GT: "Gain Above", PERCENT_CHANGE_LT: "Loss Above",
+  PRICE_CROSS_ABOVE: "Cross Above", PRICE_CROSS_BELOW: "Cross Below",
+  PERCENT_CHANGE_GT: "Day % Above", PERCENT_CHANGE_LT: "Day % Below",
   VOLUME_SPIKE: "Volume Spike", CUSTOM: "Custom",
+};
+
+const conditionEmojis: Record<string, string> = {
+  PRICE_GT: "📈", PRICE_LT: "📉",
+  PRICE_CROSS_ABOVE: "⚡", PRICE_CROSS_BELOW: "⚡",
+  PERCENT_CHANGE_GT: "📊", PERCENT_CHANGE_LT: "📊",
+  VOLUME_SPIKE: "🔊", CUSTOM: "🚨",
+};
+
+const conditionHeaders: Record<string, string> = {
+  PRICE_GT: "PRICE ABOVE HIT",
+  PRICE_LT: "PRICE BELOW HIT",
+  PRICE_CROSS_ABOVE: "CROSS ABOVE CONFIRMED",
+  PRICE_CROSS_BELOW: "CROSS BELOW CONFIRMED",
+  PERCENT_CHANGE_GT: "DAY % CHANGE ABOVE",
+  PERCENT_CHANGE_LT: "DAY % CHANGE BELOW",
+  VOLUME_SPIKE: "VOLUME SPIKE",
+  CUSTOM: "CUSTOM ALERT",
 };
 
 const eventTypeLabels: Record<string, string> = {
@@ -113,7 +134,17 @@ const segmentTag: Record<string, string> = {
   Commodities: "MCX",
 };
 
-// Safe number formatting — never show NaN
+function getExchangeTag(exchange: string | null): string {
+  switch (exchange) {
+    case "NSE": return "NSE·EQ";
+    case "BSE": return "BSE·EQ";
+    case "NFO": return "NSE·F&O";
+    case "MCX": return "MCX";
+    default: return exchange || "NSE·EQ";
+  }
+}
+
+// Safe number formatting
 function fmt(val: number | null | undefined, fallback = "—"): string {
   if (val === null || val === undefined || Number.isNaN(val)) return fallback;
   return `₹${val.toLocaleString("en-IN")}`;
@@ -130,6 +161,16 @@ function fmtNum(val: number | null | undefined, fallback = "—"): string {
   return val.toLocaleString("en-IN");
 }
 
+function istTimestamp(): string {
+  return new Date().toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata", dateStyle: "short", timeStyle: "short",
+  });
+}
+
+const modeLabels: Record<string, string> = {
+  ONCE: "One-time", DAILY: "Repeating (Daily)", CONTINUOUS: "Repeating",
+};
+
 // Get user settings including RA mode
 async function getUserSettings(supabase: any, userId: string) {
   const { data } = await supabase
@@ -140,7 +181,6 @@ async function getUserSettings(supabase: any, userId: string) {
   return data || { telegram_chat_id: null, ra_public_mode: false, ra_disclaimer: null };
 }
 
-// Helper function to send Telegram photo with caption
 async function sendTelegramPhoto(
   token: string, chatId: string, photoUrl: string, caption: string
 ): Promise<{ success: boolean; messageId?: number }> {
@@ -163,7 +203,6 @@ async function sendTelegramPhoto(
   }
 }
 
-// Helper function to send Telegram message
 async function sendTelegramMessage(
   token: string, chatId: string, message: string
 ): Promise<{ success: boolean; messageId?: number }> {
@@ -193,7 +232,97 @@ function getFirstChartImage(trade: any): string | null {
   return null;
 }
 
-// ── SEGMENT-AWARE NEW TRADE TEMPLATES ──
+// ════════════════════════════════════════
+//  ALERT TRIGGERED TEMPLATES
+// ════════════════════════════════════════
+
+function buildAlertTriggeredMessage(alert: any, ltp: number): string {
+  const ct = alert.condition_type || "CUSTOM";
+  const emoji = conditionEmojis[ct] || "🚨";
+  const header = conditionHeaders[ct] || "ALERT TRIGGERED";
+  const tag = getExchangeTag(alert.exchange);
+  const time = istTimestamp();
+  const mode = modeLabels[alert.recurrence || "ONCE"] || alert.recurrence;
+  const isCross = ct.startsWith("PRICE_CROSS");
+  const isPct = ct.includes("PERCENT_CHANGE");
+  const isVol = ct === "VOLUME_SPIKE";
+
+  let triggerText = "";
+  if (isPct) {
+    triggerText = `Day % ${ct.includes("GT") ? "above" : "below"} ${alert.threshold}%`;
+  } else if (isVol) {
+    triggerText = `Spike Triggered ✅`;
+  } else if (isCross) {
+    triggerText = `Crossed: ${fmt(alert.threshold)}`;
+  } else {
+    triggerText = `Level: ${ct.includes("GT") ? "Above" : "Below"} ${fmt(alert.threshold)}`;
+  }
+
+  let msg = `${emoji} *${header}*\n`;
+  msg += `*${alert.symbol}* (${tag})\n\n`;
+  msg += `${triggerText}\n`;
+
+  if (isPct) {
+    msg += `Now: ${fmtPct(ltp ? ((ltp - (alert.threshold || 0)) / (alert.threshold || 1)) * 100 : null)} | LTP: ${fmt(ltp)}\n`;
+  } else {
+    msg += `Now: LTP ${fmt(ltp)}\n`;
+  }
+
+  msg += `Mode: ${mode}\n`;
+  if (alert.notes) msg += `Reason: ${alert.notes}\n`;
+  msg += `\n⏱ ${time}`;
+
+  return msg;
+}
+
+// ════════════════════════════════════════
+//  ALERT LIFECYCLE TEMPLATES
+// ════════════════════════════════════════
+
+function buildAlertCreatedMessage(alert: any): string {
+  const tag = getExchangeTag(alert.exchange);
+  const condLabel = conditionLabels[alert.condition_type] || alert.condition_type;
+  const mode = modeLabels[alert.recurrence || "ONCE"] || alert.recurrence;
+  const isPct = alert.condition_type?.includes("PERCENT_CHANGE");
+  const triggerText = isPct ? `${alert.threshold}%` : fmt(alert.threshold);
+
+  const inApp = alert.delivery_in_app !== false ? "✅" : "❌";
+  const tg = alert.telegram_enabled ? "✅" : "❌";
+  const wh = alert.webhook_enabled ? "✅" : "❌";
+
+  let msg = `✅ *ALERT CREATED* | ${APP}\n`;
+  msg += `*${alert.symbol}* (${tag})\n\n`;
+  msg += `Condition: ${condLabel}\n`;
+  msg += `Trigger: ${triggerText}\n`;
+  msg += `Mode: ${mode}\n`;
+  msg += `Delivery: In-App ${inApp} | Telegram ${tg} | Webhook ${wh}\n`;
+  if (alert.notes) msg += `Reason: ${alert.notes}\n`;
+
+  return msg;
+}
+
+function buildAlertPausedMessage(alert: any, isPaused: boolean): string {
+  const tag = getExchangeTag(alert.exchange);
+  const condLabel = conditionLabels[alert.condition_type] || alert.condition_type;
+  const isPct = alert.condition_type?.includes("PERCENT_CHANGE");
+  const triggerText = isPct ? `${alert.threshold}%` : fmt(alert.threshold);
+
+  if (isPaused) {
+    return `⏸ *ALERT PAUSED:* ${alert.symbol} (${tag}) | ${condLabel} ${triggerText}`;
+  }
+  return `▶️ *ALERT RESUMED:* ${alert.symbol} (${tag}) | ${condLabel} ${triggerText}`;
+}
+
+function buildAlertDeletedMessage(symbol: string, conditionType: string, threshold: number | null): string {
+  const condLabel = conditionLabels[conditionType] || conditionType;
+  const isPct = conditionType?.includes("PERCENT_CHANGE");
+  const triggerText = isPct ? `${threshold}%` : fmt(threshold);
+  return `🗑️ *Alert Deleted:* ${symbol} | ${condLabel} ${triggerText}`;
+}
+
+// ════════════════════════════════════════
+//  TRADE TEMPLATES
+// ════════════════════════════════════════
 
 function buildNewTradeMessage(trade: any, isRaMode: boolean, disclaimer: string | null): string {
   const segment = trade.segment || "Equity_Intraday";
@@ -210,17 +339,9 @@ function buildNewTradeMessage(trade: any, isRaMode: boolean, disclaimer: string 
   const holdType = trade.holding_period || (segment === "Equity_Intraday" ? "Intraday" : "Positional");
   const tf = trade.timeframe ? (timeframeLabels[trade.timeframe] || trade.timeframe) : "";
 
-  // SL info
-  const slLine = trade.stop_loss
-    ? `SL: ${fmt(trade.stop_loss)}`
-    : "SL: —";
+  const slLine = trade.stop_loss ? `SL: ${fmt(trade.stop_loss)}` : "SL: —";
+  const entryLine = trade.entry_price ? `Entry: ${fmt(trade.entry_price)}` : "Entry: At LTP";
 
-  // Entry info
-  const entryLine = trade.entry_price
-    ? `Entry: ${fmt(trade.entry_price)}`
-    : "Entry: At LTP";
-
-  // TSL info
   let tslLine = "";
   if (trade.trailing_sl_enabled) {
     const tslVal = trade.trailing_sl_percent
@@ -229,7 +350,6 @@ function buildNewTradeMessage(trade: any, isRaMode: boolean, disclaimer: string 
     tslLine = `\n🔄 TSL: ${tslVal}`;
   }
 
-  // Segment-specific header and risk note
   let headerEmoji = "🔔";
   let typeLabel = label;
   let riskNote = "";
@@ -243,7 +363,6 @@ function buildNewTradeMessage(trade: any, isRaMode: boolean, disclaimer: string 
     typeLabel = "Commodity";
   }
 
-  // Build the message
   let msg = `${headerEmoji} *NEW TRADE (${typeLabel})* | ${tag}\n`;
   msg += `*${side} ${symbol}* (${tag})\n\n`;
   msg += `${entryLine}\n`;
@@ -254,7 +373,6 @@ function buildNewTradeMessage(trade: any, isRaMode: boolean, disclaimer: string 
   }
   msg += "\n";
 
-  // Qty line — only in normal mode
   if (!isRaMode && trade.quantity && trade.quantity > 1) {
     msg += `Qty: ${fmtNum(trade.quantity)}\n`;
   }
@@ -268,18 +386,15 @@ function buildNewTradeMessage(trade: any, isRaMode: boolean, disclaimer: string 
   msg += tslLine;
   msg += riskNote;
 
-  // RA compliance footer
+  msg += `\n\n⏱ ${istTimestamp()}`;
+
   if (isRaMode) {
     msg += "\n\n⚠️ _Position sizing as per your risk plan. Quantity not shared publicly._";
-    if (disclaimer) {
-      msg += `\n\n🧾 _${disclaimer}_`;
-    }
+    if (disclaimer) msg += `\n\n🧾 _${disclaimer}_`;
   }
 
   return msg;
 }
-
-// ── TRADE CLOSED TEMPLATE ──
 
 function buildTradeClosedMessage(trade: any, isRaMode: boolean, disclaimer: string | null): string {
   const segment = trade.segment || "Equity_Intraday";
@@ -288,8 +403,7 @@ function buildTradeClosedMessage(trade: any, isRaMode: boolean, disclaimer: stri
   const symbol = trade.symbol || "—";
 
   const pnl = trade.pnl || 0;
-  const isProfit = pnl >= 0;
-  const emoji = isProfit ? "✅" : "❌";
+  const emoji = pnl >= 0 ? "✅" : "❌";
   const outcome = pnl > 0 ? "WIN" : pnl < 0 ? "LOSS" : "BREAKEVEN";
 
   const reasonLabels: Record<string, string> = {
@@ -316,8 +430,9 @@ function buildTradeClosedMessage(trade: any, isRaMode: boolean, disclaimer: stri
 
   msg += `Outcome: *${outcome}*\n`;
   msg += `Reason: ${reasonLabel}\n`;
+  msg += `\n⏱ ${istTimestamp()}`;
 
-  if (trade.notes) msg += `\n📝 ${trade.notes}`;
+  if (trade.notes) msg += `\n\n📝 ${trade.notes}`;
 
   if (isRaMode && disclaimer) {
     msg += `\n\n🧾 _${disclaimer}_`;
@@ -326,20 +441,10 @@ function buildTradeClosedMessage(trade: any, isRaMode: boolean, disclaimer: stri
   return msg;
 }
 
-// ── TRADE UPDATE TEMPLATE ──
-
 function buildTradeUpdateMessage(trade: any, latestEvent: any, isRaMode: boolean): string {
   const symbol = trade.symbol || "—";
   const eventType = latestEvent?.event_type || "UPDATE";
 
-  let emoji = "📊";
-  if (eventType.includes("TARGET")) emoji = "🎯";
-  if (eventType === "SL_HIT") emoji = "🛑";
-  if (eventType === "TSL_HIT" || eventType === "TSL_UPDATED") emoji = "🔄";
-  if (eventType === "SL_MODIFIED") emoji = "✏️";
-  if (eventType === "PARTIAL_EXIT") emoji = "🎯";
-
-  // Use specific templates based on event type
   if (eventType.includes("TARGET") && eventType !== "TARGET_MODIFIED") {
     const targetNum = eventType.replace("TARGET", "T").replace("_HIT", "");
     let msg = `🎯 *TARGET HIT: ${symbol}*\n`;
@@ -348,6 +453,7 @@ function buildTradeUpdateMessage(trade: any, latestEvent: any, isRaMode: boolean
     if (!isRaMode) msg += `P&L: ${fmt(trade.pnl)} (${fmtPct(trade.pnl_percent)})\n`;
     msg += `\nAction: Partial booking suggested`;
     if (trade.trailing_sl_current) msg += ` + SL trail to ${fmt(trade.trailing_sl_current)}`;
+    msg += `\n\n⏱ ${istTimestamp()}`;
     return msg;
   }
 
@@ -357,7 +463,7 @@ function buildTradeUpdateMessage(trade: any, latestEvent: any, isRaMode: boolean
     msg += `Exit done as per plan.\n`;
     if (!isRaMode) msg += `\nP&L: ${fmt(trade.pnl)} (${fmtPct(trade.pnl_percent)})`;
     if (latestEvent?.notes) msg += `\n\n📝 ${latestEvent.notes}`;
-    msg += `\n\nNext: wait for fresh setup.`;
+    msg += `\n\n⏱ ${istTimestamp()}\nNext: wait for fresh setup.`;
     return msg;
   }
 
@@ -366,6 +472,7 @@ function buildTradeUpdateMessage(trade: any, latestEvent: any, isRaMode: boolean
     msg += `New TSL: ${fmt(trade.trailing_sl_current)}\n`;
     if (trade.trailing_sl_active) msg += `Status: Active ✅`;
     if (latestEvent?.notes) msg += `\n\n📝 ${latestEvent.notes}`;
+    msg += `\n\n⏱ ${istTimestamp()}`;
     return msg;
   }
 
@@ -373,6 +480,7 @@ function buildTradeUpdateMessage(trade: any, latestEvent: any, isRaMode: boolean
     let msg = `🔄 *TSL HIT: ${symbol}*\n`;
     msg += `Trailing SL triggered at ${fmt(latestEvent?.price)}\n`;
     if (!isRaMode) msg += `P&L: ${fmt(trade.pnl)} (${fmtPct(trade.pnl_percent)})`;
+    msg += `\n\n⏱ ${istTimestamp()}`;
     return msg;
   }
 
@@ -381,10 +489,13 @@ function buildTradeUpdateMessage(trade: any, latestEvent: any, isRaMode: boolean
     msg += `New SL: ${fmt(latestEvent?.price)}\n`;
     msg += `LTP: ${fmt(trade.current_price)}`;
     if (latestEvent?.notes) msg += `\nReason: ${latestEvent.notes}`;
+    msg += `\n\n⏱ ${istTimestamp()}`;
     return msg;
   }
 
   // Generic update
+  let emoji = "📊";
+  if (eventType === "PARTIAL_EXIT") emoji = "🎯";
   let msg = `${emoji} *Trade Update*\n\n`;
   msg += `*${symbol}* — ${eventType.replace(/_/g, " ")}\n`;
   msg += `LTP: ${fmt(trade.current_price)}\n`;
@@ -394,21 +505,35 @@ function buildTradeUpdateMessage(trade: any, latestEvent: any, isRaMode: boolean
     msg += `\nTSL: ${fmt(trade.trailing_sl_current)} (active)`;
   }
   if (latestEvent?.notes) msg += `\n\n📝 ${latestEvent.notes}`;
+  msg += `\n\n⏱ ${istTimestamp()}`;
 
   return msg;
 }
-
-// ── SL MODIFIED TEMPLATE ──
 
 function buildSLModifiedMessage(trade: any, oldSL: number, newSL: number): string {
   let msg = `🧲 *TSL UPDATE: ${trade.symbol}*\n`;
   msg += `Old SL: ${fmt(oldSL)} → New SL: ${fmt(newSL)}\n`;
-
-  const pnl = trade.pnl || 0;
-  msg += `Current P&L: ${fmt(pnl)} (${fmtPct(trade.pnl_percent)})`;
-
+  msg += `Current P&L: ${fmt(trade.pnl)} (${fmtPct(trade.pnl_percent)})`;
+  msg += `\n\n⏱ ${istTimestamp()}`;
   return msg;
 }
+
+function buildTradeEventMessage(trade: any, eventType: string, price: number, notes?: string): string {
+  const eventLabel = eventTypeLabels[eventType] || eventType.replace(/_/g, " ");
+  const tag = segmentTag[trade.segment] || "NSE";
+  let msg = `📝 *TRADE EVENT* | ${APP}\n`;
+  msg += `Instrument: *${trade.symbol}* (${tag})\n\n`;
+  msg += `Event: ${eventLabel}\n`;
+  msg += `Price: ${fmt(price)}\n`;
+  msg += `LTP: ${fmt(trade.current_price)}\n`;
+  if (notes) msg += `Notes: ${notes}\n`;
+  msg += `\n⏱ ${istTimestamp()}`;
+  return msg;
+}
+
+// ════════════════════════════════════════
+//  MAIN HANDLER
+// ════════════════════════════════════════
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -436,17 +561,11 @@ Deno.serve(async (req) => {
         const { data: trade, error } = await supabase
           .from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
         if (error) throw error;
-        if (!trade) {
-          return new Response(
-            JSON.stringify({ success: true, skipped: true, reason: "Trade not found" }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
+        if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
 
         const settings = await getUserSettings(supabase, trade.user_id);
         if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
         imageUrl = getFirstChartImage(trade);
-
         message = buildNewTradeMessage(trade, settings.ra_public_mode, settings.ra_disclaimer);
         break;
       }
@@ -455,12 +574,7 @@ Deno.serve(async (req) => {
         const { data: trade, error } = await supabase
           .from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
         if (error) throw error;
-        if (!trade) {
-          return new Response(
-            JSON.stringify({ success: true, skipped: true, reason: "Trade not found" }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
+        if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
 
         const settings = await getUserSettings(supabase, trade.user_id);
         if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
@@ -471,9 +585,7 @@ Deno.serve(async (req) => {
           .eq("trade_id", trade.id)
           .order("timestamp", { ascending: false })
           .limit(1);
-        const latestEvent = events?.[0];
-
-        message = buildTradeUpdateMessage(trade, latestEvent, settings.ra_public_mode);
+        message = buildTradeUpdateMessage(trade, events?.[0], settings.ra_public_mode);
         break;
       }
 
@@ -481,17 +593,11 @@ Deno.serve(async (req) => {
         const { data: trade, error } = await supabase
           .from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
         if (error) throw error;
-        if (!trade) {
-          return new Response(
-            JSON.stringify({ success: true, skipped: true, reason: "Trade not found" }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
+        if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
 
         const settings = await getUserSettings(supabase, trade.user_id);
         if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
         imageUrl = getFirstChartImage(trade);
-
         message = buildTradeClosedMessage(trade, settings.ra_public_mode, settings.ra_disclaimer);
         break;
       }
@@ -500,16 +606,10 @@ Deno.serve(async (req) => {
         const { data: trade, error } = await supabase
           .from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
         if (error) throw error;
-        if (!trade) {
-          return new Response(
-            JSON.stringify({ success: true, skipped: true, reason: "Trade not found" }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
+        if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
 
         const settings = await getUserSettings(supabase, trade.user_id);
         if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
-
         message = buildSLModifiedMessage(trade, payload.old_sl, payload.new_sl);
         break;
       }
@@ -518,40 +618,12 @@ Deno.serve(async (req) => {
         const { data: alert, error } = await supabase
           .from("alerts").select("*").eq("id", payload.alert_id).maybeSingle();
         if (error) throw error;
-        if (!alert) {
-          return new Response(
-            JSON.stringify({ success: true, skipped: true, reason: "Alert not found" }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-        if (!(alert as any).telegram_enabled) {
-          return new Response(
-            JSON.stringify({ success: true, skipped: true, reason: "Telegram disabled" }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
+        if (!alert) return jsonOk({ success: true, skipped: true, reason: "Alert not found" });
+        if (!(alert as any).telegram_enabled) return jsonOk({ success: true, skipped: true, reason: "Telegram disabled" });
 
         const settings = await getUserSettings(supabase, alert.user_id);
         if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
-
-        const conditionMap: Record<string, string> = {
-          PRICE_GT: "crossed above", PRICE_LT: "crossed below",
-          PERCENT_CHANGE_GT: "gained more than", PERCENT_CHANGE_LT: "lost more than",
-          VOLUME_SPIKE: "volume spike detected", CUSTOM: "custom condition met",
-        };
-        const condition = conditionMap[alert.condition_type] || alert.condition_type;
-        const timestamp = new Date().toLocaleString("en-IN", {
-          timeZone: "Asia/Kolkata", dateStyle: "short", timeStyle: "short"
-        });
-
-        message = `🔔 *ALERT TRIGGERED*\n\n` +
-          `*${alert.symbol}* (${(alert as any).exchange || "NSE"})\n` +
-          `${condition} ${fmt(alert.threshold)}\n\n` +
-          `📍 Current Price: ${fmt(payload.current_price)}\n` +
-          `🕐 Time: ${timestamp}\n` +
-          `🔁 Recurrence: ${alert.recurrence}\n` +
-          `📊 Trigger Count: ${((alert.trigger_count || 0) + 1)}` +
-          ((alert as any).notes ? `\n\n📝 *Notes:* ${(alert as any).notes}` : "");
+        message = buildAlertTriggeredMessage(alert, payload.current_price);
         break;
       }
 
@@ -559,31 +631,12 @@ Deno.serve(async (req) => {
         const { data: alert, error } = await supabase
           .from("alerts").select("*").eq("id", payload.alert_id).maybeSingle();
         if (error) throw error;
-        if (!alert) {
-          return new Response(
-            JSON.stringify({ success: true, skipped: true, reason: "Alert not found" }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-        if (!(alert as any).telegram_enabled) {
-          return new Response(
-            JSON.stringify({ success: true, skipped: true, reason: "Telegram disabled" }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
+        if (!alert) return jsonOk({ success: true, skipped: true, reason: "Alert not found" });
+        if (!(alert as any).telegram_enabled) return jsonOk({ success: true, skipped: true, reason: "Telegram disabled" });
 
         const settings = await getUserSettings(supabase, alert.user_id);
         if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
-
-        const conditionLabel = conditionLabels[alert.condition_type] || alert.condition_type;
-        const recurrenceLabels: Record<string, string> = { ONCE: "One-time", DAILY: "Daily", CONTINUOUS: "Continuous" };
-        const recurrence = recurrenceLabels[alert.recurrence || "ONCE"] || alert.recurrence;
-
-        message = `🔔 *New Alert Created*\n\n` +
-          `Symbol: *${alert.symbol}* (${(alert as any).exchange || "NSE"})\n` +
-          `Condition: ${conditionLabel} ${fmt(alert.threshold)}\n` +
-          `Recurrence: ${recurrence}` +
-          ((alert as any).notes ? `\n\n📝 *Notes:* ${(alert as any).notes}` : "");
+        message = buildAlertCreatedMessage(alert);
         break;
       }
 
@@ -591,31 +644,16 @@ Deno.serve(async (req) => {
         const { data: alert, error } = await supabase
           .from("alerts").select("*").eq("id", payload.alert_id).maybeSingle();
         if (error) throw error;
-        if (!alert) {
-          return new Response(
-            JSON.stringify({ success: true, skipped: true, reason: "Alert not found" }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
+        if (!alert) return jsonOk({ success: true, skipped: true, reason: "Alert not found" });
 
         const settings = await getUserSettings(supabase, alert.user_id);
         if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
-
-        const conditionLabel = conditionLabels[alert.condition_type] || alert.condition_type;
-        const emoji = payload.is_paused ? "⏸️" : "▶️";
-        const statusText = payload.is_paused ? "Paused" : "Resumed";
-
-        message = `${emoji} *Alert ${statusText}*\n\n` +
-          `Symbol: *${alert.symbol}*\n` +
-          `Condition: ${conditionLabel} ${fmt(alert.threshold)}`;
+        message = buildAlertPausedMessage(alert, payload.is_paused);
         break;
       }
 
       case "alert_deleted": {
-        const conditionLabel = conditionLabels[payload.condition_type] || payload.condition_type;
-        message = `🗑️ *Alert Deleted*\n\n` +
-          `Symbol: *${payload.symbol}*\n` +
-          `Condition: ${conditionLabel} ${fmt(payload.threshold)}`;
+        message = buildAlertDeletedMessage(payload.symbol, payload.condition_type, payload.threshold);
         break;
       }
 
@@ -623,23 +661,11 @@ Deno.serve(async (req) => {
         const { data: trade, error } = await supabase
           .from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
         if (error) throw error;
-        if (!trade) {
-          return new Response(
-            JSON.stringify({ success: true, skipped: true, reason: "Trade not found" }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
+        if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
 
         const settings = await getUserSettings(supabase, trade.user_id);
         if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
-
-        const eventLabel = eventTypeLabels[payload.event_type] || payload.event_type.replace(/_/g, " ");
-
-        message = `📝 *Trade Event Added*\n\n` +
-          `Symbol: *${trade.symbol}*\n` +
-          `Event: ${eventLabel}\n` +
-          `Price: ${fmt(payload.price)}` +
-          (payload.notes ? `\nNotes: ${payload.notes}` : "");
+        message = buildTradeEventMessage(trade, payload.event_type, payload.price, payload.notes);
         break;
       }
 
@@ -647,12 +673,7 @@ Deno.serve(async (req) => {
         const { data: report, error } = await supabase
           .from("weekly_reports").select("*").eq("id", payload.report_id).maybeSingle();
         if (error) throw error;
-        if (!report) {
-          return new Response(
-            JSON.stringify({ success: true, skipped: true, reason: "Report not found" }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
+        if (!report) return jsonOk({ success: true, skipped: true, reason: "Report not found" });
 
         const settings = await getUserSettings(supabase, report.user_id);
         if (settings.telegram_chat_id) chatId = settings.telegram_chat_id;
@@ -670,7 +691,7 @@ Deno.serve(async (req) => {
           ? mistakes.slice(0, 3).map((m: any) => `• ${m.mistake} (${m.count}x)`).join("\n")
           : "None";
 
-        message = `📊 *Weekly Report – ${report.segment.replace("_", " ")}*\n` +
+        message = `📊 *Weekly Report – ${report.segment.replace("_", " ")}* | ${APP}\n` +
           `Week: ${report.week_start} to ${report.week_end}\n\n` +
           `📈 *Performance*\n` +
           `• Total Trades: ${fmtNum(report.total_trades)}\n` +
@@ -679,7 +700,8 @@ Deno.serve(async (req) => {
           `🎯 *Top Setups*\n${topSetupsStr}\n\n` +
           `⚠️ *Common Mistakes*\n${mistakesStr}\n\n` +
           `${pnlEmoji} Best Trade: ${fmt(report.best_trade_pnl)}\n` +
-          `Worst Trade: ${fmt(report.worst_trade_pnl)}`;
+          `Worst Trade: ${fmt(report.worst_trade_pnl)}\n\n` +
+          `⏱ ${istTimestamp()}`;
         break;
       }
 
@@ -690,7 +712,7 @@ Deno.serve(async (req) => {
       }
 
       case "test": {
-        message = payload.message || `🔔 *Test Notification*\n\nYour Telegram integration is working correctly!\n\n✅ TradeBook is connected.`;
+        message = payload.message || `🔔 *Test Notification* | ${APP}\n\nYour Telegram integration is working correctly!\n\n✅ ${APP} is connected.\n⏱ ${istTimestamp()}`;
         break;
       }
 
@@ -700,7 +722,6 @@ Deno.serve(async (req) => {
 
     if (!chatId) throw new Error("No Telegram chat ID configured");
 
-    // Send to Telegram
     let result: { success: boolean; messageId?: number };
     if (imageUrl) {
       result = await sendTelegramPhoto(TELEGRAM_BOT_TOKEN, chatId, imageUrl, message);
@@ -727,3 +748,9 @@ Deno.serve(async (req) => {
     );
   }
 });
+
+function jsonOk(data: unknown) {
+  return new Response(JSON.stringify(data), {
+    status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
