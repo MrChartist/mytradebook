@@ -4,6 +4,8 @@ import { z } from "zod";
 export const alertConditionTypes = [
   "PRICE_GT",
   "PRICE_LT",
+  "PRICE_CROSS_ABOVE",
+  "PRICE_CROSS_BELOW",
   "PERCENT_CHANGE_GT",
   "PERCENT_CHANGE_LT",
   "VOLUME_SPIKE",

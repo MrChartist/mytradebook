@@ -39,6 +39,8 @@ type AlertCondition = Database["public"]["Enums"]["alert_condition"];
 const conditionLabels: Record<AlertCondition, string> = {
   PRICE_GT: "Price Above",
   PRICE_LT: "Price Below",
+  PRICE_CROSS_ABOVE: "Crosses Above",
+  PRICE_CROSS_BELOW: "Crosses Below",
   PERCENT_CHANGE_GT: "% Change ↑",
   PERCENT_CHANGE_LT: "% Change ↓",
   VOLUME_SPIKE: "Volume Spike",
@@ -48,6 +50,8 @@ const conditionLabels: Record<AlertCondition, string> = {
 const conditionIcons: Record<AlertCondition, typeof TrendingUp> = {
   PRICE_GT: TrendingUp,
   PRICE_LT: TrendingDown,
+  PRICE_CROSS_ABOVE: TrendingUp,
+  PRICE_CROSS_BELOW: TrendingDown,
   PERCENT_CHANGE_GT: Percent,
   PERCENT_CHANGE_LT: Percent,
   VOLUME_SPIKE: Zap,
@@ -57,6 +61,8 @@ const conditionIcons: Record<AlertCondition, typeof TrendingUp> = {
 const conditionColors: Record<AlertCondition, string> = {
   PRICE_GT: "bg-profit/10 text-profit border-profit/20",
   PRICE_LT: "bg-loss/10 text-loss border-loss/20",
+  PRICE_CROSS_ABOVE: "bg-profit/10 text-profit border-profit/20",
+  PRICE_CROSS_BELOW: "bg-loss/10 text-loss border-loss/20",
   PERCENT_CHANGE_GT: "bg-warning/10 text-warning border-warning/20",
   PERCENT_CHANGE_LT: "bg-warning/10 text-warning border-warning/20",
   VOLUME_SPIKE: "bg-primary/10 text-primary border-primary/20",

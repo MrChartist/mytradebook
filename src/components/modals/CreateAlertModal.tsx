@@ -40,6 +40,8 @@ interface CreateAlertModalProps {
 const conditionLabels: Record<string, { label: string; desc: string }> = {
   PRICE_GT: { label: "Price Above", desc: "Triggers when LTP exceeds threshold" },
   PRICE_LT: { label: "Price Below", desc: "Triggers when LTP drops below threshold" },
+  PRICE_CROSS_ABOVE: { label: "Price Crosses Above", desc: "Triggers when price crosses above threshold (was below, now above)" },
+  PRICE_CROSS_BELOW: { label: "Price Crosses Below", desc: "Triggers when price crosses below threshold (was above, now below)" },
   PERCENT_CHANGE_GT: { label: "Day % Change Above", desc: "(LTP - PrevClose) / PrevClose × 100 > X%" },
   PERCENT_CHANGE_LT: { label: "Day % Change Below", desc: "(LTP - PrevClose) / PrevClose × 100 < -X%" },
   VOLUME_SPIKE: { label: "Volume Spike", desc: "Current volume >= Multiplier × Avg volume" },
