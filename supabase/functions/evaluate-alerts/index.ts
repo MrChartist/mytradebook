@@ -29,6 +29,124 @@ interface Alert {
   expires_at: string | null;
   previous_ltp: number | null;
   chain_children: Record<string, unknown>[] | null;
+  security_id: string | null;
+  exchange_segment: string | null;
+}
+
+// Fetch prices using per-user Dhan credentials via security_ids
+async function fetchPricesForUser(
+  supabase: any,
+  userId: string,
+  alerts: Alert[]
+): Promise<Record<string, { ltp: number; previousClose: number; volume: number; high: number; low: number }>> {
+  const priceData: Record<string, { ltp: number; previousClose: number; volume: number; high: number; low: number }> = {};
+
+  // Get user's Dhan credentials
+  const { data: settings } = await supabase
+    .from("user_settings")
+    .select("dhan_access_token, dhan_client_id, dhan_enabled")
+    .eq("user_id", userId)
+    .single();
+
+  const token = settings?.dhan_enabled ? settings.dhan_access_token : null;
+  const clientId = settings?.dhan_enabled ? settings.dhan_client_id : null;
+
+  if (!token || !clientId) {
+    console.log(`No Dhan credentials for user ${userId}, skipping price fetch`);
+    return priceData;
+  }
+
+  // Build request body grouped by exchange_segment using security_ids
+  const requestBody: Record<string, number[]> = {};
+  const secIdToSymbol: Record<string, string> = {};
+
+  for (const alert of alerts) {
+    // Try to use security_id from alert, or look up from instrument_master
+    let secId = alert.security_id;
+    let exchSeg = alert.exchange_segment || "NSE_EQ";
+
+    if (!secId) {
+      // Look up from instrument_master
+      const { data: inst } = await supabase
+        .from("instrument_master")
+        .select("security_id, exchange_segment")
+        .eq("trading_symbol", alert.symbol)
+        .limit(1)
+        .maybeSingle();
+      if (inst) {
+        secId = inst.security_id;
+        exchSeg = inst.exchange_segment;
+      }
+    }
+
+    if (!secId) continue;
+    const numericId = parseInt(secId, 10);
+    if (isNaN(numericId)) continue;
+
+    if (!requestBody[exchSeg]) requestBody[exchSeg] = [];
+    if (!requestBody[exchSeg].includes(numericId)) {
+      requestBody[exchSeg].push(numericId);
+    }
+    secIdToSymbol[secId] = alert.symbol;
+  }
+
+  const hasIds = Object.keys(requestBody).some((k) => requestBody[k].length > 0);
+  if (!hasIds) return priceData;
+
+  try {
+    let retries = 0;
+    let res: Response | null = null;
+
+    while (retries < 3) {
+      res = await fetch(`${DHAN_API_URL}/marketfeed/quote`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "access-token": token,
+          "client-id": clientId,
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (res.status === 429) {
+        retries++;
+        await new Promise((r) => setTimeout(r, 1000 * retries));
+        continue;
+      }
+      break;
+    }
+
+    if (res && res.ok) {
+      const data = await res.json();
+      for (const seg of Object.keys(requestBody)) {
+        const segData = data?.data?.[seg];
+        if (!segData) continue;
+        for (const [secId, quote] of Object.entries(segData)) {
+          const sym = secIdToSymbol[secId];
+          if (!sym || !quote) continue;
+          const q = quote as Record<string, any>;
+          const ltp = q.last_price || q.ltp || 0;
+          const ohlc = q.ohlc || {};
+          if (ltp > 0) {
+            priceData[sym] = {
+              ltp,
+              previousClose: ohlc.close || q.prev_close || 0,
+              volume: q.volume || 0,
+              high: ohlc.high || q.high || 0,
+              low: ohlc.low || q.low || 0,
+            };
+          }
+        }
+      }
+    } else if (res) {
+      console.error(`Dhan quote error for user ${userId}:`, res.status, await res.text());
+    }
+  } catch (e) {
+    console.error(`Dhan fetch error for user ${userId}:`, e);
+  }
+
+  return priceData;
 }
 
 serve(async (req) => {
@@ -39,7 +157,6 @@ serve(async (req) => {
   try {
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    const DHAN_ACCESS_TOKEN = Deno.env.get("DHAN_ACCESS_TOKEN");
     const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
@@ -50,7 +167,7 @@ serve(async (req) => {
     const now = new Date();
 
     // IST market hours check
-    const istOffset = 5.5 * 60; // minutes
+    const istOffset = 5.5 * 60;
     const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
     const istMinutes = utcMinutes + istOffset;
     const istTimeNorm = istMinutes >= 1440 ? istMinutes - 1440 : istMinutes;
@@ -81,201 +198,190 @@ serve(async (req) => {
       return true;
     });
 
-    // Fetch prices
-    const symbols = [...new Set(eligible.map(a => a.symbol))];
-    const priceData: Record<string, { ltp: number; previousClose: number; volume: number; high: number; low: number }> = {};
-
-    if (DHAN_ACCESS_TOKEN && symbols.length > 0) {
-      try {
-        const res = await fetch(`${DHAN_API_URL}/marketfeed/ltp`, {
-          method: "POST",
-          headers: { "Accept": "application/json", "Content-Type": "application/json", "access-token": DHAN_ACCESS_TOKEN },
-          body: JSON.stringify({ NSE_EQ: symbols }),
-        });
-        if (res.ok) {
-          const d = await res.json();
-          if (d?.data?.NSE_EQ) {
-            for (const sym of symbols) {
-              const q = d.data.NSE_EQ[sym];
-              if (q) {
-                priceData[sym] = {
-                  ltp: q.last_price || q.ltp || 0,
-                  previousClose: q.prev_close || q.previousClose || 0,
-                  volume: q.volume || 0,
-                  high: q.high || 0,
-                  low: q.low || 0,
-                };
-              }
-            }
-          }
-        }
-      } catch (e) { console.error("Dhan fetch error:", e); }
+    // Group eligible alerts by user for per-user token resolution
+    const alertsByUser: Record<string, Alert[]> = {};
+    for (const alert of eligible) {
+      if (!alertsByUser[alert.user_id]) alertsByUser[alert.user_id] = [];
+      alertsByUser[alert.user_id].push(alert);
     }
 
-    // Evaluate
     const triggered: Alert[] = [];
+    let skippedNoPrice = 0;
 
-    for (const alert of eligible) {
-      const quote = priceData[alert.symbol];
-      const price = quote?.ltp || getMockPrice(alert.symbol);
-      const prevLtp = alert.previous_ltp;
+    for (const [userId, userAlerts] of Object.entries(alertsByUser)) {
+      // Fetch real prices using this user's Dhan credentials
+      const priceData = await fetchPricesForUser(supabase, userId, userAlerts);
 
-      let isTriggered = false;
-      let conditionDesc = "";
-
-      switch (alert.condition_type) {
-        case "PRICE_GT":
-          isTriggered = price > alert.threshold;
-          conditionDesc = `Price ₹${price.toFixed(2)} > ₹${alert.threshold}`;
-          break;
-
-        case "PRICE_LT":
-          isTriggered = price < alert.threshold;
-          conditionDesc = `Price ₹${price.toFixed(2)} < ₹${alert.threshold}`;
-          break;
-
-        case "PRICE_CROSS_ABOVE":
-          // Cross detection: was below (or unknown), now above
-          if (prevLtp !== null && prevLtp !== undefined) {
-            isTriggered = prevLtp <= alert.threshold && price > alert.threshold;
-          } else {
-            // First check — can't detect cross without previous, just track
-            isTriggered = false;
-          }
-          conditionDesc = `Price crossed above ₹${alert.threshold} (prev: ₹${prevLtp?.toFixed(2) || "—"}, now: ₹${price.toFixed(2)})`;
-          break;
-
-        case "PRICE_CROSS_BELOW":
-          if (prevLtp !== null && prevLtp !== undefined) {
-            isTriggered = prevLtp >= alert.threshold && price < alert.threshold;
-          } else {
-            isTriggered = false;
-          }
-          conditionDesc = `Price crossed below ₹${alert.threshold} (prev: ₹${prevLtp?.toFixed(2) || "—"}, now: ₹${price.toFixed(2)})`;
-          break;
-
-        case "PERCENT_CHANGE_GT": {
-          const pc = quote?.previousClose || price * 0.98;
-          const pct = ((price - pc) / pc) * 100;
-          isTriggered = pct > alert.threshold;
-          conditionDesc = `Day change ${pct.toFixed(2)}% > ${alert.threshold}%`;
-          break;
+      for (const alert of userAlerts) {
+        const quote = priceData[alert.symbol];
+        
+        // NO MOCK PRICES - skip if we can't get a real price
+        if (!quote || quote.ltp <= 0) {
+          console.log(`No real price for ${alert.symbol}, skipping alert ${alert.id}`);
+          skippedNoPrice++;
+          continue;
         }
 
-        case "PERCENT_CHANGE_LT": {
-          const pc = quote?.previousClose || price * 1.02;
-          const pct = ((price - pc) / pc) * 100;
-          isTriggered = pct < -alert.threshold;
-          conditionDesc = `Day change ${pct.toFixed(2)}% < -${alert.threshold}%`;
-          break;
-        }
+        const price = quote.ltp;
+        const prevLtp = alert.previous_ltp;
 
-        case "VOLUME_SPIKE": {
-          const vol = quote?.volume || 0;
-          isTriggered = vol > alert.threshold;
-          conditionDesc = `Volume ${vol.toLocaleString()} > ${alert.threshold.toLocaleString()}`;
-          break;
-        }
-      }
+        let isTriggered = false;
+        let conditionDesc = "";
 
-      // Always update previous_ltp for cross detection
-      await supabase
-        .from("alerts")
-        .update({ previous_ltp: price })
-        .eq("id", alert.id);
+        switch (alert.condition_type) {
+          case "PRICE_GT":
+            isTriggered = price > alert.threshold;
+            conditionDesc = `Price ₹${price.toFixed(2)} > ₹${alert.threshold}`;
+            break;
 
-      if (isTriggered) {
-        triggered.push(alert);
+          case "PRICE_LT":
+            isTriggered = price < alert.threshold;
+            conditionDesc = `Price ₹${price.toFixed(2)} < ₹${alert.threshold}`;
+            break;
 
-        const updates: Record<string, unknown> = {
-          last_triggered: now.toISOString(),
-          trigger_count: (alert.trigger_count || 0) + 1,
-          previous_ltp: price,
-        };
-        if (alert.recurrence === "ONCE") updates.active = false;
-
-        await supabase.from("alerts").update(updates).eq("id", alert.id);
-
-        // Alert Chains: create child alerts when parent triggers
-        if ((alert as any).chain_children) {
-          try {
-            const children = (alert as any).chain_children as Array<Record<string, unknown>>;
-            if (Array.isArray(children) && children.length > 0) {
-              const childInserts = children.map((child: any) => ({
-                user_id: alert.user_id,
-                symbol: child.symbol || alert.symbol,
-                condition_type: child.condition_type || "PRICE_GT",
-                threshold: child.threshold,
-                recurrence: child.recurrence || "ONCE",
-                notes: child.notes || `Chained from ${alert.symbol} alert`,
-                telegram_enabled: child.telegram_enabled ?? alert.telegram_enabled,
-                exchange: child.exchange || alert.exchange || "NSE",
-                active: true,
-              }));
-              await supabase.from("alerts").insert(childInserts);
-              console.log(`Created ${childInserts.length} chained alerts from ${alert.id}`);
+          case "PRICE_CROSS_ABOVE":
+            if (prevLtp !== null && prevLtp !== undefined) {
+              isTriggered = prevLtp <= alert.threshold && price > alert.threshold;
+            } else {
+              isTriggered = false;
             }
-          } catch (e) { console.error(`Chain creation failed for ${alert.id}:`, e); }
+            conditionDesc = `Price crossed above ₹${alert.threshold} (prev: ₹${prevLtp?.toFixed(2) || "—"}, now: ₹${price.toFixed(2)})`;
+            break;
+
+          case "PRICE_CROSS_BELOW":
+            if (prevLtp !== null && prevLtp !== undefined) {
+              isTriggered = prevLtp >= alert.threshold && price < alert.threshold;
+            } else {
+              isTriggered = false;
+            }
+            conditionDesc = `Price crossed below ₹${alert.threshold} (prev: ₹${prevLtp?.toFixed(2) || "—"}, now: ₹${price.toFixed(2)})`;
+            break;
+
+          case "PERCENT_CHANGE_GT": {
+            const pc = quote.previousClose || 0;
+            if (pc <= 0) break;
+            const pct = ((price - pc) / pc) * 100;
+            isTriggered = pct > alert.threshold;
+            conditionDesc = `Day change ${pct.toFixed(2)}% > ${alert.threshold}%`;
+            break;
+          }
+
+          case "PERCENT_CHANGE_LT": {
+            const pc = quote.previousClose || 0;
+            if (pc <= 0) break;
+            const pct = ((price - pc) / pc) * 100;
+            isTriggered = pct < -alert.threshold;
+            conditionDesc = `Day change ${pct.toFixed(2)}% < -${alert.threshold}%`;
+            break;
+          }
+
+          case "VOLUME_SPIKE": {
+            const vol = quote.volume || 0;
+            isTriggered = vol > alert.threshold;
+            conditionDesc = `Volume ${vol.toLocaleString()} > ${alert.threshold.toLocaleString()}`;
+            break;
+          }
         }
 
-        // Send Telegram
-        if (alert.telegram_enabled && TELEGRAM_BOT_TOKEN) {
-          const { data: settings } = await supabase
-            .from("user_settings")
-            .select("telegram_chat_id")
-            .eq("user_id", alert.user_id)
-            .maybeSingle();
+        // Always update previous_ltp for cross detection
+        await supabase
+          .from("alerts")
+          .update({ previous_ltp: price })
+          .eq("id", alert.id);
 
-          const chatId = settings?.telegram_chat_id;
-          if (chatId) {
-            const ct = alert.condition_type;
-            const isCross = ct.startsWith("PRICE_CROSS");
-            const isPct = ct.includes("PERCENT_CHANGE");
-            const isVol = ct === "VOLUME_SPIKE";
+        if (isTriggered) {
+          triggered.push(alert);
 
-            const emojiMap: Record<string, string> = {
-              PRICE_GT: "📈", PRICE_LT: "📉",
-              PRICE_CROSS_ABOVE: "⚡", PRICE_CROSS_BELOW: "⚡",
-              PERCENT_CHANGE_GT: "📊", PERCENT_CHANGE_LT: "📊",
-              VOLUME_SPIKE: "🔊", CUSTOM: "🚨",
-            };
-            const headerMap: Record<string, string> = {
-              PRICE_GT: "PRICE ABOVE HIT", PRICE_LT: "PRICE BELOW HIT",
-              PRICE_CROSS_ABOVE: "CROSS ABOVE CONFIRMED", PRICE_CROSS_BELOW: "CROSS BELOW CONFIRMED",
-              PERCENT_CHANGE_GT: "DAY % CHANGE ABOVE", PERCENT_CHANGE_LT: "DAY % CHANGE BELOW",
-              VOLUME_SPIKE: "VOLUME SPIKE", CUSTOM: "CUSTOM ALERT",
-            };
+          const updates: Record<string, unknown> = {
+            last_triggered: now.toISOString(),
+            trigger_count: (alert.trigger_count || 0) + 1,
+            previous_ltp: price,
+          };
+          if (alert.recurrence === "ONCE") updates.active = false;
 
-            const emoji = emojiMap[ct] || "🚨";
-            const header = headerMap[ct] || "ALERT TRIGGERED";
-            const exchangeMap: Record<string, string> = {
-              NSE: "NSE·EQ", BSE: "BSE·EQ", NFO: "NSE·F&O", MCX: "MCX",
-            };
-            const tag = exchangeMap[alert.exchange || "NSE"] || alert.exchange || "NSE·EQ";
-            const ts = now.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "short", timeStyle: "short" });
-            const modeLabel = alert.recurrence === "ONCE" ? "One-time" : alert.recurrence === "DAILY" ? "Repeating (Daily)" : "Repeating";
+          await supabase.from("alerts").update(updates).eq("id", alert.id);
 
-            let triggerText = "";
-            if (isPct) triggerText = `Triggered: Day % ${ct.includes("GT") ? "above" : "below"} ${alert.threshold}%`;
-            else if (isVol) triggerText = `Spike Triggered ✅`;
-            else if (isCross) triggerText = `Crossed: ₹${alert.threshold.toLocaleString()}`;
-            else triggerText = `Level: ${ct.includes("GT") ? "Above" : "Below"} ₹${alert.threshold.toLocaleString()}`;
-
-            let message = `${emoji} *${header}*\n`;
-            message += `*${alert.symbol}* (${tag})\n\n`;
-            message += `${triggerText}\n`;
-            message += `Now: LTP ₹${price.toLocaleString()}\n`;
-            message += `Mode: ${modeLabel}\n`;
-            if (alert.notes) message += `Reason: ${alert.notes}\n`;
-            message += `\n⏱ ${ts}`;
-
+          // Alert Chains
+          if ((alert as any).chain_children) {
             try {
-              await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "Markdown" }),
-              });
-            } catch (e) { console.error(`Telegram failed for ${alert.id}:`, e); }
+              const children = (alert as any).chain_children as Array<Record<string, unknown>>;
+              if (Array.isArray(children) && children.length > 0) {
+                const childInserts = children.map((child: any) => ({
+                  user_id: alert.user_id,
+                  symbol: child.symbol || alert.symbol,
+                  condition_type: child.condition_type || "PRICE_GT",
+                  threshold: child.threshold,
+                  recurrence: child.recurrence || "ONCE",
+                  notes: child.notes || `Chained from ${alert.symbol} alert`,
+                  telegram_enabled: child.telegram_enabled ?? alert.telegram_enabled,
+                  exchange: child.exchange || alert.exchange || "NSE",
+                  active: true,
+                }));
+                await supabase.from("alerts").insert(childInserts);
+                console.log(`Created ${childInserts.length} chained alerts from ${alert.id}`);
+              }
+            } catch (e) { console.error(`Chain creation failed for ${alert.id}:`, e); }
+          }
+
+          // Send Telegram
+          if (alert.telegram_enabled && TELEGRAM_BOT_TOKEN) {
+            const { data: settings } = await supabase
+              .from("user_settings")
+              .select("telegram_chat_id")
+              .eq("user_id", alert.user_id)
+              .maybeSingle();
+
+            const chatId = settings?.telegram_chat_id;
+            if (chatId) {
+              const ct = alert.condition_type;
+              const isCross = ct.startsWith("PRICE_CROSS");
+              const isPct = ct.includes("PERCENT_CHANGE");
+              const isVol = ct === "VOLUME_SPIKE";
+
+              const emojiMap: Record<string, string> = {
+                PRICE_GT: "📈", PRICE_LT: "📉",
+                PRICE_CROSS_ABOVE: "⚡", PRICE_CROSS_BELOW: "⚡",
+                PERCENT_CHANGE_GT: "📊", PERCENT_CHANGE_LT: "📊",
+                VOLUME_SPIKE: "🔊", CUSTOM: "🚨",
+              };
+              const headerMap: Record<string, string> = {
+                PRICE_GT: "PRICE ABOVE HIT", PRICE_LT: "PRICE BELOW HIT",
+                PRICE_CROSS_ABOVE: "CROSS ABOVE CONFIRMED", PRICE_CROSS_BELOW: "CROSS BELOW CONFIRMED",
+                PERCENT_CHANGE_GT: "DAY % CHANGE ABOVE", PERCENT_CHANGE_LT: "DAY % CHANGE BELOW",
+                VOLUME_SPIKE: "VOLUME SPIKE", CUSTOM: "CUSTOM ALERT",
+              };
+
+              const emoji = emojiMap[ct] || "🚨";
+              const header = headerMap[ct] || "ALERT TRIGGERED";
+              const exchangeMap: Record<string, string> = {
+                NSE: "NSE·EQ", BSE: "BSE·EQ", NFO: "NSE·F&O", MCX: "MCX",
+              };
+              const tag = exchangeMap[alert.exchange || "NSE"] || alert.exchange || "NSE·EQ";
+              const ts = now.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "short", timeStyle: "short" });
+              const modeLabel = alert.recurrence === "ONCE" ? "One-time" : alert.recurrence === "DAILY" ? "Repeating (Daily)" : "Repeating";
+
+              let triggerText = "";
+              if (isPct) triggerText = `Triggered: Day % ${ct.includes("GT") ? "above" : "below"} ${alert.threshold}%`;
+              else if (isVol) triggerText = `Spike Triggered ✅`;
+              else if (isCross) triggerText = `Crossed: ₹${alert.threshold.toLocaleString()}`;
+              else triggerText = `Level: ${ct.includes("GT") ? "Above" : "Below"} ₹${alert.threshold.toLocaleString()}`;
+
+              let message = `${emoji} *${header}*\n`;
+              message += `*${alert.symbol}* (${tag})\n\n`;
+              message += `${triggerText}\n`;
+              message += `Now: LTP ₹${price.toLocaleString()}\n`;
+              message += `Mode: ${modeLabel}\n`;
+              if (alert.notes) message += `Reason: ${alert.notes}\n`;
+              message += `\n⏱ ${ts}`;
+
+              try {
+                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "Markdown" }),
+                });
+              } catch (e) { console.error(`Telegram failed for ${alert.id}:`, e); }
+            }
           }
         }
       }
@@ -294,6 +400,7 @@ serve(async (req) => {
       evaluated: eligible.length,
       triggered: triggered.length,
       skipped: alerts.length - eligible.length,
+      skipped_no_price: skippedNoPrice,
       expired_deactivated: expiredIds.length,
     });
   } catch (error: unknown) {
@@ -307,12 +414,4 @@ function jsonResponse(data: unknown, status = 200) {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
-}
-
-function getMockPrice(symbol: string): number {
-  const bases: Record<string, number> = {
-    RELIANCE: 2450, TATASTEEL: 155, INFY: 1520, TCS: 3850,
-    HDFCBANK: 1680, ICICIBANK: 1120, SBIN: 780, BHARTIARTL: 1380,
-  };
-  return (bases[symbol] || 1000) * (1 + (Math.random() - 0.5) * 0.02);
 }

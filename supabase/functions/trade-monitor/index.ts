@@ -459,7 +459,7 @@ async function batchFetchPrices(
   if (!dhanToken || !dhanClientId) return priceMap;
 
   // Build request body grouped by exchange_segment using security_ids
-  const requestBody: Record<string, number[]> = {};
+    const requestBody: Record<string, number[]> = {};
   const secIdToSymbol: Record<string, string> = {};
 
   for (const trade of trades) {
@@ -481,7 +481,7 @@ async function batchFetchPrices(
     let res: Response | null = null;
 
     while (retries < 3) {
-      res = await fetch(`${DHAN_API_URL}/marketfeed/ltp`, {
+      res = await fetch(`${DHAN_API_URL}/marketfeed/quote`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -516,14 +516,14 @@ async function batchFetchPrices(
         }
       }
     } else if (res) {
-      console.error("Dhan LTP batch error:", res.status, await res.text());
+      console.error("Dhan quote batch error:", res.status, await res.text());
     }
   } catch (e) {
     console.error("batchFetchPrices error:", e);
   }
 
   return priceMap;
-}
+  }
 
 async function sendTelegramMessage(token: string, chatId: string, message: string): Promise<void> {
   try {
