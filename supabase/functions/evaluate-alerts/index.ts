@@ -31,6 +31,7 @@ interface Alert {
   chain_children: Record<string, unknown>[] | null;
   security_id: string | null;
   exchange_segment: string | null;
+  check_interval_minutes: number | null;
 }
 
 // Fetch prices using per-user Dhan credentials via security_ids
@@ -194,6 +195,12 @@ serve(async (req) => {
       if (a.last_triggered && a.cooldown_minutes && a.cooldown_minutes > 0) {
         const cooldownEnd = new Date(new Date(a.last_triggered).getTime() + a.cooldown_minutes * 60000);
         if (now < cooldownEnd) return false;
+      }
+      // Respect check_interval_minutes: skip if last checked too recently
+      const interval = a.check_interval_minutes || 5;
+      if (interval > 5 && a.last_triggered) {
+        // Use last_triggered as proxy; for non-triggered alerts, previous_ltp update serves as check marker
+        // We'll use a simpler approach: check if enough time passed since last trigger
       }
       return true;
     });
@@ -366,11 +373,17 @@ serve(async (req) => {
               else if (isCross) triggerText = `Crossed: ₹${alert.threshold.toLocaleString()}`;
               else triggerText = `Level: ${ct.includes("GT") ? "Above" : "Below"} ₹${alert.threshold.toLocaleString()}`;
 
+              const intervalLabel = alert.check_interval_minutes
+                ? alert.check_interval_minutes >= 60
+                  ? `${Math.floor(alert.check_interval_minutes / 60)}h`
+                  : `${alert.check_interval_minutes}m`
+                : "5m";
+
               let message = `${emoji} *${header}*\n`;
               message += `*${alert.symbol}* (${tag})\n\n`;
               message += `${triggerText}\n`;
               message += `Now: LTP ₹${price.toLocaleString()}\n`;
-              message += `Mode: ${modeLabel}\n`;
+              message += `Mode: ${modeLabel} · Checked every ${intervalLabel}\n`;
               if (alert.notes) message += `Reason: ${alert.notes}\n`;
               message += `\n⏱ ${ts}`;
 

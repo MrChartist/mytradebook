@@ -21,6 +21,7 @@ export type Database = {
           batch_id: string | null
           chain_children: Json | null
           chart_link: string | null
+          check_interval_minutes: number | null
           condition_type: Database["public"]["Enums"]["alert_condition"]
           cooldown_minutes: number | null
           created_at: string | null
@@ -54,6 +55,7 @@ export type Database = {
           batch_id?: string | null
           chain_children?: Json | null
           chart_link?: string | null
+          check_interval_minutes?: number | null
           condition_type: Database["public"]["Enums"]["alert_condition"]
           cooldown_minutes?: number | null
           created_at?: string | null
@@ -87,6 +89,7 @@ export type Database = {
           batch_id?: string | null
           chain_children?: Json | null
           chart_link?: string | null
+          check_interval_minutes?: number | null
           condition_type?: Database["public"]["Enums"]["alert_condition"]
           cooldown_minutes?: number | null
           created_at?: string | null
