@@ -6,11 +6,18 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "noImplicitAny": false,
-    "noUnusedParameters": false,
-    "skipLibCheck": true,
-    "allowJs": true,
-    "noUnusedLocals": false,
-    "strictNullChecks": false
+    // Strict type checking (progressively enabled)
+    "noImplicitAny": true,          // Enabled: Catch implicit any types
+    "strictNullChecks": false,       // TODO: Enable after fixing null checks
+    "noUnusedParameters": false,     // Keep disabled: Many unused params in callbacks
+    "noUnusedLocals": true,          // Enabled: Catch unused variables
+    "skipLibCheck": true,            // Keep enabled: Skip lib type checking for speed
+    "allowJs": true,                 // Keep enabled: Allow JS files
+
+    // Additional helpful checks
+    "noFallthroughCasesInSwitch": true,  // Catch missing break in switch
+    "noImplicitReturns": false,          // TODO: Enable later
+    "noImplicitThis": false,             // TODO: Enable later
+    "alwaysStrict": true                 // Enable ES6 strict mode
   }
 }
