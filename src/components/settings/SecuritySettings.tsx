@@ -42,7 +42,7 @@ export default function SecuritySettings() {
         confirmPassword: "",
       });
     } catch (error: unknown) {
-      toast.error(error.message || "Failed to change password");
+      toast.error(error instanceof Error ? error.message : "Failed to change password");
     } finally {
       setChangingPassword(false);
     }
@@ -53,7 +53,7 @@ export default function SecuritySettings() {
       await supabase.auth.signOut({ scope: "global" });
       toast.success("Logged out from all devices");
     } catch (error: unknown) {
-      toast.error(error.message || "Failed to log out from all devices");
+      toast.error(error instanceof Error ? error.message : "Failed to log out from all devices");
     }
   };
 

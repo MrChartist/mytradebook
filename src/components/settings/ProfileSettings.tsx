@@ -42,7 +42,7 @@ export default function ProfileSettings() {
       if (error) throw error;
       toast.success("Profile updated successfully");
     } catch (error: unknown) {
-      toast.error(error.message || "Failed to update profile");
+      toast.error(error instanceof Error ? error.message : "Failed to update profile");
     } finally {
       setSaving(false);
     }

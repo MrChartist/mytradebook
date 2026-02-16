@@ -44,8 +44,7 @@ export function useDashboardLayout() {
   const toggleWidget = useCallback((id: string) => {
     setWidgets((prev) => {
       const next = prev.map((w) => (w.id === id ? { ...w, visible: !w.visible } : w));
-      const update: UserSettingsWithLayout = { dashboard_layout: next };
-      updateSettings.mutate(update);
+      updateSettings.mutate({ dashboard_layout: next } as any);
       return next;
     });
   }, [updateSettings]);
@@ -59,16 +58,14 @@ export function useDashboardLayout() {
       const next = [...prev];
       [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
       const reordered = next.map((w, i) => ({ ...w, order: i }));
-      const update: UserSettingsWithLayout = { dashboard_layout: reordered };
-      updateSettings.mutate(update);
+      updateSettings.mutate({ dashboard_layout: reordered } as any);
       return reordered;
     });
   }, [updateSettings]);
 
   const resetLayout = useCallback(() => {
     setWidgets(DEFAULT_WIDGETS);
-    const update: UserSettingsWithLayout = { dashboard_layout: null };
-    updateSettings.mutate(update);
+    updateSettings.mutate({ dashboard_layout: null } as any);
   }, [updateSettings]);
 
   return { widgets, toggleWidget, moveWidget, resetLayout };
