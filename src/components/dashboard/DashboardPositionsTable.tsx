@@ -6,9 +6,8 @@ import { Link } from "react-router-dom";
 import { QuickClosePopover } from "@/components/trade/QuickClosePopover";
 import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
 import type { Trade } from "@/hooks/useTrades";
-
-const fmt = (v: number) =>
-  `${v >= 0 ? "+" : ""}₹${Math.abs(v).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
+import { calculatePnL, calculatePnLPercent } from "@/lib/calculations";
+import { formatCurrency } from "@/lib/formatting";
 
 export function DashboardPositionsTable() {
   const { openTrades, prices } = useDashboard();
@@ -17,8 +16,9 @@ export function DashboardPositionsTable() {
   const positions = useMemo(() => openTrades.map((t) => {
     const ltp = prices[t.symbol]?.ltp || t.current_price || t.entry_price || 0;
     const entry = t.entry_price || 0;
-    const pnl = t.trade_type === "BUY" ? (ltp - entry) * t.quantity : (entry - ltp) * t.quantity;
-    const pnlPct = entry > 0 ? (pnl / (entry * t.quantity)) * 100 : 0;
+    const tradeType = t.trade_type === "BUY" ? "LONG" : "SHORT";
+    const pnl = calculatePnL(entry, ltp, t.quantity, tradeType);
+    const pnlPct = entry > 0 ? calculatePnLPercent(entry, ltp, tradeType) : 0;
     const slDist = t.stop_loss
       ? t.trade_type === "BUY" ? ((ltp - t.stop_loss) / ltp) * 100 : ((t.stop_loss - ltp) / ltp) * 100
       : null;
@@ -55,7 +55,7 @@ export function DashboardPositionsTable() {
           </div>
           <div className="bg-muted/50 rounded-lg p-2.5">
             <p className="text-[10px] text-muted-foreground">Unrealized P&L</p>
-            <p className={cn("text-sm font-semibold", totalUnrealized >= 0 ? "text-profit" : "text-loss")}>{fmt(totalUnrealized)}</p>
+            <p className={cn("text-sm font-semibold", totalUnrealized >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(totalUnrealized)}</p>
           </div>
           <div className="bg-muted/50 rounded-lg p-2.5">
             <p className="text-[10px] text-muted-foreground">Positions</p>
@@ -115,7 +115,7 @@ export function DashboardPositionsTable() {
                   <td className="py-2 text-right font-mono">₹{p.ltp.toLocaleString()}</td>
                   <td className="py-2 text-right">
                     <span className={cn("font-semibold font-mono", p.pnl >= 0 ? "text-profit" : "text-loss")}>
-                      {fmt(p.pnl)}
+                      {formatCurrency(p.pnl)}
                     </span>
                     <span className={cn("text-[9px] ml-1", p.pnlPct >= 0 ? "text-profit" : "text-loss")}>
                       {p.pnlPct >= 0 ? "+" : ""}{p.pnlPct.toFixed(1)}%

@@ -14,6 +14,7 @@ import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { TradeStatus } from "@/lib/constants";
 
 type Segment = "All" | "Equity_Intraday" | "Equity_Positional" | "Futures" | "Options" | "Commodities";
 
@@ -66,11 +67,11 @@ export default function Dashboard() {
   }, [trades, monthStart, monthEnd]);
 
   // Open positions
-  const openTrades = useMemo(() => trades.filter((t) => t.status === "OPEN"), [trades]);
+  const openTrades = useMemo(() => trades.filter((t) => t.status === TradeStatus.OPEN), [trades]);
   const openInstruments = useMemo(() => openTrades.map((t) => ({
     symbol: t.symbol, security_id: t.security_id, exchange_segment: t.exchange_segment,
   })), [openTrades]);
-  const { prices, isPolling, lastUpdated } = useLivePrices(openInstruments, 30000);
+  const { prices, isPolling, lastUpdated } = useLivePrices(openInstruments);
 
   const ctx: DashboardContextValue = {
     selectedMonth, setSelectedMonth, segment,

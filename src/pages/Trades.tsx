@@ -28,6 +28,7 @@ import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 import { useDhanIntegration } from "@/hooks/useDhanIntegration";
 import { useLivePrices } from "@/hooks/useLivePrices";
 import { MultiLegStrategyModal } from "@/components/trade/MultiLegStrategyModal";
+import { TradeStatus } from "@/lib/constants";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -117,12 +118,12 @@ export default function Trades() {
     return list;
   }, [trades, sortBy]);
 
-  const openTradeInstruments = useMemo(() => trades.filter(t => t.status === "OPEN").map(t => ({
+  const openTradeInstruments = useMemo(() => trades.filter(t => t.status === TradeStatus.OPEN).map(t => ({
     symbol: t.symbol,
     security_id: t.security_id,
     exchange_segment: t.exchange_segment,
   })), [trades]);
-  const { prices, isPolling, lastUpdated } = useLivePrices(openTradeInstruments, 30000);
+  const { prices, isPolling, lastUpdated } = useLivePrices(openTradeInstruments);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { LIVE_PRICE_POLL_INTERVAL_MS } from "@/lib/constants";
 
 interface PriceData {
   ltp: number;
@@ -30,7 +31,7 @@ interface UseLivePricesResult {
 
 export function useLivePrices(
   symbolsOrInstruments: string[] | InstrumentInput[],
-  intervalMs = 30000
+  intervalMs = LIVE_PRICE_POLL_INTERVAL_MS
 ): UseLivePricesResult {
   const [prices, setPrices] = useState<Record<string, PriceData>>({});
   const [isPolling, setIsPolling] = useState(true);

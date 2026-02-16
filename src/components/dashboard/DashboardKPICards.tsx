@@ -3,9 +3,10 @@ import { useDashboard } from "@/pages/Dashboard";
 import { cn } from "@/lib/utils";
 import { Wallet, Target, TrendingUp, Bell, Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { calculatePnL } from "@/lib/calculations";
+import { formatCurrency } from "@/lib/formatting";
+import { TradeStatus } from "@/lib/constants";
 
-const fmt = (v: number) =>
-  `${v >= 0 ? "+" : ""}₹${Math.abs(v).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
 
 interface Props {
   alerts: { id: string; last_triggered: string | null; condition_type: string }[];
@@ -15,7 +16,7 @@ export function DashboardKPICards({ alerts }: Props) {
   const { monthTrades, openTrades, prices } = useDashboard();
   const navigate = useNavigate();
 
-  const closedMonth = useMemo(() => monthTrades.filter((t) => t.status === "CLOSED"), [monthTrades]);
+  const closedMonth = useMemo(() => monthTrades.filter((t) => t.status === TradeStatus.CLOSED), [monthTrades]);
   const wins = closedMonth.filter((t) => (t.pnl || 0) > 0);
   const losses = closedMonth.filter((t) => (t.pnl || 0) < 0);
 
@@ -23,7 +24,8 @@ export function DashboardKPICards({ alerts }: Props) {
   const unrealizedPnl = openTrades.reduce((a, t) => {
     const ltp = prices[t.symbol]?.ltp || t.current_price || t.entry_price || 0;
     const entry = t.entry_price || 0;
-    return a + (t.trade_type === "BUY" ? (ltp - entry) * t.quantity : (entry - ltp) * t.quantity);
+    const tradeType = t.trade_type === "BUY" ? "LONG" : "SHORT";
+    return a + calculatePnL(entry, ltp, t.quantity, tradeType);
   }, 0);
 
   const todayClosed = closedMonth.filter(
@@ -57,7 +59,7 @@ export function DashboardKPICards({ alerts }: Props) {
       <div
         role="button"
         tabIndex={0}
-        aria-label={`MTD P&L: ${fmt(realizedPnl + unrealizedPnl)}`}
+        aria-label={`MTD P&L: ${formatCurrency(realizedPnl + unrealizedPnl)}`}
         className={cardBase}
         onClick={() => navigate("/reports")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/reports"); }}
@@ -70,21 +72,21 @@ export function DashboardKPICards({ alerts }: Props) {
           </div>
         </div>
         <p className={cn("text-2xl font-bold font-mono", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>
-          {fmt(realizedPnl + unrealizedPnl)}
+          {formatCurrency(realizedPnl + unrealizedPnl)}
         </p>
         <div className="flex gap-3 mt-2">
           <div>
             <p className="text-[10px] text-muted-foreground">Realized</p>
-            <p className={cn("text-xs font-bold font-mono", realizedPnl >= 0 ? "text-profit" : "text-loss")}>{fmt(realizedPnl)}</p>
+            <p className={cn("text-xs font-bold font-mono", realizedPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(realizedPnl)}</p>
           </div>
           <div>
             <p className="text-[10px] text-muted-foreground">Unrealized</p>
-            <p className={cn("text-xs font-bold font-mono", unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>{fmt(unrealizedPnl)}</p>
+            <p className={cn("text-xs font-bold font-mono", unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(unrealizedPnl)}</p>
           </div>
         </div>
         <div className="flex items-center gap-1 mt-2 text-[10px] text-muted-foreground">
           <span>Today: </span>
-          <span className={cn("font-medium", todayPnl >= 0 ? "text-profit" : "text-loss")}>{fmt(todayPnl)}</span>
+          <span className={cn("font-medium", todayPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(todayPnl)}</span>
           <span className="mx-1">•</span>
           <span>Closed: {closedMonth.length} | Open: {openTrades.length}</span>
         </div>
@@ -135,7 +137,7 @@ export function DashboardKPICards({ alerts }: Props) {
             "text-[10px] font-medium px-1.5 py-0.5 rounded-full",
             expectancy >= 0 ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss"
           )}>
-            Exp: {fmt(expectancy)}/trade
+            Exp: {formatCurrency(expectancy)}/trade
           </span>
         </div>
         <p className="text-[10px] text-muted-foreground mt-2">
