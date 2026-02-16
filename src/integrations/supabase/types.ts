@@ -144,18 +144,21 @@ export type Database = {
           description: string | null
           id: string
           name: string
+          user_id: string | null
         }
         Insert: {
           bullish?: boolean | null
           description?: string | null
           id?: string
           name: string
+          user_id?: string | null
         }
         Update: {
           bullish?: boolean | null
           description?: string | null
           id?: string
           name?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -248,16 +251,19 @@ export type Database = {
           id: string
           name: string
           severity: string | null
+          user_id: string | null
         }
         Insert: {
           id?: string
           name: string
           severity?: string | null
+          user_id?: string | null
         }
         Update: {
           id?: string
           name?: string
           severity?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -267,18 +273,21 @@ export type Database = {
           description: string | null
           id: string
           name: string
+          user_id: string | null
         }
         Insert: {
           category?: string | null
           description?: string | null
           id?: string
           name: string
+          user_id?: string | null
         }
         Update: {
           category?: string | null
           description?: string | null
           id?: string
           name?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -1117,16 +1126,19 @@ export type Database = {
           description: string | null
           id: string
           name: string
+          user_id: string | null
         }
         Insert: {
           description?: string | null
           id?: string
           name: string
+          user_id?: string | null
         }
         Update: {
           description?: string | null
           id?: string
           name?: string
+          user_id?: string | null
         }
         Relationships: []
       }

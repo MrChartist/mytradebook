@@ -106,7 +106,7 @@ export function useJournalAnalytics(filters?: JournalFilters) {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as TradeWithTags[];
+      return data as unknown as TradeWithTags[];
     },
     enabled: !!user?.id,
   });

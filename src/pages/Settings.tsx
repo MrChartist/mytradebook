@@ -1,15 +1,17 @@
-import { User, Bell, Link, Moon, Shield } from "lucide-react";
+import { User, Bell, Link, Moon, Shield, Tag } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProfileSettings from "@/components/settings/ProfileSettings";
 import PreferencesSettings from "@/components/settings/PreferencesSettings";
 import SecuritySettings from "@/components/settings/SecuritySettings";
 import IntegrationsSettings from "@/components/settings/IntegrationsSettings";
+import TagManagementSettings from "@/components/settings/TagManagementSettings";
 
 const settingsTabs = [
   { id: "profile", label: "Profile", icon: User },
   { id: "preferences", label: "Preferences", icon: Moon },
   { id: "security", label: "Security", icon: Shield },
   { id: "integrations", label: "Integrations", icon: Link },
+  { id: "tags", label: "Tags", icon: Tag },
 ];
 
 export default function Settings() {
@@ -52,6 +54,10 @@ export default function Settings() {
 
         <TabsContent value="integrations" className="mt-0">
           <IntegrationsSettings />
+        </TabsContent>
+
+        <TabsContent value="tags" className="mt-0">
+          <TagManagementSettings />
         </TabsContent>
       </Tabs>
     </div>
