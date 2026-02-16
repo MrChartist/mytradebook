@@ -8,6 +8,11 @@ export interface WidgetConfig {
   order: number;
 }
 
+// Type for user settings with dashboard_layout
+interface UserSettingsWithLayout {
+  dashboard_layout?: WidgetConfig[] | null;
+}
+
 const DEFAULT_WIDGETS: WidgetConfig[] = [
   { id: "kpi", label: "KPI Cards", visible: true, order: 0 },
   { id: "chart", label: "Daily Chart", visible: true, order: 1 },
@@ -22,11 +27,13 @@ export function useDashboardLayout() {
   const [widgets, setWidgets] = useState<WidgetConfig[]>(DEFAULT_WIDGETS);
 
   useEffect(() => {
-    const saved = (settings as any)?.dashboard_layout;
+    const settingsWithLayout = settings as unknown as UserSettingsWithLayout;
+    const saved = settingsWithLayout?.dashboard_layout;
+
     if (saved && Array.isArray(saved)) {
       // Merge saved with defaults to handle new widgets
       const merged = DEFAULT_WIDGETS.map((dw) => {
-        const found = saved.find((s: any) => s.id === dw.id);
+        const found = saved.find((s) => s.id === dw.id);
         return found ? { ...dw, visible: found.visible, order: found.order } : dw;
       });
       merged.sort((a, b) => a.order - b.order);
@@ -37,7 +44,8 @@ export function useDashboardLayout() {
   const toggleWidget = useCallback((id: string) => {
     setWidgets((prev) => {
       const next = prev.map((w) => (w.id === id ? { ...w, visible: !w.visible } : w));
-      updateSettings.mutate({ dashboard_layout: next } as any);
+      const update: UserSettingsWithLayout = { dashboard_layout: next };
+      updateSettings.mutate(update);
       return next;
     });
   }, [updateSettings]);
@@ -51,14 +59,16 @@ export function useDashboardLayout() {
       const next = [...prev];
       [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
       const reordered = next.map((w, i) => ({ ...w, order: i }));
-      updateSettings.mutate({ dashboard_layout: reordered } as any);
+      const update: UserSettingsWithLayout = { dashboard_layout: reordered };
+      updateSettings.mutate(update);
       return reordered;
     });
   }, [updateSettings]);
 
   const resetLayout = useCallback(() => {
     setWidgets(DEFAULT_WIDGETS);
-    updateSettings.mutate({ dashboard_layout: null } as any);
+    const update: UserSettingsWithLayout = { dashboard_layout: null };
+    updateSettings.mutate(update);
   }, [updateSettings]);
 
   return { widgets, toggleWidget, moveWidget, resetLayout };

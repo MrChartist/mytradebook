@@ -67,8 +67,9 @@ export function useUserSettings() {
       queryClient.invalidateQueries({ queryKey: ["user-settings", user?.id] });
       toast.success("Settings saved successfully");
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to save settings");
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : "Failed to save settings";
+      toast.error(message);
     },
   });
 
@@ -91,8 +92,9 @@ export function useUserSettings() {
         toast.error(data?.error || "Telegram connection failed");
         return false;
       }
-    } catch (error: any) {
-      toast.error(error.message || "Failed to test Telegram connection");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to test Telegram connection";
+      toast.error(message);
       return false;
     }
   };

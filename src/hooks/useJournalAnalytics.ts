@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { startOfMonth, endOfMonth, format, eachDayOfInterval, parseISO } from "date-fns";
+import type { TradeTargets } from "@/types/trade";
 
 interface TradeWithTags {
   id: string;
@@ -20,7 +21,7 @@ interface TradeWithTags {
   entry_time: string;
   closed_at: string | null;
   stop_loss: number | null;
-  targets: any;
+  targets: TradeTargets | null;
   notes: string | null;
 }
 

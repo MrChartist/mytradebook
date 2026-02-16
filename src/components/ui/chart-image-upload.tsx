@@ -77,7 +77,7 @@ export function ChartImageUpload({
         onImagesChange([...images, ...newImages]);
         toast.success(`${newImages.length} image(s) uploaded`);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Upload error:", error);
       toast.error("Failed to upload images");
     } finally {

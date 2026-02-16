@@ -52,8 +52,11 @@ export function useLivePrices(
     .sort()
     .join(",");
 
-  const fetchPrices = useCallback(async () => {
+  const fetchPrices = useCallback(async (signal?: AbortSignal) => {
     if (instruments.length === 0) return;
+
+    // Don't start new fetch if aborted
+    if (signal?.aborted) return;
 
     setIsLoading(true);
     setError(null);
@@ -61,7 +64,7 @@ export function useLivePrices(
     try {
       // Build the request body with instrument details when available
       const hasInstrumentDetails = instruments.some((i) => i.security_id);
-      const body: Record<string, any> = {};
+      const body: Record<string, unknown> = {};
 
       if (hasInstrumentDetails) {
         body.instruments = instruments.map((i) => ({
@@ -78,6 +81,9 @@ export function useLivePrices(
         { body }
       );
 
+      // Check if aborted after async operation
+      if (signal?.aborted) return;
+
       if (fnError) {
         throw new Error(fnError.message);
       }
@@ -90,9 +96,15 @@ export function useLivePrices(
       if (data?.success && data?.prices && Object.keys(data.prices).length > 0) {
         const validPrices: Record<string, PriceData> = {};
         for (const [sym, priceData] of Object.entries(data.prices)) {
-          const p = priceData as any;
-          if (p && p.ltp && p.ltp > 0) {
-            validPrices[sym] = p;
+          // Type-safe handling of price data
+          if (
+            typeof priceData === 'object' &&
+            priceData !== null &&
+            'ltp' in priceData &&
+            typeof priceData.ltp === 'number' &&
+            priceData.ltp > 0
+          ) {
+            validPrices[sym] = priceData as PriceData;
           }
         }
         if (Object.keys(validPrices).length > 0) {
@@ -103,19 +115,39 @@ export function useLivePrices(
         throw new Error(data.error);
       }
     } catch (e) {
+      // Don't update error state if aborted
+      if (signal?.aborted) return;
+
       console.error("Price polling error:", e);
       setError(e instanceof Error ? e.message : "Failed to fetch prices");
     } finally {
-      setIsLoading(false);
+      // Don't update loading state if aborted
+      if (!signal?.aborted) {
+        setIsLoading(false);
+      }
     }
   }, [stableKey]);
 
   useEffect(() => {
     if (instruments.length === 0 || !isPolling) return;
 
-    fetchPrices();
-    const interval = setInterval(fetchPrices, intervalMs);
-    return () => clearInterval(interval);
+    // Create AbortController for cleanup
+    const abortController = new AbortController();
+    const { signal } = abortController;
+
+    // Initial fetch
+    fetchPrices(signal);
+
+    // Set up polling interval
+    const interval = setInterval(() => {
+      fetchPrices(signal);
+    }, intervalMs);
+
+    // Cleanup: abort in-flight requests and clear interval
+    return () => {
+      abortController.abort();
+      clearInterval(interval);
+    };
   }, [stableKey, intervalMs, isPolling, fetchPrices]);
 
   return {
