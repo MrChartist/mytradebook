@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   MessageCircle, Send, Trash2, Plus, CheckCircle, Loader2,
-  ExternalLink, Filter, Unplug, AlertTriangle,
+  ExternalLink, Filter, Unplug, AlertTriangle, ChevronDown, ChevronUp, History,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,10 +11,11 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useTelegramChats, SEGMENT_LABELS, type TelegramChat } from "@/hooks/useTelegramChats";
 import { useUserSettings } from "@/hooks/useUserSettings";
+import { DeliveryLogPanel } from "@/components/telegram/DeliveryLogPanel";
 
 export default function TelegramSettings() {
   const { settings, updateSettings } = useUserSettings();
-  const { chats, isLoading, addChat, removeChat, removeAllChats, toggleSegment, testChat, testAllChats } = useTelegramChats();
+  const { chats, isLoading, deliveryLogs, logsLoading, addChat, removeChat, removeAllChats, toggleSegment, testChat, testAllChats } = useTelegramChats();
 
   // Add chat form
   const [newChatId, setNewChatId] = useState("");
@@ -28,6 +29,9 @@ export default function TelegramSettings() {
   const [testingId, setTestingId] = useState<string | null>(null);
   const [testingAll, setTestingAll] = useState(false);
   const [removingAll, setRemovingAll] = useState(false);
+
+  // Delivery log panel state
+  const [showDeliveryLog, setShowDeliveryLog] = useState(false);
 
   const handleAddChat = async () => {
     if (!newChatId.trim()) return;
@@ -183,6 +187,11 @@ export default function TelegramSettings() {
                   <Filter className="w-3 h-3" />
                   <span>Segments</span>
                 </div>
+                {chat.segments.length === 0 && (
+                  <Badge variant="outline" className="text-[10px] bg-amber-500/10 border-amber-500/30 text-amber-600">
+                    None selected - No notifications
+                  </Badge>
+                )}
                 {Object.entries(SEGMENT_LABELS).map(([key, label]) => (
                   <Badge
                     key={key}
@@ -299,6 +308,41 @@ export default function TelegramSettings() {
           </Button>
         </div>
       )}
+
+      {/* Delivery Log */}
+      <div className="mb-6">
+        <button
+          onClick={() => setShowDeliveryLog(!showDeliveryLog)}
+          className="w-full flex items-center justify-between p-3 rounded-lg border border-border bg-card hover:bg-accent/50 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <History className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm font-medium">Delivery Log (Last 10)</span>
+            {deliveryLogs.length > 0 && (
+              <Badge variant="outline" className="text-xs">
+                {deliveryLogs.filter((l) => !l.success).length > 0 && (
+                  <span className="text-loss">
+                    {deliveryLogs.filter((l) => !l.success).length} failed
+                  </span>
+                )}
+                {deliveryLogs.filter((l) => !l.success).length === 0 && (
+                  <span className="text-profit">All passed</span>
+                )}
+              </Badge>
+            )}
+          </div>
+          {showDeliveryLog ? (
+            <ChevronUp className="w-4 h-4 text-muted-foreground" />
+          ) : (
+            <ChevronDown className="w-4 h-4 text-muted-foreground" />
+          )}
+        </button>
+        {showDeliveryLog && (
+          <div className="mt-3 p-3 rounded-lg border border-border bg-accent/20">
+            <DeliveryLogPanel logs={deliveryLogs} isLoading={logsLoading} />
+          </div>
+        )}
+      </div>
 
       {/* Notification Mode */}
       <div>
