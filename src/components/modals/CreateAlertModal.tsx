@@ -65,6 +65,14 @@ const cooldownOptions = [
   { value: 1440, label: "1 day" },
 ];
 
+const checkIntervalOptions = [
+  { value: 5, label: "Every 5 min" },
+  { value: 10, label: "Every 10 min" },
+  { value: 15, label: "Every 15 min" },
+  { value: 30, label: "Every 30 min" },
+  { value: 60, label: "Every 1 hour" },
+];
+
 const expiryOptions = [
   { value: "", label: "No expiry" },
   { value: "eod", label: "End of day" },
@@ -89,6 +97,7 @@ export function CreateAlertModal({ open, onOpenChange, prefillSymbol, prefillExc
   const [selectedInstrument, setSelectedInstrument] = useState<SelectedInstrument | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(15);
+  const [checkInterval, setCheckInterval] = useState(5);
   const [activeHoursOnly, setActiveHoursOnly] = useState(true);
   const [expiryMode, setExpiryMode] = useState("");
   const [customExpiry, setCustomExpiry] = useState("");
@@ -249,6 +258,7 @@ export function CreateAlertModal({ open, onOpenChange, prefillSymbol, prefillExc
         delivery_in_app: deliveryInApp,
         chain_children: chainChildren.length > 0 ? chainChildren : undefined,
         chart_link: chartLink.trim() || null,
+        check_interval_minutes: checkInterval,
       } as any);
 
       handleClose();
@@ -263,6 +273,7 @@ export function CreateAlertModal({ open, onOpenChange, prefillSymbol, prefillExc
     setSelectedInstrument(null);
     setSubmitError(null);
     setCooldown(15);
+    setCheckInterval(5);
     setActiveHoursOnly(true);
     setExpiryMode("");
     setCustomExpiry("");
@@ -377,8 +388,8 @@ export function CreateAlertModal({ open, onOpenChange, prefillSymbol, prefillExc
               )}
             />
 
-            {/* Recurrence + Cooldown row */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* Recurrence + Cooldown + Check Interval row */}
+            <div className="grid grid-cols-3 gap-3">
               <FormField
                 control={form.control}
                 name="recurrence"
@@ -414,6 +425,22 @@ export function CreateAlertModal({ open, onOpenChange, prefillSymbol, prefillExc
                   </SelectTrigger>
                   <SelectContent>
                     {cooldownOptions.map((o) => (
+                      <SelectItem key={o.value} value={String(o.value)}>{o.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <FormLabel className="flex items-center gap-1">
+                  <Zap className="w-3 h-3" /> Check Interval
+                </FormLabel>
+                <Select value={String(checkInterval)} onValueChange={(v) => setCheckInterval(Number(v))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {checkIntervalOptions.map((o) => (
                       <SelectItem key={o.value} value={String(o.value)}>{o.label}</SelectItem>
                     ))}
                   </SelectContent>
