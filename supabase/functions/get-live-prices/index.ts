@@ -138,7 +138,17 @@ serve(async (req) => {
     const SUPABASE_SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
     const body = await req.json();
-    const userId = body.user_id;
+
+    // Resolve user_id: prefer body, then extract from auth JWT
+    let userId = body.user_id;
+    if (!userId && SUPABASE_URL && SUPABASE_SERVICE_KEY) {
+      const authHeader = req.headers.get("authorization") || "";
+      if (authHeader.startsWith("Bearer ")) {
+        const anonClient = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_ANON_KEY") || SUPABASE_SERVICE_KEY);
+        const { data: { user } } = await anonClient.auth.getUser(authHeader.replace("Bearer ", ""));
+        userId = user?.id;
+      }
+    }
 
     const symbols: string[] = body.symbols || [];
     const instruments: InstrumentInput[] = body.instruments || [];
