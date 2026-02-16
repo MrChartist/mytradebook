@@ -61,7 +61,21 @@ Deno.serve(async (req) => {
       const profileData = await response.json();
       const profile = profileData?.data || profileData;
       const accountName = profile?.name || `Dhan Account (${client_id})`;
-      const tokenExpiry = profile?.tokenValidity || null;
+      const rawExpiry = profile?.tokenValidity || null;
+      let tokenExpiry: string | null = null;
+      if (rawExpiry) {
+        try {
+          // Dhan returns "DD/MM/YYYY HH:mm" format
+          const parts = rawExpiry.match(/(\d{2})\/(\d{2})\/(\d{4})\s*(\d{2}):(\d{2})/);
+          if (parts) {
+            tokenExpiry = new Date(`${parts[3]}-${parts[2]}-${parts[1]}T${parts[4]}:${parts[5]}:00Z`).toISOString();
+          } else {
+            tokenExpiry = new Date(rawExpiry).toISOString();
+          }
+        } catch {
+          console.warn("Could not parse token expiry:", rawExpiry);
+        }
+      }
 
       const { error: updateError } = await supabase
         .from("user_settings")
@@ -138,7 +152,20 @@ Deno.serve(async (req) => {
 
       const profileData = await response.json();
       const profile = profileData?.data || profileData;
-      const tokenExpiry = profile?.tokenValidity || null;
+      const rawExpiry = profile?.tokenValidity || null;
+      let tokenExpiry: string | null = null;
+      if (rawExpiry) {
+        try {
+          const parts = rawExpiry.match(/(\d{2})\/(\d{2})\/(\d{4})\s*(\d{2}):(\d{2})/);
+          if (parts) {
+            tokenExpiry = new Date(`${parts[3]}-${parts[2]}-${parts[1]}T${parts[4]}:${parts[5]}:00Z`).toISOString();
+          } else {
+            tokenExpiry = new Date(rawExpiry).toISOString();
+          }
+        } catch {
+          console.warn("Could not parse token expiry:", rawExpiry);
+        }
+      }
 
       // Update expiry in DB
       await supabase
