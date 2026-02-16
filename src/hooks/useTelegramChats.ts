@@ -31,6 +31,19 @@ export const SEGMENT_LABELS: Record<string, string> = {
   Commodities: "MCX / Commodity Trade",
 };
 
+export interface TelegramDeliveryLog {
+  id: string;
+  user_id: string;
+  chat_id: string;
+  notification_type: string;
+  segment: string | null;
+  success: boolean;
+  error_message: string | null;
+  response_data: any;
+  attempt_number: number;
+  created_at: string;
+}
+
 export function useTelegramChats() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -59,7 +72,8 @@ export function useTelegramChats() {
           user_id: user.id,
           chat_id: input.chat_id,
           label: input.label || `Chat ${input.chat_id}`,
-          segments: ALL_SEGMENTS,
+          segments: [], // Default: OFF - user must explicitly select segments
+          notification_types: {}, // Empty by default
           bot_token: input.bot_token || null,
           bot_username: input.bot_username || null,
         } as any)
@@ -137,15 +151,40 @@ export function useTelegramChats() {
           ...(botToken ? { bot_token: botToken } : {}),
         },
       });
-      if (error) throw error;
+
+      if (error) {
+        const errorMsg = error.message || "Test failed";
+        toast.error(`Test failed: ${errorMsg}`, { duration: 5000 });
+        return false;
+      }
+
       if (data?.success) {
-        toast.success("Test message sent!");
+        toast.success("Test message sent successfully!");
         return true;
       }
-      toast.error(data?.error || "Test failed");
+
+      // Detailed error message from Telegram API
+      const errorCode = data?.errorCode;
+      const errorDesc = data?.errorDescription || data?.error;
+
+      let userFriendlyError = "Test failed";
+
+      if (errorCode === 400 && errorDesc?.includes("chat not found")) {
+        userFriendlyError = "Chat ID not found. Check if the ID is correct.";
+      } else if (errorCode === 403 && errorDesc?.includes("bot was blocked")) {
+        userFriendlyError = "Bot was blocked by user. Unblock the bot and try again.";
+      } else if (errorCode === 403 && errorDesc?.includes("not enough rights")) {
+        userFriendlyError = "Bot is not admin. Add bot as admin in channel/group.";
+      } else if (errorCode === 401) {
+        userFriendlyError = "Invalid bot token. Check your bot token.";
+      } else if (errorDesc) {
+        userFriendlyError = errorDesc;
+      }
+
+      toast.error(userFriendlyError, { duration: 6000 });
       return false;
     } catch (e: any) {
-      toast.error(e.message || "Test failed");
+      toast.error(e.message || "Test failed", { duration: 5000 });
       return false;
     }
   };
@@ -164,9 +203,27 @@ export function useTelegramChats() {
     }
   };
 
+  const deliveryLogsQuery = useQuery({
+    queryKey: ["telegram-delivery-logs", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data, error } = await supabase
+        .from("telegram_delivery_log")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(10);
+      if (error) throw error;
+      return (data || []) as TelegramDeliveryLog[];
+    },
+    enabled: !!user?.id,
+  });
+
   return {
     chats: chatsQuery.data || [],
     isLoading: chatsQuery.isLoading,
+    deliveryLogs: deliveryLogsQuery.data || [],
+    logsLoading: deliveryLogsQuery.isLoading,
     addChat,
     updateChat,
     removeChat,

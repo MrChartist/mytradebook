@@ -180,33 +180,71 @@ async function getUserSettings(supabase: any, userId: string) {
   return data || { telegram_chat_id: null, ra_public_mode: false, ra_disclaimer: null };
 }
 
-// Get all telegram_chats for a user, optionally filtered by segment
+// Get all telegram_chats for a user, filtered by notification type and segment
 async function getUserTelegramChats(
   supabase: any,
   userId: string,
+  notificationType: string, // 'trade', 'alert', 'study', 'report', 'test'
   segment?: string | null
 ): Promise<Array<{ chat_id: string; bot_token: string | null }>> {
   const { data } = await supabase
     .from("telegram_chats")
-    .select("chat_id, bot_token, segments, enabled")
+    .select("chat_id, bot_token, segments, notification_types, enabled")
     .eq("user_id", userId)
     .eq("enabled", true);
 
   if (!data || data.length === 0) return [];
 
-  // If segment provided, filter chats that include this segment
-  if (segment) {
-    return data
-      .filter((c: any) => c.segments && c.segments.includes(segment))
-      .map((c: any) => ({ chat_id: c.chat_id, bot_token: c.bot_token }));
-  }
+  // Filter chats based on notification_types routing
+  const filteredChats = data.filter((chat: any) => {
+    // If notification_types exists, use new routing logic
+    if (chat.notification_types && Object.keys(chat.notification_types).length > 0) {
+      const typeSegments = chat.notification_types[notificationType];
 
-  return data.map((c: any) => ({ chat_id: c.chat_id, bot_token: c.bot_token }));
+      // If notification type not configured, skip this chat
+      if (!typeSegments || typeSegments.length === 0) return false;
+
+      // If wildcard "*", allow all
+      if (typeSegments.includes("*")) return true;
+
+      // For alerts/studies/reports (no segment), include if any segments configured
+      if (!segment) return typeSegments.length > 0;
+
+      // For trades (with segment), check if segment is included
+      return typeSegments.includes(segment);
+    }
+
+    // Fallback to old segments array (for backward compatibility)
+    if (notificationType === "trade" && segment) {
+      return chat.segments && chat.segments.includes(segment);
+    }
+
+    // For non-trade types, include if segments array has any items
+    return chat.segments && chat.segments.length > 0;
+  });
+
+  return filteredChats.map((c: any) => ({
+    chat_id: c.chat_id,
+    bot_token: c.bot_token
+  }));
+}
+
+interface TelegramResult {
+  success: boolean;
+  messageId?: number;
+  error?: string;
+  errorCode?: number;
+  errorDescription?: string;
+  retryable?: boolean;
+}
+
+async function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function sendTelegramPhoto(
   token: string, chatId: string, photoUrl: string, caption: string
-): Promise<{ success: boolean; messageId?: number }> {
+): Promise<TelegramResult> {
   try {
     const truncatedCaption = caption.length > 1024 ? caption.substring(0, 1021) + "..." : caption;
     const response = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
@@ -218,17 +256,37 @@ async function sendTelegramPhoto(
       }),
     });
     const result = await response.json();
-    if (!response.ok) { console.error("Telegram sendPhoto error:", result); return { success: false }; }
+
+    if (!response.ok) {
+      const errorCode = result.error_code || response.status;
+      const errorDescription = result.description || "Unknown error";
+      console.error("Telegram sendPhoto error:", { errorCode, errorDescription, chatId });
+
+      // Determine if error is retryable
+      const retryable = errorCode === 429 || errorCode >= 500;
+
+      return {
+        success: false,
+        error: errorDescription,
+        errorCode,
+        errorDescription,
+        retryable,
+      };
+    }
     return { success: true, messageId: result.result?.message_id };
   } catch (e) {
     console.error("Failed to send Telegram photo:", e);
-    return { success: false };
+    return {
+      success: false,
+      error: e instanceof Error ? e.message : "Network error",
+      retryable: true, // Network errors are retryable
+    };
   }
 }
 
 async function sendTelegramMessage(
   token: string, chatId: string, message: string
-): Promise<{ success: boolean; messageId?: number }> {
+): Promise<TelegramResult> {
   try {
     const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: "POST",
@@ -239,47 +297,170 @@ async function sendTelegramMessage(
       }),
     });
     const result = await response.json();
-    if (!response.ok) { console.error("Telegram sendMessage error:", result); return { success: false }; }
+
+    if (!response.ok) {
+      const errorCode = result.error_code || response.status;
+      const errorDescription = result.description || "Unknown error";
+      console.error("Telegram sendMessage error:", { errorCode, errorDescription, chatId });
+
+      // Determine if error is retryable
+      const retryable = errorCode === 429 || errorCode >= 500;
+
+      return {
+        success: false,
+        error: errorDescription,
+        errorCode,
+        errorDescription,
+        retryable,
+      };
+    }
     return { success: true, messageId: result.result?.message_id };
   } catch (e) {
     console.error("Failed to send Telegram message:", e);
-    return { success: false };
+    return {
+      success: false,
+      error: e instanceof Error ? e.message : "Network error",
+      retryable: true, // Network errors are retryable
+    };
   }
 }
 
-// Send to multiple chats
+// Retry with exponential backoff
+async function sendWithRetry(
+  token: string,
+  chatId: string,
+  message: string,
+  imageUrl: string | null,
+  maxRetries = 3
+): Promise<TelegramResult> {
+  let lastResult: TelegramResult = { success: false, error: "No attempts made" };
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    // Try sending with image first, fallback to text-only
+    if (imageUrl) {
+      lastResult = await sendTelegramPhoto(token, chatId, imageUrl, message);
+      if (!lastResult.success) {
+        console.log(`Photo send failed for ${chatId}, trying text-only...`);
+        lastResult = await sendTelegramMessage(token, chatId, message);
+      }
+    } else {
+      lastResult = await sendTelegramMessage(token, chatId, message);
+    }
+
+    // Success - return immediately
+    if (lastResult.success) {
+      return lastResult;
+    }
+
+    // Don't retry if error is not retryable (e.g., invalid chat_id, bot blocked)
+    if (!lastResult.retryable) {
+      console.error(`Non-retryable error for ${chatId}: ${lastResult.error}`);
+      return lastResult;
+    }
+
+    // Wait before retry (exponential backoff: 1s, 2s, 4s)
+    if (attempt < maxRetries) {
+      const delayMs = Math.pow(2, attempt - 1) * 1000;
+      console.log(`Retry ${attempt}/${maxRetries} for ${chatId} after ${delayMs}ms...`);
+      await sleep(delayMs);
+    }
+  }
+
+  return lastResult;
+}
+
+// Log delivery attempt to database
+async function logDeliveryAttempt(
+  supabase: any,
+  userId: string,
+  chatId: string,
+  notificationType: string,
+  segment: string | null,
+  result: TelegramResult,
+  attemptNumber: number
+): Promise<void> {
+  try {
+    await supabase.from("telegram_delivery_log").insert({
+      user_id: userId,
+      chat_id: chatId,
+      notification_type: notificationType,
+      segment: segment,
+      success: result.success,
+      error_message: result.error || null,
+      response_data: result.errorCode
+        ? { error_code: result.errorCode, description: result.errorDescription }
+        : result.messageId
+        ? { message_id: result.messageId }
+        : null,
+      attempt_number: attemptNumber,
+    });
+  } catch (e) {
+    // Don't fail the main flow if logging fails
+    console.error("Failed to log delivery attempt:", e);
+  }
+}
+
+// Send to multiple chats with retry and logging
+interface ChatDeliveryResult {
+  chat_id: string;
+  success: boolean;
+  error?: string;
+  message_id?: number;
+}
+
 async function sendToMultipleChats(
+  supabase: any,
   defaultToken: string,
   chats: Array<{ chat_id: string; bot_token: string | null }>,
   message: string,
-  imageUrl: string | null
-): Promise<{ successCount: number; failCount: number; messageIds: number[] }> {
+  imageUrl: string | null,
+  userId: string | null,
+  notificationType: string,
+  segment: string | null
+): Promise<{
+  successCount: number;
+  failCount: number;
+  results: ChatDeliveryResult[];
+}> {
   let successCount = 0;
   let failCount = 0;
-  const messageIds: number[] = [];
+  const results: ChatDeliveryResult[] = [];
 
   for (const chat of chats) {
     const token = chat.bot_token || defaultToken;
-    let result: { success: boolean; messageId?: number };
+    const result = await sendWithRetry(token, chat.chat_id, message, imageUrl, 3);
 
-    if (imageUrl) {
-      result = await sendTelegramPhoto(token, chat.chat_id, imageUrl, message);
-      if (!result.success) {
-        result = await sendTelegramMessage(token, chat.chat_id, message);
-      }
-    } else {
-      result = await sendTelegramMessage(token, chat.chat_id, message);
+    // Log to database if we have userId
+    if (userId) {
+      await logDeliveryAttempt(
+        supabase,
+        userId,
+        chat.chat_id,
+        notificationType,
+        segment,
+        result,
+        1 // We track retries internally, but log as single attempt
+      );
     }
 
     if (result.success) {
       successCount++;
-      if (result.messageId) messageIds.push(result.messageId);
+      results.push({
+        chat_id: chat.chat_id,
+        success: true,
+        message_id: result.messageId,
+      });
     } else {
       failCount++;
+      results.push({
+        chat_id: chat.chat_id,
+        success: false,
+        error: result.error || "Unknown error",
+      });
     }
   }
 
-  return { successCount, failCount, messageIds };
+  return { successCount, failCount, results };
 }
 
 function getFirstChartImage(trade: any): string | null {
@@ -518,9 +699,25 @@ Deno.serve(async (req) => {
     // For "custom" with explicit chat_id — direct send (used by Test button)
     if (payload.type === "custom" && payload.chat_id) {
       const token = (payload as any).bot_token || TELEGRAM_BOT_TOKEN;
-      const result = await sendTelegramMessage(token, payload.chat_id, payload.message);
-      if (!result.success) throw new Error("Failed to send message");
-      return jsonOk({ success: true, message_id: result.messageId, chat_id: payload.chat_id });
+      const result = await sendWithRetry(token, payload.chat_id, payload.message, null, 3);
+
+      if (!result.success) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: result.error || "Failed to send message",
+            errorCode: result.errorCode,
+            errorDescription: result.errorDescription,
+          }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      return jsonOk({
+        success: true,
+        message_id: result.messageId,
+        chat_id: payload.chat_id,
+      });
     }
 
     // For "test" — direct send to default
@@ -537,6 +734,7 @@ Deno.serve(async (req) => {
     let imageUrl: string | null = null;
     let userId: string | null = null;
     let segment: string | null = null;
+    let notificationType = "other"; // 'trade', 'alert', 'study', 'report', 'test', 'other'
 
     switch (payload.type) {
       case "new_trade": {
@@ -545,6 +743,7 @@ Deno.serve(async (req) => {
         if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
         userId = trade.user_id;
         segment = trade.segment;
+        notificationType = "trade";
         const settings = await getUserSettings(supabase, trade.user_id);
         imageUrl = getFirstChartImage(trade);
         message = buildNewTradeMessage(trade, settings.ra_public_mode, settings.ra_disclaimer);
@@ -556,6 +755,7 @@ Deno.serve(async (req) => {
         if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
         userId = trade.user_id;
         segment = trade.segment;
+        notificationType = "trade";
         const settings = await getUserSettings(supabase, trade.user_id);
         imageUrl = getFirstChartImage(trade);
         const { data: events } = await supabase.from("trade_events").select("*").eq("trade_id", trade.id).order("timestamp", { ascending: false }).limit(1);
@@ -568,6 +768,7 @@ Deno.serve(async (req) => {
         if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
         userId = trade.user_id;
         segment = trade.segment;
+        notificationType = "trade";
         const settings = await getUserSettings(supabase, trade.user_id);
         imageUrl = getFirstChartImage(trade);
         message = buildTradeClosedMessage(trade, settings.ra_public_mode, settings.ra_disclaimer);
@@ -579,6 +780,7 @@ Deno.serve(async (req) => {
         if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
         userId = trade.user_id;
         segment = trade.segment;
+        notificationType = "trade";
         message = buildSLModifiedMessage(trade, payload.old_sl, payload.new_sl);
         break;
       }
@@ -588,6 +790,7 @@ Deno.serve(async (req) => {
         if (!alert) return jsonOk({ success: true, skipped: true, reason: "Alert not found" });
         if (!(alert as any).telegram_enabled) return jsonOk({ success: true, skipped: true, reason: "Telegram disabled" });
         userId = alert.user_id;
+        notificationType = "alert";
         message = buildAlertTriggeredMessage(alert, payload.current_price);
         break;
       }
@@ -597,6 +800,7 @@ Deno.serve(async (req) => {
         if (!alert) return jsonOk({ success: true, skipped: true, reason: "Alert not found" });
         if (!(alert as any).telegram_enabled) return jsonOk({ success: true, skipped: true, reason: "Telegram disabled" });
         userId = alert.user_id;
+        notificationType = "alert";
         message = buildAlertCreatedMessage(alert);
         break;
       }
@@ -605,11 +809,13 @@ Deno.serve(async (req) => {
         if (error) throw error;
         if (!alert) return jsonOk({ success: true, skipped: true, reason: "Alert not found" });
         userId = alert.user_id;
+        notificationType = "alert";
         message = buildAlertPausedMessage(alert, payload.is_paused);
         break;
       }
       case "alert_deleted": {
         message = buildAlertDeletedMessage(payload.symbol, payload.condition_type, payload.threshold);
+        notificationType = "alert";
         // No userId context for deleted alerts — falls back to legacy
         break;
       }
@@ -619,6 +825,7 @@ Deno.serve(async (req) => {
         if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
         userId = trade.user_id;
         segment = trade.segment;
+        notificationType = "trade";
         message = buildTradeEventMessage(trade, payload.event_type, payload.price, payload.notes);
         break;
       }
@@ -627,6 +834,7 @@ Deno.serve(async (req) => {
         if (error) throw error;
         if (!report) return jsonOk({ success: true, skipped: true, reason: "Report not found" });
         userId = report.user_id;
+        notificationType = "report";
 
         const totalPnl = report.total_pnl || 0;
         const pnlEmoji = totalPnl >= 0 ? "📈" : "📉";
@@ -640,6 +848,7 @@ Deno.serve(async (req) => {
       }
       case "custom": {
         message = payload.message;
+        notificationType = "other";
         break;
       }
       default:
@@ -650,8 +859,8 @@ Deno.serve(async (req) => {
     let targetChats: Array<{ chat_id: string; bot_token: string | null }> = [];
 
     if (userId) {
-      // Try new multi-chat system first
-      targetChats = await getUserTelegramChats(supabase, userId, segment);
+      // Try new multi-chat system first with notification type routing
+      targetChats = await getUserTelegramChats(supabase, userId, notificationType, segment);
 
       // Fallback to legacy single chat_id from user_settings
       if (targetChats.length === 0) {
@@ -668,18 +877,44 @@ Deno.serve(async (req) => {
     }
 
     if (targetChats.length === 0) {
-      throw new Error("No Telegram chat destinations configured");
+      return jsonOk({
+        success: true,
+        skipped: true,
+        reason: "No Telegram chat destinations configured for this notification type",
+      });
     }
 
-    const result = await sendToMultipleChats(TELEGRAM_BOT_TOKEN, targetChats, message, imageUrl);
+    const result = await sendToMultipleChats(
+      supabase,
+      TELEGRAM_BOT_TOKEN,
+      targetChats,
+      message,
+      imageUrl,
+      userId,
+      notificationType,
+      segment
+    );
 
-    if (result.successCount === 0) throw new Error("Failed to send to any chat destination");
+    if (result.successCount === 0) {
+      // Return detailed error info
+      const firstError = result.results.find((r) => !r.success);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: firstError?.error || "Failed to send to any chat destination",
+          sent_to: result.successCount,
+          failed: result.failCount,
+          results: result.results,
+        }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     return jsonOk({
       success: true,
       sent_to: result.successCount,
       failed: result.failCount,
-      message_ids: result.messageIds,
+      results: result.results,
       with_image: !!imageUrl,
     });
   } catch (error) {
