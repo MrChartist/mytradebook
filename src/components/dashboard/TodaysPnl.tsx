@@ -3,6 +3,9 @@ import { useLivePrices } from "@/hooks/useLivePrices";
 import { Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMemo } from "react";
+import { calculatePnL } from "@/lib/calculations";
+import { formatCurrency } from "@/lib/formatting";
+import { TradeStatus } from "@/lib/constants";
 
 export function TodaysPnl() {
   const { trades } = useTrades();
@@ -10,33 +13,27 @@ export function TodaysPnl() {
   const today = new Date().toDateString();
 
   const closedToday = trades.filter(
-    (t) => t.status === "CLOSED" && t.closed_at && new Date(t.closed_at).toDateString() === today
+    (t) => t.status === TradeStatus.CLOSED && t.closed_at && new Date(t.closed_at).toDateString() === today
   );
-  const openTrades = trades.filter((t) => t.status === "OPEN");
+  const openTrades = trades.filter((t) => t.status === TradeStatus.OPEN);
 
   const openInstruments = useMemo(() => openTrades.map((t) => ({
     symbol: t.symbol,
     security_id: t.security_id,
     exchange_segment: t.exchange_segment,
   })), [openTrades]);
-  const { prices } = useLivePrices(openInstruments, 30000);
+  const { prices } = useLivePrices(openInstruments);
 
   const realizedPnl = closedToday.reduce((acc, t) => acc + (t.pnl || 0), 0);
 
   const unrealizedPnl = openTrades.reduce((acc, t) => {
     const ltp = prices[t.symbol]?.ltp || t.current_price || t.entry_price;
     const entry = t.entry_price || 0;
-    const pnl =
-      t.trade_type === "BUY"
-        ? (ltp - entry) * t.quantity
-        : (entry - ltp) * t.quantity;
-    return acc + pnl;
+    const tradeType = t.trade_type === "BUY" ? "LONG" : "SHORT";
+    return acc + calculatePnL(entry, ltp, t.quantity, tradeType);
   }, 0);
 
   const totalPnl = realizedPnl + unrealizedPnl;
-
-  const format = (v: number) =>
-    `${v >= 0 ? "+" : ""}₹${Math.abs(v).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
 
   return (
     <div className="glass-card-hover p-5 relative overflow-hidden group">
@@ -46,7 +43,7 @@ export function TodaysPnl() {
         <div className="space-y-1">
           <p className="text-sm text-muted-foreground font-medium">Today's P&L</p>
           <p className={cn("text-2xl font-bold tracking-tight", totalPnl >= 0 ? "text-profit" : "text-loss")}>
-            {format(totalPnl)}
+            {formatCurrency(totalPnl)}
           </p>
         </div>
         <div className={cn(
@@ -61,14 +58,14 @@ export function TodaysPnl() {
         <div className="flex-1 p-2.5 rounded-lg bg-accent/30">
           <p className="text-xs text-muted-foreground">Realized</p>
           <p className={cn("text-sm font-semibold mt-0.5", realizedPnl >= 0 ? "text-profit" : "text-loss")}>
-            {format(realizedPnl)}
+            {formatCurrency(realizedPnl)}
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">{closedToday.length} closed</p>
         </div>
         <div className="flex-1 p-2.5 rounded-lg bg-accent/30">
           <p className="text-xs text-muted-foreground">Unrealized</p>
           <p className={cn("text-sm font-semibold mt-0.5", unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>
-            {format(unrealizedPnl)}
+            {formatCurrency(unrealizedPnl)}
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">{openTrades.length} open</p>
         </div>

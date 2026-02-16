@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useMemo } from "react";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { calculatePnL, calculatePnLPercent } from "@/lib/calculations";
 
 export function OpenPositionsTable() {
   const { trades, isLoading } = useTrades({ status: "OPEN" });
@@ -11,16 +12,14 @@ export function OpenPositionsTable() {
   const instruments = useMemo(() => trades.map((t) => ({
     symbol: t.symbol, security_id: t.security_id, exchange_segment: t.exchange_segment,
   })), [trades]);
-  const { prices } = useLivePrices(instruments, 30000);
+  const { prices } = useLivePrices(instruments);
 
   const positions = trades.map((t) => {
     const ltp = prices[t.symbol]?.ltp || t.current_price || t.entry_price || 0;
     const entry = t.entry_price || 0;
-    const unrealizedPnl =
-      t.trade_type === "BUY"
-        ? (ltp - entry) * t.quantity
-        : (entry - ltp) * t.quantity;
-    const unrealizedPercent = entry > 0 ? (unrealizedPnl / (entry * t.quantity)) * 100 : 0;
+    const tradeType = t.trade_type === "BUY" ? "LONG" : "SHORT";
+    const unrealizedPnl = calculatePnL(entry, ltp, t.quantity, tradeType);
+    const unrealizedPercent = entry > 0 ? calculatePnLPercent(entry, ltp, tradeType) : 0;
     const slDistance = t.stop_loss
       ? t.trade_type === "BUY"
         ? ((ltp - t.stop_loss) / ltp) * 100
