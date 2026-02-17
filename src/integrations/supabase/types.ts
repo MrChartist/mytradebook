@@ -869,9 +869,13 @@ export type Database = {
           entry_price: number | null
           entry_time: string
           exchange_segment: string | null
+          highest_since_entry: number | null
           holding_period: string | null
           id: string
           instrument_token: string | null
+          last_trail_anchor_price: number | null
+          last_tsl_notified_at: string | null
+          lowest_since_entry: number | null
           notes: string | null
           pnl: number | null
           pnl_percent: number | null
@@ -918,9 +922,13 @@ export type Database = {
           entry_price?: number | null
           entry_time?: string
           exchange_segment?: string | null
+          highest_since_entry?: number | null
           holding_period?: string | null
           id?: string
           instrument_token?: string | null
+          last_trail_anchor_price?: number | null
+          last_tsl_notified_at?: string | null
+          lowest_since_entry?: number | null
           notes?: string | null
           pnl?: number | null
           pnl_percent?: number | null
@@ -967,9 +975,13 @@ export type Database = {
           entry_price?: number | null
           entry_time?: string
           exchange_segment?: string | null
+          highest_since_entry?: number | null
           holding_period?: string | null
           id?: string
           instrument_token?: string | null
+          last_trail_anchor_price?: number | null
+          last_tsl_notified_at?: string | null
+          lowest_since_entry?: number | null
           notes?: string | null
           pnl?: number | null
           pnl_percent?: number | null
@@ -1099,6 +1111,7 @@ export type Database = {
           telegram_verified_at: string | null
           theme: string | null
           timezone: string | null
+          tsl_profiles: Json | null
           updated_at: string | null
           user_id: string
           webhook_secret: string | null
@@ -1129,6 +1142,7 @@ export type Database = {
           telegram_verified_at?: string | null
           theme?: string | null
           timezone?: string | null
+          tsl_profiles?: Json | null
           updated_at?: string | null
           user_id: string
           webhook_secret?: string | null
@@ -1159,6 +1173,7 @@ export type Database = {
           telegram_verified_at?: string | null
           theme?: string | null
           timezone?: string | null
+          tsl_profiles?: Json | null
           updated_at?: string | null
           user_id?: string
           webhook_secret?: string | null

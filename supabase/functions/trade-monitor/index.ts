@@ -25,27 +25,58 @@ interface Trade {
   timeframe: string | null;
   holding_period: string | null;
   trailing_sl_enabled: boolean;
-  trailing_sl_percent: number | null;
-  trailing_sl_points: number | null;
+  trailing_sl_active: boolean;
   trailing_sl_current: number | null;
   trailing_sl_trigger_price: number | null;
-  trailing_sl_active: boolean;
   rating: number | null;
   confidence_score: number | null;
   auto_track_enabled: boolean;
   telegram_post_enabled: boolean;
   security_id: string | null;
   exchange_segment: string | null;
+  // New TSL tracking fields
+  highest_since_entry: number | null;
+  lowest_since_entry: number | null;
+  last_trail_anchor_price: number | null;
+  last_tsl_notified_at: string | null;
 }
 
-// Helper function to get user's telegram chat ID
-async function getUserChatId(supabase: any, userId: string): Promise<string | null> {
+interface TslProfile {
+  activate_pct: number;
+  step_pct: number;
+  trail_gap_pct: number;
+  cooldown_sec: number;
+  min_sl_improve_pct: number;
+}
+
+const DEFAULT_TSL_PROFILES: Record<string, TslProfile> = {
+  Equity_Intraday: { activate_pct: 0.5, step_pct: 0.5, trail_gap_pct: 1.0, cooldown_sec: 120, min_sl_improve_pct: 0.1 },
+  Equity_Positional: { activate_pct: 2.0, step_pct: 3.0, trail_gap_pct: 4.0, cooldown_sec: 1200, min_sl_improve_pct: 0.5 },
+  Futures: { activate_pct: 1.0, step_pct: 1.0, trail_gap_pct: 2.0, cooldown_sec: 300, min_sl_improve_pct: 0.2 },
+  Options: { activate_pct: 1.5, step_pct: 2.0, trail_gap_pct: 3.0, cooldown_sec: 300, min_sl_improve_pct: 0.3 },
+  Commodities: { activate_pct: 1.0, step_pct: 1.5, trail_gap_pct: 2.5, cooldown_sec: 300, min_sl_improve_pct: 0.2 },
+};
+
+// deno-lint-ignore no-explicit-any
+async function getUserTelegramInfo(supabase: any, userId: string) {
   const { data } = await supabase
     .from("user_settings")
-    .select("telegram_chat_id")
+    .select("telegram_chat_id, tsl_profiles")
     .eq("user_id", userId)
     .maybeSingle();
-  return data?.telegram_chat_id || null;
+  return {
+    chatId: data?.telegram_chat_id || null,
+    tslProfiles: data?.tsl_profiles || null,
+  };
+}
+
+function getTslProfile(userProfiles: Record<string, TslProfile> | null, segment: string): TslProfile {
+  if (userProfiles && userProfiles[segment]) return userProfiles[segment];
+  return DEFAULT_TSL_PROFILES[segment] || DEFAULT_TSL_PROFILES.Equity_Intraday;
+}
+
+function isValidPrice(p: number | null | undefined): p is number {
+  return typeof p === "number" && isFinite(p) && p > 0;
 }
 
 serve(async (req) => {
@@ -67,16 +98,13 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-     // Fetch all open trades with auto_track_enabled
     const { data: openTrades, error: tradesError } = await supabase
       .from("trades")
       .select("*")
-       .eq("status", "OPEN")
-       .eq("auto_track_enabled", true);
+      .eq("status", "OPEN")
+      .eq("auto_track_enabled", true);
 
-    if (tradesError) {
-      throw new Error(`Failed to fetch trades: ${tradesError.message}`);
-    }
+    if (tradesError) throw new Error(`Failed to fetch trades: ${tradesError.message}`);
 
     if (!openTrades || openTrades.length === 0) {
       return new Response(
@@ -88,13 +116,12 @@ serve(async (req) => {
     const results = {
       monitored: openTrades.length,
       slHits: [] as string[],
-      tslHits: [] as string[],
       tslUpdates: [] as string[],
       targetHits: [] as string[],
       priceUpdates: 0,
     };
 
-    // Group trades by user to resolve per-user Dhan tokens
+    // Group trades by user
     const tradesByUser: Record<string, Trade[]> = {};
     for (const trade of openTrades as Trade[]) {
       if (!tradesByUser[trade.user_id]) tradesByUser[trade.user_id] = [];
@@ -102,10 +129,9 @@ serve(async (req) => {
     }
 
     for (const [userId, userTrades] of Object.entries(tradesByUser)) {
-      // Resolve user-specific Dhan token
       const { data: userSettings } = await supabase
         .from("user_settings")
-        .select("dhan_access_token, dhan_client_id, dhan_enabled")
+        .select("dhan_access_token, dhan_client_id, dhan_enabled, tsl_profiles, telegram_chat_id")
         .eq("user_id", userId)
         .single();
 
@@ -113,219 +139,172 @@ serve(async (req) => {
       const userClientId = userSettings?.dhan_enabled ? userSettings.dhan_client_id : null;
       const activeToken = userToken || DHAN_ACCESS_TOKEN;
       const activeClientId = userClientId || DHAN_CLIENT_ID;
+      const userTslProfiles = userSettings?.tsl_profiles || null;
+      const userChatId = userSettings?.telegram_chat_id || null;
 
-      // Batch fetch prices for all user trades using security_ids
       const priceMap = await batchFetchPrices(userTrades, activeToken, activeClientId);
 
-    for (const trade of userTrades) {
-      // Get user-specific chat ID for this trade
-      const userChatId = await getUserChatId(supabase, trade.user_id);
-      const chatId = trade.telegram_post_enabled 
-        ? (userChatId || DEFAULT_TELEGRAM_CHAT_ID)
-        : undefined;
+      for (const trade of userTrades) {
+        const chatId = trade.telegram_post_enabled
+          ? (userChatId || DEFAULT_TELEGRAM_CHAT_ID)
+          : undefined;
 
-      // Get price from batch result - skip if no valid price
-      const currentPrice = priceMap[trade.symbol];
-      if (!currentPrice || currentPrice <= 0) continue;
+        const currentPrice = priceMap[trade.symbol];
+        if (!isValidPrice(currentPrice)) continue;
 
-      // Calculate P&L (using quantity 1 for research trades if not set)
-      const qty = trade.quantity || 1;
-      const pnlMultiplier = trade.trade_type === "BUY" ? 1 : -1;
-      const pnl = (currentPrice - trade.entry_price) * qty * pnlMultiplier;
-      const pnlPercent = ((currentPrice - trade.entry_price) / trade.entry_price) * 100 * pnlMultiplier;
+        // Outlier check: reject >20% jump from last known price
+        if (isValidPrice(trade.current_price) && Math.abs(currentPrice / trade.current_price - 1) > 0.20) {
+          console.warn(`Outlier price rejected for ${trade.symbol}: ${currentPrice} vs last ${trade.current_price}`);
+          continue;
+        }
 
-      // Prepare update object
-      const updateData: Record<string, unknown> = {
-        current_price: currentPrice,
-        pnl: pnl,
-        pnl_percent: pnlPercent,
-        updated_at: new Date().toISOString(),
-      };
+        const qty = trade.quantity || 1;
+        const isBuy = trade.trade_type === "BUY";
+        const pnlMultiplier = isBuy ? 1 : -1;
+        const entryPrice = trade.entry_price;
 
-      let tslActiveNow = trade.trailing_sl_active;
-      let tslCurrentNow = trade.trailing_sl_current;
+        if (!isValidPrice(entryPrice)) continue;
 
-      // Check and update Trailing Stop Loss
-      if (trade.trailing_sl_enabled) {
-        const tslResult = await processTrailingStopLoss(
-          trade,
-          currentPrice,
+        const pnl = (currentPrice - entryPrice) * qty * pnlMultiplier;
+        const pnlPercent = ((currentPrice - entryPrice) / entryPrice) * 100 * pnlMultiplier;
+
+        const updateData: Record<string, unknown> = {
+          current_price: currentPrice,
           pnl,
-          pnlPercent,
-          supabase,
-          TELEGRAM_BOT_TOKEN,
-          chatId
-        );
+          pnl_percent: pnlPercent,
+          updated_at: new Date().toISOString(),
+        };
 
-        if (tslResult.tslHit) {
-          results.tslHits.push(trade.symbol);
-          continue; // Skip other checks if TSL hit
-        }
+        // --- TSL Logic (segment-based) ---
+        let slClosed = false;
+        if (trade.trailing_sl_enabled) {
+          const profile = getTslProfile(userTslProfiles, trade.segment);
+          const tslResult = processSegmentTsl(trade, currentPrice, entryPrice, isBuy, profile);
 
-        if (tslResult.tslUpdated) {
-          results.tslUpdates.push(trade.symbol);
-          updateData.trailing_sl_current = tslResult.newTslValue;
-          updateData.trailing_sl_active = tslResult.tslActive;
-
-          tslActiveNow = tslResult.tslActive;
-          tslCurrentNow = tslResult.newTslValue;
-        }
-      }
-
-      // Update current price in database
-      await supabase
-        .from("trades")
-        .update(updateData)
-        .eq("id", trade.id);
-
-      results.priceUpdates++;
-
-      // Check Stop Loss / Trailing Stop Loss
-      const effectiveSL = tslActiveNow && tslCurrentNow ? tslCurrentNow : trade.stop_loss;
-
-      if (effectiveSL) {
-        const slHit = trade.trade_type === "BUY" 
-          ? currentPrice <= effectiveSL
-          : currentPrice >= effectiveSL;
-
-        if (slHit) {
-          const isTslHit = !!(tslActiveNow && tslCurrentNow && effectiveSL === tslCurrentNow);
-          const eventType = isTslHit ? "TSL_HIT" : "SL_HIT";
-          const reason = isTslHit ? "TSL_HIT" : "SL_HIT";
-
-          if (isTslHit) {
-            results.tslHits.push(trade.symbol);
-          } else {
-            results.slHits.push(trade.symbol);
+          if (tslResult.updateHighLow) {
+            updateData.highest_since_entry = tslResult.highestSinceEntry;
+            updateData.lowest_since_entry = tslResult.lowestSinceEntry;
           }
-          
-          // Log SL/TSL hit event
-          await supabase.from("trade_events").insert({
-            trade_id: trade.id,
-            event_type: eventType,
-            price: currentPrice,
-            quantity: qty,
-            pnl_realized: pnl,
-            notes: `${isTslHit ? "Trailing stop loss" : "Stop loss"} hit at ₹${currentPrice.toFixed(2)}`,
-          });
 
-          // Close trade
-          await supabase
-            .from("trades")
-            .update({
+          if (tslResult.newSl !== null) {
+            updateData.trailing_sl_current = tslResult.newSl;
+            updateData.trailing_sl_active = true;
+            updateData.last_trail_anchor_price = tslResult.newAnchor;
+            results.tslUpdates.push(trade.symbol);
+
+            // Log event
+            await supabase.from("trade_events").insert({
+              trade_id: trade.id,
+              event_type: "TSL_UPDATED",
+              price: currentPrice,
+              notes: `TSL: ₹${(trade.trailing_sl_current ?? 0).toFixed(2)} → ₹${tslResult.newSl.toFixed(2)} | ${trade.segment}`,
+            });
+
+            // Notification with cooldown
+            if (TELEGRAM_BOT_TOKEN && chatId && trade.telegram_post_enabled) {
+              const now = Date.now();
+              const lastNotified = trade.last_tsl_notified_at ? new Date(trade.last_tsl_notified_at).getTime() : 0;
+              const cooldownMs = profile.cooldown_sec * 1000;
+
+              if (now - lastNotified >= cooldownMs) {
+                const oldSl = trade.trailing_sl_current ?? trade.stop_loss ?? 0;
+                const msg = `🧲 *TSL Updated: ${trade.symbol}*\nSL: ₹${oldSl.toFixed(2)} → ₹${tslResult.newSl.toFixed(2)}\nSegment: ${trade.segment}\nLTP: ₹${currentPrice.toFixed(2)}`;
+                await sendTelegramMessage(TELEGRAM_BOT_TOKEN, chatId, msg);
+                updateData.last_tsl_notified_at = new Date().toISOString();
+              }
+            }
+          }
+        }
+
+        // Update trade in DB
+        await supabase.from("trades").update(updateData).eq("id", trade.id);
+        results.priceUpdates++;
+
+        // --- Check SL Hit (use TSL current if active, else static SL) ---
+        const effectiveSL = (trade.trailing_sl_active && isValidPrice(trade.trailing_sl_current))
+          ? (updateData.trailing_sl_current as number ?? trade.trailing_sl_current!)
+          : trade.stop_loss;
+
+        if (isValidPrice(effectiveSL)) {
+          const slHit = isBuy ? currentPrice <= effectiveSL : currentPrice >= effectiveSL;
+
+          if (slHit) {
+            const isTslHit = trade.trailing_sl_active && isValidPrice(trade.trailing_sl_current);
+            const reason = isTslHit ? "TSL_HIT" : "SL_HIT";
+            results.slHits.push(trade.symbol);
+
+            await supabase.from("trade_events").insert({
+              trade_id: trade.id,
+              event_type: reason,
+              price: currentPrice,
+              quantity: qty,
+              pnl_realized: pnl,
+              notes: `${isTslHit ? "Trailing SL" : "Stop loss"} hit at ₹${currentPrice.toFixed(2)}`,
+            });
+
+            await supabase.from("trades").update({
               status: "CLOSED",
               closed_at: new Date().toISOString(),
               closure_reason: reason,
-              pnl: pnl,
-              pnl_percent: pnlPercent,
+              pnl, pnl_percent: pnlPercent,
               current_price: currentPrice,
-            })
-            .eq("id", trade.id);
+            }).eq("id", trade.id);
 
-           // Send notification only if telegram is enabled and chat ID is available
-         if (TELEGRAM_BOT_TOKEN && chatId && trade.telegram_post_enabled) {
-            const emoji = pnl >= 0 ? "✅" : "🛑";
-            const slType = isTslHit ? "Trailing Stop Loss" : "Stop Loss";
-            const lockedGain = isTslHit && pnl > 0 
-              ? `\n💰 Locked Gain: +₹${pnl.toFixed(2)} (+${pnlPercent.toFixed(2)}%)` 
-              : "";
+            if (TELEGRAM_BOT_TOKEN && chatId && trade.telegram_post_enabled) {
+              const emoji = pnl >= 0 ? "✅" : "🛑";
+              const slType = isTslHit ? "Trailing SL" : "Stop Loss";
+              const msg = `${emoji} *${slType} Hit!*\n\nSymbol: *${trade.symbol}*\nType: ${trade.trade_type}\nEntry: ₹${entryPrice.toLocaleString()}\nExit: ₹${currentPrice.toFixed(2)}\nP&L: ${pnl >= 0 ? "+" : ""}₹${pnl.toFixed(2)} (${pnlPercent >= 0 ? "+" : ""}${pnlPercent.toFixed(2)}%)`;
+              await sendTelegramMessage(TELEGRAM_BOT_TOKEN, chatId, msg);
+            }
 
-            const message = `${emoji} *${slType} Hit!*\n\n` +
-              `Symbol: *${trade.symbol}*\n` +
-              `Type: ${trade.trade_type}\n` +
-              `Entry: ₹${trade.entry_price.toLocaleString()}\n` +
-              `Exit: ₹${currentPrice.toFixed(2)}\n` +
-              `P&L: ${pnl >= 0 ? "+" : ""}₹${pnl.toFixed(2)} (${pnlPercent >= 0 ? "+" : ""}${pnlPercent.toFixed(2)}%)${lockedGain}`;
-
-            await sendTelegramMessage(TELEGRAM_BOT_TOKEN, chatId, message);
+            if (activeToken && activeClientId) {
+              await executeExitOrder(trade, currentPrice, reason, activeToken, activeClientId);
+            }
+            slClosed = true;
           }
-
-          // Auto-execute via Dhan if configured
-          if (DHAN_ACCESS_TOKEN && DHAN_CLIENT_ID) {
-            await executeExitOrder(trade, currentPrice, reason, DHAN_ACCESS_TOKEN, DHAN_CLIENT_ID);
-          }
-
-          continue; // Skip target checks if SL/TSL hit
         }
-      }
 
-      // Check Targets
-      if (trade.targets && Array.isArray(trade.targets)) {
-        for (let i = 0; i < trade.targets.length; i++) {
-          const target = trade.targets[i];
-          const targetHit = trade.trade_type === "BUY"
-            ? currentPrice >= target
-            : currentPrice <= target;
+        if (slClosed) continue;
 
-          if (targetHit) {
-            const targetNum = i + 1;
-            const eventType = `TARGET${targetNum}_HIT` as "TARGET1_HIT" | "TARGET2_HIT" | "TARGET3_HIT";
-            
-            // Check if this target was already hit
-            const { data: existingEvents } = await supabase
-              .from("trade_events")
-              .select("id")
-              .eq("trade_id", trade.id)
-              .eq("event_type", eventType);
+        // --- Check Targets ---
+        if (trade.targets && Array.isArray(trade.targets)) {
+          for (let i = 0; i < trade.targets.length; i++) {
+            const target = trade.targets[i];
+            const targetHit = isBuy ? currentPrice >= target : currentPrice <= target;
 
-            if (!existingEvents || existingEvents.length === 0) {
-              results.targetHits.push(`${trade.symbol} T${targetNum}`);
+            if (targetHit) {
+              const targetNum = i + 1;
+              const eventType = `TARGET${targetNum}_HIT` as "TARGET1_HIT" | "TARGET2_HIT" | "TARGET3_HIT";
 
-              // Log target hit event
-              await supabase.from("trade_events").insert({
-                trade_id: trade.id,
-                event_type: eventType,
-                price: currentPrice,
-                notes: `Target ${targetNum} hit at ₹${currentPrice.toFixed(2)}`,
-              });
+              const { data: existing } = await supabase
+                .from("trade_events")
+                .select("id")
+                .eq("trade_id", trade.id)
+                .eq("event_type", eventType);
 
-              // If target 1 hit and TSL is configured but not active, activate it
-              if (targetNum === 1 && trade.trailing_sl_enabled && !trade.trailing_sl_active) {
-                const newTslValue = calculateTrailingStopLoss(trade, currentPrice);
-                await supabase
-                  .from("trades")
-                  .update({
-                    trailing_sl_active: true,
-                    trailing_sl_current: newTslValue,
-                  })
-                  .eq("id", trade.id);
+              if (!existing || existing.length === 0) {
+                results.targetHits.push(`${trade.symbol} T${targetNum}`);
 
-                // Log TSL activation
                 await supabase.from("trade_events").insert({
                   trade_id: trade.id,
-                  event_type: "TSL_UPDATED",
+                  event_type: eventType,
                   price: currentPrice,
-                  notes: `Trailing SL activated at ₹${newTslValue.toFixed(2)}`,
+                  notes: `Target ${targetNum} hit at ₹${currentPrice.toFixed(2)}`,
                 });
-              }
 
-               // Send notification only if telegram is enabled
-               if (TELEGRAM_BOT_TOKEN && chatId && trade.telegram_post_enabled) {
-                const tslInfo = trade.trailing_sl_enabled
-                  ? `\n🔄 TSL: ${trade.trailing_sl_active ? "Active" : "Activating"}`
-                  : "";
-
-                const message = `🎯 *Target ${targetNum} Hit!*\n\n` +
-                  `Symbol: *${trade.symbol}*\n` +
-                  `Entry: ₹${trade.entry_price.toLocaleString()}\n` +
-                  `Target: ₹${target.toLocaleString()}\n` +
-                  `Current: ₹${currentPrice.toFixed(2)}\n` +
-                  `P&L: +₹${pnl.toFixed(2)} (+${pnlPercent.toFixed(2)}%)${tslInfo}`;
-
-                await sendTelegramMessage(TELEGRAM_BOT_TOKEN, chatId, message);
+                if (TELEGRAM_BOT_TOKEN && chatId && trade.telegram_post_enabled) {
+                  const msg = `🎯 *Target ${targetNum} Hit!*\n\nSymbol: *${trade.symbol}*\nEntry: ₹${entryPrice.toLocaleString()}\nTarget: ₹${target.toLocaleString()}\nCurrent: ₹${currentPrice.toFixed(2)}\nP&L: +₹${pnl.toFixed(2)} (+${pnlPercent.toFixed(2)}%)`;
+                  await sendTelegramMessage(TELEGRAM_BOT_TOKEN, chatId, msg);
+                }
               }
             }
           }
         }
       }
-    } // end user loop
     }
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        results,
-      }),
+      JSON.stringify({ success: true, results }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
@@ -338,116 +317,82 @@ serve(async (req) => {
   }
 });
 
-function calculateTrailingStopLoss(trade: Trade, currentPrice: number): number {
-  const isBuy = trade.trade_type === "BUY";
-  
-  if (trade.trailing_sl_percent) {
-    const distance = trade.entry_price * (trade.trailing_sl_percent / 100);
-    return isBuy ? currentPrice - distance : currentPrice + distance;
-  } else if (trade.trailing_sl_points) {
-    return isBuy ? currentPrice - trade.trailing_sl_points : currentPrice + trade.trailing_sl_points;
-  }
-  
-  return isBuy ? currentPrice * 0.98 : currentPrice * 1.02; // Default 2%
-}
-
-async function processTrailingStopLoss(
+// --- Segment-based TSL processor ---
+function processSegmentTsl(
   trade: Trade,
-  currentPrice: number,
-  pnl: number,
-  pnlPercent: number,
-  // deno-lint-ignore no-explicit-any
-  supabase: any,
-  telegramToken: string | undefined,
-  chatId: string | undefined
-): Promise<{ tslHit: boolean; tslUpdated: boolean; newTslValue: number | null; tslActive: boolean }> {
-  const isBuy = trade.trade_type === "BUY";
-  
-  // Check if TSL should be activated
-  if (!trade.trailing_sl_active) {
-    const hasTrigger = !!trade.trailing_sl_trigger_price;
+  ltp: number,
+  entryPrice: number,
+  isBuy: boolean,
+  profile: TslProfile
+): {
+  updateHighLow: boolean;
+  highestSinceEntry: number;
+  lowestSinceEntry: number;
+  newSl: number | null;
+  newAnchor: number | null;
+} {
+  let highest = trade.highest_since_entry ?? (isBuy ? entryPrice : ltp);
+  let lowest = trade.lowest_since_entry ?? (isBuy ? ltp : entryPrice);
+  const lastAnchor = trade.last_trail_anchor_price ?? entryPrice;
+  const currentSl = trade.trailing_sl_current;
 
-    // TSL should activate immediately unless a specific trigger price is set.
-    // If trigger price is set -> wait until crossed.
-    // Otherwise -> activate immediately from the first price check.
-    const shouldActivate = hasTrigger
-      ? (isBuy
-          ? currentPrice >= (trade.trailing_sl_trigger_price as number)
-          : currentPrice <= (trade.trailing_sl_trigger_price as number))
-      : true; // Immediately activate
+  // Update high/low watermarks
+  highest = Math.max(highest, ltp);
+  lowest = Math.min(lowest, ltp);
 
-    if (shouldActivate) {
-      const newTslValue = calculateTrailingStopLoss(trade, currentPrice);
+  const result = {
+    updateHighLow: true,
+    highestSinceEntry: highest,
+    lowestSinceEntry: lowest,
+    newSl: null as number | null,
+    newAnchor: null as number | null,
+  };
 
-      const activationReason = hasTrigger
-        ? `trigger: ₹${trade.trailing_sl_trigger_price}`
-        : "no trigger & no targets";
+  if (isBuy) {
+    // Activation check: price must have moved activatePct above entry
+    if (highest < entryPrice * (1 + profile.activate_pct / 100)) return result;
 
-      // Log activation event
-      await supabase.from("trade_events").insert({
-        trade_id: trade.id,
-        event_type: "TSL_UPDATED",
-        price: currentPrice,
-        notes: `Trailing SL activated at ₹${newTslValue.toFixed(2)} (${activationReason})`,
-      });
+    // Step check: price must have moved stepPct above last anchor
+    if (highest < lastAnchor * (1 + profile.step_pct / 100)) return result;
 
-      // Send notification
-      if (telegramToken && chatId) {
-        const message = `🔄 *Trailing SL Activated!*\n\n` +
-          `Symbol: *${trade.symbol}*\n` +
-          `Entry: ₹${trade.entry_price.toLocaleString()}\n` +
-          `Current: ₹${currentPrice.toFixed(2)}\n` +
-          `TSL: ₹${newTslValue.toFixed(2)}\n` +
-          (hasTrigger ? `Trigger Price: ₹${trade.trailing_sl_trigger_price}\n` : "") +
-          `P&L: ${pnl >= 0 ? "+" : ""}₹${pnl.toFixed(2)} (${pnlPercent >= 0 ? "+" : ""}${pnlPercent.toFixed(2)}%)`;
+    // Candidate SL
+    const candidateSl = highest * (1 - profile.trail_gap_pct / 100);
+    const newSl = Math.max(currentSl ?? 0, candidateSl);
 
-        await sendTelegramMessage(telegramToken, chatId, message);
-      }
+    // Only update if actually improved
+    if (currentSl !== null && newSl <= currentSl) return result;
 
-      return { tslHit: false, tslUpdated: true, newTslValue, tslActive: true };
+    // Min improvement check
+    if (currentSl !== null && profile.min_sl_improve_pct > 0) {
+      const improvePct = ((newSl - currentSl) / currentSl) * 100;
+      if (improvePct < profile.min_sl_improve_pct) return result;
     }
-  }
-  
-  // Check if TSL should be updated (price moved favorably)
-  if (trade.trailing_sl_active && trade.trailing_sl_current) {
-    const newTslValue = calculateTrailingStopLoss(trade, currentPrice);
-    const shouldUpdate = isBuy 
-      ? newTslValue > trade.trailing_sl_current
-      : newTslValue < trade.trailing_sl_current;
-    
-    if (shouldUpdate) {
-      const oldTsl = trade.trailing_sl_current;
-      const lockedGain = isBuy 
-        ? (newTslValue - trade.entry_price)
-        : (trade.entry_price - newTslValue);
-      const lockedPercent = (lockedGain / trade.entry_price) * 100;
 
-      // Log update event
-      await supabase.from("trade_events").insert({
-        trade_id: trade.id,
-        event_type: "TSL_UPDATED",
-        price: currentPrice,
-        notes: `TSL moved from ₹${oldTsl.toFixed(2)} to ₹${newTslValue.toFixed(2)}`,
-      });
+    result.newSl = newSl;
+    result.newAnchor = highest;
+  } else {
+    // SELL logic (inverse)
+    if (lowest > entryPrice * (1 - profile.activate_pct / 100)) return result;
+    if (lowest > lastAnchor * (1 - profile.step_pct / 100)) return result;
 
-      // Send notification
-      if (telegramToken && chatId) {
-        const message = `🔄 *Trailing SL Moved*\n\n` +
-          `Symbol: *${trade.symbol}*\n` +
-          `Entry: ₹${trade.entry_price.toLocaleString()}\n` +
-          `Current: ₹${currentPrice.toFixed(2)}\n` +
-          `TSL: ₹${oldTsl.toFixed(2)} → ₹${newTslValue.toFixed(2)}\n` +
-          `💰 Locked Gain: ${lockedGain >= 0 ? "+" : ""}₹${lockedGain.toFixed(2)} (${lockedPercent >= 0 ? "+" : ""}${lockedPercent.toFixed(2)}%)`;
+    const candidateSl = lowest * (1 + profile.trail_gap_pct / 100);
+    const newSl = Math.min(currentSl ?? Infinity, candidateSl);
 
-        await sendTelegramMessage(telegramToken, chatId, message);
-      }
+    if (currentSl !== null && newSl >= currentSl) return result;
 
-      return { tslHit: false, tslUpdated: true, newTslValue, tslActive: true };
+    if (currentSl !== null && currentSl !== Infinity && profile.min_sl_improve_pct > 0) {
+      const improvePct = ((currentSl - newSl) / currentSl) * 100;
+      if (improvePct < profile.min_sl_improve_pct) return result;
     }
+
+    result.newSl = newSl;
+    result.newAnchor = lowest;
   }
 
-  return { tslHit: false, tslUpdated: false, newTslValue: null, tslActive: trade.trailing_sl_active };
+  return result;
 }
+
+// --- Helpers ---
 
 async function batchFetchPrices(
   trades: Trade[],
@@ -455,26 +400,22 @@ async function batchFetchPrices(
   dhanClientId: string | undefined
 ): Promise<Record<string, number>> {
   const priceMap: Record<string, number> = {};
-
   if (!dhanToken || !dhanClientId) return priceMap;
 
-  // Build request body grouped by exchange_segment using security_ids
-    const requestBody: Record<string, number[]> = {};
+  const requestBody: Record<string, number[]> = {};
   const secIdToSymbol: Record<string, string> = {};
 
   for (const trade of trades) {
     if (!trade.security_id) continue;
     const numericId = parseInt(trade.security_id, 10);
     if (isNaN(numericId)) continue;
-
     const seg = trade.exchange_segment || "NSE_EQ";
     if (!requestBody[seg]) requestBody[seg] = [];
     requestBody[seg].push(numericId);
     secIdToSymbol[trade.security_id] = trade.symbol;
   }
 
-  const hasIds = Object.keys(requestBody).some((k) => requestBody[k].length > 0);
-  if (!hasIds) return priceMap;
+  if (!Object.keys(requestBody).some((k) => requestBody[k].length > 0)) return priceMap;
 
   try {
     let retries = 0;
@@ -505,14 +446,12 @@ async function batchFetchPrices(
       for (const seg of Object.keys(requestBody)) {
         const segData = data?.data?.[seg];
         if (!segData) continue;
-        for (const [secId, quote] of Object.entries(segData)) {
+        // deno-lint-ignore no-explicit-any
+        for (const [secId, quote] of Object.entries(segData) as [string, any][]) {
           const sym = secIdToSymbol[secId];
           if (!sym) continue;
-          const q = quote as Record<string, any>;
-          const ltp = q.last_price || q.ltp || 0;
-          if (ltp > 0) {
-            priceMap[sym] = ltp;
-          }
+          const ltp = quote.last_price || quote.ltp || 0;
+          if (ltp > 0) priceMap[sym] = ltp;
         }
       }
     } else if (res) {
@@ -523,18 +462,14 @@ async function batchFetchPrices(
   }
 
   return priceMap;
-  }
+}
 
 async function sendTelegramMessage(token: string, chatId: string, message: string): Promise<void> {
   try {
     await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: message,
-        parse_mode: "Markdown",
-      }),
+      body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "Markdown" }),
     });
   } catch (e) {
     console.error("Failed to send Telegram message:", e);
@@ -543,14 +478,13 @@ async function sendTelegramMessage(token: string, chatId: string, message: strin
 
 async function executeExitOrder(
   trade: Trade,
-  exitPrice: number,
-  reason: string,
+  _exitPrice: number,
+  _reason: string,
   dhanToken: string,
   clientId: string
 ): Promise<void> {
   try {
     const exitType = trade.trade_type === "BUY" ? "SELL" : "BUY";
-    
     const orderPayload = {
       dhanClientId: clientId,
       transactionType: exitType,
@@ -570,7 +504,7 @@ async function executeExitOrder(
     const response = await fetch(`${DHAN_API_URL}/orders`, {
       method: "POST",
       headers: {
-        "Accept": "application/json",
+        Accept: "application/json",
         "Content-Type": "application/json",
         "access-token": dhanToken,
       },
