@@ -35,7 +35,7 @@ interface PriceResult {
 
 async function resolveUserToken(
   userId: string | undefined,
-  supabase: ReturnType<typeof createClient> | null
+  supabase: any
 ) {
   if (!userId || !supabase) return { token: null, clientId: null, hasApiKey: false };
   const { data } = await supabase
@@ -61,7 +61,7 @@ async function resolveUserToken(
 async function buildSecurityIdMap(
   instruments: InstrumentInput[],
   symbols: string[],
-  supabase: ReturnType<typeof createClient> | null
+  supabase: any
 ) {
   const securityIdMap: Record<string, { symbol: string; exchangeSegment: string }> = {};
 
