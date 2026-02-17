@@ -73,10 +73,9 @@ export function useTelegramChats() {
           chat_id: input.chat_id,
           label: input.label || `Chat ${input.chat_id}`,
           segments: [], // Default: OFF - user must explicitly select segments
-          notification_types: {}, // Empty by default
           bot_token: input.bot_token || null,
           bot_username: input.bot_username || null,
-        } as any)
+        })
         .select()
         .single();
       if (error) throw error;
@@ -152,25 +151,55 @@ export function useTelegramChats() {
         },
       });
 
+      // supabase.functions.invoke returns error for non-2xx responses
+      // but the response body is in error.context for FunctionsHttpError
       if (error) {
-        const errorMsg = error.message || "Test failed";
-        toast.error(`Test failed: ${errorMsg}`, { duration: 5000 });
+        // Try to parse the error body for detailed info
+        let errorCode: number | undefined;
+        let errorDesc: string | undefined;
+        
+        try {
+          // FunctionsHttpError has context with the response
+          const errorBody = error.context ? await error.context.json?.() : null;
+          if (errorBody) {
+            errorCode = errorBody.errorCode;
+            errorDesc = errorBody.errorDescription || errorBody.error;
+          }
+        } catch {
+          // ignore parse errors
+        }
+
+        let userFriendlyError = errorDesc || error.message || "Test failed";
+
+        if (errorCode === 400 && errorDesc?.includes("chat not found")) {
+          userFriendlyError = "Chat ID not found. Check if the ID is correct. For groups/channels, it should start with -100.";
+        } else if (errorCode === 403 && errorDesc?.includes("bot was blocked")) {
+          userFriendlyError = "Bot was blocked by user. Unblock the bot and try again.";
+        } else if (errorCode === 403 && errorDesc?.includes("not enough rights")) {
+          userFriendlyError = "Bot is not admin. Add bot as admin in channel/group.";
+        } else if (errorCode === 401) {
+          userFriendlyError = "Invalid bot token. Check your bot token.";
+        }
+
+        toast.error(userFriendlyError, { duration: 6000 });
+        queryClient.invalidateQueries({ queryKey: ["telegram-delivery-logs"] });
         return false;
       }
 
       if (data?.success) {
         toast.success("Test message sent successfully!");
+        queryClient.invalidateQueries({ queryKey: ["telegram-delivery-logs"] });
         return true;
       }
 
-      // Detailed error message from Telegram API
+      // Detailed error message from response data
       const errorCode = data?.errorCode;
       const errorDesc = data?.errorDescription || data?.error;
 
       let userFriendlyError = "Test failed";
 
       if (errorCode === 400 && errorDesc?.includes("chat not found")) {
-        userFriendlyError = "Chat ID not found. Check if the ID is correct.";
+        userFriendlyError = "Chat ID not found. Check if the ID is correct. For groups/channels, it should start with -100.";
       } else if (errorCode === 403 && errorDesc?.includes("bot was blocked")) {
         userFriendlyError = "Bot was blocked by user. Unblock the bot and try again.";
       } else if (errorCode === 403 && errorDesc?.includes("not enough rights")) {
@@ -182,6 +211,7 @@ export function useTelegramChats() {
       }
 
       toast.error(userFriendlyError, { duration: 6000 });
+      queryClient.invalidateQueries({ queryKey: ["telegram-delivery-logs"] });
       return false;
     } catch (e: any) {
       toast.error(e.message || "Test failed", { duration: 5000 });
@@ -208,13 +238,13 @@ export function useTelegramChats() {
     queryFn: async () => {
       if (!user?.id) return [];
       const { data, error } = await supabase
-        .from("telegram_delivery_log")
+        .from("telegram_delivery_log" as any)
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(10);
       if (error) throw error;
-      return (data || []) as TelegramDeliveryLog[];
+      return (data || []) as unknown as TelegramDeliveryLog[];
     },
     enabled: !!user?.id,
   });

@@ -560,6 +560,7 @@ export type Database = {
           enabled: boolean
           id: string
           label: string
+          notification_types: Json | null
           segments: string[]
           user_id: string
         }
@@ -571,6 +572,7 @@ export type Database = {
           enabled?: boolean
           id?: string
           label?: string
+          notification_types?: Json | null
           segments?: string[]
           user_id: string
         }
@@ -582,7 +584,47 @@ export type Database = {
           enabled?: boolean
           id?: string
           label?: string
+          notification_types?: Json | null
           segments?: string[]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      telegram_delivery_log: {
+        Row: {
+          attempt_number: number
+          chat_id: string
+          created_at: string
+          error_message: string | null
+          id: string
+          notification_type: string
+          response_data: Json | null
+          segment: string | null
+          success: boolean
+          user_id: string
+        }
+        Insert: {
+          attempt_number?: number
+          chat_id: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          notification_type?: string
+          response_data?: Json | null
+          segment?: string | null
+          success?: boolean
+          user_id: string
+        }
+        Update: {
+          attempt_number?: number
+          chat_id?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          notification_type?: string
+          response_data?: Json | null
+          segment?: string | null
+          success?: boolean
           user_id?: string
         }
         Relationships: []
