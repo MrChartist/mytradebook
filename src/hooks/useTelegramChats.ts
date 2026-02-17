@@ -66,11 +66,16 @@ export function useTelegramChats() {
   const addChat = useMutation({
     mutationFn: async (input: { chat_id: string; label: string; bot_token?: string; bot_username?: string }) => {
       if (!user?.id) throw new Error("Not authenticated");
+      // Validate chat_id format
+      const chatId = input.chat_id.trim();
+      if (!/^-?\d+$/.test(chatId)) {
+        throw new Error("Chat ID must be a number (e.g. 123456789 or -1001234567890)");
+      }
       const { data, error } = await supabase
         .from("telegram_chats")
         .insert({
           user_id: user.id,
-          chat_id: input.chat_id,
+          chat_id: chatId,
           label: input.label || `Chat ${input.chat_id}`,
           segments: [], // Default: OFF - user must explicitly select segments
           bot_token: input.bot_token || null,
