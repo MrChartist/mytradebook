@@ -3,6 +3,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
+export interface NotificationTypeRouting {
+  trade: string[];
+  alert: string[];
+  study: string[];
+  report: string[];
+}
+
+export const DEFAULT_NOTIFICATION_TYPES: NotificationTypeRouting = {
+  trade: [],
+  alert: [],
+  study: [],
+  report: [],
+};
+
 export interface TelegramChat {
   id: string;
   user_id: string;
@@ -12,6 +26,7 @@ export interface TelegramChat {
   bot_token: string | null;
   bot_username: string | null;
   enabled: boolean;
+  notification_types: NotificationTypeRouting | null;
   created_at: string;
 }
 
@@ -58,7 +73,7 @@ export function useTelegramChats() {
         .eq("user_id", user.id)
         .order("created_at", { ascending: true });
       if (error) throw error;
-      return (data || []) as TelegramChat[];
+      return (data || []) as unknown as TelegramChat[];
     },
     enabled: !!user?.id,
   });
@@ -84,7 +99,7 @@ export function useTelegramChats() {
         .select()
         .single();
       if (error) throw error;
-      return data as TelegramChat;
+      return data as unknown as TelegramChat;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["telegram-chats"] });
@@ -143,6 +158,32 @@ export function useTelegramChats() {
       ? currentSegments.filter((s) => s !== segment)
       : [...currentSegments, segment];
     await updateChat.mutateAsync({ id: chatId, segments: newSegments } as any);
+  };
+
+  const toggleNotificationType = async (
+    chatId: string,
+    category: keyof NotificationTypeRouting,
+    segment: string,
+    currentTypes: NotificationTypeRouting | null
+  ) => {
+    const types = currentTypes || { ...DEFAULT_NOTIFICATION_TYPES };
+    const currentSegments = types[category] || [];
+    const newSegments = currentSegments.includes(segment)
+      ? currentSegments.filter((s) => s !== segment)
+      : [...currentSegments, segment];
+    const newTypes = { ...types, [category]: newSegments };
+    await updateChat.mutateAsync({ id: chatId, notification_types: newTypes } as any);
+  };
+
+  const toggleNotificationAll = async (
+    chatId: string,
+    category: keyof NotificationTypeRouting,
+    enabled: boolean,
+    currentTypes: NotificationTypeRouting | null
+  ) => {
+    const types = currentTypes || { ...DEFAULT_NOTIFICATION_TYPES };
+    const newTypes = { ...types, [category]: enabled ? ["*"] : [] };
+    await updateChat.mutateAsync({ id: chatId, notification_types: newTypes } as any);
   };
 
   const testChat = async (chatId: string, botToken?: string | null) => {
@@ -264,6 +305,8 @@ export function useTelegramChats() {
     removeChat,
     removeAllChats,
     toggleSegment,
+    toggleNotificationType,
+    toggleNotificationAll,
     testChat,
     testAllChats,
   };

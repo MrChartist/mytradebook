@@ -55,6 +55,22 @@ interface ReportNotification {
   report_id: string;
 }
 
+interface StudyCreatedNotification {
+  type: "study_created";
+  study_id: string;
+}
+
+interface StudyUpdatedNotification {
+  type: "study_updated";
+  study_id: string;
+  old_status?: string;
+}
+
+interface StudyTriggeredNotification {
+  type: "study_triggered";
+  study_id: string;
+}
+
 interface CustomNotification {
   type: "custom";
   message: string;
@@ -76,6 +92,9 @@ type NotificationPayload =
   | AlertDeletedNotification
   | TradeEventAddedNotification
   | ReportNotification
+  | StudyCreatedNotification
+  | StudyUpdatedNotification
+  | StudyTriggeredNotification
   | CustomNotification
   | TestNotification;
 
@@ -676,6 +695,65 @@ function buildTradeEventMessage(trade: any, eventType: string, price: number, no
 }
 
 // ════════════════════════════════════════
+//  STUDY MESSAGE TEMPLATES
+// ════════════════════════════════════════
+
+const studyStatusEmojis: Record<string, string> = {
+  Draft: "📝", Active: "🔍", Triggered: "🎯", Invalidated: "❌", Archived: "📦",
+};
+
+function buildStudyMessage(study: any, action: string, oldStatus?: string): string {
+  const emoji = studyStatusEmojis[study.status] || "📋";
+  const header = action === "triggered" ? "STUDY: TRIGGERED" : action === "created" ? "STUDY CREATED" : "STUDY UPDATED";
+  const tags = (study.tags || []).map((t: string) => `#${t.replace(/\s+/g, "")}`).join(" ");
+  const duration = study.pattern_duration || "—";
+
+  let msg = `${emoji} *${header}*\n*${study.symbol}*\n\n`;
+  msg += `Title: ${study.title}\n`;
+  if (study.category) msg += `Category: ${study.category}\n`;
+  msg += `Duration: ${duration}\n`;
+  if (oldStatus) msg += `Status: ${oldStatus} → ${study.status}\n`;
+  else msg += `Status: ${study.status}\n`;
+  if (tags) msg += `\nTags: ${tags}\n`;
+
+  // Include chart links from attachments or links
+  const links = study.links || [];
+  if (links.length > 0) {
+    for (const link of links.slice(0, 2)) {
+      const linkUrl = typeof link === "string" ? link : link?.url;
+      const linkLabel = typeof link === "object" && link?.label ? link.label : "Chart";
+      if (linkUrl) msg += `📊 [${linkLabel}](${linkUrl})\n`;
+    }
+  }
+
+  // Include first attachment image URL
+  const attachments = study.attachments || [];
+  if (attachments.length > 0) {
+    const first = attachments[0];
+    const imgUrl = typeof first === "string" ? first : first?.url;
+    if (imgUrl) msg += `🖼 [View Image](${imgUrl})\n`;
+  }
+
+  if (study.notes) {
+    const truncatedNotes = study.notes.length > 200 ? study.notes.substring(0, 197) + "..." : study.notes;
+    msg += `\n📝 ${truncatedNotes}\n`;
+  }
+
+  msg += `\n⏱ ${istTimestamp()}`;
+  return msg;
+}
+
+function getFirstStudyImage(study: any): string | null {
+  const attachments = study.attachments || [];
+  if (attachments.length > 0) {
+    const first = attachments[0];
+    const url = typeof first === "string" ? first : first?.url;
+    if (url && (url.startsWith("http") || url.startsWith("/"))) return url;
+  }
+  return null;
+}
+
+// ════════════════════════════════════════
 //  MAIN HANDLER — Multi-chat routing
 // ════════════════════════════════════════
 
@@ -844,6 +922,36 @@ Deno.serve(async (req) => {
         const mistakesStr = mistakes.length > 0 ? mistakes.slice(0, 3).map((m: any) => `• ${m.mistake} (${m.count}x)`).join("\n") : "None";
 
         message = `📊 *Weekly Report – ${report.segment.replace("_", " ")}* | ${APP}\nWeek: ${report.week_start} to ${report.week_end}\n\n📈 *Performance*\n• Total Trades: ${fmtNum(report.total_trades)}\n• Win Rate: ${fmtPct(report.win_rate)}\n• Net P&L: ${fmt(totalPnl)}\n\n🎯 *Top Setups*\n${topSetupsStr}\n\n⚠️ *Common Mistakes*\n${mistakesStr}\n\n${pnlEmoji} Best Trade: ${fmt(report.best_trade_pnl)}\nWorst Trade: ${fmt(report.worst_trade_pnl)}\n\n⏱ ${istTimestamp()}`;
+        break;
+      }
+      case "study_created": {
+        const { data: study, error } = await supabase.from("studies").select("*").eq("id", payload.study_id).maybeSingle();
+        if (error) throw error;
+        if (!study) return jsonOk({ success: true, skipped: true, reason: "Study not found" });
+        userId = study.user_id;
+        notificationType = "study";
+        imageUrl = getFirstStudyImage(study);
+        message = buildStudyMessage(study, "created");
+        break;
+      }
+      case "study_updated": {
+        const { data: study, error } = await supabase.from("studies").select("*").eq("id", payload.study_id).maybeSingle();
+        if (error) throw error;
+        if (!study) return jsonOk({ success: true, skipped: true, reason: "Study not found" });
+        userId = study.user_id;
+        notificationType = "study";
+        imageUrl = getFirstStudyImage(study);
+        message = buildStudyMessage(study, "updated", payload.old_status);
+        break;
+      }
+      case "study_triggered": {
+        const { data: study, error } = await supabase.from("studies").select("*").eq("id", payload.study_id).maybeSingle();
+        if (error) throw error;
+        if (!study) return jsonOk({ success: true, skipped: true, reason: "Study not found" });
+        userId = study.user_id;
+        notificationType = "study";
+        imageUrl = getFirstStudyImage(study);
+        message = buildStudyMessage(study, "triggered");
         break;
       }
       case "custom": {

@@ -11,6 +11,9 @@ type NotificationType =
   | "alert_deleted"
   | "trade_event_added"
   | "weekly_report" 
+  | "study_created"
+  | "study_updated"
+  | "study_triggered"
   | "custom";
 
 interface BaseNotification {
@@ -66,6 +69,22 @@ interface ReportNotification extends BaseNotification {
   report_id: string;
 }
 
+interface StudyCreatedNotification extends BaseNotification {
+  type: "study_created";
+  study_id: string;
+}
+
+interface StudyUpdatedNotification extends BaseNotification {
+  type: "study_updated";
+  study_id: string;
+  old_status?: string;
+}
+
+interface StudyTriggeredNotification extends BaseNotification {
+  type: "study_triggered";
+  study_id: string;
+}
+
 interface CustomNotification extends BaseNotification {
   type: "custom";
   message: string;
@@ -81,6 +100,9 @@ type NotificationPayload =
   | AlertDeletedNotification
   | TradeEventAddedNotification
   | ReportNotification 
+  | StudyCreatedNotification
+  | StudyUpdatedNotification
+  | StudyTriggeredNotification
   | CustomNotification;
 
 interface TelegramResponse {
@@ -187,6 +209,19 @@ export async function notifyTradeEventAdded(
 // Convenience functions for reports
 export async function notifyWeeklyReport(reportId: string) {
   return sendTelegramNotification({ type: "weekly_report", report_id: reportId });
+}
+
+// Convenience functions for studies
+export async function notifyStudyCreated(studyId: string) {
+  return sendTelegramNotification({ type: "study_created", study_id: studyId });
+}
+
+export async function notifyStudyUpdated(studyId: string, oldStatus?: string) {
+  return sendTelegramNotification({ type: "study_updated", study_id: studyId, old_status: oldStatus });
+}
+
+export async function notifyStudyTriggered(studyId: string) {
+  return sendTelegramNotification({ type: "study_triggered", study_id: studyId });
 }
 
 export async function sendCustomMessage(message: string, chatId?: string) {
