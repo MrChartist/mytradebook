@@ -7,11 +7,20 @@ export function useFnoUnderlyings() {
   const { data, isLoading } = useQuery({
     queryKey: ["fno-underlyings"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_fno_underlyings");
+      const { data, error } = await supabase
+        .from("instrument_master")
+        .select("underlying_symbol")
+        .eq("exchange", "NFO")
+        .not("underlying_symbol", "is", null)
+        .order("underlying_symbol", { ascending: true });
 
       if (error) throw error;
 
-      const unique = (data || []).map((r: { underlying_symbol: string }) => r.underlying_symbol);
+      const unique = [...new Set(
+        (data || [])
+          .map(r => r.underlying_symbol!)
+          .filter(s => s && !s.includes("NSETEST"))
+      )];
 
       const indices = unique.filter(s => KNOWN_INDICES.includes(s));
       const stocks = unique.filter(s => !KNOWN_INDICES.includes(s));
