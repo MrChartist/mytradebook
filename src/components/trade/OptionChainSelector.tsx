@@ -14,6 +14,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2, Search, TrendingUp, TrendingDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { useFnoUnderlyings } from "@/hooks/useFnoUnderlyings";
+import { Separator } from "@/components/ui/separator";
 
 interface OptionChainSelectorProps {
   onSelect: (contract: {
@@ -25,24 +27,6 @@ interface OptionChainSelectorProps {
   className?: string;
 }
 
-// Common NSE underlying symbols for options
-const POPULAR_UNDERLYINGS = [
-  "NIFTY",
-  "BANKNIFTY",
-  "FINNIFTY",
-  "RELIANCE",
-  "TCS",
-  "INFY",
-  "HDFCBANK",
-  "ICICIBANK",
-  "SBIN",
-  "TATASTEEL",
-  "BHARTIARTL",
-  "HINDUNILVR",
-  "ITC",
-  "LT",
-  "KOTAKBANK",
-];
 
 function formatExpiry(date: Date): string {
   const day = date.getDate().toString().padStart(2, "0");
@@ -76,9 +60,19 @@ function generateExpiryDates(): string[] {
 }
 
 // Generate strikes around ATM
+function getStrikeStep(underlying: string, price: number): number {
+  if (underlying === "BANKNIFTY") return 100;
+  if (underlying === "NIFTY" || underlying === "FINNIFTY") return 50;
+  if (underlying === "SENSEX") return 100;
+  if (underlying === "MIDCPNIFTY") return 25;
+  if (price > 5000) return 50;
+  if (price > 2000) return 25;
+  return 10;
+}
+
 function generateStrikes(underlying: string, atmPrice: number): number[] {
-  const isIndex = ["NIFTY", "BANKNIFTY", "FINNIFTY"].includes(underlying);
-  const step = isIndex ? (underlying === "BANKNIFTY" ? 100 : 50) : 10;
+  const isIndex = ["NIFTY", "BANKNIFTY", "FINNIFTY", "SENSEX", "MIDCPNIFTY", "NIFTYNXT50", "BANKEX"].includes(underlying);
+  const step = getStrikeStep(underlying, atmPrice);
   const range = isIndex ? 20 : 10;
   
   const atm = Math.round(atmPrice / step) * step;
@@ -92,6 +86,7 @@ function generateStrikes(underlying: string, atmPrice: number): number[] {
 }
 
 export function OptionChainSelector({ onSelect, className }: OptionChainSelectorProps) {
+  const { indices, stocks, isLoading: loadingUnderlyings } = useFnoUnderlyings();
   const [underlying, setUnderlying] = useState("");
   const [underlyingSearch, setUnderlyingSearch] = useState("");
   const [expiry, setExpiry] = useState("");
@@ -105,12 +100,12 @@ export function OptionChainSelector({ onSelect, className }: OptionChainSelector
   const expiries = useMemo(() => generateExpiryDates(), []);
   const strikes = atmPrice > 0 ? generateStrikes(underlying, atmPrice) : [];
 
-  // Filter underlyings based on search
-  const filteredUnderlyings = underlyingSearch
-    ? POPULAR_UNDERLYINGS.filter((u) =>
+  // Filter stocks based on search
+  const filteredStocks = underlyingSearch
+    ? stocks.filter((u) =>
         u.toLowerCase().includes(underlyingSearch.toLowerCase())
       )
-    : POPULAR_UNDERLYINGS;
+    : stocks.slice(0, 30);
 
   // Fetch ATM price when underlying changes
   useEffect(() => {
@@ -204,24 +199,45 @@ export function OptionChainSelector({ onSelect, className }: OptionChainSelector
             className="pl-8"
           />
         </div>
-        <ScrollArea className="h-24">
-          <div className="flex flex-wrap gap-1.5">
-            {filteredUnderlyings.map((u) => (
-              <Badge
-                key={u}
-                variant={underlying === u ? "default" : "outline"}
-                className="cursor-pointer hover:bg-primary/20 transition-colors"
-                onClick={() => {
-                  setUnderlying(u);
-                  setUnderlyingSearch("");
-                  setStrike(null);
-                }}
-              >
-                {u}
-              </Badge>
-            ))}
+        {loadingUnderlyings ? (
+          <div className="flex items-center gap-2 py-2 text-sm text-muted-foreground">
+            <Loader2 className="w-4 h-4 animate-spin" /> Loading F&O symbols…
           </div>
-        </ScrollArea>
+        ) : (
+          <div className="space-y-2">
+            <div className="flex flex-wrap gap-1.5">
+              {indices.map((u) => (
+                <Badge
+                  key={u}
+                  variant={underlying === u ? "default" : "outline"}
+                  className="cursor-pointer hover:bg-primary/20 transition-colors"
+                  onClick={() => { setUnderlying(u); setUnderlyingSearch(""); setStrike(null); }}
+                >
+                  {u}
+                </Badge>
+              ))}
+            </div>
+            {filteredStocks.length > 0 && (
+              <>
+                <Separator />
+                <ScrollArea className="h-24">
+                  <div className="flex flex-wrap gap-1.5">
+                    {filteredStocks.map((u) => (
+                      <Badge
+                        key={u}
+                        variant={underlying === u ? "default" : "outline"}
+                        className="cursor-pointer hover:bg-primary/20 transition-colors"
+                        onClick={() => { setUnderlying(u); setUnderlyingSearch(""); setStrike(null); }}
+                      >
+                        {u}
+                      </Badge>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       {underlying && (
