@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 // Native <select> used instead of Radix Select to avoid infinite re-render loop inside Dialog
 import { createTradeSchema, type CreateTradeInput, marketSegments, tradeTypes, timeframes } from "@/lib/schemas";
 import { useTrades } from "@/hooks/useTrades";
-import { Loader2, AlertCircle, Zap, ChevronDown, TrendingUp, Shield, Target, FileText, Send, Radio, Activity, Link as LinkIcon } from "lucide-react";
+import { Loader2, AlertCircle, Zap, ChevronDown, TrendingUp, Shield, Target, FileText, Send, Radio, Activity, Link as LinkIcon, Layers } from "lucide-react";
 import { TargetChipsInput } from "@/components/trade/TargetChipsInput";
 import { InstrumentPicker, type SelectedInstrument } from "@/components/trade/InstrumentPicker";
 import { PositionSizingCalculator } from "@/components/trade/PositionSizingCalculator";
@@ -24,6 +24,7 @@ import { useUserSettings } from "@/hooks/useUserSettings";
 import { cn } from "@/lib/utils";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { TradingRulesChecklist } from "@/components/trade/TradingRulesChecklist";
+import { MultiLegStrategyModal } from "@/components/trade/MultiLegStrategyModal";
 
 interface CreateTradeModalProps {
   open: boolean;
@@ -124,6 +125,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
   const [checkedRules, setCheckedRules] = useState<Set<string>>(new Set());
   const [chartLink, setChartLink] = useState("");
   const [entryDate, setEntryDate] = useState<Date | null>(null);
+  const [showStrategyBuilder, setShowStrategyBuilder] = useState(false);
 
   const {
     register,
@@ -256,6 +258,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
     setCheckedRules(new Set());
     setChartLink("");
     setEntryDate(null);
+    setShowStrategyBuilder(false);
   };
 
   const handleClose = () => {
@@ -389,6 +392,20 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
             onSelect={handleInstrumentSelect}
             showLtpFetch={true}
           />
+
+          {/* Multi-Leg Strategy Builder shortcut for Options */}
+          {segment === "Options" && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="w-full border-dashed border-primary/40 text-primary hover:bg-primary/10"
+              onClick={() => setShowStrategyBuilder(true)}
+            >
+              <Layers className="w-4 h-4 mr-2" />
+              Build Multi-Leg Strategy (Straddle, Spread, etc.)
+            </Button>
+          )}
 
           {/* Entry Date */}
           <div className="space-y-2">
@@ -739,6 +756,17 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
           </div>
         </form>
         </div>
+
+        {/* Multi-Leg Strategy Builder Modal */}
+        <MultiLegStrategyModal
+          open={showStrategyBuilder}
+          onOpenChange={(v) => {
+            setShowStrategyBuilder(v);
+            if (!v) {
+              // Strategy was created, close the trade modal too
+            }
+          }}
+        />
       </div>,
       document.body
     );
