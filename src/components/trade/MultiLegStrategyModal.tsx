@@ -18,6 +18,7 @@ import {
   TrendingUp, TrendingDown, RefreshCw, Zap, Search,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useFnoUnderlyings } from "@/hooks/useFnoUnderlyings";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -82,14 +83,15 @@ const STRATEGY_TEMPLATES = [
   ]},
 ];
 
-const POPULAR_UNDERLYINGS = ["NIFTY", "BANKNIFTY", "FINNIFTY", "SENSEX", "MIDCPNIFTY", "RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK", "SBIN"];
-
-function getStrikeStep(underlying: string): number {
+function getStrikeStep(underlying: string, price?: number): number {
   if (underlying === "BANKNIFTY") return 100;
   if (underlying === "NIFTY" || underlying === "FINNIFTY") return 50;
   if (underlying === "SENSEX") return 100;
   if (underlying === "MIDCPNIFTY") return 25;
-  return 10; // stock options
+  // Dynamic step for stock options based on price
+  if (price && price > 5000) return 50;
+  if (price && price > 2000) return 25;
+  return 10;
 }
 
 function generateStrikes(underlying: string, atm: number): number[] {
@@ -140,9 +142,11 @@ export function MultiLegStrategyModal({ open, onOpenChange }: Props) {
   const expiries = useMemo(() => generateExpiries(), []);
   const strikes = useMemo(() => underlying && atmPrice > 0 ? generateStrikes(underlying, atmPrice) : [], [underlying, atmPrice]);
 
-  const filteredUnderlyings = underlyingSearch
-    ? POPULAR_UNDERLYINGS.filter(u => u.toLowerCase().includes(underlyingSearch.toLowerCase()))
-    : POPULAR_UNDERLYINGS;
+  const { indices, stocks, isLoading: loadingUnderlyings } = useFnoUnderlyings();
+
+  const filteredStocks = underlyingSearch
+    ? stocks.filter(u => u.toLowerCase().includes(underlyingSearch.toLowerCase()))
+    : stocks.slice(0, 30);
 
   // Fetch ATM price
   useEffect(() => {
@@ -346,18 +350,47 @@ export function MultiLegStrategyModal({ open, onOpenChange }: Props) {
                 className="pl-8 h-9"
               />
             </div>
-            <div className="flex flex-wrap gap-1.5">
-              {filteredUnderlyings.map(u => (
-                <Badge
-                  key={u}
-                  variant={underlying === u ? "default" : "outline"}
-                  className="cursor-pointer hover:bg-primary/20 transition-colors"
-                  onClick={() => { setUnderlying(u); setUnderlyingSearch(""); setLegs([]); }}
-                >
-                  {u}
-                </Badge>
-              ))}
-            </div>
+            {loadingUnderlyings ? (
+              <div className="flex items-center gap-2 py-2 text-sm text-muted-foreground">
+                <Loader2 className="w-4 h-4 animate-spin" /> Loading F&O symbols…
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {/* Indices - always visible */}
+                <div className="flex flex-wrap gap-1.5">
+                  {indices.map(u => (
+                    <Badge
+                      key={u}
+                      variant={underlying === u ? "default" : "outline"}
+                      className="cursor-pointer hover:bg-primary/20 transition-colors"
+                      onClick={() => { setUnderlying(u); setUnderlyingSearch(""); setLegs([]); }}
+                    >
+                      {u}
+                    </Badge>
+                  ))}
+                </div>
+                {/* Stocks - searchable */}
+                {filteredStocks.length > 0 && (
+                  <>
+                    <Separator />
+                    <ScrollArea className="h-24">
+                      <div className="flex flex-wrap gap-1.5">
+                        {filteredStocks.map(u => (
+                          <Badge
+                            key={u}
+                            variant={underlying === u ? "default" : "outline"}
+                            className="cursor-pointer hover:bg-primary/20 transition-colors"
+                            onClick={() => { setUnderlying(u); setUnderlyingSearch(""); setLegs([]); }}
+                          >
+                            {u}
+                          </Badge>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </>
+                )}
+              </div>
+            )}
             {atmPrice > 0 && (
               <div className="flex items-center gap-3 text-sm">
                 <span className="text-muted-foreground">ATM:</span>
