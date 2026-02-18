@@ -1344,6 +1344,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_fno_underlyings: {
+        Args: never
+        Returns: {
+          underlying_symbol: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
