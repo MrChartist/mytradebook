@@ -2,20 +2,116 @@ import { useState } from "react";
 import {
   MessageCircle, Send, Trash2, Plus, CheckCircle, Loader2,
   ExternalLink, Filter, Unplug, AlertTriangle, ChevronDown, ChevronUp, History,
+  BarChart3, Bell, BookOpen, FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { useTelegramChats, SEGMENT_LABELS, type TelegramChat } from "@/hooks/useTelegramChats";
+import { useTelegramChats, SEGMENT_LABELS, type TelegramChat, type NotificationTypeRouting, DEFAULT_NOTIFICATION_TYPES } from "@/hooks/useTelegramChats";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { DeliveryLogPanel } from "@/components/telegram/DeliveryLogPanel";
 
+const SEGMENT_KEYS = Object.keys(SEGMENT_LABELS);
+
+function NotificationRoutingPanel({
+  chat,
+  onToggleType,
+  onToggleAll,
+}: {
+  chat: TelegramChat;
+  onToggleType: (chatId: string, category: keyof NotificationTypeRouting, segment: string, currentTypes: NotificationTypeRouting | null) => Promise<void>;
+  onToggleAll: (chatId: string, category: keyof NotificationTypeRouting, enabled: boolean, currentTypes: NotificationTypeRouting | null) => Promise<void>;
+}) {
+  const types = chat.notification_types || DEFAULT_NOTIFICATION_TYPES;
+
+  const isSegmentEnabled = (category: keyof NotificationTypeRouting, seg: string) => {
+    const arr = types[category] || [];
+    return arr.includes("*") || arr.includes(seg);
+  };
+
+  const isAllEnabled = (category: keyof NotificationTypeRouting) => {
+    const arr = types[category] || [];
+    return arr.includes("*");
+  };
+
+  const hasAny = (category: keyof NotificationTypeRouting) => {
+    const arr = types[category] || [];
+    return arr.length > 0;
+  };
+
+  const sections: Array<{
+    key: keyof NotificationTypeRouting;
+    label: string;
+    icon: React.ReactNode;
+    mode: "segments" | "all";
+  }> = [
+    { key: "trade", label: "Trades", icon: <BarChart3 className="w-3.5 h-3.5" />, mode: "segments" },
+    { key: "alert", label: "Alerts", icon: <Bell className="w-3.5 h-3.5" />, mode: "all" },
+    { key: "study", label: "Studies", icon: <BookOpen className="w-3.5 h-3.5" />, mode: "all" },
+    { key: "report", label: "Daily Report", icon: <FileText className="w-3.5 h-3.5" />, mode: "segments" },
+  ];
+
+  return (
+    <div className="space-y-3 mt-3">
+      {sections.map((section) => (
+        <div key={section.key} className="p-3 rounded-lg border border-border bg-accent/30">
+          <div className="flex items-center gap-2 mb-2">
+            <span className={cn("text-muted-foreground", hasAny(section.key) && "text-primary")}>{section.icon}</span>
+            <span className="text-xs font-semibold uppercase tracking-wide">{section.label}</span>
+            {!hasAny(section.key) && (
+              <Badge variant="outline" className="text-[9px] ml-auto bg-muted/50 text-muted-foreground">Off</Badge>
+            )}
+            {hasAny(section.key) && (
+              <Badge variant="outline" className="text-[9px] ml-auto bg-primary/10 border-primary/30 text-primary">Active</Badge>
+            )}
+          </div>
+
+          {section.mode === "all" ? (
+            <label className="flex items-center gap-2 cursor-pointer">
+              <Checkbox
+                checked={isAllEnabled(section.key)}
+                onCheckedChange={(checked) => onToggleAll(chat.id, section.key, !!checked, chat.notification_types)}
+              />
+              <span className="text-xs text-foreground">All {section.label.toLowerCase()} to this chat</span>
+            </label>
+          ) : (
+            <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+              {SEGMENT_KEYS.map((seg) => (
+                <label key={seg} className="flex items-center gap-1.5 cursor-pointer">
+                  <Checkbox
+                    checked={isSegmentEnabled(section.key, seg)}
+                    onCheckedChange={() => {
+                      if (isAllEnabled(section.key)) {
+                        // Convert from wildcard to explicit segments minus this one
+                        const allExcept = SEGMENT_KEYS.filter((s) => s !== seg);
+                        // We need a direct update here; toggle won't work cleanly from wildcard
+                        onToggleType(chat.id, section.key, seg, {
+                          ...types,
+                          [section.key]: allExcept,
+                        });
+                      } else {
+                        onToggleType(chat.id, section.key, seg, chat.notification_types);
+                      }
+                    }}
+                  />
+                  <span className="text-[11px] text-foreground leading-tight">{SEGMENT_LABELS[seg]}</span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function TelegramSettings() {
   const { settings, updateSettings } = useUserSettings();
-  const { chats, isLoading, deliveryLogs, logsLoading, addChat, removeChat, removeAllChats, toggleSegment, testChat, testAllChats } = useTelegramChats();
+  const { chats, isLoading, deliveryLogs, logsLoading, addChat, removeChat, removeAllChats, toggleSegment, toggleNotificationType, toggleNotificationAll, testChat, testAllChats } = useTelegramChats();
 
   // Add chat form
   const [newChatId, setNewChatId] = useState("");
@@ -181,33 +277,12 @@ export default function TelegramSettings() {
                 </div>
               </div>
 
-              {/* Segment chips */}
-              <div className="flex items-center gap-2 flex-wrap">
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Filter className="w-3 h-3" />
-                  <span>Segments</span>
-                </div>
-                {chat.segments.length === 0 && (
-                  <Badge variant="outline" className="text-[10px] bg-amber-500/10 border-amber-500/30 text-amber-600">
-                    None selected - No notifications
-                  </Badge>
-                )}
-                {Object.entries(SEGMENT_LABELS).map(([key, label]) => (
-                  <Badge
-                    key={key}
-                    variant="outline"
-                    className={cn(
-                      "text-[10px] cursor-pointer transition-all select-none",
-                      chat.segments.includes(key)
-                        ? "bg-primary/10 border-primary/30 text-primary"
-                        : "bg-muted/50 border-border text-muted-foreground opacity-50"
-                    )}
-                    onClick={() => toggleSegment(chat.id, key, chat.segments)}
-                  >
-                    {label}
-                  </Badge>
-                ))}
-              </div>
+              {/* Notification Routing Panel */}
+              <NotificationRoutingPanel
+                chat={chat}
+                onToggleType={toggleNotificationType}
+                onToggleAll={toggleNotificationAll}
+              />
             </div>
           ))}
         </div>
