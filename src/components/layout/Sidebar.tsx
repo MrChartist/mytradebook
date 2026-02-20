@@ -37,7 +37,11 @@ const analyticsNavItems = [
   { icon: FileText, label: "Reports", path: "/reports" },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  onSearchClick?: () => void;
+}
+
+export function Sidebar({ onSearchClick }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
@@ -87,7 +91,7 @@ export function Sidebar() {
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Button variant="ghost" size="icon" className="h-9 w-9">
+          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={onSearchClick}>
             <Search className="w-4 h-4" />
           </Button>
           <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setMobileOpen(true)}>
