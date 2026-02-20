@@ -15,6 +15,7 @@ import {
   LogOut,
   Menu,
   Search,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileDrawer } from "./MobileDrawer";
@@ -26,7 +27,7 @@ const mainNavItems = [
   { icon: TrendingUp, label: "Trades", path: "/trades" },
   { icon: Bell, label: "Alerts", path: "/alerts" },
   { icon: BookOpen, label: "Studies", path: "/studies" },
-  
+  { icon: Eye, label: "Watchlist", path: "/watchlist" },
 ];
 
 const analyticsNavItems = [
