@@ -4,6 +4,8 @@ import { DailySectorChart } from "@/components/dashboard/DailySectorChart";
 import { DashboardAlertsPanel } from "@/components/dashboard/DashboardAlertsPanel";
 import { DashboardPositionsTable } from "@/components/dashboard/DashboardPositionsTable";
 import { DashboardMonthlyMetrics } from "@/components/dashboard/DashboardMonthlyMetrics";
+import { MorningBriefingWidget } from "@/components/dashboard/MorningBriefingWidget";
+import { RiskDashboardWidget } from "@/components/dashboard/RiskDashboardWidget";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
@@ -185,6 +187,8 @@ export default function Dashboard() {
         {widgets.map((w) => {
           if (!w.visible) return null;
           switch (w.id) {
+            case "briefing":
+              return <MorningBriefingWidget key={w.id} />;
             case "kpi":
               return <DashboardKPICards key={w.id} alerts={alerts} />;
             case "chart":
@@ -198,6 +202,8 @@ export default function Dashboard() {
               return null; // Rendered with chart
             case "positions":
               return <DashboardPositionsTable key={w.id} />;
+            case "risk":
+              return <RiskDashboardWidget key={w.id} />;
             case "monthly":
               return <DashboardMonthlyMetrics key={w.id} />;
             case "actions":
