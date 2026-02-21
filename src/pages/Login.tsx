@@ -135,7 +135,7 @@ export default function Login() {
             <span className="text-xl font-bold">TradeBook</span>
           </div>
 
-          <div className="surface-card p-8">
+          <div className="surface-card p-8 gradient-border-top">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-bold mb-2">
                 {authMode === "login" ? "Welcome Back" : "Create Account"}
