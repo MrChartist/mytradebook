@@ -204,34 +204,46 @@ export default function Dashboard() {
         </div>
 
         {/* Dynamic Widgets */}
-        {widgets.map((w) => {
-          if (!w.visible) return null;
+        {widgets.reduce<{ elements: React.ReactNode[]; index: number }>((acc, w) => {
+          if (!w.visible) return acc;
+          const staggerClass = `animate-slide-up stagger-${acc.index + 1}`;
+          let el: React.ReactNode = null;
           switch (w.id) {
             case "briefing":
-              return <MorningBriefingWidget key={w.id} />;
+              el = <div key={w.id} className={staggerClass}><MorningBriefingWidget /></div>;
+              break;
             case "kpi":
-              return <DashboardKPICards key={w.id} alerts={alerts} />;
+              el = <div key={w.id} className={staggerClass}><DashboardKPICards alerts={alerts} /></div>;
+              break;
             case "chart":
-              return (
-                <div key={w.id} className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+              el = (
+                <div key={w.id} className={cn("grid grid-cols-1 lg:grid-cols-3 gap-5", staggerClass)}>
                   <div className="lg:col-span-2"><DailySectorChart /></div>
                   <DashboardAlertsPanel alerts={alerts} />
                 </div>
               );
+              break;
             case "alerts":
-              return null; // Rendered with chart
+              return acc; // Rendered with chart
             case "positions":
-              return <DashboardPositionsTable key={w.id} />;
+              el = <div key={w.id} className={staggerClass}><DashboardPositionsTable /></div>;
+              break;
             case "risk":
-              return <RiskDashboardWidget key={w.id} />;
+              el = <div key={w.id} className={staggerClass}><RiskDashboardWidget /></div>;
+              break;
             case "monthly":
-              return <DashboardMonthlyMetrics key={w.id} />;
+              el = <div key={w.id} className={staggerClass}><DashboardMonthlyMetrics /></div>;
+              break;
             case "actions":
-              return <QuickActions key={w.id} />;
-            default:
-              return null;
+              el = <div key={w.id} className={staggerClass}><QuickActions /></div>;
+              break;
           }
-        })}
+          if (el) {
+            acc.elements.push(el);
+            acc.index++;
+          }
+          return acc;
+        }, { elements: [], index: 0 }).elements}
       </div>
     </DashboardContext.Provider>
   );
