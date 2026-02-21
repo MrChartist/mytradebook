@@ -763,6 +763,15 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Validate auth - require Bearer token
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
     const DEFAULT_CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");

@@ -48,6 +48,38 @@ Deno.serve(async (req) => {
       throw new Error("Action is required (generate, verify, disconnect)");
     }
 
+    // The "verify" action is called from Telegram webhook (no JWT).
+    // "generate" and "disconnect" need JWT auth.
+    if (action !== "verify") {
+      const authHeader = req.headers.get("Authorization");
+      if (!authHeader?.startsWith("Bearer ")) {
+        return new Response(
+          JSON.stringify({ error: "Unauthorized" }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+      const userClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const token = authHeader.replace("Bearer ", "");
+      const { data: claims, error: authError } = await userClient.auth.getClaims(token);
+      if (authError || !claims?.claims) {
+        return new Response(
+          JSON.stringify({ error: "Unauthorized" }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const authUserId = claims.claims.sub as string;
+      // Ensure user_id in body matches authenticated user
+      if (user_id && user_id !== authUserId) {
+        return new Response(
+          JSON.stringify({ error: "Forbidden: user_id mismatch" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
     if (action === "generate") {
       // Generate new verification code for user
       if (!user_id) throw new Error("user_id is required");
