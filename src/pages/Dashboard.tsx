@@ -104,11 +104,14 @@ export default function Dashboard() {
       <div className="space-y-5 animate-fade-in">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <h1 className="text-xl font-bold">Dashboard</h1>
-            <p className="text-muted-foreground text-sm">
-              {format(selectedMonth, "MMMM yyyy")} overview
-            </p>
+          <div className="relative">
+            <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-primary" />
+            <div className="pl-4">
+              <h1 className="text-xl font-bold tracking-tight">Dashboard</h1>
+              <p className="text-muted-foreground text-sm">
+                {format(selectedMonth, "MMMM yyyy")} overview
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-3">
             {/* Month selector */}

@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/ui/page-header";
 import { format, subMonths, startOfMonth } from "date-fns";
 
 interface MistakeTag {
@@ -110,12 +111,10 @@ export default function Mistakes() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-bold">Mistakes Review</h1>
-        <p className="text-muted-foreground text-sm">
-          Identify patterns in your losing trades and track improvement over time.
-        </p>
-      </div>
+      <PageHeader
+        title="Mistakes Review"
+        subtitle="Identify patterns in your losing trades and track improvement over time."
+      />
 
       {/* Mistake Tag Analysis */}
       {analysis && analysis.topMistakes.length > 0 && (

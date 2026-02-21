@@ -117,10 +117,13 @@ export default function Studies() {
     <div className="space-y-5 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold">Studies</h1>
-          <p className="text-sm text-muted-foreground">Track setups, patterns, and market analysis</p>
-        </div>
+          <div className="relative">
+            <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-primary" />
+            <div className="pl-4">
+              <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Studies</h1>
+              <p className="text-sm text-muted-foreground">Track setups, patterns, and market analysis</p>
+            </div>
+          </div>
         <Button onClick={() => setCreateModalOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
           New Study
