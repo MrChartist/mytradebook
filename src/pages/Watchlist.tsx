@@ -290,7 +290,7 @@ function WatchlistDetail({
 
   const symbolList = useMemo(() => items.map((i) => i.symbol), [items]);
 
-  const { prices, isPolling, lastUpdated, isLoading: pricesLoading } = useLivePrices(symbolList);
+  const { prices, isPolling, lastUpdated, isLoading: pricesLoading, failoverActive } = useLivePrices(symbolList);
 
   // Check market closed: all prices have ltp 0 or no prices fetched
   const allUnavailable = items.length > 0 && Object.keys(prices).length === 0 && !pricesLoading;
@@ -361,6 +361,11 @@ function WatchlistDetail({
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-profit" />
                     </span>
                     <span>Live</span>
+                    {failoverActive && (
+                      <span className="px-1 py-0.5 rounded text-[10px] font-medium bg-warning/15 text-warning border border-warning/20">
+                        TrueData
+                      </span>
+                    )}
                   </>
                 )}
                 {lastUpdated && (
