@@ -90,7 +90,7 @@ export default function Dashboard() {
   const openInstruments = useMemo(() => openTrades.map((t) => ({
     symbol: t.symbol, security_id: t.security_id, exchange_segment: t.exchange_segment,
   })), [openTrades]);
-  const { prices, isPolling, lastUpdated } = useLivePrices(openInstruments);
+  const { prices, isPolling, lastUpdated, activeProvider, failoverActive } = useLivePrices(openInstruments);
 
   const ctx: DashboardContextValue = {
     selectedMonth, setSelectedMonth, segment,
@@ -136,6 +136,14 @@ export default function Dashboard() {
                 <>
                   <Radio className="w-3 h-3 text-profit animate-pulse" />
                   <span className="text-profit font-medium">Live</span>
+                  {failoverActive && (
+                    <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-warning/15 text-warning border border-warning/20">
+                      TrueData
+                    </span>
+                  )}
+                  {!failoverActive && activeProvider === "dhan" && (
+                    <span className="text-[10px] text-muted-foreground/60">Dhan</span>
+                  )}
                   {lastUpdated && <span>• {format(lastUpdated, "h:mm a")}</span>}
                 </>
               ) : (
