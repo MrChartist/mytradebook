@@ -54,22 +54,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // onAuthStateChange is the SOLE authority for setting auth state
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         console.log("[Auth] Auth state changed:", event, session ? "session exists" : "no session");
         listenerFired.current = true;
 
         setSession(session);
         setUser(session?.user ?? null);
+        setLoading(false);
 
         if (session?.user) {
           console.log("[Auth] User authenticated:", session.user.email);
-          await fetchProfile(session.user.id);
+          fetchProfile(session.user.id).catch((err) =>
+            console.error("[Auth] Background profile fetch failed:", err)
+          );
         } else {
           console.log("[Auth] No user session");
           setProfile(null);
         }
-
-        setLoading(false);
       }
     );
 
@@ -85,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.log("[Auth] No session detected (listener never fired)");
           setLoading(false);
         }
-      }, 100);
+      }, 500);
     });
 
     return () => subscription.unsubscribe();
