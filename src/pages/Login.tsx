@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
-type AuthMode = "login" | "signup" | "phone";
+type AuthMode = "login" | "signup" | "phone" | "forgot";
 
 function LoginBranding() {
   return (
@@ -174,7 +174,7 @@ export default function Login() {
 
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithPhone, verifyPhoneOtp, user, loading: authLoading } = useAuth();
+  const { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithPhone, verifyPhoneOtp, resetPassword, user, loading: authLoading } = useAuth();
 
   // Fix: reset local loading when auth completes (covers Google popup flow)
   useEffect(() => {
@@ -255,10 +255,26 @@ export default function Login() {
     );
   }
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { error } = await resetPassword(email);
+      if (error) {
+        toast({ title: "Reset failed", description: error.message, variant: "destructive" });
+      } else {
+        toast({ title: "Check your email", description: "We've sent you a password reset link." });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const headings: Record<AuthMode, { title: string; subtitle: string }> = {
     login: { title: "Welcome Back", subtitle: "Sign in to continue to your dashboard" },
     signup: { title: "Create Account", subtitle: "Sign up to start tracking your trades" },
     phone: { title: "Phone Login", subtitle: "Sign in with your mobile number" },
+    forgot: { title: "Reset Password", subtitle: "Enter your email to receive a reset link" },
   };
 
   return (
@@ -302,6 +318,37 @@ export default function Login() {
 
             {authMode === "phone" ? (
               <PhoneOTPForm loading={loading} onSendOtp={handleSendOtp} onVerifyOtp={handleVerifyOtp} />
+            ) : authMode === "forgot" ? (
+              <form onSubmit={handleForgotPassword} className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Email Address</label>
+                  <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="h-11"
+                    required
+                  />
+                </div>
+                <Button type="submit" className="w-full h-11" disabled={loading}>
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <>
+                      Send Reset Link
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </>
+                  )}
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setAuthMode("login")}
+                  className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Back to Sign In
+                </button>
+              </form>
             ) : (
               <form onSubmit={handleEmailAuth} className="space-y-4">
                 {authMode === "signup" && (
@@ -349,6 +396,15 @@ export default function Login() {
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
+                  {authMode === "login" && (
+                    <button
+                      type="button"
+                      onClick={() => setAuthMode("forgot")}
+                      className="text-xs text-primary hover:underline mt-1.5 block"
+                    >
+                      Forgot password?
+                    </button>
+                  )}
                 </div>
 
                 <Button type="submit" className="w-full h-11" disabled={loading}>
