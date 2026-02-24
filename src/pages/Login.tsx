@@ -1,15 +1,30 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { TrendingUp, ArrowRight, Loader2, Eye, EyeOff, Smartphone } from "lucide-react";
+import { TrendingUp, ArrowRight, Loader2, Eye, EyeOff, Smartphone, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { ShimmerSkeleton } from "@/components/ui/shimmer-skeleton";
 
 type AuthMode = "login" | "signup" | "phone" | "forgot";
 
+/* ── Password strength helper ───────────────────── */
+function getPasswordStrength(pw: string): { level: 0 | 1 | 2 | 3; label: string; color: string } {
+  if (!pw) return { level: 0, label: "", color: "" };
+  let score = 0;
+  if (pw.length >= 6) score++;
+  if (pw.length >= 10) score++;
+  if (/[A-Z]/.test(pw) && /[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  if (score <= 1) return { level: 1, label: "Weak", color: "bg-loss" };
+  if (score <= 2) return { level: 2, label: "Medium", color: "bg-warning" };
+  return { level: 3, label: "Strong", color: "bg-profit" };
+}
+
+/* ── Branding panel (left side) ─────────────────── */
 function LoginBranding() {
   return (
     <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/5 via-background to-primary/10 relative overflow-hidden">
@@ -50,51 +65,70 @@ function LoginBranding() {
         </p>
 
         <div className="flex flex-wrap gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-profit" />
-            <span className="text-sm text-muted-foreground">Real-time alerts</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-primary" />
-            <span className="text-sm text-muted-foreground">Broker integration</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-warning" />
-            <span className="text-sm text-muted-foreground">Telegram notifications</span>
-          </div>
+          {[
+            { color: "bg-profit", text: "Real-time alerts" },
+            { color: "bg-primary", text: "Broker integration" },
+            { color: "bg-warning", text: "Telegram notifications" },
+          ].map(({ color, text }) => (
+            <div key={text} className="flex items-center gap-2">
+              <div className={cn("w-2 h-2 rounded-full", color)} />
+              <span className="text-sm text-muted-foreground">{text}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
 }
 
+/* ── Phone OTP Form ─────────────────────────────── */
 function PhoneOTPForm({
   loading,
   onSendOtp,
   onVerifyOtp,
 }: {
   loading: boolean;
-  onSendOtp: (phone: string) => Promise<void>;
+  onSendOtp: (phone: string) => Promise<boolean>;
   onVerifyOtp: (phone: string, otp: string) => Promise<void>;
 }) {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const phoneRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    phoneRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setTimeout(() => setResendCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendCooldown]);
+
+  const fullPhone = phone.startsWith("+") ? phone : `+91${phone}`;
 
   const handleSendOtp = async () => {
-    const fullPhone = phone.startsWith("+") ? phone : `+91${phone}`;
-    await onSendOtp(fullPhone);
-    setOtpSent(true);
+    const ok = await onSendOtp(fullPhone);
+    if (ok) {
+      setOtpSent(true);
+      setResendCooldown(30);
+    }
+  };
+
+  const handleResend = async () => {
+    const ok = await onSendOtp(fullPhone);
+    if (ok) setResendCooldown(30);
   };
 
   const handleVerifyOtp = async () => {
-    const fullPhone = phone.startsWith("+") ? phone : `+91${phone}`;
     await onVerifyOtp(fullPhone, otp);
   };
 
   if (!otpSent) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 auth-mode-enter">
         <div>
           <label className="text-sm font-medium mb-2 block">Mobile Number</label>
           <div className="flex gap-2">
@@ -102,6 +136,7 @@ function PhoneOTPForm({
               +91
             </div>
             <Input
+              ref={phoneRef}
               type="tel"
               placeholder="Enter 10-digit mobile number"
               value={phone}
@@ -111,14 +146,8 @@ function PhoneOTPForm({
             />
           </div>
         </div>
-        <Button
-          className="w-full h-11"
-          onClick={handleSendOtp}
-          disabled={loading || phone.length !== 10}
-        >
-          {loading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
+        <Button className="w-full h-11" onClick={handleSendOtp} disabled={loading || phone.length !== 10}>
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
             <>
               <Smartphone className="w-4 h-4 mr-2" />
               Send OTP
@@ -130,40 +159,80 @@ function PhoneOTPForm({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 auth-mode-enter">
       <p className="text-sm text-muted-foreground text-center">
         OTP sent to <span className="font-medium text-foreground">+91{phone}</span>
       </p>
       <div className="flex justify-center">
         <InputOTP maxLength={6} value={otp} onChange={setOtp}>
           <InputOTPGroup>
-            <InputOTPSlot index={0} />
-            <InputOTPSlot index={1} />
-            <InputOTPSlot index={2} />
-            <InputOTPSlot index={3} />
-            <InputOTPSlot index={4} />
-            <InputOTPSlot index={5} />
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <InputOTPSlot key={i} index={i} />
+            ))}
           </InputOTPGroup>
         </InputOTP>
       </div>
-      <Button
-        className="w-full h-11"
-        onClick={handleVerifyOtp}
-        disabled={loading || otp.length !== 6}
-      >
+      <Button className="w-full h-11" onClick={handleVerifyOtp} disabled={loading || otp.length !== 6}>
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Verify OTP <ArrowRight className="w-4 h-4 ml-2" /></>}
       </Button>
-      <button
-        type="button"
-        onClick={() => { setOtpSent(false); setOtp(""); }}
-        className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
-      >
-        Change number
-      </button>
+      <div className="flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => { setOtpSent(false); setOtp(""); }}
+          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Change number
+        </button>
+        <button
+          type="button"
+          onClick={handleResend}
+          disabled={resendCooldown > 0 || loading}
+          className="text-sm text-primary hover:underline disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+        >
+          <RotateCw className="w-3 h-3" />
+          {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend OTP"}
+        </button>
+      </div>
     </div>
   );
 }
 
+/* ── Auth Loading Skeleton ──────────────────────── */
+function AuthLoadingSkeleton() {
+  return (
+    <div className="min-h-screen flex">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/5 via-background to-primary/10" />
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 bg-background">
+        <div className="w-full max-w-md space-y-6">
+          <div className="surface-card p-8">
+            <div className="flex flex-col items-center gap-4 mb-6">
+              <ShimmerSkeleton className="h-8 w-48" />
+              <ShimmerSkeleton className="h-4 w-64" />
+            </div>
+            <ShimmerSkeleton className="h-10 w-full mb-4" />
+            <ShimmerSkeleton className="h-11 w-full mb-4" />
+            <ShimmerSkeleton className="h-11 w-full mb-4" />
+            <ShimmerSkeleton className="h-11 w-full" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Google Icon (multi-color) ──────────────────── */
+function GoogleIcon() {
+  return (
+    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+    </svg>
+  );
+}
+
+/* ── Main Login Page ────────────────────────────── */
 export default function Login() {
   const [authMode, setAuthMode] = useState<AuthMode>("login");
   const [email, setEmail] = useState("");
@@ -171,18 +240,28 @@ export default function Login() {
   const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
+  const emailRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithPhone, verifyPhoneOtp, resetPassword, user, loading: authLoading } = useAuth();
 
-  // Fix: reset local loading when auth completes (covers Google popup flow)
+  const pwStrength = useMemo(() => getPasswordStrength(password), [password]);
+
+  // Redirect if already signed in
   useEffect(() => {
     if (!authLoading && user) {
-      setLoading(false);
       navigate("/", { replace: true });
     }
   }, [user, authLoading, navigate]);
+
+  // Auto-focus email on mode switch
+  useEffect(() => {
+    if (authMode !== "phone") {
+      setTimeout(() => emailRef.current?.focus(), 50);
+    }
+  }, [authMode]);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -209,31 +288,32 @@ export default function Login() {
   };
 
   const handleGoogleAuth = async () => {
-    setLoading(true);
+    setGoogleLoading(true);
     const { error } = await signInWithGoogle();
     if (error) {
       toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });
-      setLoading(false);
+      setGoogleLoading(false);
     }
-    // Fallback: if popup closes without completing, reset after 10s
-    setTimeout(() => setLoading(false), 10000);
+    // Fallback reset if popup closes without completing
+    setTimeout(() => setGoogleLoading(false), 10000);
   };
 
-  const handleSendOtp = async (phone: string) => {
+  const handleSendOtp = useCallback(async (phone: string): Promise<boolean> => {
     setLoading(true);
     try {
       const { error } = await signInWithPhone(phone);
       if (error) {
         toast({ title: "Failed to send OTP", description: error.message, variant: "destructive" });
-      } else {
-        toast({ title: "OTP Sent", description: "Check your phone for the verification code." });
+        return false;
       }
+      toast({ title: "OTP Sent", description: "Check your phone for the verification code." });
+      return true;
     } finally {
       setLoading(false);
     }
-  };
+  }, [signInWithPhone, toast]);
 
-  const handleVerifyOtp = async (phone: string, otp: string) => {
+  const handleVerifyOtp = useCallback(async (phone: string, otp: string) => {
     setLoading(true);
     try {
       const { error } = await verifyPhoneOtp(phone, otp);
@@ -245,15 +325,7 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
-  };
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
+  }, [verifyPhoneOtp, toast]);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -269,6 +341,10 @@ export default function Login() {
       setLoading(false);
     }
   };
+
+  if (authLoading) {
+    return <AuthLoadingSkeleton />;
+  }
 
   const headings: Record<AuthMode, { title: string; subtitle: string }> = {
     login: { title: "Welcome Back", subtitle: "Sign in to continue to your dashboard" },
@@ -292,7 +368,7 @@ export default function Login() {
             <span className="text-xl font-bold">TradeBook</span>
           </div>
 
-          <div className="surface-card p-8 gradient-border-top">
+          <div className="surface-card p-8 gradient-border-top auth-card-enter">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-bold mb-2">{headings[authMode].title}</h3>
               <p className="text-muted-foreground text-sm">{headings[authMode].subtitle}</p>
@@ -305,7 +381,7 @@ export default function Login() {
                   key={mode}
                   onClick={() => setAuthMode(mode)}
                   className={cn(
-                    "flex-1 py-2 rounded-md text-sm font-medium transition-all",
+                    "flex-1 py-2 rounded-md text-sm font-medium transition-all duration-200",
                     authMode === mode
                       ? "bg-background shadow-sm text-foreground"
                       : "text-muted-foreground hover:text-foreground"
@@ -319,10 +395,11 @@ export default function Login() {
             {authMode === "phone" ? (
               <PhoneOTPForm loading={loading} onSendOtp={handleSendOtp} onVerifyOtp={handleVerifyOtp} />
             ) : authMode === "forgot" ? (
-              <form onSubmit={handleForgotPassword} className="space-y-4">
+              <form onSubmit={handleForgotPassword} className="space-y-4 auth-mode-enter">
                 <div>
                   <label className="text-sm font-medium mb-2 block">Email Address</label>
                   <Input
+                    ref={emailRef}
                     type="email"
                     placeholder="Enter your email"
                     value={email}
@@ -332,13 +409,8 @@ export default function Login() {
                   />
                 </div>
                 <Button type="submit" className="w-full h-11" disabled={loading}>
-                  {loading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      Send Reset Link
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </>
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                    <>Send Reset Link <ArrowRight className="w-4 h-4 ml-2" /></>
                   )}
                 </Button>
                 <button
@@ -350,7 +422,7 @@ export default function Login() {
                 </button>
               </form>
             ) : (
-              <form onSubmit={handleEmailAuth} className="space-y-4">
+              <form onSubmit={handleEmailAuth} className="space-y-4 auth-mode-enter" key={authMode}>
                 {authMode === "signup" && (
                   <div>
                     <label className="text-sm font-medium mb-2 block">Full Name</label>
@@ -367,6 +439,7 @@ export default function Login() {
                 <div>
                   <label className="text-sm font-medium mb-2 block">Email Address</label>
                   <Input
+                    ref={emailRef}
                     type="email"
                     placeholder="Enter your email"
                     value={email}
@@ -391,11 +464,31 @@ export default function Login() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
+
+                  {authMode === "signup" && password.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      <div className="flex gap-1">
+                        {[1, 2, 3].map((i) => (
+                          <div
+                            key={i}
+                            className={cn(
+                              "strength-bar flex-1",
+                              i <= pwStrength.level ? pwStrength.color : "bg-muted"
+                            )}
+                          />
+                        ))}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {pwStrength.label}{pwStrength.level < 3 && " · Min 6 chars, mix letters, numbers & symbols"}
+                      </p>
+                    </div>
+                  )}
+
                   {authMode === "login" && (
                     <button
                       type="button"
@@ -408,9 +501,7 @@ export default function Login() {
                 </div>
 
                 <Button type="submit" className="w-full h-11" disabled={loading}>
-                  {loading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                     <>
                       {authMode === "login" ? "Sign In" : "Create Account"}
                       <ArrowRight className="w-4 h-4 ml-2" />
@@ -434,15 +525,19 @@ export default function Login() {
               variant="outline"
               className="w-full h-11"
               onClick={handleGoogleAuth}
-              disabled={loading}
+              disabled={loading || googleLoading}
             >
-              <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-              </svg>
-              Continue with Google
+              {googleLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  Connecting to Google…
+                </>
+              ) : (
+                <>
+                  <GoogleIcon />
+                  Continue with Google
+                </>
+              )}
             </Button>
 
             <p className="text-xs text-muted-foreground text-center mt-6">
