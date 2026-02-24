@@ -1,78 +1,93 @@
 
 
-# Add Forgot Password / Reset Password Flow
+# Make Login Smooth and Easy to Use
 
-## Overview
+## Problems Found
 
-Add a complete password reset flow with two parts:
-1. A "Forgot password?" link on the login page that sends a reset email
-2. A new `/reset-password` page where users set their new password after clicking the email link
+1. **Auth loading can hang forever**: The `fetchProfile` call in `AuthContext` uses `await` inside `onAuthStateChange`. If the profile fetch is slow or fails (e.g., new user with no profile row yet), it blocks `setLoading(false)`. This can leave the entire app stuck on a spinner.
 
-## Changes
+2. **Login page shows spinner even when user is already signed in**: If a signed-in user visits `/login`, they see the auth loading spinner instead of being instantly redirected.
 
-### 1. Add `resetPassword` method to AuthContext
+3. **No smooth transitions or animations**: The login form switches between modes (Sign In / Sign Up / Phone / Forgot) with no animation -- feels abrupt.
 
-**File: `src/contexts/AuthContext.tsx`**
+4. **Google Auth UX is fragile**: The 10-second timeout fallback is clunky. If auth completes faster, the spinner hangs unnecessarily.
 
-- Add a `resetPassword(email: string)` method that calls `supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/reset-password' })`
-- Add an `updatePassword(password: string)` method that calls `supabase.auth.updateUser({ password })`
-- Export both in the context type interface
+5. **Phone OTP sets `otpSent` before confirming success**: The OTP form transitions to the "enter code" screen even if the OTP send request fails.
 
-### 2. Add "Forgot password?" link to Login page
+6. **No password strength indicator on signup**: Users get no feedback about password quality.
 
-**File: `src/pages/Login.tsx`**
+7. **No "Resend OTP" option**: Users who don't receive the OTP have to go back and start over.
 
-- Add a "Forgot password?" button below the password field (only visible in "Sign In" mode)
-- Clicking it shows an inline form: email input + "Send Reset Link" button (replaces the login form temporarily)
-- On success, show a toast confirming the email was sent
-- Add a "Back to Sign In" link to return to the login form
-- This avoids creating a separate page -- keeps everything on the login page using a new `authMode` value: `"forgot"`
+---
 
-### 3. Create Reset Password page
+## Plan
 
-**File: `src/pages/ResetPassword.tsx`** (new file)
+### 1. Fix Auth Loading Reliability (AuthContext.tsx)
 
-- A public page at `/reset-password`
-- Detects the `type=recovery` token in the URL hash (set automatically by the authentication system)
-- Shows a form with "New Password" and "Confirm Password" fields
-- On submit, calls `supabase.auth.updateUser({ password })` to set the new password
-- On success, redirects to `/login` with a toast
-- If no recovery token is detected, shows a message explaining the link is invalid or expired
+- Don't `await` the profile fetch inside `onAuthStateChange` -- call `setLoading(false)` first, then fetch profile in the background. This ensures the app never hangs waiting for a profile query.
+- Add a try/catch around `fetchProfile` so errors don't silently break loading.
+- Increase the no-session fallback timeout from 100ms to 500ms for more reliability.
 
-### 4. Add route for Reset Password
+### 2. Fix Login Page Redirect (Login.tsx)
 
-**File: `src/App.tsx`**
+- If user is already authenticated when the login page mounts, immediately redirect to `/` without showing the loading spinner or any form.
 
-- Add `<Route path="/reset-password" element={<ResetPassword />} />` as a public route (not behind ProtectedRoute)
+### 3. Fix Phone OTP Flow (Login.tsx)
+
+- Only transition to OTP entry screen after confirming the OTP was sent successfully (check for no error).
+- Add a "Resend OTP" button with a 30-second cooldown timer so users can retry without going back.
+
+### 4. Add Smooth Transitions (Login.tsx)
+
+- Add CSS transition/animation when switching between auth modes (fade + slight slide).
+- Add a subtle entrance animation for the form card on page load.
+
+### 5. Improve Form UX (Login.tsx)
+
+- Add a simple password strength indicator for the signup form (weak/medium/strong bar).
+- Auto-focus the first input field when switching auth modes.
+- Show inline validation hints (e.g., "Min 6 characters" below password field on signup).
+- Improve the Google button with proper brand colors for the Google icon (multi-color SVG).
+
+### 6. Better Loading States (Login.tsx)
+
+- Replace the full-screen spinner with a skeleton of the login form during auth check, so the page feels responsive even while loading.
+- For Google auth, show "Connecting to Google..." text with the spinner instead of a generic spinner.
+
+---
 
 ## Technical Details
 
-### Auth mode update in Login.tsx
+### AuthContext.tsx Changes
 
 ```text
-type AuthMode = "login" | "signup" | "phone" | "forgot"
+// Before (blocks on profile fetch):
+if (session?.user) {
+  await fetchProfile(session.user.id);
+}
+setLoading(false);
+
+// After (non-blocking):
+setLoading(false);
+if (session?.user) {
+  fetchProfile(session.user.id); // fire and forget
+}
 ```
 
-The "forgot" mode shows only an email field and a "Send Reset Link" button, with a link back to sign in.
+### Login.tsx Changes
 
-### Reset Password page flow
-
-```text
-1. User clicks reset link in email
-2. Browser opens /reset-password#access_token=...&type=recovery&...
-3. Supabase client auto-detects the recovery token from the hash
-4. onAuthStateChange fires with event = "PASSWORD_RECOVERY"
-5. Page shows new password form
-6. User submits -> updateUser({ password }) is called
-7. Redirect to /login with success toast
-```
+- New state: `resendCooldown` (number) for OTP resend timer
+- New state: `passwordStrength` computed from password value
+- PhoneOTPForm: only set `otpSent(true)` inside the success branch (no error)
+- Add `useRef` for auto-focusing inputs on mode switch
+- Add CSS classes for fade transition between modes
+- Add `animate-in` keyframe for card entrance
 
 ### Files Changed
 
 | File | Change |
 |------|--------|
-| `src/contexts/AuthContext.tsx` | Add `resetPassword` and `updatePassword` methods |
-| `src/pages/Login.tsx` | Add "Forgot password?" link and inline forgot password form |
-| `src/pages/ResetPassword.tsx` | New page for setting a new password after clicking the reset email link |
-| `src/App.tsx` | Add `/reset-password` public route |
+| `src/contexts/AuthContext.tsx` | Non-blocking profile fetch, better error handling, longer fallback timeout |
+| `src/pages/Login.tsx` | Fix OTP flow, add resend button, password strength, transitions, auto-focus, better loading states, Google button colors |
+| `src/index.css` | Add fade-in transition utility class for auth form switching |
 
