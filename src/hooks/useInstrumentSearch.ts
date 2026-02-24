@@ -90,11 +90,13 @@
            dbQuery = dbQuery.eq("instrument_type", instrumentType);
          }
  
-         if (searchQuery.trim()) {
-           const term = searchQuery.trim().toUpperCase();
-           dbQuery = dbQuery.or(
-             `trading_symbol.ilike.%${term}%,display_name.ilike.%${term}%`
-           );
+          if (searchQuery.trim()) {
+            const term = searchQuery.trim().toUpperCase().slice(0, 100);
+            // Escape ILIKE special characters to prevent pattern injection
+            const sanitized = term.replace(/[%_\\]/g, "\\$&");
+            dbQuery = dbQuery.or(
+              `trading_symbol.ilike.%${sanitized}%,display_name.ilike.%${sanitized}%`
+            );
          }
  
          dbQuery = dbQuery.order("trading_symbol", { ascending: true });
