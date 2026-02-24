@@ -1,80 +1,81 @@
 
 
-# Fix Login Flow for Smooth Authentication
+# Fix Google Auth & Add Mobile OTP Login
 
 ## Problems Identified
 
-1. **Race condition in AuthContext**: Both `onAuthStateChange` and `getSession()` independently set state, causing duplicate renders and potential flicker. The `loading` flag can be set to `false` prematurely by whichever resolves first, before profile data is loaded.
+1. **Google Auth hanging after popup**: The `handleGoogleAuth` sets `loading = true` but the Lovable Cloud OAuth flow uses a popup/token exchange (not a redirect). After the popup closes and `setSession` is called internally, the `onAuthStateChange` listener fires -- but the Login component's local `loading` state is never reset on success, leaving the button stuck in a spinner. The `authLoading` from context does resolve, but the local `loading` blocks the UI.
 
-2. **Google OAuth redirect lands on `/` but ProtectedRoute redirects to `/landing`**: After Google sign-in, the OAuth callback sets the session via `onAuthStateChange`. But if `loading` flips to `false` before the session is fully set (race condition), ProtectedRoute briefly sees `user = null` and redirects to `/landing`, breaking the flow.
-
-3. **Login page redundant navigation**: `handleEmailAuth` calls `navigate("/")` after successful login, but the `useEffect` watching `user` also calls `navigate("/")`. This can cause double navigation or a flash.
-
-4. **Google sign-in loading state never resets on success**: `handleGoogleAuth` sets `loading = true` but only resets it on error. On success (redirect happens), the button stays in loading state -- fine for redirect, but if using popup/token flow (Lovable Cloud), the page stays stuck.
-
-5. **`useNavigate` imported but unused in AuthContext**: Minor cleanup -- `useNavigate` is imported but never used.
+2. **No mobile number OTP login**: Currently only email/password and Google OAuth are supported. Need to add phone-based OTP authentication.
 
 ---
 
 ## Plan
 
-### 1. Fix AuthContext race condition
+### 1. Fix Google Auth Loading State (Login.tsx)
 
-**File: `src/contexts/AuthContext.tsx`**
+- Reset local `loading` state when `user` changes (via the existing `useEffect`), so that after Google auth completes and `onAuthStateChange` fires, the spinner stops and navigation occurs.
+- Add a `finally` block equivalent: reset `loading` after a timeout fallback (e.g., 10 seconds) to prevent infinite spinners if something fails silently.
 
-- Remove the duplicate state-setting from `getSession()` -- let `onAuthStateChange` be the single source of truth for session state
-- `getSession()` should only be used as a trigger to ensure the listener fires; if it doesn't fire (no session), set `loading = false` there
-- Add a `ref` to track if `onAuthStateChange` has already fired, to avoid the double-set
-- Remove unused `useNavigate` import
-- Move profile fetch into a separate `fetchProfile` function to avoid code duplication
-- Ensure `loading` stays `true` until profile is fetched (not just session)
+### 2. Add Phone OTP Login (Login.tsx + AuthContext.tsx)
 
-### 2. Fix Login page navigation
+**AuthContext changes:**
+- Add `signInWithPhone(phone: string)` method that calls `supabase.auth.signInWithOtp({ phone })`
+- Add `verifyPhoneOtp(phone: string, token: string)` method that calls `supabase.auth.verifyOtp({ phone, token, type: 'sms' })`
+- Export both in the context type
 
-**File: `src/pages/Login.tsx`**
+**Login.tsx UI changes:**
+- Add a third auth mode tab: "Phone" alongside "Sign In" and "Sign Up"
+- Phone mode shows:
+  - Phone number input with +91 prefix (Indian market focus)
+  - "Send OTP" button
+  - After OTP is sent, show 6-digit OTP input (using the existing `InputOTP` component)
+  - "Verify OTP" button
+- Handle loading, error, and success states with toasts
 
-- Remove the manual `navigate("/")` from `handleEmailAuth` success path -- the `useEffect` already handles redirect when `user` changes
-- Ensure `handleGoogleAuth` resets loading state properly by listening to auth state changes rather than relying on manual reset
-- Add `replace` to the navigate call in `useEffect` to prevent back-button issues
+### 3. Fix Auth Mode Tabs
 
-### 3. Fix Landing page redirect
-
-**File: `src/pages/Landing.tsx`**
-
-- Add `replace` to the navigate call to prevent back-button loop
+- Restructure the tab bar to support 3 modes: "Sign In" | "Sign Up" | "Phone"
+- Phone tab shows a simplified flow without password fields
 
 ---
 
 ## Technical Details
 
-### AuthContext rewrite (core fix)
-
-The key change is making `onAuthStateChange` the **sole authority** for setting `user`/`session`/`loading`:
+### AuthContext additions
 
 ```text
-1. Initialize: loading = true
-2. Set up onAuthStateChange listener
-3. Call getSession()
-   - If getSession returns a session, onAuthStateChange will fire with INITIAL_SESSION
-   - If no session, set loading = false via a timeout guard
-4. onAuthStateChange fires:
-   - Set user/session
-   - If user exists, fetch profile THEN set loading = false
-   - If no user, set loading = false immediately
+signInWithPhone: (phone: string) => Promise<{ error: Error | null }>
+verifyPhoneOtp: (phone: string, token: string) => Promise<{ error: Error | null }>
 ```
 
-This eliminates the race where both paths independently set state.
+These use the Supabase client directly (not Lovable OAuth module) since phone OTP is a standard Supabase auth feature.
 
-### Login page simplification
+### Login.tsx state additions
 
-- Remove `navigate("/")` from email login success handler (the useEffect handles it)
-- The useEffect redirect with `{ replace: true }` ensures clean browser history
+```text
+authMode: "login" | "signup" | "phone"
+phone: string (phone number input)
+otpSent: boolean (tracks if OTP has been sent)
+otp: string (6-digit OTP value)
+```
+
+### Google Auth fix
+
+```text
+// In the useEffect watching user:
+useEffect(() => {
+  if (!authLoading && user) {
+    setLoading(false); // Reset local loading
+    navigate("/", { replace: true });
+  }
+}, [user, authLoading, navigate]);
+```
 
 ### Files Changed
 
 | File | Change |
 |------|--------|
-| `src/contexts/AuthContext.tsx` | Fix race condition, single source of truth for auth state, remove unused import |
-| `src/pages/Login.tsx` | Remove redundant navigation, fix loading state for Google auth |
-| `src/pages/Landing.tsx` | Add `replace` to redirect navigate call |
+| `src/contexts/AuthContext.tsx` | Add `signInWithPhone` and `verifyPhoneOtp` methods |
+| `src/pages/Login.tsx` | Fix Google auth loading state, add Phone OTP tab with send/verify flow, restructure tabs to 3 modes |
 
