@@ -1,81 +1,78 @@
 
 
-# Fix Google Auth & Add Mobile OTP Login
+# Add Forgot Password / Reset Password Flow
 
-## Problems Identified
+## Overview
 
-1. **Google Auth hanging after popup**: The `handleGoogleAuth` sets `loading = true` but the Lovable Cloud OAuth flow uses a popup/token exchange (not a redirect). After the popup closes and `setSession` is called internally, the `onAuthStateChange` listener fires -- but the Login component's local `loading` state is never reset on success, leaving the button stuck in a spinner. The `authLoading` from context does resolve, but the local `loading` blocks the UI.
+Add a complete password reset flow with two parts:
+1. A "Forgot password?" link on the login page that sends a reset email
+2. A new `/reset-password` page where users set their new password after clicking the email link
 
-2. **No mobile number OTP login**: Currently only email/password and Google OAuth are supported. Need to add phone-based OTP authentication.
+## Changes
 
----
+### 1. Add `resetPassword` method to AuthContext
 
-## Plan
+**File: `src/contexts/AuthContext.tsx`**
 
-### 1. Fix Google Auth Loading State (Login.tsx)
+- Add a `resetPassword(email: string)` method that calls `supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/reset-password' })`
+- Add an `updatePassword(password: string)` method that calls `supabase.auth.updateUser({ password })`
+- Export both in the context type interface
 
-- Reset local `loading` state when `user` changes (via the existing `useEffect`), so that after Google auth completes and `onAuthStateChange` fires, the spinner stops and navigation occurs.
-- Add a `finally` block equivalent: reset `loading` after a timeout fallback (e.g., 10 seconds) to prevent infinite spinners if something fails silently.
+### 2. Add "Forgot password?" link to Login page
 
-### 2. Add Phone OTP Login (Login.tsx + AuthContext.tsx)
+**File: `src/pages/Login.tsx`**
 
-**AuthContext changes:**
-- Add `signInWithPhone(phone: string)` method that calls `supabase.auth.signInWithOtp({ phone })`
-- Add `verifyPhoneOtp(phone: string, token: string)` method that calls `supabase.auth.verifyOtp({ phone, token, type: 'sms' })`
-- Export both in the context type
+- Add a "Forgot password?" button below the password field (only visible in "Sign In" mode)
+- Clicking it shows an inline form: email input + "Send Reset Link" button (replaces the login form temporarily)
+- On success, show a toast confirming the email was sent
+- Add a "Back to Sign In" link to return to the login form
+- This avoids creating a separate page -- keeps everything on the login page using a new `authMode` value: `"forgot"`
 
-**Login.tsx UI changes:**
-- Add a third auth mode tab: "Phone" alongside "Sign In" and "Sign Up"
-- Phone mode shows:
-  - Phone number input with +91 prefix (Indian market focus)
-  - "Send OTP" button
-  - After OTP is sent, show 6-digit OTP input (using the existing `InputOTP` component)
-  - "Verify OTP" button
-- Handle loading, error, and success states with toasts
+### 3. Create Reset Password page
 
-### 3. Fix Auth Mode Tabs
+**File: `src/pages/ResetPassword.tsx`** (new file)
 
-- Restructure the tab bar to support 3 modes: "Sign In" | "Sign Up" | "Phone"
-- Phone tab shows a simplified flow without password fields
+- A public page at `/reset-password`
+- Detects the `type=recovery` token in the URL hash (set automatically by the authentication system)
+- Shows a form with "New Password" and "Confirm Password" fields
+- On submit, calls `supabase.auth.updateUser({ password })` to set the new password
+- On success, redirects to `/login` with a toast
+- If no recovery token is detected, shows a message explaining the link is invalid or expired
 
----
+### 4. Add route for Reset Password
+
+**File: `src/App.tsx`**
+
+- Add `<Route path="/reset-password" element={<ResetPassword />} />` as a public route (not behind ProtectedRoute)
 
 ## Technical Details
 
-### AuthContext additions
+### Auth mode update in Login.tsx
 
 ```text
-signInWithPhone: (phone: string) => Promise<{ error: Error | null }>
-verifyPhoneOtp: (phone: string, token: string) => Promise<{ error: Error | null }>
+type AuthMode = "login" | "signup" | "phone" | "forgot"
 ```
 
-These use the Supabase client directly (not Lovable OAuth module) since phone OTP is a standard Supabase auth feature.
+The "forgot" mode shows only an email field and a "Send Reset Link" button, with a link back to sign in.
 
-### Login.tsx state additions
-
-```text
-authMode: "login" | "signup" | "phone"
-phone: string (phone number input)
-otpSent: boolean (tracks if OTP has been sent)
-otp: string (6-digit OTP value)
-```
-
-### Google Auth fix
+### Reset Password page flow
 
 ```text
-// In the useEffect watching user:
-useEffect(() => {
-  if (!authLoading && user) {
-    setLoading(false); // Reset local loading
-    navigate("/", { replace: true });
-  }
-}, [user, authLoading, navigate]);
+1. User clicks reset link in email
+2. Browser opens /reset-password#access_token=...&type=recovery&...
+3. Supabase client auto-detects the recovery token from the hash
+4. onAuthStateChange fires with event = "PASSWORD_RECOVERY"
+5. Page shows new password form
+6. User submits -> updateUser({ password }) is called
+7. Redirect to /login with success toast
 ```
 
 ### Files Changed
 
 | File | Change |
 |------|--------|
-| `src/contexts/AuthContext.tsx` | Add `signInWithPhone` and `verifyPhoneOtp` methods |
-| `src/pages/Login.tsx` | Fix Google auth loading state, add Phone OTP tab with send/verify flow, restructure tabs to 3 modes |
+| `src/contexts/AuthContext.tsx` | Add `resetPassword` and `updatePassword` methods |
+| `src/pages/Login.tsx` | Add "Forgot password?" link and inline forgot password form |
+| `src/pages/ResetPassword.tsx` | New page for setting a new password after clicking the reset email link |
+| `src/App.tsx` | Add `/reset-password` public route |
 
