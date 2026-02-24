@@ -21,7 +21,7 @@ export default function Login() {
 
   useEffect(() => {
     if (!authLoading && user) {
-      navigate("/");
+      navigate("/", { replace: true });
     }
   }, [user, authLoading, navigate]);
 
@@ -35,7 +35,6 @@ export default function Login() {
           toast({ title: "Login failed", description: error.message, variant: "destructive" });
         } else {
           toast({ title: "Welcome back!", description: "Successfully signed in." });
-          navigate("/");
         }
       } else {
         const { error } = await signUpWithEmail(email, password, name);
