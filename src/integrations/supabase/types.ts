@@ -1356,6 +1356,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_old_deleted_records: {
+        Args: { days_old?: number }
+        Returns: {
+          deleted_count: number
+          table_name: string
+        }[]
+      }
+      cleanup_old_telegram_logs: {
+        Args: { days_old?: number }
+        Returns: {
+          deleted_count: number
+          table_name: string
+        }[]
+      }
       get_fno_underlyings: {
         Args: never
         Returns: {

@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { validateCronAuth } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -763,14 +764,9 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Validate auth - require Bearer token
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(
-        JSON.stringify({ error: "Unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
+    // Validate cron/system auth (called by other edge functions and cron)
+    const cronAuthError = validateCronAuth(req);
+    if (cronAuthError) return cronAuthError;
 
     const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
     const DEFAULT_CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID");
