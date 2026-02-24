@@ -366,7 +366,7 @@ export default function Landing() {
 
   useEffect(() => {
     if (!loading && user) {
-      navigate("/");
+      navigate("/", { replace: true });
     }
   }, [user, loading, navigate]);
 
