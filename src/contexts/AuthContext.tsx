@@ -78,7 +78,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // If no session, the listener may not fire, so we set loading = false as a fallback.
     supabase.auth.getSession().then(({ error }) => {
       if (error) {
-        console.error("[Auth] getSession error:", error);
+        console.error("[Auth] getSession error, clearing stale session:", error);
+        supabase.auth.signOut().catch(() => {});
+        setLoading(false);
+        return;
       }
       // Give the listener a moment to fire; if it hasn't, there's no session
       setTimeout(() => {
