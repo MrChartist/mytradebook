@@ -123,7 +123,7 @@ export default function Trades() {
     security_id: t.security_id,
     exchange_segment: t.exchange_segment,
   })), [trades]);
-  const { prices, isPolling, lastUpdated, failoverActive } = useLivePrices(openTradeInstruments);
+  const { prices, isPolling, lastUpdated } = useLivePrices(openTradeInstruments);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -329,11 +329,6 @@ export default function Trades() {
             {isPolling && openTradeInstruments.length > 0 && (
               <span className="flex items-center gap-1 text-xs text-profit">
                 <Radio className="w-3 h-3 animate-pulse" /> Live
-                {failoverActive && (
-                  <span className="ml-1 px-1 py-0.5 rounded text-[10px] font-medium bg-warning/15 text-warning border border-warning/20">
-                    TrueData
-                  </span>
-                )}
               </span>
             )}
           </div>
