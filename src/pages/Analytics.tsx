@@ -9,7 +9,6 @@ import { TimeOfDayAnalysis } from "@/components/analytics/TimeOfDayAnalysis";
 import { DayOfWeekAnalysis } from "@/components/analytics/DayOfWeekAnalysis";
 import { StreakTracker } from "@/components/analytics/StreakTracker";
 import { SetupTagPerformance } from "@/components/analytics/SetupTagPerformance";
-import { PageHeader } from "@/components/ui/page-header";
 
 export default function Analytics() {
   const { trades, summary } = useTrades();
@@ -30,7 +29,10 @@ export default function Analytics() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <PageHeader title="Analytics" subtitle="Deep dive into your trading performance." />
+      <div>
+        <h1 className="text-2xl font-bold">Analytics</h1>
+        <p className="text-muted-foreground text-sm">Deep dive into your trading performance.</p>
+      </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard title="Win Rate" value={`${summary.winRate.toFixed(1)}%`} change={`${closed.length} trades`} changeType={summary.winRate >= 50 ? "profit" : "loss"} icon={Target} subtitle="Closed" href="/trades?status=CLOSED" />

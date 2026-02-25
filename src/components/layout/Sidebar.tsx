@@ -62,14 +62,14 @@ export function Sidebar({ onSearchClick }: SidebarProps) {
         className={cn(
           "flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 group",
           isActive
-            ? "bg-primary/8 text-primary font-medium nav-item-active"
+            ? "bg-primary/8 text-primary font-medium"
             : "text-muted-foreground hover:text-foreground hover:bg-muted"
         )}
       >
         <item.icon
           className={cn(
-            "w-[18px] h-[18px] flex-shrink-0 transition-transform duration-150",
-            isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5"
+            "w-[18px] h-[18px] flex-shrink-0",
+            isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
           )}
         />
         {!collapsed && (
@@ -111,8 +111,8 @@ export function Sidebar({ onSearchClick }: SidebarProps) {
       >
         {/* Logo */}
         <div className="flex items-center gap-2.5 px-4 h-[60px] border-b border-border">
-          <div className="w-8 h-8 rounded-xl bg-gradient-primary flex items-center justify-center flex-shrink-0 logo-shimmer">
-            <TrendingUp className="w-[18px] h-[18px] text-primary-foreground relative z-10" />
+          <div className="w-8 h-8 rounded-xl bg-gradient-primary flex items-center justify-center flex-shrink-0">
+            <TrendingUp className="w-[18px] h-[18px] text-primary-foreground" />
           </div>
           {!collapsed && (
             <div className="animate-fade-in">
@@ -153,7 +153,7 @@ export function Sidebar({ onSearchClick }: SidebarProps) {
           )}
           {/* Profile */}
           {!collapsed && profile && (
-            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/50 rounded-xl transition-all duration-200 hover:ring-2 hover:ring-primary/20 hover:shadow-glow">
+            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/50 rounded-xl">
               <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
                 <span className="text-primary-foreground font-semibold text-xs">
                   {profile.name?.charAt(0).toUpperCase() || "U"}
@@ -171,11 +171,11 @@ export function Sidebar({ onSearchClick }: SidebarProps) {
             className={cn(
               "flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 group",
               location.pathname === "/settings"
-                ? "bg-primary/8 text-primary font-medium nav-item-active"
+                ? "bg-primary/8 text-primary font-medium"
                 : "text-muted-foreground hover:text-foreground hover:bg-muted"
             )}
           >
-            <Settings className={cn("w-[18px] h-[18px] transition-transform duration-150", location.pathname !== "/settings" && "group-hover:translate-x-0.5")} />
+            <Settings className="w-[18px] h-[18px]" />
             {!collapsed && <span className="text-[13px]">Settings</span>}
           </NavLink>
 

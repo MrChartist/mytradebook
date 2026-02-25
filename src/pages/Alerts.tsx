@@ -177,12 +177,9 @@ export default function Alerts() {
       <div className="space-y-5 animate-fade-in">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="relative">
-            <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-primary" />
-            <div className="pl-4">
-              <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Alerts</h1>
-              <p className="text-sm text-muted-foreground">Monitor price & market conditions</p>
-            </div>
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold">Alerts</h1>
+            <p className="text-sm text-muted-foreground">Monitor price & market conditions</p>
           </div>
           <div className="flex gap-2">
             {activeCount > 0 && (

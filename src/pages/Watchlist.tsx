@@ -96,13 +96,10 @@ export default function WatchlistPage() {
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div className="relative">
-            <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-primary" />
-            <div className="pl-4">
-              <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Watchlists</h1>
-              <p className="text-muted-foreground">Track instruments & create quick alerts</p>
-            </div>
-          </div>
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-bold">Watchlists</h1>
+          <p className="text-muted-foreground">Track instruments & create quick alerts</p>
+        </div>
         <Button onClick={() => setCreateOpen(true)}>
           <Plus className="w-4 h-4 mr-2" /> New List
         </Button>

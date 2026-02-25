@@ -37,7 +37,7 @@ export function MainLayout({ children }: MainLayoutProps) {
             </span>
           </div>
         )}
-        <div className="p-4 lg:p-6 page-transition">{children}</div>
+        <div className="p-4 lg:p-6">{children}</div>
       </main>
     </div>
   );
