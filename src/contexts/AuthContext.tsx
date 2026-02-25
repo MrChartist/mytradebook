@@ -50,6 +50,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     console.log("[Auth] Initializing auth context");
 
+    // Proactively clear any corrupted/stale session from localStorage
+    // before the Supabase client's autoRefreshToken can start retrying it
+    const storageKey = `sb-nuilpmoipiazjafpjaft-auth-token`;
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // If the access token is expired and refresh token looks stale, nuke it
+        if (parsed?.expires_at && parsed.expires_at * 1000 < Date.now()) {
+          console.log("[Auth] Found expired session in localStorage, clearing it");
+          localStorage.removeItem(storageKey);
+        }
+      }
+    } catch {
+      // Corrupted JSON — remove it
+      console.log("[Auth] Corrupted session in localStorage, clearing it");
+      localStorage.removeItem(storageKey);
+    }
+
     // onAuthStateChange is the SOLE authority for setting auth state
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -72,14 +91,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
-    // getSession triggers the listener if a session exists.
-    // If no session, the listener may not fire, so we set loading = false as a fallback.
     supabase.auth.getSession().then(({ error }) => {
       if (error) {
         console.error("[Auth] getSession error, clearing stale session:", error);
-        // Directly remove from localStorage — signOut() fails with "Failed to fetch"
-        // when the token is already corrupted, creating an infinite retry loop
-        const storageKey = `sb-nuilpmoipiazjafpjaft-auth-token`;
         localStorage.removeItem(storageKey);
         setSession(null);
         setUser(null);
