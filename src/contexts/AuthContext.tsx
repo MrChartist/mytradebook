@@ -77,7 +77,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     supabase.auth.getSession().then(({ error }) => {
       if (error) {
         console.error("[Auth] getSession error, clearing stale session:", error);
-        supabase.auth.signOut().catch(() => {});
+        // Directly remove from localStorage — signOut() fails with "Failed to fetch"
+        // when the token is already corrupted, creating an infinite retry loop
+        const storageKey = `sb-nuilpmoipiazjafpjaft-auth-token`;
+        localStorage.removeItem(storageKey);
+        setSession(null);
+        setUser(null);
+        setProfile(null);
         setLoading(false);
         return;
       }
