@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
-import { Save, Loader2, CheckCircle, Users } from "lucide-react";
+import { Save, Loader2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export default function ProfileSettings() {
-  const { profile, user, allProfiles, switchUser } = useAuth();
+  const { profile, user } = useAuth();
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -61,34 +60,6 @@ export default function ProfileSettings() {
 
   return (
     <div className="space-y-6">
-      {/* User Switcher */}
-      {allProfiles.length > 0 && (
-        <div className="glass-card p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Users className="w-4.5 h-4.5 text-primary" />
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold">Active User</h2>
-              <p className="text-sm text-muted-foreground">Switch between registered users to view their data</p>
-            </div>
-          </div>
-          <Select value={user?.id || ""} onValueChange={switchUser}>
-            <SelectTrigger className="w-full md:w-80 bg-accent border-border">
-              <SelectValue placeholder="Select a user" />
-            </SelectTrigger>
-            <SelectContent>
-              {allProfiles.map((p) => (
-                <SelectItem key={p.user_id} value={p.user_id}>
-                  <span className="font-medium">{p.name || "Unnamed"}</span>
-                  <span className="text-muted-foreground ml-2 text-xs">{p.email}</span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
-
       {/* Profile Information */}
       <div className="glass-card p-6">
         <h2 className="text-lg font-semibold mb-6">Profile Information</h2>

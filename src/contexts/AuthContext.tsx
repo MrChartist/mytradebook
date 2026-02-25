@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
-import { User } from "@supabase/supabase-js";
+import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 
 interface Profile {
   id: string;
@@ -13,11 +14,9 @@ interface Profile {
 
 interface AuthContextType {
   user: User | null;
-  session: null;
+  session: Session | null;
   profile: Profile | null;
   loading: boolean;
-  allProfiles: Profile[];
-  switchUser: (userId: string) => void;
   signInWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUpWithEmail: (email: string, password: string, name?: string) => Promise<{ error: Error | null }>;
   signInWithGoogle: () => Promise<{ error: Error | null }>;
@@ -28,72 +27,116 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const noop = async () => ({ error: null });
-
-function makeUser(userId: string, email: string, name: string): User {
-  return {
-    id: userId,
-    email,
-    app_metadata: {},
-    user_metadata: { full_name: name },
-    aud: "authenticated",
-    created_at: new Date().toISOString(),
-  } as User;
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [allProfiles, setAllProfiles] = useState<Profile[]>([]);
-  const [activeUserId, setActiveUserId] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    supabase
+  const fetchProfile = useCallback(async (userId: string) => {
+    const { data } = await supabase
       .from("profiles")
       .select("*")
-      .order("created_at", { ascending: true })
-      .then(({ data, error }) => {
-        if (error) {
-          console.error("[Auth] Failed to fetch profiles:", error);
-          setLoading(false);
-          return;
-        }
-        const profiles = data || [];
-        setAllProfiles(profiles);
-        if (profiles.length > 0) {
-          const saved = localStorage.getItem("tradebook_active_user");
-          const match = profiles.find((p) => p.user_id === saved);
-          setActiveUserId(match ? match.user_id : profiles[0].user_id);
-        }
+      .eq("user_id", userId)
+      .single();
+    setProfile(data as Profile | null);
+  }, []);
+
+  useEffect(() => {
+    // Set up auth listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
+
+      if (currentSession?.user) {
+        // Use setTimeout to avoid Supabase deadlock
+        setTimeout(() => fetchProfile(currentSession.user.id), 0);
+      } else {
+        setProfile(null);
+      }
+
+      if (event === "SIGNED_OUT") {
+        setProfile(null);
+      }
+
+      setLoading(false);
+    });
+
+    // Then check existing session
+    supabase.auth.getSession().then(({ data: { session: existingSession }, error }) => {
+      if (error) {
+        // Clear corrupted session
+        localStorage.removeItem("sb-nuilpmoipiazjafpjaft-auth-token");
         setLoading(false);
-      });
-  }, []);
+        return;
+      }
+      if (existingSession) {
+        setSession(existingSession);
+        setUser(existingSession.user);
+        fetchProfile(existingSession.user.id);
+      }
+      setLoading(false);
+    });
 
-  const switchUser = useCallback((userId: string) => {
-    setActiveUserId(userId);
-    localStorage.setItem("tradebook_active_user", userId);
-  }, []);
+    return () => subscription.unsubscribe();
+  }, [fetchProfile]);
 
-  const activeProfile = allProfiles.find((p) => p.user_id === activeUserId) || null;
+  const signInWithEmail = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error: error as Error | null };
+  };
 
-  const user = activeProfile
-    ? makeUser(activeProfile.user_id, activeProfile.email || "", activeProfile.name || "User")
-    : null;
+  const signUpWithEmail = async (email: string, password: string, name?: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: name },
+        emailRedirectTo: window.location.origin,
+      },
+    });
+    return { error: error as Error | null };
+  };
+
+  const signInWithGoogle = async () => {
+    const { error } = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    return { error: error as Error | null };
+  };
+
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    return { error: error as Error | null };
+  };
+
+  const updatePassword = async (password: string) => {
+    const { error } = await supabase.auth.updateUser({ password });
+    return { error: error as Error | null };
+  };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setSession(null);
+    setProfile(null);
+  };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        session: null,
-        profile: activeProfile,
+        session,
+        profile,
         loading,
-        allProfiles,
-        switchUser,
-        signInWithEmail: noop,
-        signUpWithEmail: noop,
-        signInWithGoogle: noop,
-        resetPassword: noop,
-        updatePassword: noop,
-        signOut: async () => {},
+        signInWithEmail,
+        signUpWithEmail,
+        signInWithGoogle,
+        resetPassword,
+        updatePassword,
+        signOut,
       }}
     >
       {children}
