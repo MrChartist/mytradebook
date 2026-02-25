@@ -94,7 +94,7 @@ export default function Login() {
       toast({ title: "Google sign-in failed", description: "Something went wrong. Please try again.", variant: "destructive" });
       setGoogleLoading(false);
     }
-    setTimeout(() => setGoogleLoading(false), 3000);
+    setTimeout(() => setGoogleLoading(false), 10000);
   };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
