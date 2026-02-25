@@ -9,7 +9,6 @@ import { useToast } from "@/hooks/use-toast";
 
 type AuthMode = "login" | "signup" | "forgot";
 
-/* ── Password strength helper ───────────────────── */
 function getPasswordStrength(pw: string): { level: 0 | 1 | 2 | 3; label: string; color: string } {
   if (!pw) return { level: 0, label: "", color: "" };
   let score = 0;
@@ -22,7 +21,6 @@ function getPasswordStrength(pw: string): { level: 0 | 1 | 2 | 3; label: string;
   return { level: 3, label: "Strong", color: "bg-profit" };
 }
 
-/* ── Google Icon (multi-color) ──────────────────── */
 function GoogleIcon() {
   return (
     <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
@@ -34,7 +32,6 @@ function GoogleIcon() {
   );
 }
 
-/* ── Main Login Page ────────────────────────────── */
 export default function Login() {
   const [authMode, setAuthMode] = useState<AuthMode>("login");
   const [email, setEmail] = useState("");
@@ -51,14 +48,12 @@ export default function Login() {
 
   const pwStrength = useMemo(() => getPasswordStrength(password), [password]);
 
-  // Redirect if already signed in
   useEffect(() => {
     if (!authLoading && user) {
       navigate("/", { replace: true });
     }
   }, [user, authLoading, navigate]);
 
-  // Auto-focus email on mode switch
   useEffect(() => {
     setTimeout(() => emailRef.current?.focus(), 50);
   }, [authMode]);
@@ -132,252 +127,201 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Branding Panel */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/5 via-background to-primary/10 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]">
-          <div
-            className="h-full w-full"
-            style={{
-              backgroundImage:
-                "linear-gradient(hsl(var(--primary) / 0.4) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary) / 0.4) 1px, transparent 1px)",
-              backgroundSize: "60px 60px",
-            }}
-          />
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <div className="w-full max-w-[420px]">
+        {/* Logo */}
+        <div className="flex items-center justify-center gap-3 mb-8">
+          <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center shadow-md">
+            <TrendingUp className="w-6 h-6 text-primary-foreground" />
+          </div>
+          <span className="text-xl font-bold text-foreground">TradeBook</span>
         </div>
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-profit/10 rounded-full blur-[100px]" />
 
-        <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
-              <TrendingUp className="w-7 h-7 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">TradeBook</h1>
-              <p className="text-muted-foreground text-sm">Trading Journal</p>
-            </div>
+        {/* Card */}
+        <div className="bg-card border border-border rounded-2xl p-8 shadow-lg">
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-foreground mb-1">{headings[authMode].title}</h1>
+            <p className="text-muted-foreground text-sm">{headings[authMode].subtitle}</p>
           </div>
 
-          <h2 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
-            Master Your Trades.
-            <br />
-            <span className="gradient-text">Track Your Edge.</span>
-          </h2>
-
-          <p className="text-base text-muted-foreground max-w-md mb-8">
-            A structured trading journal and analytics platform for Indian
-            markets. Log trades, track performance, and improve discipline.
-          </p>
-
-          <div className="flex flex-wrap gap-6">
-            {[
-              { color: "bg-profit", text: "Real-time alerts" },
-              { color: "bg-primary", text: "Broker integration" },
-              { color: "bg-warning", text: "Telegram notifications" },
-            ].map(({ color, text }) => (
-              <div key={text} className="flex items-center gap-2">
-                <div className={cn("w-2 h-2 rounded-full", color)} />
-                <span className="text-sm text-muted-foreground">{text}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Right Panel - Auth Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 bg-background">
-        <div className="w-full max-w-md">
-          {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
-            <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold">TradeBook</span>
-          </div>
-
-          <div className="surface-card p-8 gradient-border-top auth-card-enter">
-            <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold mb-2">{headings[authMode].title}</h3>
-              <p className="text-muted-foreground text-sm">{headings[authMode].subtitle}</p>
-            </div>
-
-            {/* Google Sign In - prominent at top */}
-            {authMode !== "forgot" && (
-              <>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full h-11 mb-4"
-                  onClick={handleGoogleAuth}
-                  disabled={loading || googleLoading}
-                >
-                  {googleLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                      Connecting to Google…
-                    </>
-                  ) : (
-                    <>
-                      <GoogleIcon />
-                      Continue with Google
-                    </>
-                  )}
-                </Button>
-
-                <div className="relative my-6">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-border" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">Or</span>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {authMode === "forgot" ? (
-              <form onSubmit={handleForgotPassword} className="space-y-4 auth-mode-enter">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Email Address</label>
-                  <Input
-                    ref={emailRef}
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="h-11"
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full h-11" disabled={loading}>
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
-                    <>Send Reset Link <ArrowRight className="w-4 h-4 ml-2" /></>
-                  )}
-                </Button>
-                <button
-                  type="button"
-                  onClick={() => setAuthMode("login")}
-                  className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Back to Sign In
-                </button>
-              </form>
-            ) : (
-              <form onSubmit={handleEmailAuth} className="space-y-4 auth-mode-enter" key={authMode}>
-                {authMode === "signup" && (
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Full Name</label>
-                    <Input
-                      type="text"
-                      placeholder="Enter your name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="h-11"
-                    />
-                  </div>
+          {/* Google Sign In */}
+          {authMode !== "forgot" && (
+            <>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-11 mb-5"
+                onClick={handleGoogleAuth}
+                disabled={loading || googleLoading}
+              >
+                {googleLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    Connecting…
+                  </>
+                ) : (
+                  <>
+                    <GoogleIcon />
+                    Continue with Google
+                  </>
                 )}
+              </Button>
 
+              <div className="relative my-5">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-3 text-muted-foreground">Or</span>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Forgot Password Form */}
+          {authMode === "forgot" ? (
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-foreground mb-1.5 block">Email</label>
+                <Input
+                  ref={emailRef}
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-11"
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full h-11" disabled={loading}>
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                  <>Send Reset Link <ArrowRight className="w-4 h-4 ml-2" /></>
+                )}
+              </Button>
+              <button
+                type="button"
+                onClick={() => setAuthMode("login")}
+                className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors pt-1"
+              >
+                ← Back to Sign In
+              </button>
+            </form>
+          ) : (
+            /* Login / Signup Form */
+            <form onSubmit={handleEmailAuth} className="space-y-4" key={authMode}>
+              {authMode === "signup" && (
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Email Address</label>
+                  <label className="text-sm font-medium text-foreground mb-1.5 block">Full Name</label>
                   <Input
-                    ref={emailRef}
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    type="text"
+                    placeholder="Your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     className="h-11"
-                    required
                   />
                 </div>
+              )}
 
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Password</label>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="h-11 pr-10"
-                      required
-                      minLength={6}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
+              <div>
+                <label className="text-sm font-medium text-foreground mb-1.5 block">Email</label>
+                <Input
+                  ref={emailRef}
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-11"
+                  required
+                />
+              </div>
 
-                  {authMode === "signup" && password.length > 0 && (
-                    <div className="mt-2 space-y-1">
-                      <div className="flex gap-1">
-                        {[1, 2, 3].map((i) => (
-                          <div
-                            key={i}
-                            className={cn(
-                              "strength-bar flex-1",
-                              i <= pwStrength.level ? pwStrength.color : "bg-muted"
-                            )}
-                          />
-                        ))}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        {pwStrength.label}{pwStrength.level < 3 && " · Min 6 chars, mix letters, numbers & symbols"}
-                      </p>
-                    </div>
-                  )}
-
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-sm font-medium text-foreground">Password</label>
                   {authMode === "login" && (
                     <button
                       type="button"
                       onClick={() => setAuthMode("forgot")}
-                      className="text-xs text-primary hover:underline mt-1.5 block"
+                      className="text-xs text-primary hover:underline"
                     >
                       Forgot password?
                     </button>
                   )}
                 </div>
+                <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="h-11 pr-10"
+                    required
+                    minLength={6}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
 
-                <Button type="submit" className="w-full h-11" disabled={loading}>
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
-                    <>
-                      {authMode === "login" ? "Sign In" : "Create Account"}
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </>
-                  )}
-                </Button>
+                {authMode === "signup" && password.length > 0 && (
+                  <div className="mt-2 space-y-1">
+                    <div className="flex gap-1">
+                      {[1, 2, 3].map((i) => (
+                        <div
+                          key={i}
+                          className={cn(
+                            "h-1 flex-1 rounded-full transition-colors",
+                            i <= pwStrength.level ? pwStrength.color : "bg-muted"
+                          )}
+                        />
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {pwStrength.label}{pwStrength.level < 3 && " · Min 6 chars, mix letters, numbers & symbols"}
+                    </p>
+                  </div>
+                )}
+              </div>
 
-                <p className="text-sm text-center text-muted-foreground">
-                  {authMode === "login" ? (
-                    <>
-                      Don't have an account?{" "}
-                      <button type="button" onClick={() => setAuthMode("signup")} className="text-primary hover:underline font-medium">
-                        Sign Up
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      Already have an account?{" "}
-                      <button type="button" onClick={() => setAuthMode("login")} className="text-primary hover:underline font-medium">
-                        Sign In
-                      </button>
-                    </>
-                  )}
-                </p>
-              </form>
-            )}
+              <Button type="submit" className="w-full h-11" disabled={loading}>
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                  <>
+                    {authMode === "login" ? "Sign In" : "Create Account"}
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
+              </Button>
 
-            <p className="text-xs text-muted-foreground text-center mt-6">
-              By signing in, you agree to our{" "}
-              <a href="#" className="text-primary hover:underline">Terms</a>{" "}and{" "}
-              <a href="#" className="text-primary hover:underline">Privacy Policy</a>
-            </p>
-          </div>
+              <p className="text-sm text-center text-muted-foreground pt-1">
+                {authMode === "login" ? (
+                  <>
+                    Don't have an account?{" "}
+                    <button type="button" onClick={() => setAuthMode("signup")} className="text-primary hover:underline font-medium">
+                      Sign Up
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    Already have an account?{" "}
+                    <button type="button" onClick={() => setAuthMode("login")} className="text-primary hover:underline font-medium">
+                      Sign In
+                    </button>
+                  </>
+                )}
+              </p>
+            </form>
+          )}
         </div>
+
+        <p className="text-xs text-muted-foreground text-center mt-5">
+          By signing in, you agree to our{" "}
+          <a href="#" className="text-primary hover:underline">Terms</a> and{" "}
+          <a href="#" className="text-primary hover:underline">Privacy Policy</a>
+        </p>
       </div>
     </div>
   );
