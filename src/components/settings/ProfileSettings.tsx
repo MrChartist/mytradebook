@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export default function ProfileSettings() {
-  const { profile, user } = useAuth();
+  const { profile, user, role } = useAuth();
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -116,7 +116,7 @@ export default function ProfileSettings() {
             <Label htmlFor="role">Role</Label>
             <Input
               id="role"
-              value="Client"
+              value={role === 'admin' ? 'Admin' : 'Client'}
               readOnly
               disabled
               className="bg-accent border-border"

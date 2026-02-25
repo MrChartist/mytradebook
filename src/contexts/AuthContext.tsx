@@ -15,10 +15,10 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: Profile | null;
+  role: 'admin' | 'client' | null;
   loading: boolean;
   signInWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUpWithEmail: (email: string, password: string, name?: string) => Promise<{ error: Error | null }>;
-  signInWithGoogle: () => Promise<{ error: Error | null }>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
   updatePassword: (password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -30,6 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [role, setRole] = useState<'admin' | 'client' | null>(null);
   const [loading, setLoading] = useState(true);
   const listenerFired = useRef(false);
 
@@ -44,6 +45,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("[Auth] Profile fetch error:", error);
     }
     setProfile(data);
+
+    const { data: roleData } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .single();
+    setRole((roleData?.role as 'admin' | 'client') ?? 'client');
   }, []);
 
   useEffect(() => {
@@ -80,6 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else {
           console.log("[Auth] No user session");
           setProfile(null);
+          setRole(null);
         }
       }
     );
@@ -122,17 +131,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
-  const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    return { error };
-  };
-
-
   const resetPassword = async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
@@ -150,11 +148,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setSession(null);
     setProfile(null);
+    setRole(null);
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, session, profile, loading, signInWithEmail, signUpWithEmail, signInWithGoogle, resetPassword, updatePassword, signOut }}
+      value={{ user, session, profile, role, loading, signInWithEmail, signUpWithEmail, resetPassword, updatePassword, signOut }}
     >
       {children}
     </AuthContext.Provider>
