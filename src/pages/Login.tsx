@@ -289,13 +289,18 @@ export default function Login() {
 
   const handleGoogleAuth = async () => {
     setGoogleLoading(true);
-    const { error } = await signInWithGoogle();
-    if (error) {
-      toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });
+    try {
+      const { error } = await signInWithGoogle();
+      if (error) {
+        toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });
+        setGoogleLoading(false);
+      }
+    } catch {
+      toast({ title: "Google sign-in failed", description: "Something went wrong. Please try again.", variant: "destructive" });
       setGoogleLoading(false);
     }
-    // Fallback reset if popup closes without completing
-    setTimeout(() => setGoogleLoading(false), 10000);
+    // Fallback reset — if redirect doesn't happen within 3s, reset
+    setTimeout(() => setGoogleLoading(false), 3000);
   };
 
   const handleSendOtp = useCallback(async (phone: string): Promise<boolean> => {
