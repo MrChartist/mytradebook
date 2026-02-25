@@ -4,8 +4,6 @@ import { DailySectorChart } from "@/components/dashboard/DailySectorChart";
 import { DashboardAlertsPanel } from "@/components/dashboard/DashboardAlertsPanel";
 import { DashboardPositionsTable } from "@/components/dashboard/DashboardPositionsTable";
 import { DashboardMonthlyMetrics } from "@/components/dashboard/DashboardMonthlyMetrics";
-import { MorningBriefingWidget } from "@/components/dashboard/MorningBriefingWidget";
-import { RiskDashboardWidget } from "@/components/dashboard/RiskDashboardWidget";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
@@ -42,24 +40,7 @@ export interface DashboardContextValue {
 }
 
 export const DashboardContext = createContext<DashboardContextValue | null>(null);
-export const useDashboard = () => {
-  const ctx = useContext(DashboardContext);
-  if (!ctx) {
-    // Return safe defaults so components don't crash outside provider
-    return {
-      selectedMonth: new Date(),
-      setSelectedMonth: () => {},
-      segment: "All" as Segment,
-      trades: [],
-      monthTrades: [],
-      openTrades: [],
-      prices: {} as Record<string, { ltp: number }>,
-      isPolling: false,
-      lastUpdated: null,
-    } satisfies DashboardContextValue;
-  }
-  return ctx;
-};
+export const useDashboard = () => useContext(DashboardContext)!;
 
 export default function Dashboard() {
   const [selectedMonth, setSelectedMonth] = useState(new Date());
@@ -204,8 +185,6 @@ export default function Dashboard() {
         {widgets.map((w) => {
           if (!w.visible) return null;
           switch (w.id) {
-            case "briefing":
-              return <MorningBriefingWidget key={w.id} />;
             case "kpi":
               return <DashboardKPICards key={w.id} alerts={alerts} />;
             case "chart":
@@ -219,8 +198,6 @@ export default function Dashboard() {
               return null; // Rendered with chart
             case "positions":
               return <DashboardPositionsTable key={w.id} />;
-            case "risk":
-              return <RiskDashboardWidget key={w.id} />;
             case "monthly":
               return <DashboardMonthlyMetrics key={w.id} />;
             case "actions":

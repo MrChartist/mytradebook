@@ -15,7 +15,6 @@ import {
   LogOut,
   Menu,
   Search,
-  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileDrawer } from "./MobileDrawer";
@@ -27,7 +26,7 @@ const mainNavItems = [
   { icon: TrendingUp, label: "Trades", path: "/trades" },
   { icon: Bell, label: "Alerts", path: "/alerts" },
   { icon: BookOpen, label: "Studies", path: "/studies" },
-  { icon: Eye, label: "Watchlist", path: "/watchlist" },
+  
 ];
 
 const analyticsNavItems = [
@@ -37,11 +36,7 @@ const analyticsNavItems = [
   { icon: FileText, label: "Reports", path: "/reports" },
 ];
 
-interface SidebarProps {
-  onSearchClick?: () => void;
-}
-
-export function Sidebar({ onSearchClick }: SidebarProps) {
+export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
@@ -91,7 +86,7 @@ export function Sidebar({ onSearchClick }: SidebarProps) {
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={onSearchClick}>
+          <Button variant="ghost" size="icon" className="h-9 w-9">
             <Search className="w-4 h-4" />
           </Button>
           <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setMobileOpen(true)}>

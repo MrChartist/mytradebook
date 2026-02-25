@@ -21,7 +21,6 @@ import Calendar from "./pages/Calendar";
 import Mistakes from "./pages/Mistakes";
 import Analytics from "./pages/Analytics";
 import DhanCallback from "./pages/DhanCallback";
-import Watchlist from "./pages/Watchlist";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,7 +55,6 @@ const App = () => (
               { path: "/calendar", element: <Calendar /> },
               { path: "/mistakes", element: <Mistakes /> },
               { path: "/analytics", element: <Analytics /> },
-              { path: "/watchlist", element: <Watchlist /> },
               { path: "/dhan-callback", element: <DhanCallback /> },
             ].map(({ path, element }) => (
               <Route

@@ -10,7 +10,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useStudies, type StudyFilters } from "@/hooks/useStudies";
 import { CreateStudyModal } from "@/components/modals/CreateStudyModal";
-import { CreateTradeModal, type TradeModalPrefill } from "@/components/modals/CreateTradeModal";
 import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 import { InsightCard, type InsightCardAction } from "@/components/ui/insight-card";
 import { ViewToggle, type ViewMode } from "@/components/ui/view-toggle";
@@ -59,8 +58,6 @@ export default function Studies() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [studyToDelete, setStudyToDelete] = useState<Study | null>(null);
-  const [tradeModalOpen, setTradeModalOpen] = useState(false);
-  const [tradePrefill, setTradePrefill] = useState<TradeModalPrefill>({});
 
   const filters: StudyFilters = {
     ...(selectedCategory && { category: selectedCategory as StudyFilters["category"] }),
@@ -226,14 +223,7 @@ export default function Studies() {
                   : undefined}
                 onView={() => {}}
                 onCreateAlert={() => {}}
-                onCreateTrade={() => {
-                  setTradePrefill({
-                    symbol: study.symbol,
-                    notes: `**From Study:** ${study.title}\n${study.notes || ""}`,
-                    study_id: study.id,
-                  });
-                  setTradeModalOpen(true);
-                }}
+                onCreateTrade={() => {}}
                 menuActions={menuActions}
                 viewMode={viewMode}
               />
@@ -253,11 +243,6 @@ export default function Studies() {
       )}
 
       <CreateStudyModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
-      <CreateTradeModal
-        open={tradeModalOpen}
-        onOpenChange={setTradeModalOpen}
-        prefill={tradePrefill}
-      />
       <ConfirmDeleteModal
         open={deleteModalOpen}
         onOpenChange={setDeleteModalOpen}

@@ -11,7 +11,6 @@ import {
   FileText,
   Settings,
   LogOut,
-  Eye,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,7 +21,7 @@ const mainNavItems = [
   { icon: TrendingUp, label: "Trades", path: "/trades" },
   { icon: Bell, label: "Alerts", path: "/alerts" },
   { icon: BookOpen, label: "Studies", path: "/studies" },
-  { icon: Eye, label: "Watchlist", path: "/watchlist" },
+  
 ];
 
 const analyticsNavItems = [

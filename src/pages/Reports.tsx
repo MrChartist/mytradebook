@@ -164,46 +164,6 @@ export default function Reports() {
     }
   };
 
-  const handleDownloadPdf = (report: GroupedReport) => {
-    const segmentLines = report.segments
-      .map((seg) => {
-        const name = segmentDisplayNames[seg.segment] || seg.segment;
-        const pnl = (seg.total_pnl || 0);
-        return `${name}: ${pnl >= 0 ? "+" : ""}₹${pnl.toLocaleString()}  |  Win Rate: ${(seg.win_rate || 0).toFixed(1)}%  |  Trades: ${seg.total_trades}`;
-      })
-      .join("\n");
-
-    const content = [
-      "TRADEBOOK — WEEKLY REPORT",
-      "=".repeat(50),
-      `Week: ${formatDate(report.weekStart)} — ${formatDate(report.weekEnd)}`,
-      "",
-      "OVERALL",
-      `  Net P&L:      ${report.totalPnl >= 0 ? "+" : ""}₹${report.totalPnl.toLocaleString()}`,
-      `  Win Rate:     ${report.overallWinRate.toFixed(1)}%`,
-      `  Total Trades: ${report.totalTrades}`,
-      "",
-      "SEGMENT BREAKDOWN",
-      "-".repeat(50),
-      segmentLines,
-      "",
-      "=".repeat(50),
-      `Generated: ${new Date().toLocaleString("en-IN")}`,
-    ].join("\n");
-
-    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `TradeBook_Report_${report.weekStart}_to_${report.weekEnd}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    toast({ title: "Report downloaded", description: "Weekly report saved as text file." });
-  };
-
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString("en-IN", {
       day: "numeric",
@@ -392,12 +352,7 @@ export default function Reports() {
 
                 {/* Report Actions */}
                 <div className="p-4 bg-accent/30 flex justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-border"
-                    onClick={() => handleDownloadPdf(report)}
-                  >
+                  <Button variant="outline" size="sm" className="border-border">
                     <Download className="w-4 h-4 mr-2" />
                     Download PDF
                   </Button>

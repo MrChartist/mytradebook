@@ -20,13 +20,6 @@ export function useKeyboardShortcuts(handlers: ShortcutHandlers = {}) {
         return;
       }
 
-      // Allow Cmd+K for search
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        handlers.onSearch?.();
-        return;
-      }
-
       // Skip if modifier keys (Ctrl/Cmd) are held — avoid hijacking browser shortcuts
       if (e.ctrlKey || e.metaKey) return;
 
