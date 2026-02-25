@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useRef, useCallback, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
+import { lovable } from "@/integrations/lovable";
 
 interface Profile {
   id: string;
@@ -32,50 +32,82 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const listenerFired = useRef(false);
 
   const fetchProfile = useCallback(async (userId: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("profiles")
       .select("*")
       .eq("user_id", userId)
       .single();
-    setProfile(data as Profile | null);
+
+    if (error) {
+      console.error("[Auth] Profile fetch error:", error);
+    }
+    setProfile(data);
   }, []);
 
   useEffect(() => {
-    // Set up auth listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
+    console.log("[Auth] Initializing auth context");
 
-      if (currentSession?.user) {
-        // Use setTimeout to avoid Supabase deadlock
-        setTimeout(() => fetchProfile(currentSession.user.id), 0);
-      } else {
-        setProfile(null);
+    // Proactively clear any corrupted/stale session from localStorage
+    // before the Supabase client's autoRefreshToken can start retrying it
+    const storageKey = `sb-nuilpmoipiazjafpjaft-auth-token`;
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // If the access token is expired and refresh token looks stale, nuke it
+        if (parsed?.expires_at && parsed.expires_at * 1000 < Date.now()) {
+          console.log("[Auth] Found expired session in localStorage, clearing it");
+          localStorage.removeItem(storageKey);
+        }
       }
+    } catch {
+      // Corrupted JSON — remove it
+      console.log("[Auth] Corrupted session in localStorage, clearing it");
+      localStorage.removeItem(storageKey);
+    }
 
-      if (event === "SIGNED_OUT") {
-        setProfile(null);
+    // onAuthStateChange is the SOLE authority for setting auth state
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        console.log("[Auth] Auth state changed:", event, session ? "session exists" : "no session");
+        listenerFired.current = true;
+
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+
+        if (session?.user) {
+          console.log("[Auth] User authenticated:", session.user.email);
+          fetchProfile(session.user.id).catch((err) =>
+            console.error("[Auth] Background profile fetch failed:", err)
+          );
+        } else {
+          console.log("[Auth] No user session");
+          setProfile(null);
+        }
       }
+    );
 
-      setLoading(false);
-    });
-
-    // Then check existing session
-    supabase.auth.getSession().then(({ data: { session: existingSession }, error }) => {
+    supabase.auth.getSession().then(({ error }) => {
       if (error) {
-        // Clear corrupted session
-        localStorage.removeItem("sb-nuilpmoipiazjafpjaft-auth-token");
+        console.error("[Auth] getSession error, clearing stale session:", error);
+        localStorage.removeItem(storageKey);
+        setSession(null);
+        setUser(null);
+        setProfile(null);
         setLoading(false);
         return;
       }
-      if (existingSession) {
-        setSession(existingSession);
-        setUser(existingSession.user);
-        fetchProfile(existingSession.user.id);
-      }
-      setLoading(false);
+      // Give the listener a brief moment to fire; if it hasn't, there's no session
+      setTimeout(() => {
+        if (!listenerFired.current) {
+          console.log("[Auth] No session detected (listener never fired)");
+          setLoading(false);
+        }
+      }, 150);
     });
 
     return () => subscription.unsubscribe();
@@ -83,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithEmail = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error as Error | null };
+    return { error };
   };
 
   const signUpWithEmail = async (email: string, password: string, name?: string) => {
@@ -91,30 +123,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
       options: {
-        data: { full_name: name },
         emailRedirectTo: window.location.origin,
+        data: { full_name: name },
       },
     });
-    return { error: error as Error | null };
+    return { error };
   };
 
   const signInWithGoogle = async () => {
     const { error } = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
     });
-    return { error: error as Error | null };
+    return { error: error ?? null };
   };
+
 
   const resetPassword = async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
-    return { error: error as Error | null };
+    return { error };
   };
 
   const updatePassword = async (password: string) => {
     const { error } = await supabase.auth.updateUser({ password });
-    return { error: error as Error | null };
+    return { error };
   };
 
   const signOut = async () => {
@@ -126,18 +159,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        session,
-        profile,
-        loading,
-        signInWithEmail,
-        signUpWithEmail,
-        signInWithGoogle,
-        resetPassword,
-        updatePassword,
-        signOut,
-      }}
+      value={{ user, session, profile, loading, signInWithEmail, signUpWithEmail, signInWithGoogle, resetPassword, updatePassword, signOut }}
     >
       {children}
     </AuthContext.Provider>

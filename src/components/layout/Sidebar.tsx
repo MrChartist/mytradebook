@@ -12,10 +12,10 @@ import {
   FileText,
   Settings,
   ChevronLeft,
+  LogOut,
   Menu,
   Search,
   Eye,
-  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileDrawer } from "./MobileDrawer";
@@ -46,12 +46,11 @@ export function Sidebar({ onSearchClick }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  
-  const { profile, signOut } = useAuth();
+  const { signOut, profile } = useAuth();
 
-  const handleSignOut = async () => {
+  const handleLogout = async () => {
     await signOut();
-    navigate("/landing");
+    navigate("/login");
   };
 
   const renderNavItem = (item: typeof mainNavItems[0]) => {
@@ -180,15 +179,6 @@ export function Sidebar({ onSearchClick }: SidebarProps) {
             {!collapsed && <span className="text-[13px]">Settings</span>}
           </NavLink>
 
-          {/* Logout */}
-          <button
-            onClick={handleSignOut}
-            className="flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 group w-full text-muted-foreground hover:text-loss hover:bg-loss/10"
-          >
-            <LogOut className="w-[18px] h-[18px] transition-transform duration-150 group-hover:translate-x-0.5" />
-            {!collapsed && <span className="text-[13px]">Logout</span>}
-          </button>
-
           {collapsed && (
             <button
               onClick={() => setCollapsed(false)}
@@ -198,6 +188,13 @@ export function Sidebar({ onSearchClick }: SidebarProps) {
             </button>
           )}
 
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-3 py-2 rounded-xl text-muted-foreground hover:text-loss hover:bg-loss/8 transition-all duration-150 w-full"
+          >
+            <LogOut className="w-[18px] h-[18px] flex-shrink-0" />
+            {!collapsed && <span className="text-[13px]">Logout</span>}
+          </button>
         </div>
       </aside>
     </>
