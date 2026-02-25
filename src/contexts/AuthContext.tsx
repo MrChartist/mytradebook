@@ -81,13 +81,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLoading(false);
         return;
       }
-      // Give the listener a moment to fire; if it hasn't, there's no session
+      // Give the listener a brief moment to fire; if it hasn't, there's no session
       setTimeout(() => {
         if (!listenerFired.current) {
           console.log("[Auth] No session detected (listener never fired)");
           setLoading(false);
         }
-      }, 500);
+      }, 150);
     });
 
     return () => subscription.unsubscribe();
