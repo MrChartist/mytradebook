@@ -2,9 +2,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { MainLayout } from "@/components/layout/MainLayout";
+import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
 import Studies from "./pages/Studies";
@@ -18,6 +19,9 @@ import Mistakes from "./pages/Mistakes";
 import Analytics from "./pages/Analytics";
 import DhanCallback from "./pages/DhanCallback";
 import Watchlist from "./pages/Watchlist";
+import Landing from "./pages/Landing";
+import Login from "./pages/Login";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,7 +35,13 @@ const App = () => (
         <BrowserRouter>
           <AuthProvider>
             <Routes>
+              {/* Public routes */}
               <Route path="/" element={<Index />} />
+              <Route path="/landing" element={<Landing />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+
+              {/* Protected routes */}
               {[
                 { path: "/studies", element: <Studies /> },
                 { path: "/alerts", element: <Alerts /> },
@@ -48,13 +58,13 @@ const App = () => (
                 <Route
                   key={path}
                   path={path}
-                  element={<MainLayout>{element}</MainLayout>}
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>{element}</MainLayout>
+                    </ProtectedRoute>
+                  }
                 />
               ))}
-              {/* Redirect old routes */}
-              <Route path="/login" element={<Navigate to="/" replace />} />
-              <Route path="/landing" element={<Navigate to="/" replace />} />
-              <Route path="/reset-password" element={<Navigate to="/" replace />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>

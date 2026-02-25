@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -15,6 +15,7 @@ import {
   Menu,
   Search,
   Eye,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileDrawer } from "./MobileDrawer";
@@ -44,8 +45,14 @@ export function Sidebar({ onSearchClick }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   
-  const { profile } = useAuth();
+  const { profile, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/landing");
+  };
 
   const renderNavItem = (item: typeof mainNavItems[0]) => {
     const isActive = location.pathname === item.path;
@@ -172,6 +179,15 @@ export function Sidebar({ onSearchClick }: SidebarProps) {
             <Settings className={cn("w-[18px] h-[18px] transition-transform duration-150", location.pathname !== "/settings" && "group-hover:translate-x-0.5")} />
             {!collapsed && <span className="text-[13px]">Settings</span>}
           </NavLink>
+
+          {/* Logout */}
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 group w-full text-muted-foreground hover:text-loss hover:bg-loss/10"
+          >
+            <LogOut className="w-[18px] h-[18px] transition-transform duration-150 group-hover:translate-x-0.5" />
+            {!collapsed && <span className="text-[13px]">Logout</span>}
+          </button>
 
           {collapsed && (
             <button
