@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState, useRef, useCallback, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 
 interface Profile {
   id: string;
@@ -50,21 +49,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     console.log("[Auth] Initializing auth context");
 
-    // Proactively clear any corrupted/stale session from localStorage
-    // before the Supabase client's autoRefreshToken can start retrying it
+    // Only clean up truly corrupted session data from localStorage.
+    // Do NOT remove expired sessions — Supabase's autoRefreshToken handles token refresh.
     const storageKey = `sb-nuilpmoipiazjafpjaft-auth-token`;
     try {
       const raw = localStorage.getItem(storageKey);
       if (raw) {
-        const parsed = JSON.parse(raw);
-        // If the access token is expired and refresh token looks stale, nuke it
-        if (parsed?.expires_at && parsed.expires_at * 1000 < Date.now()) {
-          console.log("[Auth] Found expired session in localStorage, clearing it");
-          localStorage.removeItem(storageKey);
-        }
+        JSON.parse(raw); // Validate it's parseable
       }
     } catch {
-      // Corrupted JSON — remove it
       console.log("[Auth] Corrupted session in localStorage, clearing it");
       localStorage.removeItem(storageKey);
     }
@@ -93,8 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     supabase.auth.getSession().then(({ error }) => {
       if (error) {
-        console.error("[Auth] getSession error, clearing stale session:", error);
-        localStorage.removeItem(storageKey);
+        console.error("[Auth] getSession error:", error);
         setSession(null);
         setUser(null);
         setProfile(null);
@@ -123,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
         data: { full_name: name },
       },
     });
@@ -131,10 +123,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signInWithGoogle = async () => {
-    const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
-    return { error: error ?? null };
+    return { error };
   };
 
 
