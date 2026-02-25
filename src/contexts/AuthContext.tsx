@@ -72,22 +72,96 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
-    // getSession triggers the listener if a session exists.
-    // If no session, the listener may not fire, so we set loading = false as a fallback.
-    supabase.auth.getSession().then(({ error }) => {
-      if (error) {
-        console.error("[Auth] getSession error, clearing stale session:", error);
-        supabase.auth.signOut().catch(() => {});
-        setLoading(false);
+    // Handle OAuth callback tokens that may be in the URL after a redirect
+    const processOAuthCallback = async (): Promise<boolean> => {
+      // Check for PKCE authorization code in query params (e.g. ?code=...)
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+
+      if (code) {
+        console.log("[Auth] Detected PKCE authorization code, exchanging for session...");
+        try {
+          const { error } = await supabase.auth.exchangeCodeForSession(code);
+          if (error) {
+            console.error("[Auth] PKCE code exchange failed:", error);
+            return false;
+          }
+          // Clean up URL to remove the code parameter
+          window.history.replaceState(null, '', window.location.pathname);
+          return true;
+        } catch (err) {
+          console.error("[Auth] PKCE exchange error:", err);
+          return false;
+        }
+      }
+
+      // Check for implicit flow tokens in URL hash (e.g. #access_token=...)
+      const hash = window.location.hash;
+      if (hash && hash.includes('access_token')) {
+        console.log("[Auth] Detected access token in URL hash, setting session...");
+        const hashParams = new URLSearchParams(hash.substring(1));
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+
+        if (accessToken && refreshToken) {
+          try {
+            const { error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken,
+            });
+            if (error) {
+              console.error("[Auth] Failed to set session from URL tokens:", error);
+              return false;
+            }
+            // Clean up URL hash
+            window.history.replaceState(null, '', window.location.pathname);
+            return true;
+          } catch (err) {
+            console.error("[Auth] URL token processing error:", err);
+            return false;
+          }
+        }
+      }
+
+      return false;
+    };
+
+    processOAuthCallback().then((handled) => {
+      if (handled) {
+        // OAuth callback was processed; onAuthStateChange will set state.
+        // Safety timeout in case the listener doesn't fire.
+        setTimeout(() => {
+          if (!listenerFired.current) {
+            console.log("[Auth] OAuth processed but listener silent, fetching session...");
+            supabase.auth.getSession().then(({ data: { session } }) => {
+              if (session) {
+                setSession(session);
+                setUser(session.user);
+                fetchProfile(session.user.id).catch(console.error);
+              }
+              setLoading(false);
+            });
+          }
+        }, 500);
         return;
       }
-      // Give the listener a brief moment to fire; if it hasn't, there's no session
-      setTimeout(() => {
-        if (!listenerFired.current) {
-          console.log("[Auth] No session detected (listener never fired)");
+
+      // Standard flow: check for existing session (no OAuth callback in URL)
+      supabase.auth.getSession().then(({ error }) => {
+        if (error) {
+          console.error("[Auth] getSession error, clearing stale session:", error);
+          supabase.auth.signOut().catch(() => {});
           setLoading(false);
+          return;
         }
-      }, 150);
+        // Give the listener a brief moment to fire; if it hasn't, there's no session
+        setTimeout(() => {
+          if (!listenerFired.current) {
+            console.log("[Auth] No session detected (listener never fired)");
+            setLoading(false);
+          }
+        }, 150);
+      });
     });
 
     return () => subscription.unsubscribe();
