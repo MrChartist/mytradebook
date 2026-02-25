@@ -20,8 +20,6 @@ interface AuthContextType {
   signInWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUpWithEmail: (email: string, password: string, name?: string) => Promise<{ error: Error | null }>;
   signInWithGoogle: () => Promise<{ error: Error | null }>;
-  signInWithPhone: (phone: string) => Promise<{ error: Error | null }>;
-  verifyPhoneOtp: (phone: string, token: string) => Promise<{ error: Error | null }>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
   updatePassword: (password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -119,15 +117,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error ?? null };
   };
 
-  const signInWithPhone = async (phone: string) => {
-    const { error } = await supabase.auth.signInWithOtp({ phone });
-    return { error };
-  };
-
-  const verifyPhoneOtp = async (phone: string, token: string) => {
-    const { error } = await supabase.auth.verifyOtp({ phone, token, type: 'sms' });
-    return { error };
-  };
 
   const resetPassword = async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -150,7 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, session, profile, loading, signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithPhone, verifyPhoneOtp, resetPassword, updatePassword, signOut }}
+      value={{ user, session, profile, loading, signInWithEmail, signUpWithEmail, signInWithGoogle, resetPassword, updatePassword, signOut }}
     >
       {children}
     </AuthContext.Provider>
