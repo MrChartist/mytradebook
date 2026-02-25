@@ -1,26 +1,30 @@
+import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { CommandPalette } from "@/components/CommandPalette";
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 export function MainLayout({ children }: MainLayoutProps) {
-  useKeyboardShortcuts({});
+  const [cmdOpen, setCmdOpen] = useState(false);
+  useKeyboardShortcuts({ onSearch: () => setCmdOpen(true) });
   const { settings } = useUserSettings();
   const navigate = useNavigate();
 
   // Check if Dhan token is expired
-  const isDhanConnected = !!settings?.dhan_access_token && !!settings?.dhan_enabled;
+  const isDhanConnected = !!settings?.dhan_verified_at && !!settings?.dhan_enabled;
   const tokenExpiry = settings?.dhan_token_expiry ? new Date(settings.dhan_token_expiry) : null;
   const isTokenExpired = isDhanConnected && tokenExpiry && tokenExpiry < new Date();
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar />
+      <Sidebar onSearchClick={() => setCmdOpen(true)} />
+      <CommandPalette open={cmdOpen} onOpenChange={setCmdOpen} />
       <main className="lg:ml-[230px] min-h-screen pt-14 lg:pt-0">
         {isTokenExpired && (
           <div
@@ -33,7 +37,7 @@ export function MainLayout({ children }: MainLayoutProps) {
             </span>
           </div>
         )}
-        <div className="p-4 lg:p-6">{children}</div>
+        <div className="p-4 lg:p-6 page-transition">{children}</div>
       </main>
     </div>
   );

@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { calculatePnL } from "@/lib/calculations";
 import { formatCurrency } from "@/lib/formatting";
 import { TradeStatus } from "@/lib/constants";
+import { AnimatedNumber } from "@/components/ui/animated-number";
 
 
 interface Props {
@@ -71,9 +72,11 @@ export function DashboardKPICards({ alerts }: Props) {
             <Wallet className={cn("w-4 h-4", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")} />
           </div>
         </div>
-        <p className={cn("text-2xl font-bold font-mono", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>
-          {formatCurrency(realizedPnl + unrealizedPnl)}
-        </p>
+        <AnimatedNumber
+          value={realizedPnl + unrealizedPnl}
+          formatter={formatCurrency}
+          className={cn("text-2xl font-bold font-mono", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")}
+        />
         <div className="flex gap-3 mt-2">
           <div>
             <p className="text-[10px] text-muted-foreground">Realized</p>
@@ -108,7 +111,7 @@ export function DashboardKPICards({ alerts }: Props) {
             <Target className="w-4 h-4 text-primary" />
           </div>
         </div>
-        <p className="text-2xl font-bold font-mono">{openTrades.length}</p>
+        <AnimatedNumber value={openTrades.length} formatter={(n) => Math.round(n).toString()} className="text-2xl font-bold font-mono" />
         <p className="text-xs text-muted-foreground mt-1">
           ₹{riskAtSL.toLocaleString("en-IN", { maximumFractionDigits: 0 })} at risk (to SL)
         </p>
@@ -132,7 +135,7 @@ export function DashboardKPICards({ alerts }: Props) {
           </div>
         </div>
         <div className="flex items-baseline gap-2">
-          <p className={cn("text-2xl font-bold font-mono", winRate >= 50 ? "text-profit" : "text-loss")}>{winRate.toFixed(1)}%</p>
+          <AnimatedNumber value={winRate} formatter={(n) => n.toFixed(1) + "%"} className={cn("text-2xl font-bold font-mono", winRate >= 50 ? "text-profit" : "text-loss")} />
           <span className={cn(
             "text-[10px] font-medium px-1.5 py-0.5 rounded-full",
             expectancy >= 0 ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss"
@@ -162,7 +165,7 @@ export function DashboardKPICards({ alerts }: Props) {
           </div>
         </div>
         <div className="flex items-baseline gap-2">
-          <p className="text-2xl font-bold font-mono">{alerts.length}</p>
+          <AnimatedNumber value={alerts.length} formatter={(n) => Math.round(n).toString()} className="text-2xl font-bold font-mono" />
           {triggeredToday > 0 && (
             <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-warning/10 text-warning">
               {triggeredToday} triggered today

@@ -17,18 +17,22 @@ interface UserSettings {
   telegram_verified_at: string | null;
   telegram_enabled: boolean | null;
   dhan_client_id: string | null;
-  dhan_access_token: string | null;
   dhan_verified_at: string | null;
   dhan_enabled: boolean | null;
   dhan_account_name: string | null;
   dhan_token_expiry: string | null;
-  dhan_api_key: string | null;
-  dhan_api_secret: string | null;
   ra_public_mode: boolean | null;
   ra_disclaimer: string | null;
   starting_capital: number | null;
   created_at: string | null;
   updated_at: string | null;
+  dashboard_layout: Record<string, unknown> | null;
+  tsl_profiles: Record<string, unknown> | null;
+  webhook_url: string | null;
+  truedata_username: string | null;
+  truedata_password: string | null;
+  truedata_enabled: boolean | null;
+  truedata_verified_at: string | null;
 }
 
 export function useUserSettings() {
@@ -42,7 +46,7 @@ export function useUserSettings() {
       
       const { data, error } = await supabase
         .from("user_settings")
-        .select("*")
+        .select("id, user_id, default_sl_percent, alert_frequency_minutes, auto_sync_portfolio, theme, timezone, telegram_chat_id, telegram_link_code, telegram_link_expires_at, telegram_verified_at, telegram_enabled, dhan_client_id, dhan_verified_at, dhan_enabled, dhan_account_name, dhan_token_expiry, ra_public_mode, ra_disclaimer, starting_capital, created_at, updated_at, dashboard_layout, tsl_profiles, webhook_url, truedata_username, truedata_enabled, truedata_verified_at")
         .eq("user_id", user.id)
         .single();
 
@@ -58,7 +62,7 @@ export function useUserSettings() {
 
       const { error } = await supabase
         .from("user_settings")
-        .update(updates)
+        .update(updates as any)
         .eq("user_id", user.id);
 
       if (error) throw error;

@@ -14,6 +14,43 @@ interface ChartImageUploadProps {
   maxImages?: number;
 }
 
+/**
+ * Get a signed URL for a storage path. Falls back to constructing a direct path
+ * if signing fails (e.g. during upload before RLS propagates).
+ */
+async function getSignedImageUrl(bucket: string, path: string): Promise<string | null> {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .createSignedUrl(path, 3600); // 1 hour expiry
+  if (error || !data?.signedUrl) {
+    console.warn("Failed to create signed URL:", error?.message);
+    return null;
+  }
+  return data.signedUrl;
+}
+
+/**
+ * Extract the storage path from a full public/signed URL.
+ * Handles both old public URLs and new signed URLs.
+ */
+function extractStoragePath(url: string, bucket: string): string | null {
+  try {
+    // Match pattern: /storage/v1/object/public|sign/<bucket>/<path>
+    const regex = new RegExp(`/storage/v1/object/(?:public|sign)/${bucket}/(.+?)(?:\\?|$)`);
+    const match = url.match(regex);
+    if (match) return decodeURIComponent(match[1]);
+
+    // Also try: /storage/v1/s/<bucket>/<path> (signed URL format)
+    const regex2 = new RegExp(`/storage/v1/s/${bucket}/(.+?)(?:\\?|$)`);
+    const match2 = url.match(regex2);
+    if (match2) return decodeURIComponent(match2[1]);
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export function ChartImageUpload({
   images,
   onImagesChange,
@@ -24,6 +61,30 @@ export function ChartImageUpload({
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [annotatingIndex, setAnnotatingIndex] = useState<number | null>(null);
+  const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
+
+  // Resolve display URL: use signed URL cache or the original
+  const getDisplayUrl = (url: string) => signedUrls[url] || url;
+
+  // Refresh signed URLs for all images
+  const refreshSignedUrls = async (imageUrls: string[]) => {
+    const newSignedUrls: Record<string, string> = {};
+    for (const url of imageUrls) {
+      const path = extractStoragePath(url, bucket);
+      if (path) {
+        const signed = await getSignedImageUrl(bucket, path);
+        if (signed) newSignedUrls[url] = signed;
+      }
+    }
+    setSignedUrls((prev) => ({ ...prev, ...newSignedUrls }));
+  };
+
+  // Refresh signed URLs when images change
+  useState(() => {
+    if (images.length > 0) {
+      refreshSignedUrls(images);
+    }
+  });
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -64,12 +125,13 @@ export function ChartImageUpload({
           continue;
         }
 
-        const { data: publicUrl } = supabase.storage
-          .from(bucket)
-          .getPublicUrl(fileName);
-
-        if (publicUrl.publicUrl) {
+        // Use signed URL instead of public URL
+        const signedUrl = await getSignedImageUrl(bucket, fileName);
+        if (signedUrl) {
+          // Store the path-based reference for persistence
+          const { data: publicUrl } = supabase.storage.from(bucket).getPublicUrl(fileName);
           newImages.push(publicUrl.publicUrl);
+          setSignedUrls((prev) => ({ ...prev, [publicUrl.publicUrl]: signedUrl }));
         }
       }
 
@@ -95,7 +157,6 @@ export function ChartImageUpload({
 
   const handleAnnotationSave = async (dataUrl: string) => {
     if (annotatingIndex === null || !user) return;
-    // Convert data URL to blob and upload
     setUploading(true);
     try {
       const res = await fetch(dataUrl);
@@ -105,11 +166,16 @@ export function ChartImageUpload({
         .from(bucket)
         .upload(fileName, blob, { contentType: "image/png" });
       if (uploadError) throw uploadError;
+
+      const signedUrl = await getSignedImageUrl(bucket, fileName);
       const { data: publicUrl } = supabase.storage.from(bucket).getPublicUrl(fileName);
       if (publicUrl.publicUrl) {
         const newImages = [...images];
         newImages[annotatingIndex] = publicUrl.publicUrl;
         onImagesChange(newImages);
+        if (signedUrl) {
+          setSignedUrls((prev) => ({ ...prev, [publicUrl.publicUrl]: signedUrl }));
+        }
         toast.success("Annotated image saved");
       }
     } catch (err: any) {
@@ -132,9 +198,19 @@ export function ChartImageUpload({
               className="relative group aspect-video rounded-lg overflow-hidden border border-border bg-accent"
             >
               <img
-                src={url}
+                src={getDisplayUrl(url)}
                 alt={`Chart ${index + 1}`}
                 className="w-full h-full object-cover"
+                onError={async () => {
+                  // If signed URL expired, refresh it
+                  const path = extractStoragePath(url, bucket);
+                  if (path) {
+                    const newSigned = await getSignedImageUrl(bucket, path);
+                    if (newSigned) {
+                      setSignedUrls((prev) => ({ ...prev, [url]: newSigned }));
+                    }
+                  }
+                }}
               />
               <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
@@ -203,7 +279,7 @@ export function ChartImageUpload({
         <ChartAnnotationModal
           open={annotatingIndex !== null}
           onOpenChange={(open) => !open && setAnnotatingIndex(null)}
-          imageUrl={images[annotatingIndex]}
+          imageUrl={getDisplayUrl(images[annotatingIndex])}
           onSave={handleAnnotationSave}
         />
       )}

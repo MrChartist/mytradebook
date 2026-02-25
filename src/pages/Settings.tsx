@@ -1,5 +1,6 @@
 import { User, Bell, Link, Moon, Shield, Tag } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PageHeader } from "@/components/ui/page-header";
 import ProfileSettings from "@/components/settings/ProfileSettings";
 import PreferencesSettings from "@/components/settings/PreferencesSettings";
 import SecuritySettings from "@/components/settings/SecuritySettings";
@@ -17,22 +18,16 @@ const settingsTabs = [
 export default function Settings() {
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl lg:text-3xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">
-          Manage your account and preferences
-        </p>
-      </div>
+      <PageHeader title="Settings" subtitle="Manage your account and preferences" />
 
       {/* Tabs Layout */}
       <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="w-full flex flex-wrap justify-start gap-2 h-auto p-1 bg-card border border-border rounded-lg mb-6">
+        <TabsList className="pill-tabs w-full flex flex-wrap justify-start gap-1.5 h-auto p-1.5 bg-muted/50 border border-border rounded-xl mb-6">
           {settingsTabs.map((tab) => (
             <TabsTrigger
               key={tab.id}
               value={tab.id}
-              className="flex items-center gap-2 px-4 py-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground"
             >
               <tab.icon className="w-4 h-4" />
               {tab.label}

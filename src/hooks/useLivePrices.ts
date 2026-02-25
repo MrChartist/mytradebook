@@ -27,6 +27,8 @@ interface UseLivePricesResult {
   isLoading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
+  activeProvider: "dhan" | "truedata" | "unavailable";
+  failoverActive: boolean;
 }
 
 export function useLivePrices(
@@ -38,6 +40,8 @@ export function useLivePrices(
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeProvider, setActiveProvider] = useState<"dhan" | "truedata" | "unavailable">("unavailable");
+  const [failoverActive, setFailoverActive] = useState(false);
 
   // Normalize input: determine if we have instruments or plain symbols
   const instruments: InstrumentInput[] =
@@ -112,6 +116,9 @@ export function useLivePrices(
           setPrices(validPrices);
           setLastUpdated(new Date());
         }
+        // Track provider and failover status
+        if (data.source) setActiveProvider(data.source);
+        if (data.failover_active !== undefined) setFailoverActive(data.failover_active);
       } else if (data?.error) {
         throw new Error(data.error);
       }
@@ -159,5 +166,7 @@ export function useLivePrices(
     isLoading,
     error,
     refresh: fetchPrices,
+    activeProvider,
+    failoverActive,
   };
 }

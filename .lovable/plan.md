@@ -1,58 +1,76 @@
 
-# Expand F&O Stocks in Option Strategy Builder
+
+# Rebuild Login Page and Fix Auth Initialization
 
 ## Problem
-Both `MultiLegStrategyModal.tsx` and `OptionChainSelector.tsx` use a hardcoded `POPULAR_UNDERLYINGS` array with only 11-15 symbols. The actual `instrument_master` database has 180+ F&O underlying symbols.
+
+The core issue is that a **stale refresh token** (`cs533bqljyja`) is stuck in the browser's localStorage. The previous fix tried calling `supabase.auth.signOut()` to clear it, but `signOut()` itself makes a network request to revoke the token on the server -- and that request also fails with "Failed to fetch", so the corrupted token is **never actually removed**.
+
+This means the Supabase client's internal `autoRefreshToken` mechanism keeps retrying the bad token in an infinite loop, blocking everything including Google sign-in.
 
 ## Solution
-Replace the hardcoded list with a database-driven approach that fetches all F&O underlyings, organized into Indices and Stocks, with search filtering.
+
+Rebuild the Login page from scratch with a clean, simple design, and fix the AuthContext to properly clear corrupted sessions by writing directly to localStorage instead of relying on network calls.
+
+---
 
 ## Changes
 
-### 1. Create a shared hook: `src/hooks/useFnoUnderlyings.ts`
-- Query `instrument_master` for distinct `underlying_symbol` where `exchange = 'NFO'`
-- Filter out test symbols (e.g., those ending in "NSETEST")
-- Categorize into **Indices** (NIFTY, BANKNIFTY, FINNIFTY, SENSEX, MIDCPNIFTY, NIFTYNXT50, BANKEX) and **Stocks** (everything else)
-- Cache the result using React Query so it loads once and stays fast
-- Return `{ indices, stocks, all, isLoading }` 
+### 1. Fix AuthContext (`src/contexts/AuthContext.tsx`)
 
-### 2. Update `src/components/trade/MultiLegStrategyModal.tsx`
-- Remove hardcoded `POPULAR_UNDERLYINGS`
-- Use the new `useFnoUnderlyings` hook
-- Show Indices first as a row of badges (always visible)
-- Show Stocks below, filtered by the search input
-- Display a small loading spinner while fetching
-- Cap the visible stock badges to ~30 at a time with the search narrowing results
+The critical fix: when `getSession` fails, **directly remove the Supabase auth keys from localStorage** instead of calling `signOut()` (which itself fails). This is the only way to break the infinite retry loop.
 
-### 3. Update `src/components/trade/OptionChainSelector.tsx`
-- Same change: replace hardcoded `POPULAR_UNDERLYINGS` with the shared hook
-- Show Indices as a pinned row, Stocks searchable below
+```text
+// Before (broken - signOut also fails with "Failed to fetch"):
+supabase.auth.signOut().catch(() => {});
 
-### 4. Strike step logic
-- Update `getStrikeStep()` to default to a sensible value for stock options (currently returns 10, which is correct for most stocks, but larger stocks like RELIANCE may need larger steps)
-- Add a lookup: if price > 5000 use step 50, if > 2000 use step 25, else step 10
+// After (works - directly clears localStorage):
+const storageKey = `sb-nuilpmoipiazjafpjaft-auth-token`;
+localStorage.removeItem(storageKey);
+```
+
+Also simplify the initialization to be more robust:
+- Remove the `listenerFired` ref pattern
+- Use a cleaner flow: set up listener, call getSession, handle errors directly
+
+### 2. Rebuild Login Page (`src/pages/Login.tsx`)
+
+Complete rewrite with:
+- **Clean, centered single-column layout** (no split-screen branding panel)
+- **Google Sign-In button** prominently at the top
+- **Email/Password form** below with divider
+- **Password strength indicator** on signup
+- **Forgot password flow** inline
+- **Toggle between Login / Signup** at the bottom
+- Proper loading states that auto-reset
+- No unnecessary animations or complex CSS classes
+
+### 3. Files Unchanged
+
+No files need to be deleted -- the previous cleanup already removed unused components. The CSS utility classes (`surface-card`, `gradient-border-top`, etc.) are used across the app so they stay.
+
+---
 
 ## Technical Details
 
-**Database query** (inside the hook):
-```sql
-SELECT DISTINCT underlying_symbol 
-FROM instrument_master 
-WHERE exchange = 'NFO' 
-  AND underlying_symbol IS NOT NULL
-ORDER BY underlying_symbol
-```
+### AuthContext Changes
 
-**Known indices to pin at top:**
-NIFTY, BANKNIFTY, FINNIFTY, SENSEX, MIDCPNIFTY, NIFTYNXT50, BANKEX
+| What | Why |
+|------|-----|
+| Replace `signOut()` with direct `localStorage.removeItem()` on error | `signOut()` makes a network call that also fails, so the token is never cleared |
+| Use the exact storage key format `sb-{project_id}-auth-token` | This is the key Supabase uses internally to store the session |
+| Keep `onAuthStateChange` as the single source of truth | This pattern is correct and should not change |
+| Keep 150ms fallback timeout | Already optimized in previous edit |
 
-**UI layout change:**
-```
-Indices:  [NIFTY] [BANKNIFTY] [FINNIFTY] [SENSEX] [MIDCPNIFTY]
-─────────────────────────────────────────
-Stocks:   Search: [________]
-          [RELIANCE] [TCS] [INFY] [HDFCBANK] ...
-          (scrollable, filtered by search)
-```
+### Login Page Rebuild
 
-No database migration needed -- all data already exists in `instrument_master`.
+| What | Details |
+|------|---------|
+| Layout | Single centered card, max-width 400px, works on all screens |
+| Google button | Full-width at top, with proper loading/error reset |
+| Email form | Simple email + password fields |
+| Signup extras | Name field + password strength meter |
+| Forgot password | Inline mode switch (no separate page needed) |
+| No branding panel | Removes the left-side panel for a cleaner, faster-loading page |
+| Mobile-first | No separate mobile logo needed since layout is already centered |
+

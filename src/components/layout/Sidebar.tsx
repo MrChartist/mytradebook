@@ -15,6 +15,7 @@ import {
   LogOut,
   Menu,
   Search,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileDrawer } from "./MobileDrawer";
@@ -26,7 +27,7 @@ const mainNavItems = [
   { icon: TrendingUp, label: "Trades", path: "/trades" },
   { icon: Bell, label: "Alerts", path: "/alerts" },
   { icon: BookOpen, label: "Studies", path: "/studies" },
-  
+  { icon: Eye, label: "Watchlist", path: "/watchlist" },
 ];
 
 const analyticsNavItems = [
@@ -36,7 +37,11 @@ const analyticsNavItems = [
   { icon: FileText, label: "Reports", path: "/reports" },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  onSearchClick?: () => void;
+}
+
+export function Sidebar({ onSearchClick }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
@@ -57,14 +62,14 @@ export function Sidebar() {
         className={cn(
           "flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 group",
           isActive
-            ? "bg-primary/8 text-primary font-medium"
+            ? "bg-primary/8 text-primary font-medium nav-item-active"
             : "text-muted-foreground hover:text-foreground hover:bg-muted"
         )}
       >
         <item.icon
           className={cn(
-            "w-[18px] h-[18px] flex-shrink-0",
-            isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+            "w-[18px] h-[18px] flex-shrink-0 transition-transform duration-150",
+            isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5"
           )}
         />
         {!collapsed && (
@@ -86,7 +91,7 @@ export function Sidebar() {
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Button variant="ghost" size="icon" className="h-9 w-9">
+          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={onSearchClick}>
             <Search className="w-4 h-4" />
           </Button>
           <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setMobileOpen(true)}>
@@ -106,8 +111,8 @@ export function Sidebar() {
       >
         {/* Logo */}
         <div className="flex items-center gap-2.5 px-4 h-[60px] border-b border-border">
-          <div className="w-8 h-8 rounded-xl bg-gradient-primary flex items-center justify-center flex-shrink-0">
-            <TrendingUp className="w-[18px] h-[18px] text-primary-foreground" />
+          <div className="w-8 h-8 rounded-xl bg-gradient-primary flex items-center justify-center flex-shrink-0 logo-shimmer">
+            <TrendingUp className="w-[18px] h-[18px] text-primary-foreground relative z-10" />
           </div>
           {!collapsed && (
             <div className="animate-fade-in">
@@ -148,7 +153,7 @@ export function Sidebar() {
           )}
           {/* Profile */}
           {!collapsed && profile && (
-            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/50 rounded-xl">
+            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/50 rounded-xl transition-all duration-200 hover:ring-2 hover:ring-primary/20 hover:shadow-glow">
               <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
                 <span className="text-primary-foreground font-semibold text-xs">
                   {profile.name?.charAt(0).toUpperCase() || "U"}
@@ -166,11 +171,11 @@ export function Sidebar() {
             className={cn(
               "flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 group",
               location.pathname === "/settings"
-                ? "bg-primary/8 text-primary font-medium"
+                ? "bg-primary/8 text-primary font-medium nav-item-active"
                 : "text-muted-foreground hover:text-foreground hover:bg-muted"
             )}
           >
-            <Settings className="w-[18px] h-[18px]" />
+            <Settings className={cn("w-[18px] h-[18px] transition-transform duration-150", location.pathname !== "/settings" && "group-hover:translate-x-0.5")} />
             {!collapsed && <span className="text-[13px]">Settings</span>}
           </NavLink>
 

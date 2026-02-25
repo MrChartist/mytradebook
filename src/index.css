@@ -277,4 +277,162 @@
     from { box-shadow: 0 0 10px hsl(var(--primary) / 0.1); }
     to { box-shadow: 0 0 20px hsl(var(--primary) / 0.2); }
   }
+
+  /* ── Shimmer effect for skeleton loaders ────────── */
+  .shimmer-effect {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--primary) / 0.04) 40%,
+      hsl(var(--primary) / 0.08) 50%,
+      hsl(var(--primary) / 0.04) 60%,
+      transparent 100%
+    );
+    animation: shimmer 1.8s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* ── Page transition ────────────────────────────── */
+  .page-transition {
+    animation: slide-up 0.25s ease-out;
+  }
+
+  @keyframes slide-up {
+    0% { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Gradient top border for cards ──────────────── */
+  .gradient-border-top {
+    position: relative;
+  }
+  .gradient-border-top::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 999px 999px 0 0;
+    background: var(--gradient-primary);
+    opacity: 0.7;
+  }
+
+  /* ── Row accent hover ──────────────────────────── */
+  .row-accent-hover {
+    @apply transition-all duration-150 border-l-2 border-l-transparent;
+  }
+  .row-accent-hover:hover {
+    @apply bg-muted/40;
+    transform: scale(1.005);
+  }
+  .row-accent-hover[data-pnl="profit"]:hover {
+    border-left-color: hsl(var(--profit));
+  }
+  .row-accent-hover[data-pnl="loss"]:hover {
+    border-left-color: hsl(var(--loss));
+  }
+
+  /* ── Custom Recharts tooltip ───────────────────── */
+  .recharts-tooltip-wrapper .recharts-default-tooltip,
+  .custom-chart-tooltip {
+    @apply !bg-card/80 backdrop-blur-xl !border-border/50 !rounded-xl !shadow-lg;
+    box-shadow: 0 8px 32px hsl(var(--foreground) / 0.08) !important;
+  }
+
+  /* ── Stagger animation delay utilities ─────────── */
+  .stagger-1, .stagger-2, .stagger-3, .stagger-4, .stagger-5, .stagger-6, .stagger-7, .stagger-8 {
+    animation-fill-mode: both;
+  }
+  .stagger-1 { animation-delay: 0ms; }
+  .stagger-2 { animation-delay: 80ms; }
+  .stagger-3 { animation-delay: 160ms; }
+  .stagger-4 { animation-delay: 240ms; }
+  .stagger-5 { animation-delay: 320ms; }
+  .stagger-6 { animation-delay: 400ms; }
+  .stagger-7 { animation-delay: 480ms; }
+  .stagger-8 { animation-delay: 560ms; }
+
+  /* ── Sidebar nav accent ────────────────────────── */
+  .nav-item-active {
+    position: relative;
+  }
+  .nav-item-active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: 3px;
+    border-radius: 0 4px 4px 0;
+    background: hsl(var(--primary));
+  }
+
+  /* ── Logo shimmer ──────────────────────────────── */
+  .logo-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .logo-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      120deg,
+      transparent 30%,
+      hsl(var(--primary-foreground) / 0.15) 50%,
+      transparent 70%
+    );
+    animation: logo-shimmer 3s ease-in-out infinite;
+  }
+  @keyframes logo-shimmer {
+    0%, 100% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+  }
+
+  /* ── Pill tab indicator ────────────────────────── */
+  .pill-tabs [data-state="active"] {
+    @apply bg-primary text-primary-foreground shadow-sm;
+  }
+
+  /* ── Auth form mode transition ───────────────── */
+  .auth-mode-enter {
+    animation: auth-mode-in 0.25s ease-out both;
+  }
+
+  @keyframes auth-mode-in {
+    0% { opacity: 0; transform: translateY(6px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .auth-card-enter {
+    animation: auth-card-in 0.4s ease-out both;
+  }
+
+  @keyframes auth-card-in {
+    0% { opacity: 0; transform: scale(0.97) translateY(12px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  /* ── Password strength bar ─────────────────────── */
+  .strength-bar {
+    @apply h-1 rounded-full transition-all duration-300;
+  }
+
+  /* ── Reduced motion ────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .shimmer-effect,
+    .logo-shimmer::after,
+    .page-transition,
+    .stagger-1, .stagger-2, .stagger-3, .stagger-4, .stagger-5, .stagger-6 {
+      animation: none !important;
+    }
+    .row-accent-hover:hover {
+      transform: none;
+    }
+  }
 }

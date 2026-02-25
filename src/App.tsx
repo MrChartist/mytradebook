@@ -21,6 +21,8 @@ import Calendar from "./pages/Calendar";
 import Mistakes from "./pages/Mistakes";
 import Analytics from "./pages/Analytics";
 import DhanCallback from "./pages/DhanCallback";
+import Watchlist from "./pages/Watchlist";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +38,7 @@ const App = () => (
             <Routes>
             <Route path="/landing" element={<Landing />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route
               path="/"
               element={
@@ -55,6 +58,7 @@ const App = () => (
               { path: "/calendar", element: <Calendar /> },
               { path: "/mistakes", element: <Mistakes /> },
               { path: "/analytics", element: <Analytics /> },
+              { path: "/watchlist", element: <Watchlist /> },
               { path: "/dhan-callback", element: <DhanCallback /> },
             ].map(({ path, element }) => (
               <Route

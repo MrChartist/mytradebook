@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useStudies, type StudyFilters } from "@/hooks/useStudies";
 import { CreateStudyModal } from "@/components/modals/CreateStudyModal";
+import { CreateTradeModal, type TradeModalPrefill } from "@/components/modals/CreateTradeModal";
 import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 import { InsightCard, type InsightCardAction } from "@/components/ui/insight-card";
 import { ViewToggle, type ViewMode } from "@/components/ui/view-toggle";
@@ -58,6 +59,8 @@ export default function Studies() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [studyToDelete, setStudyToDelete] = useState<Study | null>(null);
+  const [tradeModalOpen, setTradeModalOpen] = useState(false);
+  const [tradePrefill, setTradePrefill] = useState<TradeModalPrefill>({});
 
   const filters: StudyFilters = {
     ...(selectedCategory && { category: selectedCategory as StudyFilters["category"] }),
@@ -114,10 +117,13 @@ export default function Studies() {
     <div className="space-y-5 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold">Studies</h1>
-          <p className="text-sm text-muted-foreground">Track setups, patterns, and market analysis</p>
-        </div>
+          <div className="relative">
+            <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-primary" />
+            <div className="pl-4">
+              <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Studies</h1>
+              <p className="text-sm text-muted-foreground">Track setups, patterns, and market analysis</p>
+            </div>
+          </div>
         <Button onClick={() => setCreateModalOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
           New Study
@@ -223,7 +229,14 @@ export default function Studies() {
                   : undefined}
                 onView={() => {}}
                 onCreateAlert={() => {}}
-                onCreateTrade={() => {}}
+                onCreateTrade={() => {
+                  setTradePrefill({
+                    symbol: study.symbol,
+                    notes: `**From Study:** ${study.title}\n${study.notes || ""}`,
+                    study_id: study.id,
+                  });
+                  setTradeModalOpen(true);
+                }}
                 menuActions={menuActions}
                 viewMode={viewMode}
               />
@@ -243,6 +256,11 @@ export default function Studies() {
       )}
 
       <CreateStudyModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
+      <CreateTradeModal
+        open={tradeModalOpen}
+        onOpenChange={setTradeModalOpen}
+        prefill={tradePrefill}
+      />
       <ConfirmDeleteModal
         open={deleteModalOpen}
         onOpenChange={setDeleteModalOpen}
