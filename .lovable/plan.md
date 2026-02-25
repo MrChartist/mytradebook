@@ -1,76 +1,39 @@
 
 
-# Rebuild Login Page and Fix Auth Initialization
+# Fix Preview Navigation and Google Auth Behavior
 
-## Problem
+## Issues Found
 
-The core issue is that a **stale refresh token** (`cs533bqljyja`) is stuck in the browser's localStorage. The previous fix tried calling `supabase.auth.signOut()` to clear it, but `signOut()` itself makes a network request to revoke the token on the server -- and that request also fails with "Failed to fetch", so the corrupted token is **never actually removed**.
+### 1. Preview shows Landing page, not Login page
+You're currently on the `/` route, which is a protected page. Since you're not logged in, it redirects you to `/landing` (not `/login`). This might be why you feel the preview isn't working -- you may be seeing the landing page instead of the login page.
 
-This means the Supabase client's internal `autoRefreshToken` mechanism keeps retrying the bad token in an infinite loop, blocking everything including Google sign-in.
+### 2. Google Auth -- Popup vs Redirect
+Good news: **Google sign-in already opens in a popup window** when you use it from the Lovable preview (the right panel). On the published site (mytradebook.lovable.app), it uses a full-page redirect instead -- this is the standard, secure approach for OAuth on standalone websites and is controlled by the authentication library. This behavior cannot be changed to popup on the published site.
 
-## Solution
+## Plan
 
-Rebuild the Login page from scratch with a clean, simple design, and fix the AuthContext to properly clear corrupted sessions by writing directly to localStorage instead of relying on network calls.
+### Step 1: Fix the redirect destination
+Change the ProtectedRoute to redirect unauthenticated users to `/login` instead of `/landing`, so you always see the login form when not signed in.
 
----
+**File: `src/components/layout/ProtectedRoute.tsx`**
+- Change `Navigate to="/landing"` to `Navigate to="/login"`
 
-## Changes
+### Step 2: Improve Google Auth error handling on Login page
+Add better error messages and ensure the loading state always resets properly, so the button never gets permanently stuck in "Connecting..." state.
 
-### 1. Fix AuthContext (`src/contexts/AuthContext.tsx`)
+**File: `src/pages/Login.tsx`**
+- Add a timeout safety net that resets `googleLoading` after 10 seconds
+- Improve the error toast to suggest opening in a new tab if popup is blocked
 
-The critical fix: when `getSession` fails, **directly remove the Supabase auth keys from localStorage** instead of calling `signOut()` (which itself fails). This is the only way to break the infinite retry loop.
-
-```text
-// Before (broken - signOut also fails with "Failed to fetch"):
-supabase.auth.signOut().catch(() => {});
-
-// After (works - directly clears localStorage):
-const storageKey = `sb-nuilpmoipiazjafpjaft-auth-token`;
-localStorage.removeItem(storageKey);
-```
-
-Also simplify the initialization to be more robust:
-- Remove the `listenerFired` ref pattern
-- Use a cleaner flow: set up listener, call getSession, handle errors directly
-
-### 2. Rebuild Login Page (`src/pages/Login.tsx`)
-
-Complete rewrite with:
-- **Clean, centered single-column layout** (no split-screen branding panel)
-- **Google Sign-In button** prominently at the top
-- **Email/Password form** below with divider
-- **Password strength indicator** on signup
-- **Forgot password flow** inline
-- **Toggle between Login / Signup** at the bottom
-- Proper loading states that auto-reset
-- No unnecessary animations or complex CSS classes
-
-### 3. Files Unchanged
-
-No files need to be deleted -- the previous cleanup already removed unused components. The CSS utility classes (`surface-card`, `gradient-border-top`, etc.) are used across the app so they stay.
+### Step 3: Ensure preview loads the login page
+The preview should now correctly show the login page when you're not authenticated, instead of showing the landing page.
 
 ---
 
 ## Technical Details
 
-### AuthContext Changes
-
-| What | Why |
-|------|-----|
-| Replace `signOut()` with direct `localStorage.removeItem()` on error | `signOut()` makes a network call that also fails, so the token is never cleared |
-| Use the exact storage key format `sb-{project_id}-auth-token` | This is the key Supabase uses internally to store the session |
-| Keep `onAuthStateChange` as the single source of truth | This pattern is correct and should not change |
-| Keep 150ms fallback timeout | Already optimized in previous edit |
-
-### Login Page Rebuild
-
-| What | Details |
-|------|---------|
-| Layout | Single centered card, max-width 400px, works on all screens |
-| Google button | Full-width at top, with proper loading/error reset |
-| Email form | Simple email + password fields |
-| Signup extras | Name field + password strength meter |
-| Forgot password | Inline mode switch (no separate page needed) |
-| No branding panel | Removes the left-side panel for a cleaner, faster-loading page |
-| Mobile-first | No separate mobile logo needed since layout is already centered |
+| Change | File | What |
+|--------|------|------|
+| Redirect to `/login` | `src/components/layout/ProtectedRoute.tsx` | Line 24: change `/landing` to `/login` |
+| Safer Google loading state | `src/pages/Login.tsx` | Reset `googleLoading` with a longer safety timeout and clearer error messages |
 
