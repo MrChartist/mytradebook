@@ -9,15 +9,27 @@ import { useToast } from "@/hooks/use-toast";
 
 type AuthMode = "login" | "signup" | "forgot";
 
+interface PasswordCheck {
+  label: string;
+  met: boolean;
+}
+
+function getPasswordChecks(pw: string): PasswordCheck[] {
+  return [
+    { label: "At least 8 characters", met: pw.length >= 8 },
+    { label: "One uppercase letter", met: /[A-Z]/.test(pw) },
+    { label: "One number", met: /[0-9]/.test(pw) },
+    { label: "One special character (!@#$…)", met: /[^A-Za-z0-9]/.test(pw) },
+  ];
+}
+
 function getPasswordStrength(pw: string): { level: 0 | 1 | 2 | 3; label: string; color: string } {
   if (!pw) return { level: 0, label: "", color: "" };
-  let score = 0;
-  if (pw.length >= 6) score++;
-  if (pw.length >= 10) score++;
-  if (/[A-Z]/.test(pw) && /[0-9]/.test(pw)) score++;
-  if (/[^A-Za-z0-9]/.test(pw)) score++;
-  if (score <= 1) return { level: 1, label: "Weak", color: "bg-loss" };
-  if (score <= 2) return { level: 2, label: "Medium", color: "bg-warning" };
+  const checks = getPasswordChecks(pw);
+  const passed = checks.filter((c) => c.met).length;
+  if (passed <= 1) return { level: 1, label: "Weak", color: "bg-destructive" };
+  if (passed <= 2) return { level: 2, label: "Medium", color: "bg-warning" };
+  if (passed <= 3) return { level: 2, label: "Good", color: "bg-warning" };
   return { level: 3, label: "Strong", color: "bg-profit" };
 }
 
@@ -47,6 +59,7 @@ export default function Login() {
   const { signInWithEmail, signUpWithEmail, signInWithGoogle, resetPassword, user, loading: authLoading } = useAuth();
 
   const pwStrength = useMemo(() => getPasswordStrength(password), [password]);
+  const pwChecks = useMemo(() => getPasswordChecks(password), [password]);
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -256,7 +269,7 @@ export default function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                     className="h-11 pr-10"
                     required
-                    minLength={6}
+                    minLength={8}
                   />
                   <button
                     type="button"
@@ -268,21 +281,50 @@ export default function Login() {
                 </div>
 
                 {authMode === "signup" && password.length > 0 && (
-                  <div className="mt-2 space-y-1">
-                    <div className="flex gap-1">
-                      {[1, 2, 3].map((i) => (
-                        <div
-                          key={i}
-                          className={cn(
-                            "h-1 flex-1 rounded-full transition-colors",
-                            i <= pwStrength.level ? pwStrength.color : "bg-muted"
-                          )}
-                        />
+                  <div className="mt-3 space-y-2">
+                    {/* Strength bar */}
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1 flex-1">
+                        {[1, 2, 3].map((i) => (
+                          <div
+                            key={i}
+                            className={cn(
+                              "h-1.5 flex-1 rounded-full transition-all duration-300",
+                              i <= pwStrength.level ? pwStrength.color : "bg-muted"
+                            )}
+                          />
+                        ))}
+                      </div>
+                      {pwStrength.label && (
+                        <span className={cn(
+                          "text-xs font-medium transition-colors",
+                          pwStrength.level === 3 ? "text-profit" : pwStrength.level >= 2 ? "text-warning" : "text-destructive"
+                        )}>
+                          {pwStrength.label}
+                        </span>
+                      )}
+                    </div>
+                    {/* Individual checks */}
+                    <div className="grid grid-cols-2 gap-x-2 gap-y-1">
+                      {pwChecks.map((check) => (
+                        <div key={check.label} className="flex items-center gap-1.5">
+                          <div className={cn(
+                            "w-3.5 h-3.5 rounded-full flex items-center justify-center transition-all duration-200 text-[9px]",
+                            check.met
+                              ? "bg-profit text-primary-foreground"
+                              : "bg-muted text-muted-foreground"
+                          )}>
+                            {check.met ? "✓" : ""}
+                          </div>
+                          <span className={cn(
+                            "text-[11px] transition-colors",
+                            check.met ? "text-foreground" : "text-muted-foreground"
+                          )}>
+                            {check.label}
+                          </span>
+                        </div>
                       ))}
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {pwStrength.label}{pwStrength.level < 3 && " · Min 6 chars, mix letters, numbers & symbols"}
-                    </p>
                   </div>
                 )}
               </div>
