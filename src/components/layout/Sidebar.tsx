@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -12,7 +12,6 @@ import {
   FileText,
   Settings,
   ChevronLeft,
-  LogOut,
   Menu,
   Search,
   Eye,
@@ -45,13 +44,8 @@ export function Sidebar({ onSearchClick }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
-  const { signOut, profile } = useAuth();
-
-  const handleLogout = async () => {
-    await signOut();
-    navigate("/login");
-  };
+  
+  const { profile } = useAuth();
 
   const renderNavItem = (item: typeof mainNavItems[0]) => {
     const isActive = location.pathname === item.path;
@@ -188,13 +182,6 @@ export function Sidebar({ onSearchClick }: SidebarProps) {
             </button>
           )}
 
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2 rounded-xl text-muted-foreground hover:text-loss hover:bg-loss/8 transition-all duration-150 w-full"
-          >
-            <LogOut className="w-[18px] h-[18px] flex-shrink-0" />
-            {!collapsed && <span className="text-[13px]">Logout</span>}
-          </button>
         </div>
       </aside>
     </>

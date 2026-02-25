@@ -1,7 +1,5 @@
-import { createContext, useContext, useEffect, useState, useRef, useCallback, ReactNode } from "react";
-import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
+import { createContext, useContext, ReactNode } from "react";
+import { User } from "@supabase/supabase-js";
 
 interface Profile {
   id: string;
@@ -14,7 +12,7 @@ interface Profile {
 
 interface AuthContextType {
   user: User | null;
-  session: Session | null;
+  session: null;
   profile: Profile | null;
   loading: boolean;
   signInWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>;
@@ -25,141 +23,46 @@ interface AuthContextType {
   signOut: () => Promise<void>;
 }
 
+const DUMMY_USER_ID = "00000000-0000-0000-0000-000000000000";
+
+// Create a minimal User-like object that satisfies hooks needing user.id
+const dummyUser = {
+  id: DUMMY_USER_ID,
+  email: "local@tradebook.app",
+  app_metadata: {},
+  user_metadata: { full_name: "Local User" },
+  aud: "authenticated",
+  created_at: new Date().toISOString(),
+} as User;
+
+const dummyProfile: Profile = {
+  id: DUMMY_USER_ID,
+  user_id: DUMMY_USER_ID,
+  name: "Local User",
+  email: "local@tradebook.app",
+  phone: null,
+  is_active: true,
+};
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const noop = async () => ({ error: null });
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const listenerFired = useRef(false);
-
-  const fetchProfile = useCallback(async (userId: string) => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
-
-    if (error) {
-      console.error("[Auth] Profile fetch error:", error);
-    }
-    setProfile(data);
-  }, []);
-
-  useEffect(() => {
-    console.log("[Auth] Initializing auth context");
-
-    // Proactively clear any corrupted/stale session from localStorage
-    // before the Supabase client's autoRefreshToken can start retrying it
-    const storageKey = `sb-nuilpmoipiazjafpjaft-auth-token`;
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        // If the access token is expired and refresh token looks stale, nuke it
-        if (parsed?.expires_at && parsed.expires_at * 1000 < Date.now()) {
-          console.log("[Auth] Found expired session in localStorage, clearing it");
-          localStorage.removeItem(storageKey);
-        }
-      }
-    } catch {
-      // Corrupted JSON — remove it
-      console.log("[Auth] Corrupted session in localStorage, clearing it");
-      localStorage.removeItem(storageKey);
-    }
-
-    // onAuthStateChange is the SOLE authority for setting auth state
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log("[Auth] Auth state changed:", event, session ? "session exists" : "no session");
-        listenerFired.current = true;
-
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-
-        if (session?.user) {
-          console.log("[Auth] User authenticated:", session.user.email);
-          fetchProfile(session.user.id).catch((err) =>
-            console.error("[Auth] Background profile fetch failed:", err)
-          );
-        } else {
-          console.log("[Auth] No user session");
-          setProfile(null);
-        }
-      }
-    );
-
-    supabase.auth.getSession().then(({ error }) => {
-      if (error) {
-        console.error("[Auth] getSession error, clearing stale session:", error);
-        localStorage.removeItem(storageKey);
-        setSession(null);
-        setUser(null);
-        setProfile(null);
-        setLoading(false);
-        return;
-      }
-      // Give the listener a brief moment to fire; if it hasn't, there's no session
-      setTimeout(() => {
-        if (!listenerFired.current) {
-          console.log("[Auth] No session detected (listener never fired)");
-          setLoading(false);
-        }
-      }, 150);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [fetchProfile]);
-
-  const signInWithEmail = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error };
-  };
-
-  const signUpWithEmail = async (email: string, password: string, name?: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: window.location.origin,
-        data: { full_name: name },
-      },
-    });
-    return { error };
-  };
-
-  const signInWithGoogle = async () => {
-    const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    return { error: error ?? null };
-  };
-
-
-  const resetPassword = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-    return { error };
-  };
-
-  const updatePassword = async (password: string) => {
-    const { error } = await supabase.auth.updateUser({ password });
-    return { error };
-  };
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setSession(null);
-    setProfile(null);
-  };
-
   return (
     <AuthContext.Provider
-      value={{ user, session, profile, loading, signInWithEmail, signUpWithEmail, signInWithGoogle, resetPassword, updatePassword, signOut }}
+      value={{
+        user: dummyUser,
+        session: null,
+        profile: dummyProfile,
+        loading: false,
+        signInWithEmail: noop,
+        signUpWithEmail: noop,
+        signInWithGoogle: noop,
+        resetPassword: noop,
+        updatePassword: noop,
+        signOut: async () => {},
+      }}
     >
       {children}
     </AuthContext.Provider>
