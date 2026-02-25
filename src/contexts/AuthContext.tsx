@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Only clean up truly corrupted session data from localStorage.
     // Do NOT remove expired sessions — Supabase's autoRefreshToken handles token refresh.
-    const storageKey = `sb-nuilpmoipiazjafpjaft-auth-token`;
+    const storageKey = `sb-uqwwpkdahrmhkfgypuqp-auth-token`;
     try {
       const raw = localStorage.getItem(storageKey);
       if (raw) {
@@ -99,7 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.log("[Auth] No session detected (listener never fired)");
           setLoading(false);
         }
-      }, 150);
+      }, 500);
     });
 
     return () => subscription.unsubscribe();
