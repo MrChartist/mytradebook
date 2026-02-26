@@ -29,8 +29,7 @@ export function TodaysPnl() {
   const unrealizedPnl = openTrades.reduce((acc, t) => {
     const ltp = prices[t.symbol]?.ltp || t.current_price || t.entry_price;
     const entry = t.entry_price || 0;
-    const tradeType = t.trade_type === "BUY" ? "LONG" : "SHORT";
-    return acc + calculatePnL(entry, ltp, t.quantity, tradeType);
+    return acc + calculatePnL(entry, ltp, t.quantity, t.trade_type);
   }, 0);
 
   const totalPnl = realizedPnl + unrealizedPnl;
