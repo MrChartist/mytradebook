@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Only clean up truly corrupted session data from localStorage.
     // Do NOT remove expired sessions — Supabase's autoRefreshToken handles token refresh.
-    const storageKey = `sb-uqwwpkdahrmhkfgypuqp-auth-token`;
+    const storageKey = `sb-nuilpmoipiazjafpjaft-auth-token`;
     try {
       const raw = localStorage.getItem(storageKey);
       if (raw) {

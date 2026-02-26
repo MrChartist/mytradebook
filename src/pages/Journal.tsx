@@ -27,6 +27,9 @@ import { JournalCalendarView } from "@/components/journal/JournalCalendarView";
 import { JournalKanbanBoard } from "@/components/journal/JournalKanbanBoard";
 import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
 import type { Trade } from "@/hooks/useTrades";
+import { tradesToCSV, downloadCSV } from "@/lib/exportUtils";
+import { toast } from "sonner";
+import { PageHeader } from "@/components/ui/page-header";
 
 const segmentOptions = [
   { value: "ALL", label: "All Segments" },
@@ -79,16 +82,43 @@ export default function Journal() {
     setSelectedTrade(trade as Trade);
   };
 
+  const handleExport = () => {
+    const tradesToExport = analytics.trades || [];
+    if (tradesToExport.length === 0) {
+      toast.info("No trades to export for the selected filters.");
+      return;
+    }
+    const csv = tradesToCSV(
+      tradesToExport.map((t: any) => ({
+        symbol: t.symbol,
+        segment: t.segment,
+        trade_type: t.trade_type,
+        status: t.status,
+        entry_price: t.entry_price,
+        exit_price: t.exit_price,
+        stop_loss: t.stop_loss,
+        quantity: t.quantity,
+        pnl: t.pnl,
+        pnl_percent: t.pnl_percent,
+        entry_time: t.entry_time,
+        exit_time: t.closed_at,
+        notes: t.notes,
+        tags: t.tags,
+      }))
+    );
+    const filename = `tradebook_journal_${format(new Date(), "yyyy-MM-dd")}.csv`;
+    downloadCSV(csv, filename);
+    toast.success(`Exported ${tradesToExport.length} trades`);
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold">Trade Journal</h1>
-          <p className="text-muted-foreground">
-            Analyze your trading performance and patterns
-          </p>
-        </div>
+        <PageHeader
+          title="Trade Journal"
+          subtitle="Analyze your trading performance and patterns"
+        />
         <div className="flex flex-wrap items-center gap-2">
           {/* Segment Filter */}
           <Select value={segment} onValueChange={setSegment}>
@@ -159,7 +189,7 @@ export default function Journal() {
           )}
 
           {/* Export */}
-          <Button variant="outline" className="border-border">
+          <Button variant="outline" className="border-border" onClick={handleExport}>
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>

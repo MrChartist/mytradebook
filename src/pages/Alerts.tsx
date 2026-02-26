@@ -110,7 +110,7 @@ export default function Alerts() {
 
     switch (activeTab) {
       case "active": list = list.filter(a => a.active && !isSnoozed(a, now)); break;
-      case "triggered": list = list.filter(a => !!a.last_triggered); break;
+      case "triggered": list = list.filter(a => { if (!a.last_triggered) return false; return new Date(a.last_triggered).toDateString() === now.toDateString(); }); break;
       case "paused": list = list.filter(a => !a.active || isSnoozed(a, now)); break;
       case "expired": list = list.filter(a => a.expires_at && new Date(a.expires_at) < now); break;
     }
@@ -180,7 +180,7 @@ export default function Alerts() {
           <div className="relative">
             <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-primary" />
             <div className="pl-4">
-              <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Alerts</h1>
+              <h1 className="text-2xl lg:text-3xl font-display tracking-tight">Alerts</h1>
               <p className="text-sm text-muted-foreground">Monitor price & market conditions</p>
             </div>
           </div>
@@ -287,9 +287,8 @@ export default function Alerts() {
               const isPercentCondition = alert.condition_type === "PERCENT_CHANGE_GT" || alert.condition_type === "PERCENT_CHANGE_LT";
               const alertStatus = getAlertStatus(alert);
 
-              const conditionSummary = `${conditionLabels[alert.condition_type]}: ${
-                isPercentCondition ? `${alert.threshold}%` : `₹${alert.threshold?.toLocaleString() || "—"}`
-              }`;
+              const conditionSummary = `${conditionLabels[alert.condition_type]}: ${isPercentCondition ? `${alert.threshold}%` : `₹${alert.threshold?.toLocaleString() || "—"}`
+                }`;
 
               const levels = alert.threshold ? [{
                 label: conditionLabels[alert.condition_type] || "Trigger",
@@ -332,7 +331,7 @@ export default function Alerts() {
                     ? `Expires ${format(new Date(alert.expires_at), "dd MMM HH:mm")}`
                     : undefined}
                   onView={() => handleEditClick(alert)}
-                  onCreateTrade={() => {}}
+                  onCreateTrade={() => { }}
                   menuActions={menuActions}
                   viewMode={viewMode}
                   className={cn(

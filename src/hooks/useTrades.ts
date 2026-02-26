@@ -32,7 +32,8 @@ export function useTrades(filters?: TradeFilters) {
         .from("trades")
         .select("*")
         .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(500); // Safety cap to prevent unbounded queries
 
       if (filters?.status) {
         query = query.eq("status", filters.status);
@@ -76,12 +77,12 @@ export function useTrades(filters?: TradeFilters) {
         title: "Trade created",
         description: "Your trade has been logged successfully.",
       });
-      
+
       // Send Telegram notification (fire and forget)
-       // Only send if telegram posting is enabled for this trade
-       if (data.telegram_post_enabled) {
-         notifyNewTrade(data.id).catch(console.error);
-       }
+      // Only send if telegram posting is enabled for this trade
+      if (data.telegram_post_enabled) {
+        notifyNewTrade(data.id).catch(console.error);
+      }
     },
     onError: (error) => {
       toast({
@@ -109,12 +110,12 @@ export function useTrades(filters?: TradeFilters) {
         .single();
 
       if (error) throw error;
-      
+
       // Return both the updated trade and old SL for notification
-      return { 
-        trade: data, 
+      return {
+        trade: data,
         oldSL: currentTrade?.stop_loss,
-        newSL: updates.stop_loss 
+        newSL: updates.stop_loss
       };
     },
     onSuccess: async (result) => {
@@ -123,7 +124,7 @@ export function useTrades(filters?: TradeFilters) {
         title: "Trade updated",
         description: "Trade has been updated successfully.",
       });
-      
+
       // Send notification if SL was modified
       if (result.oldSL !== undefined && result.newSL !== undefined && result.oldSL !== result.newSL) {
         notifySLModified(result.trade.id, result.oldSL, result.newSL).catch(console.error);
@@ -191,17 +192,17 @@ export function useTrades(filters?: TradeFilters) {
         title: "Trade closed",
         description: `Trade closed with P&L: ${pnlText}`,
       });
-      
+
       // 🎉 Confetti on profitable close
       if (data.pnl && data.pnl > 0) {
         fireProfitConfetti();
       }
-      
+
       // Send Telegram notification (fire and forget)
-       // Only send if telegram posting was enabled for this trade
-       if (data.telegram_post_enabled) {
-         notifyTradeClosed(data.id).catch(console.error);
-       }
+      // Only send if telegram posting was enabled for this trade
+      if (data.telegram_post_enabled) {
+        notifyTradeClosed(data.id).catch(console.error);
+      }
     },
     onError: (error) => {
       toast({

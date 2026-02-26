@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
 
     let body: any = {};
     if (req.method === "POST") {
-      try { body = await req.json(); } catch {}
+      try { body = await req.json(); } catch { }
     }
 
     if (body?.user_id) {
@@ -360,11 +360,21 @@ async function syncUserOrders(supabase: any, userId: string) {
 
     if (matchingTrades && matchingTrades.length > 0) {
       const trade = matchingTrades[0];
-      const currentPrice = pos.costPrice;
       const entryPrice = trade.entry_price || 0;
       const pnl = pos.unrealizedProfit;
+
+      // Compute current LTP from unrealizedProfit:
+      // For BUY: pnl = (currentPrice - entryPrice) * qty → currentPrice = entryPrice + pnl/qty
+      // For SELL: pnl = (entryPrice - currentPrice) * qty → currentPrice = entryPrice - pnl/qty
+      const netQty = Math.abs(pos.netQty) || 1;
+      const currentPrice = trade.trade_type === "SELL"
+        ? entryPrice - (pnl / netQty)
+        : entryPrice + (pnl / netQty);
+
       const pnlPercent = entryPrice > 0
-        ? ((currentPrice - entryPrice) / entryPrice) * 100
+        ? (trade.trade_type === "SELL"
+          ? ((entryPrice - currentPrice) / entryPrice) * 100
+          : ((currentPrice - entryPrice) / entryPrice) * 100)
         : 0;
 
       await supabase

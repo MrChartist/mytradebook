@@ -23,9 +23,9 @@ export function calculatePnL(
   entryPrice: number,
   exitPrice: number,
   quantity: number,
-  tradeType: 'LONG' | 'SHORT'
+  tradeType: 'BUY' | 'SELL'
 ): number {
-  if (tradeType === 'LONG') {
+  if (tradeType === 'BUY') {
     return (exitPrice - entryPrice) * quantity;
   } else {
     return (entryPrice - exitPrice) * quantity;
@@ -47,11 +47,11 @@ export function calculatePnL(
 export function calculatePnLPercent(
   entryPrice: number,
   exitPrice: number,
-  tradeType: 'LONG' | 'SHORT'
+  tradeType: 'BUY' | 'SELL'
 ): number {
   if (entryPrice === 0) return 0;
 
-  if (tradeType === 'LONG') {
+  if (tradeType === 'BUY') {
     return ((exitPrice - entryPrice) / entryPrice) * 100;
   } else {
     return ((entryPrice - exitPrice) / entryPrice) * 100;
@@ -73,11 +73,11 @@ export function calculatePnLPercent(
 export function calculateStopLoss(
   entryPrice: number,
   slPercent: number,
-  tradeType: 'LONG' | 'SHORT'
+  tradeType: 'BUY' | 'SELL'
 ): number {
   const slAmount = (entryPrice * slPercent) / 100;
 
-  if (tradeType === 'LONG') {
+  if (tradeType === 'BUY') {
     return entryPrice - slAmount;
   } else {
     return entryPrice + slAmount;
@@ -101,12 +101,12 @@ export function calculateTarget(
   entryPrice: number,
   stopLoss: number,
   riskRewardRatio: number,
-  tradeType: 'LONG' | 'SHORT'
+  tradeType: 'BUY' | 'SELL'
 ): number {
   const risk = Math.abs(entryPrice - stopLoss);
   const reward = risk * riskRewardRatio;
 
-  if (tradeType === 'LONG') {
+  if (tradeType === 'BUY') {
     return entryPrice + reward;
   } else {
     return entryPrice - reward;
@@ -158,7 +158,7 @@ export function calculateRiskReward(
   entryPrice: number,
   stopLoss: number,
   target: number,
-  tradeType: 'LONG' | 'SHORT'
+  _tradeType: 'BUY' | 'SELL'
 ): number {
   const risk = Math.abs(entryPrice - stopLoss);
   const reward = Math.abs(target - entryPrice);
@@ -298,13 +298,13 @@ export function getNextTarget(targets: TradeTargets | null): number | null {
 export function calculateBreakeven(
   entryPrice: number,
   brokerage: number,
-  tradeType: 'LONG' | 'SHORT'
+  tradeType: 'BUY' | 'SELL'
 ): number {
   // Assuming charges on both entry and exit
   const totalCharges = brokerage * 2;
   const chargeAmount = (entryPrice * totalCharges) / 100;
 
-  if (tradeType === 'LONG') {
+  if (tradeType === 'BUY') {
     return entryPrice + chargeAmount;
   } else {
     return entryPrice - chargeAmount;

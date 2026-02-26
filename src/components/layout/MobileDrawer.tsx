@@ -1,36 +1,13 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard,
   TrendingUp,
-  Bell,
-  BookOpen,
-  CalendarDays,
-  AlertTriangle,
-  BarChart3,
-  FileText,
   Settings,
   LogOut,
-  Eye,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
-
-const mainNavItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-  { icon: TrendingUp, label: "Trades", path: "/trades" },
-  { icon: Bell, label: "Alerts", path: "/alerts" },
-  { icon: BookOpen, label: "Studies", path: "/studies" },
-  { icon: Eye, label: "Watchlist", path: "/watchlist" },
-];
-
-const analyticsNavItems = [
-  { icon: CalendarDays, label: "Calendar", path: "/calendar" },
-  { icon: AlertTriangle, label: "Mistakes", path: "/mistakes" },
-  { icon: BarChart3, label: "Analytics", path: "/analytics" },
-  { icon: FileText, label: "Reports", path: "/reports" },
-];
+import { mainNavItems } from "@/lib/navConfig";
 
 interface MobileDrawerProps {
   open: boolean;
@@ -104,8 +81,6 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
         <nav className="flex-1 p-3 space-y-0.5">
           {mainNavItems.map(renderNavItem)}
 
-          <div className="sidebar-section-label mt-4 mb-1">Analytics</div>
-          {analyticsNavItems.map(renderNavItem)}
 
           <div className="mt-3 pt-3 border-t border-border">
             <NavLink

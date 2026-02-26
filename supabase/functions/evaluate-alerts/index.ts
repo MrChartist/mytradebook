@@ -62,22 +62,40 @@ async function fetchPricesForUser(
   const requestBody: Record<string, number[]> = {};
   const secIdToSymbol: Record<string, string> = {};
 
+  // Batch lookup: collect all symbols that need instrument_master resolution
+  const symbolsNeedingLookup = alerts
+    .filter((a) => !a.security_id)
+    .map((a) => a.symbol);
+  const uniqueSymbols = [...new Set(symbolsNeedingLookup)];
+
+  // Single batched query instead of N individual queries
+  const instrumentMap: Record<string, { security_id: string; exchange_segment: string }> = {};
+  if (uniqueSymbols.length > 0) {
+    const { data: instruments } = await supabase
+      .from("instrument_master")
+      .select("security_id, trading_symbol, exchange_segment")
+      .in("trading_symbol", uniqueSymbols);
+    if (instruments) {
+      for (const inst of instruments) {
+        if (!instrumentMap[inst.trading_symbol]) {
+          instrumentMap[inst.trading_symbol] = {
+            security_id: inst.security_id,
+            exchange_segment: inst.exchange_segment,
+          };
+        }
+      }
+    }
+  }
+
   for (const alert of alerts) {
-    // Try to use security_id from alert, or look up from instrument_master
     let secId = alert.security_id;
     let exchSeg = alert.exchange_segment || "NSE_EQ";
 
     if (!secId) {
-      // Look up from instrument_master
-      const { data: inst } = await supabase
-        .from("instrument_master")
-        .select("security_id, exchange_segment")
-        .eq("trading_symbol", alert.symbol)
-        .limit(1)
-        .maybeSingle();
-      if (inst) {
-        secId = inst.security_id;
-        exchSeg = inst.exchange_segment;
+      const resolved = instrumentMap[alert.symbol];
+      if (resolved) {
+        secId = resolved.security_id;
+        exchSeg = resolved.exchange_segment;
       }
     }
 
@@ -201,11 +219,12 @@ serve(async (req) => {
         const cooldownEnd = new Date(new Date(a.last_triggered).getTime() + a.cooldown_minutes * 60000);
         if (now < cooldownEnd) return false;
       }
-      // Respect check_interval_minutes: skip if last checked too recently
+      // Respect check_interval_minutes: skip if checked too recently
+      // Default cron interval is 5 minutes; only apply for longer intervals
       const interval = a.check_interval_minutes || 5;
       if (interval > 5 && a.last_triggered) {
-        // Use last_triggered as proxy; for non-triggered alerts, previous_ltp update serves as check marker
-        // We'll use a simpler approach: check if enough time passed since last trigger
+        const lastCheck = new Date(a.last_triggered).getTime();
+        if (now.getTime() - lastCheck < interval * 60000) return false;
       }
       return true;
     });
@@ -219,6 +238,8 @@ serve(async (req) => {
 
     const triggered: Alert[] = [];
     let skippedNoPrice = 0;
+    // Collect previous_ltp updates to batch after evaluation
+    const ltpUpdates: Array<{ id: string; price: number }> = [];
 
     for (const [userId, userAlerts] of Object.entries(alertsByUser)) {
       // Fetch real prices using this user's Dhan credentials
@@ -226,7 +247,7 @@ serve(async (req) => {
 
       for (const alert of userAlerts) {
         const quote = priceData[alert.symbol];
-        
+
         // NO MOCK PRICES - skip if we can't get a real price
         if (!quote || quote.ltp <= 0) {
           console.log(`No real price for ${alert.symbol}, skipping alert ${alert.id}`);
@@ -295,11 +316,9 @@ serve(async (req) => {
           }
         }
 
-        // Always update previous_ltp for cross detection
-        await supabase
-          .from("alerts")
-          .update({ previous_ltp: price })
-          .eq("id", alert.id);
+        // Collect previous_ltp updates for batching below
+        // (batched after the loop to reduce DB writes)
+        ltpUpdates.push({ id: alert.id, price });
 
         if (isTriggered) {
           triggered.push(alert);
@@ -403,6 +422,20 @@ serve(async (req) => {
           }
         }
       }
+    }
+
+    // Batch previous_ltp updates for non-triggered alerts
+    // (triggered alerts already got updated with previous_ltp above)
+    const triggeredIds = new Set(triggered.map(a => a.id));
+    const pendingLtpUpdates = ltpUpdates.filter(u => !triggeredIds.has(u.id));
+    if (pendingLtpUpdates.length > 0) {
+      // Supabase doesn't support batch updates with per-row values,
+      // so we issue them in parallel for speed
+      await Promise.allSettled(
+        pendingLtpUpdates.map(u =>
+          supabase.from("alerts").update({ previous_ltp: u.price }).eq("id", u.id)
+        )
+      );
     }
 
     // Auto-deactivate expired

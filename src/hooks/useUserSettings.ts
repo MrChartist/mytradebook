@@ -43,12 +43,12 @@ export function useUserSettings() {
     queryKey: ["user-settings", user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      
+
       const { data, error } = await supabase
         .from("user_settings")
-        .select("id, user_id, default_sl_percent, alert_frequency_minutes, auto_sync_portfolio, theme, timezone, telegram_chat_id, telegram_link_code, telegram_link_expires_at, telegram_verified_at, telegram_enabled, dhan_client_id, dhan_verified_at, dhan_enabled, dhan_account_name, dhan_token_expiry, ra_public_mode, ra_disclaimer, starting_capital, created_at, updated_at, dashboard_layout, tsl_profiles, webhook_url, truedata_username, truedata_enabled, truedata_verified_at")
+        .select("*")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data as UserSettings;
@@ -88,7 +88,7 @@ export function useUserSettings() {
       });
 
       if (error) throw error;
-      
+
       if (data?.success) {
         toast.success("Telegram connection successful!");
         return true;

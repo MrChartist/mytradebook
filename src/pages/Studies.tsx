@@ -9,13 +9,17 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useStudies, type StudyFilters } from "@/hooks/useStudies";
+import { useLivePrices } from "@/hooks/useLivePrices";
 import { CreateStudyModal } from "@/components/modals/CreateStudyModal";
+import { EditStudyModal } from "@/components/modals/EditStudyModal";
+import { CreateAlertModal } from "@/components/modals/CreateAlertModal";
 import { CreateTradeModal, type TradeModalPrefill } from "@/components/modals/CreateTradeModal";
 import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 import { InsightCard, type InsightCardAction } from "@/components/ui/insight-card";
 import { ViewToggle, type ViewMode } from "@/components/ui/view-toggle";
 import { SortSelect, type SortOption } from "@/components/ui/sort-select";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
 import type { Study } from "@/hooks/useStudies";
 
 const categoryIcons: Record<string, any> = {
@@ -57,6 +61,10 @@ export default function Studies() {
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [sortBy, setSortBy] = useState("latest");
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [studyToEdit, setStudyToEdit] = useState<Study | null>(null);
+  const [alertModalOpen, setAlertModalOpen] = useState(false);
+  const [alertPrefillSymbol, setAlertPrefillSymbol] = useState<string | undefined>(undefined);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [studyToDelete, setStudyToDelete] = useState<Study | null>(null);
   const [tradeModalOpen, setTradeModalOpen] = useState(false);
@@ -90,6 +98,14 @@ export default function Studies() {
     return list;
   }, [studies, selectedStatus, sortBy]);
 
+  // Extract unique symbols for live price polling
+  const uniqueSymbols = useMemo(() => {
+    const symbols = [...new Set(filteredStudies.map(s => s.symbol))];
+    return symbols;
+  }, [filteredStudies]);
+
+  const { prices } = useLivePrices(uniqueSymbols);
+
   const statusCounts = studies.reduce((acc: Record<string, number>, s) => {
     const st = s.status || "Draft";
     acc[st] = (acc[st] || 0) + 1;
@@ -116,19 +132,16 @@ export default function Studies() {
   return (
     <div className="space-y-5 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="relative">
-            <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-primary" />
-            <div className="pl-4">
-              <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Studies</h1>
-              <p className="text-sm text-muted-foreground">Track setups, patterns, and market analysis</p>
-            </div>
-          </div>
-        <Button onClick={() => setCreateModalOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          New Study
-        </Button>
-      </div>
+      <PageHeader
+        title="Studies"
+        subtitle="Track setups, patterns, and market analysis"
+        actions={
+          <Button onClick={() => setCreateModalOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            New Study
+          </Button>
+        }
+      />
 
       {/* Status strip */}
       <div className="flex gap-1.5 overflow-x-auto pb-1">
@@ -203,7 +216,7 @@ export default function Studies() {
             const duration = study.pattern_duration;
 
             const menuActions: InsightCardAction[] = [
-              { label: "Edit", icon: Edit, onClick: () => {} },
+              { label: "Edit", icon: Edit, onClick: () => { setStudyToEdit(study); setEditModalOpen(true); } },
               ...Object.keys(statusColors)
                 .filter(k => k !== studyStatus)
                 .map(k => ({ label: `Mark as ${k}`, onClick: () => handleStatusChange(study, k) })),
@@ -214,6 +227,8 @@ export default function Studies() {
               <InsightCard
                 key={study.id}
                 symbol={study.symbol}
+                ltp={prices[study.symbol]?.ltp}
+                dayChangePercent={prices[study.symbol]?.changePercent}
                 typeLabel={study.category || "Other"}
                 typeColor={categoryColors[study.category || "Other"]}
                 status={studyStatus}
@@ -227,8 +242,8 @@ export default function Studies() {
                 timestamp={study.analysis_date
                   ? new Date(study.analysis_date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "2-digit" })
                   : undefined}
-                onView={() => {}}
-                onCreateAlert={() => {}}
+                onView={() => { setStudyToEdit(study); setEditModalOpen(true); }}
+                onCreateAlert={() => { setAlertPrefillSymbol(study.symbol); setAlertModalOpen(true); }}
                 onCreateTrade={() => {
                   setTradePrefill({
                     symbol: study.symbol,
@@ -256,6 +271,16 @@ export default function Studies() {
       )}
 
       <CreateStudyModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
+      <EditStudyModal
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        study={studyToEdit}
+      />
+      <CreateAlertModal
+        open={alertModalOpen}
+        onOpenChange={setAlertModalOpen}
+        prefillSymbol={alertPrefillSymbol}
+      />
       <CreateTradeModal
         open={tradeModalOpen}
         onOpenChange={setTradeModalOpen}
