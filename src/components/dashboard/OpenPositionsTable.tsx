@@ -17,8 +17,9 @@ export function OpenPositionsTable() {
   const positions = trades.map((t) => {
     const ltp = prices[t.symbol]?.ltp || t.current_price || t.entry_price || 0;
     const entry = t.entry_price || 0;
-    const unrealizedPnl = calculatePnL(entry, ltp, t.quantity, t.trade_type);
-    const unrealizedPercent = entry > 0 ? calculatePnLPercent(entry, ltp, t.trade_type) : 0;
+    const tradeType = t.trade_type === "BUY" ? "LONG" : "SHORT";
+    const unrealizedPnl = calculatePnL(entry, ltp, t.quantity, tradeType);
+    const unrealizedPercent = entry > 0 ? calculatePnLPercent(entry, ltp, tradeType) : 0;
     const slDistance = t.stop_loss
       ? t.trade_type === "BUY"
         ? ((ltp - t.stop_loss) / ltp) * 100
