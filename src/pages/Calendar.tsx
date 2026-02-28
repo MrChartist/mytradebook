@@ -3,7 +3,6 @@ import { CalendarDays, SmilePlus, Frown, Meh, Smile, TrendingUp, TrendingDown } 
 import { useTrades } from "@/hooks/useTrades";
 import { JournalCalendarView } from "@/components/journal/JournalCalendarView";
 import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
-import { PageHeader } from "@/components/ui/page-header";
 import { format, isSameDay } from "date-fns";
 
 export default function Calendar() {
@@ -44,10 +43,12 @@ export default function Calendar() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <PageHeader
-        title="Calendar"
-        subtitle="Daily trading activity timeline — click a date to view trades and P&L."
-      />
+      <div>
+        <h1 className="text-2xl font-bold">Calendar</h1>
+        <p className="text-muted-foreground text-sm">
+          Daily trading activity timeline — click a date to view trades and P&L.
+        </p>
+      </div>
 
       <JournalCalendarView
         calendarData={calendarData}

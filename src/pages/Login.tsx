@@ -1,171 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { TrendingUp, ArrowRight, Loader2, Eye, EyeOff, Smartphone } from "lucide-react";
+import { TrendingUp, ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
-type AuthMode = "login" | "signup" | "phone" | "forgot";
-
-function LoginBranding() {
-  return (
-    <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/5 via-background to-primary/10 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-[0.03]">
-        <div
-          className="h-full w-full"
-          style={{
-            backgroundImage:
-              "linear-gradient(hsl(var(--primary) / 0.4) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary) / 0.4) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-      </div>
-
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px]" />
-      <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-profit/10 rounded-full blur-[100px]" />
-
-      <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
-            <TrendingUp className="w-7 h-7 text-primary-foreground" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold">TradeBook</h1>
-            <p className="text-muted-foreground text-sm">Trading Journal</p>
-          </div>
-        </div>
-
-        <h2 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
-          Master Your Trades.
-          <br />
-          <span className="gradient-text">Track Your Edge.</span>
-        </h2>
-
-        <p className="text-base text-muted-foreground max-w-md mb-8">
-          A structured trading journal and analytics platform for Indian
-          markets. Log trades, track performance, and improve discipline.
-        </p>
-
-        <div className="flex flex-wrap gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-profit" />
-            <span className="text-sm text-muted-foreground">Real-time alerts</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-primary" />
-            <span className="text-sm text-muted-foreground">Broker integration</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-warning" />
-            <span className="text-sm text-muted-foreground">Telegram notifications</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PhoneOTPForm({
-  loading,
-  onSendOtp,
-  onVerifyOtp,
-}: {
-  loading: boolean;
-  onSendOtp: (phone: string) => Promise<void>;
-  onVerifyOtp: (phone: string, otp: string) => Promise<void>;
-}) {
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-
-  const handleSendOtp = async () => {
-    const fullPhone = phone.startsWith("+") ? phone : `+91${phone}`;
-    await onSendOtp(fullPhone);
-    setOtpSent(true);
-  };
-
-  const handleVerifyOtp = async () => {
-    const fullPhone = phone.startsWith("+") ? phone : `+91${phone}`;
-    await onVerifyOtp(fullPhone, otp);
-  };
-
-  if (!otpSent) {
-    return (
-      <div className="space-y-4">
-        <div>
-          <label className="text-sm font-medium mb-2 block">Mobile Number</label>
-          <div className="flex gap-2">
-            <div className="flex items-center justify-center px-3 h-11 rounded-md border border-input bg-muted text-sm text-muted-foreground shrink-0">
-              +91
-            </div>
-            <Input
-              type="tel"
-              placeholder="Enter 10-digit mobile number"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
-              className="h-11"
-              maxLength={10}
-            />
-          </div>
-        </div>
-        <Button
-          className="w-full h-11"
-          onClick={handleSendOtp}
-          disabled={loading || phone.length !== 10}
-        >
-          {loading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <>
-              <Smartphone className="w-4 h-4 mr-2" />
-              Send OTP
-            </>
-          )}
-        </Button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-4">
-      <p className="text-sm text-muted-foreground text-center">
-        OTP sent to <span className="font-medium text-foreground">+91{phone}</span>
-      </p>
-      <div className="flex justify-center">
-        <InputOTP maxLength={6} value={otp} onChange={setOtp}>
-          <InputOTPGroup>
-            <InputOTPSlot index={0} />
-            <InputOTPSlot index={1} />
-            <InputOTPSlot index={2} />
-            <InputOTPSlot index={3} />
-            <InputOTPSlot index={4} />
-            <InputOTPSlot index={5} />
-          </InputOTPGroup>
-        </InputOTP>
-      </div>
-      <Button
-        className="w-full h-11"
-        onClick={handleVerifyOtp}
-        disabled={loading || otp.length !== 6}
-      >
-        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Verify OTP <ArrowRight className="w-4 h-4 ml-2" /></>}
-      </Button>
-      <button
-        type="button"
-        onClick={() => { setOtpSent(false); setOtp(""); }}
-        className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
-      >
-        Change number
-      </button>
-    </div>
-  );
-}
-
 export default function Login() {
-  const [authMode, setAuthMode] = useState<AuthMode>("login");
+  const [authMode, setAuthMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -174,13 +17,11 @@ export default function Login() {
 
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithPhone, verifyPhoneOtp, resetPassword, user, loading: authLoading } = useAuth();
+  const { signInWithEmail, signUpWithEmail, signInWithGoogle, user, loading: authLoading } = useAuth();
 
-  // Fix: reset local loading when auth completes (covers Google popup flow)
   useEffect(() => {
     if (!authLoading && user) {
-      setLoading(false);
-      navigate("/", { replace: true });
+      navigate("/");
     }
   }, [user, authLoading, navigate]);
 
@@ -194,6 +35,7 @@ export default function Login() {
           toast({ title: "Login failed", description: error.message, variant: "destructive" });
         } else {
           toast({ title: "Welcome back!", description: "Successfully signed in." });
+          navigate("/");
         }
       } else {
         const { error } = await signUpWithEmail(email, password, name);
@@ -215,36 +57,6 @@ export default function Login() {
       toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });
       setLoading(false);
     }
-    // Fallback: if popup closes without completing, reset after 10s
-    setTimeout(() => setLoading(false), 10000);
-  };
-
-  const handleSendOtp = async (phone: string) => {
-    setLoading(true);
-    try {
-      const { error } = await signInWithPhone(phone);
-      if (error) {
-        toast({ title: "Failed to send OTP", description: error.message, variant: "destructive" });
-      } else {
-        toast({ title: "OTP Sent", description: "Check your phone for the verification code." });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (phone: string, otp: string) => {
-    setLoading(true);
-    try {
-      const { error } = await verifyPhoneOtp(phone, otp);
-      if (error) {
-        toast({ title: "Verification failed", description: error.message, variant: "destructive" });
-      } else {
-        toast({ title: "Welcome!", description: "Successfully signed in." });
-      }
-    } finally {
-      setLoading(false);
-    }
   };
 
   if (authLoading) {
@@ -255,31 +67,62 @@ export default function Login() {
     );
   }
 
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const { error } = await resetPassword(email);
-      if (error) {
-        toast({ title: "Reset failed", description: error.message, variant: "destructive" });
-      } else {
-        toast({ title: "Check your email", description: "We've sent you a password reset link." });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const headings: Record<AuthMode, { title: string; subtitle: string }> = {
-    login: { title: "Welcome Back", subtitle: "Sign in to continue to your dashboard" },
-    signup: { title: "Create Account", subtitle: "Sign up to start tracking your trades" },
-    phone: { title: "Phone Login", subtitle: "Sign in with your mobile number" },
-    forgot: { title: "Reset Password", subtitle: "Enter your email to receive a reset link" },
-  };
-
   return (
     <div className="min-h-screen flex">
-      <LoginBranding />
+      {/* Left Panel - Branding */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/5 via-background to-primary/10 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.03]">
+          <div
+            className="h-full w-full"
+            style={{
+              backgroundImage:
+                "linear-gradient(hsl(var(--primary) / 0.4) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary) / 0.4) 1px, transparent 1px)",
+              backgroundSize: "60px 60px",
+            }}
+          />
+        </div>
+
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-profit/10 rounded-full blur-[100px]" />
+
+        <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
+              <TrendingUp className="w-7 h-7 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">TradeBook</h1>
+              <p className="text-muted-foreground text-sm">Trading Journal</p>
+            </div>
+          </div>
+
+          <h2 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
+            Master Your Trades.
+            <br />
+            <span className="gradient-text">Track Your Edge.</span>
+          </h2>
+
+          <p className="text-base text-muted-foreground max-w-md mb-8">
+            A structured trading journal and analytics platform for Indian
+            markets. Log trades, track performance, and improve discipline.
+          </p>
+
+          <div className="flex flex-wrap gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-profit" />
+              <span className="text-sm text-muted-foreground">Real-time alerts</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-primary" />
+              <span className="text-sm text-muted-foreground">Broker integration</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-warning" />
+              <span className="text-sm text-muted-foreground">Telegram notifications</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Right Panel - Auth Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 bg-background">
@@ -292,133 +135,103 @@ export default function Login() {
             <span className="text-xl font-bold">TradeBook</span>
           </div>
 
-          <div className="surface-card p-8 gradient-border-top">
+          <div className="surface-card p-8">
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold mb-2">{headings[authMode].title}</h3>
-              <p className="text-muted-foreground text-sm">{headings[authMode].subtitle}</p>
+              <h3 className="text-2xl font-bold mb-2">
+                {authMode === "login" ? "Welcome Back" : "Create Account"}
+              </h3>
+              <p className="text-muted-foreground text-sm">
+                {authMode === "login"
+                  ? "Sign in to continue to your dashboard"
+                  : "Sign up to start tracking your trades"}
+              </p>
             </div>
 
             {/* Auth Mode Tabs */}
             <div className="flex gap-1 p-1 bg-muted rounded-lg mb-6">
-              {([["login", "Sign In"], ["signup", "Sign Up"], ["phone", "Phone"]] as const).map(([mode, label]) => (
-                <button
-                  key={mode}
-                  onClick={() => setAuthMode(mode)}
-                  className={cn(
-                    "flex-1 py-2 rounded-md text-sm font-medium transition-all",
-                    authMode === mode
-                      ? "bg-background shadow-sm text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {label}
-                </button>
-              ))}
+              <button
+                onClick={() => setAuthMode("login")}
+                className={cn(
+                  "flex-1 py-2 rounded-md text-sm font-medium transition-all",
+                  authMode === "login"
+                    ? "bg-background shadow-sm text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => setAuthMode("signup")}
+                className={cn(
+                  "flex-1 py-2 rounded-md text-sm font-medium transition-all",
+                  authMode === "signup"
+                    ? "bg-background shadow-sm text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Sign Up
+              </button>
             </div>
 
-            {authMode === "phone" ? (
-              <PhoneOTPForm loading={loading} onSendOtp={handleSendOtp} onVerifyOtp={handleVerifyOtp} />
-            ) : authMode === "forgot" ? (
-              <form onSubmit={handleForgotPassword} className="space-y-4">
+            <form onSubmit={handleEmailAuth} className="space-y-4">
+              {authMode === "signup" && (
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Email Address</label>
+                  <label className="text-sm font-medium mb-2 block">Full Name</label>
                   <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    type="text"
+                    placeholder="Enter your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     className="h-11"
-                    required
                   />
                 </div>
-                <Button type="submit" className="w-full h-11" disabled={loading}>
-                  {loading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      Send Reset Link
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </>
-                  )}
-                </Button>
-                <button
-                  type="button"
-                  onClick={() => setAuthMode("login")}
-                  className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Back to Sign In
-                </button>
-              </form>
-            ) : (
-              <form onSubmit={handleEmailAuth} className="space-y-4">
-                {authMode === "signup" && (
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Full Name</label>
-                    <Input
-                      type="text"
-                      placeholder="Enter your name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="h-11"
-                    />
-                  </div>
+              )}
+
+              <div>
+                <label className="text-sm font-medium mb-2 block">Email Address</label>
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-11"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-2 block">Password</label>
+                <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="h-11 pr-10"
+                    required
+                    minLength={6}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <Button type="submit" className="w-full h-11" disabled={loading}>
+                {loading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    {authMode === "login" ? "Sign In" : "Create Account"}
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </>
                 )}
-
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Email Address</label>
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="h-11"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Password</label>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="h-11 pr-10"
-                      required
-                      minLength={6}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                  {authMode === "login" && (
-                    <button
-                      type="button"
-                      onClick={() => setAuthMode("forgot")}
-                      className="text-xs text-primary hover:underline mt-1.5 block"
-                    >
-                      Forgot password?
-                    </button>
-                  )}
-                </div>
-
-                <Button type="submit" className="w-full h-11" disabled={loading}>
-                  {loading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      {authMode === "login" ? "Sign In" : "Create Account"}
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </>
-                  )}
-                </Button>
-              </form>
-            )}
+              </Button>
+            </form>
 
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">

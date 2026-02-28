@@ -22,7 +22,6 @@ import Mistakes from "./pages/Mistakes";
 import Analytics from "./pages/Analytics";
 import DhanCallback from "./pages/DhanCallback";
 import Watchlist from "./pages/Watchlist";
-import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,7 +37,6 @@ const App = () => (
             <Routes>
             <Route path="/landing" element={<Landing />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
             <Route
               path="/"
               element={

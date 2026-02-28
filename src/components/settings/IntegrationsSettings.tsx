@@ -2,8 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { 
   Loader2, Send, RefreshCw, CheckCircle, 
   Smartphone, Database, Clock, AlertTriangle, 
-  MessageCircle, Unplug, Key, Eye, EyeOff, Shield,
-  Activity,
+  MessageCircle, Unplug, Key, Eye, EyeOff, Shield
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
@@ -43,14 +42,6 @@ export default function IntegrationsSettings() {
   
   // Dhan sync state
   const [syncingOrders, setSyncingOrders] = useState(false);
-
-  // TrueData state
-  const [trueDataUsername, setTrueDataUsername] = useState("");
-  const [trueDataPassword, setTrueDataPassword] = useState("");
-  const [showTrueDataPassword, setShowTrueDataPassword] = useState(false);
-  const [savingTrueData, setSavingTrueData] = useState(false);
-  const [testingTrueData, setTestingTrueData] = useState(false);
-  const [disconnectingTrueData, setDisconnectingTrueData] = useState(false);
 
   // Instrument Master state
   const [syncingInstruments, setSyncingInstruments] = useState(false);
@@ -287,82 +278,8 @@ export default function IntegrationsSettings() {
   }
 
   const isTelegramConnected = !!settings?.telegram_chat_id && !!settings?.telegram_verified_at;
-  const isDhanConnected = !!settings?.dhan_verified_at && !!settings?.dhan_enabled;
-  const isTrueDataConnected = !!settings?.truedata_enabled && !!settings?.truedata_verified_at;
+  const isDhanConnected = !!settings?.dhan_access_token && !!settings?.dhan_enabled;
   const totalInstruments = syncStatus.nseEqCount + syncStatus.nfoCount + syncStatus.mcxCount;
-
-  // TrueData handlers
-  const handleSaveTrueData = async () => {
-    if (!user?.id || !trueDataUsername.trim() || !trueDataPassword.trim()) {
-      toast.error("Please enter both username and password");
-      return;
-    }
-    setSavingTrueData(true);
-    try {
-      const { error: updateError } = await supabase
-        .from("user_settings")
-        .update({
-          truedata_username: trueDataUsername.trim(),
-          truedata_password: trueDataPassword.trim(),
-          truedata_enabled: true,
-          truedata_verified_at: new Date().toISOString(),
-        } as any)
-        .eq("user_id", user.id);
-      if (updateError) throw updateError;
-      toast.success("TrueData credentials saved");
-      window.location.reload();
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to save TrueData credentials");
-    } finally {
-      setSavingTrueData(false);
-    }
-  };
-
-  const handleTestTrueData = async () => {
-    if (!user?.id) return;
-    setTestingTrueData(true);
-    try {
-      // Test by fetching a known symbol
-      const { data, error } = await supabase.functions.invoke("get-live-prices", {
-        body: { symbols: ["RELIANCE"], user_id: user.id },
-      });
-      if (error) throw error;
-      if (data?.success && data?.source === "truedata") {
-        toast.success("TrueData connection verified!");
-      } else if (data?.truedata_available) {
-        toast.info("TrueData is configured but Dhan is primary. It will activate as fallback when Dhan is unavailable.");
-      } else {
-        toast.error("TrueData connection could not be verified");
-      }
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Test failed");
-    } finally {
-      setTestingTrueData(false);
-    }
-  };
-
-  const handleDisconnectTrueData = async () => {
-    if (!user?.id) return;
-    setDisconnectingTrueData(true);
-    try {
-      const { error: updateError } = await supabase
-        .from("user_settings")
-        .update({
-          truedata_username: null,
-          truedata_password: null,
-          truedata_enabled: false,
-          truedata_verified_at: null,
-        } as any)
-        .eq("user_id", user.id);
-      if (updateError) throw updateError;
-      toast.success("TrueData disconnected");
-      window.location.reload();
-    } catch (e) {
-      toast.error("Failed to disconnect");
-    } finally {
-      setDisconnectingTrueData(false);
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -673,151 +590,6 @@ export default function IntegrationsSettings() {
                   </Button>
                 </div>
               )}
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* TrueData Market Data (Secondary/Fallback) */}
-      <div className="glass-card p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-            <Activity className="w-5 h-5 text-emerald-400" />
-          </div>
-          <div>
-            <h3 className="font-semibold">TrueData Market Data</h3>
-            <p className="text-sm text-muted-foreground">Secondary live feed — activates when Dhan is unavailable</p>
-          </div>
-          {isTrueDataConnected && (
-            <div className="ml-auto flex items-center gap-2 text-profit">
-              <CheckCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">Connected</span>
-            </div>
-          )}
-        </div>
-
-        <div className="space-y-4">
-          {isTrueDataConnected ? (
-            <>
-              <div className="p-3 rounded-lg bg-profit/10 border border-profit/20">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-profit" />
-                    <span className="text-sm font-medium">TrueData fallback active</span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    Connected {settings?.truedata_verified_at
-                      ? new Date(settings.truedata_verified_at).toLocaleDateString()
-                      : ""}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-3 rounded-lg bg-accent/50 border border-border">
-                <p className="text-sm text-muted-foreground">
-                  TrueData is your <strong>backup feed</strong>. It automatically activates when Dhan's API fails, returns stale data, or your Dhan token expires.
-                </p>
-              </div>
-
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleTestTrueData}
-                  disabled={testingTrueData}
-                >
-                  {testingTrueData ? (
-                    <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
-                  ) : (
-                    <CheckCircle className="w-3.5 h-3.5 mr-1" />
-                  )}
-                  Test Connection
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDisconnectTrueData}
-                  disabled={disconnectingTrueData}
-                  className="text-loss hover:text-loss"
-                >
-                  {disconnectingTrueData ? (
-                    <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
-                  ) : (
-                    <Unplug className="w-3.5 h-3.5 mr-1" />
-                  )}
-                  Disconnect
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="p-3 rounded-lg bg-accent/50 border border-border">
-                <p className="text-sm text-muted-foreground">
-                  Connect TrueData as a fallback market data source. When Dhan is down or your token expires, prices will automatically switch to TrueData.
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <Label htmlFor="truedata-username">Username / API Key</Label>
-                  <Input
-                    id="truedata-username"
-                    value={trueDataUsername}
-                    onChange={(e) => setTrueDataUsername(e.target.value)}
-                    className="bg-accent border-border"
-                    placeholder="Your TrueData username"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="truedata-password">Password / API Secret</Label>
-                  <div className="relative">
-                    <Input
-                      id="truedata-password"
-                      type={showTrueDataPassword ? "text" : "password"}
-                      value={trueDataPassword}
-                      onChange={(e) => setTrueDataPassword(e.target.value)}
-                      className="bg-accent border-border pr-10"
-                      placeholder="Your TrueData password"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
-                      onClick={() => setShowTrueDataPassword(!showTrueDataPassword)}
-                    >
-                      {showTrueDataPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </Button>
-                  </div>
-                </div>
-
-                <p className="text-xs text-muted-foreground">
-                  Get credentials from{" "}
-                  <a
-                    href="https://truedata.in"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    truedata.in
-                  </a>
-                  {" "}— requires an active subscription.
-                </p>
-
-                <Button
-                  onClick={handleSaveTrueData}
-                  disabled={savingTrueData || !trueDataUsername || !trueDataPassword}
-                  className="w-full"
-                >
-                  {savingTrueData ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <Key className="w-4 h-4 mr-2" />
-                  )}
-                  Connect TrueData
-                </Button>
-              </div>
             </>
           )}
         </div>

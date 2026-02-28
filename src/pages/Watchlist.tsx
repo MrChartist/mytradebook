@@ -96,13 +96,10 @@ export default function WatchlistPage() {
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div className="relative">
-            <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-primary" />
-            <div className="pl-4">
-              <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Watchlists</h1>
-              <p className="text-muted-foreground">Track instruments & create quick alerts</p>
-            </div>
-          </div>
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-bold">Watchlists</h1>
+          <p className="text-muted-foreground">Track instruments & create quick alerts</p>
+        </div>
         <Button onClick={() => setCreateOpen(true)}>
           <Plus className="w-4 h-4 mr-2" /> New List
         </Button>
@@ -290,7 +287,7 @@ function WatchlistDetail({
 
   const symbolList = useMemo(() => items.map((i) => i.symbol), [items]);
 
-  const { prices, isPolling, lastUpdated, isLoading: pricesLoading, failoverActive } = useLivePrices(symbolList);
+  const { prices, isPolling, lastUpdated, isLoading: pricesLoading } = useLivePrices(symbolList);
 
   // Check market closed: all prices have ltp 0 or no prices fetched
   const allUnavailable = items.length > 0 && Object.keys(prices).length === 0 && !pricesLoading;
@@ -361,11 +358,6 @@ function WatchlistDetail({
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-profit" />
                     </span>
                     <span>Live</span>
-                    {failoverActive && (
-                      <span className="px-1 py-0.5 rounded text-[10px] font-medium bg-warning/15 text-warning border border-warning/20">
-                        TrueData
-                      </span>
-                    )}
                   </>
                 )}
                 {lastUpdated && (

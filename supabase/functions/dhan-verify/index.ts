@@ -13,36 +13,13 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Validate JWT auth
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
-    return new Response(
-      JSON.stringify({ error: "Unauthorized" }),
-      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  }
-
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-  const userClient = createClient(supabaseUrl, anonKey, {
-    global: { headers: { Authorization: authHeader } },
-  });
-  const token = authHeader.replace("Bearer ", "");
-  const { data: claims, error: authError } = await userClient.auth.getClaims(token);
-  if (authError || !claims?.claims) {
-    return new Response(
-      JSON.stringify({ error: "Unauthorized" }),
-      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  }
-  const userId = claims.claims.sub as string;
 
   try {
     const body = await req.json();
-    const { action, client_id, access_token } = body;
+    const { action, user_id, client_id, access_token } = body;
 
     if (!action) {
       throw new Error("Action is required (verify, disconnect, test, renew)");
@@ -50,10 +27,11 @@ Deno.serve(async (req) => {
 
     // ── VERIFY: Save new credentials ───────────────────────────
     if (action === "verify") {
+      if (!user_id) throw new Error("user_id is required");
       if (!client_id) throw new Error("client_id is required");
       if (!access_token) throw new Error("access_token is required");
 
-      console.log(`Verifying Dhan credentials for user ${userId}`);
+      console.log(`Verifying Dhan credentials for user ${user_id}`);
 
       const response = await fetch(`${DHAN_API_URL}/profile`, {
         method: "GET",
@@ -87,6 +65,7 @@ Deno.serve(async (req) => {
       let tokenExpiry: string | null = null;
       if (rawExpiry) {
         try {
+          // Dhan returns "DD/MM/YYYY HH:mm" format
           const parts = rawExpiry.match(/(\d{2})\/(\d{2})\/(\d{4})\s*(\d{2}):(\d{2})/);
           if (parts) {
             tokenExpiry = new Date(`${parts[3]}-${parts[2]}-${parts[1]}T${parts[4]}:${parts[5]}:00Z`).toISOString();
@@ -108,7 +87,7 @@ Deno.serve(async (req) => {
           dhan_account_name: accountName,
           dhan_token_expiry: tokenExpiry,
         } as any)
-        .eq("user_id", userId);
+        .eq("user_id", user_id);
 
       if (updateError) throw updateError;
 
@@ -126,10 +105,12 @@ Deno.serve(async (req) => {
 
     // ── TEST: Check current token validity ─────────────────────
     if (action === "test") {
+      if (!user_id) throw new Error("user_id is required");
+
       const { data: settings } = await supabase
         .from("user_settings")
         .select("dhan_access_token, dhan_client_id, dhan_enabled")
-        .eq("user_id", userId)
+        .eq("user_id", user_id)
         .single();
 
       if (!settings?.dhan_access_token || !settings?.dhan_client_id) {
@@ -150,10 +131,11 @@ Deno.serve(async (req) => {
       });
 
       if (!response.ok) {
+        // Token is invalid/expired
         await supabase
           .from("user_settings")
           .update({ dhan_token_expiry: null } as any)
-          .eq("user_id", userId);
+          .eq("user_id", user_id);
 
         return new Response(
           JSON.stringify({
@@ -185,13 +167,14 @@ Deno.serve(async (req) => {
         }
       }
 
+      // Update expiry in DB
       await supabase
         .from("user_settings")
         .update({
           dhan_token_expiry: tokenExpiry,
           dhan_account_name: profile?.name || settings.dhan_client_id,
         } as any)
-        .eq("user_id", userId);
+        .eq("user_id", user_id);
 
       return new Response(
         JSON.stringify({
@@ -208,10 +191,12 @@ Deno.serve(async (req) => {
 
     // ── RENEW: Refresh token (only works on active tokens) ─────
     if (action === "renew") {
+      if (!user_id) throw new Error("user_id is required");
+
       const { data: settings } = await supabase
         .from("user_settings")
         .select("dhan_access_token, dhan_client_id")
-        .eq("user_id", userId)
+        .eq("user_id", user_id)
         .single();
 
       if (!settings?.dhan_access_token || !settings?.dhan_client_id) {
@@ -258,7 +243,7 @@ Deno.serve(async (req) => {
             dhan_token_expiry: expiryTime || null,
             dhan_verified_at: new Date().toISOString(),
           } as any)
-          .eq("user_id", userId);
+          .eq("user_id", user_id);
 
         return new Response(
           JSON.stringify({
@@ -278,6 +263,8 @@ Deno.serve(async (req) => {
 
     // ── DISCONNECT ─────────────────────────────────────────────
     if (action === "disconnect") {
+      if (!user_id) throw new Error("user_id is required");
+
       const { error } = await supabase
         .from("user_settings")
         .update({
@@ -289,7 +276,7 @@ Deno.serve(async (req) => {
           dhan_api_key: null,
           dhan_api_secret: null,
         } as any)
-        .eq("user_id", userId);
+        .eq("user_id", user_id);
 
       if (error) throw error;
 

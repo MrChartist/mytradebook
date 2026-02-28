@@ -25,17 +25,9 @@ import { cn } from "@/lib/utils";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { TradingRulesChecklist } from "@/components/trade/TradingRulesChecklist";
 
-export interface TradeModalPrefill {
-  symbol?: string;
-  segment?: string;
-  notes?: string;
-  study_id?: string;
-}
-
 interface CreateTradeModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  prefill?: TradeModalPrefill;
 }
 
 const segmentLabels: Record<string, string> = {
@@ -106,7 +98,7 @@ function getSegmentDefaults(segment: string) {
   }
 }
 
-export function CreateTradeModal({ open, onOpenChange, prefill }: CreateTradeModalProps) {
+export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) {
   const { createTrade } = useTrades();
   const { settings } = useUserSettings();
   const startingCapital = (settings as any)?.starting_capital ?? 500000;
@@ -166,20 +158,6 @@ export function CreateTradeModal({ open, onOpenChange, prefill }: CreateTradeMod
     setTelegramPostEnabled(defaults.telegramEnabled);
     setAutoTrackEnabled(defaults.autoTrack);
   }, [segment, setValue]);
-
-  // Apply prefill from study-to-trade or other sources
-  useEffect(() => {
-    if (!prefill || !open) return;
-    if (prefill.symbol) {
-      setValue("symbol", prefill.symbol, { shouldValidate: true });
-    }
-    if (prefill.segment) {
-      setValue("segment", prefill.segment as CreateTradeInput["segment"], { shouldValidate: true });
-    }
-    if (prefill.notes) {
-      setValue("notes", prefill.notes);
-    }
-  }, [prefill, open, setValue]);
 
   // Risk calculations
   const riskCalc = (() => {
@@ -248,7 +226,6 @@ export function CreateTradeModal({ open, onOpenChange, prefill }: CreateTradeMod
         auto_track_enabled: autoTrackEnabled,
         telegram_post_enabled: telegramPostEnabled,
         chart_link: chartLink.trim() || null,
-        study_id: prefill?.study_id || null,
         security_id: selectedInstrument?.security_id || null,
         exchange_segment: selectedInstrument?.exchange_segment || null,
         rating: toNumberOrNull(data.rating),

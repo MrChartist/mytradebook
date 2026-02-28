@@ -123,7 +123,7 @@ export default function Trades() {
     security_id: t.security_id,
     exchange_segment: t.exchange_segment,
   })), [trades]);
-  const { prices, isPolling, lastUpdated, failoverActive } = useLivePrices(openTradeInstruments);
+  const { prices, isPolling, lastUpdated } = useLivePrices(openTradeInstruments);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -167,14 +167,11 @@ export default function Trades() {
   return (
     <div className="space-y-5 animate-fade-in">
       {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="relative">
-            <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-primary" />
-            <div className="pl-4">
-              <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Trades</h1>
-              <p className="text-sm text-muted-foreground">Track and manage your positions</p>
-            </div>
-          </div>
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-bold">Trades</h1>
+          <p className="text-sm text-muted-foreground">Track and manage your positions</p>
+        </div>
         <div className="flex gap-2 flex-wrap">
           <Button
             variant="outline"
@@ -329,11 +326,6 @@ export default function Trades() {
             {isPolling && openTradeInstruments.length > 0 && (
               <span className="flex items-center gap-1 text-xs text-profit">
                 <Radio className="w-3 h-3 animate-pulse" /> Live
-                {failoverActive && (
-                  <span className="ml-1 px-1 py-0.5 rounded text-[10px] font-medium bg-warning/15 text-warning border border-warning/20">
-                    TrueData
-                  </span>
-                )}
               </span>
             )}
           </div>

@@ -4,8 +4,6 @@ import { DailySectorChart } from "@/components/dashboard/DailySectorChart";
 import { DashboardAlertsPanel } from "@/components/dashboard/DashboardAlertsPanel";
 import { DashboardPositionsTable } from "@/components/dashboard/DashboardPositionsTable";
 import { DashboardMonthlyMetrics } from "@/components/dashboard/DashboardMonthlyMetrics";
-import { MorningBriefingWidget } from "@/components/dashboard/MorningBriefingWidget";
-import { RiskDashboardWidget } from "@/components/dashboard/RiskDashboardWidget";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
@@ -42,24 +40,7 @@ export interface DashboardContextValue {
 }
 
 export const DashboardContext = createContext<DashboardContextValue | null>(null);
-export const useDashboard = () => {
-  const ctx = useContext(DashboardContext);
-  if (!ctx) {
-    // Return safe defaults so components don't crash outside provider
-    return {
-      selectedMonth: new Date(),
-      setSelectedMonth: () => {},
-      segment: "All" as Segment,
-      trades: [],
-      monthTrades: [],
-      openTrades: [],
-      prices: {} as Record<string, { ltp: number }>,
-      isPolling: false,
-      lastUpdated: null,
-    } satisfies DashboardContextValue;
-  }
-  return ctx;
-};
+export const useDashboard = () => useContext(DashboardContext)!;
 
 export default function Dashboard() {
   const [selectedMonth, setSelectedMonth] = useState(new Date());
@@ -90,7 +71,7 @@ export default function Dashboard() {
   const openInstruments = useMemo(() => openTrades.map((t) => ({
     symbol: t.symbol, security_id: t.security_id, exchange_segment: t.exchange_segment,
   })), [openTrades]);
-  const { prices, isPolling, lastUpdated, activeProvider, failoverActive } = useLivePrices(openInstruments);
+  const { prices, isPolling, lastUpdated } = useLivePrices(openInstruments);
 
   const ctx: DashboardContextValue = {
     selectedMonth, setSelectedMonth, segment,
@@ -104,14 +85,11 @@ export default function Dashboard() {
       <div className="space-y-5 animate-fade-in">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="relative">
-            <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-primary" />
-            <div className="pl-4">
-              <h1 className="text-xl font-bold tracking-tight">Dashboard</h1>
-              <p className="text-muted-foreground text-sm">
-                {format(selectedMonth, "MMMM yyyy")} overview
-              </p>
-            </div>
+          <div>
+            <h1 className="text-xl font-bold">Dashboard</h1>
+            <p className="text-muted-foreground text-sm">
+              {format(selectedMonth, "MMMM yyyy")} overview
+            </p>
           </div>
           <div className="flex items-center gap-3">
             {/* Month selector */}
@@ -136,14 +114,6 @@ export default function Dashboard() {
                 <>
                   <Radio className="w-3 h-3 text-profit animate-pulse" />
                   <span className="text-profit font-medium">Live</span>
-                  {failoverActive && (
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-warning/15 text-warning border border-warning/20">
-                      TrueData
-                    </span>
-                  )}
-                  {!failoverActive && activeProvider === "dhan" && (
-                    <span className="text-[10px] text-muted-foreground/60">Dhan</span>
-                  )}
                   {lastUpdated && <span>• {format(lastUpdated, "h:mm a")}</span>}
                 </>
               ) : (
@@ -212,46 +182,30 @@ export default function Dashboard() {
         </div>
 
         {/* Dynamic Widgets */}
-        {widgets.reduce<{ elements: React.ReactNode[]; index: number }>((acc, w) => {
-          if (!w.visible) return acc;
-          const staggerClass = `animate-slide-up stagger-${acc.index + 1}`;
-          let el: React.ReactNode = null;
+        {widgets.map((w) => {
+          if (!w.visible) return null;
           switch (w.id) {
-            case "briefing":
-              el = <div key={w.id} className={staggerClass}><MorningBriefingWidget /></div>;
-              break;
             case "kpi":
-              el = <div key={w.id} className={staggerClass}><DashboardKPICards alerts={alerts} /></div>;
-              break;
+              return <DashboardKPICards key={w.id} alerts={alerts} />;
             case "chart":
-              el = (
-                <div key={w.id} className={cn("grid grid-cols-1 lg:grid-cols-3 gap-5", staggerClass)}>
+              return (
+                <div key={w.id} className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                   <div className="lg:col-span-2"><DailySectorChart /></div>
                   <DashboardAlertsPanel alerts={alerts} />
                 </div>
               );
-              break;
             case "alerts":
-              return acc; // Rendered with chart
+              return null; // Rendered with chart
             case "positions":
-              el = <div key={w.id} className={staggerClass}><DashboardPositionsTable /></div>;
-              break;
-            case "risk":
-              el = <div key={w.id} className={staggerClass}><RiskDashboardWidget /></div>;
-              break;
+              return <DashboardPositionsTable key={w.id} />;
             case "monthly":
-              el = <div key={w.id} className={staggerClass}><DashboardMonthlyMetrics /></div>;
-              break;
+              return <DashboardMonthlyMetrics key={w.id} />;
             case "actions":
-              el = <div key={w.id} className={staggerClass}><QuickActions /></div>;
-              break;
+              return <QuickActions key={w.id} />;
+            default:
+              return null;
           }
-          if (el) {
-            acc.elements.push(el);
-            acc.index++;
-          }
-          return acc;
-        }, { elements: [], index: 0 }).elements}
+        })}
       </div>
     </DashboardContext.Provider>
   );

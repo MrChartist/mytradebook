@@ -14,38 +14,16 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Validate JWT auth
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
-    return new Response(
-      JSON.stringify({ error: "Unauthorized" }),
-      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  }
-
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-  const userClient = createClient(supabaseUrl, anonKey, {
-    global: { headers: { Authorization: authHeader } },
-  });
-  const token = authHeader.replace("Bearer ", "");
-  const { data: claims, error: authError } = await userClient.auth.getClaims(token);
-  if (authError || !claims?.claims) {
-    return new Response(
-      JSON.stringify({ error: "Unauthorized" }),
-      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  }
-  const userId = claims.claims.sub as string;
 
   try {
     const body = await req.json();
-    const { action } = body;
+    const { action, user_id } = body;
 
     if (!action) throw new Error("action is required");
+    if (!user_id) throw new Error("user_id is required");
 
     // ── STEP 1: Generate consent URL ────────────────────────────
     if (action === "generate-consent") {
@@ -53,7 +31,7 @@ Deno.serve(async (req) => {
       if (!api_key || !api_secret) throw new Error("api_key and api_secret are required");
       if (!redirect_url) throw new Error("redirect_url is required");
 
-      console.log(`Generating Dhan consent for user ${userId}`);
+      console.log(`Generating Dhan consent for user ${user_id}`);
 
       // First, save API key & secret to user_settings
       const { error: saveErr } = await supabase
@@ -62,9 +40,10 @@ Deno.serve(async (req) => {
           dhan_api_key: api_key,
           dhan_api_secret: api_secret,
         } as any)
-        .eq("user_id", userId);
+        .eq("user_id", user_id);
       if (saveErr) throw saveErr;
 
+      // Call Dhan to generate consent
       const consentRes = await fetch(
         `${DHAN_AUTH_URL}/app/generate-consent?client_id=${encodeURIComponent(body.client_id || "")}`,
         {
@@ -101,6 +80,7 @@ Deno.serve(async (req) => {
         );
       }
 
+      // Build the authorization URL the user must visit (browser-based login)
       const authUrl = `${DHAN_AUTH_URL}/login/consentApp-login?consentAppId=${consentAppId}`;
 
       return new Response(
@@ -118,10 +98,11 @@ Deno.serve(async (req) => {
       const { consent_id, token_id } = body;
       if (!consent_id || !token_id) throw new Error("consent_id and token_id are required");
 
+      // Retrieve stored API key & secret
       const { data: settings } = await supabase
         .from("user_settings")
         .select("dhan_api_key, dhan_api_secret, dhan_client_id")
-        .eq("user_id", userId)
+        .eq("user_id", user_id)
         .single();
 
       if (!settings?.dhan_api_key || !settings?.dhan_api_secret) {
@@ -131,7 +112,7 @@ Deno.serve(async (req) => {
         );
       }
 
-      console.log(`Exchanging token for user ${userId}, consent ${consent_id}`);
+      console.log(`Exchanging token for user ${user_id}, consent ${consent_id}`);
 
       const tokenRes = await fetch(`${DHAN_AUTH_URL}/app/consumeApp-consent?tokenId=${encodeURIComponent(token_id)}`, {
         method: "POST",
@@ -164,6 +145,7 @@ Deno.serve(async (req) => {
         );
       }
 
+      // Verify the new token by calling profile
       const profileRes = await fetch(`${DHAN_API_URL}/profile`, {
         method: "GET",
         headers: {
@@ -181,6 +163,7 @@ Deno.serve(async (req) => {
         const profileData = await profileRes.json();
         const profile = profileData?.data || profileData;
         accountName = profile?.name || accountName;
+        // Parse Dhan's date format (DD/MM/YYYY HH:mm) to ISO format
         const rawExpiry = profile?.tokenValidity;
         if (rawExpiry) {
           try {
@@ -197,6 +180,7 @@ Deno.serve(async (req) => {
         }
       }
 
+      // Save everything to user_settings
       const { error: updateErr } = await supabase
         .from("user_settings")
         .update({
@@ -207,7 +191,7 @@ Deno.serve(async (req) => {
           dhan_account_name: accountName,
           dhan_token_expiry: tokenExpiry,
         } as any)
-        .eq("user_id", userId);
+        .eq("user_id", user_id);
 
       if (updateErr) throw updateErr;
 
@@ -227,7 +211,7 @@ Deno.serve(async (req) => {
       const { data: settings } = await supabase
         .from("user_settings")
         .select("dhan_api_key, dhan_api_secret, dhan_client_id, dhan_access_token")
-        .eq("user_id", userId)
+        .eq("user_id", user_id)
         .single();
 
       if (!settings?.dhan_api_key || !settings?.dhan_api_secret) {
@@ -240,6 +224,7 @@ Deno.serve(async (req) => {
         );
       }
 
+      // Try to renew using existing token first (Dhan's RenewToken API)
       if (settings.dhan_access_token && settings.dhan_client_id) {
         const renewRes = await fetch(`${DHAN_API_URL}/RenewToken`, {
           method: "POST",
@@ -264,7 +249,7 @@ Deno.serve(async (req) => {
                 dhan_token_expiry: expiryTime || null,
                 dhan_verified_at: new Date().toISOString(),
               } as any)
-              .eq("user_id", userId);
+              .eq("user_id", user_id);
 
             return new Response(
               JSON.stringify({
@@ -279,6 +264,7 @@ Deno.serve(async (req) => {
         }
       }
 
+      // If renewal failed, user needs to re-authorize via browser
       return new Response(
         JSON.stringify({
           success: false,

@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { validateCronAuth } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -25,10 +24,6 @@ const segmentDisplayNames: Record<string, string> = {
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-
-  // Validate cron/system auth
-  const cronAuthError = validateCronAuth(req);
-  if (cronAuthError) return cronAuthError;
 
   try {
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;

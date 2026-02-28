@@ -1,78 +1,58 @@
 
+# Expand F&O Stocks in Option Strategy Builder
 
-# Add Forgot Password / Reset Password Flow
+## Problem
+Both `MultiLegStrategyModal.tsx` and `OptionChainSelector.tsx` use a hardcoded `POPULAR_UNDERLYINGS` array with only 11-15 symbols. The actual `instrument_master` database has 180+ F&O underlying symbols.
 
-## Overview
-
-Add a complete password reset flow with two parts:
-1. A "Forgot password?" link on the login page that sends a reset email
-2. A new `/reset-password` page where users set their new password after clicking the email link
+## Solution
+Replace the hardcoded list with a database-driven approach that fetches all F&O underlyings, organized into Indices and Stocks, with search filtering.
 
 ## Changes
 
-### 1. Add `resetPassword` method to AuthContext
+### 1. Create a shared hook: `src/hooks/useFnoUnderlyings.ts`
+- Query `instrument_master` for distinct `underlying_symbol` where `exchange = 'NFO'`
+- Filter out test symbols (e.g., those ending in "NSETEST")
+- Categorize into **Indices** (NIFTY, BANKNIFTY, FINNIFTY, SENSEX, MIDCPNIFTY, NIFTYNXT50, BANKEX) and **Stocks** (everything else)
+- Cache the result using React Query so it loads once and stays fast
+- Return `{ indices, stocks, all, isLoading }` 
 
-**File: `src/contexts/AuthContext.tsx`**
+### 2. Update `src/components/trade/MultiLegStrategyModal.tsx`
+- Remove hardcoded `POPULAR_UNDERLYINGS`
+- Use the new `useFnoUnderlyings` hook
+- Show Indices first as a row of badges (always visible)
+- Show Stocks below, filtered by the search input
+- Display a small loading spinner while fetching
+- Cap the visible stock badges to ~30 at a time with the search narrowing results
 
-- Add a `resetPassword(email: string)` method that calls `supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/reset-password' })`
-- Add an `updatePassword(password: string)` method that calls `supabase.auth.updateUser({ password })`
-- Export both in the context type interface
+### 3. Update `src/components/trade/OptionChainSelector.tsx`
+- Same change: replace hardcoded `POPULAR_UNDERLYINGS` with the shared hook
+- Show Indices as a pinned row, Stocks searchable below
 
-### 2. Add "Forgot password?" link to Login page
-
-**File: `src/pages/Login.tsx`**
-
-- Add a "Forgot password?" button below the password field (only visible in "Sign In" mode)
-- Clicking it shows an inline form: email input + "Send Reset Link" button (replaces the login form temporarily)
-- On success, show a toast confirming the email was sent
-- Add a "Back to Sign In" link to return to the login form
-- This avoids creating a separate page -- keeps everything on the login page using a new `authMode` value: `"forgot"`
-
-### 3. Create Reset Password page
-
-**File: `src/pages/ResetPassword.tsx`** (new file)
-
-- A public page at `/reset-password`
-- Detects the `type=recovery` token in the URL hash (set automatically by the authentication system)
-- Shows a form with "New Password" and "Confirm Password" fields
-- On submit, calls `supabase.auth.updateUser({ password })` to set the new password
-- On success, redirects to `/login` with a toast
-- If no recovery token is detected, shows a message explaining the link is invalid or expired
-
-### 4. Add route for Reset Password
-
-**File: `src/App.tsx`**
-
-- Add `<Route path="/reset-password" element={<ResetPassword />} />` as a public route (not behind ProtectedRoute)
+### 4. Strike step logic
+- Update `getStrikeStep()` to default to a sensible value for stock options (currently returns 10, which is correct for most stocks, but larger stocks like RELIANCE may need larger steps)
+- Add a lookup: if price > 5000 use step 50, if > 2000 use step 25, else step 10
 
 ## Technical Details
 
-### Auth mode update in Login.tsx
-
-```text
-type AuthMode = "login" | "signup" | "phone" | "forgot"
+**Database query** (inside the hook):
+```sql
+SELECT DISTINCT underlying_symbol 
+FROM instrument_master 
+WHERE exchange = 'NFO' 
+  AND underlying_symbol IS NOT NULL
+ORDER BY underlying_symbol
 ```
 
-The "forgot" mode shows only an email field and a "Send Reset Link" button, with a link back to sign in.
+**Known indices to pin at top:**
+NIFTY, BANKNIFTY, FINNIFTY, SENSEX, MIDCPNIFTY, NIFTYNXT50, BANKEX
 
-### Reset Password page flow
-
-```text
-1. User clicks reset link in email
-2. Browser opens /reset-password#access_token=...&type=recovery&...
-3. Supabase client auto-detects the recovery token from the hash
-4. onAuthStateChange fires with event = "PASSWORD_RECOVERY"
-5. Page shows new password form
-6. User submits -> updateUser({ password }) is called
-7. Redirect to /login with success toast
+**UI layout change:**
+```
+Indices:  [NIFTY] [BANKNIFTY] [FINNIFTY] [SENSEX] [MIDCPNIFTY]
+─────────────────────────────────────────
+Stocks:   Search: [________]
+          [RELIANCE] [TCS] [INFY] [HDFCBANK] ...
+          (scrollable, filtered by search)
 ```
 
-### Files Changed
-
-| File | Change |
-|------|--------|
-| `src/contexts/AuthContext.tsx` | Add `resetPassword` and `updatePassword` methods |
-| `src/pages/Login.tsx` | Add "Forgot password?" link and inline forgot password form |
-| `src/pages/ResetPassword.tsx` | New page for setting a new password after clicking the reset email link |
-| `src/App.tsx` | Add `/reset-password` public route |
-
+No database migration needed -- all data already exists in `instrument_master`.
