@@ -14,6 +14,8 @@ import {
   Bookmark,
   Trash2,
   XCircle,
+  Upload,
+  Copy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +30,7 @@ import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 import { useDhanIntegration } from "@/hooks/useDhanIntegration";
 import { useLivePrices } from "@/hooks/useLivePrices";
 import { MultiLegStrategyModal } from "@/components/trade/MultiLegStrategyModal";
+import { CSVImportModal } from "@/components/modals/CSVImportModal";
 import { TradeStatus } from "@/lib/constants";
 import {
   DropdownMenu,
@@ -87,6 +90,7 @@ export default function Trades() {
   const [activeStatFilter, setActiveStatFilter] = useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [tradeToDelete, setTradeToDelete] = useState<Trade | null>(null);
+  const [csvImportOpen, setCsvImportOpen] = useState(false);
 
   const filters: TradeFilters = {
     ...(statusFilter !== "ALL" && { status: statusFilter }),
@@ -94,7 +98,7 @@ export default function Trades() {
     ...(searchQuery && { symbol: searchQuery }),
   };
 
-  const { trades, isLoading, summary, closeTrade, updateTrade, deleteTrade } = useTrades(filters);
+  const { trades, isLoading, summary, closeTrade, updateTrade, deleteTrade, createTrade } = useTrades(filters);
   const { syncPortfolio, monitorTrades, isSyncing } = useDhanIntegration();
   const { templates } = useTradeTemplates();
 
@@ -173,6 +177,10 @@ export default function Trades() {
           <p className="text-sm text-muted-foreground">Track and manage your positions</p>
         </div>
         <div className="flex gap-2 flex-wrap">
+          <Button variant="outline" size="sm" onClick={() => setCsvImportOpen(true)}>
+            <Upload className="w-4 h-4 mr-1.5" />
+            Import CSV
+          </Button>
           <Button
             variant="outline"
             size="sm"
@@ -436,6 +444,11 @@ export default function Trades() {
 
             const menuActions: InsightCardAction[] = [
               { label: "View Details", icon: Eye, onClick: () => setSelectedTrade(trade) },
+              { label: "Duplicate", icon: Copy, onClick: () => {
+                // Clone the trade - open create modal would be complex, so we duplicate via API
+                const { id, user_id, created_at, updated_at, closed_at, pnl, pnl_percent, current_price, dhan_order_id, reviewed_at, review_rating, review_rules_followed, review_execution_quality, review_what_worked, review_what_failed, ...rest } = trade;
+                createTrade.mutate({ ...rest, status: "PENDING" as any, entry_time: new Date().toISOString(), pnl: 0, pnl_percent: 0 });
+              }},
               ...(trade.status === "CANCELLED" ? [] : [
                 { label: "Cancel", icon: XCircle, onClick: () => updateTrade.mutate({ id: trade.id, status: "CANCELLED" }), variant: "destructive" as const },
               ]),
@@ -495,6 +508,7 @@ export default function Trades() {
         title="Delete Trade"
         description={`Are you sure you want to delete the trade for "${tradeToDelete?.symbol}"? This action cannot be undone.`}
       />
+      <CSVImportModal open={csvImportOpen} onOpenChange={setCsvImportOpen} />
     </div>
   );
 }
