@@ -40,7 +40,7 @@ export default function DhanCallback() {
           setMessage(`Connected as ${data.account_name}!`);
           localStorage.removeItem("dhan_consent_id");
           // Auto-redirect after 2 seconds
-          setTimeout(() => navigate("/settings?tab=integrations"), 2000);
+          setTimeout(() => navigate("/settings"), 2000);
         } else {
           throw new Error(data?.error || "Token exchange failed");
         }

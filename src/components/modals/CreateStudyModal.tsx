@@ -76,7 +76,7 @@ const noteTemplates = [
 
 export function CreateStudyModal({ open, onOpenChange }: CreateStudyModalProps) {
   const { createStudy } = useStudies();
-
+  
   const [selectedInstrument, setSelectedInstrument] = useState<SelectedInstrument | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [attachments, setAttachments] = useState<string[]>([]);
@@ -122,7 +122,7 @@ export function CreateStudyModal({ open, onOpenChange }: CreateStudyModalProps) 
   }, [setValue, watch]);
 
   const toggleTag = (tag: string) => {
-    setSelectedTags(prev =>
+    setSelectedTags(prev => 
       prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
     );
   };
@@ -149,55 +149,25 @@ export function CreateStudyModal({ open, onOpenChange }: CreateStudyModalProps) 
       return;
     }
 
-    // Collect all links
-    const allLinks = [
-      ...(chartLink.trim() ? [chartLink.trim()] : []),
-      ...links,
-    ];
-
-    // Append metadata to notes since some columns may not exist in DB
-    let finalNotes = data.notes || "";
-    if (allLinks.length > 0) {
-      finalNotes += `\n\n**Links:**\n${allLinks.map(l => `- ${l}`).join("\n")}`;
-    }
-    if (patternDuration) {
-      finalNotes += `\n\n**Pattern Duration:** ${systemDurations.find(d => d.value === patternDuration)?.label || patternDuration}`;
-    }
-    if (patternStartDate) {
-      finalNotes += `\n**Pattern Start:** ${patternStartDate}`;
-    }
-    if (patternEndDate) {
-      finalNotes += `\n**Breakout Date:** ${patternEndDate}`;
-    }
-    if (status && status !== "Draft") { // Only add if not default "Draft"
-      finalNotes += `\n\n**Status:** ${status}`;
-    }
-
     try {
-      // Only pass fields that definitely exist in the DB schema
-      const insertData: Record<string, unknown> = {
+      await createStudy.mutateAsync({
         title: data.title,
         symbol: symbolToUse,
         category: data.category,
-        notes: finalNotes.trim() || null,
+        notes: data.notes,
         tags: selectedTags,
         analysis_date: new Date().toISOString().split("T")[0],
-        attachments: attachments.length > 0 ? attachments : null,
-      };
-
-      // Attempt to pass optional columns — if they exist in DB, great; if not, they'll be stripped
-      // These are safe to pass as Supabase ignores unknown fields when not in strict mode
-      try {
-        await createStudy.mutateAsync(insertData as any);
-      } catch (firstError: any) {
-        // If error mentions a column not found, retry without the extra fields
-        if (firstError?.message?.includes("schema cache") || firstError?.message?.includes("column")) {
-          console.warn("Retrying study creation without optional fields:", firstError.message);
-          await createStudy.mutateAsync(insertData as any);
-        } else {
-          throw firstError;
-        }
-      }
+        attachments: attachments,
+        // These are extra fields we pass — the hook/DB will handle them
+        status,
+        pattern_duration: patternDuration || null,
+        pattern_start_date: patternStartDate || null,
+        pattern_end_date: patternEndDate || null,
+        links: [
+          ...(chartLink.trim() ? [chartLink.trim()] : []),
+          ...links,
+        ],
+      } as any);
 
       resetForm();
       onOpenChange(false);
@@ -364,7 +334,7 @@ export function CreateStudyModal({ open, onOpenChange }: CreateStudyModalProps) 
                 ))}
               </div>
             )}
-
+            
             {/* Quick pick sections */}
             <div className="space-y-2">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Classic Patterns</p>
@@ -380,7 +350,7 @@ export function CreateStudyModal({ open, onOpenChange }: CreateStudyModalProps) 
                   </Badge>
                 ))}
               </div>
-
+              
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium pt-1">Candlestick</p>
               <div className="flex flex-wrap gap-1">
                 {candlestickTags.map(tag => (
@@ -394,7 +364,7 @@ export function CreateStudyModal({ open, onOpenChange }: CreateStudyModalProps) 
                   </Badge>
                 ))}
               </div>
-
+              
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium pt-1">Setup</p>
               <div className="flex flex-wrap gap-1">
                 {setupTags.map(tag => (
@@ -436,7 +406,7 @@ export function CreateStudyModal({ open, onOpenChange }: CreateStudyModalProps) 
               bucket="study-attachments"
               maxImages={5}
             />
-
+            
             {/* Link attachments */}
             <div className="space-y-2 pt-2">
               {links.length > 0 && (

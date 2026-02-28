@@ -124,8 +124,9 @@ export function DailySectorChart() {
             <button
               key={r}
               onClick={() => setRange(r)}
-              className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${range === r ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
-                }`}
+              className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+                range === r ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               {r}
             </button>
@@ -159,8 +160,9 @@ export function DailySectorChart() {
           {topSectors.map(([seg, pnl]) => (
             <span
               key={seg}
-              className={`text-[10px] font-medium px-2 py-1 rounded-md border ${pnl >= 0 ? "border-profit/20 bg-profit/5 text-profit" : "border-loss/20 bg-loss/5 text-loss"
-                }`}
+              className={`text-[10px] font-medium px-2 py-1 rounded-md border ${
+                pnl >= 0 ? "border-profit/20 bg-profit/5 text-profit" : "border-loss/20 bg-loss/5 text-loss"
+              }`}
             >
               {SEGMENT_SHORT[seg] || seg}: {pnl >= 0 ? "+" : ""}₹{Math.abs(pnl).toLocaleString("en-IN", { maximumFractionDigits: 0 })}
             </span>

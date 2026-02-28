@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Save, Loader2, IndianRupee } from "lucide-react";
+import { Save, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,7 +16,6 @@ import { useUserSettings } from "@/hooks/useUserSettings";
 export default function PreferencesSettings() {
   const { settings, isLoading, updateSettings } = useUserSettings();
   const [formData, setFormData] = useState({
-    starting_capital: 500000,
     default_sl_percent: 2,
     alert_frequency_minutes: 5,
     auto_sync_portfolio: true,
@@ -27,7 +26,6 @@ export default function PreferencesSettings() {
   useEffect(() => {
     if (settings) {
       setFormData({
-        starting_capital: settings.starting_capital ?? 500000,
         default_sl_percent: settings.default_sl_percent ?? 2,
         alert_frequency_minutes: settings.alert_frequency_minutes ?? 5,
         auto_sync_portfolio: settings.auto_sync_portfolio ?? true,
@@ -53,30 +51,6 @@ export default function PreferencesSettings() {
     <div className="glass-card p-6">
       <h2 className="text-lg font-semibold mb-6">App Preferences</h2>
       <div className="space-y-6">
-        {/* Trading Capital */}
-        <div className="flex items-center justify-between p-4 rounded-lg bg-accent/50">
-          <div>
-            <Label htmlFor="starting-capital" className="font-medium">Trading Capital</Label>
-            <p className="text-sm text-muted-foreground mt-1">
-              Used for equity curve, position sizing &amp; risk calculations
-            </p>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <IndianRupee className="w-4 h-4 text-muted-foreground" />
-            <Input
-              id="starting-capital"
-              type="number"
-              value={formData.starting_capital}
-              onChange={(e) =>
-                setFormData({ ...formData, starting_capital: parseInt(e.target.value) || 500000 })
-              }
-              className="w-32 bg-card border-border text-right font-mono"
-              min={10000}
-              step={50000}
-            />
-          </div>
-        </div>
-
         {/* Default SL % */}
         <div className="flex items-center justify-between p-4 rounded-lg bg-accent/50">
           <div>

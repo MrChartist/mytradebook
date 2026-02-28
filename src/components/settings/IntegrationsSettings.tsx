@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import {
-  Loader2, Send, RefreshCw, CheckCircle,
-  Smartphone, Database, Clock, AlertTriangle,
+import { 
+  Loader2, Send, RefreshCw, CheckCircle, 
+  Smartphone, Database, Clock, AlertTriangle, 
   MessageCircle, Unplug, Key, Eye, EyeOff, Shield,
   Activity,
 } from "lucide-react";
@@ -20,13 +20,13 @@ import { cn } from "@/lib/utils";
 export default function IntegrationsSettings() {
   const { user } = useAuth();
   const { settings, isLoading, updateSettings } = useUserSettings();
-
+  
   // Telegram state
   const [telegramChatId, setTelegramChatId] = useState("");
   const [savingTelegram, setSavingTelegram] = useState(false);
   const [testingTelegram, setTestingTelegram] = useState(false);
   const [disconnectingTelegram, setDisconnectingTelegram] = useState(false);
-
+  
   // Dhan state
   const [dhanClientId, setDhanClientId] = useState("");
   const [dhanAccessToken, setDhanAccessToken] = useState("");
@@ -34,13 +34,13 @@ export default function IntegrationsSettings() {
   const [verifyingDhan, setVerifyingDhan] = useState(false);
   const [disconnectingDhan, setDisconnectingDhan] = useState(false);
   const [dhanAuthMode, setDhanAuthMode] = useState<"token" | "apikey">("apikey");
-
+  
   // API Key mode state
   const [dhanApiKey, setDhanApiKey] = useState("");
   const [dhanApiSecret, setDhanApiSecret] = useState("");
   const [showApiSecret, setShowApiSecret] = useState(false);
   const [connectingApiKey, setConnectingApiKey] = useState(false);
-
+  
   // Dhan sync state
   const [syncingOrders, setSyncingOrders] = useState(false);
 
@@ -68,7 +68,7 @@ export default function IntegrationsSettings() {
       setDhanClientId(settings.dhan_client_id || "");
     }
   }, [settings]);
-
+  
   // Fetch instrument sync status
   const fetchSyncStatus = useCallback(async () => {
     const { data: logs } = await supabase
@@ -76,7 +76,7 @@ export default function IntegrationsSettings() {
       .select("*")
       .order("started_at", { ascending: false })
       .limit(1);
-
+    
     if (logs && logs.length > 0) {
       const latest = logs[0];
       setSyncStatus((prev) => ({
@@ -86,15 +86,15 @@ export default function IntegrationsSettings() {
         errorMessage: latest.error_message,
       }));
     }
-
+    
     // Get counts by segment
     const segments = ["NSE_EQ", "NSE_FNO", "MCX_COMM"];
     for (const seg of segments) {
       const { count } = await supabase
         .from("instrument_master")
-        .select("*", { count: "estimated", head: true })
+        .select("*", { count: "exact", head: true })
         .eq("exchange_segment", seg);
-
+      
       if (count !== null) {
         setSyncStatus((prev) => ({
           ...prev,
@@ -156,7 +156,7 @@ export default function IntegrationsSettings() {
       toast.error("Please enter both Client ID and Access Token");
       return;
     }
-
+    
     setVerifyingDhan(true);
     try {
       const { data, error } = await supabase.functions.invoke("dhan-verify", {
@@ -167,7 +167,7 @@ export default function IntegrationsSettings() {
           access_token: dhanAccessToken,
         },
       });
-
+      
       if (error) throw error;
       if (data?.success) {
         toast.success(`Connected as ${data.account_name}`);
@@ -189,11 +189,11 @@ export default function IntegrationsSettings() {
       toast.error("Please enter both API Key and API Secret");
       return;
     }
-
+    
     setConnectingApiKey(true);
     try {
       const redirectUrl = `${window.location.origin}/dhan-callback`;
-
+      
       const { data, error } = await supabase.functions.invoke("dhan-auth", {
         body: {
           action: "generate-consent",
@@ -204,9 +204,9 @@ export default function IntegrationsSettings() {
           redirect_url: redirectUrl,
         },
       });
-
+      
       if (error) throw error;
-
+      
       if (data?.success && data?.auth_url) {
         // Store consent ID for callback
         localStorage.setItem("dhan_consent_id", data.consent_id);
@@ -231,7 +231,7 @@ export default function IntegrationsSettings() {
       const { data, error } = await supabase.functions.invoke("dhan-verify", {
         body: { action: "disconnect", user_id: user.id },
       });
-
+      
       if (error) throw error;
       if (data?.success) {
         toast.success("Dhan disconnected");
@@ -248,17 +248,17 @@ export default function IntegrationsSettings() {
   const handleInstrumentSync = async () => {
     setSyncingInstruments(true);
     setSyncStatus((prev) => ({ ...prev, status: "running", errorMessage: null }));
-
+    
     try {
       const { data, error } = await supabase.functions.invoke("instrument-sync");
-
+      
       if (error) {
         console.error("Instrument sync error:", error);
         toast.error("Sync failed: " + error.message);
         setSyncStatus((prev) => ({ ...prev, status: "failed", errorMessage: error.message }));
         return;
       }
-
+      
       if (data?.success) {
         toast.success(`Synced ${data.inserted} instruments (${data.duration_ms}ms)`);
         // Refresh counts
@@ -399,20 +399,15 @@ export default function IntegrationsSettings() {
                     </span>
                   </div>
                   <span className="text-xs text-muted-foreground">
-                    Connected {settings?.dhan_verified_at
-                      ? new Date(settings.dhan_verified_at).toLocaleDateString()
+                    Connected {settings?.dhan_verified_at 
+                      ? new Date(settings.dhan_verified_at).toLocaleDateString() 
                       : ""}
                   </span>
                 </div>
               </div>
 
               {/* Token validity display */}
-              <TokenValidityCard
-                settings={settings}
-                userId={user?.id}
-                onReAuthorize={handleConnectApiKey}
-                connectingApiKey={connectingApiKey}
-              />
+              <TokenValidityCard settings={settings} userId={user?.id} />
 
               {/* Auto-Sync Toggle */}
               <div className="p-3 rounded-lg border border-border bg-accent/30 flex items-center justify-between">
@@ -433,7 +428,7 @@ export default function IntegrationsSettings() {
                 />
               </div>
 
-              {/* Manual Sync + Disconnect */}
+              {/* Manual Sync */}
               <div className="flex gap-2">
                 <Button
                   variant="outline"
@@ -629,7 +624,7 @@ export default function IntegrationsSettings() {
                       placeholder="Your Dhan Client ID"
                     />
                   </div>
-
+                  
                   <div className="space-y-2">
                     <Label htmlFor="dhan-token">Access Token</Label>
                     <div className="relative">
@@ -653,9 +648,9 @@ export default function IntegrationsSettings() {
                     </div>
                     <p className="text-xs text-muted-foreground">
                       Get your token from{" "}
-                      <a
-                        href="https://login.dhan.co/register?brand=dhan&referral=AIQU0151"
-                        target="_blank"
+                      <a 
+                        href="https://login.dhan.co/register?brand=dhan&referral=AIQU0151" 
+                        target="_blank" 
                         rel="noopener noreferrer"
                         className="text-primary hover:underline"
                       >
@@ -663,7 +658,7 @@ export default function IntegrationsSettings() {
                       </a>
                     </p>
                   </div>
-
+                  
                   <Button
                     onClick={handleVerifyDhan}
                     disabled={verifyingDhan || !dhanClientId || !dhanAccessToken}
@@ -905,15 +900,16 @@ export default function IntegrationsSettings() {
               <div className="text-lg font-bold">{syncStatus.mcxCount.toLocaleString()}</div>
             </div>
           </div>
-
+          
           {/* Sync status */}
           {syncStatus.status && (
-            <div className={`p-3 rounded-lg flex items-center gap-2 ${syncStatus.status === "completed" || syncStatus.status === "partial"
-              ? "bg-profit/10 border border-profit/20"
-              : syncStatus.status === "running"
+            <div className={`p-3 rounded-lg flex items-center gap-2 ${
+              syncStatus.status === "completed" || syncStatus.status === "partial"
+                ? "bg-profit/10 border border-profit/20"
+                : syncStatus.status === "running"
                 ? "bg-blue-500/10 border border-blue-500/20"
                 : "bg-loss/10 border border-loss/20"
-              }`}>
+            }`}>
               {(syncStatus.status === "completed" || syncStatus.status === "partial") ? (
                 <CheckCircle className="w-4 h-4 text-profit" />
               ) : syncStatus.status === "running" ? (
@@ -921,29 +917,30 @@ export default function IntegrationsSettings() {
               ) : (
                 <AlertTriangle className="w-4 h-4 text-loss" />
               )}
-              <span className={`text-sm font-medium ${(syncStatus.status === "completed" || syncStatus.status === "partial") ? "text-profit"
+              <span className={`text-sm font-medium ${
+                (syncStatus.status === "completed" || syncStatus.status === "partial") ? "text-profit" 
                 : syncStatus.status === "running" ? "text-blue-400"
-                  : "text-loss"
-                }`}>
-                {syncStatus.status === "completed" ? "Sync successful"
-                  : syncStatus.status === "partial" ? "Sync completed with warnings"
-                    : syncStatus.status === "running" ? "Syncing..."
-                      : "Sync failed"}
+                : "text-loss"
+              }`}>
+                {syncStatus.status === "completed" ? "Sync successful" 
+                 : syncStatus.status === "partial" ? "Sync completed with warnings"
+                 : syncStatus.status === "running" ? "Syncing..."
+                 : "Sync failed"}
               </span>
             </div>
           )}
-
+          
           {syncStatus.errorMessage && (
             <div className="p-2 rounded bg-loss/10 border border-loss/20">
               <p className="text-xs text-loss">{syncStatus.errorMessage}</p>
             </div>
           )}
-
+          
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Clock className="w-3.5 h-3.5" />
-              Last sync: {syncStatus.lastSync
-                ? new Date(syncStatus.lastSync).toLocaleString()
+              Last sync: {syncStatus.lastSync 
+                ? new Date(syncStatus.lastSync).toLocaleString() 
                 : "Never"}
             </div>
             <div className="text-sm font-medium">
@@ -976,17 +973,7 @@ export default function IntegrationsSettings() {
 
 // ── Token Validity Card ──────────────────────────────────────────
 
-function TokenValidityCard({
-  settings,
-  userId,
-  onReAuthorize,
-  connectingApiKey,
-}: {
-  settings: any;
-  userId?: string;
-  onReAuthorize?: () => void;
-  connectingApiKey?: boolean;
-}) {
+function TokenValidityCard({ settings, userId }: { settings: any; userId?: string }) {
   const [testing, setTesting] = useState(false);
   const [renewing, setRenewing] = useState(false);
   const [tokenStatus, setTokenStatus] = useState<"active" | "expired" | "unknown">("unknown");
@@ -1034,9 +1021,9 @@ function TokenValidityCard({
       if (data?.success) {
         setTokenStatus("active");
         setTokenExpiry(data.token_expiry);
-        toast.success("Token renewed! Live prices are back online.");
+        toast.success("Token renewed! Valid for another 24 hours.");
       } else {
-        toast.error(data?.error || "Renewal failed. Use Re-authorize below.");
+        toast.error(data?.error || "Renewal failed. Generate a new token from Dhan Web.");
       }
     } catch (e: any) {
       toast.error(e?.message || "Renewal failed");
@@ -1045,55 +1032,21 @@ function TokenValidityCard({
     }
   };
 
-  // Prominent expired banner
-  if (tokenStatus === "expired") {
-    return (
-      <div className="rounded-lg border border-loss/40 bg-loss/10 p-4 space-y-3">
-        <div className="flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-loss flex-shrink-0" />
-          <div>
-            <p className="text-sm font-semibold text-loss">Dhan Token Expired</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Live price data is paused. Renew your token to resume — takes one click.
-            </p>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button size="sm" onClick={handleRenew} disabled={renewing}>
-            {renewing ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5 mr-1.5" />}
-            Renew Token
-          </Button>
-          {onReAuthorize && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={onReAuthorize}
-              disabled={connectingApiKey}
-              className="border-loss/40 text-loss hover:text-loss"
-            >
-              {connectingApiKey ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Key className="w-3.5 h-3.5 mr-1.5" />}
-              Re-authorize with API Key
-            </Button>
-          )}
-        </div>
-        <p className="text-xs text-muted-foreground">
-          "Renew Token" works if your API Key is configured. If it fails, use "Re-authorize" for a one-time Dhan login.
-        </p>
-      </div>
-    );
-  }
-
-  // Normal status card
   return (
     <div className="p-3 rounded-lg border border-border bg-accent/30 space-y-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div
-            className={`w-2 h-2 rounded-full ${tokenStatus === "active" ? "bg-profit" : "bg-muted-foreground"
-              }`}
+            className={`w-2 h-2 rounded-full ${
+              tokenStatus === "active"
+                ? "bg-profit"
+                : tokenStatus === "expired"
+                ? "bg-loss"
+                : "bg-muted-foreground"
+            }`}
           />
           <span className="text-sm font-medium">
-            Token: {tokenStatus === "active" ? "Active" : "Unknown — click Test"}
+            Token: {tokenStatus === "active" ? "Active" : tokenStatus === "expired" ? "Expired" : "Unknown"}
           </span>
         </div>
         {tokenExpiry && tokenStatus === "active" && (
@@ -1102,6 +1055,21 @@ function TokenValidityCard({
           </span>
         )}
       </div>
+
+      {tokenStatus === "expired" && (
+        <p className="text-xs text-loss">
+          Token expired. Renew it below or generate a new token from{" "}
+          <a
+            href="https://login.dhan.co"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+          >
+            Dhan Web
+          </a>
+          .
+        </p>
+      )}
 
       <div className="flex gap-2">
         <Button variant="outline" size="sm" onClick={handleTest} disabled={testing}>

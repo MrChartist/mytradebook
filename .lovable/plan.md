@@ -1,39 +1,78 @@
 
 
-# Fix Preview Navigation and Google Auth Behavior
+# Add Forgot Password / Reset Password Flow
 
-## Issues Found
+## Overview
 
-### 1. Preview shows Landing page, not Login page
-You're currently on the `/` route, which is a protected page. Since you're not logged in, it redirects you to `/landing` (not `/login`). This might be why you feel the preview isn't working -- you may be seeing the landing page instead of the login page.
+Add a complete password reset flow with two parts:
+1. A "Forgot password?" link on the login page that sends a reset email
+2. A new `/reset-password` page where users set their new password after clicking the email link
 
-### 2. Google Auth -- Popup vs Redirect
-Good news: **Google sign-in already opens in a popup window** when you use it from the Lovable preview (the right panel). On the published site (mytradebook.lovable.app), it uses a full-page redirect instead -- this is the standard, secure approach for OAuth on standalone websites and is controlled by the authentication library. This behavior cannot be changed to popup on the published site.
+## Changes
 
-## Plan
+### 1. Add `resetPassword` method to AuthContext
 
-### Step 1: Fix the redirect destination
-Change the ProtectedRoute to redirect unauthenticated users to `/login` instead of `/landing`, so you always see the login form when not signed in.
+**File: `src/contexts/AuthContext.tsx`**
 
-**File: `src/components/layout/ProtectedRoute.tsx`**
-- Change `Navigate to="/landing"` to `Navigate to="/login"`
+- Add a `resetPassword(email: string)` method that calls `supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/reset-password' })`
+- Add an `updatePassword(password: string)` method that calls `supabase.auth.updateUser({ password })`
+- Export both in the context type interface
 
-### Step 2: Improve Google Auth error handling on Login page
-Add better error messages and ensure the loading state always resets properly, so the button never gets permanently stuck in "Connecting..." state.
+### 2. Add "Forgot password?" link to Login page
 
 **File: `src/pages/Login.tsx`**
-- Add a timeout safety net that resets `googleLoading` after 10 seconds
-- Improve the error toast to suggest opening in a new tab if popup is blocked
 
-### Step 3: Ensure preview loads the login page
-The preview should now correctly show the login page when you're not authenticated, instead of showing the landing page.
+- Add a "Forgot password?" button below the password field (only visible in "Sign In" mode)
+- Clicking it shows an inline form: email input + "Send Reset Link" button (replaces the login form temporarily)
+- On success, show a toast confirming the email was sent
+- Add a "Back to Sign In" link to return to the login form
+- This avoids creating a separate page -- keeps everything on the login page using a new `authMode` value: `"forgot"`
 
----
+### 3. Create Reset Password page
+
+**File: `src/pages/ResetPassword.tsx`** (new file)
+
+- A public page at `/reset-password`
+- Detects the `type=recovery` token in the URL hash (set automatically by the authentication system)
+- Shows a form with "New Password" and "Confirm Password" fields
+- On submit, calls `supabase.auth.updateUser({ password })` to set the new password
+- On success, redirects to `/login` with a toast
+- If no recovery token is detected, shows a message explaining the link is invalid or expired
+
+### 4. Add route for Reset Password
+
+**File: `src/App.tsx`**
+
+- Add `<Route path="/reset-password" element={<ResetPassword />} />` as a public route (not behind ProtectedRoute)
 
 ## Technical Details
 
-| Change | File | What |
-|--------|------|------|
-| Redirect to `/login` | `src/components/layout/ProtectedRoute.tsx` | Line 24: change `/landing` to `/login` |
-| Safer Google loading state | `src/pages/Login.tsx` | Reset `googleLoading` with a longer safety timeout and clearer error messages |
+### Auth mode update in Login.tsx
+
+```text
+type AuthMode = "login" | "signup" | "phone" | "forgot"
+```
+
+The "forgot" mode shows only an email field and a "Send Reset Link" button, with a link back to sign in.
+
+### Reset Password page flow
+
+```text
+1. User clicks reset link in email
+2. Browser opens /reset-password#access_token=...&type=recovery&...
+3. Supabase client auto-detects the recovery token from the hash
+4. onAuthStateChange fires with event = "PASSWORD_RECOVERY"
+5. Page shows new password form
+6. User submits -> updateUser({ password }) is called
+7. Redirect to /login with success toast
+```
+
+### Files Changed
+
+| File | Change |
+|------|--------|
+| `src/contexts/AuthContext.tsx` | Add `resetPassword` and `updatePassword` methods |
+| `src/pages/Login.tsx` | Add "Forgot password?" link and inline forgot password form |
+| `src/pages/ResetPassword.tsx` | New page for setting a new password after clicking the reset email link |
+| `src/App.tsx` | Add `/reset-password` public route |
 

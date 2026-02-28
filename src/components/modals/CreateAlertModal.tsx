@@ -239,58 +239,28 @@ export function CreateAlertModal({ open, onOpenChange, prefillSymbol, prefillExc
       return;
     }
 
-    // Collect extra metadata to embed in notes if needed
-    const extraMeta: string[] = [];
-    if (chartLink.trim()) extraMeta.push(`Chart: ${chartLink.trim()}`);
-    if (cooldown > 0) extraMeta.push(`Cooldown: ${cooldown}min`);
-    if (checkInterval !== 5) extraMeta.push(`Check interval: ${checkInterval}min`);
-
-    // Build the full payload (try with all fields first)
-    const fullPayload: Record<string, unknown> = {
-      symbol: data.symbol,
-      condition_type: data.condition_type,
-      threshold: data.threshold || null,
-      recurrence: data.recurrence,
-      expires_at: computeExpiry() || null,
-      notes: data.notes || null,
-      telegram_enabled: data.telegram_enabled || false,
-      instrument_id: selectedInstrument.security_id || undefined,
-      exchange: data.exchange || "NSE",
-      exchange_segment: selectedInstrument.exchange_segment,
-      security_id: selectedInstrument.security_id || undefined,
-      cooldown_minutes: cooldown,
-      active_hours_only: activeHoursOnly,
-      webhook_enabled: webhookEnabled,
-      delivery_in_app: deliveryInApp,
-      chain_children: chainChildren.length > 0 ? chainChildren : undefined,
-      chart_link: chartLink.trim() || null,
-      check_interval_minutes: checkInterval,
-    };
-
-    // Core-only payload (safe fallback)
-    const coreNotes = [data.notes || "", ...extraMeta].filter(Boolean).join("\n");
-    const corePayload: Record<string, unknown> = {
-      symbol: data.symbol,
-      condition_type: data.condition_type,
-      threshold: data.threshold || null,
-      recurrence: data.recurrence,
-      expires_at: computeExpiry() || null,
-      notes: coreNotes.trim() || null,
-      telegram_enabled: data.telegram_enabled || false,
-    };
-
     try {
-      try {
-        await createAlert.mutateAsync(fullPayload as any);
-      } catch (firstError: any) {
-        const msg = firstError?.message || "";
-        if (msg.includes("schema cache") || msg.includes("column")) {
-          console.warn("Alert: falling back to core fields:", msg);
-          await createAlert.mutateAsync(corePayload as any);
-        } else {
-          throw firstError;
-        }
-      }
+      await createAlert.mutateAsync({
+        symbol: data.symbol,
+        condition_type: data.condition_type,
+        threshold: data.threshold || null,
+        recurrence: data.recurrence,
+        expires_at: computeExpiry() || null,
+        notes: data.notes || null,
+        telegram_enabled: data.telegram_enabled || false,
+        instrument_id: selectedInstrument.security_id || undefined,
+        exchange: data.exchange || "NSE",
+        exchange_segment: selectedInstrument.exchange_segment,
+        security_id: selectedInstrument.security_id || undefined,
+        cooldown_minutes: cooldown,
+        active_hours_only: activeHoursOnly,
+        webhook_enabled: webhookEnabled,
+        delivery_in_app: deliveryInApp,
+        chain_children: chainChildren.length > 0 ? chainChildren : undefined,
+        chart_link: chartLink.trim() || null,
+        check_interval_minutes: checkInterval,
+      } as any);
+
       handleClose();
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to create alert";

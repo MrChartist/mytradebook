@@ -246,21 +246,22 @@ export async function promisePool<T>(
   tasks: (() => Promise<T>)[],
   concurrency: number
 ): Promise<T[]> {
-  const results: T[] = new Array(tasks.length);
-  const executing = new Set<Promise<void>>();
+  const results: T[] = [];
+  const executing: Promise<void>[] = [];
 
-  for (let i = 0; i < tasks.length; i++) {
-    const index = i;
-    const p = tasks[index]().then((result) => {
-      results[index] = result;
-    }).finally(() => {
-      executing.delete(p);
+  for (const task of tasks) {
+    const p = task().then((result) => {
+      results.push(result);
     });
 
-    executing.add(p);
+    executing.push(p);
 
-    if (executing.size >= concurrency) {
+    if (executing.length >= concurrency) {
       await Promise.race(executing);
+      executing.splice(
+        executing.findIndex((e) => e === p),
+        1
+      );
     }
   }
 

@@ -48,7 +48,7 @@ export const useDashboard = () => {
     // Return safe defaults so components don't crash outside provider
     return {
       selectedMonth: new Date(),
-      setSelectedMonth: () => { },
+      setSelectedMonth: () => {},
       segment: "All" as Segment,
       trades: [],
       monthTrades: [],
@@ -107,45 +107,28 @@ export default function Dashboard() {
           <div className="relative">
             <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-primary" />
             <div className="pl-4">
-              <h1 className="text-xl font-display tracking-tight">Dashboard</h1>
+              <h1 className="text-xl font-bold tracking-tight">Dashboard</h1>
               <p className="text-muted-foreground text-sm">
                 {format(selectedMonth, "MMMM yyyy")} overview
               </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            {/* Month selector with navigation */}
-            <div className="flex items-center gap-1 bg-muted rounded-lg p-0.5">
-              <button
-                onClick={() => setSelectedMonth(subMonths(selectedMonth, 1))}
-                className="px-1.5 py-1 text-xs text-muted-foreground hover:text-foreground rounded-md transition-all"
-                aria-label="Previous month"
-              >
-                ←
-              </button>
-              <span className="px-2.5 py-1 text-xs font-semibold text-foreground min-w-[4.5rem] text-center">
-                {format(selectedMonth, "MMM yyyy")}
-              </span>
+            {/* Month selector */}
+            <div className="flex gap-1 bg-muted rounded-lg p-0.5">
               {[subMonths(new Date(), 2), subMonths(new Date(), 1), new Date()].map((m) => (
                 <button
                   key={m.toISOString()}
                   onClick={() => setSelectedMonth(m)}
-                  className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${format(selectedMonth, "MMM yy") === format(m, "MMM yy")
-                    ? "bg-background shadow-sm text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                    }`}
+                  className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+                    format(selectedMonth, "MMM yy") === format(m, "MMM yy")
+                      ? "bg-background shadow-sm text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
                 >
                   {format(m, "MMM")}
                 </button>
               ))}
-              <button
-                onClick={() => setSelectedMonth(subMonths(selectedMonth, -1))}
-                className="px-1.5 py-1 text-xs text-muted-foreground hover:text-foreground rounded-md transition-all"
-                aria-label="Next month"
-                disabled={format(selectedMonth, "MMM yy") === format(new Date(), "MMM yy")}
-              >
-                →
-              </button>
             </div>
             {/* Live indicator */}
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -163,26 +146,12 @@ export default function Dashboard() {
                   )}
                   {lastUpdated && <span>• {format(lastUpdated, "h:mm a")}</span>}
                 </>
-              ) : (() => {
-                const now = new Date();
-                const istHour = now.getUTCHours() + 5 + (now.getUTCMinutes() + 30 >= 60 ? 1 : 0);
-                const istMin = (now.getUTCMinutes() + 30) % 60;
-                const day = now.getUTCDay();
-                const isWeekday = day >= 1 && day <= 5;
-                const timeInMinutes = istHour * 60 + istMin;
-                const isOpen = isWeekday && timeInMinutes >= 555 && timeInMinutes <= 930; // 9:15 AM to 3:30 PM IST
-                return isOpen ? (
-                  <>
-                    <span className="w-1.5 h-1.5 rounded-full bg-profit" />
-                    <span>Market Open</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40" />
-                    <span className="text-muted-foreground/60">Market Closed</span>
-                  </>
-                );
-              })()}
+              ) : (
+                <>
+                  <span className="w-1.5 h-1.5 rounded-full bg-profit" />
+                  <span>Market Open</span>
+                </>
+              )}
             </div>
 
             {/* Widget customization */}
@@ -231,10 +200,11 @@ export default function Dashboard() {
             <button
               key={opt.value}
               onClick={() => setSegment(opt.value)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${segment === opt.value
-                ? "bg-primary text-primary-foreground border-primary"
-                : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/20"
-                }`}
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
+                segment === opt.value
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/20"
+              }`}
             >
               {opt.label}
             </button>

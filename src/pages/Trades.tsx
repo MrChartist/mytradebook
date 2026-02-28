@@ -35,13 +35,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { toast } from "sonner";
 import type { Trade } from "@/hooks/useTrades";
 import { InsightCard, type InsightCardAction } from "@/components/ui/insight-card";
@@ -94,8 +87,6 @@ export default function Trades() {
   const [activeStatFilter, setActiveStatFilter] = useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [tradeToDelete, setTradeToDelete] = useState<Trade | null>(null);
-  const [bulkConfirmAction, setBulkConfirmAction] = useState<"cancel" | "close" | null>(null);
-  const [templatePrefill, setTemplatePrefill] = useState<{ segment?: string; trade_type?: string; notes?: string; tags?: string[] } | undefined>(undefined);
 
   const filters: TradeFilters = {
     ...(statusFilter !== "ALL" && { status: statusFilter }),
@@ -107,18 +98,14 @@ export default function Trades() {
   const { syncPortfolio, monitorTrades, isSyncing } = useDhanIntegration();
   const { templates } = useTradeTemplates();
 
-  // Use a separate lightweight call only when filters are active; otherwise reuse existing data
-  const { trades: allTrades } = useTrades(
-    statusFilter !== "ALL" || segmentFilter !== "ALL" || searchQuery ? undefined : undefined
-  );
-  const tradesForCounts = statusFilter === "ALL" && segmentFilter === "ALL" && !searchQuery ? trades : allTrades;
+  const { trades: allTrades } = useTrades();
   const statusCounts = useMemo(() => ({
-    ALL: tradesForCounts.length,
-    PENDING: tradesForCounts.filter(t => t.status === "PENDING").length,
-    OPEN: tradesForCounts.filter(t => t.status === "OPEN").length,
-    CLOSED: tradesForCounts.filter(t => t.status === "CLOSED").length,
-    CANCELLED: tradesForCounts.filter(t => t.status === "CANCELLED").length,
-  }), [tradesForCounts]);
+    ALL: allTrades.length,
+    PENDING: allTrades.filter(t => t.status === "PENDING").length,
+    OPEN: allTrades.filter(t => t.status === "OPEN").length,
+    CLOSED: allTrades.filter(t => t.status === "CLOSED").length,
+    CANCELLED: allTrades.filter(t => t.status === "CANCELLED").length,
+  }), [allTrades]);
 
   const sortedTrades = useMemo(() => {
     let list = [...trades];
@@ -180,14 +167,14 @@ export default function Trades() {
   return (
     <div className="space-y-5 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div className="relative">
-          <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-primary" />
-          <div className="pl-4">
-            <h1 className="text-2xl lg:text-3xl font-display tracking-tight">Trades</h1>
-            <p className="text-sm text-muted-foreground">Track and manage your positions</p>
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="relative">
+            <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-primary" />
+            <div className="pl-4">
+              <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Trades</h1>
+              <p className="text-sm text-muted-foreground">Track and manage your positions</p>
+            </div>
           </div>
-        </div>
         <div className="flex gap-2 flex-wrap">
           <Button
             variant="outline"
@@ -221,18 +208,7 @@ export default function Trades() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {templates.map((t) => (
-                  <DropdownMenuItem
-                    key={t.id}
-                    onClick={() => {
-                      setTemplatePrefill({
-                        segment: t.segment,
-                        trade_type: t.trade_type,
-                        notes: t.notes_template || undefined,
-                        tags: t.tags || [],
-                      });
-                      setCreateModalOpen(true);
-                    }}
-                  >
+                  <DropdownMenuItem key={t.id} onClick={() => setCreateModalOpen(true)}>
                     <Bookmark className="w-3.5 h-3.5 mr-2 text-primary" />
                     {t.name}
                     <span className="ml-auto text-[10px] text-muted-foreground">{t.segment}</span>
@@ -253,10 +229,10 @@ export default function Trades() {
         <div className="flex items-center gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
           <span className="text-sm font-medium">{selectedIds.size} selected</span>
           <div className="flex gap-2 ml-auto">
-            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setBulkConfirmAction("cancel")}>
+            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={bulkCancel}>
               <X className="w-3 h-3 mr-1" /> Cancel Selected
             </Button>
-            <Button size="sm" className="h-7 text-xs bg-loss hover:bg-loss/90 text-loss-foreground" onClick={() => setBulkConfirmAction("close")}>
+            <Button size="sm" className="h-7 text-xs bg-loss hover:bg-loss/90 text-loss-foreground" onClick={bulkClose}>
               Close at Market
             </Button>
           </div>
@@ -387,7 +363,7 @@ export default function Trades() {
                 "border-border text-xs h-7",
                 statusFilter === status && (
                   status === "ALL" ? "bg-primary/10 border-primary/20 text-primary" :
-                    statusConfig[status]?.color
+                  statusConfig[status]?.color
                 )
               )}
             >
@@ -407,17 +383,22 @@ export default function Trades() {
             />
           </div>
           <div className="flex gap-2 items-center flex-wrap">
-            <Select value={segmentFilter} onValueChange={setSegmentFilter}>
-              <SelectTrigger className="w-[150px] border-border h-8 text-xs">
-                <SelectValue placeholder="Segment" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">All Segments</SelectItem>
-                {Object.entries(segmentLabels).map(([key, label]) => (
-                  <SelectItem key={key} value={key}>{label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex gap-1">
+              {[{ key: "ALL", label: "All Segments" }, ...Object.entries(segmentLabels).map(([key, label]) => ({ key, label }))].map((seg) => (
+                <Button
+                  key={seg.key}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSegmentFilter(seg.key)}
+                  className={cn(
+                    "border-border text-xs h-7",
+                    segmentFilter === seg.key && "bg-primary/10 border-primary/20 text-primary"
+                  )}
+                >
+                  {seg.label}
+                </Button>
+              ))}
+            </div>
             <SortSelect value={sortBy} onValueChange={setSortBy} options={sortOptions} />
             <ViewToggle view={viewMode} onViewChange={setViewMode} />
           </div>
@@ -505,14 +486,7 @@ export default function Trades() {
         />
       )}
 
-      <CreateTradeModal
-        open={createModalOpen}
-        onOpenChange={(open) => {
-          setCreateModalOpen(open);
-          if (!open) setTemplatePrefill(undefined);
-        }}
-        prefill={templatePrefill}
-      />
+      <CreateTradeModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
       <TradeDetailModal trade={selectedTrade} open={!!selectedTrade} onOpenChange={(open) => !open && setSelectedTrade(null)} />
       <MultiLegStrategyModal open={strategyModalOpen} onOpenChange={setStrategyModalOpen} />
       <ConfirmDeleteModal
@@ -528,22 +502,6 @@ export default function Trades() {
         isLoading={deleteTrade.isPending}
         title="Delete Trade"
         description={`Are you sure you want to delete the trade for "${tradeToDelete?.symbol}"? This action cannot be undone.`}
-      />
-      {/* Bulk Confirm Dialog (#24) */}
-      <ConfirmDeleteModal
-        open={bulkConfirmAction !== null}
-        onOpenChange={(open) => !open && setBulkConfirmAction(null)}
-        onConfirm={async () => {
-          if (bulkConfirmAction === "cancel") {
-            await bulkCancel();
-          } else if (bulkConfirmAction === "close") {
-            await bulkClose();
-          }
-          setBulkConfirmAction(null);
-        }}
-        isLoading={updateTrade.isPending || closeTrade.isPending}
-        title={bulkConfirmAction === "cancel" ? "Cancel Selected Trades" : "Close Selected Trades"}
-        description={`Are you sure you want to ${bulkConfirmAction === "cancel" ? "cancel" : "close at market price"} ${selectedIds.size} trade(s)? This action cannot be undone.`}
       />
     </div>
   );

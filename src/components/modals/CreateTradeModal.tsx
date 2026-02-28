@@ -28,9 +28,7 @@ import { TradingRulesChecklist } from "@/components/trade/TradingRulesChecklist"
 export interface TradeModalPrefill {
   symbol?: string;
   segment?: string;
-  trade_type?: string;
   notes?: string;
-  tags?: string[];
   study_id?: string;
 }
 
@@ -112,24 +110,24 @@ export function CreateTradeModal({ open, onOpenChange, prefill }: CreateTradeMod
   const { createTrade } = useTrades();
   const { settings } = useUserSettings();
   const startingCapital = (settings as any)?.starting_capital ?? 500000;
-
+  
   const [selectedInstrument, setSelectedInstrument] = useState<SelectedInstrument | null>(null);
   const [targets, setTargets] = useState<number[]>([]);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [isFetchingLtp, setIsFetchingLtp] = useState(false);
-
+  
   // Automation
   const [autoTrackEnabled, setAutoTrackEnabled] = useState(false);
   const [telegramPostEnabled, setTelegramPostEnabled] = useState(false);
-
+  
   // Trailing SL
   const [trailingSlEnabled, setTrailingSlEnabled] = useState(false);
   const [trailingSlMethod, setTrailingSlMethod] = useState("fixed_percent");
   const [trailingSlActivationRule, setTrailingSlActivationRule] = useState("immediate");
-
+  
   // SL invalidation note
   const [slInvalidationNote, setSlInvalidationNote] = useState("");
-
+  
   // Pre-trade checklist
   const [checkedRules, setCheckedRules] = useState<Set<string>>(new Set());
   const [chartLink, setChartLink] = useState("");
@@ -169,7 +167,7 @@ export function CreateTradeModal({ open, onOpenChange, prefill }: CreateTradeMod
     setAutoTrackEnabled(defaults.autoTrack);
   }, [segment, setValue]);
 
-  // Apply prefill from study-to-trade, template, or other sources
+  // Apply prefill from study-to-trade or other sources
   useEffect(() => {
     if (!prefill || !open) return;
     if (prefill.symbol) {
@@ -177,9 +175,6 @@ export function CreateTradeModal({ open, onOpenChange, prefill }: CreateTradeMod
     }
     if (prefill.segment) {
       setValue("segment", prefill.segment as CreateTradeInput["segment"], { shouldValidate: true });
-    }
-    if (prefill.trade_type) {
-      setValue("trade_type", prefill.trade_type as CreateTradeInput["trade_type"], { shouldValidate: true });
     }
     if (prefill.notes) {
       setValue("notes", prefill.notes);
@@ -192,12 +187,12 @@ export function CreateTradeModal({ open, onOpenChange, prefill }: CreateTradeMod
     const sl = Number(stopLoss);
     const qty = Number(quantity) || 1;
     if (!entry || !sl || entry <= 0 || sl <= 0) return null;
-
+    
     const isBuy = tradeType === "BUY";
     const slPoints = isBuy ? entry - sl : sl - entry;
     const slPercent = (slPoints / entry) * 100;
     const riskAmount = slPoints * qty;
-
+    
     return {
       slPoints: Math.abs(slPoints).toFixed(2),
       slPercent: slPercent.toFixed(2),
@@ -233,7 +228,7 @@ export function CreateTradeModal({ open, onOpenChange, prefill }: CreateTradeMod
       const hasKeyFields = sanitizedEntryPrice && sanitizedEntryPrice > 0;
       const tradeStatus = hasKeyFields ? "OPEN" : "PENDING";
 
-      const fullPayload: Record<string, unknown> = {
+      await createTrade.mutateAsync({
         symbol: symbolToUse,
         segment: data.segment,
         trade_type: data.trade_type,
@@ -258,39 +253,7 @@ export function CreateTradeModal({ open, onOpenChange, prefill }: CreateTradeMod
         exchange_segment: selectedInstrument?.exchange_segment || null,
         rating: toNumberOrNull(data.rating),
         confidence_score: toNumberOrNull(data.confidence_score),
-      };
-
-      // Core-only payload for fallback
-      const extraNotes: string[] = [];
-      if (chartLink.trim()) extraNotes.push(`Chart: ${chartLink.trim()}`);
-      if (trailingSlEnabled) extraNotes.push(`Trailing SL enabled`);
-      if (data.timeframe) extraNotes.push(`Timeframe: ${data.timeframe}`);
-      const coreFinalNotes = [finalNotes, ...extraNotes].filter(Boolean).join("\n");
-
-      const corePayload: Record<string, unknown> = {
-        symbol: symbolToUse,
-        segment: data.segment,
-        trade_type: data.trade_type,
-        quantity: sanitizedQuantity,
-        entry_price: sanitizedEntryPrice || 0,
-        stop_loss: sanitizedStopLoss,
-        targets: targets.length > 0 ? targets : null,
-        notes: coreFinalNotes || null,
-        status: tradeStatus,
-        entry_time: entryDate ? entryDate.toISOString() : new Date().toISOString(),
-      };
-
-      try {
-        await createTrade.mutateAsync(fullPayload as any);
-      } catch (firstError: any) {
-        const msg = firstError?.message || "";
-        if (msg.includes("schema cache") || msg.includes("column")) {
-          console.warn("Trade: falling back to core fields:", msg);
-          await createTrade.mutateAsync(corePayload as any);
-        } else {
-          throw firstError;
-        }
-      }
+      });
 
       resetForm();
       onOpenChange(false);
@@ -348,21 +311,22 @@ export function CreateTradeModal({ open, onOpenChange, prefill }: CreateTradeMod
         },
       });
       if (error) throw error;
-
+      if (data?.error === "token_expired") {
+        toast.error("Dhan token expired — update in Settings → Integrations");
+        return;
+      }
       if (data?.success && data?.prices?.[selectedInstrument.symbol]) {
-        const priceObj = data.prices[selectedInstrument.symbol];
-        const ltp = priceObj.ltp;
+        const ltp = data.prices[selectedInstrument.symbol].ltp;
         if (ltp && ltp > 0) {
           setValue("entry_price", ltp, { shouldValidate: true });
-          const sourceLabel = priceObj.source === "yahoo"
-            ? " (Yahoo, ~15min delay)"
-            : priceObj.source === "truedata" ? " (TrueData)" : "";
-          toast.success(`LTP: ₹${ltp.toLocaleString()}${sourceLabel}`);
+          toast.success(`LTP: ₹${ltp.toLocaleString()}`);
         } else {
           toast.info("Price returned 0. Enter manually.");
         }
+      } else if (data?.error) {
+        toast.error(`${data.error}. Enter price manually.`);
       } else {
-        toast.info("Price not available right now. Enter manually.");
+        toast.info("Price not available. Enter manually.");
       }
     } catch (err) {
       console.error("LTP fetch error:", err);
@@ -381,21 +345,21 @@ export function CreateTradeModal({ open, onOpenChange, prefill }: CreateTradeMod
   if (!open) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50" onClick={handleClose}>
-      {/* Overlay */}
-      <div className="fixed inset-0 bg-black/80" />
-      {/* Content */}
-      <div className="fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] border bg-background p-6 shadow-lg sm:rounded-lg sm:max-w-[640px] max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-        <div className="flex flex-col space-y-1.5 text-center sm:text-left">
-          <h2 className="text-lg font-semibold leading-none tracking-tight">Create Research Trade</h2>
-          <p className="text-sm text-muted-foreground">
-            Log a trade quickly. Only Segment, Trade Type, and Instrument are required.
-          </p>
-        </div>
-        <button onClick={handleClose} className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-          <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
-        </button>
+      <div className="fixed inset-0 z-50" onClick={handleClose}>
+        {/* Overlay */}
+        <div className="fixed inset-0 bg-black/80" />
+        {/* Content */}
+        <div className="fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] border bg-background p-6 shadow-lg sm:rounded-lg sm:max-w-[640px] max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="flex flex-col space-y-1.5 text-center sm:text-left">
+            <h2 className="text-lg font-semibold leading-none tracking-tight">Create Research Trade</h2>
+            <p className="text-sm text-muted-foreground">
+              Log a trade quickly. Only Segment, Trade Type, and Instrument are required.
+            </p>
+          </div>
+          <button onClick={handleClose} className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </button>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {Object.keys(errors).length > 0 && (
@@ -797,8 +761,8 @@ export function CreateTradeModal({ open, onOpenChange, prefill }: CreateTradeMod
             </Button>
           </div>
         </form>
-      </div>
-    </div>,
-    document.body
-  );
+        </div>
+      </div>,
+      document.body
+    );
 }

@@ -15,7 +15,7 @@ export function PageHeader({ title, subtitle, actions, className }: PageHeaderPr
       <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-primary" />
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pl-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-display tracking-tight">{title}</h1>
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">{title}</h1>
           {subtitle && (
             <p className="text-muted-foreground text-sm mt-0.5">{subtitle}</p>
           )}

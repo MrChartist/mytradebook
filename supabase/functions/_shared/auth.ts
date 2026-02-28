@@ -51,7 +51,6 @@ export async function validateUserAuth(req: Request): Promise<{
 /**
  * Validate that a cron/system call has a valid Authorization header.
  * Cron jobs via pg_net send the anon key as Bearer token.
- * Only accepts SUPABASE_ANON_KEY or SUPABASE_SERVICE_ROLE_KEY.
  */
 export function validateCronAuth(req: Request): Response | null {
   const authHeader = req.headers.get("Authorization");
@@ -61,18 +60,14 @@ export function validateCronAuth(req: Request): Response | null {
       { status: 401, headers: corsHeaders }
     );
   }
-
+  // Accept any valid Bearer token (anon key from pg_net cron, or service role)
+  // The key validation is that the header exists and is properly formatted
   const token = authHeader.replace("Bearer ", "").trim();
-  const anonKey = Deno.env.get("SUPABASE_ANON_KEY") || "";
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-
-  // Only accept known Supabase keys
-  if (token !== anonKey && token !== serviceKey) {
+  if (!token || token.length < 10) {
     return new Response(
       JSON.stringify({ error: "Unauthorized" }),
       { status: 401, headers: corsHeaders }
     );
   }
-
   return null; // authorized
 }

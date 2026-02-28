@@ -156,8 +156,8 @@ export const TradeStatus = {
 
 /** Trade types */
 export const TradeType = {
-  BUY: 'BUY',
-  SELL: 'SELL',
+  LONG: 'LONG',
+  SHORT: 'SHORT',
 } as const;
 
 /** Trading segments */

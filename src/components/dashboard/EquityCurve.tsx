@@ -40,10 +40,11 @@ export function EquityCurve() {
           {["1W", "1M", "3M", "1Y", "ALL"].map((period) => (
             <button
               key={period}
-              className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${period === "3M"
+              className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+                period === "3M"
                   ? "bg-background shadow-sm text-foreground"
                   : "text-muted-foreground hover:text-foreground"
-                }`}
+              }`}
             >
               {period}
             </button>

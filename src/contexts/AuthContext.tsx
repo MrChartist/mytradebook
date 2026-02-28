@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useRef, useCallback, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 
 interface Profile {
   id: string;
@@ -19,6 +20,8 @@ interface AuthContextType {
   signInWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUpWithEmail: (email: string, password: string, name?: string) => Promise<{ error: Error | null }>;
   signInWithGoogle: () => Promise<{ error: Error | null }>;
+  signInWithPhone: (phone: string) => Promise<{ error: Error | null }>;
+  verifyPhoneOtp: (phone: string, token: string) => Promise<{ error: Error | null }>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
   updatePassword: (password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -49,57 +52,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     console.log("[Auth] Initializing auth context");
 
-    // Only clean up truly corrupted session data from localStorage.
-    // Do NOT remove expired sessions — Supabase's autoRefreshToken handles token refresh.
-    const storageKey = `sb-nuilpmoipiazjafpjaft-auth-token`;
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (raw) {
-        JSON.parse(raw); // Validate it's parseable
-      }
-    } catch {
-      console.log("[Auth] Corrupted session in localStorage, clearing it");
-      localStorage.removeItem(storageKey);
-    }
-
     // onAuthStateChange is the SOLE authority for setting auth state
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         console.log("[Auth] Auth state changed:", event, session ? "session exists" : "no session");
         listenerFired.current = true;
 
         setSession(session);
         setUser(session?.user ?? null);
-        setLoading(false);
 
         if (session?.user) {
           console.log("[Auth] User authenticated:", session.user.email);
-          fetchProfile(session.user.id).catch((err) =>
-            console.error("[Auth] Background profile fetch failed:", err)
-          );
+          await fetchProfile(session.user.id);
         } else {
           console.log("[Auth] No user session");
           setProfile(null);
         }
+
+        setLoading(false);
       }
     );
 
+    // getSession triggers the listener if a session exists.
+    // If no session, the listener may not fire, so we set loading = false as a fallback.
     supabase.auth.getSession().then(({ error }) => {
       if (error) {
         console.error("[Auth] getSession error:", error);
-        setSession(null);
-        setUser(null);
-        setProfile(null);
-        setLoading(false);
-        return;
       }
-      // Give the listener a brief moment to fire; if it hasn't, there's no session
+      // Give the listener a moment to fire; if it hasn't, there's no session
       setTimeout(() => {
         if (!listenerFired.current) {
           console.log("[Auth] No session detected (listener never fired)");
           setLoading(false);
         }
-      }, 500);
+      }, 100);
     });
 
     return () => subscription.unsubscribe();
@@ -115,7 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: window.location.origin,
         data: { full_name: name },
       },
     });
@@ -123,15 +109,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
+    const { error } = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
     });
+    return { error: error ?? null };
+  };
+
+  const signInWithPhone = async (phone: string) => {
+    const { error } = await supabase.auth.signInWithOtp({ phone });
     return { error };
   };
 
+  const verifyPhoneOtp = async (phone: string, token: string) => {
+    const { error } = await supabase.auth.verifyOtp({ phone, token, type: 'sms' });
+    return { error };
+  };
 
   const resetPassword = async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -154,7 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, session, profile, loading, signInWithEmail, signUpWithEmail, signInWithGoogle, resetPassword, updatePassword, signOut }}
+      value={{ user, session, profile, loading, signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithPhone, verifyPhoneOtp, resetPassword, updatePassword, signOut }}
     >
       {children}
     </AuthContext.Provider>

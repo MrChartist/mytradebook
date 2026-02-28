@@ -23,7 +23,6 @@ import { SortSelect } from "@/components/ui/sort-select";
 import { useWatchlists, useWatchlistItems, type Watchlist, type WatchlistItem } from "@/hooks/useWatchlists";
 import { useLivePrices } from "@/hooks/useLivePrices";
 import { cn } from "@/lib/utils";
-import { PageHeader } from "@/components/ui/page-header";
 
 const listColors = [
   "#6366f1", "#8b5cf6", "#ec4899", "#ef4444", "#f97316",
@@ -69,9 +68,6 @@ export default function WatchlistPage() {
   const [newDesc, setNewDesc] = useState("");
   const [newColor, setNewColor] = useState("#6366f1");
   const [searchQuery, setSearchQuery] = useState("");
-  const [editingList, setEditingList] = useState<Watchlist | null>(null);
-  const [editName, setEditName] = useState("");
-  const [editDesc, setEditDesc] = useState("");
 
   const handleCreate = async () => {
     if (!newName.trim()) return;
@@ -91,22 +87,6 @@ export default function WatchlistPage() {
     }
   };
 
-  const handleStartEdit = (wl: Watchlist) => {
-    setEditingList(wl);
-    setEditName(wl.name);
-    setEditDesc(wl.description || "");
-  };
-
-  const handleSaveEdit = async () => {
-    if (!editingList || !editName.trim()) return;
-    await updateWatchlist.mutateAsync({
-      id: editingList.id,
-      name: editName.trim(),
-      description: editDesc.trim() || undefined,
-    });
-    setEditingList(null);
-  };
-
   // Auto-select first list
   if (!selectedList && watchlists.length > 0 && !isLoading) {
     setSelectedList(watchlists[0]);
@@ -115,15 +95,18 @@ export default function WatchlistPage() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <PageHeader
-        title="Watchlists"
-        subtitle="Track instruments & create quick alerts"
-        actions={
-          <Button onClick={() => setCreateOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" /> New List
-          </Button>
-        }
-      />
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div className="relative">
+            <div className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-primary" />
+            <div className="pl-4">
+              <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Watchlists</h1>
+              <p className="text-muted-foreground">Track instruments & create quick alerts</p>
+            </div>
+          </div>
+        <Button onClick={() => setCreateOpen(true)}>
+          <Plus className="w-4 h-4 mr-2" /> New List
+        </Button>
+      </div>
 
       {isLoading ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -179,7 +162,7 @@ export default function WatchlistPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleStartEdit(wl); }}><Edit2 className="w-4 h-4 mr-2" /> Rename</DropdownMenuItem>
+                      <DropdownMenuItem><Edit2 className="w-4 h-4 mr-2" /> Rename</DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         className="text-destructive"
@@ -271,41 +254,6 @@ export default function WatchlistPage() {
         title="Delete Watchlist"
         description={`Delete "${listToDelete?.name}"? All items will be removed.`}
       />
-
-      {/* Rename modal */}
-      <Dialog open={!!editingList} onOpenChange={(open) => !open && setEditingList(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Rename Watchlist</DialogTitle>
-            <DialogDescription>Update the name and description.</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Name *</Label>
-              <Input
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-                placeholder="Watchlist name"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Description</Label>
-              <Textarea
-                value={editDesc}
-                onChange={(e) => setEditDesc(e.target.value)}
-                rows={2}
-                placeholder="Optional description..."
-              />
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setEditingList(null)}>Cancel</Button>
-              <Button onClick={handleSaveEdit} disabled={!editName.trim() || updateWatchlist.isPending}>
-                Save
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
