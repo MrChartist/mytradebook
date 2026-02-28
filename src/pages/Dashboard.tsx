@@ -1,4 +1,5 @@
 import { useState, useMemo, createContext, useContext } from "react";
+import { OnboardingWelcome } from "@/components/dashboard/OnboardingWelcome";
 import { DashboardKPICards } from "@/components/dashboard/DashboardKPICards";
 import { DailySectorChart } from "@/components/dashboard/DailySectorChart";
 import { DashboardAlertsPanel } from "@/components/dashboard/DashboardAlertsPanel";
@@ -83,6 +84,8 @@ export default function Dashboard() {
   return (
     <DashboardContext.Provider value={ctx}>
       <div className="space-y-5 animate-fade-in">
+        {/* Onboarding for new users */}
+        <OnboardingWelcome />
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
