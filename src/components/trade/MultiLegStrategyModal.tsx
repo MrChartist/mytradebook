@@ -26,6 +26,7 @@ import { toast } from "sonner";
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onStrategyCreated?: () => void;
 }
 
 interface StrategyLeg {
@@ -124,7 +125,7 @@ function generateExpiries(): { value: string; label: string }[] {
 let legIdCounter = 0;
 function genId() { return `leg-${++legIdCounter}-${Date.now()}`; }
 
-export function MultiLegStrategyModal({ open, onOpenChange }: Props) {
+export function MultiLegStrategyModal({ open, onOpenChange, onStrategyCreated }: Props) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
@@ -315,6 +316,7 @@ export function MultiLegStrategyModal({ open, onOpenChange }: Props) {
       toast.success("Strategy created with all legs!");
       resetForm();
       onOpenChange(false);
+      onStrategyCreated?.();
     },
     onError: (e: Error) => toast.error(e.message),
   });
