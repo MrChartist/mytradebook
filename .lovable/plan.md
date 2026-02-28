@@ -1,58 +1,59 @@
 
-# Expand F&O Stocks in Option Strategy Builder
 
-## Problem
-Both `MultiLegStrategyModal.tsx` and `OptionChainSelector.tsx` use a hardcoded `POPULAR_UNDERLYINGS` array with only 11-15 symbols. The actual `instrument_master` database has 180+ F&O underlying symbols.
+# Fix All Pending Issues
 
-## Solution
-Replace the hardcoded list with a database-driven approach that fetches all F&O underlyings, organized into Indices and Stocks, with search filtering.
+## Issues Identified
 
-## Changes
+### 1. F&O Underlyings Hook Still Uses Direct Query (Not RPC)
+The `useFnoUnderlyings` hook (line 10-16) still queries `instrument_master` table directly, hitting the 1000-row limit. The RPC function `get_fno_underlyings()` was created in the database but the hook was never updated to use it.
 
-### 1. Create a shared hook: `src/hooks/useFnoUnderlyings.ts`
-- Query `instrument_master` for distinct `underlying_symbol` where `exchange = 'NFO'`
-- Filter out test symbols (e.g., those ending in "NSETEST")
-- Categorize into **Indices** (NIFTY, BANKNIFTY, FINNIFTY, SENSEX, MIDCPNIFTY, NIFTYNXT50, BANKEX) and **Stocks** (everything else)
-- Cache the result using React Query so it loads once and stays fast
-- Return `{ indices, stocks, all, isLoading }` 
+**Fix**: Replace the direct table query with `supabase.rpc("get_fno_underlyings")` which returns all 250 distinct symbols server-side.
 
-### 2. Update `src/components/trade/MultiLegStrategyModal.tsx`
-- Remove hardcoded `POPULAR_UNDERLYINGS`
-- Use the new `useFnoUnderlyings` hook
-- Show Indices first as a row of badges (always visible)
-- Show Stocks below, filtered by the search input
-- Display a small loading spinner while fetching
-- Cap the visible stock badges to ~30 at a time with the search narrowing results
+### 2. Strategy Builder Not Integrated into Create Trade Modal
+The plan included adding a "Build Multi-Leg Strategy" button in the Create Trade modal when "Options" segment is selected. This was never implemented.
 
-### 3. Update `src/components/trade/OptionChainSelector.tsx`
-- Same change: replace hardcoded `POPULAR_UNDERLYINGS` with the shared hook
-- Show Indices as a pinned row, Stocks searchable below
+**Fix**: Add a state + button in `CreateTradeModal.tsx` that opens the `MultiLegStrategyModal` when the Options segment is chosen.
 
-### 4. Strike step logic
-- Update `getStrikeStep()` to default to a sensible value for stock options (currently returns 10, which is correct for most stocks, but larger stocks like RELIANCE may need larger steps)
-- Add a lookup: if price > 5000 use step 50, if > 2000 use step 25, else step 10
+### 3. Sidebar & Navigation Already Working
+Watchlist is correctly added to both `Sidebar.tsx` and `MobileDrawer.tsx` with the Eye icon. No fix needed.
+
+### 4. Calendar Page Already Working
+The Calendar page correctly uses `JournalCalendarView` with trade data mapped from closed trades. No fix needed.
+
+### 5. Mistakes Page Already Working
+The Mistakes page fetches `trade_mistakes` and `mistake_tags` correctly, shows repeat patterns and monthly trends. No fix needed.
+
+### 6. Reports Download Already Working
+The `handleDownloadPdf` function generates and downloads a text file. No fix needed.
+
+---
+
+## Changes Required
+
+### File 1: `src/hooks/useFnoUnderlyings.ts`
+- Replace `supabase.from("instrument_master").select(...)` with `supabase.rpc("get_fno_underlyings")`
+- Parse the RPC result (returns `{ underlying_symbol: string }[]`) into the indices/stocks split
+- Remove the manual deduplication logic since RPC already returns distinct values
+
+### File 2: `src/components/modals/CreateTradeModal.tsx`
+- Import `MultiLegStrategyModal` component
+- Add a `showStrategyBuilder` state variable
+- When `segment === "Options"`, show a "Build Multi-Leg Strategy" button with a Layers icon
+- Render `MultiLegStrategyModal` conditionally, closing both modals on strategy creation
+
+---
 
 ## Technical Details
 
-**Database query** (inside the hook):
-```sql
-SELECT DISTINCT underlying_symbol 
-FROM instrument_master 
-WHERE exchange = 'NFO' 
-  AND underlying_symbol IS NOT NULL
-ORDER BY underlying_symbol
+**Hook fix** (useFnoUnderlyings.ts):
+```typescript
+const { data, error } = await supabase.rpc("get_fno_underlyings");
+// Returns: { underlying_symbol: string }[]
+const symbols = (data || []).map(r => r.underlying_symbol);
 ```
 
-**Known indices to pin at top:**
-NIFTY, BANKNIFTY, FINNIFTY, SENSEX, MIDCPNIFTY, NIFTYNXT50, BANKEX
+**CreateTradeModal integration**:
+- Button appears below the segment selector when Options is chosen
+- Opens the strategy builder in a separate dialog
+- Both modals close when strategy is successfully created
 
-**UI layout change:**
-```
-Indices:  [NIFTY] [BANKNIFTY] [FINNIFTY] [SENSEX] [MIDCPNIFTY]
-─────────────────────────────────────────
-Stocks:   Search: [________]
-          [RELIANCE] [TCS] [INFY] [HDFCBANK] ...
-          (scrollable, filtered by search)
-```
-
-No database migration needed -- all data already exists in `instrument_master`.
