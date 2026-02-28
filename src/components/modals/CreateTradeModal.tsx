@@ -2,7 +2,8 @@ import { useState, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { X } from "lucide-react";
+import { X, Layers } from "lucide-react";
+import { MultiLegStrategyModal } from "@/components/trade/MultiLegStrategyModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -123,6 +124,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
   // Pre-trade checklist
   const [checkedRules, setCheckedRules] = useState<Set<string>>(new Set());
   const [chartLink, setChartLink] = useState("");
+  const [showStrategyBuilder, setShowStrategyBuilder] = useState(false);
   const [entryDate, setEntryDate] = useState<Date | null>(null);
 
   const {
@@ -390,7 +392,29 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
             showLtpFetch={true}
           />
 
-          {/* Entry Date */}
+          {/* Strategy Builder Button for Options */}
+          {segment === "Options" && (
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full border-dashed border-primary/40 text-primary hover:bg-primary/5"
+              onClick={() => setShowStrategyBuilder(true)}
+            >
+              <Layers className="w-4 h-4 mr-2" />
+              Build Multi-Leg Strategy
+            </Button>
+          )}
+
+          {/* Strategy Builder Modal */}
+          <MultiLegStrategyModal
+            open={showStrategyBuilder}
+            onOpenChange={setShowStrategyBuilder}
+            onStrategyCreated={() => {
+              setShowStrategyBuilder(false);
+              resetForm();
+              onOpenChange(false);
+            }}
+          />
           <div className="space-y-2">
             <Label>Entry Date & Time</Label>
             <DateTimePicker

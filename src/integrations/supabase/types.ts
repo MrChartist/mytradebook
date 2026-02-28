@@ -1111,6 +1111,10 @@ export type Database = {
           telegram_verified_at: string | null
           theme: string | null
           timezone: string | null
+          truedata_enabled: boolean | null
+          truedata_password: string | null
+          truedata_username: string | null
+          truedata_verified_at: string | null
           tsl_profiles: Json | null
           updated_at: string | null
           user_id: string
@@ -1142,6 +1146,10 @@ export type Database = {
           telegram_verified_at?: string | null
           theme?: string | null
           timezone?: string | null
+          truedata_enabled?: boolean | null
+          truedata_password?: string | null
+          truedata_username?: string | null
+          truedata_verified_at?: string | null
           tsl_profiles?: Json | null
           updated_at?: string | null
           user_id: string
@@ -1173,6 +1181,10 @@ export type Database = {
           telegram_verified_at?: string | null
           theme?: string | null
           timezone?: string | null
+          truedata_enabled?: boolean | null
+          truedata_password?: string | null
+          truedata_username?: string | null
+          truedata_verified_at?: string | null
           tsl_profiles?: Json | null
           updated_at?: string | null
           user_id?: string
@@ -1344,6 +1356,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_old_deleted_records: {
+        Args: { days_old?: number }
+        Returns: {
+          deleted_count: number
+          table_name: string
+        }[]
+      }
+      cleanup_old_telegram_logs: {
+        Args: { days_old?: number }
+        Returns: {
+          deleted_count: number
+          table_name: string
+        }[]
+      }
       get_fno_underlyings: {
         Args: never
         Returns: {
