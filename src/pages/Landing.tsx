@@ -70,6 +70,9 @@ function FadeIn({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    
+    // Start visible immediately for hero elements (delay < 500ms)
+    // Use IntersectionObserver for below-fold elements
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -77,7 +80,7 @@ function FadeIn({
           observer.disconnect();
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.05, rootMargin: "50px" }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -88,7 +91,7 @@ function FadeIn({
       ref={ref}
       className={cn(
         "transition-all duration-700 ease-out",
-        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8",
+        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
         className
       )}
       style={{ transitionDelay: `${delay}ms` }}
