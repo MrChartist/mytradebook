@@ -160,7 +160,9 @@
 @layer components {
   /* ── Surface Cards ─────────────────────────────────── */
   .surface-card {
-    @apply bg-card rounded-2xl border border-border;
+    @apply bg-card/80 rounded-2xl border border-border/60;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--shadow-sm);
   }
 
@@ -176,22 +178,24 @@
   /* ── Glassmorphism Card ────────────────────────────── */
   .glass-morph {
     @apply rounded-2xl border relative overflow-hidden;
-    background: hsl(var(--card) / var(--glass-opacity));
-    backdrop-filter: blur(var(--glass-blur));
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    border-color: var(--glass-border);
-    box-shadow: var(--shadow-sm), inset 0 1px 0 0 hsl(var(--glass-shine) / 0.05);
+    background: hsl(var(--card) / 0.65);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border-color: hsl(var(--border) / 0.4);
+    box-shadow: var(--shadow-sm), inset 0 1px 0 0 hsl(var(--glass-shine) / 0.06);
   }
 
   .glass-morph:hover {
-    box-shadow: var(--shadow-lg), inset 0 1px 0 0 hsl(var(--glass-shine) / 0.08);
-    border-color: hsl(var(--primary) / 0.2);
+    box-shadow: var(--shadow-lg), inset 0 1px 0 0 hsl(var(--glass-shine) / 0.1);
+    border-color: hsl(var(--primary) / 0.15);
   }
 
   /* ── Premium Card (rich, layered) ──────────────────── */
   .premium-card {
-    @apply bg-card rounded-[20px] border border-border p-6 relative overflow-hidden;
-    box-shadow: var(--shadow-sm), 0 0 0 1px hsl(var(--border) / 0.5);
+    @apply bg-card/80 rounded-[20px] border border-border/60 p-6 relative overflow-hidden;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-sm), 0 0 0 1px hsl(var(--border) / 0.3);
   }
 
   .premium-card-hover {

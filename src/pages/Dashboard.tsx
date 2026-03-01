@@ -161,7 +161,11 @@ export default function Dashboard() {
 
   return (
     <DashboardContext.Provider value={ctx}>
-      <div className="space-y-5 animate-fade-in">
+      <div className="space-y-5 animate-fade-in relative">
+        {/* Soft ambient background blurs */}
+        <div className="fixed top-20 -left-32 w-72 h-72 rounded-full pointer-events-none opacity-20 blur-[100px]" style={{ background: "hsl(var(--primary))" }} />
+        <div className="fixed bottom-20 -right-32 w-64 h-64 rounded-full pointer-events-none opacity-10 blur-[100px]" style={{ background: "hsl(var(--profit))" }} />
+
         <OnboardingWelcome />
 
         {/* Header with greeting */}
