@@ -12,7 +12,6 @@ export default function DhanCallback() {
 
   useEffect(() => {
     const tokenId = searchParams.get("tokenId");
-    const consentId = searchParams.get("consentId") || localStorage.getItem("dhan_consent_id");
 
     if (!tokenId) {
       setStatus("error");
@@ -20,30 +19,22 @@ export default function DhanCallback() {
       return;
     }
 
-    if (!consentId) {
-      setStatus("error");
-      setMessage("Missing consentId. Please try again from Settings.");
-      return;
-    }
-
     const exchangeToken = async () => {
       try {
-        // Step 1: Resolve user_id from consent_id via backend
+        // Step 1: Find the pending consent user from the database
         const { data: resolveData, error: resolveError } = await supabase.functions.invoke("dhan-auth", {
-          body: {
-            action: "resolve-consent",
-            consent_id: consentId,
-          },
+          body: { action: "resolve-by-token" },
         });
 
         if (resolveError) throw resolveError;
-        if (!resolveData?.success || !resolveData?.user_id) {
-          throw new Error(resolveData?.error || "Could not identify user from consent. Please reconnect from Settings.");
+        if (!resolveData?.success || !resolveData?.user_id || !resolveData?.consent_id) {
+          throw new Error(resolveData?.error || "No pending Dhan authorization found. Please reconnect from Settings.");
         }
 
         const userId = resolveData.user_id;
+        const consentId = resolveData.consent_id;
 
-        // Step 2: Exchange token using resolved user_id
+        // Step 2: Exchange token using resolved user_id and consent_id
         const { data, error } = await supabase.functions.invoke("dhan-auth", {
           body: {
             action: "exchange-token",
@@ -58,7 +49,6 @@ export default function DhanCallback() {
         if (data?.success) {
           setStatus("success");
           setMessage(`Connected as ${data.account_name}!`);
-          localStorage.removeItem("dhan_consent_id");
           setTimeout(() => navigate("/settings"), 2000);
         } else {
           throw new Error(data?.error || "Token exchange failed");
