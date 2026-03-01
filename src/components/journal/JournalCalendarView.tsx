@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, ArrowUpRight, ArrowDownRight, Eye } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowUpRight, ArrowDownRight, Eye, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 import {
   format,
   startOfMonth,
@@ -12,7 +13,6 @@ import {
   isSameDay,
   addMonths,
   subMonths,
-  getDay,
   startOfWeek,
   endOfWeek,
 } from "date-fns";
@@ -36,12 +36,21 @@ interface JournalCalendarViewProps {
   calendarData: DayData[];
   isLoading: boolean;
   onTradeClick: (trade: Trade) => void;
+  /** Compact heatmap mode for dashboard widget */
+  compact?: boolean;
+  /** Show a link to the full calendar page (compact mode) */
+  showLink?: boolean;
+  /** Called when a day cell is clicked in compact mode */
+  onDayClick?: (dateStr: string) => void;
 }
 
 export function JournalCalendarView({
   calendarData,
   isLoading,
   onTradeClick,
+  compact = false,
+  showLink = false,
+  onDayClick,
 }: JournalCalendarViewProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -52,7 +61,7 @@ export function JournalCalendarView({
   const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
 
   const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
-  const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const weekDays = compact ? ["M", "T", "W", "T", "F", "S", "S"] : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   const getDayData = (date: Date): DayData | undefined => {
     return calendarData.find((d) => isSameDay(d.date, date));
@@ -60,36 +69,126 @@ export function JournalCalendarView({
 
   const selectedDayData = selectedDate ? getDayData(selectedDate) : null;
 
+  // Compact stats
+  const tradingDays = calendarData.length;
+  const profitDays = calendarData.filter((d) => d.pnl > 0).length;
+
   if (isLoading) {
     return (
       <div className="glass-card p-5">
         <Skeleton className="h-8 w-48 mb-4" />
-        <Skeleton className="h-[400px] w-full" />
+        <Skeleton className={compact ? "h-[200px] w-full" : "h-[400px] w-full"} />
       </div>
     );
   }
 
+  /* ─── Compact heatmap mode (dashboard widget) ─── */
+  if (compact) {
+    const today = format(new Date(), "yyyy-MM-dd");
+
+    const getIntensity = (pnl: number) => {
+      const maxAbs = Math.max(...calendarData.map((d) => Math.abs(d.pnl)), 1);
+      const ratio = Math.min(Math.abs(pnl) / maxAbs, 1);
+      if (ratio < 0.25) return "low";
+      if (ratio < 0.6) return "mid";
+      return "high";
+    };
+
+    return (
+      <div className="glass-card p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            {showLink ? (
+              <Link to="/calendar" className="group flex items-center gap-1.5 hover:text-primary transition-colors">
+                <h3 className="font-semibold text-lg">🗓️ Calendar</h3>
+                <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </Link>
+            ) : (
+              <h3 className="font-semibold text-lg">🗓️ Calendar</h3>
+            )}
+            <p className="text-sm text-muted-foreground">{format(currentMonth, "MMMM yyyy")}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">{profitDays}/{tradingDays} green days</span>
+            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
+              <ChevronLeft className="w-3.5 h-3.5" />
+            </Button>
+            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Day labels */}
+        <div className="grid grid-cols-7 gap-1 mb-1">
+          {weekDays.map((d, i) => (
+            <div key={i} className="text-center text-[10px] text-muted-foreground font-medium">{d}</div>
+          ))}
+        </div>
+
+        {/* Compact grid */}
+        <div className="grid grid-cols-7 gap-1">
+          {days.map((day) => {
+            const key = format(day, "yyyy-MM-dd");
+            const dayData = getDayData(day);
+            const isCurrentMonth = isSameMonth(day, currentMonth);
+            const isToday = key === today;
+            const isFuture = day > new Date();
+            const pnl = dayData?.pnl;
+            const clickable = !!onDayClick && !isFuture && isCurrentMonth;
+
+            if (!isCurrentMonth) {
+              return <div key={key} className="aspect-square" />;
+            }
+
+            return (
+              <div
+                key={key}
+                title={pnl !== undefined ? `${format(day, "MMM d")}: ₹${pnl.toLocaleString()}` : format(day, "MMM d")}
+                className={cn(
+                  "aspect-square rounded-sm flex items-center justify-center text-[10px] font-mono transition-colors",
+                  isFuture && "opacity-30",
+                  isToday && "ring-1 ring-primary/50",
+                  clickable && "cursor-pointer hover:ring-1 hover:ring-primary/30",
+                  !dayData && "bg-accent/20",
+                  dayData && pnl !== undefined && pnl > 0 && getIntensity(pnl) === "low" && "bg-profit/15 text-profit",
+                  dayData && pnl !== undefined && pnl > 0 && getIntensity(pnl) === "mid" && "bg-profit/30 text-profit",
+                  dayData && pnl !== undefined && pnl > 0 && getIntensity(pnl) === "high" && "bg-profit/50 text-profit font-semibold",
+                  dayData && pnl !== undefined && pnl < 0 && getIntensity(pnl) === "low" && "bg-loss/15 text-loss",
+                  dayData && pnl !== undefined && pnl < 0 && getIntensity(pnl) === "mid" && "bg-loss/30 text-loss",
+                  dayData && pnl !== undefined && pnl < 0 && getIntensity(pnl) === "high" && "bg-loss/50 text-loss font-semibold",
+                  dayData && pnl === 0 && "bg-muted/40"
+                )}
+                onClick={clickable ? () => onDayClick!(key) : undefined}
+              >
+                {format(day, "d")}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Legend */}
+        <div className="flex items-center justify-center gap-3 mt-3 text-[10px] text-muted-foreground">
+          <div className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-loss/40" /> Loss</div>
+          <div className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-accent/30" /> No trade</div>
+          <div className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-profit/40" /> Profit</div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ─── Full calendar mode ─── */
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       {/* Calendar Grid */}
       <div className="glass-card p-5 flex-1">
         {/* Month Navigation */}
         <div className="flex items-center justify-between mb-6">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-          >
+          <Button variant="ghost" size="icon" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
             <ChevronLeft className="w-5 h-5" />
           </Button>
-          <h3 className="text-lg font-semibold">
-            {format(currentMonth, "MMMM yyyy")}
-          </h3>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-          >
+          <h3 className="text-lg font-semibold">{format(currentMonth, "MMMM yyyy")}</h3>
+          <Button variant="ghost" size="icon" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
             <ChevronRight className="w-5 h-5" />
           </Button>
         </div>
@@ -97,12 +196,7 @@ export function JournalCalendarView({
         {/* Week Day Headers */}
         <div className="grid grid-cols-7 gap-1 mb-2">
           {weekDays.map((day) => (
-            <div
-              key={day}
-              className="text-center text-sm font-medium text-muted-foreground py-2"
-            >
-              {day}
-            </div>
+            <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">{day}</div>
           ))}
         </div>
 
@@ -119,18 +213,11 @@ export function JournalCalendarView({
                 onClick={() => setSelectedDate(day)}
                 className={cn(
                   "aspect-square p-1 rounded-lg transition-colors text-left flex flex-col relative min-h-[80px]",
-                  isCurrentMonth
-                    ? "hover:bg-accent"
-                    : "opacity-40 hover:opacity-60",
+                  isCurrentMonth ? "hover:bg-accent" : "opacity-40 hover:opacity-60",
                   isSelected && "ring-2 ring-primary bg-primary/10"
                 )}
               >
-                <span
-                  className={cn(
-                    "text-sm font-medium",
-                    !isCurrentMonth && "text-muted-foreground"
-                  )}
-                >
+                <span className={cn("text-sm font-medium", !isCurrentMonth && "text-muted-foreground")}>
                   {format(day, "d")}
                 </span>
                 {dayData && dayData.tradeCount > 0 && (
@@ -138,20 +225,10 @@ export function JournalCalendarView({
                     <span className="text-xs text-muted-foreground mt-1">
                       {dayData.tradeCount} trade{dayData.tradeCount > 1 ? "s" : ""}
                     </span>
-                    <span
-                      className={cn(
-                        "text-xs font-semibold mt-auto",
-                        dayData.pnl >= 0 ? "text-profit" : "text-loss"
-                      )}
-                    >
+                    <span className={cn("text-xs font-semibold mt-auto", dayData.pnl >= 0 ? "text-profit" : "text-loss")}>
                       {dayData.pnl >= 0 ? "+" : ""}₹{dayData.pnl.toLocaleString()}
                     </span>
-                    <div
-                      className={cn(
-                        "absolute top-1 right-1 w-2 h-2 rounded-full",
-                        dayData.pnl >= 0 ? "bg-profit" : "bg-loss"
-                      )}
-                    />
+                    <div className={cn("absolute top-1 right-1 w-2 h-2 rounded-full", dayData.pnl >= 0 ? "bg-profit" : "bg-loss")} />
                   </>
                 )}
               </button>
@@ -163,54 +240,27 @@ export function JournalCalendarView({
       {/* Day Detail Sidebar */}
       <div className="glass-card p-5 lg:w-80">
         <h4 className="font-semibold mb-4">
-          {selectedDate
-            ? `Trades on ${format(selectedDate, "MMM dd, yyyy")}`
-            : "Select a date"}
+          {selectedDate ? `Trades on ${format(selectedDate, "MMM dd, yyyy")}` : "Select a date"}
         </h4>
 
         {selectedDayData && selectedDayData.trades.length > 0 ? (
           <div className="space-y-3">
             {selectedDayData.trades.map((trade) => (
-              <div
-                key={trade.id}
-                className="flex items-center justify-between p-3 rounded-lg bg-accent/50 hover:bg-accent transition-colors"
-              >
+              <div key={trade.id} className="flex items-center justify-between p-3 rounded-lg bg-accent/50 hover:bg-accent transition-colors">
                 <div className="flex items-center gap-3">
-                  <div
-                    className={cn(
-                      "w-8 h-8 rounded-lg flex items-center justify-center",
-                      trade.trade_type === "BUY" ? "bg-profit/10" : "bg-loss/10"
-                    )}
-                  >
-                    {trade.trade_type === "BUY" ? (
-                      <ArrowUpRight className="w-4 h-4 text-profit" />
-                    ) : (
-                      <ArrowDownRight className="w-4 h-4 text-loss" />
-                    )}
+                  <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", trade.trade_type === "BUY" ? "bg-profit/10" : "bg-loss/10")}>
+                    {trade.trade_type === "BUY" ? <ArrowUpRight className="w-4 h-4 text-profit" /> : <ArrowDownRight className="w-4 h-4 text-loss" />}
                   </div>
                   <div>
                     <p className="font-medium text-sm">{trade.symbol}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {trade.trade_type}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{trade.trade_type}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span
-                    className={cn(
-                      "font-semibold text-sm",
-                      (trade.pnl || 0) >= 0 ? "text-profit" : "text-loss"
-                    )}
-                  >
-                    {(trade.pnl || 0) >= 0 ? "+" : ""}₹
-                    {Math.abs(trade.pnl || 0).toLocaleString()}
+                  <span className={cn("font-semibold text-sm", (trade.pnl || 0) >= 0 ? "text-profit" : "text-loss")}>
+                    {(trade.pnl || 0) >= 0 ? "+" : ""}₹{Math.abs(trade.pnl || 0).toLocaleString()}
                   </span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7"
-                    onClick={() => onTradeClick(trade)}
-                  >
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onTradeClick(trade)}>
                     <Eye className="w-4 h-4" />
                   </Button>
                 </div>
@@ -219,26 +269,16 @@ export function JournalCalendarView({
             <div className="pt-3 border-t border-border">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Day Total</span>
-                <span
-                  className={cn(
-                    "font-bold",
-                    selectedDayData.pnl >= 0 ? "text-profit" : "text-loss"
-                  )}
-                >
-                  {selectedDayData.pnl >= 0 ? "+" : ""}₹
-                  {selectedDayData.pnl.toLocaleString()}
+                <span className={cn("font-bold", selectedDayData.pnl >= 0 ? "text-profit" : "text-loss")}>
+                  {selectedDayData.pnl >= 0 ? "+" : ""}₹{selectedDayData.pnl.toLocaleString()}
                 </span>
               </div>
             </div>
           </div>
         ) : selectedDate ? (
-          <p className="text-muted-foreground text-sm text-center py-8">
-            No trades on this date
-          </p>
+          <p className="text-muted-foreground text-sm text-center py-8">No trades on this date</p>
         ) : (
-          <p className="text-muted-foreground text-sm text-center py-8">
-            Click a date to view trades
-          </p>
+          <p className="text-muted-foreground text-sm text-center py-8">Click a date to view trades</p>
         )}
       </div>
     </div>
