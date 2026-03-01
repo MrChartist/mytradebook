@@ -444,6 +444,7 @@ interface ChatDeliveryResult {
   success: boolean;
   error?: string;
   message_id?: number;
+  token_tier?: string; // 'custom' | 'personal' | 'system'
 }
 
 async function sendToMultipleChats(
@@ -466,6 +467,7 @@ async function sendToMultipleChats(
 
   for (const chat of chats) {
     const token = chat.bot_token || defaultToken;
+    const tokenTier = chat.bot_token ? "custom" : (defaultToken && defaultToken !== (Deno.env.get("TELEGRAM_BOT_TOKEN") || "")) ? "personal" : "system";
     const result = await sendWithRetry(token, chat.chat_id, message, imageUrl, 3);
 
     // Log to database if we have userId
@@ -477,8 +479,20 @@ async function sendToMultipleChats(
         notificationType,
         segment,
         result,
-        1 // We track retries internally, but log as single attempt
+        1
       );
+
+      // Update verification status per chat
+      try {
+        await supabase
+          .from("telegram_chats")
+          .update({
+            verification_status: result.success ? "verified" : "failed",
+            ...(result.success ? { last_verified_at: new Date().toISOString() } : {}),
+          })
+          .eq("user_id", userId)
+          .eq("chat_id", chat.chat_id);
+      } catch (_) { /* don't fail main flow */ }
     }
 
     if (result.success) {
@@ -487,6 +501,7 @@ async function sendToMultipleChats(
         chat_id: chat.chat_id,
         success: true,
         message_id: result.messageId,
+        token_tier: tokenTier,
       });
     } else {
       failCount++;
@@ -494,6 +509,7 @@ async function sendToMultipleChats(
         chat_id: chat.chat_id,
         success: false,
         error: result.error || "Unknown error",
+        token_tier: tokenTier,
       });
     }
   }
@@ -1138,12 +1154,7 @@ Deno.serve(async (req) => {
       // Try new multi-chat system first with notification type routing
       targetChats = await getUserTelegramChats(supabase, userId, notificationType, segment);
 
-      // Fallback to legacy single chat_id from user_settings
-      if (targetChats.length === 0) {
-        if (settings.telegram_chat_id) {
-          targetChats = [{ chat_id: settings.telegram_chat_id, bot_token: null }];
-        }
-      }
+      // Legacy telegram_chat_id fallback removed — users must add explicit chat destinations
     }
 
     // No more silent fallback to DEFAULT_CHAT_ID for user notifications.
