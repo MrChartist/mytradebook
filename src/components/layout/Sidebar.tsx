@@ -16,13 +16,11 @@ import {
   Menu,
   Search,
   Eye,
-  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileDrawer } from "./MobileDrawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { useSubscription } from "@/hooks/useSubscription";
 
 const mainNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -45,7 +43,6 @@ export function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut, profile } = useAuth();
-  const { plan, isTrialing, trialDaysLeft } = useSubscription();
 
   const handleLogout = async () => {
     await signOut();
@@ -159,17 +156,7 @@ export function Sidebar() {
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <p className="text-[13px] font-medium truncate">{profile.name || "User"}</p>
-                  <span className={cn(
-                    "text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full shrink-0",
-                    plan === "pro" || plan === "team"
-                      ? "bg-primary/10 text-primary"
-                      : "bg-muted text-muted-foreground"
-                  )}>
-                    {isTrialing ? `Trial · ${trialDaysLeft}d` : plan}
-                  </span>
-                </div>
+                <p className="text-[13px] font-medium truncate">{profile.name || "User"}</p>
                 <p className="text-[11px] text-muted-foreground truncate">{profile.email}</p>
               </div>
             </div>
