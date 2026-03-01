@@ -16,6 +16,9 @@ import {
   Eye,
   Layers,
   Send,
+  ChevronDown,
+  Star,
+  Quote,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -155,6 +158,54 @@ const steps = [
   },
 ];
 
+const testimonials = [
+  {
+    name: "Rahul M.",
+    role: "Options Trader, Mumbai",
+    quote: "TradeBook helped me identify that my Monday morning trades were consistently losing. After adjusting my strategy, my win rate went from 42% to 61%.",
+    stars: 5,
+  },
+  {
+    name: "Priya S.",
+    role: "Swing Trader, Bangalore",
+    quote: "The segment-level analytics are a game-changer. I can see exactly which setups work for intraday vs positional, and the Telegram alerts keep me disciplined.",
+    stars: 5,
+  },
+  {
+    name: "Aditya K.",
+    role: "F&O Trader, Delhi",
+    quote: "I tried 4 journals before TradeBook. None understood Indian markets — segments, lot sizes, MCX. Finally something built for how we actually trade.",
+    stars: 5,
+  },
+];
+
+const faqs = [
+  {
+    q: "Is TradeBook free to use?",
+    a: "Yes! The Free plan includes up to 50 trades/month, basic analytics, and 1 watchlist — forever free. Upgrade to Pro for unlimited trades, Telegram notifications, broker integration, and advanced analytics.",
+  },
+  {
+    q: "Which brokers are supported?",
+    a: "Currently we support Dhan for live prices, portfolio auto-sync, and one-click order execution. More brokers (Zerodha, Angel One) are on the roadmap.",
+  },
+  {
+    q: "Is my trading data safe?",
+    a: "Absolutely. All data is encrypted at rest and in transit. Your data is yours — we never share, sell, or use it for any purpose other than powering your dashboard.",
+  },
+  {
+    q: "Can I use TradeBook for Commodities and F&O?",
+    a: "Yes! TradeBook supports 5 market segments: Equity Intraday, Equity Positional, Futures, Options, and Commodities. Each segment has its own analytics and reporting.",
+  },
+  {
+    q: "How does the 14-day Pro trial work?",
+    a: "Every new signup gets full Pro access for 14 days — no credit card required. After the trial, you can continue on the Free plan or upgrade to keep Pro features.",
+  },
+  {
+    q: "Do you offer refunds?",
+    a: "Yes, we offer a full refund within 7 days of purchase if you're not satisfied. No questions asked.",
+  },
+];
+
 const pricingPlans = [
   {
     name: "Free",
@@ -199,6 +250,27 @@ const pricingPlans = [
     highlighted: false,
   },
 ];
+
+/* ─── FAQ Accordion Item ────────────────────────────────── */
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border border-border rounded-xl overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-muted/50 transition-colors"
+      >
+        <span className="font-medium text-sm pr-4">{question}</span>
+        <ChevronDown className={cn("w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-200", open && "rotate-180")} />
+      </button>
+      {open && (
+        <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed animate-fade-in">
+          {answer}
+        </div>
+      )}
+    </div>
+  );
+}
 
 /* ─── Main Component ────────────────────────────────────── */
 export default function Landing() {
@@ -488,6 +560,75 @@ export default function Landing() {
               </FadeIn>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Testimonials ─────────────────────────────────── */}
+      <section className="py-20 lg:py-28 relative overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.2]"
+          style={{
+            backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+        <div className="relative max-w-6xl mx-auto px-6">
+          <FadeIn className="text-center mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+              Trusted by{" "}
+              <span
+                className="text-[hsl(var(--tb-accent))] italic"
+                style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
+              >
+                Real Traders
+              </span>
+            </h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Here's what traders across India are saying about TradeBook.
+            </p>
+          </FadeIn>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {testimonials.map((t, i) => (
+              <FadeIn key={t.name} delay={i * 100}>
+                <div className="rounded-2xl border border-border bg-card p-6 h-full flex flex-col">
+                  <Quote className="w-8 h-8 text-[hsl(var(--tb-accent)/0.2)] mb-4" />
+                  <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-4">
+                    "{t.quote}"
+                  </p>
+                  <div className="flex items-center gap-1 mb-3">
+                    {[...Array(t.stars)].map((_, j) => (
+                      <Star key={j} className="w-3.5 h-3.5 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />
+                    ))}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">{t.name}</p>
+                    <p className="text-xs text-muted-foreground">{t.role}</p>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ──────────────────────────────────────────── */}
+      <section id="faq" className="py-20 lg:py-28">
+        <div className="max-w-3xl mx-auto px-6">
+          <FadeIn className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Everything you need to know about TradeBook.
+            </p>
+          </FadeIn>
+
+          <FadeIn delay={100}>
+            <div className="space-y-3">
+              {faqs.map((faq) => (
+                <FAQItem key={faq.q} question={faq.q} answer={faq.a} />
+              ))}
+            </div>
+          </FadeIn>
         </div>
       </section>
 
