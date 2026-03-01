@@ -88,10 +88,10 @@ export function InsightCard({
   return (
     <div
       className={cn(
-        "group transition-all duration-300 cursor-pointer",
+        "group cursor-pointer transition-all duration-300",
         isGrid
-          ? "premium-card-hover !p-5"
-          : "premium-card-hover !p-3 !rounded-xl flex items-center gap-4",
+          ? "glass-morph shine-overlay p-5 hover:translate-y-[-2px]"
+          : "glass-morph shine-overlay p-3 !rounded-xl flex items-center gap-4 trade-row-hover",
         className
       )}
       onClick={onView}

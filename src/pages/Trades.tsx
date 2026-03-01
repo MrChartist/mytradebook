@@ -283,7 +283,7 @@ export default function Trades() {
         <div
           role="button"
           tabIndex={0}
-          className="premium-card-hover !p-5 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="glass-morph shine-overlay p-5 cursor-pointer group active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-300 hover:translate-y-[-2px]"
           onClick={() => { setSortBy("pnl_high"); setStatusFilter("ALL"); setActiveStatFilter("Total P&L"); }}
           onKeyDown={(e) => { if (e.key === "Enter") { setSortBy("pnl_high"); setStatusFilter("ALL"); setActiveStatFilter("Total P&L"); } }}
           aria-label="Sort by Total P&L"
@@ -299,7 +299,7 @@ export default function Trades() {
         <div
           role="button"
           tabIndex={0}
-          className="premium-card-hover !p-5 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="glass-morph shine-overlay p-5 cursor-pointer group active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-300 hover:translate-y-[-2px]"
           onClick={() => { setStatusFilter("OPEN"); setActiveStatFilter("Open"); }}
           onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("OPEN"); setActiveStatFilter("Open"); } }}
           aria-label="Filter to Open trades"
@@ -312,7 +312,7 @@ export default function Trades() {
         <div
           role="button"
           tabIndex={0}
-          className="premium-card-hover !p-5 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="glass-morph shine-overlay p-5 cursor-pointer group active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-300 hover:translate-y-[-2px]"
           onClick={() => { setStatusFilter("PENDING"); setActiveStatFilter("Planned"); }}
           onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("PENDING"); setActiveStatFilter("Planned"); } }}
           aria-label="Filter to Planned trades"
@@ -325,7 +325,7 @@ export default function Trades() {
         <div
           role="button"
           tabIndex={0}
-          className="premium-card-hover !p-5 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="glass-morph shine-overlay p-5 cursor-pointer group active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-300 hover:translate-y-[-2px]"
           onClick={() => { setStatusFilter("CLOSED"); setActiveStatFilter("Closed Today"); }}
           onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("CLOSED"); setActiveStatFilter("Closed Today"); } }}
           aria-label="Filter to Closed trades"
@@ -338,7 +338,7 @@ export default function Trades() {
         <div
           role="button"
           tabIndex={0}
-          className="premium-card-hover !p-5 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="glass-morph shine-overlay p-5 cursor-pointer group active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-300 hover:translate-y-[-2px]"
           onClick={() => { setStatusFilter("CLOSED"); setActiveStatFilter("Win Rate"); }}
           onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("CLOSED"); setActiveStatFilter("Win Rate"); } }}
           aria-label="Filter to show Win Rate"
