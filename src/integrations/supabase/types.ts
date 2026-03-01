@@ -195,6 +195,45 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_journal_entries: {
+        Row: {
+          created_at: string
+          entry_date: string
+          id: string
+          lessons_learned: string | null
+          market_outlook: string | null
+          mood: string | null
+          post_market_review: string | null
+          pre_market_plan: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          entry_date: string
+          id?: string
+          lessons_learned?: string | null
+          market_outlook?: string | null
+          mood?: string | null
+          post_market_review?: string | null
+          pre_market_plan?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          entry_date?: string
+          id?: string
+          lessons_learned?: string | null
+          market_outlook?: string | null
+          mood?: string | null
+          post_market_review?: string | null
+          pre_market_plan?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       instrument_master: {
         Row: {
           display_name: string | null
@@ -950,6 +989,7 @@ export type Database = {
           created_from_alert_id: string | null
           current_price: number | null
           dhan_order_id: string | null
+          emotion_tag: string | null
           entry_price: number | null
           entry_time: string
           exchange_segment: string | null
@@ -1003,6 +1043,7 @@ export type Database = {
           created_from_alert_id?: string | null
           current_price?: number | null
           dhan_order_id?: string | null
+          emotion_tag?: string | null
           entry_price?: number | null
           entry_time?: string
           exchange_segment?: string | null
@@ -1056,6 +1097,7 @@ export type Database = {
           created_from_alert_id?: string | null
           current_price?: number | null
           dhan_order_id?: string | null
+          emotion_tag?: string | null
           entry_price?: number | null
           entry_time?: string
           exchange_segment?: string | null
