@@ -4,36 +4,57 @@ import {
   AreaChart,
   Bar,
   BarChart,
-  ComposedChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
   ReferenceLine,
   CartesianGrid,
+  ReferenceDot,
 } from "recharts";
 import { format } from "date-fns";
 import type { Trade } from "@/hooks/useTrades";
+import type { CapitalTransaction } from "@/hooks/useCapitalTransactions";
 import { cn } from "@/lib/utils";
-import { TrendingDown } from "lucide-react";
+import { TrendingDown, ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
 
 interface Props {
   trades: Trade[];
   startingCapital: number;
+  capitalTransactions?: CapitalTransaction[];
 }
 
 type Period = "1M" | "3M" | "6M" | "1Y" | "ALL";
 
-export function EquityCurveDrawdown({ trades, startingCapital }: Props) {
+export function EquityCurveDrawdown({ trades, startingCapital, capitalTransactions = [] }: Props) {
   const [period, setPeriod] = useState<Period>("ALL");
 
-  const { curveData, maxDrawdown, maxDrawdownPercent, currentEquity } = useMemo(() => {
+  const totalDeposited = capitalTransactions.filter((t) => t.type === "DEPOSIT").reduce((s, t) => s + Number(t.amount), 0);
+  const totalWithdrawn = capitalTransactions.filter((t) => t.type === "WITHDRAWAL").reduce((s, t) => s + Number(t.amount), 0);
+  const netCapitalDeployed = startingCapital + totalDeposited - totalWithdrawn;
+
+  const { curveData, maxDrawdown, maxDrawdownPercent, currentEquity, capitalEventIndices } = useMemo(() => {
     const closed = trades
       .filter((t) => t.status === "CLOSED" && t.closed_at && t.pnl != null)
       .sort((a, b) => new Date(a.closed_at!).getTime() - new Date(b.closed_at!).getTime());
 
-    if (closed.length === 0) {
-      return { curveData: [], maxDrawdown: 0, maxDrawdownPercent: 0, currentEquity: startingCapital };
+    // Build unified timeline
+    type TimelineEvent = { date: Date; dateStr: string } & (
+      | { kind: "trade"; pnl: number }
+      | { kind: "capital"; type: "DEPOSIT" | "WITHDRAWAL"; amount: number }
+    );
+
+    const events: TimelineEvent[] = [];
+    for (const t of closed) {
+      events.push({ date: new Date(t.closed_at!), dateStr: format(new Date(t.closed_at!), "dd MMM"), kind: "trade", pnl: t.pnl || 0 });
+    }
+    for (const ct of capitalTransactions) {
+      events.push({ date: new Date(ct.transaction_date), dateStr: format(new Date(ct.transaction_date), "dd MMM"), kind: "capital", type: ct.type, amount: Number(ct.amount) });
+    }
+    events.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+    if (events.length === 0) {
+      return { curveData: [], maxDrawdown: 0, maxDrawdownPercent: 0, currentEquity: startingCapital, capitalEventIndices: [] };
     }
 
     // Filter by period
@@ -47,40 +68,52 @@ export function EquityCurveDrawdown({ trades, startingCapital }: Props) {
         default: return new Date(0);
       }
     })();
-
-    const filtered = closed.filter((t) => new Date(t.closed_at!) >= cutoff);
+    const filtered = events.filter((e) => e.date >= cutoff);
 
     let equity = startingCapital;
     let peak = startingCapital;
     let maxDd = 0;
     let maxDdPct = 0;
+    const capIndices: number[] = [];
 
-    const data = [
-      { date: filtered[0] ? format(new Date(filtered[0].closed_at!), "dd MMM") : "Start", equity: startingCapital, drawdown: 0, drawdownPct: 0 },
-    ];
+    const data = [{ date: filtered[0]?.dateStr || "Start", equity: startingCapital, drawdown: 0, drawdownPct: 0, capitalEvent: null as string | null }];
 
-    for (const trade of filtered) {
-      equity += trade.pnl || 0;
-      if (equity > peak) peak = equity;
+    for (const ev of filtered) {
+      if (ev.kind === "trade") {
+        equity += ev.pnl;
+        if (equity > peak) peak = equity;
+      } else {
+        if (ev.type === "DEPOSIT") {
+          equity += ev.amount;
+          peak += ev.amount;
+        } else {
+          equity -= ev.amount;
+          peak -= ev.amount;
+        }
+      }
       const dd = peak - equity;
       const ddPct = peak > 0 ? (dd / peak) * 100 : 0;
       if (dd > maxDd) maxDd = dd;
       if (ddPct > maxDdPct) maxDdPct = ddPct;
 
+      const idx = data.length;
+      if (ev.kind === "capital") capIndices.push(idx);
+
       data.push({
-        date: format(new Date(trade.closed_at!), "dd MMM"),
+        date: ev.dateStr,
         equity,
         drawdown: -dd,
         drawdownPct: -ddPct,
+        capitalEvent: ev.kind === "capital" ? ev.type : null,
       });
     }
 
-    return { curveData: data, maxDrawdown: maxDd, maxDrawdownPercent: maxDdPct, currentEquity: equity };
-  }, [trades, startingCapital, period]);
+    return { curveData: data, maxDrawdown: maxDd, maxDrawdownPercent: maxDdPct, currentEquity: equity, capitalEventIndices: capIndices };
+  }, [trades, startingCapital, capitalTransactions, period]);
 
-  const totalReturn = currentEquity - startingCapital;
-  const totalReturnPct = startingCapital > 0 ? (totalReturn / startingCapital) * 100 : 0;
-  const isProfit = totalReturn >= 0;
+  const tradingPnl = currentEquity - netCapitalDeployed;
+  const tradingPnlPct = netCapitalDeployed > 0 ? (tradingPnl / netCapitalDeployed) * 100 : 0;
+  const isProfit = tradingPnl >= 0;
 
   return (
     <div className="surface-card p-5 space-y-4">
@@ -107,18 +140,18 @@ export function EquityCurveDrawdown({ trades, startingCapital }: Props) {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="p-3 rounded-lg bg-accent/50">
           <p className="text-xs text-muted-foreground">Current Equity</p>
           <p className="text-lg font-bold font-mono">₹{currentEquity.toLocaleString("en-IN")}</p>
         </div>
         <div className="p-3 rounded-lg bg-accent/50">
-          <p className="text-xs text-muted-foreground">Total Return</p>
+          <p className="text-xs text-muted-foreground">Trading P&L</p>
           <p className={cn("text-lg font-bold font-mono", isProfit ? "text-profit" : "text-loss")}>
-            {isProfit ? "+" : ""}₹{totalReturn.toLocaleString("en-IN")}
+            {isProfit ? "+" : ""}₹{tradingPnl.toLocaleString("en-IN")}
           </p>
           <p className={cn("text-xs", isProfit ? "text-profit" : "text-loss")}>
-            {isProfit ? "+" : ""}{totalReturnPct.toFixed(2)}%
+            {isProfit ? "+" : ""}{tradingPnlPct.toFixed(2)}%
           </p>
         </div>
         <div className="p-3 rounded-lg bg-loss/5 border border-loss/10">
@@ -129,8 +162,15 @@ export function EquityCurveDrawdown({ trades, startingCapital }: Props) {
           <p className="text-xs text-loss">-{maxDrawdownPercent.toFixed(2)}%</p>
         </div>
         <div className="p-3 rounded-lg bg-accent/50">
-          <p className="text-xs text-muted-foreground">Starting Capital</p>
-          <p className="text-lg font-bold font-mono">₹{startingCapital.toLocaleString("en-IN")}</p>
+          <p className="text-xs text-muted-foreground">Net Capital Deployed</p>
+          <p className="text-lg font-bold font-mono">₹{netCapitalDeployed.toLocaleString("en-IN")}</p>
+          {(totalDeposited > 0 || totalWithdrawn > 0) && (
+            <p className="text-xs text-muted-foreground">
+              <span className="text-profit">+{totalDeposited.toLocaleString("en-IN")}</span>
+              {" / "}
+              <span className="text-loss">-{totalWithdrawn.toLocaleString("en-IN")}</span>
+            </p>
+          )}
         </div>
       </div>
 
@@ -159,7 +199,17 @@ export function EquityCurveDrawdown({ trades, startingCapital }: Props) {
                     boxShadow: "var(--shadow-md)",
                     fontSize: "12px",
                   }}
-                  formatter={(value: number) => [`₹${value.toLocaleString("en-IN")}`, "Equity"]}
+                  formatter={(value: number, name: string) => {
+                    if (name === "equity") return [`₹${value.toLocaleString("en-IN")}`, "Equity"];
+                    return [value, name];
+                  }}
+                  labelFormatter={(label, payload) => {
+                    const item = payload?.[0]?.payload;
+                    if (item?.capitalEvent) {
+                      return `${label} (${item.capitalEvent === "DEPOSIT" ? "💰 Deposit" : "💸 Withdrawal"})`;
+                    }
+                    return label;
+                  }}
                 />
                 <Area
                   type="monotone"
@@ -168,6 +218,22 @@ export function EquityCurveDrawdown({ trades, startingCapital }: Props) {
                   strokeWidth={2}
                   fill="url(#equityGradient)"
                 />
+                {/* Capital event markers */}
+                {capitalEventIndices.map((idx) => {
+                  const point = curveData[idx];
+                  if (!point) return null;
+                  return (
+                    <ReferenceDot
+                      key={idx}
+                      x={point.date}
+                      y={point.equity}
+                      r={5}
+                      fill={point.capitalEvent === "DEPOSIT" ? "hsl(152, 60%, 42%)" : "hsl(0, 72%, 55%)"}
+                      stroke="hsl(var(--background))"
+                      strokeWidth={2}
+                    />
+                  );
+                })}
               </AreaChart>
             </ResponsiveContainer>
           </div>

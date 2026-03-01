@@ -1,6 +1,7 @@
 import { BarChart3, TrendingUp, TrendingDown, Target, Activity } from "lucide-react";
 import { useTrades } from "@/hooks/useTrades";
 import { useUserSettings } from "@/hooks/useUserSettings";
+import { useCapitalTransactions } from "@/hooks/useCapitalTransactions";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { EquityCurveDrawdown } from "@/components/analytics/EquityCurveDrawdown";
 import { RiskRewardAnalytics } from "@/components/analytics/RiskRewardAnalytics";
@@ -14,6 +15,7 @@ import { PlanGate } from "@/components/PlanGate";
 export default function Analytics() {
   const { trades, summary } = useTrades();
   const { settings } = useUserSettings();
+  const { transactions: capitalTransactions } = useCapitalTransactions();
   const closed = trades.filter((t) => t.status === "CLOSED");
 
   const startingCapital = (settings as any)?.starting_capital ?? 500000;
@@ -50,7 +52,7 @@ export default function Analytics() {
       </div>
 
       {/* Equity Curve & Drawdown */}
-      <EquityCurveDrawdown trades={trades} startingCapital={startingCapital} />
+      <EquityCurveDrawdown trades={trades} startingCapital={startingCapital} capitalTransactions={capitalTransactions} />
 
       {/* Segment Performance Breakdown */}
       <PlanGate plan="pro" feature="advancedAnalytics" message="Upgrade to Pro to unlock segment breakdown, time analysis, and more.">

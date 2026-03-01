@@ -165,6 +165,36 @@ export type Database = {
         }
         Relationships: []
       }
+      capital_transactions: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: string
+          notes: string | null
+          transaction_date: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          transaction_date?: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          transaction_date?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       instrument_master: {
         Row: {
           display_name: string | null
