@@ -212,10 +212,10 @@ const modeLabels: Record<string, string> = {
 async function getUserSettings(supabase: any, userId: string) {
   const { data } = await supabase
     .from("user_settings")
-    .select("telegram_chat_id, ra_public_mode, ra_disclaimer")
+    .select("telegram_chat_id, ra_public_mode, ra_disclaimer, telegram_bot_token, telegram_bot_username")
     .eq("user_id", userId)
     .maybeSingle();
-  return data || { telegram_chat_id: null, ra_public_mode: false, ra_disclaimer: null };
+  return data || { telegram_chat_id: null, ra_public_mode: false, ra_disclaimer: null, telegram_bot_token: null, telegram_bot_username: null };
 }
 
 // Get all telegram_chats for a user, filtered by notification type and segment
@@ -844,20 +844,21 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
+    const SYSTEM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN") || "";
     const DEFAULT_CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-    if (!TELEGRAM_BOT_TOKEN) throw new Error("TELEGRAM_BOT_TOKEN is not configured");
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) throw new Error("Supabase credentials not configured");
+    if (!SYSTEM_BOT_TOKEN) console.warn("TELEGRAM_BOT_TOKEN not set — relying on per-user/per-chat tokens");
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
     const payload: NotificationPayload = await req.json();
 
     // For "custom" with explicit chat_id — direct send (used by Test button)
     if (payload.type === "custom" && payload.chat_id) {
-      const token = (payload as any).bot_token || TELEGRAM_BOT_TOKEN;
+      const token = (payload as any).bot_token || SYSTEM_BOT_TOKEN;
+      if (!token) throw new Error("No bot token available for direct send");
       const result = await sendWithRetry(token, payload.chat_id, payload.message, null, 3);
 
       if (!result.success) {
@@ -883,7 +884,8 @@ Deno.serve(async (req) => {
     if (payload.type === "test") {
       const message = payload.message || `🔔 *Test Notification* | ${APP}\n\nYour Telegram integration is working correctly!\n\n✅ ${APP} is connected.\n⏱ ${istTimestamp()}`;
       if (!DEFAULT_CHAT_ID) throw new Error("No default chat ID configured");
-      const result = await sendTelegramMessage(TELEGRAM_BOT_TOKEN, DEFAULT_CHAT_ID, message);
+      if (!SYSTEM_BOT_TOKEN) throw new Error("No system bot token configured for test");
+      const result = await sendTelegramMessage(SYSTEM_BOT_TOKEN, DEFAULT_CHAT_ID, message);
       if (!result.success) throw new Error("Failed to send test message");
       return jsonOk({ success: true, message_id: result.messageId });
     }
@@ -1079,14 +1081,18 @@ Deno.serve(async (req) => {
 
     // === Resolve target chats ===
     let targetChats: Array<{ chat_id: string; bot_token: string | null }> = [];
+    let userBotToken: string | null = null;
 
     if (userId) {
+      // Fetch user-level bot token for 3-tier resolution
+      const settings = await getUserSettings(supabase, userId);
+      userBotToken = settings.telegram_bot_token || null;
+
       // Try new multi-chat system first with notification type routing
       targetChats = await getUserTelegramChats(supabase, userId, notificationType, segment);
 
       // Fallback to legacy single chat_id from user_settings
       if (targetChats.length === 0) {
-        const settings = await getUserSettings(supabase, userId);
         if (settings.telegram_chat_id) {
           targetChats = [{ chat_id: settings.telegram_chat_id, bot_token: null }];
         }
@@ -1106,9 +1112,18 @@ Deno.serve(async (req) => {
       });
     }
 
+    // 3-tier token resolution: per-chat > user-level > system-level
+    const effectiveDefaultToken = userBotToken || SYSTEM_BOT_TOKEN;
+    if (!effectiveDefaultToken && targetChats.some(c => !c.bot_token)) {
+      return jsonOk({
+        success: false,
+        error: "No bot token available. Configure your personal bot token in Settings or contact admin.",
+      });
+    }
+
     const result = await sendToMultipleChats(
       supabase,
-      TELEGRAM_BOT_TOKEN,
+      effectiveDefaultToken || "",
       targetChats,
       message,
       imageUrl,
