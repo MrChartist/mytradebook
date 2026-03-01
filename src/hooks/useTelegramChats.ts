@@ -53,6 +53,40 @@ export interface TelegramDeliveryLog {
   created_at: string;
 }
 
+// ──────────────────────────────────────────────
+// Friendly error mapping for Telegram API errors
+// ──────────────────────────────────────────────
+function mapTelegramError(raw: string): string {
+  const lower = raw.toLowerCase();
+
+  if (lower.includes("chat not found")) {
+    return "Chat ID not found. Tips:\n• Personal chat — send /start to your bot first\n• Group — add the bot to the group\n• Channel — add the bot as admin\n• Channel IDs start with -100 (e.g. -1001234567890)";
+  }
+  if (lower.includes("bot was blocked")) {
+    return "This user has blocked the bot. They need to unblock it and send /start again.";
+  }
+  if (lower.includes("bot is not a member") || lower.includes("forbidden")) {
+    return "The bot isn't a member of this group/channel. Add it as a member (or admin for channels) first.";
+  }
+  if (lower.includes("group chat was upgraded")) {
+    return "This group was upgraded to a supergroup. Use the new Chat ID (starts with -100).";
+  }
+  if (lower.includes("not enough rights")) {
+    return "The bot doesn't have permission to send messages in this chat. Check admin/member permissions.";
+  }
+  if (lower.includes("too many requests") || lower.includes("429")) {
+    return "Rate limited by Telegram. Wait a minute and try again.";
+  }
+  return raw;
+}
+
+// Auto-label based on Chat ID format
+function autoLabel(chatId: string): string {
+  if (chatId.startsWith("-100")) return "Channel / Supergroup";
+  if (chatId.startsWith("-")) return "Group";
+  return "Personal Chat";
+}
+
 export function useTelegramChats() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -80,13 +114,16 @@ export function useTelegramChats() {
         throw new Error("Chat ID must be a number (e.g. 123456789 or -1001234567890)");
       }
 
+      // Use provided label or auto-generate from Chat ID pattern
+      const label = input.label || autoLabel(chatId);
+
       // Insert the chat first
       const { data, error } = await supabase
         .from("telegram_chats")
         .insert({
           user_id: user.id,
           chat_id: chatId,
-          label: input.label || `Chat ${input.chat_id}`,
+          label,
           segments: [],
           bot_token: input.bot_token || null,
           bot_username: input.bot_username || null,
@@ -110,7 +147,6 @@ export function useTelegramChats() {
         if (testError || (testData && !testData.success)) {
           // Verification failed — delete the chat and throw
           await supabase.from("telegram_chats").delete().eq("id", chatRow.id);
-          // Try to extract detailed error from edge function response body
           let errorMsg = "Bot cannot reach this chat";
           if (testData?.errorDescription) {
             errorMsg = testData.errorDescription;
@@ -126,14 +162,12 @@ export function useTelegramChats() {
           } else if (testError?.message) {
             errorMsg = testError.message;
           }
-          throw new Error(`Verification failed: ${errorMsg}`);
+          throw new Error(`Verification failed: ${mapTelegramError(errorMsg)}`);
         }
       } catch (verifyErr: any) {
-        // If it's our own thrown error, re-throw
         if (verifyErr.message?.startsWith("Verification failed:")) throw verifyErr;
-        // Otherwise, network error — delete and throw
         await supabase.from("telegram_chats").delete().eq("id", chatRow.id);
-        throw new Error(`Verification failed: ${verifyErr.message || "Could not reach chat"}`);
+        throw new Error(`Verification failed: ${mapTelegramError(verifyErr.message || "Could not reach chat")}`);
       }
 
       return chatRow;
@@ -241,7 +275,7 @@ export function useTelegramChats() {
           if (errorBody) errorDesc = errorBody.errorDescription || errorBody.error;
         } catch { /* ignore */ }
 
-        toast.error(errorDesc || error.message || "Test failed", { duration: 6000 });
+        toast.error(mapTelegramError(errorDesc || error.message || "Test failed"), { duration: 6000 });
         queryClient.invalidateQueries({ queryKey: ["telegram-chats"] });
         queryClient.invalidateQueries({ queryKey: ["telegram-delivery-logs"] });
         return false;
@@ -255,12 +289,12 @@ export function useTelegramChats() {
       }
 
       const errorMsg = data?.errorDescription || data?.error || "Test failed";
-      toast.error(errorMsg, { duration: 6000 });
+      toast.error(mapTelegramError(errorMsg), { duration: 6000 });
       queryClient.invalidateQueries({ queryKey: ["telegram-chats"] });
       queryClient.invalidateQueries({ queryKey: ["telegram-delivery-logs"] });
       return false;
     } catch (e: any) {
-      toast.error(e.message || "Test failed", { duration: 5000 });
+      toast.error(mapTelegramError(e.message || "Test failed"), { duration: 5000 });
       return false;
     }
   };
@@ -276,6 +310,32 @@ export function useTelegramChats() {
       toast.success(`All ${chats.length} chats tested successfully!`);
     } else {
       toast.warning(`${successCount}/${chats.length} chats responded`);
+    }
+  };
+
+  // Verify a bot token via the telegram-verify edge function
+  const verifyBotToken = async (token: string): Promise<{ success: boolean; bot?: { username: string; first_name: string }; error?: string }> => {
+    try {
+      const { data, error } = await supabase.functions.invoke("telegram-verify", {
+        body: { action: "verify_bot_token", bot_token: token },
+      });
+
+      if (error) {
+        let errorMsg = "Could not verify bot token";
+        try {
+          const body = error.context ? await error.context.json?.() : null;
+          if (body?.error) errorMsg = body.error;
+        } catch { /* ignore */ }
+        return { success: false, error: errorMsg };
+      }
+
+      if (data?.success && data?.bot) {
+        return { success: true, bot: data.bot };
+      }
+
+      return { success: false, error: data?.error || "Invalid bot token" };
+    } catch (e: any) {
+      return { success: false, error: e.message || "Network error" };
     }
   };
 
@@ -309,5 +369,6 @@ export function useTelegramChats() {
     toggleNotificationAll,
     testChat,
     testAllChats,
+    verifyBotToken,
   };
 }
