@@ -61,34 +61,6 @@ export function useTrades(filters?: TradeFilters) {
     mutationFn: async (trade: Omit<TradeInsert, "user_id">) => {
       if (!user?.id) throw new Error("Not authenticated");
 
-      // Check monthly trade limit for free users
-      const startOfMonth = new Date();
-      startOfMonth.setDate(1);
-      startOfMonth.setHours(0, 0, 0, 0);
-      
-      const { count, error: countError } = await supabase
-        .from("trades")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .gte("created_at", startOfMonth.toISOString());
-
-      if (!countError && count !== null) {
-        // Fetch subscription to check limit
-        const { data: sub } = await supabase
-          .from("subscriptions")
-          .select("plan, status, trial_ends_at")
-          .eq("user_id", user.id)
-          .single();
-
-        const isTrialing = sub?.status === "trialing";
-        const trialExpired = isTrialing && sub?.trial_ends_at && new Date(sub.trial_ends_at) < new Date();
-        const effectivePlan = trialExpired ? "free" : (sub?.plan || "free");
-
-        if (effectivePlan === "free" && count >= 50) {
-          throw new Error("You've reached the 50 trades/month limit on the Free plan. Upgrade to Pro for unlimited trades.");
-        }
-      }
-
       const { data, error } = await supabase
         .from("trades")
         .insert({ ...trade, user_id: user.id })

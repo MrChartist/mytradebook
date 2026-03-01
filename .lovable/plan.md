@@ -1,107 +1,151 @@
 
-# TradeBook — Improvement & SaaS Hardening Plan (v2)
 
-## Current State (Post Phase 1)
-- ✅ Subscriptions table + 14-day Pro trial on signup
-- ✅ `useSubscription` hook + `PlanGate` component
-- ✅ Billing settings tab with plan comparison
-- ✅ Trial banner in MainLayout
-- ✅ Advanced analytics gated behind Pro
-- ⏳ Razorpay payment integration (user will add later)
+# Deep Research: SaaS Transformation Plan for TradeBook
 
----
+## Current State Assessment
 
-## 🐛 Bugs & Issues Found
+TradeBook is a feature-rich trading journal for Indian markets (NSE, MCX) with:
+- 10 core pages (Dashboard, Trades, Alerts, Watchlist, Studies, Calendar, Mistakes, Analytics, Reports, Settings)
+- Dhan broker integration with live prices
+- Telegram notifications
+- Multi-segment support (Equity Intraday/Positional, Futures, Options, Commodities)
+- Google OAuth + Email/Password auth
+- Weekly report generation
+- Trailing stop-loss engine
 
-### B1: Console Warning — Select ref in PreferencesSettings
-`Function components cannot be given refs` warning from Radix Select in PreferencesSettings. Needs `forwardRef` wrapping or prop fix.
-
-### B2: Landing Page Stats Are Fabricated
-"2,500+ Traders" and "10,000+ Trades Logged" are hardcoded fake numbers. Should either pull real counts (privacy-safe aggregates) or remove them.
-
-### B3: Footer Links Are Dead
-Privacy Policy, Terms of Service, Refund Policy, Documentation, Contact Us, Status Page — all link to `#`.
-
-### B4: Reports "Download PDF" Generates .txt
-The download function creates a plain text file, not a real PDF. Unprofessional for a paid SaaS.
-
-### B5: No Feature Gating on Telegram/Dhan/Reports
-Only Analytics has PlanGate. Telegram notifications, Dhan broker integration, and weekly reports are not gated per the plan limits.
+**However, it lacks critical SaaS infrastructure** -- no subscription management, no usage limits enforcement, no billing, no plan gating, and no admin panel. The pricing section on the landing page is purely decorative.
 
 ---
 
-## 🚀 Improvements (Prioritized)
+## SaaS Gaps Identified (Priority Order)
 
-### Priority 1: Complete Feature Gating
-| Feature | Gate Level | Where |
-|---|---|---|
-| Telegram notifications | Pro | TelegramSettings, CreateTradeModal |
-| Dhan broker integration | Pro | IntegrationsSettings |
-| Weekly reports | Pro | Reports page |
-| Trailing SL engine | Pro | CreateTradeModal, TradeAutomation |
-| Watchlist creation (>1) | Pro | Watchlist page |
-| Trade creation (>50/mo) | Free limit | CreateTradeModal |
-| Team features | Team | Future |
+### 1. No Subscription/Billing System (Critical)
+The landing page shows Free/Pro/Team pricing (₹0/₹499/₹1,499) but there is zero billing infrastructure. All users get unlimited access to every feature. This is the single biggest gap preventing monetization.
 
-### Priority 2: Landing Page Trust & Conversion
-1. **FAQ Accordion** — Add 6-8 common questions below pricing
-2. **Testimonial Cards** — 3 placeholder testimonials with avatars
-3. **Product Screenshot** — Real dashboard screenshot in hero section
-4. **Remove fake stats** or replace with real aggregated counts
-5. **Proper legal pages** — /terms, /privacy, /refund routes with real content
+**Fix**: Integrate Stripe for subscription management with plan-based feature gating.
 
-### Priority 3: Functional Improvements
-1. **CSV Trade Import** — Already built per memory, verify it's working
-2. **PDF Report Generation** — Use html-to-canvas or a proper PDF library
-3. **Forgot Password Flow** — No password reset link on login page
-4. **Loading States** — Some pages show blank during data fetch
-5. **Empty States** — Improve empty state illustrations across pages
+### 2. No Feature Gating / Plan Enforcement
+Every user can create unlimited trades, watchlists, alerts, and access all analytics. The pricing page promises limits (e.g., "50 trades/month" on Free) but nothing is enforced.
 
-### Priority 4: Dashboard Enhancements
-1. **Subscription-aware dashboard** — Show plan badge, trial countdown in sidebar
-2. **Usage meter** — Show "X/50 trades used this month" for free users
-3. **Quick upgrade CTA** — Contextual upgrade prompts when hitting limits
+**Fix**: Create a `subscriptions` table, a `useSubscription` hook, and gate features behind plan checks (e.g., trade count limits, watchlist limits, analytics access).
 
-### Priority 5: Admin Dashboard
-1. **Role-gated /admin route** — Using existing `user_roles` table + `has_role()` function
-2. **Platform metrics** — Total users, active trials, trade volume
-3. **User management table** — View users, their plans, activity
-4. **Subscription overview** — MRR tracking (once Razorpay is added)
+### 3. No Admin Dashboard
+There is no way to view users, monitor usage, manage subscriptions, or see platform metrics. The `user_roles` table and `has_role()` function exist but are unused in the frontend.
 
-### Priority 6: Technical Debt
-1. **Fix Select ref warning** in PreferencesSettings
-2. **Add proper error boundaries** per page
-3. **Optimize bundle size** — Lazy load routes with React.lazy
-4. **Add meta tags** — SEO title/description per page
-5. **PWA improvements** — Offline support, better manifest
-6. **Rate limiting** — Add per-user API rate limits in edge functions
+**Fix**: Build an `/admin` page behind role-based access showing user count, active subscriptions, trade volume, and revenue metrics.
 
-### Priority 7: Growth Features
-1. **Email notifications** — Welcome email, weekly digest, alert triggers
-2. **Public trade sharing** — Shareable trade cards with unique URLs
-3. **Referral system** — Invite friends for free Pro days
-4. **API access** — REST API for Pro/Team users
-5. **Mobile responsiveness audit** — Fix any responsive issues
+### 4. No Usage Analytics / Metering
+No tracking of per-user usage (trades logged, alerts created, API calls made). This is needed both for plan enforcement and for understanding user engagement.
+
+**Fix**: Add usage counters either via database queries or a lightweight `usage_metrics` table.
+
+### 5. No Onboarding Funnel / Trial Flow
+The landing page CTA goes to `/login` which is a generic auth form. There is no trial activation, no welcome email sequence, and no guided first-trade experience beyond the basic onboarding checklist.
+
+**Fix**: Add a 14-day Pro trial on signup, with a trial banner and upgrade prompts when limits are hit.
+
+### 6. Landing Page Missing Trust Signals
+- No testimonials or social proof (the "2,500+ traders" stat is fabricated)
+- No product screenshots or demo video
+- No FAQ section
+- Footer links (Privacy, Terms, Docs) all point to `#`
+
+**Fix**: Add testimonials section, FAQ accordion, product screenshots, and proper legal pages.
+
+### 7. Reports Download is a Text File, Not PDF
+The "Download PDF" button generates a `.txt` file. This looks unprofessional for a paid SaaS product.
+
+**Fix**: Generate proper PDF reports using a library or server-side rendering.
+
+### 8. No CSV Import Feature
+Active traders need to bulk-import historical trades. Currently, every trade must be logged manually or synced from Dhan only.
+
+**Fix**: Add a CSV import wizard with column mapping and preview.
+
+### 9. No Email Notifications
+The platform relies entirely on Telegram for notifications. There is no email notification system (trade alerts, weekly digest, account events).
+
+**Fix**: Add email notification support via backend functions using the configured email domain.
+
+### 10. No Public Sharing / Social Features
+No way to share a trade idea, study, or performance report publicly. The `ra_public_mode` field exists in settings but is not implemented.
+
+**Fix**: Add shareable public profile pages and trade idea cards with unique URLs.
 
 ---
 
-## Implementation Order (Next Steps)
+## Recommended Implementation Phases
 
-### Immediate (This Session)
-1. Gate Telegram, Dhan, Reports, Watchlists, Trade limits behind PlanGate
-2. Add usage meter to sidebar/dashboard for free users
-3. Add FAQ section to landing page
-4. Fix dead footer links with proper legal pages
+### Phase 1: Billing + Plan Gating (Highest Impact)
+1. Enable Stripe integration
+2. Create `subscriptions` table with plan details
+3. Build `useSubscription` hook to check plan limits
+4. Add upgrade prompts when Free users hit limits (50 trades, 1 watchlist, no Telegram)
+5. Add billing settings tab with plan management
+6. Implement 14-day Pro trial on signup
 
-### Next Session
-1. Add testimonials to landing page
-2. Build admin dashboard
-3. Fix PDF report generation
-4. Add forgot password flow
-5. Route-level code splitting
+### Phase 2: SaaS Polish
+1. Add FAQ section to landing page
+2. Add testimonial cards (placeholder data)
+3. Create proper Terms of Service and Privacy Policy pages
+4. Add product screenshot/mockup to hero section
+5. Fix PDF report generation (use proper formatting)
+6. Add CSV trade import wizard
 
-### Future Sessions
-1. Email notifications (requires email domain setup)
-2. Public sharing features
-3. Razorpay integration (user-driven)
-4. API access for Team plan
+### Phase 3: Admin + Metrics
+1. Build `/admin` route (role-gated)
+2. Show platform metrics: total users, MRR, active subscriptions, trade volume
+3. User management table with plan info
+4. Usage monitoring per user
+
+### Phase 4: Growth Features
+1. Email notifications (weekly digest, alert triggers)
+2. Public trade sharing / RA mode
+3. Referral system
+4. API access for Pro/Team plans
+
+---
+
+## Technical Details
+
+### Stripe Integration
+- Use Lovable's built-in Stripe connector
+- Create products for Free, Pro (₹499/mo), and Team (₹1,499/mo) plans
+- Webhook edge function to handle subscription lifecycle events
+- Store subscription status in a `subscriptions` table
+
+### Plan Gating Logic
+```text
+Free Plan Limits:
+  - 50 trades/month
+  - 1 watchlist
+  - Basic analytics (no segment breakdown, no time analysis)
+  - No Telegram notifications
+  - No broker integration
+  - No weekly reports
+
+Pro Plan:
+  - Unlimited trades
+  - 10 watchlists
+  - Full analytics
+  - Telegram + alerts
+  - Broker integration
+  - Weekly reports
+  - Trailing SL engine
+
+Team Plan:
+  - Everything in Pro
+  - 5 team members
+  - Shared studies
+  - RA compliance mode
+  - API access
+```
+
+### Database Changes
+- New `subscriptions` table: `user_id, plan, status, stripe_customer_id, stripe_subscription_id, current_period_start, current_period_end, trial_ends_at`
+- RLS: Users can only view their own subscription
+- Trigger: Auto-create Free subscription on signup
+
+### Feature Gate Component
+A `<PlanGate plan="pro">` wrapper component that shows an upgrade prompt instead of the gated content for free users.
+

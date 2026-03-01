@@ -1,6 +1,4 @@
 import { useState, useMemo } from "react";
-import { useSubscription } from "@/hooks/useSubscription";
-import { toast } from "sonner";
 import {
   Eye, Plus, Search, Trash2, MoreHorizontal, Edit2,
   List, Star, Bell, X, Palette, TrendingUp, CircleDot,
@@ -62,7 +60,6 @@ const sortOptions = [
 
 export default function WatchlistPage() {
   const { watchlists, isLoading, createWatchlist, updateWatchlist, deleteWatchlist } = useWatchlists();
-  const { limits } = useSubscription();
   const [selectedList, setSelectedList] = useState<Watchlist | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -74,10 +71,6 @@ export default function WatchlistPage() {
 
   const handleCreate = async () => {
     if (!newName.trim()) return;
-    if (watchlists.length >= limits.maxWatchlists) {
-      toast.error(`You've reached the ${limits.maxWatchlists} watchlist limit on your plan. Upgrade for more.`);
-      return;
-    }
     await createWatchlist.mutateAsync({ name: newName.trim(), description: newDesc.trim() || undefined, color: newColor });
     setCreateOpen(false);
     setNewName("");

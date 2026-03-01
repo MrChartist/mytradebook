@@ -23,8 +23,6 @@ import Analytics from "./pages/Analytics";
 import DhanCallback from "./pages/DhanCallback";
 import Watchlist from "./pages/Watchlist";
 import NotFound from "./pages/NotFound";
-import Terms from "./pages/Terms";
-import Privacy from "./pages/Privacy";
 
 const queryClient = new QueryClient();
 
@@ -39,8 +37,6 @@ const App = () => (
             <Routes>
             <Route path="/landing" element={<Landing />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/privacy" element={<Privacy />} />
             <Route
               path="/"
               element={
