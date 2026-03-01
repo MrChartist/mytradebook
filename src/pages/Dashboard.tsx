@@ -11,7 +11,7 @@ import { QuickActions } from "@/components/dashboard/QuickActions";
 import { TodaysPnl } from "@/components/dashboard/TodaysPnl";
 import { EquityCurve } from "@/components/dashboard/EquityCurve";
 import { StreakDiscipline } from "@/components/dashboard/StreakDiscipline";
-import { CalendarHeatmap } from "@/components/dashboard/CalendarHeatmap";
+import { JournalCalendarView } from "@/components/journal/JournalCalendarView";
 import { RiskGoalWidget } from "@/components/dashboard/RiskGoalWidget";
 import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
@@ -83,19 +83,24 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
 
-  // Compute dailyPnl for heatmap from trades already in context
-  const dailyPnl = useMemo(() => {
-    const map: Record<string, number> = {};
+  // Compute calendarData for the compact calendar widget
+  const calendarData = useMemo(() => {
+    const map = new Map<string, { date: Date; dateStr: string; trades: any[]; tradeCount: number; pnl: number }>();
     trades.forEach((t) => {
-      if (t.status === "CLOSED" && t.closed_at && t.pnl) {
-        const key = format(new Date(t.closed_at), "yyyy-MM-dd");
-        map[key] = (map[key] || 0) + t.pnl;
+      if (t.status === "CLOSED" && t.closed_at) {
+        const d = new Date(t.closed_at);
+        const key = format(d, "yyyy-MM-dd");
+        if (!map.has(key)) map.set(key, { date: d, dateStr: key, trades: [], tradeCount: 0, pnl: 0 });
+        const entry = map.get(key)!;
+        entry.trades.push({ id: t.id, symbol: t.symbol, trade_type: t.trade_type, pnl: t.pnl });
+        entry.tradeCount += 1;
+        entry.pnl += t.pnl || 0;
       }
     });
-    return map;
+    return Array.from(map.values());
   }, [trades]);
 
-  const handleHeatmapDayClick = useCallback((dateStr: string) => {
+  const handleCalendarDayClick = useCallback((dateStr: string) => {
     navigate("/calendar");
   }, [navigate]);
 
@@ -132,7 +137,14 @@ export default function Dashboard() {
         return (
           <div key={w.id} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <StreakDiscipline />
-            <CalendarHeatmap dailyPnl={dailyPnl} showLink onDayClick={handleHeatmapDayClick} />
+            <JournalCalendarView
+              calendarData={calendarData}
+              isLoading={tradesLoading}
+              onTradeClick={() => {}}
+              compact
+              showLink
+              onDayClick={handleCalendarDayClick}
+            />
           </div>
         );
       case "monthly":
