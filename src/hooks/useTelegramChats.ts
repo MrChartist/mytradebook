@@ -110,7 +110,22 @@ export function useTelegramChats() {
         if (testError || (testData && !testData.success)) {
           // Verification failed — delete the chat and throw
           await supabase.from("telegram_chats").delete().eq("id", chatRow.id);
-          const errorMsg = testData?.errorDescription || testData?.error || testError?.message || "Bot cannot reach this chat";
+          // Try to extract detailed error from edge function response body
+          let errorMsg = "Bot cannot reach this chat";
+          if (testData?.errorDescription) {
+            errorMsg = testData.errorDescription;
+          } else if (testData?.error) {
+            errorMsg = testData.error;
+          } else if (testError?.context) {
+            try {
+              const body = await testError.context.json();
+              errorMsg = body?.errorDescription || body?.error || testError.message;
+            } catch {
+              errorMsg = testError.message || errorMsg;
+            }
+          } else if (testError?.message) {
+            errorMsg = testError.message;
+          }
           throw new Error(`Verification failed: ${errorMsg}`);
         }
       } catch (verifyErr: any) {
