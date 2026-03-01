@@ -12,6 +12,7 @@ import { StreakTracker } from "@/components/analytics/StreakTracker";
 import { SetupTagPerformance } from "@/components/analytics/SetupTagPerformance";
 import { PlanGate } from "@/components/PlanGate";
 import { AITradeInsights } from "@/components/analytics/AITradeInsights";
+import { RiskOfRuinCalculator } from "@/components/analytics/RiskOfRuinCalculator";
 
 export default function Analytics() {
   const { trades, summary } = useTrades();
@@ -76,8 +77,16 @@ export default function Analytics() {
           <SetupTagPerformance trades={trades} />
         </div>
 
-        {/* Risk-Reward Analytics */}
-        <RiskRewardAnalytics trades={trades} />
+        {/* Risk-Reward Analytics & Risk of Ruin */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+          <RiskRewardAnalytics trades={trades} />
+          <RiskOfRuinCalculator
+            winRate={summary.winRate}
+            avgWinAmount={avgWin}
+            avgLossAmount={avgLoss}
+            startingCapital={startingCapital}
+          />
+        </div>
       </PlanGate>
 
       {closed.length === 0 && (

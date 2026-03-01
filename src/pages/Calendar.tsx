@@ -1,12 +1,14 @@
 import { useState, useMemo } from "react";
 import { useTrades } from "@/hooks/useTrades";
 import { JournalCalendarView } from "@/components/journal/JournalCalendarView";
+import { DailyJournalEditor } from "@/components/journal/DailyJournalEditor";
 import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
 import { format } from "date-fns";
 
 export default function Calendar() {
   const { trades, isLoading } = useTrades();
   const [selectedTradeId, setSelectedTradeId] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   const closedTrades = useMemo(
     () => trades.filter((t) => t.status === "CLOSED" && t.closed_at),
@@ -44,11 +46,17 @@ export default function Calendar() {
         </p>
       </div>
 
-      <JournalCalendarView
-        calendarData={calendarData}
-        isLoading={isLoading}
-        onTradeClick={handleTradeClick}
-      />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <JournalCalendarView
+            calendarData={calendarData}
+            isLoading={isLoading}
+            onTradeClick={handleTradeClick}
+            onDayClick={(dateStr) => setSelectedDate(new Date(dateStr))}
+          />
+        </div>
+        <DailyJournalEditor date={selectedDate} />
+      </div>
 
       {selectedTrade && (
         <TradeDetailModal
