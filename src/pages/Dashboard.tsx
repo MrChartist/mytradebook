@@ -1,11 +1,17 @@
 import { useState, useMemo, createContext, useContext } from "react";
 import { OnboardingWelcome } from "@/components/dashboard/OnboardingWelcome";
+import { DashboardGreeting } from "@/components/dashboard/DashboardGreeting";
 import { DashboardKPICards } from "@/components/dashboard/DashboardKPICards";
 import { DailySectorChart } from "@/components/dashboard/DailySectorChart";
 import { DashboardAlertsPanel } from "@/components/dashboard/DashboardAlertsPanel";
 import { DashboardPositionsTable } from "@/components/dashboard/DashboardPositionsTable";
 import { DashboardMonthlyMetrics } from "@/components/dashboard/DashboardMonthlyMetrics";
 import { QuickActions } from "@/components/dashboard/QuickActions";
+import { TodaysPnl } from "@/components/dashboard/TodaysPnl";
+import { EquityCurve } from "@/components/dashboard/EquityCurve";
+import { StreakDiscipline } from "@/components/dashboard/StreakDiscipline";
+import { CalendarHeatmap } from "@/components/dashboard/CalendarHeatmap";
+import { RiskGoalWidget } from "@/components/dashboard/RiskGoalWidget";
 import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useLivePrices } from "@/hooks/useLivePrices";
@@ -81,19 +87,52 @@ export default function Dashboard() {
     isPolling, lastUpdated,
   };
 
+  const renderWidget = (w: WidgetConfig) => {
+    if (!w.visible) return null;
+    switch (w.id) {
+      case "todayPnl":
+        return <TodaysPnl key={w.id} />;
+      case "kpi":
+        return <DashboardKPICards key={w.id} alerts={alerts} />;
+      case "riskGoal":
+        return <RiskGoalWidget key={w.id} />;
+      case "chart":
+        return (
+          <div key={w.id} className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div className="lg:col-span-2"><DailySectorChart /></div>
+            <DashboardAlertsPanel alerts={alerts} />
+          </div>
+        );
+      case "alerts":
+        return null; // Rendered with chart
+      case "equityCurve":
+        return <EquityCurve key={w.id} />;
+      case "positions":
+        return <DashboardPositionsTable key={w.id} />;
+      case "streakCalendar":
+        return (
+          <div key={w.id} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <StreakDiscipline />
+            <CalendarHeatmap />
+          </div>
+        );
+      case "monthly":
+        return <DashboardMonthlyMetrics key={w.id} />;
+      case "actions":
+        return <QuickActions key={w.id} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <DashboardContext.Provider value={ctx}>
       <div className="space-y-5 animate-fade-in">
-        {/* Onboarding for new users */}
         <OnboardingWelcome />
-        {/* Header */}
+
+        {/* Header with greeting */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <h1 className="text-xl font-bold">Dashboard</h1>
-            <p className="text-muted-foreground text-sm">
-              {format(selectedMonth, "MMMM yyyy")} overview
-            </p>
-          </div>
+          <DashboardGreeting />
           <div className="flex items-center gap-3">
             {/* Month selector */}
             <div className="flex gap-1 bg-muted rounded-lg p-0.5">
@@ -121,8 +160,8 @@ export default function Dashboard() {
                 </>
               ) : (
                 <>
-                  <span className="w-1.5 h-1.5 rounded-full bg-profit" />
-                  <span>Market Open</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
+                  <span>Offline</span>
                 </>
               )}
             </div>
@@ -185,30 +224,7 @@ export default function Dashboard() {
         </div>
 
         {/* Dynamic Widgets */}
-        {widgets.map((w) => {
-          if (!w.visible) return null;
-          switch (w.id) {
-            case "kpi":
-              return <DashboardKPICards key={w.id} alerts={alerts} />;
-            case "chart":
-              return (
-                <div key={w.id} className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                  <div className="lg:col-span-2"><DailySectorChart /></div>
-                  <DashboardAlertsPanel alerts={alerts} />
-                </div>
-              );
-            case "alerts":
-              return null; // Rendered with chart
-            case "positions":
-              return <DashboardPositionsTable key={w.id} />;
-            case "monthly":
-              return <DashboardMonthlyMetrics key={w.id} />;
-            case "actions":
-              return <QuickActions key={w.id} />;
-            default:
-              return null;
-          }
-        })}
+        {widgets.map((w) => renderWidget(w))}
       </div>
     </DashboardContext.Provider>
   );
