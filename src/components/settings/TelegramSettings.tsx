@@ -110,7 +110,7 @@ function NotificationRoutingPanel({
 }
 
 export default function TelegramSettings() {
-  const { settings, updateSettings } = useUserSettings();
+  const { settings, updateSettings, testTelegramConnection } = useUserSettings();
   const { chats, isLoading, deliveryLogs, logsLoading, addChat, removeChat, removeAllChats, toggleSegment, toggleNotificationType, toggleNotificationAll, testChat, testAllChats } = useTelegramChats();
 
   // Add chat form
@@ -121,6 +121,13 @@ export default function TelegramSettings() {
   const [showCustomBot, setShowCustomBot] = useState(false);
   const [adding, setAdding] = useState(false);
 
+  // Bot config form
+  const [editingBot, setEditingBot] = useState(false);
+  const [botTokenInput, setBotTokenInput] = useState("");
+  const [botUsernameInput, setBotUsernameInput] = useState("");
+  const [savingBot, setSavingBot] = useState(false);
+  const [testingBot, setTestingBot] = useState(false);
+
   // Testing state
   const [testingId, setTestingId] = useState<string | null>(null);
   const [testingAll, setTestingAll] = useState(false);
@@ -128,6 +135,47 @@ export default function TelegramSettings() {
 
   // Delivery log panel state
   const [showDeliveryLog, setShowDeliveryLog] = useState(false);
+
+  const hasPersonalBot = !!settings?.telegram_bot_token;
+
+  const handleSaveBot = async () => {
+    if (!botTokenInput.trim()) return;
+    setSavingBot(true);
+    try {
+      await updateSettings.mutateAsync({
+        telegram_bot_token: botTokenInput.trim(),
+        telegram_bot_username: botUsernameInput.trim() || null,
+      } as any);
+      setEditingBot(false);
+      setBotTokenInput("");
+      setBotUsernameInput("");
+    } finally {
+      setSavingBot(false);
+    }
+  };
+
+  const handleRemoveBot = async () => {
+    setSavingBot(true);
+    try {
+      await updateSettings.mutateAsync({
+        telegram_bot_token: null,
+        telegram_bot_username: null,
+      } as any);
+    } finally {
+      setSavingBot(false);
+    }
+  };
+
+  const handleTestBot = async () => {
+    if (!settings?.telegram_bot_token) return;
+    setTestingBot(true);
+    // Use the first chat destination to test, or a test-specific approach
+    const firstChat = chats[0];
+    if (firstChat) {
+      await testChat(firstChat.chat_id, settings.telegram_bot_token);
+    }
+    setTestingBot(false);
+  };
 
   const handleAddChat = async () => {
     if (!newChatId.trim()) return;
@@ -203,26 +251,74 @@ export default function TelegramSettings() {
           <h4 className="font-medium text-sm">Set Up Your Bot</h4>
         </div>
 
-        <div className="p-3 rounded-lg border border-profit/20 bg-profit/5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-profit" />
-              <span className="text-sm text-profit font-medium">
-                Bot is configured via environment
-              </span>
+        {hasPersonalBot && !editingBot ? (
+          <div className="p-3 rounded-lg border border-profit/20 bg-profit/5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-profit" />
+                <span className="text-sm text-profit font-medium">
+                  Your Bot{settings?.telegram_bot_username ? `: @${settings.telegram_bot_username}` : ""}
+                </span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={handleTestBot} disabled={testingBot || chats.length === 0}>
+                  {testingBot ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Send className="w-3 h-3 mr-1" />}
+                  Test
+                </Button>
+                <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => { setEditingBot(true); setBotTokenInput(settings?.telegram_bot_token || ""); setBotUsernameInput(settings?.telegram_bot_username || ""); }}>
+                  Edit
+                </Button>
+                <Button variant="ghost" size="sm" className="h-7 text-xs text-loss hover:text-loss" onClick={handleRemoveBot} disabled={savingBot}>
+                  Remove
+                </Button>
+              </div>
             </div>
+            <p className="text-xs text-muted-foreground mt-1">Token: ••••{settings?.telegram_bot_token?.slice(-8)}</p>
+          </div>
+        ) : (
+          <div className="p-4 rounded-lg border border-border bg-card space-y-3">
             <p className="text-xs text-muted-foreground">
-              Uses TELEGRAM_BOT_TOKEN from backend
+              Create a bot via <a href="https://t.me/BotFather" target="_blank" rel="noopener" className="text-primary hover:underline">@BotFather</a>, then paste the token here. This bot will be your default for all chat destinations.
+            </p>
+            <div className="space-y-2">
+              <Label className="text-xs">Bot Token</Label>
+              <Input
+                value={botTokenInput}
+                onChange={(e) => setBotTokenInput(e.target.value)}
+                placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+                className="bg-accent border-border text-xs font-mono"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs">Bot Username (optional)</Label>
+              <Input
+                value={botUsernameInput}
+                onChange={(e) => setBotUsernameInput(e.target.value)}
+                placeholder="@MyTradingBot"
+                className="bg-accent border-border text-xs"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Button onClick={handleSaveBot} disabled={savingBot || !botTokenInput.trim()} size="sm" className="gap-1">
+                {savingBot ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
+                Save Bot
+              </Button>
+              {editingBot && (
+                <Button variant="ghost" size="sm" onClick={() => { setEditingBot(false); setBotTokenInput(""); setBotUsernameInput(""); }}>
+                  Cancel
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {!hasPersonalBot && !editingBot && (
+          <div className="mt-2 p-3 rounded-lg bg-accent/50 border border-border">
+            <p className="text-xs text-muted-foreground">
+              <strong>No personal bot configured.</strong> The system default bot will be used as fallback. Set up your own bot for independent, reliable delivery.
             </p>
           </div>
-        </div>
-
-        <div className="mt-2 p-3 rounded-lg bg-accent/50 border border-border">
-          <p className="text-xs text-muted-foreground">
-            <strong>Custom bot?</strong> You can override the bot per chat destination by setting a custom bot token when adding a chat.
-            Create a bot via <a href="https://t.me/BotFather" target="_blank" rel="noopener" className="text-primary hover:underline">@BotFather</a>.
-          </p>
-        </div>
+        )}
       </div>
 
       {/* Step 2: Chat Destinations */}

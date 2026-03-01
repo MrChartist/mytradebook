@@ -1182,6 +1182,8 @@ export type Database = {
           ra_disclaimer: string | null
           ra_public_mode: boolean | null
           starting_capital: number | null
+          telegram_bot_token: string | null
+          telegram_bot_username: string | null
           telegram_chat_id: string | null
           telegram_enabled: boolean | null
           telegram_link_code: string | null
@@ -1217,6 +1219,8 @@ export type Database = {
           ra_disclaimer?: string | null
           ra_public_mode?: boolean | null
           starting_capital?: number | null
+          telegram_bot_token?: string | null
+          telegram_bot_username?: string | null
           telegram_chat_id?: string | null
           telegram_enabled?: boolean | null
           telegram_link_code?: string | null
@@ -1252,6 +1256,8 @@ export type Database = {
           ra_disclaimer?: string | null
           ra_public_mode?: boolean | null
           starting_capital?: number | null
+          telegram_bot_token?: string | null
+          telegram_bot_username?: string | null
           telegram_chat_id?: string | null
           telegram_enabled?: boolean | null
           telegram_link_code?: string | null
