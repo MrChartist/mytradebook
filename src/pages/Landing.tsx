@@ -11,7 +11,6 @@ import {
   Target,
   LineChart,
   CheckCircle2,
-  Star,
   Zap,
   Download,
   Eye,
@@ -206,8 +205,7 @@ export default function Landing() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
-  const s1 = useCountUp(2500, 2000);
-  const s2 = useCountUp(10000, 2000);
+  // Stats: segments and rating are factual product constants
   const s3 = useCountUp(5, 1200);
   const s4 = useCountUp(48, 1500);
 
@@ -324,30 +322,29 @@ export default function Landing() {
           {/* Stats Row */}
           <FadeIn delay={400}>
             <div className="flex items-center justify-center gap-8 sm:gap-12 flex-wrap">
-              <div className="text-center" ref={s1.ref}>
-                <div className="text-2xl sm:text-3xl font-bold tracking-tight">
-                  {s1.count.toLocaleString()}+
-                </div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Traders</div>
-              </div>
-              <div className="text-center" ref={s2.ref}>
-                <div className="text-2xl sm:text-3xl font-bold tracking-tight">
-                  {s2.count.toLocaleString()}+
-                </div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Trades Logged</div>
-              </div>
               <div className="text-center" ref={s3.ref}>
                 <div className="text-2xl sm:text-3xl font-bold tracking-tight">
                   {s3.count}
                 </div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Segments</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Market Segments</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold tracking-tight">
+                  14-Day
+                </div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Free Pro Trial</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold tracking-tight">
+                  100%
+                </div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Data Privacy</div>
               </div>
               <div className="text-center" ref={s4.ref}>
                 <div className="text-2xl sm:text-3xl font-bold tracking-tight">
-                  4.{s4.count > 8 ? 8 : s4.count}
-                  <Star className="w-4 h-4 inline-block ml-0.5 -mt-1 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />
+                  24/7
                 </div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Avg Rating</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Cloud Access</div>
               </div>
             </div>
           </FadeIn>
@@ -516,7 +513,7 @@ export default function Landing() {
             Trading
           </h2>
           <p className="text-base text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed">
-            Join 2,500+ Indian traders who use TradeBook to journal, analyze, and compound their edge — every single day.
+            Start journaling, analyzing, and compounding your trading edge — every single day.
           </p>
           <Button
             size="lg"
@@ -555,17 +552,15 @@ export default function Landing() {
             <div>
               <h4 className="font-semibold text-sm mb-3">Support</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">Documentation</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Contact Us</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Status Page</a></li>
+                <li><a href="mailto:support@tradebook.app" className="hover:text-foreground transition-colors">Contact Us</a></li>
+                <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-3">Legal</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Refund Policy</a></li>
+                <li><a href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms" className="hover:text-foreground transition-colors">Terms of Service</a></li>
               </ul>
             </div>
           </div>
