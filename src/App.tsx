@@ -10,10 +10,10 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { lazy, Suspense } from "react";
 import { Loader2, TrendingUp } from "lucide-react";
 import Index from "./pages/Index";
+import Login from "./pages/Login";
 
 // Lazy-loaded routes
 const Landing = lazy(() => import("./pages/Landing"));
-const Login = lazy(() => import("./pages/Login"));
 const Studies = lazy(() => import("./pages/Studies"));
 const Alerts = lazy(() => import("./pages/Alerts"));
 const Trades = lazy(() => import("./pages/Trades"));
