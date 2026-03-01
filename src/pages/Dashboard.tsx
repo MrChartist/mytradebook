@@ -13,6 +13,7 @@ import { EquityCurve } from "@/components/dashboard/EquityCurve";
 import { StreakDiscipline } from "@/components/dashboard/StreakDiscipline";
 import { JournalCalendarView } from "@/components/journal/JournalCalendarView";
 import { RiskGoalWidget } from "@/components/dashboard/RiskGoalWidget";
+import { AITradeInsights } from "@/components/analytics/AITradeInsights";
 import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useLivePrices } from "@/hooks/useLivePrices";
@@ -151,6 +152,8 @@ export default function Dashboard() {
         return <DashboardMonthlyMetrics key={w.id} />;
       case "actions":
         return <QuickActions key={w.id} />;
+      case "aiInsights":
+        return <AITradeInsights key={w.id} compact maxInsights={2} />;
       default:
         return null;
     }

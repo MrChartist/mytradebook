@@ -24,6 +24,7 @@ const DEFAULT_WIDGETS: WidgetConfig[] = [
   { id: "streakCalendar", label: "Streak & Calendar", visible: true, order: 7 },
   { id: "monthly", label: "Monthly Metrics", visible: true, order: 8 },
   { id: "actions", label: "Quick Actions", visible: true, order: 9 },
+  { id: "aiInsights", label: "AI Insights", visible: true, order: 10 },
 ];
 
 export function useDashboardLayout() {

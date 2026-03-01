@@ -11,6 +11,7 @@ import { DayOfWeekAnalysis } from "@/components/analytics/DayOfWeekAnalysis";
 import { StreakTracker } from "@/components/analytics/StreakTracker";
 import { SetupTagPerformance } from "@/components/analytics/SetupTagPerformance";
 import { PlanGate } from "@/components/PlanGate";
+import { AITradeInsights } from "@/components/analytics/AITradeInsights";
 
 export default function Analytics() {
   const { trades, summary } = useTrades();
@@ -50,6 +51,11 @@ export default function Analytics() {
         <StatCard title="Best Trade" value={`₹${bestTrade.toLocaleString("en-IN")}`} change="Single trade" changeType="profit" icon={TrendingUp} subtitle="Max profit" href="/trades?status=CLOSED" />
         <StatCard title="Worst Trade" value={`₹${worstTrade.toLocaleString("en-IN")}`} change="Single trade" changeType="loss" icon={TrendingDown} subtitle="Max loss" href="/trades?status=CLOSED" />
       </div>
+
+      {/* AI Trade Insights */}
+      <PlanGate plan="pro" feature="advancedAnalytics" message="Upgrade to Pro to unlock AI-powered trade insights.">
+        <AITradeInsights />
+      </PlanGate>
 
       {/* Equity Curve & Drawdown */}
       <EquityCurveDrawdown trades={trades} startingCapital={startingCapital} capitalTransactions={capitalTransactions} />
