@@ -46,7 +46,7 @@ export function StreakDiscipline() {
   }, [trades]);
 
   return (
-    <div className="surface-card p-5">
+    <div className="glass-card p-5">
       <div className="mb-4">
         <h3 className="font-semibold text-lg">🏆 Streak & Discipline</h3>
         <p className="text-sm text-muted-foreground">Trading consistency</p>

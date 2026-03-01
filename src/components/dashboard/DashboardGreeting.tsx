@@ -45,16 +45,13 @@ export function DashboardGreeting() {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          Welcome Back, <span className="text-primary">{displayName}</span>
+        <h1 className="text-xl font-bold">
+          {greeting}, <span className="text-primary">{displayName}</span> 👋
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Your trading control room — monitoring positions, analytics, and discipline
-        </p>
-        <div className="flex items-center gap-2 mt-2">
+        <div className="flex items-center gap-2 mt-1">
           <div className="flex items-center gap-1.5">
             <span className={`w-2 h-2 rounded-full ${market.isOpen ? "bg-profit animate-pulse" : "bg-muted-foreground"}`} />
-            <span className="text-xs text-muted-foreground">{market.label}</span>
+            <span className="text-sm text-muted-foreground">{market.label}</span>
           </div>
         </div>
       </div>
