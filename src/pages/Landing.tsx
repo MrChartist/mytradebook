@@ -23,6 +23,9 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Minus,
+  Twitter,
+  Linkedin,
+  Youtube,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -162,18 +165,21 @@ const steps = [
 const testimonials = [
   {
     name: "Rahul M.",
+    initials: "RM",
     role: "Options Trader, Mumbai",
     quote: "TradeBook helped me identify that my Monday morning trades were consistently losing. After adjusting my strategy, my win rate went from 42% to 61%.",
     stars: 5,
   },
   {
     name: "Priya S.",
+    initials: "PS",
     role: "Swing Trader, Bangalore",
     quote: "The segment-level analytics are a game-changer. I can see exactly which setups work for intraday vs positional, and the Telegram alerts keep me disciplined.",
     stars: 5,
   },
   {
     name: "Aditya K.",
+    initials: "AK",
     role: "F&O Trader, Delhi",
     quote: "I tried 4 journals before TradeBook. None understood Indian markets — segments, lot sizes, MCX. Finally something built for how we actually trade.",
     stars: 5,
@@ -294,23 +300,34 @@ const segmentTabs = [
   },
 ];
 
-/* ─── FAQ Accordion Item ────────────────────────────────── */
+/* ─── FAQ Accordion Item (smooth height animation) ──────── */
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
   return (
-    <div className="border border-border rounded-xl overflow-hidden">
+    <div className={cn(
+      "border rounded-xl overflow-hidden transition-all duration-300",
+      open ? "border-[hsl(var(--tb-accent)/0.3)] bg-card shadow-sm" : "border-border bg-card/60"
+    )}>
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-muted/50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-muted/30 transition-colors"
       >
-        <span className="font-medium text-sm pr-4">{question}</span>
-        <ChevronDown className={cn("w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-200", open && "rotate-180")} />
+        <span className={cn("font-medium text-sm pr-4", open && "text-[hsl(var(--tb-accent))]")}>{question}</span>
+        <ChevronDown className={cn(
+          "w-4 h-4 shrink-0 transition-transform duration-300",
+          open ? "rotate-180 text-[hsl(var(--tb-accent))]" : "text-muted-foreground"
+        )} />
       </button>
-      {open && (
-        <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed animate-fade-in">
+      <div
+        className="overflow-hidden transition-all duration-300 ease-out"
+        style={{ maxHeight: open ? contentRef.current?.scrollHeight ?? 200 : 0, opacity: open ? 1 : 0 }}
+      >
+        <div ref={contentRef} className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed border-l-2 border-[hsl(var(--tb-accent)/0.3)] ml-5">
           {answer}
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -398,18 +415,25 @@ export default function Landing() {
 
       {/* ── Hero ─────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
+        {/* Ambient radial glow */}
         <div
-          className="absolute inset-0 pointer-events-none opacity-[0.35]"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] pointer-events-none"
+          style={{
+            background: "radial-gradient(ellipse at center, hsl(var(--tb-accent) / 0.12) 0%, transparent 70%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.25]"
           style={{
             backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.15) 1px, transparent 1px)",
             backgroundSize: "24px 24px",
           }}
         />
 
-        <div className="relative max-w-5xl mx-auto px-6 pt-20 pb-12 lg:pt-32 lg:pb-20 text-center">
+        <div className="relative max-w-5xl mx-auto px-6 pt-16 pb-10 lg:pt-24 lg:pb-16 text-center">
           {/* Badge */}
-          <FadeIn className="flex justify-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[hsl(var(--tb-accent)/0.3)] bg-[hsl(var(--tb-accent)/0.08)] text-sm">
+          <FadeIn className="flex justify-center mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[hsl(var(--tb-accent)/0.3)] bg-[hsl(var(--tb-accent)/0.08)] text-sm backdrop-blur-sm">
               <span className="w-2 h-2 rounded-full bg-[hsl(var(--tb-accent))] animate-pulse" />
               <span className="text-[hsl(var(--tb-accent))] font-semibold uppercase tracking-wider text-xs">
                 Built for Indian Markets · NSE · BSE · MCX
@@ -419,14 +443,16 @@ export default function Landing() {
 
           {/* Heading */}
           <FadeIn delay={100}>
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.08] tracking-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.08] tracking-tight mb-5">
               Know Your Edge.
               <br />
               <span
-                className="text-[hsl(var(--tb-accent))] italic"
+                className="italic relative"
                 style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
               >
-                Compound
+                <span className="gradient-text-orange">Compound</span>
+                {/* Gradient underline */}
+                <span className="absolute -bottom-1 left-0 right-0 h-[3px] rounded-full" style={{ background: "linear-gradient(90deg, hsl(var(--tb-accent)), hsl(16 85% 45%))" }} />
               </span>{" "}
               It Daily.
             </h1>
@@ -434,7 +460,7 @@ export default function Landing() {
 
           {/* Subtitle */}
           <FadeIn delay={200}>
-            <p className="text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
+            <p className="text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto mb-7 leading-relaxed">
               The trading journal that shows you <strong className="text-foreground">why</strong> you win and{" "}
               <strong className="text-foreground">why</strong> you lose — with segment analytics for Equity, F&O, and Commodities.
               Stop guessing. Start compounding.
@@ -442,10 +468,10 @@ export default function Landing() {
           </FadeIn>
 
           {/* CTAs */}
-          <FadeIn delay={300} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+          <FadeIn delay={300} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
             <Button
               size="lg"
-              className="h-13 px-10 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-none font-semibold"
+              className="h-13 px-10 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-none font-semibold cta-glow-pulse"
               onClick={() => navigate("/login")}
             >
               Start Free — No Card Needed
@@ -463,16 +489,16 @@ export default function Landing() {
 
           {/* Micro trust line */}
           <FadeIn delay={350}>
-            <p className="text-xs text-muted-foreground mb-12">
+            <p className="text-xs text-muted-foreground mb-10">
               14-day Pro trial · No credit card · 2-minute setup
             </p>
           </FadeIn>
 
           {/* ── Social Proof Trust Strip ───────────────────── */}
           <FadeIn delay={400}>
-            <div className="flex items-center justify-center gap-6 sm:gap-10 mb-14 flex-wrap">
+            <div className="flex items-center justify-center gap-6 sm:gap-10 mb-12 flex-wrap">
               {["NSE", "BSE", "MCX"].map((exchange) => (
-                <div key={exchange} className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border/60 bg-card/60">
+                <div key={exchange} className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm">
                   <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center">
                     <Activity className="w-3.5 h-3.5 text-muted-foreground" />
                   </div>
@@ -488,9 +514,9 @@ export default function Landing() {
 
           {/* ── Dashboard Preview ─────────────────────────── */}
           <FadeIn delay={500}>
-            <div className="relative mx-auto max-w-5xl">
+            <div className="relative mx-auto max-w-5xl animate-float">
               {/* Glow effect */}
-              <div className="absolute -inset-6 bg-[hsl(var(--tb-accent)/0.06)] rounded-3xl blur-3xl" />
+              <div className="absolute -inset-8 bg-[hsl(var(--tb-accent)/0.08)] rounded-3xl blur-3xl" />
               <div className="relative rounded-2xl border border-border/60 bg-card overflow-hidden shadow-2xl shadow-black/5">
                 {/* Window chrome */}
                 <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/50 bg-muted/30">
@@ -621,44 +647,46 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Stats Row ────────────────────────────────────── */}
-      <section className="py-12 border-y border-border/50">
+      {/* ── Stats Row (Glassmorphism) ────────────────────── */}
+      <section className="py-10 relative">
         <div className="max-w-4xl mx-auto px-6">
-          <div className="flex items-center justify-center gap-8 sm:gap-16 flex-wrap">
-            <div className="text-center" ref={s3.ref}>
-              <div className="text-3xl sm:text-4xl font-bold tracking-tight">{s3.count}</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Market Segments</div>
-            </div>
-            <div className="text-center" ref={s4.ref}>
-              <div className="text-3xl sm:text-4xl font-bold tracking-tight">{s4.count}+</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Analytics Metrics</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold tracking-tight">14</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Day Free Trial</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold tracking-tight flex items-center gap-1 justify-center">
-                <Clock className="w-6 h-6 text-[hsl(var(--tb-accent))]" />
-                24/7
+          <div className="glass-morph rounded-2xl px-8 py-6">
+            <div className="flex items-center justify-center gap-8 sm:gap-16 flex-wrap">
+              <div className="text-center" ref={s3.ref}>
+                <div className="text-3xl sm:text-4xl font-bold tracking-tight gradient-text-orange">{s3.count}</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Market Segments</div>
               </div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Cloud Access</div>
+              <div className="text-center" ref={s4.ref}>
+                <div className="text-3xl sm:text-4xl font-bold tracking-tight gradient-text-orange">{s4.count}+</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Analytics Metrics</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold tracking-tight gradient-text-orange">14</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Day Free Trial</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold tracking-tight flex items-center gap-1 justify-center">
+                  <Clock className="w-6 h-6 text-[hsl(var(--tb-accent))]" />
+                  <span className="gradient-text-orange">24/7</span>
+                </div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Cloud Access</div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Features ─────────────────────────────────────── */}
-      <section id="features" className="py-20 lg:py-28">
+      {/* ── Features (Premium Glass Cards) ────────────────── */}
+      <section id="features" className="py-16 lg:py-24">
         <div className="max-w-6xl mx-auto px-6">
-          <FadeIn className="text-center mb-16">
+          <FadeIn className="text-center mb-14">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
               Everything You Need to{" "}
               <span
-                className="text-[hsl(var(--tb-accent))] italic"
+                className="italic"
                 style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
               >
-                Trade Better
+                <span className="gradient-text-orange">Trade Better</span>
               </span>
             </h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
@@ -668,9 +696,12 @@ export default function Landing() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((f, i) => (
-              <FadeIn key={f.title} delay={i * 80}>
-                <div className="group rounded-2xl border border-border bg-card p-6 h-full transition-all duration-300 hover:border-[hsl(var(--tb-accent)/0.3)] hover:-translate-y-1 hover:shadow-lg">
-                  <div className="w-12 h-12 rounded-xl bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center mb-4 group-hover:bg-[hsl(var(--tb-accent)/0.15)] transition-colors">
+              <FadeIn key={f.title} delay={i * 100}>
+                <div className="group glass-morph shine-overlay p-6 h-full transition-all duration-300 hover:border-[hsl(var(--tb-accent)/0.3)] hover:-translate-y-1.5">
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-all duration-300"
+                    style={{ background: "linear-gradient(135deg, hsl(var(--tb-accent) / 0.15), hsl(var(--tb-accent) / 0.05))" }}
+                  >
                     <f.icon className="w-5 h-5 text-[hsl(var(--tb-accent))]" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
@@ -683,7 +714,7 @@ export default function Landing() {
       </section>
 
       {/* ── Segment Showcase ─────────────────────────────── */}
-      <section id="segments" className="py-20 lg:py-28 relative overflow-hidden">
+      <section id="segments" className="py-16 lg:py-24 relative overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.2]"
           style={{
@@ -692,14 +723,14 @@ export default function Landing() {
           }}
         />
         <div className="relative max-w-5xl mx-auto px-6">
-          <FadeIn className="text-center mb-12">
+          <FadeIn className="text-center mb-10">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
               Built for{" "}
               <span
-                className="text-[hsl(var(--tb-accent))] italic"
+                className="italic"
                 style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
               >
-                Every Segment
+                <span className="gradient-text-orange">Every Segment</span>
               </span>
             </h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
@@ -707,7 +738,7 @@ export default function Landing() {
             </p>
           </FadeIn>
 
-          {/* Tabs */}
+          {/* Tabs with underline glow */}
           <FadeIn delay={100}>
             <div className="flex items-center justify-center gap-2 mb-10">
               {segmentTabs.map((tab) => (
@@ -715,11 +746,12 @@ export default function Landing() {
                   key={tab.id}
                   onClick={() => setActiveSegment(tab.id)}
                   className={cn(
-                    "flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-200",
+                    "relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300",
                     activeSegment === tab.id
-                      ? "bg-[hsl(var(--tb-accent))] text-white shadow-none"
+                      ? "bg-[hsl(var(--tb-accent))] text-white shadow-lg"
                       : "bg-card border border-border text-muted-foreground hover:text-foreground hover:border-[hsl(var(--tb-accent)/0.3)]"
                   )}
+                  style={activeSegment === tab.id ? { boxShadow: "0 4px 20px hsl(var(--tb-accent) / 0.3)" } : {}}
                 >
                   <tab.icon className="w-4 h-4" />
                   {tab.label}
@@ -730,7 +762,7 @@ export default function Landing() {
 
           {/* Tab content */}
           <FadeIn delay={150}>
-            <div className="rounded-2xl border border-border bg-card overflow-hidden">
+            <div className="glass-morph overflow-hidden">
               <div className="grid md:grid-cols-2">
                 {/* Left: Info */}
                 <div className="p-8 lg:p-10 flex flex-col justify-center">
@@ -741,7 +773,7 @@ export default function Landing() {
                   <div className="flex items-center gap-6 mb-6">
                     {activeTab.stats.map((s) => (
                       <div key={s.label}>
-                        <p className="text-xl font-bold font-mono text-[hsl(var(--tb-accent))]">{s.value}</p>
+                        <p className="text-xl font-bold font-mono gradient-text-orange">{s.value}</p>
                         <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{s.label}</p>
                       </div>
                     ))}
@@ -759,9 +791,8 @@ export default function Landing() {
                 </div>
 
                 {/* Right: Visual */}
-                <div className="bg-muted/30 border-l border-border/50 p-8 flex items-center justify-center">
+                <div className="border-l border-border/30 p-8 flex items-center justify-center" style={{ background: "hsl(var(--card-inner))" }}>
                   <div className="w-full max-w-xs space-y-3">
-                    {/* Mock trade cards */}
                     {activeSegment === "equity" && (
                       <>
                         <MockTradeCard sym="RELIANCE" type="BUY" entry="₹2,890" pnl="+₹2,450" up />
@@ -791,51 +822,63 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── How It Works ─────────────────────────────────── */}
-      <section id="how-it-works" className="py-20 lg:py-28">
+      {/* ── How It Works (Connected Timeline) ────────────── */}
+      <section id="how-it-works" className="py-16 lg:py-24">
         <div className="max-w-5xl mx-auto px-6">
-          <FadeIn className="text-center mb-16">
+          <FadeIn className="text-center mb-14">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">Three Steps to Mastery</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
               From first trade to edge mastery — in minutes.
             </p>
           </FadeIn>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {steps.map((item, i) => (
-              <FadeIn key={item.step} delay={i * 120}>
-                <div className="relative group">
-                  {i < 2 && (
-                    <div className="hidden md:block absolute top-14 -right-3 w-6 border-t-2 border-dashed border-border" />
-                  )}
-                  <div className="rounded-2xl border border-border bg-card p-6 h-full text-center relative overflow-hidden">
-                    <div className="absolute top-3 right-4 text-5xl font-black text-muted-foreground/10 select-none">
-                      {item.step}
+          <div className="relative">
+            {/* Connecting gradient line (desktop) */}
+            <div className="hidden md:block absolute top-[4.5rem] left-[16.67%] right-[16.67%] h-[2px]" style={{ background: "linear-gradient(90deg, hsl(var(--tb-accent) / 0.1), hsl(var(--tb-accent) / 0.5), hsl(var(--tb-accent) / 0.1))" }} />
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              {steps.map((item, i) => (
+                <FadeIn key={item.step} delay={i * 120}>
+                  <div className="relative group">
+                    {/* Step circle on timeline */}
+                    <div className="hidden md:flex absolute -top-0 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full items-center justify-center z-10" style={{ background: "linear-gradient(135deg, hsl(var(--tb-accent)), hsl(16 85% 45%))" }}>
+                      <span className="text-white text-xs font-bold">{i + 1}</span>
                     </div>
-                    <div className="w-14 h-14 rounded-2xl bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center mx-auto mb-5">
-                      <item.icon className="w-6 h-6 text-[hsl(var(--tb-accent))]" />
+                    
+                    <div className="premium-card-hover text-center mt-12 md:mt-14">
+                      <div className="absolute top-3 right-4 text-5xl font-black select-none gradient-text-orange opacity-20">
+                        {item.step}
+                      </div>
+                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5" style={{ background: "linear-gradient(135deg, hsl(var(--tb-accent) / 0.15), hsl(var(--tb-accent) / 0.05))" }}>
+                        <item.icon className="w-6 h-6 text-[hsl(var(--tb-accent))]" />
+                      </div>
+                      <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
                     </div>
-                    <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
                   </div>
-                </div>
-              </FadeIn>
-            ))}
+                </FadeIn>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* ── Pricing ──────────────────────────────────────── */}
-      <section id="pricing" className="py-20 lg:py-28 relative overflow-hidden">
+      <section id="pricing" className="py-16 lg:py-24 relative overflow-hidden">
+        {/* Ambient glow behind pricing */}
         <div
-          className="absolute inset-0 pointer-events-none opacity-[0.2]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] pointer-events-none"
+          style={{ background: "radial-gradient(ellipse at center, hsl(var(--tb-accent) / 0.06) 0%, transparent 70%)" }}
+        />
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.15]"
           style={{
             backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)",
             backgroundSize: "24px 24px",
           }}
         />
         <div className="relative max-w-5xl mx-auto px-6">
-          <FadeIn className="text-center mb-16">
+          <FadeIn className="text-center mb-14">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
               Start free. Upgrade when your edge demands it.
@@ -845,52 +888,62 @@ export default function Landing() {
           <div className="grid md:grid-cols-3 gap-6 items-start">
             {pricingPlans.map((plan, i) => (
               <FadeIn key={plan.name} delay={i * 100}>
-                <div
-                  className={cn(
-                    "rounded-2xl border bg-card p-6 flex flex-col relative overflow-hidden transition-all duration-300",
-                    plan.highlighted
-                      ? "border-[hsl(var(--tb-accent)/0.4)] ring-1 ring-[hsl(var(--tb-accent)/0.15)] scale-[1.02] lg:scale-105"
-                      : "border-border hover:border-[hsl(var(--tb-accent)/0.2)]"
-                  )}
-                >
-                  {plan.highlighted && (
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-[hsl(var(--tb-accent))]" />
-                  )}
-                  {plan.highlighted && (
-                    <div className="inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))] text-xs font-semibold mb-4">
-                      <Zap className="w-3 h-3" /> Most Popular
+                {plan.highlighted ? (
+                  /* Pro card with gradient border */
+                  <div className="relative rounded-2xl p-[1.5px] overflow-hidden scale-[1.02] lg:scale-105" style={{ background: "linear-gradient(135deg, hsl(var(--tb-accent)), hsl(16 85% 45%), hsl(var(--tb-accent) / 0.4))" }}>
+                    <div className="bg-card rounded-[calc(1rem-1.5px)] p-6 flex flex-col relative overflow-hidden" style={{ boxShadow: "0 0 30px hsl(var(--tb-accent) / 0.15)" }}>
+                      <div className="shimmer-badge inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))] text-xs font-semibold mb-4">
+                        <Zap className="w-3 h-3" /> Most Popular
+                      </div>
+                      <h3 className="text-xl font-bold">{plan.name}</h3>
+                      <div className="mt-3 mb-1 flex items-baseline gap-1">
+                        <span className="text-4xl font-bold font-mono gradient-text-orange">{plan.price}</span>
+                        <span className="text-muted-foreground text-sm">{plan.period}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-6">{plan.description}</p>
+                      <ul className="space-y-3 flex-1 mb-8">
+                        {plan.features.map((f) => (
+                          <li key={f} className="flex items-start gap-2.5 text-sm">
+                            <CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0 mt-0.5" />
+                            <span>{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <Button
+                        className="w-full h-11 rounded-full bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white shadow-none cta-glow-pulse"
+                        onClick={() => navigate("/login")}
+                      >
+                        {plan.cta}
+                        <ArrowRight className="w-4 h-4 ml-1" />
+                      </Button>
                     </div>
-                  )}
-                  <h3 className="text-xl font-bold">{plan.name}</h3>
-                  <div className="mt-3 mb-1 flex items-baseline gap-1">
-                    <span className="text-4xl font-bold font-mono">{plan.price}</span>
-                    <span className="text-muted-foreground text-sm">{plan.period}</span>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-6">{plan.description}</p>
-
-                  <ul className="space-y-3 flex-1 mb-8">
-                    {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2.5 text-sm">
-                        <CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0 mt-0.5" />
-                        <span>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    className={cn(
-                      "w-full h-11 rounded-full",
-                      plan.highlighted
-                        ? "bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white shadow-none"
-                        : ""
-                    )}
-                    variant={plan.highlighted ? "default" : "outline"}
-                    onClick={() => navigate("/login")}
-                  >
-                    {plan.cta}
-                    {plan.highlighted && <ArrowRight className="w-4 h-4 ml-1" />}
-                  </Button>
-                </div>
+                ) : (
+                  /* Free & Team cards with glassmorphism */
+                  <div className="glass-morph p-6 flex flex-col h-full transition-all duration-300 hover:border-[hsl(var(--tb-accent)/0.2)]">
+                    <h3 className="text-xl font-bold">{plan.name}</h3>
+                    <div className="mt-3 mb-1 flex items-baseline gap-1">
+                      <span className="text-4xl font-bold font-mono gradient-text-orange">{plan.price}</span>
+                      <span className="text-muted-foreground text-sm">{plan.period}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-6">{plan.description}</p>
+                    <ul className="space-y-3 flex-1 mb-8">
+                      {plan.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2.5 text-sm">
+                          <CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0 mt-0.5" />
+                          <span>{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button
+                      className="w-full h-11 rounded-full"
+                      variant="outline"
+                      onClick={() => navigate("/login")}
+                    >
+                      {plan.cta}
+                    </Button>
+                  </div>
+                )}
               </FadeIn>
             ))}
           </div>
@@ -898,16 +951,16 @@ export default function Landing() {
       </section>
 
       {/* ── Testimonials ─────────────────────────────────── */}
-      <section className="py-20 lg:py-28">
+      <section className="py-16 lg:py-24">
         <div className="max-w-6xl mx-auto px-6">
-          <FadeIn className="text-center mb-16">
+          <FadeIn className="text-center mb-14">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
               Trusted by{" "}
               <span
-                className="text-[hsl(var(--tb-accent))] italic"
+                className="italic"
                 style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
               >
-                Real Traders
+                <span className="gradient-text-orange">Real Traders</span>
               </span>
             </h2>
             <p className="text-muted-foreground max-w-md mx-auto">
@@ -918,8 +971,10 @@ export default function Landing() {
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <FadeIn key={t.name} delay={i * 100}>
-                <div className="rounded-2xl border border-border bg-card p-6 h-full flex flex-col">
-                  <Quote className="w-8 h-8 text-[hsl(var(--tb-accent)/0.2)] mb-4" />
+                <div className="glass-morph p-6 h-full flex flex-col relative overflow-hidden">
+                  {/* Large decorative quote watermark */}
+                  <div className="absolute top-4 right-4 text-6xl font-serif text-[hsl(var(--tb-accent)/0.06)] leading-none select-none">"</div>
+                  <Quote className="w-8 h-8 text-[hsl(var(--tb-accent)/0.35)] mb-4" />
                   <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-4">
                     "{t.quote}"
                   </p>
@@ -928,9 +983,15 @@ export default function Landing() {
                       <Star key={j} className="w-3.5 h-3.5 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />
                     ))}
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold">{t.name}</p>
-                    <p className="text-xs text-muted-foreground">{t.role}</p>
+                  <div className="flex items-center gap-3">
+                    {/* Avatar with initials */}
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0" style={{ background: "linear-gradient(135deg, hsl(var(--tb-accent)), hsl(16 85% 45%))" }}>
+                      {t.initials}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">{t.name}</p>
+                      <p className="text-xs text-muted-foreground">{t.role}</p>
+                    </div>
                   </div>
                 </div>
               </FadeIn>
@@ -939,17 +1000,17 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── FAQ ──────────────────────────────────────────── */}
-      <section id="faq" className="py-20 lg:py-28 relative overflow-hidden">
+      {/* ── FAQ (Glassmorphism Wrapper) ───────────────────── */}
+      <section id="faq" className="py-16 lg:py-24 relative overflow-hidden">
         <div
-          className="absolute inset-0 pointer-events-none opacity-[0.2]"
+          className="absolute inset-0 pointer-events-none opacity-[0.15]"
           style={{
             backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)",
             backgroundSize: "24px 24px",
           }}
         />
         <div className="relative max-w-3xl mx-auto px-6">
-          <FadeIn className="text-center mb-12">
+          <FadeIn className="text-center mb-10">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
               Everything you need to know about TradeBook.
@@ -957,45 +1018,55 @@ export default function Landing() {
           </FadeIn>
 
           <FadeIn delay={100}>
-            <div className="space-y-3">
-              {faqs.map((faq) => (
-                <FAQItem key={faq.q} question={faq.q} answer={faq.a} />
-              ))}
+            <div className="glass-morph p-6 sm:p-8">
+              <div className="space-y-3">
+                {faqs.map((faq) => (
+                  <FAQItem key={faq.q} question={faq.q} answer={faq.a} />
+                ))}
+              </div>
             </div>
           </FadeIn>
         </div>
       </section>
 
-      {/* ── Final CTA ────────────────────────────────────── */}
-      <section className="py-20 lg:py-28">
-        <FadeIn className="max-w-3xl mx-auto px-6 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-6 leading-tight">
+      {/* ── Final CTA (Dramatic gradient bg) ─────────────── */}
+      <section className="py-16 lg:py-24 relative overflow-hidden">
+        {/* Gradient background */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 0%, hsl(var(--tb-accent) / 0.04) 30%, hsl(var(--tb-accent) / 0.08) 100%)" }} />
+        {/* Floating decorative shapes */}
+        <div className="absolute top-10 left-10 w-32 h-32 rounded-full border border-[hsl(var(--tb-accent)/0.1)] pointer-events-none animate-float" style={{ animationDelay: "1s" }} />
+        <div className="absolute bottom-10 right-10 w-20 h-20 rounded-2xl border border-[hsl(var(--tb-accent)/0.08)] pointer-events-none animate-float" style={{ animationDelay: "2s" }} />
+        
+        <FadeIn className="relative max-w-3xl mx-auto px-6 text-center">
+          <h2 className="text-3xl lg:text-5xl font-bold mb-6 leading-tight">
             Stop Losing Money to
             <br />
             <span
-              className="text-[hsl(var(--tb-accent))] italic"
+              className="italic"
               style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
             >
-              Undisciplined
+              <span className="gradient-text-orange">Undisciplined</span>
             </span>{" "}
             Trading
           </h2>
-          <p className="text-base text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed">
+          <p className="text-base lg:text-lg text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed">
             Start journaling, analyzing, and compounding your trading edge — every single day.
           </p>
           <Button
             size="lg"
-            className="h-13 px-10 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-none font-semibold"
+            className="h-14 px-12 text-lg gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-none font-semibold cta-glow-pulse"
             onClick={() => navigate("/login")}
           >
-            Get Started — It's Free <ArrowRight className="w-4 h-4" />
+            Get Started — It's Free <ArrowRight className="w-5 h-5" />
           </Button>
           <p className="text-xs text-muted-foreground mt-4">No credit card required · 2-minute setup</p>
         </FadeIn>
       </section>
 
-      {/* ── Footer ───────────────────────────────────────── */}
-      <footer className="border-t border-border bg-card/50 py-12">
+      {/* ── Footer (Glass + gradient separator) ──────────── */}
+      <footer className="relative bg-card/60 backdrop-blur-sm py-12">
+        {/* Gradient separator */}
+        <div className="absolute top-0 left-0 right-0 h-[1px]" style={{ background: "linear-gradient(90deg, transparent, hsl(var(--tb-accent) / 0.3), transparent)" }} />
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-1">
@@ -1005,9 +1076,17 @@ export default function Landing() {
                 </div>
                 <span className="font-bold">TradeBook</span>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                 The trading journal built for Indian markets. Track, analyze, and improve.
               </p>
+              {/* Social icons */}
+              <div className="flex items-center gap-3">
+                {[Twitter, Linkedin, Youtube].map((Icon, i) => (
+                  <div key={i} className="w-8 h-8 rounded-lg bg-muted/60 flex items-center justify-center text-muted-foreground hover:text-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent)/0.1)] transition-colors cursor-pointer">
+                    <Icon className="w-3.5 h-3.5" />
+                  </div>
+                ))}
+              </div>
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-3">Product</h4>
@@ -1032,7 +1111,7 @@ export default function Landing() {
               </ul>
             </div>
           </div>
-          <div className="border-t border-border pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-border/50 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-muted-foreground">
               © {new Date().getFullYear()} TradeBook. All rights reserved. Made with ❤️ in India.
             </p>
@@ -1049,7 +1128,12 @@ export default function Landing() {
 /* ─── Mock trade card for segment showcase ──────────────── */
 function MockTradeCard({ sym, type, entry, pnl, up }: { sym: string; type: string; entry: string; pnl: string; up: boolean }) {
   return (
-    <div className="rounded-xl border border-border/50 bg-card p-3.5 flex items-center justify-between transition-all hover:border-[hsl(var(--tb-accent)/0.3)]">
+    <div className={cn(
+      "rounded-xl border bg-card p-3.5 flex items-center justify-between transition-all duration-300 hover:-translate-y-0.5",
+      up ? "border-profit/20 hover:border-profit/40" : "border-loss/20 hover:border-loss/40"
+    )}
+    style={{ boxShadow: up ? "inset 3px 0 0 hsl(var(--profit) / 0.4)" : "inset 3px 0 0 hsl(var(--loss) / 0.4)" }}
+    >
       <div className="flex items-center gap-3">
         <div className={cn("w-1.5 h-8 rounded-full", up ? "bg-profit" : "bg-loss")} />
         <div>
