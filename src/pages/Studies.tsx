@@ -1,12 +1,15 @@
 import { useState, useMemo } from "react";
 import {
   BookOpen, Plus, Search, Tag, Calendar, Edit, Trash2,
-  TrendingUp, BarChart2, Newspaper, Bell,
+  TrendingUp, BarChart2, Newspaper, Bell, ChevronDown, X, Filter,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Collapsible, CollapsibleContent, CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { useStudies, type StudyFilters } from "@/hooks/useStudies";
 import { CreateStudyModal } from "@/components/modals/CreateStudyModal";
@@ -49,10 +52,41 @@ const sortOptions: SortOption[] = [
   { value: "status", label: "By Status" },
 ];
 
+// Tag groups for filtering (same as CreateStudyModal)
+const tagGroups = [
+  {
+    label: "Classic Patterns",
+    color: "text-primary bg-primary/10",
+    tags: [
+      "Double Top", "Double Bottom", "Head & Shoulders", "Inv H&S",
+      "Cup & Handle", "Asc Triangle", "Desc Triangle", "Symm Triangle",
+      "Flag", "Pennant", "Channel", "Wedge", "Rounding Bottom", "Rectangle",
+    ],
+  },
+  {
+    label: "Candlestick",
+    color: "text-orange-500 bg-orange-500/10",
+    tags: [
+      "Engulfing", "Pin Bar", "Hammer", "Shooting Star", "Doji",
+      "Inside Bar", "Morning Star", "Evening Star", "Harami", "Marubozu",
+    ],
+  },
+  {
+    label: "Setup",
+    color: "text-profit bg-profit/10",
+    tags: [
+      "Breakout", "Breakdown", "Retest", "Range", "ATH", "ATL",
+      "Gap", "Volume Spike", "Base Formation", "Distribution", "Accumulation",
+    ],
+  },
+];
+
 export default function Studies() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [tagFilterOpen, setTagFilterOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [sortBy, setSortBy] = useState("latest");
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -66,8 +100,36 @@ export default function Studies() {
 
   const { studies, isLoading, deleteStudy, updateStudy } = useStudies(filters);
 
+  // Compute tag counts from all studies (before status/tag filtering)
+  const tagCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    studies.forEach((s) => {
+      s.tags?.forEach((t) => {
+        counts[t] = (counts[t] || 0) + 1;
+      });
+    });
+    return counts;
+  }, [studies]);
+
+  // Collect any custom tags not in preset groups
+  const customTags = useMemo(() => {
+    const presetSet = new Set(tagGroups.flatMap((g) => g.tags));
+    return Object.keys(tagCounts).filter((t) => !presetSet.has(t)).sort();
+  }, [tagCounts]);
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  };
+
   const filteredStudies = useMemo(() => {
     let list = selectedStatus ? studies.filter(s => s.status === selectedStatus) : studies;
+
+    // Tag filtering (OR logic)
+    if (selectedTags.length > 0) {
+      list = list.filter(s => s.tags?.some(t => selectedTags.includes(t)));
+    }
 
     // Sort
     switch (sortBy) {
@@ -85,7 +147,7 @@ export default function Studies() {
     }
 
     return list;
-  }, [studies, selectedStatus, sortBy]);
+  }, [studies, selectedStatus, selectedTags, sortBy]);
 
   const statusCounts = studies.reduce((acc: Record<string, number>, s) => {
     const st = s.status || "Draft";
@@ -180,6 +242,112 @@ export default function Studies() {
         </div>
       </div>
 
+      {/* Tag Filter Section */}
+      <Collapsible open={tagFilterOpen} onOpenChange={setTagFilterOpen}>
+        <div className="flex items-center gap-2">
+          <CollapsibleTrigger asChild>
+            <Button variant="outline" size="sm" className={cn(
+              "text-xs h-8 gap-1.5",
+              selectedTags.length > 0 && "bg-primary/10 border-primary/20 text-primary"
+            )}>
+              <Filter className="w-3.5 h-3.5" />
+              Filter by Tags
+              {selectedTags.length > 0 && (
+                <Badge variant="secondary" className="ml-1 px-1.5 py-0 h-4 text-[10px]">
+                  {selectedTags.length}
+                </Badge>
+              )}
+              <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", tagFilterOpen && "rotate-180")} />
+            </Button>
+          </CollapsibleTrigger>
+          {selectedTags.length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs h-8 text-muted-foreground"
+              onClick={() => setSelectedTags([])}
+            >
+              Clear all
+            </Button>
+          )}
+        </div>
+
+        {/* Selected tags display */}
+        {selectedTags.length > 0 && !tagFilterOpen && (
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {selectedTags.map((tag) => (
+              <Badge
+                key={tag}
+                variant="secondary"
+                className="text-xs cursor-pointer hover:opacity-80"
+                onClick={() => toggleTag(tag)}
+              >
+                {tag}
+                <X className="w-3 h-3 ml-1" />
+              </Badge>
+            ))}
+          </div>
+        )}
+
+        <CollapsibleContent className="mt-3 space-y-3 rounded-lg border border-border bg-card/50 p-3">
+          {tagGroups.map((group) => {
+            const tagsWithCount = group.tags.filter((t) => tagCounts[t]);
+            if (tagsWithCount.length === 0) return null;
+            return (
+              <div key={group.label}>
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1.5">
+                  {group.label}
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {tagsWithCount.map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant={selectedTags.includes(tag) ? "default" : "outline"}
+                      className={cn(
+                        "text-[10px] cursor-pointer transition-colors",
+                        selectedTags.includes(tag) && group.color
+                      )}
+                      onClick={() => toggleTag(tag)}
+                    >
+                      {tag}
+                      <span className="ml-1 opacity-60">({tagCounts[tag]})</span>
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Custom / user tags */}
+          {customTags.length > 0 && (
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1.5">
+                Custom
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {customTags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant={selectedTags.includes(tag) ? "default" : "outline"}
+                    className="text-[10px] cursor-pointer transition-colors"
+                    onClick={() => toggleTag(tag)}
+                  >
+                    {tag}
+                    <span className="ml-1 opacity-60">({tagCounts[tag]})</span>
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {Object.keys(tagCounts).length === 0 && (
+            <p className="text-xs text-muted-foreground text-center py-2">
+              No tags found. Add tags when creating studies to enable filtering.
+            </p>
+          )}
+        </CollapsibleContent>
+      </Collapsible>
+
       {/* Studies Grid/List */}
       {isLoading ? (
         <div className={cn(
@@ -234,7 +402,7 @@ export default function Studies() {
         <EmptyState
           icon={BookOpen}
           title="No studies found"
-          description={searchQuery
+          description={searchQuery || selectedTags.length > 0
             ? "Try adjusting your search or filters to find what you're looking for."
             : "Studies help you track setups, patterns, and analysis before taking a trade."}
           createLabel="Create Study"
