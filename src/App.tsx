@@ -7,43 +7,26 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { lazy, Suspense } from "react";
-import { Loader2, TrendingUp } from "lucide-react";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
-
-// Lazy-loaded routes
-const Landing = lazy(() => import("./pages/Landing"));
-const Studies = lazy(() => import("./pages/Studies"));
-const Alerts = lazy(() => import("./pages/Alerts"));
-const Trades = lazy(() => import("./pages/Trades"));
-const Journal = lazy(() => import("./pages/Journal"));
-const Reports = lazy(() => import("./pages/Reports"));
-const Settings = lazy(() => import("./pages/Settings"));
-const Calendar = lazy(() => import("./pages/Calendar"));
-const Mistakes = lazy(() => import("./pages/Mistakes"));
-const Analytics = lazy(() => import("./pages/Analytics"));
-const DhanCallback = lazy(() => import("./pages/DhanCallback"));
-const Watchlist = lazy(() => import("./pages/Watchlist"));
-const NotFound = lazy(() => import("./pages/NotFound"));
-const Terms = lazy(() => import("./pages/Terms"));
-const Privacy = lazy(() => import("./pages/Privacy"));
-const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+import Landing from "./pages/Landing";
+import Studies from "./pages/Studies";
+import Alerts from "./pages/Alerts";
+import Trades from "./pages/Trades";
+import Journal from "./pages/Journal";
+import Reports from "./pages/Reports";
+import Settings from "./pages/Settings";
+import Calendar from "./pages/Calendar";
+import Mistakes from "./pages/Mistakes";
+import Analytics from "./pages/Analytics";
+import DhanCallback from "./pages/DhanCallback";
+import Watchlist from "./pages/Watchlist";
+import NotFound from "./pages/NotFound";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
-
-function PageLoader() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="flex flex-col items-center gap-4 animate-fade-in">
-        <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
-          <TrendingUp className="w-6 h-6 text-primary-foreground" />
-        </div>
-        <Loader2 className="w-5 h-5 animate-spin text-primary" />
-      </div>
-    </div>
-  );
-}
 
 const App = () => (
   <ErrorBoundary>
@@ -53,8 +36,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <AuthProvider>
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
+            <Routes>
               <Route path="/landing" element={<Landing />} />
               <Route path="/login" element={<Login />} />
               <Route path="/reset-password" element={<ResetPassword />} />
@@ -92,8 +74,7 @@ const App = () => (
                 />
               ))}
               <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
+            </Routes>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
