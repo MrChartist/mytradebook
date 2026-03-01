@@ -75,9 +75,16 @@ export default function Login() {
 
   const handleGoogleAuth = async () => {
     setLoading(true);
-    const { error } = await signInWithGoogle();
-    if (error) {
-      toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });
+    try {
+      const result = await signInWithGoogle();
+      if (result?.error) {
+        toast({ title: "Google sign-in failed", description: result.error.message, variant: "destructive" });
+        setLoading(false);
+      }
+      // If no error, the page will redirect — but add safety timeout
+      setTimeout(() => setLoading(false), 10000);
+    } catch (err) {
+      toast({ title: "Google sign-in failed", description: "Something went wrong. Please try again.", variant: "destructive" });
       setLoading(false);
     }
   };
