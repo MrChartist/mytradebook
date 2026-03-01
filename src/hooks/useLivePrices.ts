@@ -11,6 +11,7 @@ interface PriceData {
   low?: number;
   prevClose?: number;
   volume?: number;
+  source?: "dhan" | "yahoo" | "unavailable";
 }
 
 export interface InstrumentInput {
@@ -27,6 +28,8 @@ interface UseLivePricesResult {
   isLoading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
+  primarySource: "dhan" | "yahoo" | "unavailable" | null;
+  yahooFallbackUsed: boolean;
 }
 
 export function useLivePrices(
@@ -38,6 +41,8 @@ export function useLivePrices(
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [primarySource, setPrimarySource] = useState<"dhan" | "yahoo" | "unavailable" | null>(null);
+  const [yahooFallbackUsed, setYahooFallbackUsed] = useState(false);
 
   // Normalize input: determine if we have instruments or plain symbols
   const instruments: InstrumentInput[] =
@@ -89,12 +94,12 @@ export function useLivePrices(
         throw new Error(fnError.message);
       }
 
-      if (data?.error === "token_expired") {
+      if (data?.error === "token_expired" && !data?.yahoo_fallback_used) {
         setError("Dhan token expired — update in Settings");
         return;
       }
 
-      if (data?.error === "data_api_not_subscribed") {
+      if (data?.error === "data_api_not_subscribed" && !data?.yahoo_fallback_used) {
         setError("Dhan Data API not active — subscribe at web.dhan.co → My Profile → Access DhanHQ APIs");
         return;
       }
@@ -102,7 +107,6 @@ export function useLivePrices(
       if (data?.success && data?.prices && Object.keys(data.prices).length > 0) {
         const validPrices: Record<string, PriceData> = {};
         for (const [sym, priceData] of Object.entries(data.prices)) {
-          // Type-safe handling of price data
           if (
             typeof priceData === 'object' &&
             priceData !== null &&
@@ -116,6 +120,15 @@ export function useLivePrices(
         if (Object.keys(validPrices).length > 0) {
           setPrices(validPrices);
           setLastUpdated(new Date());
+        }
+
+        // Track source info
+        setPrimarySource(data.source || null);
+        setYahooFallbackUsed(!!data.yahoo_fallback_used);
+
+        // Show soft warning when Yahoo is in use
+        if (data.yahoo_fallback_used && data.dhan_failed) {
+          setError("Using delayed prices (Yahoo) — Dhan unavailable");
         }
       } else if (data?.error) {
         throw new Error(data.error);
@@ -164,5 +177,7 @@ export function useLivePrices(
     isLoading,
     error,
     refresh: fetchPrices,
+    primarySource,
+    yahooFallbackUsed,
   };
 }

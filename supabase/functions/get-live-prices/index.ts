@@ -24,7 +24,7 @@ interface PriceResult {
   low?: number;
   prevClose?: number;
   volume?: number;
-  source: "dhan" | "unavailable";
+  source: "dhan" | "yahoo" | "unavailable";
   timestamp: string;
   security_id?: string;
   exchange_segment?: string;
@@ -33,10 +33,7 @@ interface PriceResult {
 
 // ── helpers ──────────────────────────────────────────────────────────
 
-async function resolveUserToken(
-  userId: string | undefined,
-  supabase: any
-) {
+async function resolveUserToken(userId: string | undefined, supabase: any) {
   if (!userId || !supabase) return { token: null, clientId: null, hasApiKey: false };
   const { data } = await supabase
     .from("user_settings")
@@ -45,15 +42,15 @@ async function resolveUserToken(
     .single();
   if (data?.dhan_access_token && data?.dhan_client_id && data?.dhan_enabled) {
     console.log("Using per-user Dhan token");
-    return { 
-      token: data.dhan_access_token, 
+    return {
+      token: data.dhan_access_token,
       clientId: data.dhan_client_id,
       hasApiKey: !!(data.dhan_api_key && data.dhan_api_secret),
     };
   }
-  return { 
-    token: null, 
-    clientId: null, 
+  return {
+    token: null,
+    clientId: null,
     hasApiKey: !!(data?.dhan_api_key && data?.dhan_api_secret),
   };
 }
@@ -124,6 +121,110 @@ function dhanHeaders(token: string, clientId: string) {
   };
 }
 
+// ── Yahoo Finance fallback ──────────────────────────────────────────
+
+function getYahooSuffix(exchangeSegment?: string): string {
+  if (!exchangeSegment) return ".NS";
+  if (exchangeSegment.startsWith("BSE")) return ".BO";
+  return ".NS"; // NSE_EQ, NSE_FNO, default
+}
+
+interface YahooSymbolInfo {
+  symbol: string;
+  yahooSymbol: string;
+  exchangeSegment?: string;
+}
+
+async function fetchSingleYahooPrice(
+  info: YahooSymbolInfo,
+  timestamp: string
+): Promise<[string, PriceResult] | null> {
+  try {
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(info.yahooSymbol)}?interval=1d&range=1d`;
+    const res = await fetch(url, {
+      headers: { "User-Agent": "Mozilla/5.0" },
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.warn(`Yahoo fetch failed for ${info.yahooSymbol}: ${res.status} ${errText.slice(0, 100)}`);
+      return null;
+    }
+
+    const data = await res.json();
+    const meta = data?.chart?.result?.[0]?.meta;
+    if (!meta || !meta.regularMarketPrice) return null;
+
+    const ltp = meta.regularMarketPrice;
+    const prevClose = meta.previousClose || meta.chartPreviousClose || 0;
+    const change = prevClose ? parseFloat((ltp - prevClose).toFixed(2)) : 0;
+    const changePercent = prevClose > 0 ? parseFloat(((change / prevClose) * 100).toFixed(2)) : 0;
+
+    return [
+      info.symbol,
+      {
+        ltp,
+        change,
+        changePercent,
+        open: meta.regularMarketOpen || undefined,
+        high: meta.regularMarketDayHigh || undefined,
+        low: meta.regularMarketDayLow || undefined,
+        prevClose: prevClose ? parseFloat(Number(prevClose).toFixed(2)) : undefined,
+        volume: meta.regularMarketVolume || undefined,
+        source: "yahoo",
+        timestamp,
+      },
+    ];
+  } catch (e) {
+    console.warn(`Yahoo error for ${info.yahooSymbol}:`, e);
+    return null;
+  }
+}
+
+async function fetchYahooPrices(
+  unfetchedSymbols: string[],
+  instruments: InstrumentInput[],
+  timestamp: string
+): Promise<Record<string, PriceResult>> {
+  const results: Record<string, PriceResult> = {};
+  if (unfetchedSymbols.length === 0) return results;
+
+  // Build Yahoo symbol list with exchange segment info
+  const yahooInfos: YahooSymbolInfo[] = unfetchedSymbols.map((sym) => {
+    const inst = instruments.find((i) => i.symbol === sym);
+    const suffix = getYahooSuffix(inst?.exchange_segment);
+    return { symbol: sym, yahooSymbol: `${sym}${suffix}`, exchangeSegment: inst?.exchange_segment };
+  });
+
+  // Filter out F&O symbols — Yahoo doesn't support them well
+  const equityInfos = yahooInfos.filter((info) => {
+    const seg = info.exchangeSegment || "";
+    return !seg.includes("FNO") && !seg.includes("MCX");
+  });
+
+  if (equityInfos.length === 0) return results;
+
+  console.log(`Yahoo fallback: fetching ${equityInfos.length} symbols:`, equityInfos.map((i) => i.yahooSymbol));
+
+  // Batch in groups of 5 concurrent requests
+  const BATCH_SIZE = 5;
+  for (let i = 0; i < equityInfos.length; i += BATCH_SIZE) {
+    const batch = equityInfos.slice(i, i + BATCH_SIZE);
+    const promises = batch.map((info) => fetchSingleYahooPrice(info, timestamp));
+    const batchResults = await Promise.allSettled(promises);
+
+    for (const result of batchResults) {
+      if (result.status === "fulfilled" && result.value) {
+        const [sym, priceData] = result.value;
+        results[sym] = priceData;
+      }
+    }
+  }
+
+  console.log(`Yahoo fallback: got prices for ${Object.keys(results).length}/${equityInfos.length} symbols`);
+  return results;
+}
+
 // ── main handler ─────────────────────────────────────────────────────
 
 serve(async (req) => {
@@ -139,7 +240,7 @@ serve(async (req) => {
 
     const body = await req.json();
 
-    // Resolve user_id: prefer body, then extract from auth JWT
+    // Resolve user_id
     let userId = body.user_id;
     if (!userId && SUPABASE_URL && SUPABASE_SERVICE_KEY) {
       const authHeader = req.headers.get("authorization") || "";
@@ -168,6 +269,7 @@ serve(async (req) => {
 
     const prices: Record<string, PriceResult> = {};
     const timestamp = new Date().toISOString();
+    let dhanFailed = false;
 
     const supabase =
       SUPABASE_URL && SUPABASE_SERVICE_KEY ? createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY) : null;
@@ -185,8 +287,6 @@ serve(async (req) => {
       const headers = dhanHeaders(activeToken, activeClientId);
       const bodyStr = JSON.stringify(requestBody);
 
-      // Use single /marketfeed/quote call — returns LTP + OHLC + Volume + depth
-      // This avoids dual calls that hit Dhan's 1 req/sec rate limit
       console.log("Calling /marketfeed/quote for", Object.values(requestBody).flat().length, "instruments");
 
       let retries = 0;
@@ -201,7 +301,7 @@ serve(async (req) => {
 
         if (quoteRes.status === 429) {
           retries++;
-          const waitMs = 1000 * retries; // 1s, 2s, 3s backoff
+          const waitMs = 1000 * retries;
           console.warn(`Rate limited (429), retry ${retries}/3 after ${waitMs}ms`);
           await new Promise((r) => setTimeout(r, waitMs));
           continue;
@@ -258,15 +358,14 @@ serve(async (req) => {
       } else if (quoteRes) {
         const errText = await quoteRes.text();
         console.error("Dhan quote error:", quoteRes.status, errText);
+        dhanFailed = true;
 
-        // If 401, parse the error body to distinguish 806 (Data API not subscribed) from actual token expiry
         if (quoteRes.status === 401) {
           let errorType = "token_expired";
           let message = userCreds.hasApiKey
             ? "Dhan token expired. Go to Settings to re-authorize with your API Key."
             : "Dhan access token is invalid or expired. Update it in Settings.";
 
-          // Try to parse error body for specific error codes
           try {
             const errBody = JSON.parse(errText);
             if (errBody?.data?.["806"] || errText.includes("not Subscribed") || errText.includes("Data APIs")) {
@@ -275,33 +374,43 @@ serve(async (req) => {
             }
           } catch { /* ignore parse errors */ }
 
-          return new Response(
-            JSON.stringify({
-              success: false,
-              error: errorType,
-              message,
-              has_api_key: userCreds.hasApiKey,
-              prices: {},
-              timestamp,
-            }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
+          // Don't return early — let Yahoo fallback try first
+          // We'll include the Dhan error info in the response
+          console.log(`Dhan error: ${errorType}, will try Yahoo fallback`);
         }
       }
+    } else {
+      // No Dhan token at all
+      dhanFailed = true;
+      console.log("No Dhan token available, will try Yahoo fallback");
     }
 
+    // ── Yahoo Finance fallback for unfetched symbols ──
     const unfetched = symbols.filter((s) => !prices[s]);
-    if (unfetched.length > 0) console.log(`Prices unavailable for: ${unfetched.join(", ")}`);
+    if (unfetched.length > 0) {
+      console.log(`${unfetched.length} symbols unfetched after Dhan, trying Yahoo fallback`);
+      const yahooPrices = await fetchYahooPrices(unfetched, instruments, timestamp);
+      Object.assign(prices, yahooPrices);
+    }
+
+    // Determine combined source info
+    const sources = new Set(Object.values(prices).map((p) => p.source));
+    const primarySource = sources.has("dhan") ? "dhan" : sources.has("yahoo") ? "yahoo" : "unavailable";
+    const hasYahooFallback = sources.has("yahoo");
+    const finalUnfetched = symbols.filter((s) => !prices[s]);
+    if (finalUnfetched.length > 0) console.log(`Prices still unavailable for: ${finalUnfetched.join(", ")}`);
 
     return new Response(
       JSON.stringify({
         success: true,
         prices,
         timestamp,
-        source: activeToken ? "dhan" : "unavailable",
+        source: primarySource,
         fetched_count: Object.keys(prices).length,
         requested_count: symbols.length,
         using_user_token: !!userCreds.token,
+        yahoo_fallback_used: hasYahooFallback,
+        dhan_failed: dhanFailed,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
