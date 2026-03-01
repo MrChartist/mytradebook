@@ -21,7 +21,6 @@ import { Button } from "@/components/ui/button";
 import { MobileDrawer } from "./MobileDrawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { NotificationCenter } from "./NotificationCenter";
 
 const mainNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -86,9 +85,8 @@ export function Sidebar() {
           </div>
           <span className="font-bold text-[15px]">TradeBook</span>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <ThemeToggle />
-          <NotificationCenter />
           <Button variant="ghost" size="icon" className="h-9 w-9">
             <Search className="w-4 h-4" />
           </Button>

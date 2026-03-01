@@ -51,11 +51,13 @@ export default function Dashboard() {
   const { trades: allTrades, isLoading: tradesLoading } = useTrades();
   const { alerts } = useAlerts({ active: true });
 
+  // Filter by segment
   const trades = useMemo(() => {
     if (segment === "All") return allTrades;
     return allTrades.filter((t) => t.segment === segment);
   }, [allTrades, segment]);
 
+  // Month-filtered trades
   const monthStart = startOfMonth(selectedMonth);
   const monthEnd = endOfMonth(selectedMonth);
   const monthTrades = useMemo(() => {
@@ -65,6 +67,7 @@ export default function Dashboard() {
     });
   }, [trades, monthStart, monthEnd]);
 
+  // Open positions
   const openTrades = useMemo(() => trades.filter((t) => t.status === TradeStatus.OPEN), [trades]);
   const openInstruments = useMemo(() => openTrades.map((t) => ({
     symbol: t.symbol, security_id: t.security_id, exchange_segment: t.exchange_segment,
@@ -83,7 +86,6 @@ export default function Dashboard() {
       <div className="space-y-5 animate-fade-in">
         {/* Onboarding for new users */}
         <OnboardingWelcome />
-
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
@@ -93,6 +95,7 @@ export default function Dashboard() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            {/* Month selector */}
             <div className="flex gap-1 bg-muted rounded-lg p-0.5">
               {[subMonths(new Date(), 2), subMonths(new Date(), 1), new Date()].map((m) => (
                 <button
@@ -108,6 +111,7 @@ export default function Dashboard() {
                 </button>
               ))}
             </div>
+            {/* Live indicator */}
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               {isPolling && openInstruments.length > 0 ? (
                 <>
@@ -123,6 +127,7 @@ export default function Dashboard() {
               )}
             </div>
 
+            {/* Widget customization */}
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -162,6 +167,7 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Segment filter */}
         <div className="flex gap-1.5 flex-wrap">
           {SEGMENT_OPTIONS.map((opt) => (
             <button
@@ -178,6 +184,7 @@ export default function Dashboard() {
           ))}
         </div>
 
+        {/* Dynamic Widgets */}
         {widgets.map((w) => {
           if (!w.visible) return null;
           switch (w.id) {
@@ -191,7 +198,7 @@ export default function Dashboard() {
                 </div>
               );
             case "alerts":
-              return null;
+              return null; // Rendered with chart
             case "positions":
               return <DashboardPositionsTable key={w.id} />;
             case "monthly":
