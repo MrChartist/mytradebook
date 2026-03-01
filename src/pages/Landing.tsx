@@ -11,12 +11,18 @@ import {
   Target,
   LineChart,
   CheckCircle2,
-  Star,
   Zap,
-  Download,
   Eye,
+  ChevronDown,
+  Star,
+  Quote,
+  Activity,
+  PieChart,
   Layers,
-  Send,
+  Clock,
+  ArrowUpRight,
+  ArrowDownRight,
+  Minus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -70,9 +76,6 @@ function FadeIn({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    
-    // Start visible immediately for hero elements (delay < 500ms)
-    // Use IntersectionObserver for below-fold elements
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -156,6 +159,54 @@ const steps = [
   },
 ];
 
+const testimonials = [
+  {
+    name: "Rahul M.",
+    role: "Options Trader, Mumbai",
+    quote: "TradeBook helped me identify that my Monday morning trades were consistently losing. After adjusting my strategy, my win rate went from 42% to 61%.",
+    stars: 5,
+  },
+  {
+    name: "Priya S.",
+    role: "Swing Trader, Bangalore",
+    quote: "The segment-level analytics are a game-changer. I can see exactly which setups work for intraday vs positional, and the Telegram alerts keep me disciplined.",
+    stars: 5,
+  },
+  {
+    name: "Aditya K.",
+    role: "F&O Trader, Delhi",
+    quote: "I tried 4 journals before TradeBook. None understood Indian markets — segments, lot sizes, MCX. Finally something built for how we actually trade.",
+    stars: 5,
+  },
+];
+
+const faqs = [
+  {
+    q: "Is TradeBook free to use?",
+    a: "Yes! The Free plan includes up to 50 trades/month, basic analytics, and 1 watchlist — forever free. Upgrade to Pro for unlimited trades, Telegram notifications, broker integration, and advanced analytics.",
+  },
+  {
+    q: "Which brokers are supported?",
+    a: "Currently we support Dhan for live prices, portfolio auto-sync, and one-click order execution. More brokers (Zerodha, Angel One) are on the roadmap.",
+  },
+  {
+    q: "Is my trading data safe?",
+    a: "Absolutely. All data is encrypted at rest and in transit. Your data is yours — we never share, sell, or use it for any purpose other than powering your dashboard.",
+  },
+  {
+    q: "Can I use TradeBook for Commodities and F&O?",
+    a: "Yes! TradeBook supports 5 market segments: Equity Intraday, Equity Positional, Futures, Options, and Commodities. Each segment has its own analytics and reporting.",
+  },
+  {
+    q: "How does the 14-day Pro trial work?",
+    a: "Every new signup gets full Pro access for 14 days — no credit card required. After the trial, you can continue on the Free plan or upgrade to keep Pro features.",
+  },
+  {
+    q: "Do you offer refunds?",
+    a: "Yes, we offer a full refund within 7 days of purchase if you're not satisfied. No questions asked.",
+  },
+];
+
 const pricingPlans = [
   {
     name: "Free",
@@ -201,21 +252,110 @@ const pricingPlans = [
   },
 ];
 
+const segmentTabs = [
+  {
+    id: "equity",
+    label: "Equity",
+    icon: TrendingUp,
+    title: "Intraday & Positional Equity",
+    description: "Track cash-market trades with split segments for intraday scalps and positional swing trades. See per-segment win rates, average holding periods, and sector breakdowns.",
+    stats: [
+      { label: "Segments", value: "2" },
+      { label: "Metrics", value: "15+" },
+      { label: "Holding", value: "1d–90d" },
+    ],
+    features: ["Intraday vs Positional split", "Sector-wise P&L heatmap", "Day-of-week analysis", "Brokerage & charges tracking"],
+  },
+  {
+    id: "fno",
+    label: "F&O",
+    icon: Activity,
+    title: "Futures & Options",
+    description: "Purpose-built for derivatives traders. Log option chains, strategy legs, Greeks tracking, and lot-size-aware position sizing with expiry-based analytics.",
+    stats: [
+      { label: "Strategy Types", value: "10+" },
+      { label: "Greeks", value: "4" },
+      { label: "Expiries", value: "Auto" },
+    ],
+    features: ["Multi-leg strategy logging", "Option chain selector", "Lot-size aware P&L", "Expiry-based performance"],
+  },
+  {
+    id: "commodities",
+    label: "Commodities",
+    icon: PieChart,
+    title: "MCX Commodities",
+    description: "Track Gold, Silver, Crude, Natural Gas, and other MCX instruments with commodity-specific lot sizes, margin requirements, and session-based analysis.",
+    stats: [
+      { label: "Instruments", value: "20+" },
+      { label: "Sessions", value: "2" },
+      { label: "Margin", value: "Auto" },
+    ],
+    features: ["MCX instrument support", "Session-wise analytics", "Commodity-specific lot sizes", "Margin utilization tracking"],
+  },
+];
+
+/* ─── FAQ Accordion Item ────────────────────────────────── */
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border border-border rounded-xl overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-muted/50 transition-colors"
+      >
+        <span className="font-medium text-sm pr-4">{question}</span>
+        <ChevronDown className={cn("w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-200", open && "rotate-180")} />
+      </button>
+      {open && (
+        <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed animate-fade-in">
+          {answer}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Animated ticker line for dashboard mockup ──────────── */
+function TickerBar() {
+  const tickers = [
+    { symbol: "NIFTY 50", price: "24,285", change: "+0.82%", up: true },
+    { symbol: "BANKNIFTY", price: "51,440", change: "-0.34%", up: false },
+    { symbol: "RELIANCE", price: "2,945", change: "+1.24%", up: true },
+    { symbol: "GOLD", price: "71,850", change: "+0.45%", up: true },
+    { symbol: "CRUDE", price: "6,420", change: "-1.12%", up: false },
+  ];
+
+  return (
+    <div className="flex items-center gap-5 px-4 py-2 border-b border-border/30 bg-muted/20 overflow-hidden text-[10px]">
+      {tickers.map((t) => (
+        <div key={t.symbol} className="flex items-center gap-1.5 shrink-0">
+          <span className="text-muted-foreground font-medium">{t.symbol}</span>
+          <span className="font-mono font-semibold text-foreground/80">{t.price}</span>
+          <span className={cn("font-mono font-semibold", t.up ? "text-profit" : "text-loss")}>
+            {t.change}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /* ─── Main Component ────────────────────────────────────── */
 export default function Landing() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const [activeSegment, setActiveSegment] = useState("equity");
 
-  const s1 = useCountUp(2500, 2000);
-  const s2 = useCountUp(10000, 2000);
   const s3 = useCountUp(5, 1200);
-  const s4 = useCountUp(48, 1500);
+  const s4 = useCountUp(50, 1500);
 
   useEffect(() => {
     if (!loading && user) {
       navigate("/");
     }
   }, [user, loading, navigate]);
+
+  const activeTab = segmentTabs.find((t) => t.id === activeSegment)!;
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden font-sans">
@@ -231,8 +371,9 @@ export default function Landing() {
 
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors duration-200 px-3 py-1.5 rounded-full hover:bg-muted">Features</a>
-            <a href="#how-it-works" className="hover:text-foreground transition-colors duration-200">How It Works</a>
+            <a href="#segments" className="hover:text-foreground transition-colors duration-200">Segments</a>
             <a href="#pricing" className="hover:text-foreground transition-colors duration-200">Pricing</a>
+            <a href="#faq" className="hover:text-foreground transition-colors duration-200">FAQ</a>
           </div>
 
           <div className="flex items-center gap-3">
@@ -257,7 +398,6 @@ export default function Landing() {
 
       {/* ── Hero ─────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
-        {/* Dot grid background */}
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.35]"
           style={{
@@ -266,91 +406,245 @@ export default function Landing() {
           }}
         />
 
-        <div className="relative max-w-4xl mx-auto px-6 pt-24 pb-16 lg:pt-36 lg:pb-24 text-center">
+        <div className="relative max-w-5xl mx-auto px-6 pt-20 pb-12 lg:pt-32 lg:pb-20 text-center">
           {/* Badge */}
-          <FadeIn className="flex justify-center mb-10">
+          <FadeIn className="flex justify-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[hsl(var(--tb-accent)/0.3)] bg-[hsl(var(--tb-accent)/0.08)] text-sm">
               <span className="w-2 h-2 rounded-full bg-[hsl(var(--tb-accent))] animate-pulse" />
               <span className="text-[hsl(var(--tb-accent))] font-semibold uppercase tracking-wider text-xs">
-                Built for Indian Markets · NSE · MCX
+                Built for Indian Markets · NSE · BSE · MCX
               </span>
             </div>
           </FadeIn>
 
           {/* Heading */}
           <FadeIn delay={100}>
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.1] tracking-tight mb-8">
-              The Ultimate
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.08] tracking-tight mb-6">
+              Know Your Edge.
               <br />
               <span
-                className="font-script text-[hsl(var(--tb-accent))] italic"
+                className="text-[hsl(var(--tb-accent))] italic"
                 style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
               >
-                Trading
+                Compound
               </span>{" "}
-              Journal
+              It Daily.
             </h1>
           </FadeIn>
 
           {/* Subtitle */}
           <FadeIn delay={200}>
-            <p className="text-base lg:text-lg text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed">
-              Track, analyze, and improve your trades with real-time alerts,
-              broker integration, and segment-based analytics.
-              Built for Equity, F&O, and Commodity traders.
+            <p className="text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
+              The trading journal that shows you <strong className="text-foreground">why</strong> you win and{" "}
+              <strong className="text-foreground">why</strong> you lose — with segment analytics for Equity, F&O, and Commodities.
+              Stop guessing. Start compounding.
             </p>
           </FadeIn>
 
           {/* CTAs */}
-          <FadeIn delay={300} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+          <FadeIn delay={300} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <Button
               size="lg"
-              className="h-12 px-8 text-base gap-2 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-none"
+              className="h-13 px-10 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-none font-semibold"
               onClick={() => navigate("/login")}
             >
-              <Download className="w-4 h-4" />
-              Start Free
+              Start Free — No Card Needed
+              <ArrowRight className="w-4 h-4" />
             </Button>
             <Button
               variant="outline"
               size="lg"
-              className="h-12 px-8 text-base gap-2 rounded-full"
+              className="h-13 px-8 text-base gap-2 rounded-full"
               onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })}
             >
-              Explore Features <ArrowRight className="w-4 h-4" />
+              See How It Works
             </Button>
           </FadeIn>
 
-          {/* Stats Row */}
+          {/* Micro trust line */}
+          <FadeIn delay={350}>
+            <p className="text-xs text-muted-foreground mb-12">
+              14-day Pro trial · No credit card · 2-minute setup
+            </p>
+          </FadeIn>
+
+          {/* ── Social Proof Trust Strip ───────────────────── */}
           <FadeIn delay={400}>
-            <div className="flex items-center justify-center gap-8 sm:gap-12 flex-wrap">
-              <div className="text-center" ref={s1.ref}>
-                <div className="text-2xl sm:text-3xl font-bold tracking-tight">
-                  {s1.count.toLocaleString()}+
+            <div className="flex items-center justify-center gap-6 sm:gap-10 mb-14 flex-wrap">
+              {["NSE", "BSE", "MCX"].map((exchange) => (
+                <div key={exchange} className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border/60 bg-card/60">
+                  <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center">
+                    <Activity className="w-3.5 h-3.5 text-muted-foreground" />
+                  </div>
+                  <span className="text-sm font-semibold tracking-wide text-muted-foreground">{exchange}</span>
                 </div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Traders</div>
-              </div>
-              <div className="text-center" ref={s2.ref}>
-                <div className="text-2xl sm:text-3xl font-bold tracking-tight">
-                  {s2.count.toLocaleString()}+
-                </div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Trades Logged</div>
-              </div>
-              <div className="text-center" ref={s3.ref}>
-                <div className="text-2xl sm:text-3xl font-bold tracking-tight">
-                  {s3.count}
-                </div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Segments</div>
-              </div>
-              <div className="text-center" ref={s4.ref}>
-                <div className="text-2xl sm:text-3xl font-bold tracking-tight">
-                  4.{s4.count > 8 ? 8 : s4.count}
-                  <Star className="w-4 h-4 inline-block ml-0.5 -mt-1 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />
-                </div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Avg Rating</div>
+              ))}
+              <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
+                <Minus className="w-4 h-4" />
+                <span>All Indian exchanges supported</span>
               </div>
             </div>
           </FadeIn>
+
+          {/* ── Dashboard Preview ─────────────────────────── */}
+          <FadeIn delay={500}>
+            <div className="relative mx-auto max-w-5xl">
+              {/* Glow effect */}
+              <div className="absolute -inset-6 bg-[hsl(var(--tb-accent)/0.06)] rounded-3xl blur-3xl" />
+              <div className="relative rounded-2xl border border-border/60 bg-card overflow-hidden shadow-2xl shadow-black/5">
+                {/* Window chrome */}
+                <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/50 bg-muted/30">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-loss/50" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-warning/50" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-profit/50" />
+                  </div>
+                  <div className="flex-1 text-center">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-muted/50 text-[10px] text-muted-foreground font-mono">
+                      <span className="w-1.5 h-1.5 rounded-full bg-profit/60" />
+                      mytradebook.lovable.app/dashboard
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ticker bar */}
+                <TickerBar />
+
+                {/* Dashboard content */}
+                <div className="flex">
+                  {/* Mini sidebar */}
+                  <div className="hidden sm:flex flex-col w-14 border-r border-border/30 bg-muted/10 py-3 gap-3 items-center">
+                    {[BarChart3, BookOpen, Bell, Target, Eye, Layers].map((Icon, i) => (
+                      <div
+                        key={i}
+                        className={cn(
+                          "w-8 h-8 rounded-lg flex items-center justify-center transition-colors",
+                          i === 0
+                            ? "bg-[hsl(var(--tb-accent)/0.12)] text-[hsl(var(--tb-accent))]"
+                            : "text-muted-foreground/50 hover:text-muted-foreground"
+                        )}
+                      >
+                        <Icon className="w-3.5 h-3.5" />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Main content */}
+                  <div className="flex-1 p-4 sm:p-5">
+                    {/* Welcome */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Good Morning,</p>
+                        <p className="text-sm font-semibold">Dashboard</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="px-2.5 py-1 rounded-md bg-profit/10 text-profit text-[10px] font-semibold flex items-center gap-1">
+                          <ArrowUpRight className="w-3 h-3" />
+                          4 day streak
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* KPI row */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
+                      {[
+                        { label: "MTD P&L", value: "+₹24,850", change: "+12.4%", up: true },
+                        { label: "Win Rate", value: "67.5%", change: "+3.2%", up: true },
+                        { label: "Open Positions", value: "3", change: "", up: true },
+                        { label: "Active Alerts", value: "8", change: "2 triggered", up: true },
+                      ].map((kpi) => (
+                        <div key={kpi.label} className="rounded-xl border border-border/40 bg-card p-3">
+                          <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">{kpi.label}</p>
+                          <p className={cn("text-base font-bold font-mono", kpi.label.includes("P&L") || kpi.label.includes("Win") ? "text-profit" : "text-foreground")}>{kpi.value}</p>
+                          {kpi.change && (
+                            <p className={cn("text-[9px] font-mono mt-0.5", kpi.up ? "text-profit/70" : "text-loss/70")}>{kpi.change}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Equity curve + Recent trades */}
+                    <div className="grid sm:grid-cols-5 gap-3">
+                      <div className="sm:col-span-3 rounded-xl border border-border/40 bg-card p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-[10px] text-muted-foreground font-medium">Equity Curve</p>
+                          <p className="text-[10px] text-profit font-mono font-semibold">+₹1,24,850</p>
+                        </div>
+                        <svg viewBox="0 0 400 80" className="w-full h-14">
+                          <defs>
+                            <linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="hsl(var(--profit))" stopOpacity="0.25" />
+                              <stop offset="100%" stopColor="hsl(var(--profit))" stopOpacity="0" />
+                            </linearGradient>
+                          </defs>
+                          <path
+                            d="M0,65 C20,62 40,58 60,50 C80,42 100,48 130,40 C160,32 180,36 210,28 C240,20 260,24 290,18 C320,12 350,16 370,10 C385,6 395,8 400,5"
+                            fill="none"
+                            stroke="hsl(var(--profit))"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                          <path
+                            d="M0,65 C20,62 40,58 60,50 C80,42 100,48 130,40 C160,32 180,36 210,28 C240,20 260,24 290,18 C320,12 350,16 370,10 C385,6 395,8 400,5 L400,80 L0,80 Z"
+                            fill="url(#curveGrad)"
+                          />
+                        </svg>
+                      </div>
+
+                      <div className="sm:col-span-2 rounded-xl border border-border/40 bg-card p-3">
+                        <p className="text-[10px] text-muted-foreground font-medium mb-2">Recent Trades</p>
+                        <div className="space-y-2">
+                          {[
+                            { sym: "RELIANCE", type: "BUY", pnl: "+₹2,450", up: true },
+                            { sym: "NIFTY 24200 CE", type: "BUY", pnl: "+₹8,200", up: true },
+                            { sym: "TATAMOTORS", type: "SELL", pnl: "-₹1,100", up: false },
+                          ].map((t) => (
+                            <div key={t.sym} className="flex items-center justify-between py-1.5 border-b border-border/20 last:border-0">
+                              <div className="flex items-center gap-2">
+                                <div className={cn("w-1 h-4 rounded-full", t.up ? "bg-profit" : "bg-loss")} />
+                                <div>
+                                  <p className="text-[10px] font-semibold leading-tight">{t.sym}</p>
+                                  <p className="text-[8px] text-muted-foreground">{t.type}</p>
+                                </div>
+                              </div>
+                              <span className={cn("text-[10px] font-mono font-semibold", t.up ? "text-profit" : "text-loss")}>{t.pnl}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ── Stats Row ────────────────────────────────────── */}
+      <section className="py-12 border-y border-border/50">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="flex items-center justify-center gap-8 sm:gap-16 flex-wrap">
+            <div className="text-center" ref={s3.ref}>
+              <div className="text-3xl sm:text-4xl font-bold tracking-tight">{s3.count}</div>
+              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Market Segments</div>
+            </div>
+            <div className="text-center" ref={s4.ref}>
+              <div className="text-3xl sm:text-4xl font-bold tracking-tight">{s4.count}+</div>
+              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Analytics Metrics</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-bold tracking-tight">14</div>
+              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Day Free Trial</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-bold tracking-tight flex items-center gap-1 justify-center">
+                <Clock className="w-6 h-6 text-[hsl(var(--tb-accent))]" />
+                24/7
+              </div>
+              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Cloud Access</div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -388,8 +682,8 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── How It Works ─────────────────────────────────── */}
-      <section id="how-it-works" className="py-20 lg:py-28 relative overflow-hidden">
+      {/* ── Segment Showcase ─────────────────────────────── */}
+      <section id="segments" className="py-20 lg:py-28 relative overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.2]"
           style={{
@@ -398,6 +692,108 @@ export default function Landing() {
           }}
         />
         <div className="relative max-w-5xl mx-auto px-6">
+          <FadeIn className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+              Built for{" "}
+              <span
+                className="text-[hsl(var(--tb-accent))] italic"
+                style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
+              >
+                Every Segment
+              </span>
+            </h2>
+            <p className="text-muted-foreground max-w-lg mx-auto">
+              Whether you trade equity, derivatives, or commodities — TradeBook understands your market.
+            </p>
+          </FadeIn>
+
+          {/* Tabs */}
+          <FadeIn delay={100}>
+            <div className="flex items-center justify-center gap-2 mb-10">
+              {segmentTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveSegment(tab.id)}
+                  className={cn(
+                    "flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-200",
+                    activeSegment === tab.id
+                      ? "bg-[hsl(var(--tb-accent))] text-white shadow-none"
+                      : "bg-card border border-border text-muted-foreground hover:text-foreground hover:border-[hsl(var(--tb-accent)/0.3)]"
+                  )}
+                >
+                  <tab.icon className="w-4 h-4" />
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </FadeIn>
+
+          {/* Tab content */}
+          <FadeIn delay={150}>
+            <div className="rounded-2xl border border-border bg-card overflow-hidden">
+              <div className="grid md:grid-cols-2">
+                {/* Left: Info */}
+                <div className="p-8 lg:p-10 flex flex-col justify-center">
+                  <h3 className="text-2xl font-bold mb-3">{activeTab.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-6">{activeTab.description}</p>
+
+                  {/* Mini stats */}
+                  <div className="flex items-center gap-6 mb-6">
+                    {activeTab.stats.map((s) => (
+                      <div key={s.label}>
+                        <p className="text-xl font-bold font-mono text-[hsl(var(--tb-accent))]">{s.value}</p>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{s.label}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Feature list */}
+                  <ul className="space-y-2.5">
+                    {activeTab.features.map((f) => (
+                      <li key={f} className="flex items-center gap-2.5 text-sm">
+                        <CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0" />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Right: Visual */}
+                <div className="bg-muted/30 border-l border-border/50 p-8 flex items-center justify-center">
+                  <div className="w-full max-w-xs space-y-3">
+                    {/* Mock trade cards */}
+                    {activeSegment === "equity" && (
+                      <>
+                        <MockTradeCard sym="RELIANCE" type="BUY" entry="₹2,890" pnl="+₹2,450" up />
+                        <MockTradeCard sym="TATAMOTORS" type="SELL" entry="₹985" pnl="-₹780" up={false} />
+                        <MockTradeCard sym="INFY" type="BUY" entry="₹1,540" pnl="+₹1,120" up />
+                      </>
+                    )}
+                    {activeSegment === "fno" && (
+                      <>
+                        <MockTradeCard sym="NIFTY 24200 CE" type="BUY" entry="₹185" pnl="+₹8,200" up />
+                        <MockTradeCard sym="BANKNIFTY 51000 PE" type="BUY" entry="₹320" pnl="-₹4,500" up={false} />
+                        <MockTradeCard sym="NIFTY FUT MAR" type="SELL" entry="₹24,100" pnl="+₹3,750" up />
+                      </>
+                    )}
+                    {activeSegment === "commodities" && (
+                      <>
+                        <MockTradeCard sym="GOLD APR" type="BUY" entry="₹71,200" pnl="+₹5,800" up />
+                        <MockTradeCard sym="CRUDE MAR" type="SELL" entry="₹6,540" pnl="+₹3,200" up />
+                        <MockTradeCard sym="SILVER MAR" type="BUY" entry="₹82,100" pnl="-₹2,100" up={false} />
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ── How It Works ─────────────────────────────────── */}
+      <section id="how-it-works" className="py-20 lg:py-28">
+        <div className="max-w-5xl mx-auto px-6">
           <FadeIn className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">Three Steps to Mastery</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
@@ -430,8 +826,15 @@ export default function Landing() {
       </section>
 
       {/* ── Pricing ──────────────────────────────────────── */}
-      <section id="pricing" className="py-20 lg:py-28">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="pricing" className="py-20 lg:py-28 relative overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.2]"
+          style={{
+            backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+        <div className="relative max-w-5xl mx-auto px-6">
           <FadeIn className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
@@ -494,16 +897,78 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Final CTA ────────────────────────────────────── */}
-      <section className="py-20 lg:py-28 relative overflow-hidden">
+      {/* ── Testimonials ─────────────────────────────────── */}
+      <section className="py-20 lg:py-28">
+        <div className="max-w-6xl mx-auto px-6">
+          <FadeIn className="text-center mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+              Trusted by{" "}
+              <span
+                className="text-[hsl(var(--tb-accent))] italic"
+                style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
+              >
+                Real Traders
+              </span>
+            </h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Here's what traders across India are saying about TradeBook.
+            </p>
+          </FadeIn>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {testimonials.map((t, i) => (
+              <FadeIn key={t.name} delay={i * 100}>
+                <div className="rounded-2xl border border-border bg-card p-6 h-full flex flex-col">
+                  <Quote className="w-8 h-8 text-[hsl(var(--tb-accent)/0.2)] mb-4" />
+                  <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-4">
+                    "{t.quote}"
+                  </p>
+                  <div className="flex items-center gap-1 mb-3">
+                    {[...Array(t.stars)].map((_, j) => (
+                      <Star key={j} className="w-3.5 h-3.5 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />
+                    ))}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">{t.name}</p>
+                    <p className="text-xs text-muted-foreground">{t.role}</p>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ──────────────────────────────────────────── */}
+      <section id="faq" className="py-20 lg:py-28 relative overflow-hidden">
         <div
-          className="absolute inset-0 pointer-events-none opacity-[0.25]"
+          className="absolute inset-0 pointer-events-none opacity-[0.2]"
           style={{
             backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)",
             backgroundSize: "24px 24px",
           }}
         />
-        <FadeIn className="relative max-w-3xl mx-auto px-6 text-center">
+        <div className="relative max-w-3xl mx-auto px-6">
+          <FadeIn className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Everything you need to know about TradeBook.
+            </p>
+          </FadeIn>
+
+          <FadeIn delay={100}>
+            <div className="space-y-3">
+              {faqs.map((faq) => (
+                <FAQItem key={faq.q} question={faq.q} answer={faq.a} />
+              ))}
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ── Final CTA ────────────────────────────────────── */}
+      <section className="py-20 lg:py-28">
+        <FadeIn className="max-w-3xl mx-auto px-6 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold mb-6 leading-tight">
             Stop Losing Money to
             <br />
@@ -516,11 +981,11 @@ export default function Landing() {
             Trading
           </h2>
           <p className="text-base text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed">
-            Join 2,500+ Indian traders who use TradeBook to journal, analyze, and compound their edge — every single day.
+            Start journaling, analyzing, and compounding your trading edge — every single day.
           </p>
           <Button
             size="lg"
-            className="h-12 px-10 text-base gap-2 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-none"
+            className="h-13 px-10 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-none font-semibold"
             onClick={() => navigate("/login")}
           >
             Get Started — It's Free <ArrowRight className="w-4 h-4" />
@@ -548,24 +1013,22 @@ export default function Landing() {
               <h4 className="font-semibold text-sm mb-3">Product</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
+                <li><a href="#segments" className="hover:text-foreground transition-colors">Segments</a></li>
                 <li><a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a></li>
-                <li><a href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-3">Support</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">Documentation</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Contact Us</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Status Page</a></li>
+                <li><a href="mailto:support@tradebook.app" className="hover:text-foreground transition-colors">Contact Us</a></li>
+                <li><a href="#faq" className="hover:text-foreground transition-colors">FAQ</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-3">Legal</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Refund Policy</a></li>
+                <li><a href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms" className="hover:text-foreground transition-colors">Terms of Service</a></li>
               </ul>
             </div>
           </div>
@@ -579,6 +1042,27 @@ export default function Landing() {
           </div>
         </div>
       </footer>
+    </div>
+  );
+}
+
+/* ─── Mock trade card for segment showcase ──────────────── */
+function MockTradeCard({ sym, type, entry, pnl, up }: { sym: string; type: string; entry: string; pnl: string; up: boolean }) {
+  return (
+    <div className="rounded-xl border border-border/50 bg-card p-3.5 flex items-center justify-between transition-all hover:border-[hsl(var(--tb-accent)/0.3)]">
+      <div className="flex items-center gap-3">
+        <div className={cn("w-1.5 h-8 rounded-full", up ? "bg-profit" : "bg-loss")} />
+        <div>
+          <p className="text-xs font-semibold">{sym}</p>
+          <p className="text-[10px] text-muted-foreground">{type} · {entry}</p>
+        </div>
+      </div>
+      <div className="text-right">
+        <p className={cn("text-xs font-mono font-bold", up ? "text-profit" : "text-loss")}>{pnl}</p>
+        <div className="flex items-center justify-end">
+          {up ? <ArrowUpRight className="w-3 h-3 text-profit" /> : <ArrowDownRight className="w-3 h-3 text-loss" />}
+        </div>
+      </div>
     </div>
   );
 }
