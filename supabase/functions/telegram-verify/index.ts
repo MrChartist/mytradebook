@@ -8,26 +8,16 @@ const corsHeaders = {
 
 /**
  * Generate cryptographically secure verification code: TS-XXXXXXXXXXXX
- *
- * Security improvements:
- * - Increased from 6 to 12 characters (52-bit entropy vs 31-bit)
- * - Uses crypto.getRandomValues() instead of Math.random()
- * - Makes brute-force attacks computationally infeasible
  */
 function generateVerificationCode(): string {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  const codeLength = 12; // Increased from 6 for better security
+  const codeLength = 12;
   let code = "TS-";
-
-  // Use cryptographically secure random number generator
   const randomBytes = new Uint8Array(codeLength);
   crypto.getRandomValues(randomBytes);
-
   for (let i = 0; i < codeLength; i++) {
-    // Use modulo to map byte value to character set
     code += chars.charAt(randomBytes[i] % chars.length);
   }
-
   return code;
 }
 
@@ -42,18 +32,51 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { action, user_id, code, chat_id } = body;
+    const { action, user_id, code, chat_id, bot_token } = body;
 
     if (!action) {
-      throw new Error("Action is required (generate, verify, disconnect)");
+      throw new Error("Action is required (generate, verify, disconnect, verify_bot_token)");
+    }
+
+    // ──────────────────────────────────────────────
+    // NEW: Verify a bot token via Telegram getMe API
+    // ──────────────────────────────────────────────
+    if (action === "verify_bot_token") {
+      if (!bot_token) throw new Error("bot_token is required");
+
+      const response = await fetch(`https://api.telegram.org/bot${bot_token}/getMe`);
+      const result = await response.json();
+
+      if (!result.ok) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: result.description || "Invalid bot token",
+          }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          bot: {
+            id: result.result.id,
+            username: result.result.username,
+            first_name: result.result.first_name,
+            can_join_groups: result.result.can_join_groups,
+            can_read_all_group_messages: result.result.can_read_all_group_messages,
+          },
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     if (action === "generate") {
-      // Generate new verification code for user
       if (!user_id) throw new Error("user_id is required");
 
       const verificationCode = generateVerificationCode();
-      const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // Extended to 15 minutes
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
       const { error } = await supabase
         .from("user_settings")
@@ -70,7 +93,7 @@ Deno.serve(async (req) => {
           success: true,
           code: verificationCode,
           expires_at: expiresAt.toISOString(),
-          bot_username: "@YourTradebookBot", // Update with actual bot username
+          bot_username: "@YourTradebookBot",
           instructions: `Send this code to the bot: ${verificationCode}`,
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -78,11 +101,9 @@ Deno.serve(async (req) => {
     }
 
     if (action === "verify") {
-      // Verify code and link chat_id
       if (!code) throw new Error("code is required");
       if (!chat_id) throw new Error("chat_id is required");
 
-      // Find user with matching code
       const { data: settings, error: findError } = await supabase
         .from("user_settings")
         .select("user_id, telegram_link_expires_at")
@@ -96,7 +117,6 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Check expiry
       const expiresAt = new Date(settings.telegram_link_expires_at);
       if (expiresAt < new Date()) {
         return new Response(
@@ -105,7 +125,6 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Update with chat_id and clear code
       const { error: updateError } = await supabase
         .from("user_settings")
         .update({
@@ -130,7 +149,6 @@ Deno.serve(async (req) => {
     }
 
     if (action === "disconnect") {
-      // Disconnect Telegram
       if (!user_id) throw new Error("user_id is required");
 
       const { error } = await supabase

@@ -2,14 +2,16 @@ import { useState } from "react";
 import {
   MessageCircle, Send, Trash2, Plus, CheckCircle, Loader2,
   ExternalLink, Filter, Unplug, AlertTriangle, ChevronDown, ChevronUp, History,
-  BarChart3, Bell, BookOpen, FileText, Circle,
+  BarChart3, Bell, BookOpen, FileText, Circle, HelpCircle, Bot,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { useTelegramChats, SEGMENT_LABELS, type TelegramChat, type NotificationTypeRouting, DEFAULT_NOTIFICATION_TYPES } from "@/hooks/useTelegramChats";
 import { useUserSettings } from "@/hooks/useUserSettings";
@@ -25,7 +27,6 @@ function BotSourceBadge({ chat, hasPersonalBot }: { chat: TelegramChat; hasPerso
   if (hasPersonalBot) {
     return <Badge className="text-[9px] bg-profit/10 text-profit border-profit/30">Your Default Bot</Badge>;
   }
-  // System bot fallback — we can't be 100% sure it exists, but it's the only option
   return <Badge className="text-[9px] bg-amber-500/10 text-amber-400 border-amber-500/30">System Bot</Badge>;
 }
 
@@ -61,6 +62,54 @@ function ConnectionStatusDot({ chat }: { chat: TelegramChat }) {
     <span title="Not yet verified" className="flex items-center gap-1">
       <Circle className="w-2.5 h-2.5 fill-muted-foreground/30 text-muted-foreground/30" />
     </span>
+  );
+}
+
+// --- Chat ID Help Guide ---
+function ChatIdHelpGuide() {
+  const [open, setOpen] = useState(false);
+  return (
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <CollapsibleTrigger className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3">
+        <HelpCircle className="w-3.5 h-3.5" />
+        How to find your Chat ID?
+        {open ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+      </CollapsibleTrigger>
+      <CollapsibleContent className="mt-2 p-3 rounded-lg border border-border bg-card text-xs text-muted-foreground space-y-3">
+        {/* Personal */}
+        <div>
+          <p className="font-semibold text-foreground mb-1">📱 Personal Chat</p>
+          <ol className="list-decimal list-inside space-y-0.5 ml-1">
+            <li>Open Telegram and search for <a href="https://t.me/userinfobot" target="_blank" rel="noopener" className="text-primary hover:underline">@userinfobot</a></li>
+            <li>Send <code className="bg-accent px-1 rounded">/start</code> — it will reply with your Chat ID</li>
+            <li>Your ID is a positive number (e.g. <code className="bg-accent px-1 rounded">123456789</code>)</li>
+          </ol>
+        </div>
+        {/* Group */}
+        <div>
+          <p className="font-semibold text-foreground mb-1">👥 Group Chat</p>
+          <ol className="list-decimal list-inside space-y-0.5 ml-1">
+            <li>Add your bot to the group</li>
+            <li>Send any message in the group</li>
+            <li>Forward any group message to <a href="https://t.me/userinfobot" target="_blank" rel="noopener" className="text-primary hover:underline">@userinfobot</a> — it will reply with the group Chat ID</li>
+            <li>Group IDs start with <code className="bg-accent px-1 rounded">-</code> (e.g. <code className="bg-accent px-1 rounded">-987654321</code>)</li>
+          </ol>
+        </div>
+        {/* Channel */}
+        <div>
+          <p className="font-semibold text-foreground mb-1">📢 Channel</p>
+          <ol className="list-decimal list-inside space-y-0.5 ml-1">
+            <li>Add your bot as an <strong>admin</strong> to the channel</li>
+            <li>Forward any channel post to <a href="https://t.me/userinfobot" target="_blank" rel="noopener" className="text-primary hover:underline">@userinfobot</a></li>
+            <li>Channel IDs start with <code className="bg-accent px-1 rounded">-100</code> (e.g. <code className="bg-accent px-1 rounded">-1001234567890</code>)</li>
+          </ol>
+        </div>
+        <div className="p-2 rounded bg-amber-500/5 border border-amber-500/20 flex items-start gap-2">
+          <AlertTriangle className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
+          <p><strong className="text-amber-400">Important:</strong> Chat IDs are numbers only. Make sure the bot has been added to the group/channel <em>before</em> testing.</p>
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
 
@@ -156,21 +205,21 @@ function NotificationRoutingPanel({
 
 export default function TelegramSettings() {
   const { settings, updateSettings, testTelegramConnection } = useUserSettings();
-  const { chats, isLoading, deliveryLogs, logsLoading, addChat, removeChat, removeAllChats, toggleSegment, toggleNotificationType, toggleNotificationAll, testChat, testAllChats } = useTelegramChats();
+  const { chats, isLoading, deliveryLogs, logsLoading, addChat, removeChat, removeAllChats, toggleSegment, toggleNotificationType, toggleNotificationAll, testChat, testAllChats, verifyBotToken } = useTelegramChats();
 
   // Add chat form
   const [newChatId, setNewChatId] = useState("");
   const [newLabel, setNewLabel] = useState("");
   const [newBotToken, setNewBotToken] = useState("");
-  const [newBotUsername, setNewBotUsername] = useState("");
   const [showCustomBot, setShowCustomBot] = useState(false);
   const [adding, setAdding] = useState(false);
 
   // Bot config form
   const [editingBot, setEditingBot] = useState(false);
   const [botTokenInput, setBotTokenInput] = useState("");
-  const [botUsernameInput, setBotUsernameInput] = useState("");
   const [savingBot, setSavingBot] = useState(false);
+  const [verifyingBot, setVerifyingBot] = useState(false);
+  const [verifiedBotInfo, setVerifiedBotInfo] = useState<{ username: string; first_name: string } | null>(null);
   const [testingBot, setTestingBot] = useState(false);
 
   // Testing state
@@ -183,17 +232,46 @@ export default function TelegramSettings() {
 
   const hasPersonalBot = !!settings?.telegram_bot_token;
 
+  // Auto-verify bot token when pasted
+  const handleBotTokenChange = async (token: string) => {
+    setBotTokenInput(token);
+    setVerifiedBotInfo(null);
+
+    // Auto-verify if it looks like a valid token format (number:alphanumeric)
+    if (/^\d+:[A-Za-z0-9_-]{30,}$/.test(token.trim())) {
+      setVerifyingBot(true);
+      const result = await verifyBotToken(token.trim());
+      setVerifyingBot(false);
+      if (result.success && result.bot) {
+        setVerifiedBotInfo(result.bot);
+      }
+    }
+  };
+
   const handleSaveBot = async () => {
     if (!botTokenInput.trim()) return;
     setSavingBot(true);
     try {
+      // Verify first if not already verified
+      if (!verifiedBotInfo) {
+        setVerifyingBot(true);
+        const result = await verifyBotToken(botTokenInput.trim());
+        setVerifyingBot(false);
+        if (!result.success) {
+          toast.error(result.error || "Invalid bot token — please check and try again");
+          setSavingBot(false);
+          return;
+        }
+        setVerifiedBotInfo(result.bot!);
+      }
+
       await updateSettings.mutateAsync({
         telegram_bot_token: botTokenInput.trim(),
-        telegram_bot_username: botUsernameInput.trim() || null,
+        telegram_bot_username: verifiedBotInfo?.username || null,
       } as any);
       setEditingBot(false);
       setBotTokenInput("");
-      setBotUsernameInput("");
+      setVerifiedBotInfo(null);
     } finally {
       setSavingBot(false);
     }
@@ -227,14 +305,12 @@ export default function TelegramSettings() {
     try {
       await addChat.mutateAsync({
         chat_id: newChatId.trim(),
-        label: newLabel.trim() || `Chat ${newChatId.trim()}`,
+        label: newLabel.trim(),
         bot_token: newBotToken.trim() || undefined,
-        bot_username: newBotUsername.trim() || undefined,
       });
       setNewChatId("");
       setNewLabel("");
       setNewBotToken("");
-      setNewBotUsername("");
       setShowCustomBot(false);
     } finally {
       setAdding(false);
@@ -301,7 +377,7 @@ export default function TelegramSettings() {
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-profit" />
                 <span className="text-sm text-profit font-medium">
-                  Your Bot{settings?.telegram_bot_username ? `: @${settings.telegram_bot_username}` : ""}
+                  Bot verified{settings?.telegram_bot_username ? `: @${settings.telegram_bot_username}` : ""}
                 </span>
               </div>
               <div className="flex items-center gap-1">
@@ -309,7 +385,7 @@ export default function TelegramSettings() {
                   {testingBot ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Send className="w-3 h-3 mr-1" />}
                   Test
                 </Button>
-                <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => { setEditingBot(true); setBotTokenInput(settings?.telegram_bot_token || ""); setBotUsernameInput(settings?.telegram_bot_username || ""); }}>
+                <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => { setEditingBot(true); setBotTokenInput(settings?.telegram_bot_token || ""); setVerifiedBotInfo(null); }}>
                   Edit
                 </Button>
                 <Button variant="ghost" size="sm" className="h-7 text-xs text-loss hover:text-loss" onClick={handleRemoveBot} disabled={savingBot}>
@@ -321,34 +397,51 @@ export default function TelegramSettings() {
           </div>
         ) : (
           <div className="p-4 rounded-lg border border-border bg-card space-y-3">
-            <p className="text-xs text-muted-foreground">
-              Create a bot via <a href="https://t.me/BotFather" target="_blank" rel="noopener" className="text-primary hover:underline">@BotFather</a>, then paste the token here. This bot will be your default for all chat destinations.
-            </p>
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground">
+                <strong>Step 1:</strong> Open Telegram and search for <a href="https://t.me/BotFather" target="_blank" rel="noopener" className="text-primary hover:underline font-medium">@BotFather</a>
+              </p>
+              <p className="text-xs text-muted-foreground">
+                <strong>Step 2:</strong> Send <code className="bg-accent px-1 rounded">/newbot</code>, follow prompts to name your bot
+              </p>
+              <p className="text-xs text-muted-foreground">
+                <strong>Step 3:</strong> Copy the token BotFather gives you and paste it below
+              </p>
+            </div>
             <div className="space-y-2">
               <Label className="text-xs">Bot Token</Label>
-              <Input
-                value={botTokenInput}
-                onChange={(e) => setBotTokenInput(e.target.value)}
-                placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
-                className="bg-accent border-border text-xs font-mono"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-xs">Bot Username (optional)</Label>
-              <Input
-                value={botUsernameInput}
-                onChange={(e) => setBotUsernameInput(e.target.value)}
-                placeholder="@MyTradingBot"
-                className="bg-accent border-border text-xs"
-              />
+              <div className="relative">
+                <Input
+                  value={botTokenInput}
+                  onChange={(e) => handleBotTokenChange(e.target.value)}
+                  placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+                  className="bg-accent border-border text-xs font-mono pr-10"
+                />
+                {verifyingBot && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                  </div>
+                )}
+                {verifiedBotInfo && !verifyingBot && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <CheckCircle className="w-4 h-4 text-profit" />
+                  </div>
+                )}
+              </div>
+              {verifiedBotInfo && (
+                <div className="flex items-center gap-2 text-xs text-profit">
+                  <Bot className="w-3.5 h-3.5" />
+                  <span>Verified: @{verifiedBotInfo.username} ({verifiedBotInfo.first_name})</span>
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-2">
-              <Button onClick={handleSaveBot} disabled={savingBot || !botTokenInput.trim()} size="sm" className="gap-1">
-                {savingBot ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
-                Save Bot
+              <Button onClick={handleSaveBot} disabled={savingBot || verifyingBot || !botTokenInput.trim()} size="sm" className="gap-1">
+                {savingBot || verifyingBot ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
+                Save & Verify
               </Button>
               {editingBot && (
-                <Button variant="ghost" size="sm" onClick={() => { setEditingBot(false); setBotTokenInput(""); setBotUsernameInput(""); }}>
+                <Button variant="ghost" size="sm" onClick={() => { setEditingBot(false); setBotTokenInput(""); setVerifiedBotInfo(null); }}>
                   Cancel
                 </Button>
               )}
@@ -375,7 +468,7 @@ export default function TelegramSettings() {
           <h4 className="font-medium text-sm">Add Chat Destinations</h4>
         </div>
         <p className="text-xs text-muted-foreground mb-4 ml-8">
-          Add your personal chat, group chats, or channel IDs. Each chat is verified on add. Assign notification types to control routing.
+          Add your personal chat, group chats, or channel IDs. Each chat is verified on add.
         </p>
 
         {/* Existing chats */}
@@ -434,18 +527,18 @@ export default function TelegramSettings() {
 
         {/* Add new chat */}
         <div className="p-4 rounded-lg border border-dashed border-border bg-accent/30">
-          <p className="text-xs text-muted-foreground mb-3">Add a new Chat ID — a test message will be sent to verify the connection</p>
+          <p className="text-xs text-muted-foreground mb-3">Add a new Chat ID — a test message will be sent to verify the connection.</p>
           <div className="flex gap-2">
             <Input
               value={newChatId}
               onChange={(e) => setNewChatId(e.target.value)}
-              placeholder="Chat ID (e.g. 123456789)"
+              placeholder="Chat ID (e.g. 123456789 or -1001234567890)"
               className="flex-1 bg-card border-border"
             />
             <Input
               value={newLabel}
               onChange={(e) => setNewLabel(e.target.value)}
-              placeholder="Label (e.g. My Group)"
+              placeholder="Label (auto-detected if empty)"
               className="w-48 bg-card border-border"
             />
             <Button
@@ -454,7 +547,7 @@ export default function TelegramSettings() {
               className="gap-1"
             >
               {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-              {adding ? "Verifying..." : "Add"}
+              {adding ? "Verifying..." : "Connect & Verify"}
             </Button>
           </div>
 
@@ -465,15 +558,15 @@ export default function TelegramSettings() {
               onClick={() => setShowCustomBot(!showCustomBot)}
               className="text-xs text-primary hover:underline"
             >
-              {showCustomBot ? "− Hide custom bot settings" : "+ Use your own bot (optional)"}
+              {showCustomBot ? "− Hide custom bot settings" : "+ Use a different bot for this chat (optional)"}
             </button>
             {showCustomBot && (
               <div className="mt-2 space-y-2 p-3 rounded-lg border border-border bg-card">
                 <p className="text-xs text-muted-foreground">
-                  Create a bot via <a href="https://t.me/BotFather" target="_blank" rel="noopener" className="text-primary hover:underline">@BotFather</a>, then paste the token here. This bot will be used only for this chat destination.
+                  Use a separate bot token for this specific chat. Create one via <a href="https://t.me/BotFather" target="_blank" rel="noopener" className="text-primary hover:underline">@BotFather</a>.
                 </p>
                 <div className="space-y-2">
-                  <Label className="text-xs">Bot Token</Label>
+                  <Label className="text-xs">Bot Token (for this chat only)</Label>
                   <Input
                     value={newBotToken}
                     onChange={(e) => setNewBotToken(e.target.value)}
@@ -481,27 +574,12 @@ export default function TelegramSettings() {
                     className="bg-accent border-border text-xs font-mono"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-xs">Bot Username (optional)</Label>
-                  <Input
-                    value={newBotUsername}
-                    onChange={(e) => setNewBotUsername(e.target.value)}
-                    placeholder="@MyTradingBot"
-                    className="bg-accent border-border text-xs"
-                  />
-                </div>
               </div>
             )}
           </div>
 
-          <div className="mt-3 text-xs text-muted-foreground space-y-1">
-            <p>How to find your Chat ID:</p>
-            <ul className="list-disc list-inside space-y-0.5 ml-2">
-              <li><strong>Personal:</strong> Send /start to your bot, then message <a href="https://t.me/userinfobot" target="_blank" rel="noopener" className="text-primary hover:underline">@userinfobot</a> to get your ID</li>
-              <li><strong>Group:</strong> Add the bot to your group, send any message, then use <a href="https://api.telegram.org" target="_blank" rel="noopener" className="text-primary hover:underline">getUpdates</a></li>
-              <li><strong>Channel:</strong> Add the bot as admin, use the channel's Chat ID (starts with -100)</li>
-            </ul>
-          </div>
+          {/* Chat ID Help Guide */}
+          <ChatIdHelpGuide />
         </div>
       </div>
 
