@@ -36,45 +36,38 @@ export function TodaysPnl() {
   const totalPnl = realizedPnl + unrealizedPnl;
 
   return (
-    <div className="glass-morph shine-overlay p-5 group transition-all duration-300 hover:translate-y-[-2px]">
-      <div className="absolute top-0 left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-[hsl(var(--glass-shine)/0.15)] to-transparent" />
-
+    <div className="surface-card p-5 group">
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <p className="text-sm text-muted-foreground font-medium">Today's P&L</p>
-          <p className={cn("text-2xl font-bold tracking-tight", totalPnl >= 0 ? "text-profit" : "text-loss")}>
+          <p className={cn("text-2xl font-bold tracking-tight font-mono", totalPnl >= 0 ? "text-profit" : "text-loss")}>
             {formatCurrency(totalPnl)}
           </p>
         </div>
         <div className={cn(
-          "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
-          totalPnl >= 0 ? "bg-profit/10 group-hover:bg-profit/20" : "bg-loss/10 group-hover:bg-loss/20"
+          "w-11 h-11 rounded-xl flex items-center justify-center",
+          totalPnl >= 0 ? "bg-profit/10" : "bg-loss/10"
         )}>
-          <Flame className={cn("w-6 h-6", totalPnl >= 0 ? "text-profit" : "text-loss")} />
+          <Flame className={cn("w-5 h-5", totalPnl >= 0 ? "text-profit" : "text-loss")} />
         </div>
       </div>
 
-      <div className="mt-3 flex gap-4">
-        <div className="flex-1 p-2.5 rounded-lg bg-accent/30">
-          <p className="text-xs text-muted-foreground">Realized</p>
-          <p className={cn("text-sm font-semibold mt-0.5", realizedPnl >= 0 ? "text-profit" : "text-loss")}>
+      <div className="mt-3 flex gap-3">
+        <div className="flex-1 p-2.5 rounded-xl bg-muted/50">
+          <p className="text-[11px] text-muted-foreground">Realized</p>
+          <p className={cn("text-sm font-semibold mt-0.5 font-mono", realizedPnl >= 0 ? "text-profit" : "text-loss")}>
             {formatCurrency(realizedPnl)}
           </p>
-          <p className="text-xs text-muted-foreground mt-0.5">{closedToday.length} closed</p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">{closedToday.length} closed</p>
         </div>
-        <div className="flex-1 p-2.5 rounded-lg bg-accent/30">
-          <p className="text-xs text-muted-foreground">Unrealized</p>
-          <p className={cn("text-sm font-semibold mt-0.5", unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>
+        <div className="flex-1 p-2.5 rounded-xl bg-muted/50">
+          <p className="text-[11px] text-muted-foreground">Unrealized</p>
+          <p className={cn("text-sm font-semibold mt-0.5 font-mono", unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>
             {formatCurrency(unrealizedPnl)}
           </p>
-          <p className="text-xs text-muted-foreground mt-0.5">{openTrades.length} open</p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">{openTrades.length} open</p>
         </div>
       </div>
-
-      <div className={cn(
-        "absolute -bottom-4 -right-4 w-24 h-24 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-500",
-        totalPnl >= 0 ? "bg-profit/10" : "bg-loss/10"
-      )} />
     </div>
   );
 }
