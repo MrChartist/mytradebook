@@ -27,16 +27,10 @@ export interface TelegramChat {
   bot_username: string | null;
   enabled: boolean;
   notification_types: NotificationTypeRouting | null;
+  last_verified_at: string | null;
+  verification_status: string | null;
   created_at: string;
 }
-
-const ALL_SEGMENTS = [
-  "Equity_Intraday",
-  "Equity_Positional",
-  "Futures",
-  "Options",
-  "Commodities",
-];
 
 export const SEGMENT_LABELS: Record<string, string> = {
   Equity_Intraday: "Equity - Intraday & Short Term",
@@ -81,29 +75,57 @@ export function useTelegramChats() {
   const addChat = useMutation({
     mutationFn: async (input: { chat_id: string; label: string; bot_token?: string; bot_username?: string }) => {
       if (!user?.id) throw new Error("Not authenticated");
-      // Validate chat_id format
       const chatId = input.chat_id.trim();
       if (!/^-?\d+$/.test(chatId)) {
         throw new Error("Chat ID must be a number (e.g. 123456789 or -1001234567890)");
       }
+
+      // Insert the chat first
       const { data, error } = await supabase
         .from("telegram_chats")
         .insert({
           user_id: user.id,
           chat_id: chatId,
           label: input.label || `Chat ${input.chat_id}`,
-          segments: [], // Default: OFF - user must explicitly select segments
+          segments: [],
           bot_token: input.bot_token || null,
           bot_username: input.bot_username || null,
         })
         .select()
         .single();
       if (error) throw error;
-      return data as unknown as TelegramChat;
+
+      // Verify by sending a test message
+      const chatRow = data as unknown as TelegramChat;
+      try {
+        const { data: testData, error: testError } = await supabase.functions.invoke("telegram-notify", {
+          body: {
+            type: "custom",
+            message: `✅ *Chat Connected!*\n\nThis chat is now linked to TradeBook.\nNotifications will arrive here.\n\n⏱ ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}`,
+            chat_id: chatId,
+            ...(input.bot_token ? { bot_token: input.bot_token } : {}),
+          },
+        });
+
+        if (testError || (testData && !testData.success)) {
+          // Verification failed — delete the chat and throw
+          await supabase.from("telegram_chats").delete().eq("id", chatRow.id);
+          const errorMsg = testData?.errorDescription || testData?.error || testError?.message || "Bot cannot reach this chat";
+          throw new Error(`Verification failed: ${errorMsg}`);
+        }
+      } catch (verifyErr: any) {
+        // If it's our own thrown error, re-throw
+        if (verifyErr.message?.startsWith("Verification failed:")) throw verifyErr;
+        // Otherwise, network error — delete and throw
+        await supabase.from("telegram_chats").delete().eq("id", chatRow.id);
+        throw new Error(`Verification failed: ${verifyErr.message || "Could not reach chat"}`);
+      }
+
+      return chatRow;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["telegram-chats"] });
-      toast.success("Chat destination added");
+      toast.success("Chat destination added & verified ✅");
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -197,66 +219,29 @@ export function useTelegramChats() {
         },
       });
 
-      // supabase.functions.invoke returns error for non-2xx responses
-      // but the response body is in error.context for FunctionsHttpError
       if (error) {
-        // Try to parse the error body for detailed info
-        let errorCode: number | undefined;
         let errorDesc: string | undefined;
-        
         try {
-          // FunctionsHttpError has context with the response
           const errorBody = error.context ? await error.context.json?.() : null;
-          if (errorBody) {
-            errorCode = errorBody.errorCode;
-            errorDesc = errorBody.errorDescription || errorBody.error;
-          }
-        } catch {
-          // ignore parse errors
-        }
+          if (errorBody) errorDesc = errorBody.errorDescription || errorBody.error;
+        } catch { /* ignore */ }
 
-        let userFriendlyError = errorDesc || error.message || "Test failed";
-
-        if (errorCode === 400 && errorDesc?.includes("chat not found")) {
-          userFriendlyError = "Chat ID not found. Check if the ID is correct. For groups/channels, it should start with -100.";
-        } else if (errorCode === 403 && errorDesc?.includes("bot was blocked")) {
-          userFriendlyError = "Bot was blocked by user. Unblock the bot and try again.";
-        } else if (errorCode === 403 && errorDesc?.includes("not enough rights")) {
-          userFriendlyError = "Bot is not admin. Add bot as admin in channel/group.";
-        } else if (errorCode === 401) {
-          userFriendlyError = "Invalid bot token. Check your bot token.";
-        }
-
-        toast.error(userFriendlyError, { duration: 6000 });
+        toast.error(errorDesc || error.message || "Test failed", { duration: 6000 });
+        queryClient.invalidateQueries({ queryKey: ["telegram-chats"] });
         queryClient.invalidateQueries({ queryKey: ["telegram-delivery-logs"] });
         return false;
       }
 
       if (data?.success) {
         toast.success("Test message sent successfully!");
+        queryClient.invalidateQueries({ queryKey: ["telegram-chats"] });
         queryClient.invalidateQueries({ queryKey: ["telegram-delivery-logs"] });
         return true;
       }
 
-      // Detailed error message from response data
-      const errorCode = data?.errorCode;
-      const errorDesc = data?.errorDescription || data?.error;
-
-      let userFriendlyError = "Test failed";
-
-      if (errorCode === 400 && errorDesc?.includes("chat not found")) {
-        userFriendlyError = "Chat ID not found. Check if the ID is correct. For groups/channels, it should start with -100.";
-      } else if (errorCode === 403 && errorDesc?.includes("bot was blocked")) {
-        userFriendlyError = "Bot was blocked by user. Unblock the bot and try again.";
-      } else if (errorCode === 403 && errorDesc?.includes("not enough rights")) {
-        userFriendlyError = "Bot is not admin. Add bot as admin in channel/group.";
-      } else if (errorCode === 401) {
-        userFriendlyError = "Invalid bot token. Check your bot token.";
-      } else if (errorDesc) {
-        userFriendlyError = errorDesc;
-      }
-
-      toast.error(userFriendlyError, { duration: 6000 });
+      const errorMsg = data?.errorDescription || data?.error || "Test failed";
+      toast.error(errorMsg, { duration: 6000 });
+      queryClient.invalidateQueries({ queryKey: ["telegram-chats"] });
       queryClient.invalidateQueries({ queryKey: ["telegram-delivery-logs"] });
       return false;
     } catch (e: any) {

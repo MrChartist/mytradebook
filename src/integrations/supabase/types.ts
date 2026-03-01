@@ -638,9 +638,11 @@ export type Database = {
           enabled: boolean
           id: string
           label: string
+          last_verified_at: string | null
           notification_types: Json | null
           segments: string[]
           user_id: string
+          verification_status: string | null
         }
         Insert: {
           bot_token?: string | null
@@ -650,9 +652,11 @@ export type Database = {
           enabled?: boolean
           id?: string
           label?: string
+          last_verified_at?: string | null
           notification_types?: Json | null
           segments?: string[]
           user_id: string
+          verification_status?: string | null
         }
         Update: {
           bot_token?: string | null
@@ -662,9 +666,11 @@ export type Database = {
           enabled?: boolean
           id?: string
           label?: string
+          last_verified_at?: string | null
           notification_types?: Json | null
           segments?: string[]
           user_id?: string
+          verification_status?: string | null
         }
         Relationships: []
       }

@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   MessageCircle, Send, Trash2, Plus, CheckCircle, Loader2,
   ExternalLink, Filter, Unplug, AlertTriangle, ChevronDown, ChevronUp, History,
-  BarChart3, Bell, BookOpen, FileText,
+  BarChart3, Bell, BookOpen, FileText, Circle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,53 @@ import { useUserSettings } from "@/hooks/useUserSettings";
 import { DeliveryLogPanel } from "@/components/telegram/DeliveryLogPanel";
 
 const SEGMENT_KEYS = Object.keys(SEGMENT_LABELS);
+
+// --- Bot Source Badge ---
+function BotSourceBadge({ chat, hasPersonalBot }: { chat: TelegramChat; hasPersonalBot: boolean }) {
+  if (chat.bot_token) {
+    return <Badge className="text-[9px] bg-sky-500/10 text-sky-400 border-sky-500/30">Custom Bot</Badge>;
+  }
+  if (hasPersonalBot) {
+    return <Badge className="text-[9px] bg-profit/10 text-profit border-profit/30">Your Default Bot</Badge>;
+  }
+  // System bot fallback — we can't be 100% sure it exists, but it's the only option
+  return <Badge className="text-[9px] bg-amber-500/10 text-amber-400 border-amber-500/30">System Bot</Badge>;
+}
+
+// --- Connection Status Dot ---
+function ConnectionStatusDot({ chat }: { chat: TelegramChat }) {
+  const status = chat.verification_status;
+  const lastVerified = chat.last_verified_at ? new Date(chat.last_verified_at) : null;
+  const now = new Date();
+  const hoursSinceVerified = lastVerified ? (now.getTime() - lastVerified.getTime()) / (1000 * 60 * 60) : Infinity;
+
+  if (status === "failed") {
+    return (
+      <span title="Last delivery failed" className="flex items-center gap-1">
+        <Circle className="w-2.5 h-2.5 fill-loss text-loss" />
+      </span>
+    );
+  }
+  if (status === "verified" && hoursSinceVerified <= 24) {
+    return (
+      <span title={`Verified ${lastVerified?.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}`} className="flex items-center gap-1">
+        <Circle className="w-2.5 h-2.5 fill-profit text-profit" />
+      </span>
+    );
+  }
+  if (status === "verified" && hoursSinceVerified > 24) {
+    return (
+      <span title="Verified >24h ago" className="flex items-center gap-1">
+        <Circle className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+      </span>
+    );
+  }
+  return (
+    <span title="Not yet verified" className="flex items-center gap-1">
+      <Circle className="w-2.5 h-2.5 fill-muted-foreground/30 text-muted-foreground/30" />
+    </span>
+  );
+}
 
 function NotificationRoutingPanel({
   chat,
@@ -86,9 +133,7 @@ function NotificationRoutingPanel({
                     checked={isSegmentEnabled(section.key, seg)}
                     onCheckedChange={() => {
                       if (isAllEnabled(section.key)) {
-                        // Convert from wildcard to explicit segments minus this one
                         const allExcept = SEGMENT_KEYS.filter((s) => s !== seg);
-                        // We need a direct update here; toggle won't work cleanly from wildcard
                         onToggleType(chat.id, section.key, seg, {
                           ...types,
                           [section.key]: allExcept,
@@ -169,7 +214,6 @@ export default function TelegramSettings() {
   const handleTestBot = async () => {
     if (!settings?.telegram_bot_token) return;
     setTestingBot(true);
-    // Use the first chat destination to test, or a test-specific approach
     const firstChat = chats[0];
     if (firstChat) {
       await testChat(firstChat.chat_id, settings.telegram_bot_token);
@@ -313,10 +357,13 @@ export default function TelegramSettings() {
         )}
 
         {!hasPersonalBot && !editingBot && (
-          <div className="mt-2 p-3 rounded-lg bg-accent/50 border border-border">
-            <p className="text-xs text-muted-foreground">
-              <strong>No personal bot configured.</strong> The system default bot will be used as fallback. Set up your own bot for independent, reliable delivery.
-            </p>
+          <div className="mt-2 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+              <p className="text-xs text-muted-foreground">
+                <strong className="text-amber-400">No personal bot configured.</strong> Messages are currently sent via the shared system bot. For independent, reliable delivery, configure your own bot above.
+              </p>
+            </div>
           </div>
         )}
       </div>
@@ -328,7 +375,7 @@ export default function TelegramSettings() {
           <h4 className="font-medium text-sm">Add Chat Destinations</h4>
         </div>
         <p className="text-xs text-muted-foreground mb-4 ml-8">
-          Add your personal chat, group chats, or channel IDs. Assign trade segments to control which notifications each channel receives.
+          Add your personal chat, group chats, or channel IDs. Each chat is verified on add. Assign notification types to control routing.
         </p>
 
         {/* Existing chats */}
@@ -337,14 +384,16 @@ export default function TelegramSettings() {
             <div key={chat.id} className="p-4 rounded-lg border border-border bg-card">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
+                  <ConnectionStatusDot chat={chat} />
                   <MessageCircle className="w-4 h-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm font-medium">{chat.label}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium">{chat.label}</p>
+                      <BotSourceBadge chat={chat} hasPersonalBot={hasPersonalBot} />
+                    </div>
                     <p className="text-xs text-muted-foreground font-mono">{chat.chat_id}</p>
-                    {chat.bot_token && (
-                      <p className="text-xs text-primary">
-                        Custom Bot{chat.bot_username ? `: @${chat.bot_username}` : ""}
-                      </p>
+                    {chat.bot_token && chat.bot_username && (
+                      <p className="text-xs text-sky-400">@{chat.bot_username}</p>
                     )}
                   </div>
                 </div>
@@ -385,7 +434,7 @@ export default function TelegramSettings() {
 
         {/* Add new chat */}
         <div className="p-4 rounded-lg border border-dashed border-border bg-accent/30">
-          <p className="text-xs text-muted-foreground mb-3">Add a new Chat ID</p>
+          <p className="text-xs text-muted-foreground mb-3">Add a new Chat ID — a test message will be sent to verify the connection</p>
           <div className="flex gap-2">
             <Input
               value={newChatId}
@@ -405,7 +454,7 @@ export default function TelegramSettings() {
               className="gap-1"
             >
               {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-              Add
+              {adding ? "Verifying..." : "Add"}
             </Button>
           </div>
 
