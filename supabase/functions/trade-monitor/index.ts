@@ -34,7 +34,6 @@ interface Trade {
   telegram_post_enabled: boolean;
   security_id: string | null;
   exchange_segment: string | null;
-  // New TSL tracking fields
   highest_since_entry: number | null;
   lowest_since_entry: number | null;
   last_trail_anchor_price: number | null;
@@ -57,19 +56,6 @@ const DEFAULT_TSL_PROFILES: Record<string, TslProfile> = {
   Commodities: { activate_pct: 1.0, step_pct: 1.5, trail_gap_pct: 2.5, cooldown_sec: 300, min_sl_improve_pct: 0.2 },
 };
 
-// deno-lint-ignore no-explicit-any
-async function getUserTelegramInfo(supabase: any, userId: string) {
-  const { data } = await supabase
-    .from("user_settings")
-    .select("telegram_chat_id, tsl_profiles")
-    .eq("user_id", userId)
-    .maybeSingle();
-  return {
-    chatId: data?.telegram_chat_id || null,
-    tslProfiles: data?.tsl_profiles || null,
-  };
-}
-
 function getTslProfile(userProfiles: Record<string, TslProfile> | null, segment: string): TslProfile {
   if (userProfiles && userProfiles[segment]) return userProfiles[segment];
   return DEFAULT_TSL_PROFILES[segment] || DEFAULT_TSL_PROFILES.Equity_Intraday;
@@ -77,6 +63,32 @@ function getTslProfile(userProfiles: Record<string, TslProfile> | null, segment:
 
 function isValidPrice(p: number | null | undefined): p is number {
   return typeof p === "number" && isFinite(p) && p > 0;
+}
+
+// Call the centralized telegram-notify edge function for multi-chat routing + delivery logging
+async function sendViaTelegramNotify(
+  supabaseUrl: string,
+  serviceRoleKey: string,
+  payload: Record<string, unknown>
+): Promise<void> {
+  try {
+    const res = await fetch(`${supabaseUrl}/functions/v1/telegram-notify`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${serviceRoleKey}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("telegram-notify call failed:", res.status, errText);
+    } else {
+      await res.text(); // consume body
+    }
+  } catch (e) {
+    console.error("Failed to call telegram-notify:", e);
+  }
 }
 
 serve(async (req) => {
@@ -89,8 +101,6 @@ serve(async (req) => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const DHAN_ACCESS_TOKEN = Deno.env.get("DHAN_ACCESS_TOKEN");
     const DHAN_CLIENT_ID = Deno.env.get("DHAN_CLIENT_ID");
-    const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
-    const DEFAULT_TELEGRAM_CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID");
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       throw new Error("Supabase credentials not configured");
@@ -140,15 +150,10 @@ serve(async (req) => {
       const activeToken = userToken || DHAN_ACCESS_TOKEN;
       const activeClientId = userClientId || DHAN_CLIENT_ID;
       const userTslProfiles = userSettings?.tsl_profiles || null;
-      const userChatId = userSettings?.telegram_chat_id || null;
 
       const priceMap = await batchFetchPrices(userTrades, activeToken, activeClientId);
 
       for (const trade of userTrades) {
-        const chatId = trade.telegram_post_enabled
-          ? (userChatId || DEFAULT_TELEGRAM_CHAT_ID)
-          : undefined;
-
         const currentPrice = priceMap[trade.symbol];
         if (!isValidPrice(currentPrice)) continue;
 
@@ -200,16 +205,17 @@ serve(async (req) => {
               notes: `TSL: ₹${(trade.trailing_sl_current ?? 0).toFixed(2)} → ₹${tslResult.newSl.toFixed(2)} | ${trade.segment}`,
             });
 
-            // Notification with cooldown
-            if (TELEGRAM_BOT_TOKEN && chatId && trade.telegram_post_enabled) {
+            // Notification via centralized telegram-notify (multi-chat + delivery log)
+            if (trade.telegram_post_enabled) {
               const now = Date.now();
               const lastNotified = trade.last_tsl_notified_at ? new Date(trade.last_tsl_notified_at).getTime() : 0;
               const cooldownMs = profile.cooldown_sec * 1000;
 
               if (now - lastNotified >= cooldownMs) {
-                const oldSl = trade.trailing_sl_current ?? trade.stop_loss ?? 0;
-                const msg = `🧲 *TSL Updated: ${trade.symbol}*\nSL: ₹${oldSl.toFixed(2)} → ₹${tslResult.newSl.toFixed(2)}\nSegment: ${trade.segment}\nLTP: ₹${currentPrice.toFixed(2)}`;
-                await sendTelegramMessage(TELEGRAM_BOT_TOKEN, chatId, msg);
+                await sendViaTelegramNotify(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+                  type: "trade_update",
+                  trade_id: trade.id,
+                });
                 updateData.last_tsl_notified_at = new Date().toISOString();
               }
             }
@@ -250,11 +256,12 @@ serve(async (req) => {
               current_price: currentPrice,
             }).eq("id", trade.id);
 
-            if (TELEGRAM_BOT_TOKEN && chatId && trade.telegram_post_enabled) {
-              const emoji = pnl >= 0 ? "✅" : "🛑";
-              const slType = isTslHit ? "Trailing SL" : "Stop Loss";
-              const msg = `${emoji} *${slType} Hit!*\n\nSymbol: *${trade.symbol}*\nType: ${trade.trade_type}\nEntry: ₹${entryPrice.toLocaleString()}\nExit: ₹${currentPrice.toFixed(2)}\nP&L: ${pnl >= 0 ? "+" : ""}₹${pnl.toFixed(2)} (${pnlPercent >= 0 ? "+" : ""}${pnlPercent.toFixed(2)}%)`;
-              await sendTelegramMessage(TELEGRAM_BOT_TOKEN, chatId, msg);
+            // Send close notification via centralized telegram-notify
+            if (trade.telegram_post_enabled) {
+              await sendViaTelegramNotify(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+                type: "trade_closed",
+                trade_id: trade.id,
+              });
             }
 
             if (activeToken && activeClientId) {
@@ -292,9 +299,12 @@ serve(async (req) => {
                   notes: `Target ${targetNum} hit at ₹${currentPrice.toFixed(2)}`,
                 });
 
-                if (TELEGRAM_BOT_TOKEN && chatId && trade.telegram_post_enabled) {
-                  const msg = `🎯 *Target ${targetNum} Hit!*\n\nSymbol: *${trade.symbol}*\nEntry: ₹${entryPrice.toLocaleString()}\nTarget: ₹${target.toLocaleString()}\nCurrent: ₹${currentPrice.toFixed(2)}\nP&L: +₹${pnl.toFixed(2)} (+${pnlPercent.toFixed(2)}%)`;
-                  await sendTelegramMessage(TELEGRAM_BOT_TOKEN, chatId, msg);
+                // Send target hit notification via centralized telegram-notify
+                if (trade.telegram_post_enabled) {
+                  await sendViaTelegramNotify(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+                    type: "trade_update",
+                    trade_id: trade.id,
+                  });
                 }
               }
             }
@@ -336,7 +346,6 @@ function processSegmentTsl(
   const lastAnchor = trade.last_trail_anchor_price ?? entryPrice;
   const currentSl = trade.trailing_sl_current;
 
-  // Update high/low watermarks
   highest = Math.max(highest, ltp);
   lowest = Math.min(lowest, ltp);
 
@@ -349,20 +358,14 @@ function processSegmentTsl(
   };
 
   if (isBuy) {
-    // Activation check: price must have moved activatePct above entry
     if (highest < entryPrice * (1 + profile.activate_pct / 100)) return result;
-
-    // Step check: price must have moved stepPct above last anchor
     if (highest < lastAnchor * (1 + profile.step_pct / 100)) return result;
 
-    // Candidate SL
     const candidateSl = highest * (1 - profile.trail_gap_pct / 100);
     const newSl = Math.max(currentSl ?? 0, candidateSl);
 
-    // Only update if actually improved
     if (currentSl !== null && newSl <= currentSl) return result;
 
-    // Min improvement check
     if (currentSl !== null && profile.min_sl_improve_pct > 0) {
       const improvePct = ((newSl - currentSl) / currentSl) * 100;
       if (improvePct < profile.min_sl_improve_pct) return result;
@@ -371,7 +374,6 @@ function processSegmentTsl(
     result.newSl = newSl;
     result.newAnchor = highest;
   } else {
-    // SELL logic (inverse)
     if (lowest > entryPrice * (1 - profile.activate_pct / 100)) return result;
     if (lowest > lastAnchor * (1 - profile.step_pct / 100)) return result;
 
@@ -464,18 +466,6 @@ async function batchFetchPrices(
   return priceMap;
 }
 
-async function sendTelegramMessage(token: string, chatId: string, message: string): Promise<void> {
-  try {
-    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "Markdown" }),
-    });
-  } catch (e) {
-    console.error("Failed to send Telegram message:", e);
-  }
-}
-
 async function executeExitOrder(
   trade: Trade,
   _exitPrice: number,
@@ -513,6 +503,8 @@ async function executeExitOrder(
 
     if (!response.ok) {
       console.error("Dhan exit order failed:", await response.text());
+    } else {
+      await response.text(); // consume body
     }
   } catch (e) {
     console.error("Failed to execute exit order:", e);

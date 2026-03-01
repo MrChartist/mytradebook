@@ -14,7 +14,10 @@ type NotificationType =
   | "study_created"
   | "study_updated"
   | "study_triggered"
-  | "custom";
+  | "custom"
+  | "manual_trade_snapshot"
+  | "manual_pnl_snapshot"
+  | "manual_custom_note";
 
 interface BaseNotification {
   type: NotificationType;
@@ -91,6 +94,23 @@ interface CustomNotification extends BaseNotification {
   chat_id?: string;
 }
 
+// Manual send types
+interface ManualTradeSnapshotNotification extends BaseNotification {
+  type: "manual_trade_snapshot";
+  trade_id: string;
+}
+
+interface ManualPnlSnapshotNotification extends BaseNotification {
+  type: "manual_pnl_snapshot";
+  trade_id: string;
+}
+
+interface ManualCustomNoteNotification extends BaseNotification {
+  type: "manual_custom_note";
+  trade_id: string;
+  custom_message: string;
+}
+
 type NotificationPayload = 
   | TradeNotification 
   | SLModifiedNotification
@@ -103,13 +123,18 @@ type NotificationPayload =
   | StudyCreatedNotification
   | StudyUpdatedNotification
   | StudyTriggeredNotification
-  | CustomNotification;
+  | CustomNotification
+  | ManualTradeSnapshotNotification
+  | ManualPnlSnapshotNotification
+  | ManualCustomNoteNotification;
 
 interface TelegramResponse {
   success: boolean;
   message_id?: number;
   chat_id?: string;
   error?: string;
+  sent_to?: number;
+  failed?: number;
 }
 
 export async function sendTelegramNotification(
@@ -229,5 +254,29 @@ export async function sendCustomMessage(message: string, chatId?: string) {
     type: "custom", 
     message,
     chat_id: chatId 
+  });
+}
+
+// === Manual Send Functions ===
+
+export async function sendManualTradeSnapshot(tradeId: string) {
+  return sendTelegramNotification({
+    type: "manual_trade_snapshot",
+    trade_id: tradeId,
+  });
+}
+
+export async function sendManualPnlSnapshot(tradeId: string) {
+  return sendTelegramNotification({
+    type: "manual_pnl_snapshot",
+    trade_id: tradeId,
+  });
+}
+
+export async function sendManualCustomNote(tradeId: string, customMessage: string) {
+  return sendTelegramNotification({
+    type: "manual_custom_note",
+    trade_id: tradeId,
+    custom_message: customMessage,
   });
 }

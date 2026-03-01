@@ -83,6 +83,22 @@ interface TestNotification {
   message?: string;
 }
 
+interface ManualTradeSnapshotNotification {
+  type: "manual_trade_snapshot";
+  trade_id: string;
+}
+
+interface ManualPnlSnapshotNotification {
+  type: "manual_pnl_snapshot";
+  trade_id: string;
+}
+
+interface ManualCustomNoteNotification {
+  type: "manual_custom_note";
+  trade_id: string;
+  custom_message: string;
+}
+
 type NotificationPayload =
   | TradeNotification
   | SLModifiedNotification
@@ -96,7 +112,10 @@ type NotificationPayload =
   | StudyUpdatedNotification
   | StudyTriggeredNotification
   | CustomNotification
-  | TestNotification;
+  | TestNotification
+  | ManualTradeSnapshotNotification
+  | ManualPnlSnapshotNotification
+  | ManualCustomNoteNotification;
 
 const APP = "TradeBook";
 
@@ -695,6 +714,68 @@ function buildTradeEventMessage(trade: any, eventType: string, price: number, no
 }
 
 // ════════════════════════════════════════
+//  MANUAL SEND MESSAGE TEMPLATES
+// ════════════════════════════════════════
+
+function buildManualTradeSnapshotMessage(trade: any, isRaMode: boolean, disclaimer: string | null): string {
+  const segment = trade.segment || "Equity_Intraday";
+  const label = segmentLabels[segment] || segment;
+  const tag = segmentTag[segment] || "NSE";
+  const side = trade.trade_type || "BUY";
+  const targets = trade.targets || [];
+  const targetsStr = targets.length > 0 ? targets.map((t: number, i: number) => `T${i + 1}: ${fmt(t)}`).join(" / ") : "—";
+  const holdType = trade.holding_period || (segment === "Equity_Intraday" ? "Intraday" : "Positional");
+  const tf = trade.timeframe ? (timeframeLabels[trade.timeframe] || trade.timeframe) : "";
+  const slLine = trade.stop_loss ? `SL: ${fmt(trade.stop_loss)}` : "SL: —";
+  const entryLine = trade.entry_price ? `Entry: ${fmt(trade.entry_price)}` : "Entry: —";
+  const pnl = trade.pnl || 0;
+  const pnlPct = trade.pnl_percent || 0;
+
+  let tslLine = "";
+  if (trade.trailing_sl_enabled && trade.trailing_sl_current) {
+    tslLine = `\n🔄 TSL: ${fmt(trade.trailing_sl_current)} ${trade.trailing_sl_active ? "(active)" : "(pending)"}`;
+  }
+
+  let msg = `📋 *TRADE SNAPSHOT* | ${tag}\n*${side} ${trade.symbol}* (${label})\n\n`;
+  msg += `${entryLine}\nLTP: ${fmt(trade.current_price)}\n${slLine}\n`;
+  if (!isRaMode && trade.quantity > 1) msg += `Qty: ${fmtNum(trade.quantity)}\n`;
+  msg += `Targets: ${targetsStr}\n`;
+  msg += `P&L: ${fmt(pnl)} (${fmtPct(pnlPct)})\n`;
+  msg += `Status: ${trade.status}\nHold: ${holdType}`;
+  if (tf) msg += ` | TF: ${tf}`;
+  msg += tslLine;
+  if (trade.notes) msg += `\n\n📝 ${trade.notes}`;
+  if (trade.chart_link) msg += `\n📊 [Chart](${trade.chart_link})`;
+  msg += `\n\n⏱ ${istTimestamp()}`;
+  if (isRaMode && disclaimer) msg += `\n\n🧾 _${disclaimer}_`;
+  return msg;
+}
+
+function buildManualPnlSnapshotMessage(trade: any, isRaMode: boolean): string {
+  const tag = segmentTag[trade.segment] || "NSE";
+  const pnl = trade.pnl || 0;
+  const pnlPct = trade.pnl_percent || 0;
+  const emoji = pnl >= 0 ? "📈" : "📉";
+
+  let msg = `${emoji} *P&L UPDATE: ${trade.symbol}* | ${tag}\n\n`;
+  msg += `Side: ${trade.trade_type}\nEntry: ${fmt(trade.entry_price)}\nLTP: ${fmt(trade.current_price)}\n`;
+  if (!isRaMode) msg += `P&L: ${fmt(pnl)} (${fmtPct(pnlPct)})\n`;
+  if (trade.stop_loss) msg += `SL: ${fmt(trade.stop_loss)}\n`;
+  if (trade.trailing_sl_active && trade.trailing_sl_current) msg += `TSL: ${fmt(trade.trailing_sl_current)} (active)\n`;
+  msg += `Status: ${trade.status}\n\n⏱ ${istTimestamp()}`;
+  return msg;
+}
+
+function buildManualCustomNoteMessage(trade: any, customMessage: string): string {
+  const tag = segmentTag[trade.segment] || "NSE";
+  let msg = `💬 *NOTE: ${trade.symbol}* | ${tag}\n\n`;
+  msg += `${customMessage}\n\n`;
+  msg += `LTP: ${fmt(trade.current_price)} | P&L: ${fmt(trade.pnl)} (${fmtPct(trade.pnl_percent)})\n`;
+  msg += `\n⏱ ${istTimestamp()}`;
+  return msg;
+}
+
+// ════════════════════════════════════════
 //  STUDY MESSAGE TEMPLATES
 // ════════════════════════════════════════
 
@@ -957,6 +1038,39 @@ Deno.serve(async (req) => {
       case "custom": {
         message = payload.message;
         notificationType = "other";
+        break;
+      }
+      case "manual_trade_snapshot": {
+        const { data: trade, error } = await supabase.from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
+        if (error) throw error;
+        if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
+        userId = trade.user_id;
+        segment = trade.segment;
+        notificationType = "trade";
+        imageUrl = getFirstChartImage(trade);
+        const settings = await getUserSettings(supabase, trade.user_id);
+        message = buildManualTradeSnapshotMessage(trade, settings.ra_public_mode, settings.ra_disclaimer);
+        break;
+      }
+      case "manual_pnl_snapshot": {
+        const { data: trade, error } = await supabase.from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
+        if (error) throw error;
+        if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
+        userId = trade.user_id;
+        segment = trade.segment;
+        notificationType = "trade";
+        const settings = await getUserSettings(supabase, trade.user_id);
+        message = buildManualPnlSnapshotMessage(trade, settings.ra_public_mode);
+        break;
+      }
+      case "manual_custom_note": {
+        const { data: trade, error } = await supabase.from("trades").select("*").eq("id", payload.trade_id).maybeSingle();
+        if (error) throw error;
+        if (!trade) return jsonOk({ success: true, skipped: true, reason: "Trade not found" });
+        userId = trade.user_id;
+        segment = trade.segment;
+        notificationType = "trade";
+        message = buildManualCustomNoteMessage(trade, (payload as any).custom_message);
         break;
       }
       default:
