@@ -855,11 +855,58 @@ Deno.serve(async (req) => {
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
     const payload: NotificationPayload = await req.json();
 
-    // For "custom" with explicit chat_id — direct send (used by Test button)
+    // For "custom" with explicit chat_id — direct send (used by Test button & manual sends)
     if (payload.type === "custom" && payload.chat_id) {
-      const token = (payload as any).bot_token || SYSTEM_BOT_TOKEN;
-      if (!token) throw new Error("No bot token available for direct send");
+      // 3-tier token resolution: payload > user-level > system
+      let token = (payload as any).bot_token || "";
+      if (!token) {
+        // Try to resolve user token from auth header
+        const authHeader = req.headers.get("Authorization");
+        if (authHeader) {
+          const jwt = authHeader.replace("Bearer ", "");
+          const { data: { user } } = await supabase.auth.getUser(jwt);
+          if (user) {
+            const settings = await getUserSettings(supabase, user.id);
+            token = settings.telegram_bot_token || SYSTEM_BOT_TOKEN;
+          } else {
+            token = SYSTEM_BOT_TOKEN;
+          }
+        } else {
+          token = SYSTEM_BOT_TOKEN;
+        }
+      }
+      if (!token) throw new Error("No bot token available. Configure your personal bot in Settings.");
       const result = await sendWithRetry(token, payload.chat_id, payload.message, null, 3);
+
+      // Update verification status for the chat if we can identify it
+      if (result.success) {
+        const authHeader = req.headers.get("Authorization");
+        if (authHeader) {
+          const jwt = authHeader.replace("Bearer ", "");
+          const { data: { user } } = await supabase.auth.getUser(jwt);
+          if (user) {
+            await supabase
+              .from("telegram_chats")
+              .update({ last_verified_at: new Date().toISOString(), verification_status: "verified" })
+              .eq("user_id", user.id)
+              .eq("chat_id", payload.chat_id);
+          }
+        }
+      } else {
+        // Update verification status to failed
+        const authHeader = req.headers.get("Authorization");
+        if (authHeader) {
+          const jwt = authHeader.replace("Bearer ", "");
+          const { data: { user } } = await supabase.auth.getUser(jwt);
+          if (user) {
+            await supabase
+              .from("telegram_chats")
+              .update({ verification_status: "failed" })
+              .eq("user_id", user.id)
+              .eq("chat_id", payload.chat_id);
+          }
+        }
+      }
 
       if (!result.success) {
         return new Response(
@@ -880,7 +927,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // For "test" — direct send to default
+    // For "test" — direct send (legacy, use custom+chat_id instead)
     if (payload.type === "test") {
       const message = payload.message || `🔔 *Test Notification* | ${APP}\n\nYour Telegram integration is working correctly!\n\n✅ ${APP} is connected.\n⏱ ${istTimestamp()}`;
       if (!DEFAULT_CHAT_ID) throw new Error("No default chat ID configured");
@@ -1099,11 +1146,8 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Final fallback to env default
-    if (targetChats.length === 0 && DEFAULT_CHAT_ID) {
-      targetChats = [{ chat_id: DEFAULT_CHAT_ID, bot_token: null }];
-    }
-
+    // No more silent fallback to DEFAULT_CHAT_ID for user notifications.
+    // If user has no chats configured, skip instead of sending to admin's chat.
     if (targetChats.length === 0) {
       return jsonOk({
         success: true,
