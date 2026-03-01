@@ -1,100 +1,104 @@
 
 
-# AI-Powered Trade Insights
+# Fix Live Prices & Add LTP to Studies and Alerts
 
-## Overview
+## Root Cause: "Data APIs not Subscribed" (Error 806)
 
-Add an AI coach that analyzes your closed trades, patterns, mistakes, and behavioral data to generate personalized improvement suggestions. The insights appear as a new dashboard widget and a dedicated section on the Analytics page.
+The edge function logs reveal the real issue:
 
-## How It Works
-
-1. You click "Get AI Insights" (or it refreshes weekly)
-2. Your trade data (closed trades, patterns, mistakes, streaks, segment performance) is summarized into anonymized statistics on the backend
-3. The backend sends these stats to Lovable AI (Gemini) with a trading coach system prompt
-4. You receive 3-5 actionable insights like "Your Options win rate drops 40% after 2pm -- consider avoiding afternoon entries" or "Your best setups use the Bull Flag pattern with 72% win rate -- lean into it"
-
-## Architecture
-
-```text
-[Analytics Page / Dashboard Widget]
-        |
-        | Click "Get Insights" 
-        v
-[useTradeInsights hook]
-        |
-        | supabase.functions.invoke("trade-insights", { period: "30d" })
-        v
-[Edge Function: trade-insights]
-        |
-        | 1. Fetch user's closed trades, patterns, mistakes from DB
-        | 2. Compute summary stats (win rate by segment, time, day, patterns, mistakes)
-        | 3. Send stats to Lovable AI Gateway with trading coach prompt
-        | 4. Return structured insights
-        v
-[UI renders insight cards with icons + actionable tips]
+```
+Dhan quote error: 401 {"data":{"806":"Data APIs not Subscribed"},"status":"failed"}
 ```
 
-## What the AI Analyzes
+Your Dhan account token is valid and connected, but the **Market Data API plan is not active** on your Dhan account. The current code treats ALL 401 errors as "token expired", which is wrong -- error 806 means you need to subscribe to Dhan's data API plan (it's free for basic use, but needs activation).
 
-- Win rate by segment, time of day, day of week
-- Most profitable vs least profitable patterns/setups
-- Repeat mistakes and their financial impact
-- Risk-reward ratios and position sizing habits
-- Streak data (winning/losing streaks and behavior after streaks)
-- Holding time analysis (are you exiting too early or too late?)
-- Confidence score vs actual outcomes (are high-confidence trades actually better?)
+## Plan
 
-## New Files
+### 1. Fix error handling in `get-live-prices` edge function
 
-### 1. Edge Function: `supabase/functions/trade-insights/index.ts`
+**File:** `supabase/functions/get-live-prices/index.ts`
 
-- Authenticates the user via JWT
-- Fetches closed trades, trade_patterns, trade_mistakes for the user (last 30/90/all days based on param)
-- Computes a statistical summary (no raw trade data sent to AI -- just aggregated numbers)
-- Calls Lovable AI Gateway with a system prompt: "You are a trading performance coach. Analyze these statistics and provide 3-5 specific, actionable insights..."
-- Uses tool calling to return structured output: `{ insights: [{ title, description, category, severity }] }`
-- Returns the insights array
+Currently, all 401 responses return `"token_expired"`. We need to parse the response body and distinguish:
+- **Error 806** ("Data APIs not Subscribed") -- Show: "Dhan Data API plan not active. Go to web.dhan.co > My Profile > Access DhanHQ APIs and subscribe to a Data API plan (free tier available)."
+- **Actual 401** (invalid token) -- Keep existing "token expired" message
 
-### 2. Hook: `src/hooks/useTradeInsights.ts`
+Changes:
+- Parse the JSON error body from Dhan's 401 response
+- Check for error code 806 specifically
+- Return a distinct error type `"data_api_not_subscribed"` so the frontend can show the right message
 
-- Calls the edge function with period filter
-- Caches results in React Query (staleTime: 1 hour)
-- Provides `insights`, `isLoading`, `refresh` to components
+### 2. Show proper error message in Dashboard/UI
 
-### 3. Component: `src/components/analytics/AITradeInsights.tsx`
+**File:** `src/hooks/useLivePrices.ts`
 
-- Displays insight cards with category icons (behavioral, timing, risk, pattern)
-- Each card has a title, description, and severity indicator (info/warning/success)
-- "Refresh Insights" button with loading state
-- Gated behind PlanGate (Pro feature)
+- Handle the new `"data_api_not_subscribed"` error type alongside `"token_expired"`
+- Show actionable guidance: "Activate Data API plan on Dhan"
 
-### 4. Dashboard Widget Integration
+### 3. Add live LTP to Studies page
 
-- Add "aiInsights" to the dashboard widget list in `useDashboardLayout.ts`
-- Show a compact version (top 2 insights) on the Dashboard
-- Full version on the Analytics page
+**File:** `src/pages/Studies.tsx`
 
-## Data Privacy
+The `InsightCard` component already supports `ltp` and `dayChangePercent` props -- they're just not being passed from the Studies page.
 
-- Raw trade data never leaves the backend
-- Only aggregated statistics (counts, percentages, averages) are sent to the AI
-- No symbol names, prices, or personal info included in the AI prompt
+Changes:
+- Import and use `useLivePrices` hook with the unique symbols from studies
+- Pass `ltp` and `dayChangePercent` to each `InsightCard`
+- Only fetch prices for studies with status "Active" or "Draft" (not Archived/Invalidated)
 
-## UI Design
+### 4. Add live LTP to Alerts page
 
-Each insight card shows:
-- Category icon (brain for behavioral, clock for timing, shield for risk, target for patterns)
-- Title: "Afternoon Options Trading Underperforms"
-- Description: "Your win rate drops from 65% to 38% for Options trades taken after 2:00 PM. Consider restricting entries to morning sessions."
-- Severity badge: info (blue), warning (amber), success (green)
+**File:** `src/pages/Alerts.tsx`
+
+Same pattern as Studies:
+- Import `useLivePrices` with unique symbols from active alerts
+- Pass `ltp` and `dayChangePercent` to each alert's `InsightCard`
+- This lets users see current price vs their alert threshold at a glance
+
+### 5. Show LTP alongside alert threshold on cards
+
+For each alert card, show the current LTP next to the trigger price so users can see how close the price is to triggering. Example: "Price Above: target 1,461 | LTP 1,445 (1.1% away)"
+
+## Technical Details
+
+### Edge function error parsing (get-live-prices)
+
+```text
+Current: if (quoteRes.status === 401) -> return "token_expired"
+Fixed:   if (quoteRes.status === 401) -> parse body -> 
+           if body contains "806" or "not Subscribed" -> return "data_api_not_subscribed"
+           else -> return "token_expired"
+```
+
+### Live price integration pattern (Studies & Alerts)
+
+```text
+// Extract unique symbols with security_id/exchange_segment
+const instruments = useMemo(() => 
+  uniqueSymbols.map(s => ({ symbol: s.symbol, security_id: s.security_id, exchange_segment: s.exchange_segment }))
+, [studies/alerts]);
+
+const { prices } = useLivePrices(instruments);
+
+// Pass to InsightCard
+<InsightCard 
+  ltp={prices[study.symbol]?.ltp}
+  dayChangePercent={prices[study.symbol]?.changePercent}
+  ...
+/>
+```
 
 ## Files Modified
 
-1. `supabase/functions/trade-insights/index.ts` -- NEW edge function
-2. `supabase/config.toml` -- register function with `verify_jwt = false`
-3. `src/hooks/useTradeInsights.ts` -- NEW hook
-4. `src/components/analytics/AITradeInsights.tsx` -- NEW component
-5. `src/pages/Analytics.tsx` -- add AITradeInsights section
-6. `src/hooks/useDashboardLayout.ts` -- add "aiInsights" widget
-7. `src/pages/Dashboard.tsx` -- render compact insights widget
+1. `supabase/functions/get-live-prices/index.ts` -- Parse 806 error, return distinct error type
+2. `src/hooks/useLivePrices.ts` -- Handle "data_api_not_subscribed" error with actionable message
+3. `src/pages/Studies.tsx` -- Add useLivePrices, pass LTP to InsightCards
+4. `src/pages/Alerts.tsx` -- Add useLivePrices, pass LTP to InsightCards
+
+## Important Note for User
+
+You need to activate the Dhan Data API plan:
+1. Go to web.dhan.co
+2. My Profile > Access DhanHQ APIs
+3. Subscribe to a Data API plan (free tier is available)
+4. Once activated, live prices will start flowing immediately
 
