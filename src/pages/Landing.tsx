@@ -12,17 +12,13 @@ import {
   LineChart,
   CheckCircle2,
   Zap,
+  Download,
   Eye,
+  Layers,
+  Send,
   ChevronDown,
   Star,
   Quote,
-  Activity,
-  PieChart,
-  Layers,
-  Clock,
-  ArrowUpRight,
-  ArrowDownRight,
-  Minus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -76,6 +72,9 @@ function FadeIn({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    
+    // Start visible immediately for hero elements (delay < 500ms)
+    // Use IntersectionObserver for below-fold elements
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -252,48 +251,6 @@ const pricingPlans = [
   },
 ];
 
-const segmentTabs = [
-  {
-    id: "equity",
-    label: "Equity",
-    icon: TrendingUp,
-    title: "Intraday & Positional Equity",
-    description: "Track cash-market trades with split segments for intraday scalps and positional swing trades. See per-segment win rates, average holding periods, and sector breakdowns.",
-    stats: [
-      { label: "Segments", value: "2" },
-      { label: "Metrics", value: "15+" },
-      { label: "Holding", value: "1d–90d" },
-    ],
-    features: ["Intraday vs Positional split", "Sector-wise P&L heatmap", "Day-of-week analysis", "Brokerage & charges tracking"],
-  },
-  {
-    id: "fno",
-    label: "F&O",
-    icon: Activity,
-    title: "Futures & Options",
-    description: "Purpose-built for derivatives traders. Log option chains, strategy legs, Greeks tracking, and lot-size-aware position sizing with expiry-based analytics.",
-    stats: [
-      { label: "Strategy Types", value: "10+" },
-      { label: "Greeks", value: "4" },
-      { label: "Expiries", value: "Auto" },
-    ],
-    features: ["Multi-leg strategy logging", "Option chain selector", "Lot-size aware P&L", "Expiry-based performance"],
-  },
-  {
-    id: "commodities",
-    label: "Commodities",
-    icon: PieChart,
-    title: "MCX Commodities",
-    description: "Track Gold, Silver, Crude, Natural Gas, and other MCX instruments with commodity-specific lot sizes, margin requirements, and session-based analysis.",
-    stats: [
-      { label: "Instruments", value: "20+" },
-      { label: "Sessions", value: "2" },
-      { label: "Margin", value: "Auto" },
-    ],
-    features: ["MCX instrument support", "Session-wise analytics", "Commodity-specific lot sizes", "Margin utilization tracking"],
-  },
-];
-
 /* ─── FAQ Accordion Item ────────────────────────────────── */
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false);
@@ -315,47 +272,20 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
   );
 }
 
-/* ─── Animated ticker line for dashboard mockup ──────────── */
-function TickerBar() {
-  const tickers = [
-    { symbol: "NIFTY 50", price: "24,285", change: "+0.82%", up: true },
-    { symbol: "BANKNIFTY", price: "51,440", change: "-0.34%", up: false },
-    { symbol: "RELIANCE", price: "2,945", change: "+1.24%", up: true },
-    { symbol: "GOLD", price: "71,850", change: "+0.45%", up: true },
-    { symbol: "CRUDE", price: "6,420", change: "-1.12%", up: false },
-  ];
-
-  return (
-    <div className="flex items-center gap-5 px-4 py-2 border-b border-border/30 bg-muted/20 overflow-hidden text-[10px]">
-      {tickers.map((t) => (
-        <div key={t.symbol} className="flex items-center gap-1.5 shrink-0">
-          <span className="text-muted-foreground font-medium">{t.symbol}</span>
-          <span className="font-mono font-semibold text-foreground/80">{t.price}</span>
-          <span className={cn("font-mono font-semibold", t.up ? "text-profit" : "text-loss")}>
-            {t.change}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 /* ─── Main Component ────────────────────────────────────── */
 export default function Landing() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const [activeSegment, setActiveSegment] = useState("equity");
 
+  // Stats: segments and rating are factual product constants
   const s3 = useCountUp(5, 1200);
-  const s4 = useCountUp(50, 1500);
+  const s4 = useCountUp(48, 1500);
 
   useEffect(() => {
     if (!loading && user) {
       navigate("/");
     }
   }, [user, loading, navigate]);
-
-  const activeTab = segmentTabs.find((t) => t.id === activeSegment)!;
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden font-sans">
@@ -371,9 +301,8 @@ export default function Landing() {
 
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors duration-200 px-3 py-1.5 rounded-full hover:bg-muted">Features</a>
-            <a href="#segments" className="hover:text-foreground transition-colors duration-200">Segments</a>
+            <a href="#how-it-works" className="hover:text-foreground transition-colors duration-200">How It Works</a>
             <a href="#pricing" className="hover:text-foreground transition-colors duration-200">Pricing</a>
-            <a href="#faq" className="hover:text-foreground transition-colors duration-200">FAQ</a>
           </div>
 
           <div className="flex items-center gap-3">
@@ -398,6 +327,7 @@ export default function Landing() {
 
       {/* ── Hero ─────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
+        {/* Dot grid background */}
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.35]"
           style={{
@@ -406,245 +336,154 @@ export default function Landing() {
           }}
         />
 
-        <div className="relative max-w-5xl mx-auto px-6 pt-20 pb-12 lg:pt-32 lg:pb-20 text-center">
+        <div className="relative max-w-4xl mx-auto px-6 pt-24 pb-16 lg:pt-36 lg:pb-24 text-center">
           {/* Badge */}
-          <FadeIn className="flex justify-center mb-8">
+          <FadeIn className="flex justify-center mb-10">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[hsl(var(--tb-accent)/0.3)] bg-[hsl(var(--tb-accent)/0.08)] text-sm">
               <span className="w-2 h-2 rounded-full bg-[hsl(var(--tb-accent))] animate-pulse" />
               <span className="text-[hsl(var(--tb-accent))] font-semibold uppercase tracking-wider text-xs">
-                Built for Indian Markets · NSE · BSE · MCX
+                Built for Indian Markets · NSE · MCX
               </span>
             </div>
           </FadeIn>
 
           {/* Heading */}
           <FadeIn delay={100}>
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.08] tracking-tight mb-6">
-              Know Your Edge.
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.1] tracking-tight mb-8">
+              The Ultimate
               <br />
               <span
-                className="text-[hsl(var(--tb-accent))] italic"
+                className="font-script text-[hsl(var(--tb-accent))] italic"
                 style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
               >
-                Compound
+                Trading
               </span>{" "}
-              It Daily.
+              Journal
             </h1>
           </FadeIn>
 
           {/* Subtitle */}
           <FadeIn delay={200}>
-            <p className="text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
-              The trading journal that shows you <strong className="text-foreground">why</strong> you win and{" "}
-              <strong className="text-foreground">why</strong> you lose — with segment analytics for Equity, F&O, and Commodities.
-              Stop guessing. Start compounding.
+            <p className="text-base lg:text-lg text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed">
+              Track, analyze, and improve your trades with real-time alerts,
+              broker integration, and segment-based analytics.
+              Built for Equity, F&O, and Commodity traders.
             </p>
           </FadeIn>
 
           {/* CTAs */}
-          <FadeIn delay={300} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+          <FadeIn delay={300} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
             <Button
               size="lg"
-              className="h-13 px-10 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-none font-semibold"
+              className="h-12 px-8 text-base gap-2 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-none"
               onClick={() => navigate("/login")}
             >
-              Start Free — No Card Needed
-              <ArrowRight className="w-4 h-4" />
+              <Download className="w-4 h-4" />
+              Start Free
             </Button>
             <Button
               variant="outline"
               size="lg"
-              className="h-13 px-8 text-base gap-2 rounded-full"
+              className="h-12 px-8 text-base gap-2 rounded-full"
               onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })}
             >
-              See How It Works
+              Explore Features <ArrowRight className="w-4 h-4" />
             </Button>
           </FadeIn>
 
-          {/* Micro trust line */}
-          <FadeIn delay={350}>
-            <p className="text-xs text-muted-foreground mb-12">
-              14-day Pro trial · No credit card · 2-minute setup
-            </p>
-          </FadeIn>
-
-          {/* ── Social Proof Trust Strip ───────────────────── */}
+          {/* Stats Row */}
           <FadeIn delay={400}>
-            <div className="flex items-center justify-center gap-6 sm:gap-10 mb-14 flex-wrap">
-              {["NSE", "BSE", "MCX"].map((exchange) => (
-                <div key={exchange} className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border/60 bg-card/60">
-                  <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center">
-                    <Activity className="w-3.5 h-3.5 text-muted-foreground" />
-                  </div>
-                  <span className="text-sm font-semibold tracking-wide text-muted-foreground">{exchange}</span>
+            <div className="flex items-center justify-center gap-8 sm:gap-12 flex-wrap">
+              <div className="text-center" ref={s3.ref}>
+                <div className="text-2xl sm:text-3xl font-bold tracking-tight">
+                  {s3.count}
                 </div>
-              ))}
-              <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
-                <Minus className="w-4 h-4" />
-                <span>All Indian exchanges supported</span>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Market Segments</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold tracking-tight">
+                  14-Day
+                </div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Free Pro Trial</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold tracking-tight">
+                  100%
+                </div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Data Privacy</div>
+              </div>
+              <div className="text-center" ref={s4.ref}>
+                <div className="text-2xl sm:text-3xl font-bold tracking-tight">
+                  24/7
+                </div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Cloud Access</div>
               </div>
             </div>
           </FadeIn>
 
-          {/* ── Dashboard Preview ─────────────────────────── */}
-          <FadeIn delay={500}>
-            <div className="relative mx-auto max-w-5xl">
+          {/* Dashboard Preview Mockup */}
+          <FadeIn delay={500} className="mt-16">
+            <div className="relative mx-auto max-w-4xl">
               {/* Glow effect */}
-              <div className="absolute -inset-6 bg-[hsl(var(--tb-accent)/0.06)] rounded-3xl blur-3xl" />
-              <div className="relative rounded-2xl border border-border/60 bg-card overflow-hidden shadow-2xl shadow-black/5">
+              <div className="absolute -inset-4 bg-[hsl(var(--tb-accent)/0.08)] rounded-3xl blur-2xl" />
+              <div className="relative rounded-2xl border border-border/60 bg-card overflow-hidden shadow-lg">
                 {/* Window chrome */}
-                <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/50 bg-muted/30">
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-border/50 bg-muted/30">
                   <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-loss/50" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-warning/50" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-profit/50" />
+                    <div className="w-3 h-3 rounded-full bg-loss/40" />
+                    <div className="w-3 h-3 rounded-full bg-warning/40" />
+                    <div className="w-3 h-3 rounded-full bg-profit/40" />
                   </div>
                   <div className="flex-1 text-center">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-muted/50 text-[10px] text-muted-foreground font-mono">
-                      <span className="w-1.5 h-1.5 rounded-full bg-profit/60" />
-                      mytradebook.lovable.app/dashboard
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-muted/50 text-xs text-muted-foreground">
+                      <span className="w-2 h-2 rounded-full bg-profit/60" />
+                      mytradebook.lovable.app
                     </div>
                   </div>
                 </div>
-
-                {/* Ticker bar */}
-                <TickerBar />
-
-                {/* Dashboard content */}
-                <div className="flex">
-                  {/* Mini sidebar */}
-                  <div className="hidden sm:flex flex-col w-14 border-r border-border/30 bg-muted/10 py-3 gap-3 items-center">
-                    {[BarChart3, BookOpen, Bell, Target, Eye, Layers].map((Icon, i) => (
-                      <div
-                        key={i}
-                        className={cn(
-                          "w-8 h-8 rounded-lg flex items-center justify-center transition-colors",
-                          i === 0
-                            ? "bg-[hsl(var(--tb-accent)/0.12)] text-[hsl(var(--tb-accent))]"
-                            : "text-muted-foreground/50 hover:text-muted-foreground"
-                        )}
-                      >
-                        <Icon className="w-3.5 h-3.5" />
+                {/* Fake dashboard content */}
+                <div className="p-4 sm:p-6">
+                  {/* KPI row */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                    {[
+                      { label: "MTD P&L", value: "+₹24,850", color: "text-profit" },
+                      { label: "Open Positions", value: "3", color: "text-foreground" },
+                      { label: "Win Rate", value: "67.5%", color: "text-profit" },
+                      { label: "Active Alerts", value: "8", color: "text-foreground" },
+                    ].map((kpi) => (
+                      <div key={kpi.label} className="rounded-xl border border-border/50 bg-card p-3">
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{kpi.label}</p>
+                        <p className={cn("text-lg font-bold font-mono", kpi.color)}>{kpi.value}</p>
                       </div>
                     ))}
                   </div>
-
-                  {/* Main content */}
-                  <div className="flex-1 p-4 sm:p-5">
-                    {/* Welcome */}
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <p className="text-xs text-muted-foreground">Good Morning,</p>
-                        <p className="text-sm font-semibold">Dashboard</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="px-2.5 py-1 rounded-md bg-profit/10 text-profit text-[10px] font-semibold flex items-center gap-1">
-                          <ArrowUpRight className="w-3 h-3" />
-                          4 day streak
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* KPI row */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
-                      {[
-                        { label: "MTD P&L", value: "+₹24,850", change: "+12.4%", up: true },
-                        { label: "Win Rate", value: "67.5%", change: "+3.2%", up: true },
-                        { label: "Open Positions", value: "3", change: "", up: true },
-                        { label: "Active Alerts", value: "8", change: "2 triggered", up: true },
-                      ].map((kpi) => (
-                        <div key={kpi.label} className="rounded-xl border border-border/40 bg-card p-3">
-                          <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">{kpi.label}</p>
-                          <p className={cn("text-base font-bold font-mono", kpi.label.includes("P&L") || kpi.label.includes("Win") ? "text-profit" : "text-foreground")}>{kpi.value}</p>
-                          {kpi.change && (
-                            <p className={cn("text-[9px] font-mono mt-0.5", kpi.up ? "text-profit/70" : "text-loss/70")}>{kpi.change}</p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Equity curve + Recent trades */}
-                    <div className="grid sm:grid-cols-5 gap-3">
-                      <div className="sm:col-span-3 rounded-xl border border-border/40 bg-card p-3">
-                        <div className="flex items-center justify-between mb-2">
-                          <p className="text-[10px] text-muted-foreground font-medium">Equity Curve</p>
-                          <p className="text-[10px] text-profit font-mono font-semibold">+₹1,24,850</p>
-                        </div>
-                        <svg viewBox="0 0 400 80" className="w-full h-14">
-                          <defs>
-                            <linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="0%" stopColor="hsl(var(--profit))" stopOpacity="0.25" />
-                              <stop offset="100%" stopColor="hsl(var(--profit))" stopOpacity="0" />
-                            </linearGradient>
-                          </defs>
-                          <path
-                            d="M0,65 C20,62 40,58 60,50 C80,42 100,48 130,40 C160,32 180,36 210,28 C240,20 260,24 290,18 C320,12 350,16 370,10 C385,6 395,8 400,5"
-                            fill="none"
-                            stroke="hsl(var(--profit))"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                          />
-                          <path
-                            d="M0,65 C20,62 40,58 60,50 C80,42 100,48 130,40 C160,32 180,36 210,28 C240,20 260,24 290,18 C320,12 350,16 370,10 C385,6 395,8 400,5 L400,80 L0,80 Z"
-                            fill="url(#curveGrad)"
-                          />
-                        </svg>
-                      </div>
-
-                      <div className="sm:col-span-2 rounded-xl border border-border/40 bg-card p-3">
-                        <p className="text-[10px] text-muted-foreground font-medium mb-2">Recent Trades</p>
-                        <div className="space-y-2">
-                          {[
-                            { sym: "RELIANCE", type: "BUY", pnl: "+₹2,450", up: true },
-                            { sym: "NIFTY 24200 CE", type: "BUY", pnl: "+₹8,200", up: true },
-                            { sym: "TATAMOTORS", type: "SELL", pnl: "-₹1,100", up: false },
-                          ].map((t) => (
-                            <div key={t.sym} className="flex items-center justify-between py-1.5 border-b border-border/20 last:border-0">
-                              <div className="flex items-center gap-2">
-                                <div className={cn("w-1 h-4 rounded-full", t.up ? "bg-profit" : "bg-loss")} />
-                                <div>
-                                  <p className="text-[10px] font-semibold leading-tight">{t.sym}</p>
-                                  <p className="text-[8px] text-muted-foreground">{t.type}</p>
-                                </div>
-                              </div>
-                              <span className={cn("text-[10px] font-mono font-semibold", t.up ? "text-profit" : "text-loss")}>{t.pnl}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+                  {/* Mini equity curve */}
+                  <div className="rounded-xl border border-border/50 bg-card p-4">
+                    <p className="text-xs text-muted-foreground mb-3">Equity Curve</p>
+                    <svg viewBox="0 0 400 100" className="w-full h-16 sm:h-20">
+                      <defs>
+                        <linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="hsl(var(--profit))" stopOpacity="0.3" />
+                          <stop offset="100%" stopColor="hsl(var(--profit))" stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+                      <path
+                        d="M0,80 C30,75 60,60 100,55 C140,50 160,65 200,45 C240,25 280,30 320,20 C360,10 380,15 400,8"
+                        fill="none"
+                        stroke="hsl(var(--profit))"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M0,80 C30,75 60,60 100,55 C140,50 160,65 200,45 C240,25 280,30 320,20 C360,10 380,15 400,8 L400,100 L0,100 Z"
+                        fill="url(#curveGrad)"
+                      />
+                    </svg>
                   </div>
                 </div>
               </div>
             </div>
           </FadeIn>
-        </div>
-      </section>
-
-      {/* ── Stats Row ────────────────────────────────────── */}
-      <section className="py-12 border-y border-border/50">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="flex items-center justify-center gap-8 sm:gap-16 flex-wrap">
-            <div className="text-center" ref={s3.ref}>
-              <div className="text-3xl sm:text-4xl font-bold tracking-tight">{s3.count}</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Market Segments</div>
-            </div>
-            <div className="text-center" ref={s4.ref}>
-              <div className="text-3xl sm:text-4xl font-bold tracking-tight">{s4.count}+</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Analytics Metrics</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold tracking-tight">14</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Day Free Trial</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold tracking-tight flex items-center gap-1 justify-center">
-                <Clock className="w-6 h-6 text-[hsl(var(--tb-accent))]" />
-                24/7
-              </div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Cloud Access</div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -682,8 +521,8 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Segment Showcase ─────────────────────────────── */}
-      <section id="segments" className="py-20 lg:py-28 relative overflow-hidden">
+      {/* ── How It Works ─────────────────────────────────── */}
+      <section id="how-it-works" className="py-20 lg:py-28 relative overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.2]"
           style={{
@@ -692,108 +531,6 @@ export default function Landing() {
           }}
         />
         <div className="relative max-w-5xl mx-auto px-6">
-          <FadeIn className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              Built for{" "}
-              <span
-                className="text-[hsl(var(--tb-accent))] italic"
-                style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
-              >
-                Every Segment
-              </span>
-            </h2>
-            <p className="text-muted-foreground max-w-lg mx-auto">
-              Whether you trade equity, derivatives, or commodities — TradeBook understands your market.
-            </p>
-          </FadeIn>
-
-          {/* Tabs */}
-          <FadeIn delay={100}>
-            <div className="flex items-center justify-center gap-2 mb-10">
-              {segmentTabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveSegment(tab.id)}
-                  className={cn(
-                    "flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-200",
-                    activeSegment === tab.id
-                      ? "bg-[hsl(var(--tb-accent))] text-white shadow-none"
-                      : "bg-card border border-border text-muted-foreground hover:text-foreground hover:border-[hsl(var(--tb-accent)/0.3)]"
-                  )}
-                >
-                  <tab.icon className="w-4 h-4" />
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </FadeIn>
-
-          {/* Tab content */}
-          <FadeIn delay={150}>
-            <div className="rounded-2xl border border-border bg-card overflow-hidden">
-              <div className="grid md:grid-cols-2">
-                {/* Left: Info */}
-                <div className="p-8 lg:p-10 flex flex-col justify-center">
-                  <h3 className="text-2xl font-bold mb-3">{activeTab.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-6">{activeTab.description}</p>
-
-                  {/* Mini stats */}
-                  <div className="flex items-center gap-6 mb-6">
-                    {activeTab.stats.map((s) => (
-                      <div key={s.label}>
-                        <p className="text-xl font-bold font-mono text-[hsl(var(--tb-accent))]">{s.value}</p>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{s.label}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Feature list */}
-                  <ul className="space-y-2.5">
-                    {activeTab.features.map((f) => (
-                      <li key={f} className="flex items-center gap-2.5 text-sm">
-                        <CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0" />
-                        <span>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Right: Visual */}
-                <div className="bg-muted/30 border-l border-border/50 p-8 flex items-center justify-center">
-                  <div className="w-full max-w-xs space-y-3">
-                    {/* Mock trade cards */}
-                    {activeSegment === "equity" && (
-                      <>
-                        <MockTradeCard sym="RELIANCE" type="BUY" entry="₹2,890" pnl="+₹2,450" up />
-                        <MockTradeCard sym="TATAMOTORS" type="SELL" entry="₹985" pnl="-₹780" up={false} />
-                        <MockTradeCard sym="INFY" type="BUY" entry="₹1,540" pnl="+₹1,120" up />
-                      </>
-                    )}
-                    {activeSegment === "fno" && (
-                      <>
-                        <MockTradeCard sym="NIFTY 24200 CE" type="BUY" entry="₹185" pnl="+₹8,200" up />
-                        <MockTradeCard sym="BANKNIFTY 51000 PE" type="BUY" entry="₹320" pnl="-₹4,500" up={false} />
-                        <MockTradeCard sym="NIFTY FUT MAR" type="SELL" entry="₹24,100" pnl="+₹3,750" up />
-                      </>
-                    )}
-                    {activeSegment === "commodities" && (
-                      <>
-                        <MockTradeCard sym="GOLD APR" type="BUY" entry="₹71,200" pnl="+₹5,800" up />
-                        <MockTradeCard sym="CRUDE MAR" type="SELL" entry="₹6,540" pnl="+₹3,200" up />
-                        <MockTradeCard sym="SILVER MAR" type="BUY" entry="₹82,100" pnl="-₹2,100" up={false} />
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* ── How It Works ─────────────────────────────────── */}
-      <section id="how-it-works" className="py-20 lg:py-28">
-        <div className="max-w-5xl mx-auto px-6">
           <FadeIn className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">Three Steps to Mastery</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
@@ -826,15 +563,8 @@ export default function Landing() {
       </section>
 
       {/* ── Pricing ──────────────────────────────────────── */}
-      <section id="pricing" className="py-20 lg:py-28 relative overflow-hidden">
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.2]"
-          style={{
-            backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)",
-            backgroundSize: "24px 24px",
-          }}
-        />
-        <div className="relative max-w-5xl mx-auto px-6">
+      <section id="pricing" className="py-20 lg:py-28">
+        <div className="max-w-5xl mx-auto px-6">
           <FadeIn className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
@@ -898,8 +628,15 @@ export default function Landing() {
       </section>
 
       {/* ── Testimonials ─────────────────────────────────── */}
-      <section className="py-20 lg:py-28">
-        <div className="max-w-6xl mx-auto px-6">
+      <section className="py-20 lg:py-28 relative overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.2]"
+          style={{
+            backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+        <div className="relative max-w-6xl mx-auto px-6">
           <FadeIn className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
               Trusted by{" "}
@@ -940,15 +677,8 @@ export default function Landing() {
       </section>
 
       {/* ── FAQ ──────────────────────────────────────────── */}
-      <section id="faq" className="py-20 lg:py-28 relative overflow-hidden">
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.2]"
-          style={{
-            backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)",
-            backgroundSize: "24px 24px",
-          }}
-        />
-        <div className="relative max-w-3xl mx-auto px-6">
+      <section id="faq" className="py-20 lg:py-28">
+        <div className="max-w-3xl mx-auto px-6">
           <FadeIn className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
@@ -967,8 +697,15 @@ export default function Landing() {
       </section>
 
       {/* ── Final CTA ────────────────────────────────────── */}
-      <section className="py-20 lg:py-28">
-        <FadeIn className="max-w-3xl mx-auto px-6 text-center">
+      <section className="py-20 lg:py-28 relative overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.25]"
+          style={{
+            backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+        <FadeIn className="relative max-w-3xl mx-auto px-6 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold mb-6 leading-tight">
             Stop Losing Money to
             <br />
@@ -985,7 +722,7 @@ export default function Landing() {
           </p>
           <Button
             size="lg"
-            className="h-13 px-10 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-none font-semibold"
+            className="h-12 px-10 text-base gap-2 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-none"
             onClick={() => navigate("/login")}
           >
             Get Started — It's Free <ArrowRight className="w-4 h-4" />
@@ -1013,15 +750,15 @@ export default function Landing() {
               <h4 className="font-semibold text-sm mb-3">Product</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
-                <li><a href="#segments" className="hover:text-foreground transition-colors">Segments</a></li>
                 <li><a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a></li>
+                <li><a href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-3">Support</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><a href="mailto:support@tradebook.app" className="hover:text-foreground transition-colors">Contact Us</a></li>
-                <li><a href="#faq" className="hover:text-foreground transition-colors">FAQ</a></li>
+                <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
               </ul>
             </div>
             <div>
@@ -1042,27 +779,6 @@ export default function Landing() {
           </div>
         </div>
       </footer>
-    </div>
-  );
-}
-
-/* ─── Mock trade card for segment showcase ──────────────── */
-function MockTradeCard({ sym, type, entry, pnl, up }: { sym: string; type: string; entry: string; pnl: string; up: boolean }) {
-  return (
-    <div className="rounded-xl border border-border/50 bg-card p-3.5 flex items-center justify-between transition-all hover:border-[hsl(var(--tb-accent)/0.3)]">
-      <div className="flex items-center gap-3">
-        <div className={cn("w-1.5 h-8 rounded-full", up ? "bg-profit" : "bg-loss")} />
-        <div>
-          <p className="text-xs font-semibold">{sym}</p>
-          <p className="text-[10px] text-muted-foreground">{type} · {entry}</p>
-        </div>
-      </div>
-      <div className="text-right">
-        <p className={cn("text-xs font-mono font-bold", up ? "text-profit" : "text-loss")}>{pnl}</p>
-        <div className="flex items-center justify-end">
-          {up ? <ArrowUpRight className="w-3 h-3 text-profit" /> : <ArrowDownRight className="w-3 h-3 text-loss" />}
-        </div>
-      </div>
     </div>
   );
 }

@@ -22,41 +22,30 @@ export default function Login() {
 
   useEffect(() => {
     if (!authLoading && user) {
-      navigate("/", { replace: true });
+      navigate("/");
     }
   }, [user, authLoading, navigate]);
-
-  const isBusy = loading || authLoading;
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       if (authMode === "login") {
         const { error } = await signInWithEmail(email, password);
         if (error) {
           toast({ title: "Login failed", description: error.message, variant: "destructive" });
-          return;
+        } else {
+          toast({ title: "Welcome back!", description: "Successfully signed in." });
+          navigate("/");
         }
-
-        toast({ title: "Welcome back!", description: "Successfully signed in." });
-        navigate("/", { replace: true });
-        return;
-      }
-
-      if (authMode === "signup") {
+      } else if (authMode === "signup") {
         const { error } = await signUpWithEmail(email, password, name);
         if (error) {
           toast({ title: "Signup failed", description: error.message, variant: "destructive" });
-          return;
+        } else {
+          toast({ title: "Check your email", description: "We've sent you a verification link." });
         }
-
-        toast({ title: "Check your email", description: "We've sent you a verification link." });
       }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Something went wrong. Please try again.";
-      toast({ title: "Authentication error", description: message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -86,18 +75,25 @@ export default function Login() {
 
   const handleGoogleAuth = async () => {
     setLoading(true);
-    try {
-      const { error } = await signInWithGoogle();
-      if (error) {
-        toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });
-      }
-    } catch (err) {
-      toast({ title: "Google sign-in failed", description: "Something went wrong. Please try again.", variant: "destructive" });
-    } finally {
-      // For redirect flows the page unloads; for failures this re-enables instantly.
+    const { error } = await signInWithGoogle();
+    if (error) {
+      toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });
       setLoading(false);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
+            <TrendingUp className="w-6 h-6 text-primary-foreground" />
+          </div>
+          <Loader2 className="w-5 h-5 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex">
@@ -190,14 +186,12 @@ export default function Login() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="h-11"
-                      autoComplete="email"
-                      inputMode="email"
                       required
                     />
                   </div>
 
-                  <Button type="submit" className="w-full h-11" disabled={isBusy}>
-                    {isBusy ? (
+                  <Button type="submit" className="w-full h-11" disabled={loading}>
+                    {loading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
                       <>Send Reset Link</>
@@ -207,7 +201,7 @@ export default function Login() {
 
                 <button
                   onClick={() => setAuthMode("login")}
-                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mx-auto mt-6"
+                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mx-auto mt-6"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Back to Sign In
@@ -231,7 +225,7 @@ export default function Login() {
                   <button
                     onClick={() => setAuthMode("login")}
                     className={cn(
-                      "flex-1 py-2 rounded-md text-sm font-medium",
+                      "flex-1 py-2 rounded-md text-sm font-medium transition-all",
                       authMode === "login"
                         ? "bg-background shadow-sm text-foreground"
                         : "text-muted-foreground hover:text-foreground"
@@ -242,7 +236,7 @@ export default function Login() {
                   <button
                     onClick={() => setAuthMode("signup")}
                     className={cn(
-                      "flex-1 py-2 rounded-md text-sm font-medium",
+                      "flex-1 py-2 rounded-md text-sm font-medium transition-all",
                       authMode === "signup"
                         ? "bg-background shadow-sm text-foreground"
                         : "text-muted-foreground hover:text-foreground"
@@ -262,7 +256,6 @@ export default function Login() {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         className="h-11"
-                        autoComplete="name"
                       />
                     </div>
                   )}
@@ -275,8 +268,6 @@ export default function Login() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="h-11"
-                      autoComplete="email"
-                      inputMode="email"
                       required
                     />
                   </div>
@@ -288,7 +279,7 @@ export default function Login() {
                         <button
                           type="button"
                           onClick={() => setAuthMode("forgot")}
-                          className="text-xs text-primary hover:text-primary/80 font-medium"
+                          className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
                         >
                           Forgot password?
                         </button>
@@ -301,7 +292,6 @@ export default function Login() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="h-11 pr-10"
-                        autoComplete={authMode === "login" ? "current-password" : "new-password"}
                         required
                         minLength={6}
                       />
@@ -315,8 +305,8 @@ export default function Login() {
                     </div>
                   </div>
 
-                  <Button type="submit" className="w-full h-11" disabled={isBusy}>
-                    {isBusy ? (
+                  <Button type="submit" className="w-full h-11" disabled={loading}>
+                    {loading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
                       <>
@@ -341,7 +331,7 @@ export default function Login() {
                   variant="outline"
                   className="w-full h-11"
                   onClick={handleGoogleAuth}
-                  disabled={isBusy}
+                  disabled={loading}
                 >
                   <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
                     <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
