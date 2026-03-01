@@ -3,6 +3,7 @@ import {
   BookOpen, Plus, Search, Tag, Calendar, Edit, Trash2,
   TrendingUp, BarChart2, Newspaper, Bell, ChevronDown, X, Filter,
 } from "lucide-react";
+import { useLivePrices, type InstrumentInput } from "@/hooks/useLivePrices";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -99,6 +100,22 @@ export default function Studies() {
   };
 
   const { studies, isLoading, deleteStudy, updateStudy } = useStudies(filters);
+
+  // Live prices for active/draft studies
+  const priceInstruments = useMemo<InstrumentInput[]>(() => {
+    const seen = new Set<string>();
+    return studies
+      .filter(s => s.status === "Draft" || s.status === "Active")
+      .reduce<InstrumentInput[]>((acc, s) => {
+        if (!seen.has(s.symbol)) {
+          seen.add(s.symbol);
+          acc.push({ symbol: s.symbol });
+        }
+        return acc;
+      }, []);
+  }, [studies]);
+
+  const { prices } = useLivePrices(priceInstruments);
 
   // Compute tag counts from all studies (before status/tag filtering)
   const tagCounts = useMemo(() => {
@@ -376,6 +393,8 @@ export default function Studies() {
               <InsightCard
                 key={study.id}
                 symbol={study.symbol}
+                ltp={prices[study.symbol]?.ltp}
+                dayChangePercent={prices[study.symbol]?.changePercent}
                 typeLabel={study.category || "Other"}
                 typeColor={categoryColors[study.category || "Other"]}
                 status={studyStatus}

@@ -94,6 +94,11 @@ export function useLivePrices(
         return;
       }
 
+      if (data?.error === "data_api_not_subscribed") {
+        setError("Dhan Data API not active — subscribe at web.dhan.co → My Profile → Access DhanHQ APIs");
+        return;
+      }
+
       if (data?.success && data?.prices && Object.keys(data.prices).length > 0) {
         const validPrices: Record<string, PriceData> = {};
         for (const [sym, priceData] of Object.entries(data.prices)) {

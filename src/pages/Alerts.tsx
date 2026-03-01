@@ -5,6 +5,7 @@ import {
   Send, Clock, CalendarClock, PauseCircle,
   BellOff, Timer, History, MoreHorizontal,
 } from "lucide-react";
+import { useLivePrices, type InstrumentInput } from "@/hooks/useLivePrices";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -85,6 +86,22 @@ export default function Alerts() {
   const [bulkPausing, setBulkPausing] = useState(false);
 
   const { alerts, isLoading, toggleAlert, deleteAlert, updateAlert } = useAlerts();
+
+  // Live prices for active alerts
+  const priceInstruments = useMemo<InstrumentInput[]>(() => {
+    const seen = new Set<string>();
+    return (alerts as Alert[])
+      .filter(a => a.active)
+      .reduce<InstrumentInput[]>((acc, a) => {
+        if (!seen.has(a.symbol)) {
+          seen.add(a.symbol);
+          acc.push({ symbol: a.symbol, security_id: a.security_id, exchange_segment: a.exchange_segment });
+        }
+        return acc;
+      }, []);
+  }, [alerts]);
+
+  const { prices } = useLivePrices(priceInstruments);
 
   const now = new Date();
   const activeCount = alerts.filter(a => a.active && !isSnoozed(a as Alert, now)).length;
@@ -284,9 +301,17 @@ export default function Alerts() {
               const isPercentCondition = alert.condition_type === "PERCENT_CHANGE_GT" || alert.condition_type === "PERCENT_CHANGE_LT";
               const alertStatus = getAlertStatus(alert);
 
-              const conditionSummary = `${conditionLabels[alert.condition_type]}: ${
+              const alertLtp = prices[alert.symbol]?.ltp;
+              const alertChangePercent = prices[alert.symbol]?.changePercent;
+
+              // Build condition summary with LTP distance
+              let conditionSummary = `${conditionLabels[alert.condition_type]}: ${
                 isPercentCondition ? `${alert.threshold}%` : `₹${alert.threshold?.toLocaleString() || "—"}`
               }`;
+              if (alertLtp && alert.threshold && !isPercentCondition) {
+                const distPct = ((alert.threshold - alertLtp) / alertLtp * 100).toFixed(1);
+                conditionSummary += ` | LTP ₹${alertLtp.toLocaleString()} (${Number(distPct) >= 0 ? "+" : ""}${distPct}%)`;
+              }
 
               const levels = alert.threshold ? [{
                 label: conditionLabels[alert.condition_type] || "Trigger",
@@ -313,6 +338,8 @@ export default function Alerts() {
                 <InsightCard
                   key={alert.id}
                   symbol={alert.symbol}
+                  ltp={alertLtp}
+                  dayChangePercent={alertChangePercent}
                   typeLabel={conditionLabels[alert.condition_type]}
                   typeColor={conditionTypeColors[alert.condition_type]}
                   status={alertStatus.label}
