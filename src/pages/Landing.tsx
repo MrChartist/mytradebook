@@ -420,6 +420,70 @@ export default function Landing() {
               </div>
             </div>
           </FadeIn>
+
+          {/* Dashboard Preview Mockup */}
+          <FadeIn delay={500} className="mt-16">
+            <div className="relative mx-auto max-w-4xl">
+              {/* Glow effect */}
+              <div className="absolute -inset-4 bg-[hsl(var(--tb-accent)/0.08)] rounded-3xl blur-2xl" />
+              <div className="relative rounded-2xl border border-border/60 bg-card overflow-hidden shadow-lg">
+                {/* Window chrome */}
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-border/50 bg-muted/30">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-loss/40" />
+                    <div className="w-3 h-3 rounded-full bg-warning/40" />
+                    <div className="w-3 h-3 rounded-full bg-profit/40" />
+                  </div>
+                  <div className="flex-1 text-center">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-muted/50 text-xs text-muted-foreground">
+                      <span className="w-2 h-2 rounded-full bg-profit/60" />
+                      mytradebook.lovable.app
+                    </div>
+                  </div>
+                </div>
+                {/* Fake dashboard content */}
+                <div className="p-4 sm:p-6">
+                  {/* KPI row */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                    {[
+                      { label: "MTD P&L", value: "+₹24,850", color: "text-profit" },
+                      { label: "Open Positions", value: "3", color: "text-foreground" },
+                      { label: "Win Rate", value: "67.5%", color: "text-profit" },
+                      { label: "Active Alerts", value: "8", color: "text-foreground" },
+                    ].map((kpi) => (
+                      <div key={kpi.label} className="rounded-xl border border-border/50 bg-card p-3">
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{kpi.label}</p>
+                        <p className={cn("text-lg font-bold font-mono", kpi.color)}>{kpi.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Mini equity curve */}
+                  <div className="rounded-xl border border-border/50 bg-card p-4">
+                    <p className="text-xs text-muted-foreground mb-3">Equity Curve</p>
+                    <svg viewBox="0 0 400 100" className="w-full h-16 sm:h-20">
+                      <defs>
+                        <linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="hsl(var(--profit))" stopOpacity="0.3" />
+                          <stop offset="100%" stopColor="hsl(var(--profit))" stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+                      <path
+                        d="M0,80 C30,75 60,60 100,55 C140,50 160,65 200,45 C240,25 280,30 320,20 C360,10 380,15 400,8"
+                        fill="none"
+                        stroke="hsl(var(--profit))"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M0,80 C30,75 60,60 100,55 C140,50 160,65 200,45 C240,25 280,30 320,20 C360,10 380,15 400,8 L400,100 L0,100 Z"
+                        fill="url(#curveGrad)"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
