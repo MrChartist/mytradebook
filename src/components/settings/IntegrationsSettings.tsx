@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { PlanGate } from "@/components/PlanGate";
 import { 
   Loader2, Send, RefreshCw, CheckCircle, 
   Smartphone, Database, Clock, AlertTriangle, 
@@ -284,9 +285,12 @@ export default function IntegrationsSettings() {
   return (
     <div className="space-y-6">
       {/* Telegram Integration — Multi-chat system */}
-      <TelegramSettings />
+      <PlanGate plan="pro" feature="telegramNotifications" message="Upgrade to Pro to enable Telegram notifications.">
+        <TelegramSettings />
+      </PlanGate>
 
       {/* Dhan API Integration */}
+      <PlanGate plan="pro" feature="brokerIntegration" message="Upgrade to Pro to connect your Dhan broker account.">
       <div className="glass-card p-6">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -643,6 +647,7 @@ export default function IntegrationsSettings() {
           )}
         </div>
       </div>
+      </PlanGate>
 
       {/* Instrument Master Sync */}
       <div className="glass-card p-6">

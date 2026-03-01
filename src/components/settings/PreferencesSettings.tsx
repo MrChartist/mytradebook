@@ -4,13 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useUserSettings } from "@/hooks/useUserSettings";
 
 export default function PreferencesSettings() {
@@ -84,21 +77,17 @@ export default function PreferencesSettings() {
               How often to evaluate price alerts
             </p>
           </div>
-          <Select
+          <select
             value={formData.alert_frequency_minutes.toString()}
-            onValueChange={(value) =>
-              setFormData({ ...formData, alert_frequency_minutes: parseInt(value) })
+            onChange={(e) =>
+              setFormData({ ...formData, alert_frequency_minutes: parseInt(e.target.value) })
             }
+            className="w-28 h-10 rounded-md border border-input bg-card px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
-            <SelectTrigger className="w-28 bg-card border-border">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">1 min</SelectItem>
-              <SelectItem value="5">5 min</SelectItem>
-              <SelectItem value="15">15 min</SelectItem>
-            </SelectContent>
-          </Select>
+            <option value="1">1 min</option>
+            <option value="5">5 min</option>
+            <option value="15">15 min</option>
+          </select>
         </div>
 
         {/* Auto-sync Dhan Portfolio */}
@@ -125,19 +114,15 @@ export default function PreferencesSettings() {
               Choose your preferred color scheme
             </p>
           </div>
-          <Select
+          <select
             value={formData.theme}
-            onValueChange={(value) => setFormData({ ...formData, theme: value })}
+            onChange={(e) => setFormData({ ...formData, theme: e.target.value })}
+            className="w-28 h-10 rounded-md border border-input bg-card px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
-            <SelectTrigger className="w-28 bg-card border-border">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="auto">Auto</SelectItem>
-            </SelectContent>
-          </Select>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="auto">Auto</option>
+          </select>
         </div>
 
         {/* Timezone */}
@@ -148,20 +133,16 @@ export default function PreferencesSettings() {
               Your local timezone for timestamps
             </p>
           </div>
-          <Select
+          <select
             value={formData.timezone}
-            onValueChange={(value) => setFormData({ ...formData, timezone: value })}
+            onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
+            className="w-40 h-10 rounded-md border border-input bg-card px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
-            <SelectTrigger className="w-40 bg-card border-border">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Asia/Kolkata">Asia/Kolkata (IST)</SelectItem>
-              <SelectItem value="America/New_York">America/New_York (EST)</SelectItem>
-              <SelectItem value="Europe/London">Europe/London (GMT)</SelectItem>
-              <SelectItem value="Asia/Singapore">Asia/Singapore (SGT)</SelectItem>
-            </SelectContent>
-          </Select>
+            <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+            <option value="America/New_York">America/New_York (EST)</option>
+            <option value="Europe/London">Europe/London (GMT)</option>
+            <option value="Asia/Singapore">Asia/Singapore (SGT)</option>
+          </select>
         </div>
 
         <Button
