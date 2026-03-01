@@ -1,107 +1,102 @@
 
 
-# Improve Telegram Connection Transparency and Reliability
+# Make Telegram Integration Setup Easy and Foolproof
 
-## Problem
+## Current Issues
 
-The current system silently falls back to the system-wide bot token (`TELEGRAM_BOT_TOKEN` env secret) even when the user hasn't configured their own bot. This creates confusion:
+1. **Confusing Chat ID input** -- Users don't know how to find their Chat ID and enter wrong values (e.g., using bot token number as chat ID)
+2. **No guided step-by-step flow** -- The setup dumps all fields at once without walking users through
+3. **Bot token validation missing** -- Bot tokens are saved without verifying they're real working bots
+4. **Error messages are cryptic** -- "Bad Request: chat not found" doesn't tell users what went wrong or how to fix it
+5. **Instructions are too technical** -- "use getUpdates" is not beginner-friendly
 
-- The UI shows "No personal bot configured" but messages still send via the hidden system bot
-- The "Test" button on chat destinations uses the system bot silently -- user thinks *their* setup works
-- Legacy fallback to `DEFAULT_CHAT_ID` means notifications could go to the admin's chat instead of the user's
-- No "Connect & Verify" step when adding a chat -- broken IDs are saved silently
+## Solution: Guided Setup Wizard with Auto-Validation
 
-## Solution
+### 1. Add Bot Token Validation via Telegram `getMe` API
 
-### 1. Remove Silent System Fallback for User Notifications
+Before saving a bot token, call `https://api.telegram.org/bot<TOKEN>/getMe` to verify it's valid. This:
+- Confirms the token is real
+- Auto-fills the bot username (no need for user to type it)
+- Shows instant feedback: "Bot verified: @TradeBookUpdateBot"
 
-The system bot token should only be used as an explicit opt-in, not a silent fallback for user-specific notifications.
+**Changes:**
+- Add a `telegram-verify` edge function update (or handle inline) to call `getMe`
+- In `TelegramSettings.tsx`: When user pastes bot token, auto-verify and show bot name
+- Remove the "Bot Username" manual input field -- auto-populated from `getMe`
 
-**Edge function changes (`telegram-notify`):**
-- Remove the `DEFAULT_CHAT_ID` fallback for user notifications (lines 1102-1105) -- if a user has no chats configured, return `skipped` instead of sending to the admin's default chat
-- When handling `custom` type with explicit `chat_id`, resolve the bot token using the 3-tier chain: `payload.bot_token` > user's `telegram_bot_token` > system token (this already partially works but needs the user context)
-- Remove the `test` type's hardcoded system bot usage -- route it through the same 3-tier resolution
+### 2. Improve Chat ID Instructions with Visual Guide
 
-### 2. Add "Connect & Verify" on Chat Add
+Replace the current terse bullet list with a proper expandable guide:
+- **Personal Chat**: "Open Telegram, search for @userinfobot, send /start -- it will reply with your Chat ID"
+- **Group**: "Add your bot to the group, then send /start in the group. Forward any group message to @userinfobot"
+- **Channel**: "Add your bot as admin to the channel. The Chat ID starts with -100 followed by numbers"
+- Add a note: "Chat IDs are numbers only. Personal IDs are positive (e.g., 123456789). Groups/channels start with - (e.g., -1001234567890)"
 
-When a user adds a new chat destination, automatically send a test message to verify the bot can reach that chat before saving.
+### 3. Improve Error Messages with Actionable Guidance
 
-**Hook changes (`useTelegramChats`):**
-- In `addChat` mutation: after inserting the chat, immediately call the test endpoint
-- If the test fails, delete the just-inserted chat and show the error
-- Show a "Verifying..." loading state during this process
+Map common Telegram API errors to user-friendly messages:
+- "chat not found" -> "This Chat ID doesn't exist or your bot hasn't been added to it. Make sure you've sent /start to the bot first, or added the bot to your group/channel as an admin."
+- "bot was blocked by the user" -> "The user has blocked this bot. They need to unblock it and send /start again."
+- "Forbidden: bot is not a member" -> "The bot isn't a member of this group/channel. Add it first."
 
-### 3. Show Bot Source Indicator in UI
+**Changes in `useTelegramChats.ts`**: Add an error mapping function that translates API errors.
 
-Make it crystal clear which bot is being used for each chat destination.
+### 4. Auto-Verify Bot Token on Save (via `getMe`)
 
-**UI changes (`TelegramSettings`):**
-- Next to each chat destination, show a small badge: "Your Bot", "Personal Default", or "System Bot" based on which token tier would be used
-- If no bot is available at all (no per-chat, no personal, no system), show a red warning "No bot available -- notifications will fail"
-- In the "No personal bot configured" banner, change the wording to clarify: "Messages are currently sent via the shared system bot. For independent delivery, configure your own bot."
+**New logic in `TelegramSettings.tsx`:**
+- When user clicks "Save Bot", first call the Telegram `getMe` API (via edge function) to validate
+- If valid: auto-fill username, save, show success
+- If invalid: show "Invalid bot token -- please check and try again"
 
-### 4. Add Connection Status Indicator
+**Edge function addition** (`telegram-verify` already exists, enhance it):
+- Add a `verify_bot_token` action that calls `getMe` and returns bot info
 
-Show real-time connection health per chat destination.
+### 5. Simplify the Add Chat Flow
 
-**Database change:**
-- Add `last_verified_at` and `verification_status` columns to `telegram_chats` table
-- Updated on every successful test or notification delivery
-
-**UI changes:**
-- Show a green/red dot next to each chat: green if verified within 24h, yellow if older, red if last delivery failed
-- The test button updates this status
-
-### 5. Prevent Notifications Without Explicit Setup
-
-**Edge function changes:**
-- For auto-notifications (trade monitor, alerts), require at least one `telegram_chats` entry with matching notification types enabled -- don't fall back to legacy `telegram_chat_id` or system defaults
-- Keep the legacy fallback only for the `custom` direct-send type (used by manual sends from Trade Detail Modal)
+Currently the "Add Chat" form shows Chat ID + Label + optional custom bot all at once. Simplify:
+- Default label auto-generates from Chat ID type (detect if it starts with -100 = "Channel/Group", positive number = "Personal Chat")
+- Move the label field to be editable after adding (inline edit on the chat card)
+- Keep custom bot as an expandable section (already done)
 
 ## Technical Details
 
-### Database Migration
-
-```sql
-ALTER TABLE public.telegram_chats
-  ADD COLUMN IF NOT EXISTS last_verified_at timestamptz,
-  ADD COLUMN IF NOT EXISTS verification_status text DEFAULT 'unverified';
-```
-
 ### Files Modified
 
-1. **Database migration** -- add `last_verified_at`, `verification_status` to `telegram_chats`
-2. **`supabase/functions/telegram-notify/index.ts`** -- remove silent fallbacks, fix `test`/`custom` type token resolution, update verification status on success
-3. **`src/hooks/useTelegramChats.ts`** -- add verify-on-add logic, update verification status after test
-4. **`src/components/settings/TelegramSettings.tsx`** -- add bot source badges, connection status dots, improved "no bot" messaging
-5. **`src/hooks/useUserSettings.ts`** -- no changes needed (already supports the fields)
+1. **`supabase/functions/telegram-verify/index.ts`** -- Add `getMe` verification endpoint for bot tokens
+2. **`src/components/settings/TelegramSettings.tsx`** -- Improved instructions, auto-verify bot token, better error messages, simplified add chat flow, auto-label
+3. **`src/hooks/useTelegramChats.ts`** -- Add error mapping for user-friendly messages, auto-label logic
 
-### Edge Function Token Resolution (After Fix)
+### Bot Token Verification Flow
 
 ```text
-custom + explicit chat_id:
-  Token: payload.bot_token > user.telegram_bot_token > SYSTEM_BOT_TOKEN
-  (requires auth context to resolve user token)
-
-auto notifications (trade/alert/study/report):
-  Chats: telegram_chats table filtered by notification_types
-  Token per chat: chat.bot_token > user.telegram_bot_token > SYSTEM_BOT_TOKEN
-  No fallback to DEFAULT_CHAT_ID
-
-test (via Settings UI):
-  Token: payload.bot_token > user.telegram_bot_token > SYSTEM_BOT_TOKEN
-  Chat: explicit chat_id from payload
+User pastes token -> Click "Save & Verify"
+  -> Edge function calls https://api.telegram.org/bot<TOKEN>/getMe
+  -> Success: returns { ok: true, result: { username: "MyBot", first_name: "My Bot" } }
+    -> Auto-fill username, save to DB, show green checkmark
+  -> Failure: returns { ok: false, description: "Not Found" }
+    -> Show "Invalid token" error, don't save
 ```
 
-### UI Bot Source Badge Logic
+### Error Mapping (Chat Add)
 
 ```text
-For each chat destination:
-  if chat.bot_token exists -> "Custom Bot" (blue badge)
-  else if user_settings.telegram_bot_token exists -> "Your Default Bot" (green badge)
-  else if SYSTEM_BOT_TOKEN exists -> "System Bot" (yellow badge with warning)
-  else -> "No Bot" (red badge)
+"chat not found" -> 
+  "Chat ID not found. Tips:
+   - For personal chats: Send /start to your bot first
+   - For groups: Add the bot to the group
+   - For channels: Add the bot as admin
+   - Channel IDs start with -100 (e.g., -1001234567890)"
+
+"bot was blocked" -> "This user blocked the bot. They need to unblock and /start again."
+"Forbidden: bot is not a member" -> "Bot isn't in this group. Add it as a member first."
+"Bad Request: group chat was upgraded" -> "This group was upgraded to a supergroup. Use the new Chat ID (starts with -100)."
 ```
 
-The system token availability can be inferred: if a test message succeeds without any user/chat token, the system token exists.
+### Auto-Label Logic
+
+```text
+Chat ID starts with "-100" -> "Channel / Supergroup"
+Chat ID starts with "-" -> "Group"
+Chat ID is positive number -> "Personal Chat"
+```
 
