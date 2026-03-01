@@ -33,6 +33,9 @@ verify_jwt = false
 [functions.dhan-verify]
 verify_jwt = false
 
+[functions.dhan-auth]
+verify_jwt = false
+
 [functions.morning-briefing]
 verify_jwt = false
 
