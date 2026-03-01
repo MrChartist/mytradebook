@@ -26,7 +26,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_STORAGE_KEY = `sb-nuilpmoipiazjafpjaft-auth-token`;
-const MAX_LOADING_MS = 8000; // 8 second max loading time
+const MAX_LOADING_MS = 1200; // fast-fail loading guard for snappy auth UX
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -113,7 +113,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (existingSession?.user) {
           console.log("[Auth] Existing user found:", existingSession.user.email);
-          await fetchProfile(existingSession.user.id);
+          // Keep init fast; do not block UI on profile fetch
+          fetchProfile(existingSession.user.id);
         }
 
         resolveLoading();
