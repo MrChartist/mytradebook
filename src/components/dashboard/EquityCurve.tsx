@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import {
   Area,
   AreaChart,
@@ -5,27 +7,64 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  ReferenceDot,
 } from "recharts";
-
-const data = [
-  { date: "Jan 01", value: 100000 },
-  { date: "Jan 08", value: 102500 },
-  { date: "Jan 15", value: 98000 },
-  { date: "Jan 22", value: 105000 },
-  { date: "Jan 29", value: 112000 },
-  { date: "Feb 05", value: 108500 },
-  { date: "Feb 12", value: 115000 },
-  { date: "Feb 19", value: 122000 },
-  { date: "Feb 26", value: 118500 },
-  { date: "Mar 04", value: 128000 },
-  { date: "Mar 11", value: 135000 },
-  { date: "Mar 18", value: 142000 },
-];
+import { format } from "date-fns";
+import { useDashboard } from "@/pages/Dashboard";
+import { useUserSettings } from "@/hooks/useUserSettings";
+import { useCapitalTransactions } from "@/hooks/useCapitalTransactions";
+import { ArrowUpRight } from "lucide-react";
 
 export function EquityCurve() {
-  const startValue = data[0].value;
-  const endValue = data[data.length - 1].value;
-  const isProfit = endValue > startValue;
+  const { trades } = useDashboard();
+  const { settings } = useUserSettings();
+  const { transactions: capitalTransactions } = useCapitalTransactions();
+  const startingCapital = (settings as any)?.starting_capital ?? 500000;
+
+  const { data, isProfit, capitalEventIndices } = useMemo(() => {
+    const closed = trades
+      .filter((t) => t.status === "CLOSED" && t.closed_at && t.pnl != null)
+      .sort((a, b) => new Date(a.closed_at!).getTime() - new Date(b.closed_at!).getTime());
+
+    type TimelineEvent = { date: Date; dateStr: string } & (
+      | { kind: "trade"; pnl: number }
+      | { kind: "capital"; type: "DEPOSIT" | "WITHDRAWAL"; amount: number }
+    );
+
+    const events: TimelineEvent[] = [];
+    for (const t of closed) {
+      events.push({ date: new Date(t.closed_at!), dateStr: format(new Date(t.closed_at!), "MMM dd"), kind: "trade", pnl: t.pnl || 0 });
+    }
+    for (const ct of capitalTransactions) {
+      events.push({ date: new Date(ct.transaction_date), dateStr: format(new Date(ct.transaction_date), "MMM dd"), kind: "capital", type: ct.type, amount: Number(ct.amount) });
+    }
+    events.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+    if (events.length === 0) {
+      return { data: [{ date: "Start", value: startingCapital, capitalEvent: null }], isProfit: true, capitalEventIndices: [] as number[] };
+    }
+
+    let equity = startingCapital;
+    let peak = startingCapital;
+    const capIndices: number[] = [];
+    const result = [{ date: events[0].dateStr, value: startingCapital, capitalEvent: null as string | null }];
+
+    for (const ev of events) {
+      if (ev.kind === "trade") {
+        equity += ev.pnl;
+        if (equity > peak) peak = equity;
+      } else {
+        if (ev.type === "DEPOSIT") { equity += ev.amount; peak += ev.amount; }
+        else { equity -= ev.amount; peak -= ev.amount; }
+      }
+      const idx = result.length;
+      if (ev.kind === "capital") capIndices.push(idx);
+      result.push({ date: ev.dateStr, value: equity, capitalEvent: ev.kind === "capital" ? ev.type : null });
+    }
+
+    return { data: result, isProfit: equity >= startingCapital, capitalEventIndices: capIndices };
+  }, [trades, capitalTransactions, startingCapital]);
+
   const strokeColor = isProfit ? "hsl(152, 60%, 42%)" : "hsl(0, 72%, 55%)";
   const fillId = isProfit ? "url(#profitGradient)" : "url(#lossGradient)";
 
@@ -36,20 +75,9 @@ export function EquityCurve() {
           <h3 className="font-semibold">Equity Curve</h3>
           <p className="text-xs text-muted-foreground mt-0.5">Portfolio performance</p>
         </div>
-        <div className="flex gap-1 bg-muted rounded-lg p-0.5">
-          {["1W", "1M", "3M", "1Y", "ALL"].map((period) => (
-            <button
-              key={period}
-              className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
-                period === "3M"
-                  ? "bg-background shadow-sm text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {period}
-            </button>
-          ))}
-        </div>
+        <Link to="/analytics" className="flex items-center gap-1 text-xs text-primary hover:underline">
+          View Analytics <ArrowUpRight className="w-3 h-3" />
+        </Link>
       </div>
       <div className="h-[260px]">
         <ResponsiveContainer width="100%" height="100%">
@@ -64,20 +92,8 @@ export function EquityCurve() {
                 <stop offset="100%" stopColor="hsl(0, 72%, 55%)" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <XAxis
-              dataKey="date"
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: "hsl(220, 9%, 46%)", fontSize: 11 }}
-              dy={8}
-            />
-            <YAxis
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: "hsl(220, 9%, 46%)", fontSize: 11 }}
-              tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}k`}
-              dx={-5}
-            />
+            <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: "hsl(220, 9%, 46%)", fontSize: 11 }} dy={8} />
+            <YAxis axisLine={false} tickLine={false} tick={{ fill: "hsl(220, 9%, 46%)", fontSize: 11 }} tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}k`} dx={-5} />
             <Tooltip
               contentStyle={{
                 backgroundColor: "hsl(0 0% 100%)",
@@ -88,14 +104,28 @@ export function EquityCurve() {
               }}
               labelStyle={{ color: "hsl(222, 47%, 11%)", fontWeight: 600 }}
               formatter={(value: number) => [`₹${value.toLocaleString("en-IN")}`, "Value"]}
+              labelFormatter={(label, payload) => {
+                const item = payload?.[0]?.payload;
+                if (item?.capitalEvent) return `${label} (${item.capitalEvent === "DEPOSIT" ? "💰 Deposit" : "💸 Withdrawal"})`;
+                return label;
+              }}
             />
-            <Area
-              type="monotone"
-              dataKey="value"
-              stroke={strokeColor}
-              strokeWidth={2}
-              fill={fillId}
-            />
+            <Area type="monotone" dataKey="value" stroke={strokeColor} strokeWidth={2} fill={fillId} />
+            {capitalEventIndices.map((idx) => {
+              const point = data[idx];
+              if (!point) return null;
+              return (
+                <ReferenceDot
+                  key={idx}
+                  x={point.date}
+                  y={point.value}
+                  r={4}
+                  fill={point.capitalEvent === "DEPOSIT" ? "hsl(152, 60%, 42%)" : "hsl(0, 72%, 55%)"}
+                  stroke="hsl(var(--background))"
+                  strokeWidth={2}
+                />
+              );
+            })}
           </AreaChart>
         </ResponsiveContainer>
       </div>
