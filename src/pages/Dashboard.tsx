@@ -1,4 +1,5 @@
-import { useState, useMemo, createContext, useContext } from "react";
+import { useState, useMemo, useCallback, createContext, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { OnboardingWelcome } from "@/components/dashboard/OnboardingWelcome";
 import { DashboardGreeting } from "@/components/dashboard/DashboardGreeting";
 import { DashboardKPICards } from "@/components/dashboard/DashboardKPICards";
@@ -80,6 +81,24 @@ export default function Dashboard() {
   })), [openTrades]);
   const { prices, isPolling, lastUpdated } = useLivePrices(openInstruments);
 
+  const navigate = useNavigate();
+
+  // Compute dailyPnl for heatmap from trades already in context
+  const dailyPnl = useMemo(() => {
+    const map: Record<string, number> = {};
+    trades.forEach((t) => {
+      if (t.status === "CLOSED" && t.closed_at && t.pnl) {
+        const key = format(new Date(t.closed_at), "yyyy-MM-dd");
+        map[key] = (map[key] || 0) + t.pnl;
+      }
+    });
+    return map;
+  }, [trades]);
+
+  const handleHeatmapDayClick = useCallback((dateStr: string) => {
+    navigate("/calendar");
+  }, [navigate]);
+
   const ctx: DashboardContextValue = {
     selectedMonth, setSelectedMonth, segment,
     trades, monthTrades, openTrades,
@@ -113,7 +132,7 @@ export default function Dashboard() {
         return (
           <div key={w.id} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <StreakDiscipline />
-            <CalendarHeatmap />
+            <CalendarHeatmap dailyPnl={dailyPnl} showLink onDayClick={handleHeatmapDayClick} />
           </div>
         );
       case "monthly":
