@@ -8,7 +8,7 @@ import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { lazy, Suspense } from "react";
-import { Loader2, TrendingUp } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Index from "./pages/Index";
 
 // Lazy-loaded routes
@@ -34,12 +34,7 @@ const queryClient = new QueryClient();
 function PageLoader() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="flex flex-col items-center gap-4 animate-fade-in">
-        <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
-          <TrendingUp className="w-6 h-6 text-primary-foreground" />
-        </div>
-        <Loader2 className="w-5 h-5 animate-spin text-primary" />
-      </div>
+      <Loader2 className="w-6 h-6 animate-spin text-primary" />
     </div>
   );
 }

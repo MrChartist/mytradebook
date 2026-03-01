@@ -22,7 +22,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="min-h-screen bg-background">
       <Sidebar />
-      <main className="lg:ml-[230px] min-h-screen pt-14 lg:pt-0 transition-[margin] duration-300">
+      <main className="lg:ml-[230px] min-h-screen pt-14 lg:pt-0">
         <TrialBanner />
         {isTokenExpired && (
           <div
