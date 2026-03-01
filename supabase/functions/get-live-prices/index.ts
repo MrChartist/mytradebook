@@ -259,15 +259,27 @@ serve(async (req) => {
         const errText = await quoteRes.text();
         console.error("Dhan quote error:", quoteRes.status, errText);
 
-        // If 401, mark token as potentially expired
+        // If 401, parse the error body to distinguish 806 (Data API not subscribed) from actual token expiry
         if (quoteRes.status === 401) {
+          let errorType = "token_expired";
+          let message = userCreds.hasApiKey
+            ? "Dhan token expired. Go to Settings to re-authorize with your API Key."
+            : "Dhan access token is invalid or expired. Update it in Settings.";
+
+          // Try to parse error body for specific error codes
+          try {
+            const errBody = JSON.parse(errText);
+            if (errBody?.data?.["806"] || errText.includes("not Subscribed") || errText.includes("Data APIs")) {
+              errorType = "data_api_not_subscribed";
+              message = "Dhan Data API plan not active. Go to web.dhan.co → My Profile → Access DhanHQ APIs and subscribe to a Data API plan (free tier available).";
+            }
+          } catch { /* ignore parse errors */ }
+
           return new Response(
             JSON.stringify({
               success: false,
-              error: "token_expired",
-              message: userCreds.hasApiKey
-                ? "Dhan token expired. Go to Settings to re-authorize with your API Key."
-                : "Dhan access token is invalid or expired. Update it in Settings.",
+              error: errorType,
+              message,
               has_api_key: userCreds.hasApiKey,
               prices: {},
               timestamp,
