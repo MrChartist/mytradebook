@@ -9,6 +9,7 @@ import { TimeOfDayAnalysis } from "@/components/analytics/TimeOfDayAnalysis";
 import { DayOfWeekAnalysis } from "@/components/analytics/DayOfWeekAnalysis";
 import { StreakTracker } from "@/components/analytics/StreakTracker";
 import { SetupTagPerformance } from "@/components/analytics/SetupTagPerformance";
+import { PlanGate } from "@/components/PlanGate";
 
 export default function Analytics() {
   const { trades, summary } = useTrades();
@@ -52,22 +53,24 @@ export default function Analytics() {
       <EquityCurveDrawdown trades={trades} startingCapital={startingCapital} />
 
       {/* Segment Performance Breakdown */}
-      <SegmentPerformance trades={trades} />
+      <PlanGate plan="pro" feature="advancedAnalytics" message="Upgrade to Pro to unlock segment breakdown, time analysis, and more.">
+        <SegmentPerformance trades={trades} />
 
-      {/* Time & Day Heatmaps */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <TimeOfDayAnalysis trades={trades} />
-        <DayOfWeekAnalysis trades={trades} />
-      </div>
+        {/* Time & Day Heatmaps */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+          <TimeOfDayAnalysis trades={trades} />
+          <DayOfWeekAnalysis trades={trades} />
+        </div>
 
-      {/* Streak & Tag Performance */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <StreakTracker trades={trades} />
-        <SetupTagPerformance trades={trades} />
-      </div>
+        {/* Streak & Tag Performance */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+          <StreakTracker trades={trades} />
+          <SetupTagPerformance trades={trades} />
+        </div>
 
-      {/* Risk-Reward Analytics */}
-      <RiskRewardAnalytics trades={trades} />
+        {/* Risk-Reward Analytics */}
+        <RiskRewardAnalytics trades={trades} />
+      </PlanGate>
 
       {closed.length === 0 && (
         <div className="surface-card p-12 text-center">

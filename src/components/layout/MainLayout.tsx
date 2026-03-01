@@ -3,6 +3,7 @@ import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { TrialBanner } from "@/components/TrialBanner";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -22,6 +23,7 @@ export function MainLayout({ children }: MainLayoutProps) {
     <div className="min-h-screen bg-background">
       <Sidebar />
       <main className="lg:ml-[230px] min-h-screen pt-14 lg:pt-0">
+        <TrialBanner />
         {isTokenExpired && (
           <div
             className="bg-loss/10 border-b border-loss/20 px-4 py-2 flex items-center justify-center gap-2 cursor-pointer hover:bg-loss/15 transition-colors"

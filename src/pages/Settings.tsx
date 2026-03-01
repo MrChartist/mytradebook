@@ -1,13 +1,16 @@
-import { User, Bell, Link, Moon, Shield, Tag } from "lucide-react";
+import { User, Moon, Shield, Link, Tag, CreditCard } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProfileSettings from "@/components/settings/ProfileSettings";
 import PreferencesSettings from "@/components/settings/PreferencesSettings";
 import SecuritySettings from "@/components/settings/SecuritySettings";
 import IntegrationsSettings from "@/components/settings/IntegrationsSettings";
 import TagManagementSettings from "@/components/settings/TagManagementSettings";
+import BillingSettings from "@/components/settings/BillingSettings";
+import { useSearchParams } from "react-router-dom";
 
 const settingsTabs = [
   { id: "profile", label: "Profile", icon: User },
+  { id: "billing", label: "Billing", icon: CreditCard },
   { id: "preferences", label: "Preferences", icon: Moon },
   { id: "security", label: "Security", icon: Shield },
   { id: "integrations", label: "Integrations", icon: Link },
@@ -15,9 +18,13 @@ const settingsTabs = [
 ];
 
 export default function Settings() {
+  const [searchParams] = useSearchParams();
+  const defaultTab = settingsTabs.some(t => t.id === searchParams.get("tab"))
+    ? searchParams.get("tab")!
+    : "profile";
+
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Header */}
       <div>
         <h1 className="text-2xl lg:text-3xl font-bold">Settings</h1>
         <p className="text-muted-foreground">
@@ -25,8 +32,7 @@ export default function Settings() {
         </p>
       </div>
 
-      {/* Tabs Layout */}
-      <Tabs defaultValue="profile" className="w-full">
+      <Tabs defaultValue={defaultTab} className="w-full">
         <TabsList className="w-full flex flex-wrap justify-start gap-2 h-auto p-1 bg-card border border-border rounded-lg mb-6">
           {settingsTabs.map((tab) => (
             <TabsTrigger
@@ -42,6 +48,10 @@ export default function Settings() {
 
         <TabsContent value="profile" className="mt-0">
           <ProfileSettings />
+        </TabsContent>
+
+        <TabsContent value="billing" className="mt-0">
+          <BillingSettings />
         </TabsContent>
 
         <TabsContent value="preferences" className="mt-0">
