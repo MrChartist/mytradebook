@@ -185,15 +185,19 @@ export function useTrades(filters?: TradeFilters) {
 
       if (!trade) throw new Error("Trade not found");
 
+      const entryPrice = trade.entry_price ?? 0;
+      if (entryPrice === 0) throw new Error("Cannot close trade without an entry price");
+
       const pnl =
         trade.trade_type === "BUY"
-          ? (exitPrice - trade.entry_price) * trade.quantity
-          : (trade.entry_price - exitPrice) * trade.quantity;
+          ? (exitPrice - entryPrice) * trade.quantity
+          : (entryPrice - exitPrice) * trade.quantity;
 
-      const pnlPercent =
-        trade.trade_type === "BUY"
-          ? ((exitPrice - trade.entry_price) / trade.entry_price) * 100
-          : ((trade.entry_price - exitPrice) / trade.entry_price) * 100;
+      const pnlPercent = entryPrice > 0
+        ? (trade.trade_type === "BUY"
+            ? ((exitPrice - entryPrice) / entryPrice) * 100
+            : ((entryPrice - exitPrice) / entryPrice) * 100)
+        : 0;
 
       const { data, error } = await supabase
         .from("trades")
@@ -242,14 +246,18 @@ export function useTrades(filters?: TradeFilters) {
 
   const deleteTrade = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("trades").delete().eq("id", id);
+      // Soft delete: mark as CANCELLED instead of permanent delete
+      const { error } = await supabase
+        .from("trades")
+        .update({ status: "CANCELLED" as const, closed_at: new Date().toISOString() })
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["trades"] });
       toast({
-        title: "Trade deleted",
-        description: "Trade has been deleted successfully.",
+        title: "Trade removed",
+        description: "Trade has been moved to cancelled.",
       });
     },
     onError: (error) => {

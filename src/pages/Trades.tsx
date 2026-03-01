@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   TrendingUp,
@@ -15,6 +15,7 @@ import {
   Trash2,
   XCircle,
   Upload,
+  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,6 +44,7 @@ import { ViewToggle, type ViewMode } from "@/components/ui/view-toggle";
 import { SortSelect, type SortOption } from "@/components/ui/sort-select";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CsvImportModal } from "@/components/trade/CsvImportModal";
+import { tradesToCSV, downloadCSV } from "@/lib/csv-export";
 
 const segmentLabels: Record<string, string> = {
   Equity_Intraday: "Intraday",
@@ -219,7 +221,20 @@ export default function Trades() {
           )}
           <Button variant="outline" size="sm" onClick={() => setCsvImportOpen(true)}>
             <Upload className="w-4 h-4 mr-2" />
-            Import CSV
+            Import
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              const csv = tradesToCSV(sortedTrades);
+              downloadCSV(csv, `trades-${new Date().toISOString().slice(0, 10)}.csv`);
+              toast.success(`Exported ${sortedTrades.length} trades`);
+            }}
+            disabled={sortedTrades.length === 0}
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Export
           </Button>
           <Button onClick={() => setCreateModalOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
