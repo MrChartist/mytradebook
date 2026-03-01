@@ -2,11 +2,10 @@ import { useMemo } from "react";
 import { useDashboard } from "@/pages/Dashboard";
 import { cn } from "@/lib/utils";
 import { Wallet, Target, TrendingUp, Bell, Plus } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { calculatePnL } from "@/lib/calculations";
 import { formatCurrency } from "@/lib/formatting";
 import { TradeStatus } from "@/lib/constants";
-
 
 interface Props {
   alerts: { id: string; last_triggered: string | null; condition_type: string }[];
@@ -51,11 +50,11 @@ export function DashboardKPICards({ alerts }: Props) {
   const priceAlerts = alerts.filter((a) => ["PRICE_GT", "PRICE_LT"].includes(a.condition_type)).length;
   const techAlerts = alerts.length - priceAlerts;
 
-  const cardBase = "glass-morph shine-overlay p-5 block cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98] transition-all duration-300 hover:translate-y-[-2px]";
+  const cardBase = "surface-card p-5 block cursor-pointer group hover:shadow-md transition-shadow duration-200";
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* Total P&L → Reports */}
+      {/* Total P&L */}
       <div
         role="button"
         tabIndex={0}
@@ -64,10 +63,9 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/reports")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/reports"); }}
       >
-        <div className="flex items-center justify-between mb-3 relative">
-          <div className="absolute -top-5 -right-5 w-16 h-16 dot-pattern opacity-30 rounded-bl-2xl" />
+        <div className="flex items-center justify-between mb-3">
           <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">MTD P&L</span>
-          <div className={cn("inner-panel !p-2 !rounded-xl", realizedPnl + unrealizedPnl >= 0 ? "!bg-profit/8 !border-profit/15" : "!bg-loss/8 !border-loss/15")}>
+          <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center", realizedPnl + unrealizedPnl >= 0 ? "bg-profit/10" : "bg-loss/10")}>
             <Wallet className={cn("w-4 h-4", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")} />
           </div>
         </div>
@@ -92,7 +90,7 @@ export function DashboardKPICards({ alerts }: Props) {
         </div>
       </div>
 
-      {/* Open Positions → /trades?status=OPEN */}
+      {/* Open Positions */}
       <div
         role="button"
         tabIndex={0}
@@ -101,10 +99,9 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/trades?status=OPEN")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/trades?status=OPEN"); }}
       >
-        <div className="flex items-center justify-between mb-3 relative">
-          <div className="absolute -top-5 -right-5 w-16 h-16 dot-pattern opacity-30 rounded-bl-2xl" />
+        <div className="flex items-center justify-between mb-3">
           <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Open Positions</span>
-          <div className="inner-panel !p-2 !rounded-xl !bg-primary/8 !border-primary/15">
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-primary/10">
             <Target className="w-4 h-4 text-primary" />
           </div>
         </div>
@@ -115,7 +112,7 @@ export function DashboardKPICards({ alerts }: Props) {
         <p className="text-[10px] text-muted-foreground mt-1.5">{monthTrades.length} total trades this month</p>
       </div>
 
-      {/* Win Rate → /analytics */}
+      {/* Win Rate */}
       <div
         role="button"
         tabIndex={0}
@@ -124,10 +121,9 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/analytics")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/analytics"); }}
       >
-        <div className="flex items-center justify-between mb-3 relative">
-          <div className="absolute -top-5 -right-5 w-16 h-16 dot-pattern opacity-30 rounded-bl-2xl" />
+        <div className="flex items-center justify-between mb-3">
           <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Win Rate</span>
-          <div className={cn("inner-panel !p-2 !rounded-xl", winRate >= 50 ? "!bg-profit/8 !border-profit/15" : "!bg-loss/8 !border-loss/15")}>
+          <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center", winRate >= 50 ? "bg-profit/10" : "bg-loss/10")}>
             <TrendingUp className={cn("w-4 h-4", winRate >= 50 ? "text-profit" : "text-loss")} />
           </div>
         </div>
@@ -145,7 +141,7 @@ export function DashboardKPICards({ alerts }: Props) {
         </p>
       </div>
 
-      {/* Active Alerts → /alerts?status=active */}
+      {/* Active Alerts */}
       <div
         role="button"
         tabIndex={0}
@@ -154,10 +150,9 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/alerts")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/alerts"); }}
       >
-        <div className="flex items-center justify-between mb-3 relative">
-          <div className="absolute -top-5 -right-5 w-16 h-16 dot-pattern opacity-30 rounded-bl-2xl" />
+        <div className="flex items-center justify-between mb-3">
           <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Active Alerts</span>
-          <div className="inner-panel !p-2 !rounded-xl !bg-warning/8 !border-warning/15">
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-warning/10">
             <Bell className="w-4 h-4 text-warning" />
           </div>
         </div>
