@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { PostTradeReviewModal } from "@/components/modals/PostTradeReviewModal";
 import {
@@ -25,6 +25,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import {
   ArrowUpRight,
@@ -47,6 +53,10 @@ import {
   ExternalLink,
   Activity,
   Send,
+  MessageCircle,
+  FileText,
+  BarChart3,
+  History,
 } from "lucide-react";
 import type { Trade } from "@/hooks/useTrades";
 import { useTrades } from "@/hooks/useTrades";
@@ -54,6 +64,9 @@ import { useTradeEvents } from "@/hooks/useTradeEvents";
 import { useTradeTags } from "@/hooks/useTradeTags";
 import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 import { Trash2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { sendManualTradeSnapshot, sendManualPnlSnapshot, sendManualCustomNote } from "@/lib/telegram";
+import { toast } from "sonner";
 
 interface TradeDetailModalProps {
   trade: Trade | null;
@@ -116,7 +129,71 @@ export function TradeDetailModal({
   const [newEventQty, setNewEventQty] = useState("");
   const [newEventNotes, setNewEventNotes] = useState("");
 
+  // Telegram manual send state
+  const [isSendingTelegram, setIsSendingTelegram] = useState(false);
+  const [showCustomNote, setShowCustomNote] = useState(false);
+  const [customNoteText, setCustomNoteText] = useState("");
+  const [showNotificationHistory, setShowNotificationHistory] = useState(false);
+  const [deliveryLogs, setDeliveryLogs] = useState<any[]>([]);
+  const [loadingLogs, setLoadingLogs] = useState(false);
+
   if (!trade) return null;
+
+  const handleSendTradeSnapshot = async () => {
+    setIsSendingTelegram(true);
+    try {
+      const res = await sendManualTradeSnapshot(trade.id);
+      if (res.success) {
+        toast.success(`Trade snapshot sent to ${res.sent_to || 1} chat(s)`);
+      } else {
+        toast.error(res.error || "Failed to send");
+      }
+    } catch { toast.error("Failed to send"); }
+    setIsSendingTelegram(false);
+  };
+
+  const handleSendPnlSnapshot = async () => {
+    setIsSendingTelegram(true);
+    try {
+      const res = await sendManualPnlSnapshot(trade.id);
+      if (res.success) {
+        toast.success(`P&L snapshot sent to ${res.sent_to || 1} chat(s)`);
+      } else {
+        toast.error(res.error || "Failed to send");
+      }
+    } catch { toast.error("Failed to send"); }
+    setIsSendingTelegram(false);
+  };
+
+  const handleSendCustomNote = async () => {
+    if (!customNoteText.trim()) return;
+    setIsSendingTelegram(true);
+    try {
+      const res = await sendManualCustomNote(trade.id, customNoteText);
+      if (res.success) {
+        toast.success(`Custom note sent to ${res.sent_to || 1} chat(s)`);
+        setCustomNoteText("");
+        setShowCustomNote(false);
+      } else {
+        toast.error(res.error || "Failed to send");
+      }
+    } catch { toast.error("Failed to send"); }
+    setIsSendingTelegram(false);
+  };
+
+  const loadDeliveryLogs = async () => {
+    setLoadingLogs(true);
+    try {
+      const { data } = await supabase
+        .from("telegram_delivery_log")
+        .select("*")
+        .eq("user_id", trade.user_id)
+        .order("created_at", { ascending: false })
+        .limit(20);
+      setDeliveryLogs(data || []);
+    } catch { setDeliveryLogs([]); }
+    setLoadingLogs(false);
+  };
 
   const startEditing = () => {
     setEditForm({
@@ -1274,6 +1351,105 @@ export function TradeDetailModal({
         )}
         </>
         )}
+
+        {/* Telegram Manual Send */}
+        <Separator />
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h4 className="font-medium flex items-center gap-2">
+              <Send className="w-4 h-4 text-primary" />
+              Send to Telegram
+            </h4>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setShowNotificationHistory(!showNotificationHistory);
+                if (!showNotificationHistory) loadDeliveryLogs();
+              }}
+            >
+              <History className="w-4 h-4 mr-1" />
+              History
+            </Button>
+          </div>
+
+          <div className="flex gap-2 flex-wrap">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" disabled={isSendingTelegram}>
+                  {isSendingTelegram ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Send className="w-4 h-4 mr-1" />}
+                  Send Now
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem onClick={handleSendTradeSnapshot}>
+                  <FileText className="w-4 h-4 mr-2" />
+                  Full Trade Card
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSendPnlSnapshot}>
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  P&L Snapshot
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowCustomNote(true)}>
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Custom Message
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Custom Note Input */}
+          {showCustomNote && (
+            <div className="p-3 rounded-lg bg-accent/50 space-y-2">
+              <Textarea
+                value={customNoteText}
+                onChange={(e) => setCustomNoteText(e.target.value)}
+                placeholder="Type your message..."
+                className="min-h-[60px]"
+              />
+              <div className="flex gap-2">
+                <Button size="sm" onClick={handleSendCustomNote} disabled={isSendingTelegram || !customNoteText.trim()}>
+                  {isSendingTelegram && <Loader2 className="w-4 h-4 mr-1 animate-spin" />}
+                  Send
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => { setShowCustomNote(false); setCustomNoteText(""); }}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Notification History */}
+          {showNotificationHistory && (
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {loadingLogs ? (
+                <div className="flex items-center justify-center py-4">
+                  <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                </div>
+              ) : deliveryLogs.length === 0 ? (
+                <p className="text-xs text-muted-foreground text-center py-3">No delivery logs found</p>
+              ) : (
+                deliveryLogs.map((log) => (
+                  <div key={log.id} className="flex items-center justify-between p-2 rounded-lg bg-accent/30 text-xs">
+                    <div className="flex items-center gap-2">
+                      {log.success ? (
+                        <CheckCircle2 className="w-3 h-3 text-profit" />
+                      ) : (
+                        <XCircle className="w-3 h-3 text-loss" />
+                      )}
+                      <span className="font-medium">{log.notification_type}</span>
+                      {log.segment && <Badge variant="outline" className="text-[9px] py-0">{log.segment}</Badge>}
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <span className="font-mono">{log.chat_id?.slice(-6)}</span>
+                      <span>{new Date(log.created_at).toLocaleString("en-IN", { dateStyle: "short", timeStyle: "short" })}</span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Delete Trade Button */}
         <Separator />
