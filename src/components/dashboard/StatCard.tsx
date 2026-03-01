@@ -34,12 +34,20 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         onClick={isClickable ? handleClick : undefined}
         onKeyDown={isClickable ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleClick(); } } : undefined}
         className={cn(
-          "premium-card-hover p-5 group",
+          "glass-morph shine-overlay p-5 group transition-all duration-300",
           isClickable && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-[0.98]"
         )}
       >
+        {/* Gradient glow on hover */}
+        <div className={cn(
+          "absolute -bottom-6 -right-6 w-28 h-28 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-500",
+          changeType === "profit" && "bg-profit/10",
+          changeType === "loss" && "bg-loss/10",
+          changeType === "neutral" && "bg-primary/10"
+        )} />
+
         {/* Decorative dot pattern */}
-        <div className="absolute top-0 right-0 w-24 h-24 dot-pattern opacity-40 rounded-bl-3xl" />
+        <div className="absolute top-0 right-0 w-24 h-24 dot-pattern opacity-30 rounded-bl-3xl" />
 
         <div className="flex items-start justify-between relative">
           <div className="space-y-2">
@@ -63,7 +71,7 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
           </div>
           <div
             className={cn(
-              "inner-panel !p-2.5 !rounded-xl",
+              "inner-panel !p-2.5 !rounded-xl transition-transform duration-300 group-hover:scale-110",
               changeType === "profit" && "!bg-profit/8 !border-profit/15",
               changeType === "loss" && "!bg-loss/8 !border-loss/15",
               changeType === "neutral" && "!bg-primary/8 !border-primary/15"
@@ -71,7 +79,7 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
           >
             <Icon
               className={cn(
-                "w-5 h-5",
+                "w-5 h-5 icon-bounce",
                 changeType === "profit" && "text-profit",
                 changeType === "loss" && "text-loss",
                 changeType === "neutral" && "text-primary"

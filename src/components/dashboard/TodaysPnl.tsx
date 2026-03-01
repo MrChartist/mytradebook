@@ -36,8 +36,8 @@ export function TodaysPnl() {
   const totalPnl = realizedPnl + unrealizedPnl;
 
   return (
-    <div className="glass-card-hover p-5 relative overflow-hidden group">
-      <div className="absolute top-0 left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-[hsl(var(--glass-shine)/0.2)] to-transparent" />
+    <div className="glass-morph shine-overlay p-5 group transition-all duration-300 hover:translate-y-[-2px]">
+      <div className="absolute top-0 left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-[hsl(var(--glass-shine)/0.15)] to-transparent" />
 
       <div className="flex items-start justify-between">
         <div className="space-y-1">
