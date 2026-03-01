@@ -48,6 +48,30 @@ Deno.serve(async (req) => {
       );
     }
 
+    // ── RESOLVE BY TOKEN: Find pending consent user (no params needed) ──
+    if (action === "resolve-by-token") {
+      const { data: settings, error } = await supabase
+        .from("user_settings")
+        .select("user_id, dhan_consent_id")
+        .not("dhan_consent_id", "is", null)
+        .eq("dhan_enabled", false)
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error || !settings?.user_id || !settings?.dhan_consent_id) {
+        return new Response(
+          JSON.stringify({ success: false, error: "No pending Dhan authorization found. Please start the connection process from Settings." }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, user_id: settings.user_id, consent_id: settings.dhan_consent_id }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // All other actions require user_id
     const { user_id } = body;
     if (!user_id) throw new Error("user_id is required");
