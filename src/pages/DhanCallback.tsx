@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function DhanCallback() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [message, setMessage] = useState("Connecting to Dhan...");
 
@@ -16,18 +14,40 @@ export default function DhanCallback() {
     const tokenId = searchParams.get("tokenId");
     const consentId = searchParams.get("consentId") || localStorage.getItem("dhan_consent_id");
 
-    if (!tokenId || !consentId || !user?.id) {
+    if (!tokenId) {
       setStatus("error");
-      setMessage("Missing authorization parameters. Please try again from Settings.");
+      setMessage("Missing tokenId. Please try again from Settings.");
+      return;
+    }
+
+    if (!consentId) {
+      setStatus("error");
+      setMessage("Missing consentId. Please try again from Settings.");
       return;
     }
 
     const exchangeToken = async () => {
       try {
+        // Step 1: Resolve user_id from consent_id via backend
+        const { data: resolveData, error: resolveError } = await supabase.functions.invoke("dhan-auth", {
+          body: {
+            action: "resolve-consent",
+            consent_id: consentId,
+          },
+        });
+
+        if (resolveError) throw resolveError;
+        if (!resolveData?.success || !resolveData?.user_id) {
+          throw new Error(resolveData?.error || "Could not identify user from consent. Please reconnect from Settings.");
+        }
+
+        const userId = resolveData.user_id;
+
+        // Step 2: Exchange token using resolved user_id
         const { data, error } = await supabase.functions.invoke("dhan-auth", {
           body: {
             action: "exchange-token",
-            user_id: user.id,
+            user_id: userId,
             consent_id: consentId,
             token_id: tokenId,
           },
@@ -39,7 +59,6 @@ export default function DhanCallback() {
           setStatus("success");
           setMessage(`Connected as ${data.account_name}!`);
           localStorage.removeItem("dhan_consent_id");
-          // Auto-redirect after 2 seconds
           setTimeout(() => navigate("/settings"), 2000);
         } else {
           throw new Error(data?.error || "Token exchange failed");
@@ -52,7 +71,7 @@ export default function DhanCallback() {
     };
 
     exchangeToken();
-  }, [searchParams, user?.id, navigate]);
+  }, [searchParams, navigate]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">

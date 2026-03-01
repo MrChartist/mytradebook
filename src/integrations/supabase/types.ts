@@ -1223,6 +1223,7 @@ export type Database = {
           dhan_api_key: string | null
           dhan_api_secret: string | null
           dhan_client_id: string | null
+          dhan_consent_id: string | null
           dhan_enabled: boolean | null
           dhan_token_expiry: string | null
           dhan_verified_at: string | null
@@ -1260,6 +1261,7 @@ export type Database = {
           dhan_api_key?: string | null
           dhan_api_secret?: string | null
           dhan_client_id?: string | null
+          dhan_consent_id?: string | null
           dhan_enabled?: boolean | null
           dhan_token_expiry?: string | null
           dhan_verified_at?: string | null
@@ -1297,6 +1299,7 @@ export type Database = {
           dhan_api_key?: string | null
           dhan_api_secret?: string | null
           dhan_client_id?: string | null
+          dhan_consent_id?: string | null
           dhan_enabled?: boolean | null
           dhan_token_expiry?: string | null
           dhan_verified_at?: string | null

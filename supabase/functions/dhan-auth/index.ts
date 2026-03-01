@@ -20,9 +20,36 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { action, user_id } = body;
+    const { action } = body;
 
     if (!action) throw new Error("action is required");
+
+    // ── RESOLVE CONSENT: Look up user_id from consent_id ────────
+    if (action === "resolve-consent") {
+      const { consent_id } = body;
+      if (!consent_id) throw new Error("consent_id is required");
+
+      const { data: settings, error } = await supabase
+        .from("user_settings")
+        .select("user_id")
+        .eq("dhan_consent_id", consent_id)
+        .single();
+
+      if (error || !settings?.user_id) {
+        return new Response(
+          JSON.stringify({ success: false, error: "No user found for this consent ID. Please reconnect from Settings." }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, user_id: settings.user_id }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // All other actions require user_id
+    const { user_id } = body;
     if (!user_id) throw new Error("user_id is required");
 
     // ── STEP 1: Generate consent URL ────────────────────────────
@@ -78,6 +105,15 @@ Deno.serve(async (req) => {
           JSON.stringify({ success: false, error: "No consentAppId returned from Dhan" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
+      }
+
+      // Save consent_id to user_settings for later lookup
+      const { error: consentSaveErr } = await supabase
+        .from("user_settings")
+        .update({ dhan_consent_id: consentAppId } as any)
+        .eq("user_id", user_id);
+      if (consentSaveErr) {
+        console.warn("Failed to save consent_id:", consentSaveErr);
       }
 
       // Build the authorization URL the user must visit (browser-based login)
@@ -163,7 +199,6 @@ Deno.serve(async (req) => {
         const profileData = await profileRes.json();
         const profile = profileData?.data || profileData;
         accountName = profile?.name || accountName;
-        // Parse Dhan's date format (DD/MM/YYYY HH:mm) to ISO format
         const rawExpiry = profile?.tokenValidity;
         if (rawExpiry) {
           try {
@@ -180,7 +215,7 @@ Deno.serve(async (req) => {
         }
       }
 
-      // Save everything to user_settings
+      // Save everything to user_settings and clear consent_id
       const { error: updateErr } = await supabase
         .from("user_settings")
         .update({
@@ -190,6 +225,7 @@ Deno.serve(async (req) => {
           dhan_enabled: true,
           dhan_account_name: accountName,
           dhan_token_expiry: tokenExpiry,
+          dhan_consent_id: null,
         } as any)
         .eq("user_id", user_id);
 

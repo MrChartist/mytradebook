@@ -44,6 +44,7 @@ const App = () => (
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/dhan-callback" element={<DhanCallback />} />
               <Route
                 path="/"
                 element={
@@ -63,7 +64,6 @@ const App = () => (
                 { path: "/mistakes", element: <Mistakes /> },
                 { path: "/analytics", element: <Analytics /> },
                 { path: "/watchlist", element: <Watchlist /> },
-                { path: "/dhan-callback", element: <DhanCallback /> },
               ].map(({ path, element }) => (
                 <Route
                   key={path}
