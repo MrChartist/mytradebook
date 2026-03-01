@@ -361,6 +361,38 @@
     to { box-shadow: 0 0 20px hsl(var(--primary) / 0.2); }
   }
 
+  /* Gradient text for landing page accents */
+  .gradient-text-orange {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(24 90% 55%), hsl(16 85% 45%));
+  }
+
+  /* Shimmer animation for badges */
+  .shimmer-badge {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer-badge::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.15) 50%, transparent 100%);
+    animation: shimmer 2.5s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* CTA glow pulse */
+  .cta-glow-pulse {
+    animation: ctaGlow 2s ease-in-out infinite alternate;
+  }
+  @keyframes ctaGlow {
+    from { box-shadow: 0 0 15px hsl(24 90% 55% / 0.2); }
+    to { box-shadow: 0 0 30px hsl(24 90% 55% / 0.35); }
+  }
+
   /* Icon micro-animation on parent hover */
   .icon-bounce {
     @apply transition-transform duration-300;
