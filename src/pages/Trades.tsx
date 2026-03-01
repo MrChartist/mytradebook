@@ -14,6 +14,7 @@ import {
   Bookmark,
   Trash2,
   XCircle,
+  Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +42,7 @@ import { InsightCard, type InsightCardAction } from "@/components/ui/insight-car
 import { ViewToggle, type ViewMode } from "@/components/ui/view-toggle";
 import { SortSelect, type SortOption } from "@/components/ui/sort-select";
 import { EmptyState } from "@/components/ui/empty-state";
+import { CsvImportModal } from "@/components/trade/CsvImportModal";
 
 const segmentLabels: Record<string, string> = {
   Equity_Intraday: "Intraday",
@@ -87,6 +89,7 @@ export default function Trades() {
   const [activeStatFilter, setActiveStatFilter] = useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [tradeToDelete, setTradeToDelete] = useState<Trade | null>(null);
+  const [csvImportOpen, setCsvImportOpen] = useState(false);
 
   const filters: TradeFilters = {
     ...(statusFilter !== "ALL" && { status: statusFilter }),
@@ -214,6 +217,10 @@ export default function Trades() {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
+          <Button variant="outline" size="sm" onClick={() => setCsvImportOpen(true)}>
+            <Upload className="w-4 h-4 mr-2" />
+            Import CSV
+          </Button>
           <Button onClick={() => setCreateModalOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             New Trade
@@ -494,6 +501,11 @@ export default function Trades() {
         isLoading={deleteTrade.isPending}
         title="Delete Trade"
         description={`Are you sure you want to delete the trade for "${tradeToDelete?.symbol}"? This action cannot be undone.`}
+      />
+      <CsvImportModal
+        open={csvImportOpen}
+        onOpenChange={setCsvImportOpen}
+        onImportComplete={() => {}}
       />
     </div>
   );

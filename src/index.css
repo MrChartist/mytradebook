@@ -285,3 +285,8 @@
     to { box-shadow: 0 0 20px hsl(var(--primary) / 0.2); }
   }
 }
+
+/* Safe area for mobile bottom nav */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
