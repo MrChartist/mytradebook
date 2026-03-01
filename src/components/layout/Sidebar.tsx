@@ -28,7 +28,8 @@ const mainNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: TrendingUp, label: "Trades", path: "/trades" },
   { icon: Bell, label: "Alerts", path: "/alerts" },
-  { icon: BookOpen, label: "Studies", path: "/studies" },
+  { icon: BookOpen, label: "Journal", path: "/journal" },
+  { icon: Sparkles, label: "Studies", path: "/studies" },
   { icon: Eye, label: "Watchlist", path: "/watchlist" },
 ];
 
