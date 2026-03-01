@@ -1,95 +1,51 @@
 
 
-# Capital Addition & Withdrawal Tracking
+# Enhance Studies with Tag-Based Filtering
 
-## What This Does
-Lets you record when you add money to or withdraw money from your trading account. The Equity Curve will show these capital changes as distinct events (marked with icons/annotations), so your P&L performance isn't distorted by deposits or withdrawals.
+## Problem
+Studies currently only filter by 5 broad categories (Technical, Fundamental, News, Sentiment, Other). Traders need to filter by the actual setup/pattern tags they use -- Classic Patterns, Candlestick Patterns, Setup Context -- which are currently only applied as tags but not filterable on the Studies page.
+
+## Solution
+Add a tag-based filter section to the Studies page that lets you filter studies by any tag (Classic Patterns, Candlesticks, Setup tags, and custom user tags). Keep the existing category filter as-is but make tags the primary way to drill down.
 
 ## Changes
 
-### 1. New Database Table: `capital_transactions`
-Stores every deposit and withdrawal with date, amount, type, and optional notes.
+### 1. Studies Page -- Add Tag Filter Bar (`src/pages/Studies.tsx`)
+- Add a new collapsible "Filter by Tags" section below the existing category buttons
+- Show tag chips grouped by type: Classic Patterns, Candlestick, Setup, Custom
+- Clicking a tag chip filters the studies list to only show studies that have that tag
+- Multiple tags can be selected (OR logic -- show studies matching any selected tag)
+- Show a count badge next to each tag showing how many studies use it
+- Clear all button to reset tag filters
 
-Columns:
-- `id` (uuid, primary key)
-- `user_id` (uuid, RLS-protected)
-- `type` ("DEPOSIT" or "WITHDRAWAL")
-- `amount` (numeric, positive value)
-- `transaction_date` (timestamptz)
-- `notes` (text, optional)
-- `created_at` (timestamptz)
+### 2. Fetch Available Tags (`src/pages/Studies.tsx`)
+- Use the existing `useAvailableTags()` hook to pull system + custom pattern, candlestick, and volume tags from the database
+- Merge with the hardcoded tag arrays already in `CreateStudyModal.tsx` (patternTags, candlestickTags, setupTags) to build the complete filter list
+- Only show tags that actually appear in at least one study (to avoid clutter)
 
-RLS: Users can only CRUD their own rows.
-
-### 2. New Hook: `useCapitalTransactions`
-- Fetches all capital transactions for the logged-in user
-- Provides `addTransaction` and `deleteTransaction` mutations
-- Computes `totalDeposited` and `totalWithdrawn` summaries
-
-### 3. Capital Management UI (Settings > Profile section)
-Add a "Capital Management" card in the Settings Profile tab showing:
-- Current starting capital (editable, already exists)
-- Total deposited / Total withdrawn / Net capital
-- Transaction history table with date, type, amount, notes, delete button
-- "Add Funds" and "Withdraw Funds" buttons that open a small dialog (amount + date + notes)
-
-### 4. Equity Curve Updates
-Update `EquityCurveDrawdown` component to:
-- Accept capital transactions as a prop
-- Merge transactions into the equity timeline (sorted by date alongside trade close dates)
-- When a DEPOSIT occurs, equity jumps up (and peak adjusts) without counting as P&L
-- When a WITHDRAWAL occurs, equity drops without counting as a loss
-- Show deposit/withdrawal markers as reference dots on the chart
-- Update "Starting Capital" stat to show "Net Capital Deployed" (starting + deposits - withdrawals)
-- The "Total Return" calculation will subtract net capital changes so it only reflects trading P&L
-
-### 5. Dashboard EquityCurve Widget
-The dashboard's static `EquityCurve` component will also be updated to use real trade data + capital transactions instead of hardcoded mock data.
-
----
+### 3. Update Filtering Logic (`src/pages/Studies.tsx`)
+- Add `selectedTags: string[]` state
+- In the `filteredStudies` memo, add a filter step: if any tags are selected, only include studies where `study.tags` contains at least one of the selected tags
+- This works client-side since studies are already fetched with their tags array
 
 ## Technical Details
 
-### Files to create
-- `src/hooks/useCapitalTransactions.ts` -- hook for CRUD on capital_transactions table
-- `src/components/settings/CapitalManagementCard.tsx` -- UI card with transaction form + history
+### File: `src/pages/Studies.tsx`
+- Add `selectedTags` state (string array)
+- Import `useAvailableTags` hook
+- Add a tag filter section after the category filter buttons, grouped under collapsible headers (Classic Patterns, Candlestick, Setup)
+- Compute `tagCounts` from studies to show how many studies use each tag
+- Update `filteredStudies` memo to include tag filtering:
+  ```text
+  if selectedTags.length > 0:
+    list = list.filter(study => study.tags?.some(t => selectedTags.includes(t)))
+  ```
 
-### Files to modify
-- `src/components/analytics/EquityCurveDrawdown.tsx` -- merge capital transactions into equity timeline, add markers
-- `src/components/dashboard/EquityCurve.tsx` -- replace mock data with real trades + capital transactions
-- `src/components/settings/ProfileSettings.tsx` -- embed the CapitalManagementCard
-- `src/pages/Analytics.tsx` -- pass capital transactions to EquityCurveDrawdown
-- `src/pages/Dashboard.tsx` -- pass real data to EquityCurve widget
+### File: `src/lib/schemas.ts`
+- No changes needed -- the category enum stays the same
+- Tags are already stored as a text array in the studies table
 
-### Database migration
-```sql
-CREATE TABLE public.capital_transactions (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL,
-  type text NOT NULL DEFAULT 'DEPOSIT',
-  amount numeric NOT NULL,
-  transaction_date timestamptz NOT NULL DEFAULT now(),
-  notes text,
-  created_at timestamptz DEFAULT now()
-);
-
-ALTER TABLE public.capital_transactions ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can view own transactions" ON public.capital_transactions
-  FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert own transactions" ON public.capital_transactions
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can delete own transactions" ON public.capital_transactions
-  FOR DELETE USING (auth.uid() = user_id);
-```
-
-### Equity curve calculation logic (pseudocode)
-```text
-1. Merge closed trades (by closed_at) and capital transactions (by transaction_date) into one sorted timeline
-2. Start equity = starting_capital
-3. For each event:
-   - If trade: equity += pnl (track peak, drawdown as before)
-   - If DEPOSIT: equity += amount, peak += amount (no P&L impact)
-   - If WITHDRAWAL: equity -= amount, peak -= amount (no P&L impact)
-4. Total Return = current_equity - (starting_capital + total_deposits - total_withdrawals)
-```
+### No database changes needed
+- Studies already store tags as a `text[]` column
+- The tag values are already being saved when creating studies
+- This is purely a frontend filtering enhancement
