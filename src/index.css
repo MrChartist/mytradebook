@@ -403,6 +403,22 @@
   }
 }
 
+/* ── Island Navbar ──────────────────────────────────── */
+.island-nav {
+  @apply fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 px-2 py-1.5 rounded-full border;
+  background: hsl(var(--background) / 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-color: hsl(var(--border) / 0.5);
+  box-shadow: 0 4px 30px rgb(0 0 0 / 0.06), 0 1px 3px rgb(0 0 0 / 0.04);
+}
+
+.dark .island-nav {
+  background: hsl(var(--background) / 0.6);
+  border-color: hsl(var(--border) / 0.4);
+  box-shadow: 0 4px 30px rgb(0 0 0 / 0.2), 0 1px 3px rgb(0 0 0 / 0.1);
+}
+
 /* Safe area for mobile bottom nav */
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);
