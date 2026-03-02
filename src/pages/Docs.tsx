@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { SEOHead } from "@/components/SEOHead";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -17,7 +18,8 @@ import {
   Lock, Sparkles, FileText, Download, Upload, Filter, Grid3X3,
   List, Search, Tag, AlertTriangle, CheckCircle2, TrendingDown,
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
-  Wallet, Share2, MessageSquare, Command, Hash, Palette
+  Wallet, Share2, MessageSquare, Command, Hash, Palette,
+  PanelLeftClose, PanelLeftOpen
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import {
@@ -85,14 +87,14 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
 }) {
   return (
-    <div className="premium-card-hover group hover:scale-[1.005] transition-all duration-200 relative overflow-hidden">
+    <div className="premium-card-hover group hover:scale-[1.005] transition-all duration-200 relative overflow-hidden bg-gradient-to-br from-card to-card/80">
       {/* Decorative dot-pattern corner */}
       <div className="absolute top-0 right-0 w-20 h-20 dot-pattern opacity-30 rounded-bl-2xl" />
       {/* Left accent bar on hover */}
       <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-      <div className="pb-3 flex flex-col space-y-1.5 p-6">
+      <div className="pb-3 flex flex-col space-y-1.5 p-7">
         <div className="flex items-center gap-3">
-          <div className="inner-panel !p-2.5 !rounded-xl !bg-primary/8 !border-primary/15">
+          <div className="inner-panel !p-2.5 !rounded-xl !bg-primary/8 !border-primary/15 shadow-sm">
             <Icon className="w-5 h-5 text-primary" />
           </div>
           <div className="flex items-center gap-2">
@@ -105,7 +107,19 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
           </div>
         </div>
       </div>
-      <div className="p-6 pt-0">{children}</div>
+      <div className="p-7 pt-0">
+        <div className="[&>p]:text-[14px] [&>p]:leading-relaxed [&>p]:max-w-prose">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+function SectionDivider() {
+  return (
+    <div className="flex items-center gap-4 py-2">
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      <div className="w-1.5 h-1.5 rounded-full bg-primary/30" />
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
     </div>
   );
 }
@@ -127,9 +141,9 @@ function SectionHeader({ id, title, description, icon: Icon }: {
         <div className="icon-badge inner-panel !p-2.5 !rounded-xl !bg-primary/8 !border-primary/15">
           <Icon className="w-5 h-5 text-primary" />
         </div>
-        <h2 className="text-2xl lg:text-3xl font-bold tracking-tight">{title}</h2>
+        <h2 className="text-2xl lg:text-[2rem] font-bold tracking-tight leading-tight">{title}</h2>
       </div>
-      <p className="text-muted-foreground leading-relaxed max-w-3xl">{description}</p>
+      <p className="text-muted-foreground leading-relaxed max-w-3xl mb-6">{description}</p>
     </div>
   );
 }
@@ -205,6 +219,29 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
   sidebarGroups: { label: string; ids: string[] }[];
 }) {
   const { mode, toggle } = useDocsColorMode();
+
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    return localStorage.getItem("docs-sidebar-collapsed") === "true";
+  });
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed(prev => {
+      localStorage.setItem("docs-sidebar-collapsed", String(!prev));
+      return !prev;
+    });
+  };
+
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) : 0);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className={cn("min-h-screen bg-background text-foreground", isInsideApp && "pb-6", mode === "bw" && "docs-bw")}>
@@ -309,46 +346,83 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 py-10">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-10">
         <div className="flex gap-10">
           {/* Sidebar — desktop */}
-          <aside className="hidden lg:block w-64 shrink-0">
-            <div className="sticky top-24">
-              <ScrollArea className="h-[calc(100vh-8rem)]">
-                <nav className="pr-4">
-                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 mb-3 px-3">On this page</p>
-                  {sidebarGroups.map((group, gi) => (
-                    <div key={group.label}>
-                      {gi > 0 && <Separator className="my-2 mx-3" />}
-                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground/50 px-3 py-1.5">{group.label}</p>
-                      {SECTIONS.filter((s) => group.ids.includes(s.id)).map((s) => (
-                        <button
-                          key={s.id}
-                          onClick={() => scrollTo(s.id)}
-                          className={cn(
-                            "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 text-left relative hover:translate-x-0.5",
-                            activeSection === s.id
-                              ? "bg-primary/8 text-primary font-semibold"
-                              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                          )}
-                        >
-                          {activeSection === s.id && (
-                            <motion.div
-                              layoutId="docs-active-pill"
-                              className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-full bg-primary"
-                              transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                            />
-                          )}
-                          <s.icon className="w-4 h-4 shrink-0" />
-                          {s.label}
-                        </button>
-                      ))}
-                    </div>
-                  ))}
-                </nav>
-              </ScrollArea>
-            </div>
-          </aside>
+          <TooltipProvider delayDuration={200}>
+            <aside className={cn(
+              "hidden lg:block shrink-0 transition-all duration-300",
+              sidebarCollapsed ? "w-14" : "w-64"
+            )}>
+              <div className="sticky top-24">
+                {/* Scroll progress bar */}
+                <div className="h-0.5 bg-muted rounded-full overflow-hidden mb-3">
+                  <div className="h-full bg-primary transition-all duration-150" style={{ width: `${scrollProgress}%` }} />
+                </div>
+                {/* Header with collapse toggle */}
+                <div className={cn("flex items-center mb-3", sidebarCollapsed ? "justify-center" : "justify-between px-3")}>
+                  {!sidebarCollapsed && (
+                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Table of Contents</p>
+                  )}
+                  <button
+                    onClick={toggleSidebar}
+                    className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                    aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                  >
+                    {sidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+                  </button>
+                </div>
+                <ScrollArea className="h-[calc(100vh-9rem)]">
+                  <nav className={cn(!sidebarCollapsed && "pr-4")}>
+                    {sidebarGroups.map((group, gi) => (
+                      <div key={group.label}>
+                        {gi > 0 && !sidebarCollapsed && <Separator className="my-2 mx-3" />}
+                        {gi > 0 && sidebarCollapsed && <Separator className="my-2" />}
+                        {!sidebarCollapsed && (
+                          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground/50 px-3 py-1.5">{group.label}</p>
+                        )}
+                        {SECTIONS.filter((s) => group.ids.includes(s.id)).map((s) => {
+                          const btn = (
+                            <button
+                              key={s.id}
+                              onClick={() => scrollTo(s.id)}
+                              className={cn(
+                                "w-full flex items-center rounded-lg text-sm transition-all duration-200 text-left relative hover:translate-x-0.5",
+                                sidebarCollapsed ? "justify-center p-2.5" : "gap-2.5 px-3 py-2.5",
+                                activeSection === s.id
+                                  ? "bg-primary/8 text-primary font-semibold"
+                                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                              )}
+                            >
+                              {activeSection === s.id && (
+                                <motion.div
+                                  layoutId="docs-active-pill"
+                                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-full bg-primary"
+                                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                                />
+                              )}
+                              <s.icon className="w-4 h-4 shrink-0" />
+                              {!sidebarCollapsed && s.label}
+                            </button>
+                          );
+
+                          if (sidebarCollapsed) {
+                            return (
+                              <Tooltip key={s.id}>
+                                <TooltipTrigger asChild>{btn}</TooltipTrigger>
+                                <TooltipContent side="right" className="text-xs">{s.label}</TooltipContent>
+                              </Tooltip>
+                            );
+                          }
+                          return btn;
+                        })}
+                      </div>
+                    ))}
+                  </nav>
+                </ScrollArea>
+              </div>
+            </aside>
+          </TooltipProvider>
 
           {/* Mobile tabs */}
           <div className="lg:hidden fixed top-20 left-0 right-0 z-40 bg-background/90 backdrop-blur-lg border-b border-border/20 shadow-sm">
@@ -371,7 +445,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </div>
 
           {/* Main content */}
-          <main className="flex-1 min-w-0 space-y-20 lg:pt-0 pt-14">
+          <main className={cn("flex-1 min-w-0 space-y-24 lg:pt-0 pt-14 transition-all duration-300", sidebarCollapsed ? "max-w-5xl" : "max-w-4xl")}>
 
             {/* ── 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
@@ -406,6 +480,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </FeatureCard>
               </div>
             </motion.section>
+
+            <SectionDivider />
 
             {/* ── 2. Dashboard ───────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4, delay: 0.05 }}>
@@ -485,6 +561,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><SegmentFilterMockup /></div>
               </FeatureCard>
             </motion.section>
+
+            <SectionDivider />
 
             {/* ── 3. Trade Management ────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
@@ -583,6 +661,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </FeatureCard>
             </motion.section>
 
+            <SectionDivider />
+
             {/* ── 4. Alerts System ───────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
@@ -646,6 +726,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </FeatureCard>
             </motion.section>
 
+            <SectionDivider />
+
             {/* ── 5. Studies & Research ───────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
@@ -691,6 +773,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </FeatureCard>
             </motion.section>
 
+            <SectionDivider />
+
             {/* ── 6. Watchlists ──────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
@@ -725,6 +809,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><WatchlistDetailMockup /></div>
               </FeatureCard>
             </motion.section>
+
+            <SectionDivider />
 
             {/* ── 7. Trade Journal ───────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
@@ -776,6 +862,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </FeatureCard>
               </div>
             </motion.section>
+
+            <SectionDivider />
 
             {/* ── 8. Analytics (Pro) ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
@@ -845,6 +933,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
             </motion.section>
 
+            <SectionDivider />
+
             {/* ── 9. Calendar & Daily Journal ────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
@@ -884,6 +974,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </FeatureCard>
             </motion.section>
 
+            <SectionDivider />
+
             {/* ── 10. Mistakes Review ────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
@@ -918,6 +1010,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </FeatureCard>
             </motion.section>
 
+            <SectionDivider />
+
             {/* ── 11. Weekly Reports ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
@@ -950,6 +1044,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
               </FeatureCard>
             </motion.section>
+
+            <SectionDivider />
 
             {/* ── 12. Integrations ───────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
@@ -990,6 +1086,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </FeatureCard>
               </div>
             </motion.section>
+
+            <SectionDivider />
 
             {/* ── 12b. AI Insights Setup ─────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
@@ -1071,6 +1169,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
             </motion.section>
 
+            <SectionDivider />
+
             {/* ── 13. Keyboard Shortcuts ─────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
@@ -1125,6 +1225,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><KeyboardShortcutsDetailMockup /></div>
               </FeatureCard>
             </motion.section>
+
+            <SectionDivider />
 
             {/* ── 14. Settings ───────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
