@@ -18,6 +18,7 @@ import {
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
   Wallet, Share2, MessageSquare, Command, Hash, Palette
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import {
   BentoFeatureGrid, OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
   TradeLifecycleFlow, AlertCardMockup, TelegramNotifMockup, WatchlistMockup,
@@ -200,31 +201,38 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
     <div className={cn("min-h-screen bg-background text-foreground", isInsideApp && "pb-6", mode === "bw" && "docs-bw")}>
       {/* Top accent bar */}
       <div className="h-[3px] w-full bg-gradient-primary docs-accent-bar" />
-      {/* Navbar — only show on standalone page */}
-      {!isInsideApp && (
-        <nav className="sticky top-0 z-50 border-b border-border/30 bg-background/80 backdrop-blur-xl">
-          <div className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-10 h-16">
-            <button onClick={() => navigate("/landing")} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-              <div className="w-9 h-9 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_20px_hsl(var(--tb-accent)/0.25)]">
-                <TrendingUp className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-logo font-bold tracking-tight">TradeBook</span>
-            </button>
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={() => navigate("/landing")} className="text-muted-foreground">
-                Home
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => navigate("/login")}
-                className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-5"
-              >
-                Get Started
-              </Button>
+      {/* Navbar — always visible */}
+      <nav className="sticky top-0 z-50 border-b border-border/30 bg-background/80 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-10 h-16">
+          <button onClick={() => navigate(isInsideApp ? "/dashboard" : "/landing")} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+            <div className="w-9 h-9 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_20px_hsl(var(--tb-accent)/0.25)]">
+              <TrendingUp className="w-5 h-5 text-white" />
             </div>
+            <span className="text-xl font-logo font-bold tracking-tight">TradeBook</span>
+          </button>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            {isInsideApp ? (
+              <Button size="sm" onClick={() => navigate("/dashboard")} className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-5">
+                Dashboard
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" onClick={() => navigate("/landing")} className="text-muted-foreground">
+                  Home
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => navigate("/login")}
+                  className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-5"
+                >
+                  Get Started
+                </Button>
+              </>
+            )}
           </div>
-        </nav>
-      )}
+        </div>
+      </nav>
 
       {/* Hero */}
       <div className={cn("border-b border-border/20 bg-gradient-to-b from-[hsl(var(--tb-accent)/0.04)] to-transparent", isInsideApp && "border-none")}>

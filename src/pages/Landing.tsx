@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 /* ─── Animated counter ──────────────────────────────────── */
 function useCountUp(end: number, duration = 2000) {
@@ -404,6 +405,7 @@ export default function Landing() {
           </div>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <Button variant="ghost" size="sm" onClick={() => navigate("/login")} className="text-muted-foreground hover:text-foreground">
               Sign In
             </Button>
