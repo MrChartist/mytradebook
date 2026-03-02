@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 /* ─── Animated counter ──────────────────────────────────── */
 function useCountUp(end: number, duration = 2000) {
@@ -993,20 +994,24 @@ export default function Landing() {
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Connecting lines */}
-            <div className="hidden md:block absolute top-16 left-[33%] w-[34%] border-t-2 border-dashed border-border/30" />
-            <div className="hidden md:block absolute top-16 left-[66%] w-[20%] border-t-2 border-dashed border-border/30" />
-
             {steps.map((item, i) => (
-              <motion.div key={item.step} variants={fadeUp} custom={i * 0.1}>
+              <motion.div key={item.step} variants={fadeUp} custom={i * 0.1} className="relative">
+                {/* Chevron connector between cards */}
+                {i < steps.length - 1 && (
+                  <div className="hidden md:flex absolute top-16 -right-5 z-10 w-10 items-center justify-center">
+                    <ChevronRight className="w-5 h-5 text-[hsl(var(--tb-accent))] opacity-40" />
+                  </div>
+                )}
                 <motion.div
-                  className="relative rounded-2xl border border-border/40 bg-card/80 p-8 h-full text-center overflow-hidden"
+                  className="relative rounded-2xl border border-border/40 bg-card p-8 h-full text-center overflow-hidden"
                   whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}
                 >
-                  {/* Number watermark */}
-                  <div className="absolute top-2 right-4 text-7xl font-black text-muted-foreground/[0.03] select-none">{item.step}</div>
+                  {/* Number watermark — accent tinted */}
+                  <div className="absolute top-2 right-4 text-7xl font-black text-[hsl(var(--tb-accent))] opacity-[0.07] select-none">{item.step}</div>
+                  {/* Step label */}
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[hsl(var(--tb-accent))] mb-3">Step {item.step}</p>
                   <motion.div
-                    className="w-14 h-14 rounded-2xl bg-[hsl(var(--tb-accent)/0.06)] flex items-center justify-center mx-auto mb-6"
+                    className="w-14 h-14 rounded-2xl bg-[hsl(var(--tb-accent)/0.06)] ring-4 ring-[hsl(var(--tb-accent)/0.04)] flex items-center justify-center mx-auto mb-6"
                     whileHover={{ scale: 1.08, rotate: -3 }}
                   >
                     <item.icon className="w-6 h-6 text-[hsl(var(--tb-accent))]" />
@@ -1017,6 +1022,20 @@ export default function Landing() {
               </motion.div>
             ))}
           </div>
+
+          {/* CTA below steps */}
+          <motion.div variants={fadeUp} className="text-center mt-14">
+            <p className="text-muted-foreground mb-5">Ready to start? It takes less than 60 seconds.</p>
+            <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.97 }} className="inline-block">
+              <Button
+                size="lg"
+                className="h-12 px-8 gap-2 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_4px_16px_hsl(var(--tb-accent)/0.25)] font-semibold"
+                onClick={() => navigate("/login?mode=signup")}
+              >
+                Create Free Account <ArrowRight className="w-4 h-4" />
+              </Button>
+            </motion.div>
+          </motion.div>
         </MotionSection>
       </section>
 
@@ -1222,6 +1241,95 @@ export default function Landing() {
         </MotionSection>
       </section>
 
+
+      {/* ── Built for Indian Markets ────────────────────── */}
+      <section className="py-24 lg:py-32 bg-muted/10">
+        <MotionSection className="max-w-5xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-14 items-center">
+            <motion.div variants={fadeUp}>
+              <SectionBadge>Made in India</SectionBadge>
+              <h2 className="text-3xl lg:text-5xl font-extrabold mb-5 leading-tight">
+                Built for{" "}
+                <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
+                  Indian
+                </span>{" "}
+                markets
+              </h2>
+              <p className="text-muted-foreground text-base leading-relaxed mb-6">
+                Unlike generic journals, TradeBook understands Indian market structure — segments, lot sizes, INR formatting, and market hours (9:15 AM – 3:30 PM).
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "NSE, BSE & MCX exchange support",
+                  "INR currency with Indian numbering (Lakhs, Crores)",
+                  "Dhan broker integration for auto-sync",
+                  "Indian market hours & holiday awareness",
+                ].map((item) => (
+                  <li key={item} className="flex items-center gap-2.5 text-sm">
+                    <CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+            <motion.div variants={fadeUp} custom={0.15} className="flex flex-wrap gap-3 justify-center">
+              {[
+                { label: "Equity", color: "hsl(152 60% 42%)" },
+                { label: "F&O", color: "hsl(24 90% 55%)" },
+                { label: "Commodity", color: "hsl(45 90% 50%)" },
+                { label: "Currency", color: "hsl(210 80% 55%)" },
+                { label: "Intraday", color: "hsl(340 75% 55%)" },
+                { label: "Positional", color: "hsl(270 60% 55%)" },
+              ].map((seg) => (
+                <motion.div
+                  key={seg.label}
+                  className="px-5 py-3 rounded-2xl border border-border/40 bg-card text-sm font-semibold"
+                  style={{ borderColor: `${seg.color.replace(")", " / 0.25)")}` }}
+                  whileHover={{ scale: 1.06, y: -2 }}
+                >
+                  <span style={{ color: seg.color }}>{seg.label}</span>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </MotionSection>
+      </section>
+
+      {/* ── FAQ ──────────────────────────────────────────── */}
+      <section className="py-24 lg:py-32">
+        <MotionSection className="max-w-2xl mx-auto px-6">
+          <motion.div variants={fadeUp} className="text-center mb-14">
+            <SectionBadge>FAQ</SectionBadge>
+            <h2 className="text-3xl lg:text-5xl font-extrabold mb-5 leading-tight">
+              Got{" "}
+              <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
+                questions
+              </span>
+              ?
+            </h2>
+          </motion.div>
+          <motion.div variants={fadeUp}>
+            <Accordion type="single" collapsible className="space-y-3">
+              {[
+                { q: "Is my data safe?", a: "Absolutely. All data is encrypted at rest and in transit with bank-grade security. We never share or sell your trading data to anyone." },
+                { q: "Can I import from Zerodha, Angel One, or other brokers?", a: "Yes! Our CSV import supports all major Indian brokers. Simply export your trade history as CSV and import it into TradeBook with automatic column mapping." },
+                { q: "Is it really free during beta?", a: "Yes — all features are completely free during the beta period. No credit card required. We'll notify you before any pricing changes." },
+                { q: "Does it work on mobile?", a: "TradeBook is a Progressive Web App (PWA) that works beautifully on any device — phone, tablet, or desktop. Install it on your home screen for a native app experience." },
+                { q: "How is TradeBook different from a spreadsheet?", a: "Unlike spreadsheets, TradeBook offers automated analytics, segment-level breakdowns, trailing stop loss tracking, real-time alerts, and AI-powered insights — all purpose-built for Indian market traders." },
+              ].map((faq, i) => (
+                <AccordionItem key={i} value={`faq-${i}`} className="rounded-xl border border-border/40 bg-card/80 px-5 data-[state=open]:border-[hsl(var(--tb-accent)/0.25)]">
+                  <AccordionTrigger className="text-left text-sm font-semibold hover:no-underline py-4">
+                    {faq.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
+                    {faq.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </motion.div>
+        </MotionSection>
+      </section>
 
       {/* ── Final CTA ────────────────────────────────────── */}
       <section className="py-28 lg:py-36 relative overflow-hidden">
