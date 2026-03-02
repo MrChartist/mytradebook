@@ -2271,3 +2271,218 @@ export function AlertManagementMockup() {
     </MockupFrame>
   );
 }
+
+/* ──────────────────────────────────────────────
+   49. StudyCategoryWorkflowMockup
+   ────────────────────────────────────────────── */
+export function StudyCategoryWorkflowMockup() {
+  const categories = [
+    { label: "Technical", icon: "📈", count: 12, active: true },
+    { label: "Fundamental", icon: "📊", count: 5, active: false },
+    { label: "News", icon: "📰", count: 3, active: false },
+    { label: "Sentiment", icon: "🧠", count: 2, active: false },
+    { label: "Other", icon: "📝", count: 1, active: false },
+  ];
+  const statuses = [
+    { label: "Draft", color: "bg-muted/60 border-border/40", text: "text-muted-foreground", count: 4, icon: "✏️" },
+    { label: "Active", color: "bg-[hsl(var(--tb-accent)/0.1)] border-[hsl(var(--tb-accent)/0.3)]", text: "text-[hsl(var(--tb-accent))]", count: 8, icon: "🔍" },
+    { label: "Triggered", color: "bg-profit/10 border-profit/20", text: "text-profit", count: 6, icon: "✅" },
+    { label: "Invalidated", color: "bg-loss/5 border-loss/15", text: "text-loss", count: 2, icon: "❌" },
+    { label: "Archived", color: "bg-muted/30 border-border/20", text: "text-muted-foreground", count: 3, icon: "📦" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4">
+        {/* Categories */}
+        <p className="text-[10px] font-semibold text-muted-foreground mb-2">Study Categories</p>
+        <div className="flex gap-1.5 mb-4 flex-wrap">
+          {categories.map((c) => (
+            <div key={c.label} className={cn(
+              "px-2.5 py-1.5 rounded-xl border text-[10px] font-semibold flex items-center gap-1.5 cursor-pointer transition-all",
+              c.active
+                ? "border-[hsl(var(--tb-accent)/0.4)] bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))]"
+                : "border-border/30 text-muted-foreground hover:border-border"
+            )}>
+              <span>{c.icon}</span>
+              <span>{c.label}</span>
+              <span className="text-[8px] bg-muted/60 px-1 py-0.5 rounded-full">{c.count}</span>
+            </div>
+          ))}
+        </div>
+        {/* Status workflow */}
+        <p className="text-[10px] font-semibold text-muted-foreground mb-2">Status Workflow</p>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {statuses.map((s, i) => (
+            <div key={s.label} className="flex items-center gap-1.5">
+              <div className={cn("rounded-xl border px-3 py-2", s.color)}>
+                <div className="flex items-center gap-1 mb-0.5">
+                  <span className="text-xs">{s.icon}</span>
+                  <span className={cn("text-[10px] font-bold", s.text)}>{s.label}</span>
+                </div>
+                <p className="text-[8px] text-muted-foreground">{s.count} studies</p>
+              </div>
+              {i < statuses.length - 1 && (
+                <ArrowRight className="w-3 h-3 text-muted-foreground/40 shrink-0" />
+              )}
+            </div>
+          ))}
+        </div>
+        {/* Example study card */}
+        <div className="mt-4 rounded-lg border border-border/40 p-3 bg-muted/10">
+          <div className="flex items-center justify-between mb-1.5">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold">RELIANCE — Cup & Handle</span>
+              <span className="text-[8px] px-1.5 py-0.5 rounded bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))] font-semibold">Active</span>
+            </div>
+            <span className="text-[8px] text-muted-foreground">Created 28 Feb</span>
+          </div>
+          <div className="flex items-center gap-2 text-[8px] text-muted-foreground">
+            <span className="px-1 py-0.5 rounded bg-muted/60">📈 Technical</span>
+            <span>·</span>
+            <span>LTP: ₹2,867</span>
+            <span>·</span>
+            <span>Target: ₹3,100</span>
+            <span>·</span>
+            <span className="text-[hsl(var(--tb-accent))] font-semibold">8.1% upside</span>
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   50. PatternTaggingMockup
+   ────────────────────────────────────────────── */
+export function PatternTaggingMockup() {
+  const classicPatterns = [
+    { name: "Double Top", icon: "⛰️" }, { name: "Head & Shoulders", icon: "🏔️" },
+    { name: "Cup & Handle", icon: "☕" }, { name: "Ascending Triangle", icon: "📐" },
+    { name: "Falling Wedge", icon: "🔻" }, { name: "Channel Up", icon: "📈" },
+  ];
+  const candlestickPatterns = [
+    { name: "Bullish Engulfing", bullish: true }, { name: "Pin Bar", bullish: true },
+    { name: "Morning Star", bullish: true }, { name: "Doji", bullish: false },
+    { name: "Shooting Star", bullish: false }, { name: "Evening Star", bullish: false },
+  ];
+  const setupTags = ["Breakout", "Retest", "Gap Up", "Gap Down", "Pullback", "Reversal", "Volume Spike"];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4">
+        {/* Classic patterns */}
+        <p className="text-[10px] font-semibold text-muted-foreground mb-2">Chart Patterns</p>
+        <div className="flex gap-1.5 flex-wrap mb-4">
+          {classicPatterns.map((p) => (
+            <div key={p.name} className="px-2 py-1 rounded-lg border border-border/40 text-[9px] font-medium flex items-center gap-1 hover:border-[hsl(var(--tb-accent)/0.3)] cursor-pointer transition-all">
+              <span className="text-xs">{p.icon}</span>
+              <span>{p.name}</span>
+            </div>
+          ))}
+        </div>
+        {/* Candlestick patterns */}
+        <p className="text-[10px] font-semibold text-muted-foreground mb-2">Candlestick Patterns</p>
+        <div className="flex gap-1.5 flex-wrap mb-4">
+          {candlestickPatterns.map((p) => (
+            <div key={p.name} className={cn(
+              "px-2 py-1 rounded-lg border text-[9px] font-medium cursor-pointer transition-all",
+              p.bullish
+                ? "border-profit/20 bg-profit/5 text-profit hover:border-profit/40"
+                : "border-loss/20 bg-loss/5 text-loss hover:border-loss/40"
+            )}>
+              {p.bullish ? "▲" : "▼"} {p.name}
+            </div>
+          ))}
+        </div>
+        {/* Setup tags */}
+        <p className="text-[10px] font-semibold text-muted-foreground mb-2">Setup Tags</p>
+        <div className="flex gap-1.5 flex-wrap mb-3">
+          {setupTags.map((t, i) => (
+            <div key={t} className={cn(
+              "px-2 py-1 rounded-lg text-[9px] font-semibold border cursor-pointer transition-all",
+              i < 3
+                ? "border-[hsl(var(--tb-accent)/0.3)] bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))]"
+                : "border-border/30 text-muted-foreground hover:border-border"
+            )}>
+              {t}
+            </div>
+          ))}
+        </div>
+        {/* Custom tags hint */}
+        <div className="rounded-lg bg-muted/30 p-2.5 flex items-center gap-2 text-[9px] text-muted-foreground">
+          <span className="text-base">🏷️</span>
+          <span>Create your own custom tags in <span className="font-semibold text-foreground">Settings → Tags</span>. Custom tags appear alongside presets in trade & study forms.</span>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   51. StudyAdditionalFeaturesMockup
+   ────────────────────────────────────────────── */
+export function StudyAdditionalFeaturesMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-md mx-auto">
+        <p className="text-[10px] font-semibold text-muted-foreground mb-3">Study Detail View</p>
+        {/* Study header */}
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <p className="text-xs font-bold">TATAMOTORS — Ascending Triangle</p>
+            <p className="text-[9px] text-muted-foreground">Technical · Created 25 Feb 2026</p>
+          </div>
+          <span className="px-2 py-0.5 rounded-full text-[8px] font-semibold bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))]">Active</span>
+        </div>
+        {/* Live price */}
+        <div className="rounded-lg bg-profit/5 border border-profit/15 p-2.5 mb-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-profit animate-pulse" />
+            <span className="text-[10px] font-semibold">Live Price</span>
+          </div>
+          <div className="flex items-center gap-3 text-[10px] font-mono">
+            <span className="font-bold">₹745.20</span>
+            <span className="text-profit font-bold">+1.8%</span>
+          </div>
+        </div>
+        {/* Duration tracking */}
+        <div className="rounded-lg bg-muted/30 p-2.5 mb-3">
+          <p className="text-[9px] font-semibold mb-1.5">Duration Tracking</p>
+          <div className="flex gap-1.5">
+            {["< 6M", "6M–2Y", "2–5Y", "> 5Y"].map((d, i) => (
+              <span key={d} className={cn(
+                "px-2 py-0.5 rounded text-[8px] font-semibold border",
+                i === 0
+                  ? "border-[hsl(var(--tb-accent)/0.3)] bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))]"
+                  : "border-border/30 text-muted-foreground"
+              )}>{d}</span>
+            ))}
+          </div>
+        </div>
+        {/* Attachments & links */}
+        <div className="space-y-1.5 mb-3">
+          <p className="text-[9px] font-semibold">Attachments & Links</p>
+          <div className="flex items-center gap-2 rounded-lg bg-muted/20 border border-border/30 p-2">
+            <FileText className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" />
+            <span className="text-[9px]">chart-screenshot-tata.png</span>
+            <span className="text-[8px] text-muted-foreground ml-auto">245 KB</span>
+          </div>
+          <div className="flex items-center gap-2 rounded-lg bg-muted/20 border border-border/30 p-2">
+            <ArrowUpRight className="w-3.5 h-3.5 text-[#229ED9]" />
+            <span className="text-[9px] text-[#229ED9] underline">tradingview.com/chart/TATAM...</span>
+          </div>
+        </div>
+        {/* Linked alert */}
+        <div className="rounded-lg bg-[hsl(var(--warning)/0.06)] border border-[hsl(var(--warning)/0.15)] p-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Bell className="w-3.5 h-3.5 text-[hsl(var(--warning))]" />
+            <div>
+              <p className="text-[9px] font-semibold">Linked Alert</p>
+              <p className="text-[8px] text-muted-foreground">Crosses Above ₹760 · Active</p>
+            </div>
+          </div>
+          <span className="text-[8px] font-mono text-[hsl(var(--tb-accent))]">2.0% away</span>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}

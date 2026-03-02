@@ -33,7 +33,8 @@ import {
   MultiLegStrategyDetailMockup, PositionSizingDetailMockup,
   PostTradeReviewMockup, TradeTemplateMockup,
   AlertConditionTypesMockup, RecurrenceCooldownMockup,
-  DeliveryChannelsMockup, AlertManagementMockup
+  DeliveryChannelsMockup, AlertManagementMockup,
+  StudyCategoryWorkflowMockup, PatternTaggingMockup, StudyAdditionalFeaturesMockup
 } from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
@@ -545,36 +546,42 @@ export default function Docs() {
                 icon={BookOpen}
               />
               <StudyCardMockup />
-              <div className="grid md:grid-cols-2 gap-5">
-                <FeatureCard icon={Layers} title="Categories & Status Workflow">
-                  <p className="text-sm text-muted-foreground mb-3">Organize studies by type and track their lifecycle:</p>
-                  <FeatureList items={[
-                    "Categories: Technical, Fundamental, News, Sentiment, Other",
-                    "Status flow: Draft → Active → Triggered / Invalidated → Archived",
-                    "Each status change is tracked with timestamps",
-                    "Filter and sort by category or status",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Tag} title="Pattern Tagging System">
-                  <p className="text-sm text-muted-foreground mb-3">Rich tagging for pattern recognition:</p>
-                  <FeatureList items={[
-                    "Classic Patterns: Double Top/Bottom, Head & Shoulders, Cup & Handle, Triangles, Wedges, Channels",
-                    "Candlestick Patterns: Engulfing, Pin Bar, Doji, Morning/Evening Star, Hammer, Shooting Star",
-                    "Setup Tags: Breakout, Retest, Gap Up/Down, Pullback, Reversal",
-                    "Custom tags for your own classifications",
-                    "Tag-based filtering with occurrence counts",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Clock} title="Additional Features">
-                  <FeatureList items={[
-                    "Live prices displayed for active/draft studies",
-                    "Duration tracking: < 6 months, 6M–2Y, 2–5Y, > 5Y",
-                    "Attach links and reference materials",
-                    "Free-form notes with rich context",
-                    "Link studies to alerts for automatic monitoring",
-                  ]} />
-                </FeatureCard>
-              </div>
+              {/* Categories & Status Workflow */}
+              <StudyCategoryWorkflowMockup />
+              <FeatureCard icon={Layers} title="Categories & Status Workflow">
+                <p className="text-sm text-muted-foreground mb-3">Organize studies by type and track their lifecycle:</p>
+                <FeatureList items={[
+                  "Categories: Technical, Fundamental, News, Sentiment, Other",
+                  "Status flow: Draft → Active → Triggered / Invalidated → Archived",
+                  "Each status change is tracked with timestamps",
+                  "Filter and sort by category or status",
+                ]} />
+              </FeatureCard>
+
+              {/* Pattern Tagging System */}
+              <PatternTaggingMockup />
+              <FeatureCard icon={Tag} title="Pattern Tagging System">
+                <p className="text-sm text-muted-foreground mb-3">Rich tagging for pattern recognition:</p>
+                <FeatureList items={[
+                  "Classic Patterns: Double Top/Bottom, Head & Shoulders, Cup & Handle, Triangles, Wedges, Channels",
+                  "Candlestick Patterns: Engulfing, Pin Bar, Doji, Morning/Evening Star, Hammer, Shooting Star",
+                  "Setup Tags: Breakout, Retest, Gap Up/Down, Pullback, Reversal",
+                  "Custom tags for your own classifications",
+                  "Tag-based filtering with occurrence counts",
+                ]} />
+              </FeatureCard>
+
+              {/* Additional Features */}
+              <StudyAdditionalFeaturesMockup />
+              <FeatureCard icon={Clock} title="Additional Features">
+                <FeatureList items={[
+                  "Live prices displayed for active/draft studies",
+                  "Duration tracking: < 6 months, 6M–2Y, 2–5Y, > 5Y",
+                  "Attach links and reference materials",
+                  "Free-form notes with rich context",
+                  "Link studies to alerts for automatic monitoring",
+                ]} />
+              </FeatureCard>
             </section>
 
             {/* ── 6. Watchlists ──────────────────────────── */}
