@@ -13,7 +13,7 @@ import { format } from "date-fns";
 import { useDashboard } from "@/pages/Dashboard";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { useCapitalTransactions } from "@/hooks/useCapitalTransactions";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, TrendingUp } from "lucide-react";
 
 export function EquityCurve() {
   const { trades } = useDashboard();
@@ -69,11 +69,16 @@ export function EquityCurve() {
   const fillId = isProfit ? "url(#profitGradient)" : "url(#lossGradient)";
 
   return (
-    <div className="surface-card p-5">
+    <div className="dashboard-card">
       <div className="flex items-center justify-between mb-5">
-        <div>
-          <h3 className="font-semibold">Equity Curve</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">Portfolio performance</p>
+        <div className="flex items-center gap-3">
+          <div className="icon-badge-sm bg-primary/10">
+            <TrendingUp className="w-4 h-4 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-semibold">Equity Curve</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">Portfolio performance</p>
+          </div>
         </div>
         <Link to="/analytics" className="flex items-center gap-1 text-xs text-primary hover:underline">
           View Analytics <ArrowUpRight className="w-3 h-3" />

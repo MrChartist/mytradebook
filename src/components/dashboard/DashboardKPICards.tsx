@@ -2,11 +2,10 @@ import { useMemo } from "react";
 import { useDashboard } from "@/pages/Dashboard";
 import { cn } from "@/lib/utils";
 import { Wallet, Target, TrendingUp, Bell, Plus } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { calculatePnL } from "@/lib/calculations";
 import { formatCurrency } from "@/lib/formatting";
 import { TradeStatus } from "@/lib/constants";
-
 
 interface Props {
   alerts: { id: string; last_triggered: string | null; condition_type: string }[];
@@ -51,11 +50,11 @@ export function DashboardKPICards({ alerts }: Props) {
   const priceAlerts = alerts.filter((a) => ["PRICE_GT", "PRICE_LT"].includes(a.condition_type)).length;
   const techAlerts = alerts.length - priceAlerts;
 
-  const cardBase = "premium-card-hover !p-5 block cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98]";
+  const cardBase = "dashboard-card-hover block cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98] transition-transform";
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* Total P&L → Reports */}
+      {/* Total P&L */}
       <div
         role="button"
         tabIndex={0}
@@ -64,17 +63,16 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/reports")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/reports"); }}
       >
-        <div className="flex items-center justify-between mb-3 relative">
-          <div className="absolute -top-5 -right-5 w-16 h-16 dot-pattern opacity-30 rounded-bl-2xl" />
+        <div className="flex items-center justify-between mb-4">
           <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">MTD P&L</span>
-          <div className={cn("inner-panel !p-2 !rounded-xl", realizedPnl + unrealizedPnl >= 0 ? "!bg-profit/8 !border-profit/15" : "!bg-loss/8 !border-loss/15")}>
-            <Wallet className={cn("w-4 h-4", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")} />
+          <div className={cn("icon-badge", realizedPnl + unrealizedPnl >= 0 ? "bg-profit/10" : "bg-loss/10")}>
+            <Wallet className={cn("w-4.5 h-4.5", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")} />
           </div>
         </div>
         <p className={cn("text-2xl font-bold font-mono", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>
           {formatCurrency(realizedPnl + unrealizedPnl)}
         </p>
-        <div className="flex gap-3 mt-2">
+        <div className="flex gap-4 mt-3">
           <div>
             <p className="text-[10px] text-muted-foreground">Realized</p>
             <p className={cn("text-xs font-bold font-mono", realizedPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(realizedPnl)}</p>
@@ -84,7 +82,7 @@ export function DashboardKPICards({ alerts }: Props) {
             <p className={cn("text-xs font-bold font-mono", unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(unrealizedPnl)}</p>
           </div>
         </div>
-        <div className="flex items-center gap-1 mt-2 text-[10px] text-muted-foreground">
+        <div className="flex items-center gap-1 mt-3 text-[10px] text-muted-foreground">
           <span>Today: </span>
           <span className={cn("font-medium", todayPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(todayPnl)}</span>
           <span className="mx-1">•</span>
@@ -92,7 +90,7 @@ export function DashboardKPICards({ alerts }: Props) {
         </div>
       </div>
 
-      {/* Open Positions → /trades?status=OPEN */}
+      {/* Open Positions */}
       <div
         role="button"
         tabIndex={0}
@@ -101,21 +99,20 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/trades?status=OPEN")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/trades?status=OPEN"); }}
       >
-        <div className="flex items-center justify-between mb-3 relative">
-          <div className="absolute -top-5 -right-5 w-16 h-16 dot-pattern opacity-30 rounded-bl-2xl" />
+        <div className="flex items-center justify-between mb-4">
           <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Open Positions</span>
-          <div className="inner-panel !p-2 !rounded-xl !bg-primary/8 !border-primary/15">
-            <Target className="w-4 h-4 text-primary" />
+          <div className="icon-badge bg-primary/10">
+            <Target className="w-4.5 h-4.5 text-primary" />
           </div>
         </div>
         <p className="text-2xl font-bold font-mono">{openTrades.length}</p>
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-xs text-muted-foreground mt-2">
           ₹{riskAtSL.toLocaleString("en-IN", { maximumFractionDigits: 0 })} at risk (to SL)
         </p>
-        <p className="text-[10px] text-muted-foreground mt-1.5">{monthTrades.length} total trades this month</p>
+        <p className="text-[10px] text-muted-foreground mt-2">{monthTrades.length} total trades this month</p>
       </div>
 
-      {/* Win Rate → /analytics */}
+      {/* Win Rate */}
       <div
         role="button"
         tabIndex={0}
@@ -124,11 +121,10 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/analytics")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/analytics"); }}
       >
-        <div className="flex items-center justify-between mb-3 relative">
-          <div className="absolute -top-5 -right-5 w-16 h-16 dot-pattern opacity-30 rounded-bl-2xl" />
+        <div className="flex items-center justify-between mb-4">
           <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Win Rate</span>
-          <div className={cn("inner-panel !p-2 !rounded-xl", winRate >= 50 ? "!bg-profit/8 !border-profit/15" : "!bg-loss/8 !border-loss/15")}>
-            <TrendingUp className={cn("w-4 h-4", winRate >= 50 ? "text-profit" : "text-loss")} />
+          <div className={cn("icon-badge", winRate >= 50 ? "bg-profit/10" : "bg-loss/10")}>
+            <TrendingUp className={cn("w-4.5 h-4.5", winRate >= 50 ? "text-profit" : "text-loss")} />
           </div>
         </div>
         <div className="flex items-baseline gap-2">
@@ -140,12 +136,12 @@ export function DashboardKPICards({ alerts }: Props) {
             Exp: {formatCurrency(expectancy)}/trade
           </span>
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2">
+        <p className="text-[10px] text-muted-foreground mt-3">
           Closed: {closedMonth.length} | W: {wins.length} | L: {losses.length}
         </p>
       </div>
 
-      {/* Active Alerts → /alerts?status=active */}
+      {/* Active Alerts */}
       <div
         role="button"
         tabIndex={0}
@@ -154,11 +150,10 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/alerts")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/alerts"); }}
       >
-        <div className="flex items-center justify-between mb-3 relative">
-          <div className="absolute -top-5 -right-5 w-16 h-16 dot-pattern opacity-30 rounded-bl-2xl" />
+        <div className="flex items-center justify-between mb-4">
           <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Active Alerts</span>
-          <div className="inner-panel !p-2 !rounded-xl !bg-warning/8 !border-warning/15">
-            <Bell className="w-4 h-4 text-warning" />
+          <div className="icon-badge bg-warning/10">
+            <Bell className="w-4.5 h-4.5 text-warning" />
           </div>
         </div>
         <div className="flex items-baseline gap-2">
@@ -169,10 +164,10 @@ export function DashboardKPICards({ alerts }: Props) {
             </span>
           )}
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2">
+        <p className="text-[10px] text-muted-foreground mt-3">
           Price: {priceAlerts} | Technical: {techAlerts}
         </p>
-        <span className="mt-2 inline-flex items-center gap-1 text-[10px] text-primary font-medium">
+        <span className="mt-3 inline-flex items-center gap-1 text-[10px] text-primary font-medium">
           <Plus className="w-3 h-3" /> Create alert
         </span>
       </div>

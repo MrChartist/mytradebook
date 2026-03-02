@@ -11,6 +11,7 @@ import {
   ComposedChart,
 } from "recharts";
 import { format, eachDayOfInterval, startOfMonth, endOfMonth, isWeekend, isSameDay } from "date-fns";
+import { BarChart3 } from "lucide-react";
 
 const SEGMENT_COLORS: Record<string, string> = {
   Equity_Intraday: "hsl(240, 60%, 60%)",
@@ -68,7 +69,6 @@ export function DailySectorChart() {
     });
   }, [days, closedTrades, segments]);
 
-  // Top 3 sectors
   const topSectors = useMemo(() => {
     const sectorPnl: Record<string, number> = {};
     closedTrades.forEach((t) => {
@@ -113,18 +113,23 @@ export function DailySectorChart() {
   };
 
   return (
-    <div className="surface-card p-5">
+    <div className="dashboard-card">
       <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="font-semibold">Daily P&L by Segment</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">Stacked by market segment</p>
+        <div className="flex items-center gap-3">
+          <div className="icon-badge-sm bg-primary/10">
+            <BarChart3 className="w-4 h-4 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-semibold">Daily P&L by Segment</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">Stacked by market segment</p>
+          </div>
         </div>
-        <div className="flex gap-1 bg-muted rounded-lg p-0.5">
+        <div className="flex gap-1 bg-muted rounded-full p-0.5">
           {["1W", "1M", "3M"].map((r) => (
             <button
               key={r}
               onClick={() => setRange(r)}
-              className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+              className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${
                 range === r ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -154,13 +159,12 @@ export function DailySectorChart() {
         )}
       </div>
 
-      {/* Top sectors chips */}
       {topSectors.length > 0 && (
         <div className="flex gap-2 mt-3 flex-wrap">
           {topSectors.map(([seg, pnl]) => (
             <span
               key={seg}
-              className={`text-[10px] font-medium px-2 py-1 rounded-md border ${
+              className={`text-[10px] font-medium px-2 py-1 rounded-full border ${
                 pnl >= 0 ? "border-profit/20 bg-profit/5 text-profit" : "border-loss/20 bg-loss/5 text-loss"
               }`}
             >

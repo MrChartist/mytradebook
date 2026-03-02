@@ -44,21 +44,24 @@ export function DashboardAlertsPanel({ alerts }: Props) {
   };
 
   return (
-    <div className="surface-card p-5 flex flex-col">
+    <div className="dashboard-card flex flex-col">
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Bell className="w-4 h-4 text-warning" />
-          <h3 className="font-semibold text-sm">Alerts</h3>
-          <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded-full text-muted-foreground">{alerts.length}</span>
+        <div className="flex items-center gap-2.5">
+          <div className="icon-badge-sm bg-warning/10">
+            <Bell className="w-4 h-4 text-warning" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm">Alerts</h3>
+            <span className="text-[10px] text-muted-foreground">{alerts.length} active</span>
+          </div>
         </div>
         <Link to="/alerts" className="text-xs text-primary hover:underline font-medium">Manage →</Link>
       </div>
 
-      {/* Filters */}
       <div className="flex items-center justify-between mb-3">
         <button
           onClick={() => setShowActiveOnly(!showActiveOnly)}
-          className={`text-[10px] px-2 py-0.5 rounded-md border transition-all ${
+          className={`text-[10px] px-2.5 py-1 rounded-full border transition-all ${
             showActiveOnly ? "border-primary/20 bg-primary/5 text-primary" : "border-border text-muted-foreground"
           }`}
         >
@@ -71,10 +74,9 @@ export function DashboardAlertsPanel({ alerts }: Props) {
         </Link>
       </div>
 
-      {/* Alert list */}
       <div className="flex-1 space-y-1.5 overflow-y-auto max-h-[320px]">
         {displayed.length === 0 ? (
-          <Link to="/alerts" className="block text-center py-8 cursor-pointer hover:bg-primary/5 rounded-lg transition-colors">
+          <Link to="/alerts" className="block text-center py-8 cursor-pointer hover:bg-primary/5 rounded-xl transition-colors">
             <Bell className="w-8 h-8 mx-auto text-muted-foreground/30 mb-2" />
             <p className="text-xs text-muted-foreground">No alerts</p>
             <span className="text-xs text-primary font-medium">Create one →</span>
@@ -87,7 +89,7 @@ export function DashboardAlertsPanel({ alerts }: Props) {
               tabIndex={0}
               aria-label={`${alert.symbol} alert - click to edit`}
               className={cn(
-                "p-2.5 rounded-lg border transition-all cursor-pointer hover:border-primary/20 hover:shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring active:scale-[0.99]",
+                "p-3 rounded-xl border transition-all cursor-pointer hover:border-primary/20 hover:shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring active:scale-[0.99]",
                 alert.last_triggered && new Date(alert.last_triggered).toDateString() === new Date().toDateString()
                   ? "border-warning/20 bg-warning/5"
                   : "border-border/50 hover:border-border"
@@ -101,7 +103,7 @@ export function DashboardAlertsPanel({ alerts }: Props) {
                   <span className="text-xs font-medium">{alert.symbol}</span>
                 </div>
                 <span className={cn(
-                  "text-[9px] font-medium uppercase px-1.5 py-0.5 rounded",
+                  "text-[9px] font-medium uppercase px-1.5 py-0.5 rounded-full",
                   alert.active ? "bg-profit/10 text-profit" : "bg-muted text-muted-foreground"
                 )}>
                   {alert.active ? "Active" : "Paused"}

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useDashboard } from "@/pages/Dashboard";
 import { cn } from "@/lib/utils";
 import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowUp, ArrowDown, Calendar } from "lucide-react";
 
 const fmt = (v: number) =>
   `₹${Math.abs(v).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
@@ -10,8 +10,7 @@ const fmt = (v: number) =>
 interface MetricItem {
   label: string;
   value: string;
-  prevValue?: string;
-  delta?: number; // percentage change
+  delta?: number;
   highlight?: boolean;
 }
 
@@ -68,13 +67,18 @@ export function DashboardMonthlyMetrics() {
   ];
 
   return (
-    <div className="surface-card p-5">
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="font-semibold">Monthly Performance</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            {format(monthStart, "dd MMM")} – {format(monthEnd, "dd MMM yyyy")}
-          </p>
+    <div className="dashboard-card">
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <div className="icon-badge-sm bg-primary/10">
+            <Calendar className="w-4 h-4 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-semibold">Monthly Performance</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {format(monthStart, "dd MMM")} – {format(monthEnd, "dd MMM yyyy")}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -83,17 +87,17 @@ export function DashboardMonthlyMetrics() {
           <div
             key={m.label}
             className={cn(
-              "p-3 rounded-xl transition-all",
+              "p-3.5 rounded-2xl transition-all",
               m.highlight ? "bg-primary/5 border border-primary/10" : "bg-muted/50"
             )}
           >
-            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">{m.label}</p>
-            <p className={cn("text-lg font-bold mt-1", m.highlight && "text-primary")}>
+            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">{m.label}</p>
+            <p className={cn("text-lg font-bold mt-1.5", m.highlight && "text-primary")}>
               {m.value}
             </p>
             {m.delta !== undefined && m.delta !== 0 && (
               <div className={cn(
-                "flex items-center gap-0.5 mt-1 text-[10px] font-medium",
+                "flex items-center gap-0.5 mt-1.5 text-[10px] font-medium",
                 m.delta > 0 ? "text-profit" : "text-loss"
               )}>
                 {m.delta > 0 ? <ArrowUp className="w-2.5 h-2.5" /> : <ArrowDown className="w-2.5 h-2.5" />}
