@@ -78,6 +78,7 @@ export default {
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
+        logo: ["Space Grotesk", "Inter", "system-ui", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {

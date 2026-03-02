@@ -89,7 +89,7 @@ export function Sidebar() {
           <div className="w-8 h-8 rounded-xl bg-gradient-primary flex items-center justify-center">
             <TrendingUp className="w-4 h-4 text-primary-foreground" />
           </div>
-          <span className="font-bold text-[15px]">TradeBook</span>
+          <span className="font-logo font-bold text-[15px] tracking-tight">TradeBook</span>
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
@@ -118,7 +118,7 @@ export function Sidebar() {
           </div>
           {!collapsed && (
             <div className="animate-fade-in">
-              <h1 className="font-bold text-[15px] leading-tight">TradeBook</h1>
+              <h1 className="font-logo font-bold text-[15px] leading-tight tracking-tight">TradeBook</h1>
             </div>
           )}
           {!collapsed && (
