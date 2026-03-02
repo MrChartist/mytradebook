@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import {
   TrendingUp, BarChart3, Bell, Eye, Activity, Calendar, Target,
   ArrowRight, CandlestickChart, Send, LayoutDashboard, BookOpen,
-  Layers, Keyboard as KeyboardIcon, Settings, Zap, FileText
+  Layers, Keyboard as KeyboardIcon, Settings, Zap, FileText, Upload
 } from "lucide-react";
 
 /* ──────────────────────────────────────────────
@@ -635,6 +635,398 @@ export function PositionSizingMockup() {
           <div className="flex justify-between"><span className="text-muted-foreground">Stop Loss</span><span className="font-mono text-loss">₹2,810.00</span></div>
           <div className="h-px bg-border/40 my-1" />
           <div className="flex justify-between font-semibold"><span>Recommended Qty</span><span className="font-mono text-[hsl(var(--tb-accent))]">281 shares</span></div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   18. StudyCardMockup
+   ────────────────────────────────────────────── */
+export function StudyCardMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-sm mx-auto">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center">
+              <BookOpen className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
+            </div>
+            <div>
+              <p className="text-sm font-bold">TATASTEEL</p>
+              <p className="text-[10px] text-muted-foreground">NSE · Technical Analysis</p>
+            </div>
+          </div>
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))]">Active</span>
+        </div>
+        <p className="text-xs text-muted-foreground mb-3">Cup & Handle formation on daily chart. Breakout above ₹158 with volume confirmation.</p>
+        {/* Status flow */}
+        <div className="flex items-center gap-1.5 mb-3 text-[9px]">
+          <span className="px-1.5 py-0.5 rounded bg-muted/60 text-muted-foreground line-through">Draft</span>
+          <ArrowRight className="w-3 h-3 text-muted-foreground/50" />
+          <span className="px-1.5 py-0.5 rounded bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))] font-semibold">Active</span>
+          <ArrowRight className="w-3 h-3 text-muted-foreground/50" />
+          <span className="px-1.5 py-0.5 rounded bg-muted/40 text-muted-foreground">Triggered</span>
+        </div>
+        {/* Tags */}
+        <div className="flex flex-wrap gap-1 mb-3">
+          {["Double Bottom", "Breakout", "Volume Spike"].map((t) => (
+            <span key={t} className="px-1.5 py-0.5 rounded text-[9px] bg-profit/10 text-profit font-medium">{t}</span>
+          ))}
+        </div>
+        {/* Live price */}
+        <div className="flex items-center justify-between text-[10px] pt-2 border-t border-border/30">
+          <span className="text-muted-foreground">LTP</span>
+          <span className="font-mono font-bold text-profit">₹156.80 <span className="text-[9px]">+2.3%</span></span>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   19. StreakDisciplineMockup
+   ────────────────────────────────────────────── */
+export function StreakDisciplineMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-sm mx-auto">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-base">🏆</span>
+          <div>
+            <p className="text-xs font-bold">Streak & Discipline</p>
+            <p className="text-[10px] text-muted-foreground">Trading consistency</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2 mb-3">
+          <div className="p-2.5 rounded-lg bg-profit/10 border border-profit/20">
+            <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Streak</p>
+            <p className="text-lg font-bold text-profit">5W</p>
+          </div>
+          <div className="p-2.5 rounded-lg bg-muted/40">
+            <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Avg R:R</p>
+            <p className="text-lg font-bold">1:1.8</p>
+          </div>
+          <div className="p-2.5 rounded-lg bg-muted/40">
+            <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Best Trade</p>
+            <p className="text-sm font-bold text-profit font-mono">+₹8,200</p>
+          </div>
+          <div className="p-2.5 rounded-lg bg-muted/40">
+            <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Worst Trade</p>
+            <p className="text-sm font-bold text-loss font-mono">-₹3,400</p>
+          </div>
+        </div>
+        {/* Discipline bar */}
+        <div className="p-2.5 rounded-lg bg-muted/40">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">SL Discipline</p>
+            <p className="text-[10px] font-semibold">78%</p>
+          </div>
+          <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+            <div className="h-full rounded-full bg-profit" style={{ width: '78%' }} />
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   20. WeeklyReportMockup
+   ────────────────────────────────────────────── */
+export function WeeklyReportMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-md mx-auto">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <p className="text-xs font-bold">📊 Weekly Report</p>
+            <p className="text-[10px] text-muted-foreground">Feb 17 – 21, 2026</p>
+          </div>
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-profit/10 text-profit">+₹9,200</span>
+        </div>
+        {/* Segment rows */}
+        <div className="space-y-1.5 mb-3">
+          {[
+            { seg: "Intraday", pnl: "+₹12,400", wr: "68%", color: "text-profit" },
+            { seg: "Options", pnl: "-₹3,200", wr: "42%", color: "text-loss" },
+          ].map((r) => (
+            <div key={r.seg} className="flex items-center justify-between rounded-lg bg-muted/30 px-3 py-2 text-[10px]">
+              <span className="font-semibold">{r.seg}</span>
+              <div className="flex items-center gap-3">
+                <span className={cn("font-mono font-bold", r.color)}>{r.pnl}</span>
+                <span className="text-muted-foreground">WR: {r.wr}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Highlights */}
+        <div className="grid grid-cols-2 gap-2 mb-3 text-[10px]">
+          <div className="rounded-lg bg-profit/5 p-2">
+            <p className="text-muted-foreground">Top Setup</p>
+            <p className="font-semibold text-profit">Breakout</p>
+          </div>
+          <div className="rounded-lg bg-loss/5 p-2">
+            <p className="text-muted-foreground">Worst Mistake</p>
+            <p className="font-semibold text-loss">Revenge Trade</p>
+          </div>
+        </div>
+        {/* Actions */}
+        <div className="flex gap-2">
+          <div className="flex-1 rounded-lg bg-muted/40 py-1.5 text-center text-[10px] font-semibold text-muted-foreground">📄 PDF</div>
+          <div className="flex-1 rounded-lg bg-[hsl(var(--tb-accent)/0.1)] py-1.5 text-center text-[10px] font-semibold text-[hsl(var(--tb-accent))]">📨 Telegram</div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   21. MistakeTrendMockup
+   ────────────────────────────────────────────── */
+export function MistakeTrendMockup() {
+  const months = ["Sep", "Oct", "Nov", "Dec", "Jan", "Feb"];
+  const values = [18, 14, 11, 9, 6, 4];
+  const maxVal = Math.max(...values);
+  return (
+    <MockupFrame className="my-6">
+      <p className="text-[10px] font-semibold text-muted-foreground mb-3">6-Month Mistake Trend</p>
+      <div className="flex items-end gap-2 h-20 px-2">
+        {months.map((m, i) => (
+          <div key={m} className="flex-1 flex flex-col items-center gap-1">
+            <div
+              className="w-full rounded-t-sm"
+              style={{
+                height: `${(values[i] / maxVal) * 100}%`,
+                backgroundColor: values[i] > 12 ? 'hsl(var(--loss))' : values[i] > 8 ? 'hsl(var(--warning))' : 'hsl(var(--profit))',
+                opacity: 0.7,
+              }}
+            />
+            <span className="text-[8px] text-muted-foreground">{m}</span>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center gap-3 mt-2 text-[9px] text-muted-foreground">
+        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-loss/70" /> High</span>
+        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-[hsl(var(--warning)/0.7)]" /> Med</span>
+        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-profit/70" /> Low</span>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   22. DailyJournalMockup
+   ────────────────────────────────────────────── */
+export function DailyJournalMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-md mx-auto">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center text-sm">📝</div>
+            <div>
+              <p className="text-xs font-bold">Tuesday, Feb 18, 2026</p>
+              <p className="text-[10px] text-muted-foreground">3 trades closed</p>
+            </div>
+          </div>
+          <span className="text-lg" title="Confident">😊</span>
+        </div>
+        <div className="space-y-2 text-[10px]">
+          <div className="rounded-lg bg-[hsl(var(--tb-accent)/0.05)] p-2.5 border border-[hsl(var(--tb-accent)/0.1)]">
+            <p className="font-semibold text-[hsl(var(--tb-accent))] mb-0.5">Pre-Market Plan</p>
+            <p className="text-muted-foreground">Focus on Nifty 22,400 support. Look for breakout in RELIANCE above 2,850. Avoid options until 10:30 AM.</p>
+          </div>
+          <div className="rounded-lg bg-profit/5 p-2.5 border border-profit/10">
+            <p className="font-semibold text-profit mb-0.5">Post-Market Review</p>
+            <p className="text-muted-foreground">Stuck to plan. RELIANCE breakout worked perfectly. Avoided revenge trade after INFY SL hit.</p>
+          </div>
+          <div className="rounded-lg bg-muted/30 p-2.5">
+            <p className="font-semibold mb-0.5">Lessons</p>
+            <p className="text-muted-foreground">Patience on entries pays off. Wait for volume confirmation before going in.</p>
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   23. TelegramChannelsMockup
+   ────────────────────────────────────────────── */
+export function TelegramChannelsMockup() {
+  const channels = [
+    { label: "Alerts Channel", segments: ["All"], types: "Alert triggers", enabled: true },
+    { label: "EOD Reports", segments: ["Intraday", "Options"], types: "EOD, Weekly", enabled: true },
+    { label: "Intraday Only", segments: ["Intraday"], types: "Trades, TSL", enabled: false },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <p className="text-[10px] font-semibold text-muted-foreground mb-3">Telegram Channels & Routing</p>
+      <div className="space-y-2">
+        {channels.map((ch) => (
+          <div key={ch.label} className="rounded-lg bg-card border border-border/40 p-3 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <Send className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" />
+              <div>
+                <p className="text-[11px] font-semibold">{ch.label}</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  {ch.segments.map((s) => (
+                    <span key={s} className="px-1.5 py-0.5 rounded text-[8px] bg-muted/60 text-muted-foreground">{s}</span>
+                  ))}
+                  <span className="text-[8px] text-muted-foreground/60">· {ch.types}</span>
+                </div>
+              </div>
+            </div>
+            <div className={cn(
+              "w-8 h-4 rounded-full flex items-center p-0.5 transition-colors",
+              ch.enabled ? "bg-profit justify-end" : "bg-muted justify-start"
+            )}>
+              <div className="w-3 h-3 rounded-full bg-white shadow-sm" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   24. WidgetCustomizerMockup
+   ────────────────────────────────────────────── */
+export function WidgetCustomizerMockup() {
+  const widgets = [
+    { label: "Today's P&L", visible: true },
+    { label: "KPI Cards", visible: true },
+    { label: "Risk & Goal", visible: true },
+    { label: "Equity Curve", visible: true },
+    { label: "Positions Table", visible: false },
+    { label: "Streak & Calendar", visible: true },
+    { label: "AI Insights", visible: false },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-3 max-w-xs mx-auto">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[10px] font-bold">Dashboard Widgets</p>
+          <span className="text-[9px] text-[hsl(var(--tb-accent))] font-medium cursor-default">↺ Reset</span>
+        </div>
+        <div className="space-y-1">
+          {widgets.map((w, i) => (
+            <div key={w.label} className="flex items-center justify-between py-1.5 px-2 rounded-md hover:bg-muted/30 transition-colors">
+              <div className="flex items-center gap-2">
+                <Eye className={cn("w-3 h-3", w.visible ? "text-foreground" : "text-muted-foreground/40")} />
+                <span className={cn("text-[10px]", w.visible ? "text-foreground font-medium" : "text-muted-foreground/60 line-through")}>{w.label}</span>
+              </div>
+              <div className="flex gap-0.5 text-muted-foreground/50">
+                <span className={cn("text-[10px] cursor-default", i === 0 && "opacity-30")}>▲</span>
+                <span className={cn("text-[10px] cursor-default", i === widgets.length - 1 && "opacity-30")}>▼</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   25. CsvImportMockup
+   ────────────────────────────────────────────── */
+export function CsvImportMockup() {
+  const mappings = [
+    { csv: "Symbol", field: "symbol" },
+    { csv: "Entry", field: "entry_price" },
+    { csv: "Exit", field: "exit_price" },
+    { csv: "Qty", field: "quantity" },
+    { csv: "Date", field: "entry_time" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-xs mx-auto">
+        <p className="text-xs font-bold mb-3 flex items-center gap-1.5">
+          <Upload className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" /> CSV Import
+        </p>
+        {/* File area */}
+        <div className="rounded-lg border-2 border-dashed border-border/40 p-3 mb-3 text-center">
+          <p className="text-[10px] text-muted-foreground">📄 trades_feb2026.csv</p>
+          <p className="text-[9px] text-muted-foreground/60">42 rows detected</p>
+        </div>
+        {/* Column mapping */}
+        <p className="text-[9px] font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Column Mapping</p>
+        <div className="space-y-1">
+          {mappings.map((m) => (
+            <div key={m.csv} className="flex items-center gap-2 text-[10px]">
+              <span className="w-16 text-muted-foreground">{m.csv}</span>
+              <ArrowRight className="w-3 h-3 text-[hsl(var(--tb-accent))]" />
+              <span className="font-mono font-semibold text-foreground">{m.field}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   26. SegmentPerformanceMockup
+   ────────────────────────────────────────────── */
+export function SegmentPerformanceMockup() {
+  const segments = [
+    { seg: "Intraday", wr: "68%", sharpe: "1.4", pf: "2.1", color: "text-profit" },
+    { seg: "Positional", wr: "55%", sharpe: "1.1", pf: "1.5", color: "text-foreground" },
+    { seg: "Options", wr: "42%", sharpe: "0.8", pf: "0.9", color: "text-loss" },
+    { seg: "Futures", wr: "61%", sharpe: "1.3", pf: "1.8", color: "text-profit" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <p className="text-[10px] font-semibold text-muted-foreground mb-3">Segment Performance Breakdown</p>
+      <div className="rounded-xl bg-card border border-border/40 overflow-hidden">
+        <div className="grid grid-cols-4 gap-2 px-3 py-2 bg-muted/40 text-[9px] font-semibold text-muted-foreground">
+          <span>Segment</span><span className="text-center">Win Rate</span><span className="text-center">Sharpe</span><span className="text-center">PF</span>
+        </div>
+        {segments.map((s) => (
+          <div key={s.seg} className="grid grid-cols-4 gap-2 px-3 py-2 border-t border-border/20 text-[10px]">
+            <span className="font-semibold">{s.seg}</span>
+            <span className={cn("text-center font-mono font-bold", s.color)}>{s.wr}</span>
+            <span className="text-center font-mono">{s.sharpe}</span>
+            <span className="text-center font-mono">{s.pf}</span>
+          </div>
+        ))}
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   27. RiskOfRuinMockup
+   ────────────────────────────────────────────── */
+export function RiskOfRuinMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-xs mx-auto text-center">
+        <p className="text-[10px] font-semibold text-muted-foreground mb-3">Risk of Ruin Calculator</p>
+        <svg viewBox="0 0 100 55" className="w-24 h-14 mx-auto mb-2">
+          <path d="M10 50 A40 40 0 0 1 90 50" fill="none" stroke="hsl(var(--border))" strokeWidth="6" strokeLinecap="round" />
+          <path d="M10 50 A40 40 0 0 1 90 50" fill="none" stroke="hsl(var(--profit))" strokeWidth="6" strokeLinecap="round"
+            strokeDasharray="8 118" />
+        </svg>
+        <p className="text-2xl font-bold text-profit font-mono">2.3%</p>
+        <p className="text-[10px] text-muted-foreground mt-1">Probability of account ruin</p>
+        <div className="grid grid-cols-3 gap-2 mt-3 text-[9px]">
+          <div className="rounded-md bg-muted/30 p-1.5">
+            <p className="text-muted-foreground">WR</p>
+            <p className="font-bold">62%</p>
+          </div>
+          <div className="rounded-md bg-muted/30 p-1.5">
+            <p className="text-muted-foreground">R:R</p>
+            <p className="font-bold">1:1.8</p>
+          </div>
+          <div className="rounded-md bg-muted/30 p-1.5">
+            <p className="text-muted-foreground">Risk%</p>
+            <p className="font-bold">1%</p>
+          </div>
         </div>
       </div>
     </MockupFrame>
