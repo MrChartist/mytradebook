@@ -3,7 +3,8 @@ import {
   TrendingUp, BarChart3, Bell, Eye, Activity, Calendar, Target,
   ArrowRight, CandlestickChart, Send, LayoutDashboard, BookOpen,
   Layers, Keyboard as KeyboardIcon, Settings, Zap, FileText, Upload,
-  List, Grid3X3, Sparkles, Smartphone, ArrowUpRight, ArrowDownRight
+  List, Grid3X3, Sparkles, Smartphone, ArrowUpRight, ArrowDownRight,
+  Search
 } from "lucide-react";
 
 /* ──────────────────────────────────────────────
@@ -1591,6 +1592,430 @@ export function CalendarDayDetailMockup() {
           <p className="text-[9px] font-semibold text-[hsl(var(--tb-accent))] mb-1">📝 Journal Note</p>
           <p className="text-[9px] text-muted-foreground leading-relaxed">Good day overall. Followed the pre-market plan. RELIANCE breakout worked as expected. Need to improve INFY exit timing.</p>
         </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   38. CreateTradeMockup — Realistic trade creation form
+   ────────────────────────────────────────────── */
+export function CreateTradeMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-md mx-auto">
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-sm font-bold">Create New Trade</p>
+          <span className="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))]">Equity Intraday</span>
+        </div>
+        {/* Instrument search */}
+        <div className="mb-3">
+          <p className="text-[9px] text-muted-foreground mb-1">Instrument</p>
+          <div className="flex items-center gap-2 rounded-lg bg-muted/30 border border-border/40 px-3 py-2">
+            <Search className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-xs font-semibold">RELIANCE</span>
+            <span className="text-[9px] text-muted-foreground ml-auto">NSE · EQ</span>
+          </div>
+        </div>
+        {/* Trade type toggle */}
+        <div className="flex gap-2 mb-3">
+          <div className="flex-1 rounded-lg bg-profit/15 border border-profit/30 py-1.5 text-center text-[10px] font-bold text-profit">BUY</div>
+          <div className="flex-1 rounded-lg bg-muted/30 border border-border/30 py-1.5 text-center text-[10px] font-medium text-muted-foreground">SELL</div>
+        </div>
+        {/* Price fields */}
+        <div className="grid grid-cols-2 gap-2 mb-3">
+          <div>
+            <p className="text-[9px] text-muted-foreground mb-1">Entry Price</p>
+            <div className="rounded-lg bg-muted/30 border border-border/40 px-3 py-1.5 text-xs font-mono font-bold">₹2,845.50</div>
+          </div>
+          <div>
+            <p className="text-[9px] text-muted-foreground mb-1">Quantity</p>
+            <div className="rounded-lg bg-muted/30 border border-border/40 px-3 py-1.5 text-xs font-mono font-bold">50</div>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-2 mb-3">
+          <div>
+            <p className="text-[9px] text-muted-foreground mb-1">Stop Loss</p>
+            <div className="rounded-lg bg-loss/5 border border-loss/20 px-2 py-1.5 text-xs font-mono font-bold text-loss">₹2,810</div>
+          </div>
+          <div>
+            <p className="text-[9px] text-muted-foreground mb-1">Target 1</p>
+            <div className="rounded-lg bg-profit/5 border border-profit/20 px-2 py-1.5 text-xs font-mono font-bold text-profit">₹2,900</div>
+          </div>
+          <div>
+            <p className="text-[9px] text-muted-foreground mb-1">Target 2</p>
+            <div className="rounded-lg bg-profit/5 border border-profit/20 px-2 py-1.5 text-xs font-mono font-bold text-profit">₹2,950</div>
+          </div>
+        </div>
+        {/* Risk metrics row */}
+        <div className="rounded-lg bg-[hsl(var(--tb-accent)/0.05)] border border-[hsl(var(--tb-accent)/0.15)] p-2.5 mb-3">
+          <div className="grid grid-cols-3 gap-2 text-center text-[9px]">
+            <div><p className="text-muted-foreground">SL %</p><p className="font-bold text-loss">1.25%</p></div>
+            <div><p className="text-muted-foreground">Risk ₹</p><p className="font-bold text-loss">₹1,775</p></div>
+            <div><p className="text-muted-foreground">R:R</p><p className="font-bold text-[hsl(var(--tb-accent))]">1:1.54</p></div>
+          </div>
+        </div>
+        {/* Tags & confidence */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex gap-1">
+            <span className="px-1.5 py-0.5 rounded text-[8px] bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))] font-medium">Breakout</span>
+            <span className="px-1.5 py-0.5 rounded text-[8px] bg-muted text-muted-foreground">15m</span>
+            <span className="px-1.5 py-0.5 rounded text-[8px] bg-profit/10 text-profit font-medium">Vol Spike</span>
+          </div>
+          <div className="flex gap-0.5">
+            {[1,2,3,4,5].map(i => (
+              <span key={i} className={cn("text-sm", i <= 4 ? "text-[hsl(var(--tb-accent))]" : "text-muted-foreground/30")}>★</span>
+            ))}
+          </div>
+        </div>
+        {/* Action */}
+        <div className="rounded-lg bg-[hsl(var(--tb-accent))] py-2 text-center text-xs font-bold text-white">
+          Create Trade
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   39. TradeStatusLifecycleMockup — Detailed lifecycle
+   ────────────────────────────────────────────── */
+export function TradeStatusLifecycleMockup() {
+  const statuses = [
+    { label: "Planned", icon: "📝", desc: "Idea logged, not yet executed", color: "bg-muted/60 border-border/40", textColor: "text-muted-foreground" },
+    { label: "Open", icon: "🟢", desc: "Active position in market", color: "bg-[hsl(var(--tb-accent)/0.1)] border-[hsl(var(--tb-accent)/0.3)]", textColor: "text-[hsl(var(--tb-accent))]" },
+    { label: "Closed", icon: "✅", desc: "Exited, P&L calculated", color: "bg-profit/10 border-profit/20", textColor: "text-profit" },
+    { label: "Cancelled", icon: "❌", desc: "Idea abandoned", color: "bg-loss/5 border-loss/15", textColor: "text-loss" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <p className="text-[10px] font-semibold text-muted-foreground mb-3">Trade Status Lifecycle</p>
+      <div className="flex flex-col md:flex-row items-stretch gap-2">
+        {statuses.map((s, i) => (
+          <div key={s.label} className="flex items-center gap-2 flex-1">
+            <div className={cn("rounded-xl border p-3 flex-1", s.color)}>
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-sm">{s.icon}</span>
+                <span className={cn("text-xs font-bold", s.textColor)}>{s.label}</span>
+              </div>
+              <p className="text-[9px] text-muted-foreground">{s.desc}</p>
+            </div>
+            {i < statuses.length - 1 && (
+              <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 hidden md:block" />
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="mt-3 rounded-lg bg-muted/30 p-2.5 text-[9px] text-muted-foreground">
+        <span className="font-semibold text-foreground">Tip:</span> Closing a trade triggers an automatic Post-Trade Review prompt and P&L calculation. Cancelled trades are excluded from all analytics.
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   40. TSLDetailMockup — Trailing Stop Loss visualization
+   ────────────────────────────────────────────── */
+export function TSLDetailMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-lg mx-auto">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center">
+              <Target className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
+            </div>
+            <div>
+              <p className="text-xs font-bold">Trailing Stop Loss</p>
+              <p className="text-[10px] text-muted-foreground">RELIANCE · BUY @ ₹2,845</p>
+            </div>
+          </div>
+          <span className="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-profit/10 text-profit animate-pulse">TSL Active</span>
+        </div>
+        {/* TSL visual chart */}
+        <svg viewBox="0 0 300 80" className="w-full h-20 mb-3">
+          {/* Price line going up */}
+          <path d="M0 65 L30 60 L60 55 L90 45 L120 35 L150 30 L180 25 L210 28 L240 20 L270 15 L300 12" fill="none" stroke="hsl(var(--profit))" strokeWidth="2" />
+          {/* TSL line stepping up */}
+          <path d="M0 70 L90 70 L90 55 L150 55 L150 42 L210 42 L210 38 L270 38 L270 30 L300 30" fill="none" stroke="hsl(var(--warning))" strokeWidth="1.5" strokeDasharray="4 2" />
+          {/* Entry marker */}
+          <circle cx="0" cy="65" r="3" fill="hsl(var(--tb-accent))" />
+          <text x="5" y="75" className="text-[7px]" fill="hsl(var(--muted-foreground))">Entry</text>
+          {/* Current price */}
+          <circle cx="300" cy="12" r="3" fill="hsl(var(--profit))" />
+          {/* SL markers */}
+          <circle cx="90" cy="55" r="2.5" fill="hsl(var(--warning))" />
+          <circle cx="150" cy="42" r="2.5" fill="hsl(var(--warning))" />
+          <circle cx="210" cy="38" r="2.5" fill="hsl(var(--warning))" />
+          <circle cx="270" cy="30" r="2.5" fill="hsl(var(--warning))" />
+        </svg>
+        <div className="flex items-center gap-4 mb-3 text-[9px] text-muted-foreground">
+          <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-profit rounded" /> Price</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-[hsl(var(--warning))] rounded" style={{ borderTop: '1px dashed' }} /> TSL Level</span>
+        </div>
+        {/* TSL Parameters */}
+        <div className="grid grid-cols-3 gap-2 mb-3">
+          <div className="rounded-lg bg-muted/30 p-2 text-center">
+            <p className="text-[8px] text-muted-foreground">Activation</p>
+            <p className="text-[11px] font-bold font-mono">1.5%</p>
+          </div>
+          <div className="rounded-lg bg-muted/30 p-2 text-center">
+            <p className="text-[8px] text-muted-foreground">Step Size</p>
+            <p className="text-[11px] font-bold font-mono">0.5%</p>
+          </div>
+          <div className="rounded-lg bg-muted/30 p-2 text-center">
+            <p className="text-[8px] text-muted-foreground">Trail Gap</p>
+            <p className="text-[11px] font-bold font-mono">1.0%</p>
+          </div>
+        </div>
+        {/* Current state */}
+        <div className="flex items-center justify-between text-[10px] rounded-lg bg-profit/5 border border-profit/15 p-2.5">
+          <div>
+            <span className="text-muted-foreground">Current SL: </span>
+            <span className="font-mono font-bold text-[hsl(var(--warning))]">₹2,880.00</span>
+          </div>
+          <div>
+            <span className="text-muted-foreground">LTP: </span>
+            <span className="font-mono font-bold text-profit">₹2,912.50</span>
+          </div>
+          <div>
+            <span className="text-muted-foreground">P&L: </span>
+            <span className="font-mono font-bold text-profit">+₹3,375</span>
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   41. MultiLegStrategyDetailMockup
+   ────────────────────────────────────────────── */
+export function MultiLegStrategyDetailMockup() {
+  const legs = [
+    { action: "BUY", instrument: "NIFTY 22500 CE", qty: 50, entry: "₹185", ltp: "₹210", pnl: "+₹1,250", color: "text-profit" },
+    { action: "SELL", instrument: "NIFTY 22600 CE", qty: 50, entry: "₹120", ltp: "₹95", pnl: "+₹1,250", color: "text-profit" },
+    { action: "SELL", instrument: "NIFTY 22300 PE", qty: 50, entry: "₹110", ltp: "₹85", pnl: "+₹1,250", color: "text-profit" },
+    { action: "BUY", instrument: "NIFTY 22200 PE", qty: 50, entry: "₹60", ltp: "₹42", pnl: "-₹900", color: "text-loss" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-lg mx-auto">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center">
+              <Layers className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
+            </div>
+            <div>
+              <p className="text-xs font-bold">Iron Condor</p>
+              <p className="text-[10px] text-muted-foreground">NIFTY · 4 legs · Options</p>
+            </div>
+          </div>
+          <span className="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-profit/10 text-profit">OPEN</span>
+        </div>
+        {/* Legs table */}
+        <div className="rounded-lg border border-border/30 overflow-hidden mb-3">
+          <div className="grid grid-cols-6 gap-1 px-2.5 py-1.5 bg-muted/40 text-[8px] font-semibold text-muted-foreground">
+            <span>Action</span><span className="col-span-2">Instrument</span><span className="text-right">Qty</span><span className="text-right">Entry</span><span className="text-right">P&L</span>
+          </div>
+          {legs.map((leg, i) => (
+            <div key={i} className="grid grid-cols-6 gap-1 px-2.5 py-1.5 border-t border-border/20 text-[9px]">
+              <span className={cn("font-bold", leg.action === "BUY" ? "text-profit" : "text-loss")}>{leg.action}</span>
+              <span className="col-span-2 font-medium truncate">{leg.instrument}</span>
+              <span className="text-right font-mono">{leg.qty}</span>
+              <span className="text-right font-mono">{leg.entry}</span>
+              <span className={cn("text-right font-mono font-bold", leg.color)}>{leg.pnl}</span>
+            </div>
+          ))}
+        </div>
+        {/* Strategy summary */}
+        <div className="grid grid-cols-3 gap-2 text-center">
+          <div className="rounded-lg bg-muted/30 p-2">
+            <p className="text-[8px] text-muted-foreground">Net Premium</p>
+            <p className="text-xs font-bold font-mono text-profit">+₹55</p>
+          </div>
+          <div className="rounded-lg bg-muted/30 p-2">
+            <p className="text-[8px] text-muted-foreground">Combined P&L</p>
+            <p className="text-xs font-bold font-mono text-profit">+₹2,850</p>
+          </div>
+          <div className="rounded-lg bg-muted/30 p-2">
+            <p className="text-[8px] text-muted-foreground">Max Risk</p>
+            <p className="text-xs font-bold font-mono text-loss">₹4,500</p>
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   42. PositionSizingDetailMockup — Full calculator
+   ────────────────────────────────────────────── */
+export function PositionSizingDetailMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-sm mx-auto">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-8 h-8 rounded-lg bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center">
+            <Target className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
+          </div>
+          <p className="text-xs font-bold">Position Sizing Calculator</p>
+        </div>
+        {/* Inputs */}
+        <div className="space-y-2 mb-3">
+          <div className="flex justify-between items-center text-[10px]">
+            <span className="text-muted-foreground">Starting Capital</span>
+            <span className="font-mono font-bold">₹10,00,000</span>
+          </div>
+          <div className="flex justify-between items-center text-[10px]">
+            <span className="text-muted-foreground">Risk per Trade</span>
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))] font-bold">1%</span>
+              <span className="font-mono font-bold">₹10,000</span>
+            </div>
+          </div>
+          <div className="h-px bg-border/40" />
+          <div className="flex justify-between items-center text-[10px]">
+            <span className="text-muted-foreground">Entry Price</span>
+            <span className="font-mono font-bold">₹2,845.50</span>
+          </div>
+          <div className="flex justify-between items-center text-[10px]">
+            <span className="text-muted-foreground">Stop Loss</span>
+            <span className="font-mono font-bold text-loss">₹2,810.00</span>
+          </div>
+          <div className="flex justify-between items-center text-[10px]">
+            <span className="text-muted-foreground">SL Distance</span>
+            <span className="font-mono text-loss">₹35.50 (1.25%)</span>
+          </div>
+        </div>
+        {/* Result */}
+        <div className="rounded-lg bg-[hsl(var(--tb-accent)/0.08)] border border-[hsl(var(--tb-accent)/0.2)] p-3">
+          <div className="flex justify-between items-center text-[10px] mb-2">
+            <span className="font-semibold text-[hsl(var(--tb-accent))]">Recommended Quantity</span>
+            <span className="text-lg font-bold font-mono text-[hsl(var(--tb-accent))]">281</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-[9px]">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Position Value</span>
+              <span className="font-mono">₹7,99,585</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Max Loss</span>
+              <span className="font-mono text-loss">₹9,976</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   43. PostTradeReviewMockup — Review modal
+   ────────────────────────────────────────────── */
+export function PostTradeReviewMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-md mx-auto">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <p className="text-sm font-bold">Post-Trade Review</p>
+            <p className="text-[10px] text-muted-foreground">RELIANCE · Closed · +₹3,375</p>
+          </div>
+          <span className="text-xl">🏆</span>
+        </div>
+        {/* Execution quality */}
+        <div className="mb-3">
+          <p className="text-[10px] font-semibold mb-1.5">Execution Quality</p>
+          <div className="flex gap-1">
+            {[1,2,3,4,5].map(i => (
+              <div key={i} className={cn(
+                "flex-1 h-2 rounded-full",
+                i <= 4 ? "bg-[hsl(var(--tb-accent))]" : "bg-muted"
+              )} />
+            ))}
+          </div>
+          <p className="text-[9px] text-muted-foreground mt-1">4 out of 5 — Very Good</p>
+        </div>
+        {/* Rules followed */}
+        <div className="mb-3">
+          <p className="text-[10px] font-semibold mb-1.5">Rules Followed?</p>
+          <div className="flex gap-2">
+            <div className="flex-1 rounded-lg bg-profit/10 border border-profit/25 py-1.5 text-center text-[10px] font-bold text-profit">✓ Yes</div>
+            <div className="flex-1 rounded-lg bg-muted/30 border border-border/30 py-1.5 text-center text-[10px] font-medium text-muted-foreground">No</div>
+          </div>
+        </div>
+        {/* Text fields */}
+        <div className="space-y-2 mb-3">
+          <div>
+            <p className="text-[9px] text-muted-foreground mb-1">What worked well?</p>
+            <div className="rounded-lg bg-profit/5 border border-profit/15 p-2.5 text-[10px] text-muted-foreground">
+              Entry was patient — waited for volume confirmation on breakout above 2,845. Trailed SL properly and let the winner run.
+            </div>
+          </div>
+          <div>
+            <p className="text-[9px] text-muted-foreground mb-1">What could improve?</p>
+            <div className="rounded-lg bg-loss/5 border border-loss/15 p-2.5 text-[10px] text-muted-foreground">
+              Could have added to position at first pullback. Exit was slightly early — missed last ₹15 move.
+            </div>
+          </div>
+        </div>
+        {/* Rating */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <p className="text-[10px] font-semibold mr-1">Trade Rating</p>
+            {[1,2,3,4,5,6,7,8].map(i => (
+              <span key={i} className={cn("text-xs", i <= 7 ? "text-[hsl(var(--tb-accent))]" : "text-muted-foreground/30")}>★</span>
+            ))}
+          </div>
+          <span className="text-[10px] font-mono font-bold text-[hsl(var(--tb-accent))]">7/10</span>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   44. TradeTemplateMockup — Template cards
+   ────────────────────────────────────────────── */
+export function TradeTemplateMockup() {
+  const templates = [
+    { name: "Intraday Breakout", segment: "Equity Intraday", type: "BUY", sl: "0.8%", tags: ["Breakout", "Volume"], timeframe: "15m", auto: true, tg: true },
+    { name: "Swing Reversal", segment: "Equity Positional", type: "BUY", sl: "2.5%", tags: ["Reversal", "Support"], timeframe: "Daily", auto: false, tg: true },
+    { name: "Options Scalp", segment: "Options", type: "BUY", sl: "15%", tags: ["Momentum"], timeframe: "5m", auto: true, tg: false },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <p className="text-[10px] font-semibold text-muted-foreground mb-3">Saved Trade Templates</p>
+      <div className="space-y-2">
+        {templates.map((t) => (
+          <div key={t.name} className="rounded-xl bg-card border border-border/40 p-3 flex items-center justify-between hover:border-[hsl(var(--tb-accent)/0.3)] transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-[hsl(var(--tb-accent)/0.08)] flex items-center justify-center">
+                <Zap className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
+              </div>
+              <div>
+                <p className="text-[11px] font-bold">{t.name}</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="text-[8px] px-1.5 py-0.5 rounded bg-muted/60 text-muted-foreground">{t.segment}</span>
+                  <span className={cn("text-[8px] px-1.5 py-0.5 rounded font-bold", t.type === "BUY" ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss")}>{t.type}</span>
+                  <span className="text-[8px] text-muted-foreground">SL: {t.sl}</span>
+                  <span className="text-[8px] text-muted-foreground">· {t.timeframe}</span>
+                </div>
+                <div className="flex items-center gap-1 mt-1">
+                  {t.tags.map(tag => (
+                    <span key={tag} className="text-[7px] px-1 py-0.5 rounded bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] font-medium">{tag}</span>
+                  ))}
+                  {t.auto && <span className="text-[7px] px-1 py-0.5 rounded bg-profit/10 text-profit">Auto-track</span>}
+                  {t.tg && <span className="text-[7px] px-1 py-0.5 rounded bg-[#229ED9]/10 text-[#229ED9]">Telegram</span>}
+                </div>
+              </div>
+            </div>
+            <div className="rounded-lg bg-[hsl(var(--tb-accent))] px-2.5 py-1 text-[9px] font-bold text-white cursor-pointer">
+              Use
+            </div>
+          </div>
+        ))}
       </div>
     </MockupFrame>
   );
