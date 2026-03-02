@@ -1,65 +1,112 @@
 
 
-# Permanent Auth Fix: Eliminate Published-Site Login Issues
+# Landing Page Redesign - Inspired by Modern SaaS References
 
-## Root Cause Analysis
+## What We're Fixing
 
-After reviewing the code, there are **two specific gaps** causing the persistent issues on the published site:
+The current landing page is functional but feels heavy and dark. The reference screenshots (Manila, Luna UI, Acctual, Loops) share a common thread: **clean white backgrounds, generous whitespace, bold typography, floating/scattered decorative elements, and bento-grid feature layouts**.
 
-### Gap 1: Timeout doesn't consider the pending-auth flag
-When Google OAuth redirects back to the published site, the browser may land at `/` (not `/auth/callback`) because the Lovable Cloud OAuth handler controls the final redirect destination. In this case:
-- `IS_AUTH_CALLBACK` is `false` (no tokens in URL, not on `/auth/callback`)
-- The 1.5-second timeout fires and resolves `loading: false` with `user: null`
-- The `tb-auth-pending` sessionStorage flag IS still set, so `ProtectedRoute` shows a loader...
-- ...but nothing ever resolves the session or clears the flag, creating an **infinite loader** that eventually feels like a hang
+## Design Direction (Inspired by References)
 
-### Gap 2: No timeout on the pending-auth guard
-`ProtectedRoute` shows a loader forever when `isPending` is true but user never arrives. There's no escape hatch, so users see loading indefinitely until they manually refresh.
+### From Manila (Image 1)
+- Email input + CTA button combo in hero (instead of just buttons)
+- Bento-grid feature cards with varied sizes (not uniform 3-column)
+- Large script/italic accent word in headline
+- Trust logo strip below hero
 
-## Fix (3 targeted changes)
+### From Luna UI (Image 2)
+- Asymmetric hero layout with floating UI cards on the right
+- Stats section with big bold numbers + small labels
+- Quote/testimonial block with dark card accent
+- "Mission" style section label badges
 
-### 1. AuthContext: Use `tb-auth-pending` flag to extend timeout
-When the pending flag exists in sessionStorage (set before Google redirect or email login), treat it the same as a callback -- use the longer 15-second timeout instead of 1.5 seconds. This gives the session time to establish even when the return URL doesn't contain tokens.
+### From Acctual (Image 3)
+- Scattered floating elements around hero for depth
+- Bold, oversized center-aligned typography
+- Clean white background with subtle shadows
+- Trust strip with company logos
 
-Additionally, when `tb-auth-pending` is set and no session is found initially, actively retry `getSession()` a few times (polling every 1.5s for up to 10s) to catch sessions that establish with a slight delay.
+### From Loops (Image 4)
+- Floating brand icons scattered around hero text
+- Product screenshot below hero with clean border
+- Minimal, breathable layout
+- Two-button CTA (primary + secondary link)
 
-### 2. ProtectedRoute: Add a safety timeout to the pending state
-If `isPending` is true but no user appears within 12 seconds, clear the flag and redirect to `/landing`. This prevents infinite loaders. The timeout is generous enough to allow normal auth flows to complete.
+## Implementation Plan
 
-### 3. AuthContext: Clear `tb-auth-pending` on successful auth resolution
-When `onAuthStateChange` fires with a valid user, explicitly clear the `tb-auth-pending` flag. This ensures the flag doesn't linger and cause stale behavior on subsequent navigations.
+### 1. Hero Section Overhaul
+- Force light-feeling design regardless of theme
+- Add floating decorative UI cards around the hero (mini trade cards, P&L snippets, alert badges) similar to Acctual's scattered elements
+- Keep the bold "Know Your Edge. Compound It Daily." headline but make it larger and more impactful
+- Replace dual-button CTA with an email input + "Get Access" button combo (like Manila)
+- Add animated floating trading-related icons (chart, candlestick, bell) around the hero similar to Loops' floating brand icons
 
-## Files to modify
+### 2. Trust Strip
+- Redesign the logo marquee to be static and centered like Loops/Manila
+- Show "Trusted by 1,200+ Indian traders" text above
+- Display exchange badges (NSE, BSE, MCX, Dhan, Telegram) with proper spacing
 
-### `src/contexts/AuthContext.tsx`
-- Change `MAX_LOADING_MS` calculation to also check `sessionStorage` for `tb-auth-pending`
-- Add a session polling retry loop when pending flag is detected but no initial session found
-- Clear `tb-auth-pending` in `onAuthStateChange` when user is confirmed
+### 3. Dashboard Preview
+- Keep the existing realistic dashboard mockup but add a subtle perspective/tilt transform for depth
+- Add a soft radial glow behind it
+- Make it slightly overlap the hero section for visual interest
 
-### `src/components/layout/ProtectedRoute.tsx`
-- Add a `useEffect` with a 12-second timeout that clears `tb-auth-pending` and stops showing the loader
-- This provides a clean escape from the infinite-loader scenario
+### 4. Features Section - Bento Grid (Manila-inspired)
+- Replace the uniform 3x2 grid with a **bento-grid layout** (mixed sizes)
+- Large feature card (2-col span) for "Smart Journal" with a mini dashboard preview inside
+- Medium cards for other features with icon + description
+- Add subtle hover animations with border-color transitions
 
-## Expected behavior after fix
+### 5. Stats Section (Luna UI-inspired)
+- Large bold numbers in a horizontal row
+- "5 Segments", "50+ Metrics", "1,200+ Trades Tracked", "24/7 Cloud"
+- Section label badge above: "BY THE NUMBERS"
 
-| Scenario | Current behavior | Fixed behavior |
-|----------|-----------------|----------------|
-| Google login (published) | Hangs on loader, then redirects to landing | Waits up to 15s for session, lands on dashboard |
-| Google login (editor) | Works fine | No change |
-| Email login (published) | Sometimes shows long loading | Pending flag extends timeout, session polling catches it |
-| Email signup | "Failed to fetch" intermittently | Network error handling already in place; timeout extension prevents premature resolution |
-| Any auth timeout | Infinite loader possible | 12s safety timeout in ProtectedRoute shows landing page |
+### 6. How It Works Section
+- Keep 3-step flow but redesign cards to feel lighter
+- Add connecting lines/arrows between steps
+- Number watermark in background of each card
 
-## Technical details
+### 7. Comparison Table
+- Keep existing comparison but add alternating row backgrounds
+- Make the TradeBook column more visually prominent
 
-The session polling in AuthContext will work like this:
-```text
-1. detectAuthCallback() OR tb-auth-pending flag -> use 15s timeout
-2. getSession() returns null but pending flag is set
-3. Poll getSession() every 1.5s, up to 4 retries
-4. If session found during polling -> set user, resolve loading
-5. If all retries fail -> let safety timeout resolve loading
-6. ProtectedRoute 12s timeout -> clear flag, redirect to landing
-```
+### 8. Testimonials
+- Redesign as a mix of card sizes (Luna UI style)
+- One large featured testimonial + two smaller ones
+- Add a dark accent card with a pull-quote (Luna UI inspiration)
 
-This creates a layered safety net: auth listener catches fast events, polling catches delayed sessions, and the ProtectedRoute timeout prevents any infinite-loader scenario.
+### 9. Pricing
+- Keep existing 3-tier pricing but add more whitespace
+- Highlight Pro plan more aggressively
+
+### 10. Final CTA
+- Full-width gradient section with large bold text
+- Single prominent button
+
+## Technical Details
+
+### Files to Modify
+- `src/pages/Landing.tsx` - Complete rewrite of the component (keeping all data arrays intact, redesigning the JSX/layout)
+
+### Key Changes
+- Replace scattered floating particles with meaningful floating UI elements (mini trade cards, badges)
+- Implement CSS Grid bento layout for features section
+- Add perspective transforms for dashboard preview depth
+- Use `framer-motion` `useInView` more aggressively for staggered reveals
+- Keep all existing data (features, steps, testimonials, FAQs, pricing, segments, comparison) but redesign their presentation
+- Maintain responsive behavior (mobile-first grid adjustments)
+- Keep existing animation variants (fadeUp, staggerContainer, scaleIn) and add new ones for floating elements
+
+### Animation Enhancements
+- Floating UI cards with gentle `y` oscillation (3-6s infinite loops, varying delays)
+- Parallax scroll effect on dashboard preview
+- Staggered card entrance on scroll
+- Hover micro-interactions on bento cards (subtle scale + shadow)
+- Counter animations for stats (already exists, keep)
+
+### Performance Considerations
+- Lazy-load sections below the fold using `useInView`
+- Keep SVG-based equity curve (no heavy images)
+- All decorative elements are CSS/SVG-based, no external image dependencies
+
