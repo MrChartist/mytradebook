@@ -2020,3 +2020,254 @@ export function TradeTemplateMockup() {
     </MockupFrame>
   );
 }
+
+/* ──────────────────────────────────────────────
+   45. AlertConditionTypesMockup
+   ────────────────────────────────────────────── */
+export function AlertConditionTypesMockup() {
+  const conditions = [
+    { label: "Price Above", icon: "↑", example: "RELIANCE > ₹2,900", color: "text-profit", bg: "bg-profit/10 border-profit/20" },
+    { label: "Price Below", icon: "↓", example: "HDFCBANK < ₹1,650", color: "text-loss", bg: "bg-loss/10 border-loss/20" },
+    { label: "Crosses Above", icon: "⤴", example: "NIFTY crosses 22,500", color: "text-profit", bg: "bg-profit/10 border-profit/20" },
+    { label: "Crosses Below", icon: "⤵", example: "BANKNIFTY crosses 48,000", color: "text-loss", bg: "bg-loss/10 border-loss/20" },
+    { label: "% Change", icon: "%", example: "INFY moves ±3% from prev close", color: "text-[hsl(var(--tb-accent))]", bg: "bg-[hsl(var(--tb-accent)/0.08)] border-[hsl(var(--tb-accent)/0.2)]" },
+    { label: "Volume Spike", icon: "📊", example: "TATAMOTORS vol > 2× avg", color: "text-[hsl(var(--warning))]", bg: "bg-[hsl(var(--warning)/0.08)] border-[hsl(var(--warning)/0.2)]" },
+    { label: "Custom", icon: "⚡", example: "RSI > 70 & Price > VWAP", color: "text-muted-foreground", bg: "bg-muted/40 border-border/40" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <p className="text-[10px] font-semibold text-muted-foreground mb-3">Alert Condition Types</p>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+        {conditions.map((c) => (
+          <div key={c.label} className={cn("rounded-xl border p-2.5 transition-all hover:scale-[1.02]", c.bg)}>
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="text-sm">{c.icon}</span>
+              <span className={cn("text-[10px] font-bold", c.color)}>{c.label}</span>
+            </div>
+            <p className="text-[8px] text-muted-foreground font-mono">{c.example}</p>
+          </div>
+        ))}
+      </div>
+      {/* Live distance indicator */}
+      <div className="mt-3 rounded-lg bg-card border border-border/40 p-2.5">
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-profit animate-pulse" />
+            <span className="text-[10px] font-bold">RELIANCE</span>
+            <span className="text-[8px] px-1.5 py-0.5 rounded bg-profit/10 text-profit font-semibold">Above ₹2,900</span>
+          </div>
+          <span className="text-[10px] font-mono text-muted-foreground">LTP: ₹2,867.30</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex-1 h-1.5 rounded-full bg-muted/40 overflow-hidden">
+            <div className="h-full rounded-full bg-[hsl(var(--tb-accent))]" style={{ width: "88%" }} />
+          </div>
+          <span className="text-[9px] font-mono font-bold text-[hsl(var(--tb-accent))]">1.1% away</span>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   46. RecurrenceCooldownMockup
+   ────────────────────────────────────────────── */
+export function RecurrenceCooldownMockup() {
+  const modes = [
+    { mode: "Once", desc: "Fire once, then auto-deactivate", icon: "1️⃣", active: true },
+    { mode: "Daily", desc: "Reset every trading day", icon: "📅", active: false },
+    { mode: "Continuous", desc: "Fire every time condition met", icon: "🔁", active: false },
+  ];
+  const cooldowns = ["5m", "15m", "30m", "1h", "1D"];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-md mx-auto">
+        <p className="text-[10px] font-semibold text-muted-foreground mb-3">Recurrence Mode</p>
+        <div className="flex gap-2 mb-4">
+          {modes.map((m) => (
+            <div key={m.mode} className={cn(
+              "flex-1 rounded-xl border p-2.5 text-center transition-all cursor-pointer",
+              m.active
+                ? "border-[hsl(var(--tb-accent)/0.4)] bg-[hsl(var(--tb-accent)/0.08)]"
+                : "border-border/40 hover:border-border"
+            )}>
+              <span className="text-base block mb-0.5">{m.icon}</span>
+              <p className={cn("text-[10px] font-bold", m.active && "text-[hsl(var(--tb-accent))]")}>{m.mode}</p>
+              <p className="text-[8px] text-muted-foreground mt-0.5">{m.desc}</p>
+            </div>
+          ))}
+        </div>
+        {/* Cooldown selector */}
+        <p className="text-[10px] font-semibold text-muted-foreground mb-2">Trigger Cooldown</p>
+        <div className="flex gap-1.5 mb-4">
+          {cooldowns.map((cd, i) => (
+            <div key={cd} className={cn(
+              "px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all cursor-pointer",
+              i === 2
+                ? "border-[hsl(var(--tb-accent)/0.4)] bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))]"
+                : "border-border/30 text-muted-foreground hover:border-border"
+            )}>
+              {cd}
+            </div>
+          ))}
+        </div>
+        {/* Market hours & expiry */}
+        <div className="flex items-center justify-between text-[10px] mb-2">
+          <span className="text-muted-foreground">Market Hours Only</span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[8px] text-muted-foreground">9:15 AM – 3:30 PM</span>
+            <div className="w-8 h-4 rounded-full bg-[hsl(var(--tb-accent))] relative">
+              <div className="absolute right-0.5 top-0.5 w-3 h-3 rounded-full bg-white" />
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center justify-between text-[10px]">
+          <span className="text-muted-foreground">Expires At</span>
+          <span className="font-mono text-muted-foreground px-2 py-0.5 rounded bg-muted/40">28 Mar 2026</span>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   47. DeliveryChannelsMockup
+   ────────────────────────────────────────────── */
+export function DeliveryChannelsMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-md mx-auto">
+        <p className="text-[10px] font-semibold text-muted-foreground mb-3">Delivery Channels</p>
+        {/* In-app */}
+        <div className="rounded-lg border border-border/40 p-3 mb-2">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center">
+                <Bell className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold">In-App Notifications</p>
+                <p className="text-[8px] text-muted-foreground">Dashboard panel + badge count</p>
+              </div>
+            </div>
+            <div className="w-8 h-4 rounded-full bg-[hsl(var(--tb-accent))] relative">
+              <div className="absolute right-0.5 top-0.5 w-3 h-3 rounded-full bg-white" />
+            </div>
+          </div>
+          {/* Mini notification preview */}
+          <div className="rounded-md bg-[hsl(var(--warning)/0.08)] border border-[hsl(var(--warning)/0.2)] p-2 flex items-center gap-2">
+            <TrendingUp className="w-3 h-3 text-profit shrink-0" />
+            <div className="flex-1">
+              <p className="text-[9px] font-semibold">RELIANCE triggered — Above ₹2,900</p>
+              <p className="text-[8px] text-muted-foreground">LTP: ₹2,912.50 · 2 min ago · ×3</p>
+            </div>
+            <span className="text-[8px] px-1.5 py-0.5 rounded bg-profit/10 text-profit font-bold">Active</span>
+          </div>
+        </div>
+        {/* Telegram */}
+        <div className="rounded-lg border border-border/40 p-3 mb-2">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-[#229ED9]/10 flex items-center justify-center">
+                <Send className="w-3.5 h-3.5 text-[#229ED9]" />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold">Telegram</p>
+                <p className="text-[8px] text-muted-foreground">Instant message to linked chats</p>
+              </div>
+            </div>
+            <div className="w-8 h-4 rounded-full bg-[#229ED9] relative">
+              <div className="absolute right-0.5 top-0.5 w-3 h-3 rounded-full bg-white" />
+            </div>
+          </div>
+          {/* Telegram preview */}
+          <div className="rounded-md bg-[#229ED9]/5 border border-[#229ED9]/15 p-2">
+            <p className="text-[9px] font-mono">🔔 <span className="font-bold">Alert Triggered</span></p>
+            <p className="text-[8px] font-mono text-muted-foreground mt-0.5">RELIANCE · Above ₹2,900</p>
+            <p className="text-[8px] font-mono text-muted-foreground">LTP: ₹2,912.50 · Trigger #3</p>
+            <p className="text-[8px] font-mono text-muted-foreground">⏰ 02 Mar 2026, 11:42 AM</p>
+          </div>
+        </div>
+        {/* Snooze */}
+        <div className="flex items-center justify-between rounded-lg bg-muted/30 p-2.5 text-[10px]">
+          <span className="text-muted-foreground">Quick actions:</span>
+          <div className="flex gap-1.5">
+            <span className="px-2 py-0.5 rounded bg-muted text-muted-foreground font-medium cursor-pointer hover:bg-muted/80">Snooze 1h</span>
+            <span className="px-2 py-0.5 rounded bg-muted text-muted-foreground font-medium cursor-pointer hover:bg-muted/80">Snooze today</span>
+            <span className="px-2 py-0.5 rounded bg-loss/10 text-loss font-medium cursor-pointer">Pause all</span>
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   48. AlertManagementMockup
+   ────────────────────────────────────────────── */
+export function AlertManagementMockup() {
+  const alerts = [
+    { symbol: "RELIANCE", condition: "Above ₹2,900", status: "Active", triggered: "3", last: "2m ago", color: "text-profit", statusBg: "bg-profit/10 text-profit" },
+    { symbol: "HDFCBANK", condition: "Below ₹1,650", status: "Active", triggered: "1", last: "1h ago", color: "text-loss", statusBg: "bg-profit/10 text-profit" },
+    { symbol: "NIFTY", condition: "Crosses 22,500", status: "Snoozed", triggered: "5", last: "Today", color: "text-[hsl(var(--tb-accent))]", statusBg: "bg-[hsl(var(--warning)/0.1)] text-[hsl(var(--warning))]" },
+    { symbol: "INFY", condition: "% Change ±3%", status: "Paused", triggered: "0", last: "—", color: "text-muted-foreground", statusBg: "bg-muted text-muted-foreground" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Bell className="w-4 h-4 text-[hsl(var(--warning))]" />
+            <p className="text-xs font-bold">My Alerts</p>
+            <span className="text-[9px] bg-muted px-1.5 py-0.5 rounded-full text-muted-foreground">4</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 rounded-lg bg-muted/40 px-2 py-1">
+              <Search className="w-3 h-3 text-muted-foreground" />
+              <span className="text-[9px] text-muted-foreground">Search alerts…</span>
+            </div>
+            <div className="flex gap-0.5 rounded-lg border border-border/40 p-0.5">
+              <div className="px-1.5 py-0.5 rounded bg-[hsl(var(--tb-accent)/0.1)]"><Grid3X3 className="w-3 h-3 text-[hsl(var(--tb-accent))]" /></div>
+              <div className="px-1.5 py-0.5 rounded"><List className="w-3 h-3 text-muted-foreground" /></div>
+            </div>
+          </div>
+        </div>
+        {/* Filters */}
+        <div className="flex gap-1.5 mb-3">
+          {["All", "Active", "Snoozed", "Paused"].map((f, i) => (
+            <span key={f} className={cn(
+              "px-2 py-0.5 rounded-lg text-[9px] font-semibold border cursor-pointer transition-all",
+              i === 0
+                ? "border-[hsl(var(--tb-accent)/0.3)] bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))]"
+                : "border-border/30 text-muted-foreground hover:border-border"
+            )}>{f}</span>
+          ))}
+          <div className="ml-auto flex items-center gap-1 text-[9px] text-muted-foreground">
+            <span>Sort:</span>
+            <span className="font-semibold text-foreground">Last triggered ↓</span>
+          </div>
+        </div>
+        {/* Alert rows */}
+        <div className="space-y-1.5">
+          {alerts.map((a) => (
+            <div key={a.symbol} className="rounded-lg border border-border/40 p-2.5 flex items-center justify-between hover:border-[hsl(var(--tb-accent)/0.2)] transition-all cursor-pointer">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-profit" />
+                  <span className="text-[11px] font-bold">{a.symbol}</span>
+                </div>
+                <span className={cn("text-[9px] font-mono", a.color)}>{a.condition}</span>
+              </div>
+              <div className="flex items-center gap-3 text-[9px]">
+                <span className="text-muted-foreground">×{a.triggered}</span>
+                <span className="text-muted-foreground">{a.last}</span>
+                <span className={cn("px-1.5 py-0.5 rounded font-semibold text-[8px]", a.statusBg)}>{a.status}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}

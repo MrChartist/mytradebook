@@ -31,7 +31,9 @@ import {
   EquityCurveWidgetMockup, CalendarHeatmapWidgetMockup, SegmentFilterMockup,
   CreateTradeMockup, TradeStatusLifecycleMockup, TSLDetailMockup,
   MultiLegStrategyDetailMockup, PositionSizingDetailMockup,
-  PostTradeReviewMockup, TradeTemplateMockup
+  PostTradeReviewMockup, TradeTemplateMockup,
+  AlertConditionTypesMockup, RecurrenceCooldownMockup,
+  DeliveryChannelsMockup, AlertManagementMockup
 } from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
@@ -479,49 +481,59 @@ export default function Docs() {
                 <AlertCardMockup />
                 <TelegramNotifMockup />
               </div>
-              <div className="grid md:grid-cols-2 gap-5">
-                <FeatureCard icon={Bell} title="Alert Condition Types">
-                  <FeatureList items={[
-                    "Price Above — triggers when LTP exceeds your threshold",
-                    "Price Below — triggers when LTP drops below threshold",
-                    "Crosses Above — triggers only on the crossover (not already above)",
-                    "Crosses Below — triggers only on the crossover (not already below)",
-                    "% Change — triggers on percentage move from previous close",
-                    "Volume Spike — triggers when volume exceeds normal levels",
-                    "Custom — define your own condition logic",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={RefreshCw} title="Recurrence & Cooldowns">
-                  <FeatureList items={[
-                    "Once — fires once and auto-deactivates",
-                    "Daily — resets every trading day, fires once per day",
-                    "Continuous — fires every time the condition is met",
-                    "Cooldown periods: 5 min, 15 min, 30 min, 1 hour, 1 day",
-                    "Market hours only toggle (9:15 AM – 3:30 PM IST)",
-                    "Set expiry dates for time-limited alerts",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Send} title="Delivery Channels">
-                  <p className="text-sm text-muted-foreground mb-3">Choose how you receive alert notifications:</p>
-                  <FeatureList items={[
-                    "In-app notification badge and dashboard panel",
-                    "Telegram instant message with alert details",
-                    "Live LTP tracking shows distance-to-target for each alert",
-                    "Snooze alerts for 1 hour or rest of the day",
-                    "Bulk pause/resume all alerts at once",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Eye} title="Alert Management">
-                  <p className="text-sm text-muted-foreground mb-3">Organize and monitor your alerts:</p>
-                  <FeatureList items={[
-                    "Grid view with status cards or compact list view",
-                    "Sort by symbol, creation date, last triggered, or status",
-                    "Search and filter by symbol or condition type",
-                    "Link alerts to studies or watchlist items",
-                    "Trigger count tracking per alert",
-                  ]} />
-                </FeatureCard>
-              </div>
+
+              {/* Alert Condition Types */}
+              <AlertConditionTypesMockup />
+              <FeatureCard icon={Bell} title="Alert Condition Types">
+                <FeatureList items={[
+                  "Price Above — triggers when LTP exceeds your threshold",
+                  "Price Below — triggers when LTP drops below threshold",
+                  "Crosses Above — triggers only on the crossover (not already above)",
+                  "Crosses Below — triggers only on the crossover (not already below)",
+                  "% Change — triggers on percentage move from previous close",
+                  "Volume Spike — triggers when volume exceeds normal levels",
+                  "Custom — define your own condition logic",
+                ]} />
+              </FeatureCard>
+
+              {/* Recurrence & Cooldowns */}
+              <RecurrenceCooldownMockup />
+              <FeatureCard icon={RefreshCw} title="Recurrence & Cooldowns">
+                <FeatureList items={[
+                  "Once — fires once and auto-deactivates",
+                  "Daily — resets every trading day, fires once per day",
+                  "Continuous — fires every time the condition is met",
+                  "Cooldown periods: 5 min, 15 min, 30 min, 1 hour, 1 day",
+                  "Market hours only toggle (9:15 AM – 3:30 PM IST)",
+                  "Set expiry dates for time-limited alerts",
+                ]} />
+              </FeatureCard>
+
+              {/* Delivery Channels */}
+              <DeliveryChannelsMockup />
+              <FeatureCard icon={Send} title="Delivery Channels">
+                <p className="text-sm text-muted-foreground mb-3">Choose how you receive alert notifications:</p>
+                <FeatureList items={[
+                  "In-app notification badge and dashboard panel",
+                  "Telegram instant message with alert details",
+                  "Live LTP tracking shows distance-to-target for each alert",
+                  "Snooze alerts for 1 hour or rest of the day",
+                  "Bulk pause/resume all alerts at once",
+                ]} />
+              </FeatureCard>
+
+              {/* Alert Management */}
+              <AlertManagementMockup />
+              <FeatureCard icon={Eye} title="Alert Management">
+                <p className="text-sm text-muted-foreground mb-3">Organize and monitor your alerts:</p>
+                <FeatureList items={[
+                  "Grid view with status cards or compact list view",
+                  "Sort by symbol, creation date, last triggered, or status",
+                  "Search and filter by symbol or condition type",
+                  "Link alerts to studies or watchlist items",
+                  "Trigger count tracking per alert",
+                ]} />
+              </FeatureCard>
             </section>
 
             {/* ── 5. Studies & Research ───────────────────── */}
