@@ -1,154 +1,99 @@
 
 
-# Add Documentation Page for TradeBook
+# Docs Page Enhancement -- Visual Mockups and Advanced Detail
 
-## Overview
-Create a comprehensive `/docs` documentation page that explains every feature and capability of the TradeBook platform. The page will use a clean layout with sidebar navigation and detailed content sections.
+## Problem
+The current Docs page is entirely text-based -- bullet lists and cards with no visual elements. It lacks the "show, don't tell" approach that makes documentation engaging and easy to understand.
 
-## New File: `src/pages/Docs.tsx`
+## Solution
+Add inline visual mockups, diagrams, and interactive previews throughout every section to visually demonstrate each feature. These are built with pure CSS/JSX (no images needed).
 
-A full documentation page with the following structure:
+## Visual Components to Add
 
-### Layout
-- Sticky sidebar navigation on desktop (collapses to horizontal scroll tabs on mobile)
-- Clean white/card background with section anchors
-- Consistent with the app's design system (cards, badges, typography)
-- Public route -- no authentication required
+### New Reusable Mini-Mockup Components (inside Docs.tsx)
 
-### Documentation Sections
+1. **DashboardMockup** -- A mini dashboard wireframe showing KPI cards, equity curve, and calendar heatmap with sample data
+2. **TradeCardMockup** -- A realistic trade entry card showing symbol, entry/exit, P&L, tags, and status badge
+3. **AlertCardMockup** -- An alert notification card with condition, LTP, distance bar, and status indicator
+4. **CalendarHeatmapMockup** -- A 5x7 grid of colored cells showing a month's P&L heatmap
+5. **EquityCurveMockup** -- A mini SVG line chart showing a sample equity curve with drawdown shading
+6. **KanbanBoardMockup** -- Three columns (Low/Medium/High) with mistake cards
+7. **AnalyticsHeatmapMockup** -- A colored grid showing time-of-day performance
+8. **ShortcutVisualMockup** -- A keyboard layout highlighting the shortcut keys
+9. **WatchlistMockup** -- A mini table showing symbols with LTP, change%, and action buttons
+10. **TelegramNotifMockup** -- A chat-bubble style notification showing alert trigger message
+11. **BentoFeatureGrid** -- A visual overview at the top showing all major features as an interactive bento grid
+12. **PricingComparisonMockup** -- Visual comparison of Free vs Pro vs Team plans
 
-1. **Getting Started**
-   - What is TradeBook (Indian market trading journal for NSE, BSE, MCX)
-   - Signing up and initial setup (starting capital, preferences)
-   - Quick tour overview of the sidebar navigation
+## Section-by-Section Enhancements
 
-2. **Dashboard**
-   - Personalized greeting with market status (NSE/BSE hours)
-   - Today's P&L hero card with real-time updates
-   - KPI Cards: MTD P&L, Open Positions, Win Rate, Active Alerts
-   - Risk Gauge and Goal Tracker (daily 1% / monthly 5% targets)
-   - Equity Curve widget
-   - Streak & Discipline tracker (oversize trade warnings at >10% threshold)
-   - Calendar Heatmap (compact journal view)
-   - Widget customization: toggle visibility, reorder widgets
-   - Segment filter (All, Intraday, Positional, Futures, Options, Commodities)
-   - Month selector for historical comparison
+### Hero Section
+- Add a horizontal "feature at a glance" bento strip below the subtitle showing 6 mini icons with labels (Dashboard, Trades, Alerts, Analytics, Journal, Integrations)
+- Add a "Jump to section" visual grid with icon cards
 
-3. **Trade Management**
-   - Creating trades: symbol search, segment selection, entry price, stop loss, targets (up to 5)
-   - Trade statuses: Planned, Open, Closed, Cancelled
-   - Rating (1-10) and Confidence Score (1-5) per trade
-   - Trailing Stop Loss (percentage, points, or trigger price)
-   - Multi-Leg Strategy trades (grouping legs under a parent)
-   - Position Sizing Calculator
-   - Post-Trade Review (execution quality + lessons on close)
-   - Chart image uploads (up to 5 per trade)
-   - Bulk operations: select multiple trades, bulk cancel/close at market
-   - CSV Import and Export
-   - Trade Templates for quick entry
-   - Live price tracking for open positions (via Dhan integration)
-   - List and Grid view modes, sorting and filtering
+### Getting Started
+- Add a **3-step onboarding flow visual** (Sign Up -> Set Capital -> Start Trading) with connecting arrows and numbered circles
+- Add a mini sidebar navigation mockup showing all the menu items
 
-4. **Alerts System**
-   - Condition types: Price Above/Below, Crosses Above/Below, % Change, Volume Spike, Custom
-   - Recurrence: Once, Daily, Continuous
-   - Trigger cooldowns (5m to 1D)
-   - Market hours only toggle
-   - Snooze (1h or rest of day)
-   - Expiry dates
-   - Live LTP tracking with distance-to-target calculations
-   - Telegram delivery channel
-   - Bulk pause all alerts
-   - Grid/List views with sort and search
+### Dashboard
+- Add **DashboardMockup** -- a full mini-dashboard wireframe with:
+  - Today's P&L hero card (green, showing +Rs 12,450)
+  - 4 KPI metric cards in a row
+  - Mini equity curve SVG
+  - Mini calendar heatmap grid
+  - Risk gauge arc
+- Place this as a full-width visual above the feature cards
 
-5. **Studies & Research**
-   - Categories: Technical, Fundamental, News, Sentiment, Other
-   - Status workflow: Draft, Active, Triggered, Invalidated, Archived
-   - Pattern tagging: Classic Patterns (Double Top, H&S, Cup & Handle, etc.), Candlestick (Engulfing, Pin Bar, Doji, etc.), Setup (Breakout, Retest, Gap, etc.)
-   - Custom tags support
-   - Tag-based filtering with counts
-   - Live prices for active/draft studies
-   - Duration tracking (< 6M, 6M-2Y, 2-5Y, > 5Y)
+### Trade Management  
+- Add **TradeCardMockup** showing a sample RELIANCE trade with all fields filled
+- Add a **trade lifecycle flow diagram** (Planned -> Open -> Closed) with colored status badges
+- Add a mini **position sizing calculator** visual
 
-6. **Watchlists**
-   - Multiple named watchlists with color coding
-   - Add instruments via unified search
-   - Live prices with LTP, change %, volume, day high/low
-   - Sort by % change, volume, LTP, or alphabetically
-   - Quick actions: create alert or trade directly from watchlist item
-   - Market closed detection
+### Alerts
+- Add **AlertCardMockup** showing "NIFTY > 22,500" with a progress bar showing distance to trigger
+- Add a **TelegramNotifMockup** showing the alert notification message format
 
-7. **Trade Journal**
-   - Dashboard tab: Summary cards (Total P&L, Win Rate, Avg Holding Time, Best Pattern, Top Mistake)
-   - Equity curve visualization
-   - Performance tables by Rating and Confidence
-   - Patterns & Mistakes analysis
-   - Calendar tab: visual P&L heatmap per day
-   - Mistakes Review tab: Kanban board grouped by severity
-   - Segment and date range filters (30d, 60d, 90d, custom)
+### Watchlists
+- Add **WatchlistMockup** -- a mini table with 4-5 instruments, live price columns, and action buttons
 
-8. **Analytics (Pro)**
-   - Win Rate, Total P&L, Avg Win, Avg Loss, Expectancy, Profit Factor, Best/Worst Trade
-   - AI Trade Insights (powered by AI)
-   - Equity Curve with Drawdown analysis
-   - Segment Performance breakdown (win rates, Sharpe ratios)
-   - Time of Day heatmap
-   - Day of Week heatmap
-   - Streak Tracker
-   - Setup/Tag Performance Matrix
-   - Risk-Reward Analytics
-   - Risk of Ruin Calculator
+### Journal
+- Add **CalendarHeatmapMockup** -- a visual 5-week calendar with colored cells
+- Add **KanbanBoardMockup** -- three columns with mistake cards
 
-9. **Calendar & Daily Journal**
-   - Monthly calendar with color-coded P&L per day (green/red)
-   - Click any date to open daily journal editor
-   - Write free-form notes for each trading day
-   - View trades closed on that date
+### Analytics
+- Add **EquityCurveMockup** -- SVG chart with drawdown shading
+- Add **AnalyticsHeatmapMockup** -- time-of-day colored grid
+- Add sample metric cards (Win Rate 62%, Profit Factor 1.8, Sharpe 1.4)
 
-10. **Mistakes Review**
-    - Repeat pattern analysis with occurrence counts and total loss
-    - 6-month mistake trend chart
-    - Loss severity breakdown: Low (< Rs 500), Medium (Rs 500-2K), High (> Rs 2K)
-    - Mistake tags management (via Settings)
+### Integrations
+- Add **Dhan flow diagram** (Connect -> Sync -> Live Prices -> Execute)
+- Add **TelegramNotifMockup** showing different notification types
 
-11. **Weekly Reports (Pro)**
-    - Auto-generated every Monday at 6 AM IST
-    - Manual generation option
-    - Segment-by-segment breakdown (P&L, win rate, trades, top setups, common mistakes)
-    - Download as PDF
-    - Send to Telegram
+### Keyboard Shortcuts
+- Add a visual keyboard layout with highlighted keys
+- Make it interactive -- hover over a key to see its action
 
-12. **Integrations**
-    - Dhan Broker: portfolio sync, live prices, trade execution
-    - Telegram: notifications for alerts, EOD reports, morning briefings, weekly reports
-
-13. **Keyboard Shortcuts**
-    - `N` -- New Trade, `A` -- New Alert, `S` -- New Study, `/` -- Search
-    - `1-6` -- Navigate to Dashboard, Trades, Alerts, Studies, Watchlist, Analytics
-    - Command Palette for quick actions
-
-14. **Settings**
-    - Profile management
-    - Billing and subscription (Free, Pro, Elite tiers)
-    - Preferences (theme, starting capital)
-    - Security (password change)
-    - Integrations (Dhan, Telegram)
-    - Tag Management (setup tags, mistake tags with severity)
-    - Capital management
-
-## Route Changes: `src/App.tsx`
-- Add `/docs` as a public route (no auth required)
-- Import Docs page
-
-## Landing Page Changes: `src/pages/Landing.tsx`
-- Add "Docs" link in the navbar (between existing nav links)
-- Add "Docs" link in the footer
+### Settings
+- Add a mini settings panel mockup showing the tab layout
 
 ## Technical Details
-- The Docs page will be a single-file component (~600-800 lines)
-- Uses existing UI components: Card, Badge, Tabs, ScrollArea
-- Sidebar navigation uses anchor links to scroll to sections
-- Mobile: sidebar becomes horizontal scrollable tabs at the top
-- Each section uses a consistent card-based layout with icons, feature lists, and descriptive text
-- No external dependencies needed
+
+### File: `src/pages/Docs.tsx` (major enhancement)
+- Add ~15 inline visual mockup components at the top of the file
+- Each mockup is a pure CSS/JSX component using existing design tokens
+- Uses Tailwind for all styling, SVG for charts
+- Sample data is hardcoded (static mockups, not connected to real data)
+- Responsive -- mockups stack vertically on mobile
+- All mockups use the app's color system (profit green, loss red, accent orange)
+
+### Visual Design Approach
+- Each mockup sits inside a subtle bordered container with rounded corners and soft shadow
+- Background uses `bg-muted/20` with a subtle dot grid pattern
+- Mockups have a slight scale-up on hover for interactivity
+- Color coding matches the actual app (green for profit, red for loss, orange for accent)
+
+### No New Dependencies
+- All visuals built with Tailwind CSS + inline SVGs
+- No external image assets needed
+- No new npm packages
 
