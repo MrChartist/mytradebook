@@ -64,9 +64,13 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <a href="#main-content" className="skip-to-content">
+              Skip to content
+            </a>
             <AuthProvider>
               <CommandPalette />
               <Suspense fallback={<PageLoader />}>
+                <main id="main-content">
                 <Routes>
                   <Route path="/landing" element={<Landing />} />
                   <Route path="/docs" element={<Docs />} />
@@ -108,6 +112,7 @@ const App = () => (
                   ))}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+                </main>
               </Suspense>
             </AuthProvider>
           </BrowserRouter>
