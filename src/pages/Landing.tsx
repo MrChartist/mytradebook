@@ -147,7 +147,7 @@ const comparisonFeatures = [
   { feature: "Broker integration", tradebook: true, others: "Limited" },
   { feature: "Equity curve & drawdown", tradebook: true, others: true },
   { feature: "Pattern & mistake tagging", tradebook: true, others: false },
-  { feature: "Free tier available", tradebook: true, others: "Limited" },
+  { feature: "Free beta access", tradebook: true, others: "Limited" },
 ];
 
 /* ─── Floating UI Elements ──────────────────────────────── */
@@ -353,6 +353,7 @@ function AnalyticsMiniPreview() {
 export default function Landing() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const [heroEmail, setHeroEmail] = useState("");
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 100]);
@@ -479,13 +480,15 @@ export default function Landing() {
             <Input
               type="email"
               placeholder="Enter your email"
+              value={heroEmail}
+              onChange={(e) => setHeroEmail(e.target.value)}
               className="h-14 rounded-full px-6 text-base border-border/40 bg-card/80 backdrop-blur-sm shadow-sm flex-1 focus-visible:ring-[hsl(var(--tb-accent)/0.3)]"
             />
             <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.97 }}>
               <Button
                 size="lg"
                 className="h-14 px-8 text-base gap-2 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_6px_24px_hsl(var(--tb-accent)/0.3)] font-semibold whitespace-nowrap"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate(`/login${heroEmail ? `?email=${encodeURIComponent(heroEmail)}` : ""}`)}
               >
                 Get Access
                 <ArrowRight className="w-4 h-4" />
@@ -495,7 +498,7 @@ export default function Landing() {
 
           {/* Micro trust */}
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.4} className="flex items-center justify-center gap-6 text-xs text-muted-foreground/70 mb-20">
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-profit" /> 14-day Pro trial</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-profit" /> Free during beta</span>
             <span className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5" /> Bank-grade security</span>
             <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" /> No credit card</span>
           </motion.div>
@@ -1078,7 +1081,7 @@ export default function Landing() {
             <div>
               <h4 className="font-semibold text-sm mb-4">Support</h4>
               <ul className="space-y-2.5 text-sm text-muted-foreground/70">
-                <li><a href="mailto:support@tradebook.app" className="hover:text-foreground transition-colors">Contact Us</a></li>
+                <li><a href="mailto:founder@mrchartist.com" className="hover:text-foreground transition-colors">Contact Us</a></li>
                 <li><a href="/docs" className="hover:text-foreground transition-colors">Documentation</a></li>
               </ul>
             </div>
