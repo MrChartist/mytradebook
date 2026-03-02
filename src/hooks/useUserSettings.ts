@@ -25,6 +25,8 @@ interface UserSettings {
   dhan_token_expiry: string | null;
   dhan_api_key: string | null;
   dhan_api_secret: string | null;
+  ai_provider: string | null;
+  ai_api_key: string | null;
   telegram_bot_token: string | null;
   telegram_bot_username: string | null;
   ra_public_mode: boolean | null;
