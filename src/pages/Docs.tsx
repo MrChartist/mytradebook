@@ -39,7 +39,9 @@ import {
   JournalDashboardTabMockup, JournalCalendarTabMockup, JournalMistakesTabMockup, JournalFiltersSegmentationMockup,
   DailyJournalWorkflowMockup, MistakeAnalysisToolsMockup,
   DhanIntegrationDetailMockup, TelegramIntegrationDetailMockup,
-  KeyboardShortcutsDetailMockup
+  KeyboardShortcutsDetailMockup,
+  SettingsProfileBillingMockup, SettingsPreferencesMockup, SettingsTagManagementMockup,
+  SettingsSecurityMockup, SettingsIntegrationsMockup, CapitalManagementMockup
 } from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
@@ -966,57 +968,75 @@ export default function Docs() {
               />
               <SettingsPanelMockup />
               <div className="grid md:grid-cols-2 gap-5">
-                <FeatureCard icon={Users} title="Profile & Billing">
-                  <FeatureList items={[
-                    "Update your name, email, and phone number",
-                    "View current subscription plan and status",
-                    "Upgrade/downgrade between Free, Pro, and Team plans",
-                    "14-day Pro trial for new accounts",
-                    "Manage billing and payment methods",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Settings} title="Preferences">
-                  <FeatureList items={[
-                    "Toggle between light and dark theme",
-                    "Set your starting capital amount",
-                    "Configure default stop loss percentage",
-                    "Set preferred timezone",
-                    "Alert check frequency (how often alerts are evaluated)",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Tag} title="Tag Management">
-                  <p className="text-sm text-muted-foreground mb-3">Create and manage your custom tags:</p>
-                  <FeatureList items={[
-                    "Setup tags — your trading setups (Breakout, Retest, Gap, etc.)",
-                    "Mistake tags — common mistakes with severity levels",
-                    "Pattern tags — chart patterns you trade",
-                    "Tags are used across trades, studies, and analytics",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Wallet} title="Capital Management">
-                  <FeatureList items={[
-                    "Track deposits and withdrawals from your trading capital",
-                    "View capital transaction history",
-                    "Adjusted capital used for risk calculations",
-                    "Separate from P&L — tracks actual money in/out",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Lock} title="Security">
-                  <FeatureList items={[
-                    "Change your password",
-                    "Email-based password reset",
-                    "Secure session management",
-                    "All data encrypted at rest and in transit",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Layers} title="Integration Settings">
-                  <FeatureList items={[
-                    "Dhan broker: connect/disconnect, view sync status",
-                    "Telegram: link bot, verify connection, manage channels",
-                    "Configure notification types per Telegram channel",
-                    "Segment-level routing for Telegram messages",
-                  ]} />
-                </FeatureCard>
+                <div>
+                  <SettingsProfileBillingMockup />
+                  <FeatureCard icon={Users} title="Profile & Billing">
+                    <FeatureList items={[
+                      "Update your name, email, and phone number",
+                      "View current subscription plan and status",
+                      "Upgrade/downgrade between Free, Pro, and Team plans",
+                      "14-day Pro trial for new accounts",
+                      "Manage billing and payment methods",
+                    ]} />
+                  </FeatureCard>
+                </div>
+                <div>
+                  <SettingsPreferencesMockup />
+                  <FeatureCard icon={Settings} title="Preferences">
+                    <FeatureList items={[
+                      "Toggle between light and dark theme",
+                      "Set your starting capital amount",
+                      "Configure default stop loss percentage",
+                      "Set preferred timezone",
+                      "Alert check frequency (how often alerts are evaluated)",
+                    ]} />
+                  </FeatureCard>
+                </div>
+                <div>
+                  <SettingsTagManagementMockup />
+                  <FeatureCard icon={Tag} title="Tag Management">
+                    <p className="text-sm text-muted-foreground mb-3">Create and manage your custom tags:</p>
+                    <FeatureList items={[
+                      "Setup tags — your trading setups (Breakout, Retest, Gap, etc.)",
+                      "Mistake tags — common mistakes with severity levels",
+                      "Pattern tags — chart patterns you trade",
+                      "Tags are used across trades, studies, and analytics",
+                    ]} />
+                  </FeatureCard>
+                </div>
+                <div>
+                  <CapitalManagementMockup />
+                  <FeatureCard icon={Wallet} title="Capital Management">
+                    <FeatureList items={[
+                      "Track deposits and withdrawals from your trading capital",
+                      "View capital transaction history",
+                      "Adjusted capital used for risk calculations",
+                      "Separate from P&L — tracks actual money in/out",
+                    ]} />
+                  </FeatureCard>
+                </div>
+                <div>
+                  <SettingsSecurityMockup />
+                  <FeatureCard icon={Lock} title="Security">
+                    <FeatureList items={[
+                      "Change your password",
+                      "Email-based password reset",
+                      "Secure session management",
+                      "All data encrypted at rest and in transit",
+                    ]} />
+                  </FeatureCard>
+                </div>
+                <div>
+                  <SettingsIntegrationsMockup />
+                  <FeatureCard icon={Layers} title="Integration Settings">
+                    <FeatureList items={[
+                      "Dhan broker: connect/disconnect, view sync status",
+                      "Telegram: link bot, verify connection, manage channels",
+                      "Configure notification types per Telegram channel",
+                      "Segment-level routing for Telegram messages",
+                    ]} />
+                  </FeatureCard>
+                </div>
               </div>
             </section>
 
