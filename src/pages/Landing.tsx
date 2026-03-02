@@ -410,9 +410,9 @@ export default function Landing() {
               Sign In
             </Button>
             <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-              <Button
+            <Button
                 size="sm"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate("/login?mode=signup")}
                 className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-5 shadow-[0_4px_12px_hsl(var(--tb-accent)/0.25)]"
               >
                 Get Started
@@ -936,7 +936,7 @@ export default function Landing() {
                         plan.highlighted ? "bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white shadow-[0_4px_12px_hsl(var(--tb-accent)/0.25)]" : ""
                       )}
                       variant={plan.highlighted ? "default" : "outline"}
-                      onClick={() => navigate("/login")}
+              onClick={() => navigate("/login?mode=signup")}
                     >
                       {plan.cta}
                       {plan.highlighted && <ArrowRight className="w-4 h-4 ml-1" />}
@@ -1044,7 +1044,7 @@ export default function Landing() {
             <Button
               size="lg"
               className="h-14 px-12 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_6px_24px_hsl(var(--tb-accent)/0.3)] font-semibold"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/login?mode=signup")}
             >
               Get Started — It's Free <ArrowRight className="w-4 h-4" />
             </Button>
