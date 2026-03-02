@@ -295,3 +295,18 @@
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
+
+/* ── Docs B&W Brainstorm Mode ────────────────── */
+.docs-bw-filter {
+  filter: grayscale(100%);
+  transition: filter 0.3s ease;
+}
+
+.docs-bw .gradient-text {
+  background-image: none;
+  color: hsl(var(--foreground));
+}
+
+.docs-bw .docs-accent-bar {
+  background: hsl(var(--foreground));
+}
