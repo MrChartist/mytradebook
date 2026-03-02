@@ -206,7 +206,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <div className="w-9 h-9 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_20px_hsl(var(--tb-accent)/0.25)]">
                 <TrendingUp className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold tracking-tight">TradeBook</span>
+              <span className="text-xl font-logo font-bold tracking-tight">TradeBook</span>
             </button>
             <div className="flex items-center gap-3">
               <Button variant="ghost" size="sm" onClick={() => navigate("/landing")} className="text-muted-foreground">

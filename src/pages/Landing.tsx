@@ -386,7 +386,7 @@ export default function Landing() {
             <div className="w-9 h-9 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_20px_hsl(var(--tb-accent)/0.25)]">
               <TrendingUp className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold tracking-tight">TradeBook</span>
+            <span className="text-xl font-logo font-bold tracking-tight">TradeBook</span>
           </motion.div>
 
           <div className="hidden md:flex items-center gap-1 text-sm text-muted-foreground">
@@ -1064,7 +1064,7 @@ export default function Landing() {
                 <div className="w-8 h-8 rounded-lg bg-[hsl(var(--tb-accent))] flex items-center justify-center">
                   <TrendingUp className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-bold">TradeBook</span>
+                <span className="font-logo font-bold tracking-tight">TradeBook</span>
               </div>
               <p className="text-sm text-muted-foreground/70 leading-relaxed">
                 The trading journal built for Indian markets. Track, analyze, and improve.
