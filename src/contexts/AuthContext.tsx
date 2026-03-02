@@ -27,15 +27,23 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_STORAGE_KEY = `sb-nuilpmoipiazjafpjaft-auth-token`;
 
-// Detect OAuth callback — URL hash contains access_token or has auth params
-const isOAuthCallback = () => {
+// Detect auth callback — URL hash/search contains tokens from OAuth or email verification
+const hasAuthParamsInUrl = () => {
   const hash = window.location.hash;
   const search = window.location.search;
-  return hash.includes('access_token') || hash.includes('refresh_token') || search.includes('code=');
+  return (
+    hash.includes('access_token') ||
+    hash.includes('refresh_token') ||
+    hash.includes('type=recovery') ||
+    hash.includes('type=signup') ||
+    hash.includes('type=magiclink') ||
+    search.includes('code=')
+  );
 };
 
-// Use longer timeout during OAuth callbacks (token exchange takes time on published site)
-const MAX_LOADING_MS = isOAuthCallback() ? 8000 : 1200;
+const _isAuthCallback = hasAuthParamsInUrl();
+// Normal loads resolve fast; auth callbacks (OAuth, email verification) get more time
+const MAX_LOADING_MS = _isAuthCallback ? 10000 : 1500;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -107,7 +115,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (error) {
           console.error("[Auth] getSession error:", error);
-          // If session is corrupted, clear it
           try {
             localStorage.removeItem(AUTH_STORAGE_KEY);
           } catch (_) {}
@@ -117,19 +124,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         console.log("[Auth] Initial session check:", existingSession ? "session exists" : "no session");
 
-        setSession(existingSession);
-        setUser(existingSession?.user ?? null);
-
         if (existingSession?.user) {
+          // Session already exists — resolve immediately
+          setSession(existingSession);
+          setUser(existingSession.user);
           console.log("[Auth] Existing user found:", existingSession.user.email);
-          // Keep init fast; do not block UI on profile fetch
           fetchProfile(existingSession.user.id);
+          resolveLoading();
+        } else if (!_isAuthCallback) {
+          // No session AND no auth callback in URL — safe to resolve as "no user"
+          setSession(null);
+          setUser(null);
+          resolveLoading();
         }
-
-        resolveLoading();
+        // If _isAuthCallback is true but no session yet, DON'T resolve loading.
+        // The onAuthStateChange listener will fire once token exchange completes.
+        // The safety timeout is the fallback if something goes wrong.
       } catch (err) {
         console.error("[Auth] Session init exception:", err);
-        // Clear potentially corrupted session data
         try {
           localStorage.removeItem(AUTH_STORAGE_KEY);
         } catch (_) {}
