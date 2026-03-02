@@ -36,19 +36,36 @@ export default function Login() {
       if (authMode === "login") {
         const { error } = await signInWithEmail(email, password);
         if (error) {
-          toast({ title: "Login failed", description: error.message, variant: "destructive" });
+          const msg = error.message;
+          // Handle transient network errors with guidance
+          const isNetworkError = msg.includes("Failed to fetch") || msg.includes("NetworkError") || msg.includes("fetch");
+          toast({
+            title: "Login failed",
+            description: isNetworkError
+              ? "Network error — please check your connection and try again."
+              : msg,
+            variant: "destructive",
+          });
           return;
         }
 
         toast({ title: "Welcome back!", description: "Successfully signed in." });
-        navigate("/", { replace: true });
+        // Do NOT navigate optimistically — let the auth state change + ProtectedRoute handle it
         return;
       }
 
       if (authMode === "signup") {
         const { error } = await signUpWithEmail(email, password, name);
         if (error) {
-          toast({ title: "Signup failed", description: error.message, variant: "destructive" });
+          const msg = error.message;
+          const isNetworkError = msg.includes("Failed to fetch") || msg.includes("NetworkError") || msg.includes("fetch");
+          toast({
+            title: "Signup failed",
+            description: isNetworkError
+              ? "Network error — please check your connection and try again."
+              : msg,
+            variant: "destructive",
+          });
           return;
         }
 

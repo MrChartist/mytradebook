@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => ({
       registerType: "prompt",
       includeAssets: ["favicon.ico", "pwa-192x192.png"],
       workbox: {
-        navigateFallbackDenylist: [/^\/~oauth/],
+        navigateFallbackDenylist: [/^\/~oauth/, /^\/auth\/callback/],
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         skipWaiting: false,
         clientsClaim: false,
