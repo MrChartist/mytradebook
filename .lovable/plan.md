@@ -1,91 +1,78 @@
 
 
-# BYOK AI Insights -- Bring Your Own Key Integration
+# Add AI API Integration Section to Documentation
 
-## Problem
-Currently, AI Trade Insights uses the Lovable AI gateway (LOVABLE_API_KEY), which burns **your** tokens. Since this is a public-facing product, each user's insight request costs you money. Instead, users should provide their own Gemini or OpenAI API key to power insights.
+## Your Approach is Correct
 
-## Solution
-Add a "BYOK" (Bring Your Own Key) model where each user stores their own AI API key in their settings. The edge function reads the user's key from the database and calls Gemini or OpenAI directly -- zero cost to you.
+You're right to prioritize **Google Gemini** over OpenAI for your users:
+
+- **Gemini API** is free to use via Google AI Studio with generous limits (15 requests/minute, 1M tokens/day on Flash models) -- more than enough for daily trade analysis
+- **OpenAI** requires paid credits from day one -- no free tier for API usage
+- For a public product, recommending Gemini first means most users will never need to pay anything for AI insights
+
+The docs section will strongly recommend Gemini as the primary/default choice and position OpenAI as an alternative for users who prefer it.
 
 ---
 
 ## Changes
 
-### 1. Database Migration
-Add 2 new columns to `user_settings`:
-- `ai_provider` (varchar) -- `"gemini"` or `"openai"`, default `null`
-- `ai_api_key` (text) -- encrypted user API key, default `null`
+### 1. New `AIApiSetupMockup` Visual Component (`DocsMockups.tsx`)
+Create a new mockup showing the BYOK setup flow:
+- A visual "step-by-step" diagram: **Get Free Key** -> **Paste in Settings** -> **Analyze Trades**
+- A side-by-side provider comparison card showing Gemini (recommended, free) vs OpenAI (paid)
+- A mini mockup of the Settings Integrations panel showing the provider toggle and API key input
+- Use a "Recommended" badge on the Gemini side and a "Free" badge
+- Visual of a sample AI insight card output (reuse existing AIInsightsMockup style)
 
-### 2. Settings UI -- AI Integration Section (`IntegrationsSettings.tsx`)
-Add a new card in the Integrations settings page:
-- Provider selector: **Google Gemini** or **OpenAI** (tab/radio toggle)
-- API key input (password field with show/hide toggle)
-- "Save" button that validates the key format before saving
-- Status badge showing "Connected" when key is set
-- "Disconnect" button to clear the key
-- Help text with links to get API keys:
-  - Gemini: `aistudio.google.com/apikey`
-  - OpenAI: `platform.openai.com/api-keys`
+### 2. Add "AI Integration" to Docs Sections Sidebar (`Docs.tsx`)
+- Add a new `SECTIONS` entry: `{ id: "ai-integration", label: "AI Insights Setup", icon: Sparkles }`
+- Place it in the "Settings & Tools" sidebar group, before "integrations"
+- Or place it inside the existing Integrations section as a prominent sub-card
 
-### 3. Update `useUserSettings` Hook
-Add `ai_provider` and `ai_api_key` to the `UserSettings` interface so the settings UI can read/write these fields.
+### 3. Add AI Integration Documentation Section (`Docs.tsx`)
+Add a new section with:
+- **SectionHeader**: "AI Trade Insights" with description about BYOK model
+- **AIApiSetupMockup**: The visual flow diagram
+- **FeatureCard: "Google Gemini (Recommended)"**: Step-by-step guide to get a free API key from aistudio.google.com/apikey, with emphasis on the free tier
+- **FeatureCard: "OpenAI (Alternative)"**: Brief guide for users who prefer OpenAI, noting it requires paid credits
+- **FeatureCard: "How It Works"**: Explanation of what the AI analyzes (aggregated stats, not raw data), what insights it provides, and the privacy model (your key, your cost, server-side only)
 
-### 4. Rewrite Edge Function (`trade-insights/index.ts`)
-- Remove the Lovable AI gateway call entirely
-- Read the user's `ai_provider` and `ai_api_key` from `user_settings` (using service role key for secure read)
-- If no key configured, return a friendly error: "Configure your AI API key in Settings > Integrations"
-- Route to the correct endpoint:
-  - **Gemini**: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={KEY}`
-  - **OpenAI**: `https://api.openai.com/v1/chat/completions` with Bearer token
-- Keep the same stats aggregation logic (no change)
-- Keep the same system prompt and structured output format
-- Parse responses from each provider into the same `TradeInsight[]` shape
-
-### 5. Update `AITradeInsights.tsx` Component
-- Show a setup prompt when no AI key is configured (link to Settings > Integrations)
-- Replace the empty state message: "Configure your Gemini or OpenAI API key in Settings to unlock AI-powered insights"
-- Add a small badge showing which provider is active (e.g., "Powered by Gemini")
-
-### 6. Update `useTradeInsights` Hook
-- Handle the new "no API key" error gracefully with a specific toast message pointing to Settings
+### 4. Update Existing Integrations Section
+- Add a reference/link to the new AI section from the existing Integrations section
+- Update `SettingsIntegrationsMockup` or add a note about AI provider settings being available
 
 ---
 
 ## Technical Details
 
-### Gemini API Call Format
-```typescript
-const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-const body = {
-  contents: [{ parts: [{ text: prompt }] }],
-  generationConfig: { responseMimeType: "application/json" }
-};
+### New Mockup: `AIApiSetupMockup`
+A 3-step flow visual similar to `OnboardingFlowMockup`:
+1. Step 1: "Get Free API Key" -- Google AI Studio link
+2. Step 2: "Paste in Settings" -- Settings > Integrations
+3. Step 3: "Get AI Insights" -- Analyze button
+
+Plus a provider comparison card:
+```
+| Google Gemini (Recommended)  |  OpenAI           |
+| Free tier: 15 RPM            |  Paid credits only |
+| 1M tokens/day free           |  Pay-per-token     |
+| Gemini Flash model           |  GPT-4o Mini       |
 ```
 
-### OpenAI API Call Format
-```typescript
-const url = "https://api.openai.com/v1/chat/completions";
-const headers = { Authorization: `Bearer ${apiKey}` };
-const body = {
-  model: "gpt-4o-mini",
-  messages: [...],
-  tools: [{ type: "function", function: { name: "provide_insights", ... } }],
-  tool_choice: { type: "function", function: { name: "provide_insights" } }
-};
-```
+### New Mockup: `AISettingsPreviewMockup`
+A mini version of the Integrations settings card showing:
+- Gemini/OpenAI tab toggle (Gemini selected)
+- API key input field (masked)
+- "Save & Connect" button
+- "Connected" status badge
 
-### Security
-- API keys stored in `user_settings` table (already RLS-protected per user)
-- Edge function reads keys using service role (server-side only)
-- Keys never sent to the frontend beyond the settings page
-- Password input field with show/hide toggle
+### Section Content Structure
+- Strongly recommend Gemini with "Free" and "Recommended" badges
+- Explain the BYOK model: "Your key, your cost, zero cost on our end"
+- Privacy note: "Your API key is stored securely and only used server-side. We never see your key."
+- Link to aistudio.google.com/apikey for getting a free Gemini key
 
-## Files Modified
-- **Database**: Add `ai_provider` and `ai_api_key` columns to `user_settings`
-- **`src/hooks/useUserSettings.ts`** -- Add new fields to interface
-- **`src/components/settings/IntegrationsSettings.tsx`** -- Add AI provider settings card
-- **`supabase/functions/trade-insights/index.ts`** -- Replace Lovable AI with user's own Gemini/OpenAI key
-- **`src/components/analytics/AITradeInsights.tsx`** -- Update empty state for unconfigured keys
-- **`src/hooks/useTradeInsights.ts`** -- Handle "no key" error case
+### Files Modified
+- **`src/components/docs/DocsMockups.tsx`** -- Add `AIApiSetupMockup`, `AIProviderComparisonMockup`, `AISettingsPreviewMockup`
+- **`src/pages/Docs.tsx`** -- Add new "AI Insights Setup" section with FeatureCards, update SECTIONS array and sidebar groups, import new mockups
 
