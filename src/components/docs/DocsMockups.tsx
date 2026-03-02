@@ -1,3 +1,4 @@
+import { createContext, useContext } from "react";
 import { cn } from "@/lib/utils";
 import {
   TrendingUp, BarChart3, Bell, Eye, Activity, Calendar, Target,
@@ -8,12 +9,20 @@ import {
 } from "lucide-react";
 
 /* ──────────────────────────────────────────────
+   Color Mode Context (Color / B&W)
+   ────────────────────────────────────────────── */
+export const DocsColorModeContext = createContext<'color' | 'bw'>('color');
+export const useDocsColorMode = () => useContext(DocsColorModeContext);
+
+/* ──────────────────────────────────────────────
    Shared wrapper for all mockups
    ────────────────────────────────────────────── */
 function MockupFrame({ children, className }: { children: React.ReactNode; className?: string }) {
+  const colorMode = useDocsColorMode();
   return (
     <div className={cn(
-      "rounded-2xl border border-border/50 bg-muted/20 dot-pattern p-4 md:p-6 overflow-hidden transition-transform duration-300 hover:scale-[1.01]",
+      "rounded-2xl border border-border/50 bg-muted/20 dot-pattern p-4 md:p-6 overflow-hidden transition-all duration-300 hover:scale-[1.01]",
+      colorMode === 'bw' && 'grayscale',
       className
     )}>
       {children}
