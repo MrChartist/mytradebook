@@ -27,23 +27,29 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_STORAGE_KEY = `sb-nuilpmoipiazjafpjaft-auth-token`;
 
-// Detect auth callback — URL hash/search contains tokens from OAuth or email verification
-const hasAuthParamsInUrl = () => {
+/** Detect if the current page load is an auth callback (OAuth redirect, email verification, etc.) */
+const detectAuthCallback = (): boolean => {
+  const path = window.location.pathname;
   const hash = window.location.hash;
   const search = window.location.search;
+
+  // Path-based detection (our dedicated callback route)
+  if (path === "/auth/callback") return true;
+
+  // Token/param-based detection (Supabase redirects tokens in hash)
   return (
-    hash.includes('access_token') ||
-    hash.includes('refresh_token') ||
-    hash.includes('type=recovery') ||
-    hash.includes('type=signup') ||
-    hash.includes('type=magiclink') ||
-    search.includes('code=')
+    hash.includes("access_token") ||
+    hash.includes("refresh_token") ||
+    hash.includes("type=recovery") ||
+    hash.includes("type=signup") ||
+    hash.includes("type=magiclink") ||
+    search.includes("code=")
   );
 };
 
-const _isAuthCallback = hasAuthParamsInUrl();
-// Normal loads resolve fast; auth callbacks (OAuth, email verification) get more time
-const MAX_LOADING_MS = _isAuthCallback ? 10000 : 1500;
+const IS_AUTH_CALLBACK = detectAuthCallback();
+// Normal page loads: resolve fast. Auth callbacks: generous timeout.
+const MAX_LOADING_MS = IS_AUTH_CALLBACK ? 15000 : 1500;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -52,9 +58,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const loadingResolved = useRef(false);
 
-  const resolveLoading = () => {
+  const resolveLoading = (reason: string) => {
     if (!loadingResolved.current) {
       loadingResolved.current = true;
+      console.log("[Auth] Loading resolved:", reason);
       setLoading(false);
     }
   };
@@ -77,75 +84,68 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    console.log("[Auth] Initializing auth context, origin:", window.location.origin);
+    console.log("[Auth] Init | origin:", window.location.origin, "| callback:", IS_AUTH_CALLBACK, "| path:", window.location.pathname);
 
     // Safety timeout — NEVER let loading hang forever
     const safetyTimer = setTimeout(() => {
-      if (!loadingResolved.current) {
-        console.warn("[Auth] Safety timeout reached, resolving loading state");
-        resolveLoading();
-      }
+      resolveLoading("safety-timeout");
     }, MAX_LOADING_MS);
 
-    // Set up auth state listener FIRST
+    // 1. Set up auth state listener FIRST (before getSession)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
-        console.log("[Auth] Auth state changed:", event, currentSession ? "session exists" : "no session");
-
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
+        console.log("[Auth] onAuthStateChange:", event, currentSession?.user?.email ?? "no-user");
 
         if (currentSession?.user) {
-          console.log("[Auth] User authenticated:", currentSession.user.email);
-          // Fetch profile non-blocking
+          setSession(currentSession);
+          setUser(currentSession.user);
           fetchProfile(currentSession.user.id);
-        } else {
-          console.log("[Auth] No user session");
+          resolveLoading(`auth-event:${event}`);
+        } else if (event === "SIGNED_OUT") {
+          setSession(null);
+          setUser(null);
           setProfile(null);
+          resolveLoading("signed-out-event");
         }
-
-        resolveLoading();
+        // For other events without a session (e.g. TOKEN_REFRESHED failure during callback),
+        // do NOT resolve — let the safety timeout or a subsequent event handle it.
       }
     );
 
-    // THEN check for existing session
+    // 2. Check for existing session
     const initSession = async () => {
       try {
         const { data: { session: existingSession }, error } = await supabase.auth.getSession();
 
         if (error) {
           console.error("[Auth] getSession error:", error);
-          try {
-            localStorage.removeItem(AUTH_STORAGE_KEY);
-          } catch (_) {}
-          resolveLoading();
+          // Only clear storage for non-callback flows to avoid destroying in-flight token exchange
+          if (!IS_AUTH_CALLBACK) {
+            try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch (_) {}
+          }
+          if (!IS_AUTH_CALLBACK) resolveLoading("getSession-error");
           return;
         }
 
-        console.log("[Auth] Initial session check:", existingSession ? "session exists" : "no session");
-
         if (existingSession?.user) {
-          // Session already exists — resolve immediately
           setSession(existingSession);
           setUser(existingSession.user);
-          console.log("[Auth] Existing user found:", existingSession.user.email);
+          console.log("[Auth] Existing session:", existingSession.user.email);
           fetchProfile(existingSession.user.id);
-          resolveLoading();
-        } else if (!_isAuthCallback) {
-          // No session AND no auth callback in URL — safe to resolve as "no user"
+          resolveLoading("existing-session");
+        } else if (!IS_AUTH_CALLBACK) {
+          // No session AND not a callback — safe to declare "no user"
           setSession(null);
           setUser(null);
-          resolveLoading();
+          resolveLoading("no-session-no-callback");
         }
-        // If _isAuthCallback is true but no session yet, DON'T resolve loading.
-        // The onAuthStateChange listener will fire once token exchange completes.
-        // The safety timeout is the fallback if something goes wrong.
+        // If IS_AUTH_CALLBACK but no session yet: wait for onAuthStateChange or safety timeout
       } catch (err) {
         console.error("[Auth] Session init exception:", err);
-        try {
-          localStorage.removeItem(AUTH_STORAGE_KEY);
-        } catch (_) {}
-        resolveLoading();
+        if (!IS_AUTH_CALLBACK) {
+          try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch (_) {}
+        }
+        if (!IS_AUTH_CALLBACK) resolveLoading("init-exception");
       }
     };
 
@@ -158,11 +158,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithEmail = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error };
+    // Set pending flag so route guard shows loader instead of redirecting
+    try { sessionStorage.setItem("tb-auth-pending", "1"); } catch (_) {}
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        try { sessionStorage.removeItem("tb-auth-pending"); } catch (_) {}
+      }
+      return { error };
+    } catch (err) {
+      try { sessionStorage.removeItem("tb-auth-pending"); } catch (_) {}
+      throw err;
+    }
   };
 
   const signUpWithEmail = async (email: string, password: string, name?: string) => {
@@ -170,23 +177,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
       options: {
-        emailRedirectTo: window.location.origin,
-        data: {
-          full_name: name,
-        },
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        data: { full_name: name },
       },
     });
     return { error };
   };
 
   const signInWithGoogle = async () => {
+    // Set pending flag
+    try { sessionStorage.setItem("tb-auth-pending", "1"); } catch (_) {}
     const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: `${window.location.origin}/auth/callback`,
     });
+    if (error) {
+      try { sessionStorage.removeItem("tb-auth-pending"); } catch (_) {}
+    }
     return { error: error ?? null };
   };
 
   const signOut = async () => {
+    try { sessionStorage.removeItem("tb-auth-pending"); } catch (_) {}
     try {
       await supabase.auth.signOut();
     } catch (err) {
@@ -199,16 +210,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        session,
-        profile,
-        loading,
-        signInWithEmail,
-        signUpWithEmail,
-        signInWithGoogle,
-        signOut,
-      }}
+      value={{ user, session, profile, loading, signInWithEmail, signUpWithEmail, signInWithGoogle, signOut }}
     >
       {children}
     </AuthContext.Provider>

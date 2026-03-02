@@ -9,7 +9,13 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
 
-  if (loading) {
+  // Check if an auth attempt is in flight (login button pressed, OAuth redirect)
+  const isPending = (() => {
+    try { return sessionStorage.getItem("tb-auth-pending") === "1"; } catch { return false; }
+  })();
+
+  // While auth is loading OR a pending auth attempt exists, show loader
+  if (loading || (!user && isPending)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
@@ -21,8 +27,12 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!user) {
+    console.log("[ProtectedRoute] No user, redirecting to /landing");
     return <Navigate to="/landing" replace />;
   }
+
+  // User exists — clear pending flag if lingering
+  try { sessionStorage.removeItem("tb-auth-pending"); } catch (_) {}
 
   return <>{children}</>;
 }
