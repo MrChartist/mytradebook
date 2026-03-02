@@ -375,45 +375,48 @@ export default function Landing() {
         description="Track, analyze, and improve your trades with TradeBook. Real-time alerts, broker integration, and segment-based analytics built for Equity, F&O, and Commodity traders in India."
         path="/"
       />
-      {/* ── Navbar ───────────────────────────────────────── */}
+      {/* ── Navbar — Floating Island ────────────────────── */}
       <motion.nav
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="sticky top-0 z-50 border-b border-border/30 bg-background/80 backdrop-blur-xl"
+        initial={{ y: -40, opacity: 0, scale: 0.95 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="sticky top-4 z-50 mx-auto max-w-3xl px-4"
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-10 h-16">
-          <motion.div className="flex items-center gap-2.5" whileHover={{ scale: 1.02 }}>
-            <div className="w-9 h-9 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_20px_hsl(var(--tb-accent)/0.25)]">
-              <TrendingUp className="w-5 h-5 text-white" />
+        <div className="flex items-center justify-between px-3 pl-4 py-2 rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg shadow-foreground/[0.03]">
+          {/* Logo */}
+          <motion.div className="flex items-center gap-2" whileHover={{ scale: 1.03 }}>
+            <div className="w-8 h-8 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_16px_hsl(var(--tb-accent)/0.25)]">
+              <TrendingUp className="w-4 h-4 text-white" />
             </div>
-            <span className="text-xl font-logo font-bold tracking-tight">TradeBook</span>
+            <span className="text-lg font-logo font-bold tracking-tight">TradeBook</span>
           </motion.div>
 
-          <div className="hidden md:flex items-center gap-1 text-sm text-muted-foreground">
+          {/* Center links */}
+          <div className="hidden md:flex items-center gap-0.5 text-sm text-muted-foreground">
             {["Features", "Pricing", "Docs"].map((item) => (
               <motion.a
                 key={item}
                 href={item === "Docs" ? "/docs" : `#${item.toLowerCase()}`}
-                className="px-4 py-2 rounded-full hover:bg-muted/50 hover:text-foreground transition-all duration-200"
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.98 }}
+                className="px-3.5 py-1.5 rounded-full hover:bg-muted/60 hover:text-foreground transition-colors duration-200 text-[13px] font-medium"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
               >
                 {item}
               </motion.a>
             ))}
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Right actions */}
+          <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Button variant="ghost" size="sm" onClick={() => navigate("/login")} className="text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/login")} className="text-muted-foreground hover:text-foreground text-[13px] h-8 px-3 rounded-full">
               Sign In
             </Button>
-            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-            <Button
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.96 }}>
+              <Button
                 size="sm"
                 onClick={() => navigate("/login?mode=signup")}
-                className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-5 shadow-[0_4px_12px_hsl(var(--tb-accent)/0.25)]"
+                className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 h-8 text-[13px] font-semibold shadow-[0_4px_12px_hsl(var(--tb-accent)/0.25)]"
               >
                 Get Started
               </Button>
