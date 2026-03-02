@@ -85,26 +85,28 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
 }) {
   return (
-    <Card className="border-border/40 bg-card/80 hover:border-[hsl(var(--tb-accent)/0.3)] hover:shadow-md hover:scale-[1.003] transition-all duration-200 relative group overflow-hidden">
+    <div className="premium-card-hover group hover:scale-[1.005] transition-all duration-200 relative overflow-hidden">
+      {/* Decorative dot-pattern corner */}
+      <div className="absolute top-0 right-0 w-20 h-20 dot-pattern opacity-30 rounded-bl-2xl" />
       {/* Left accent bar on hover */}
-      <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-[hsl(var(--tb-accent))] opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-      <CardHeader className="pb-3">
+      <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+      <div className="pb-3 flex flex-col space-y-1.5 p-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[hsl(var(--tb-accent)/0.08)] flex items-center justify-center ring-1 ring-border/20">
-            <Icon className="w-5 h-5 text-[hsl(var(--tb-accent))]" />
+          <div className="inner-panel !p-2.5 !rounded-xl !bg-primary/8 !border-primary/15">
+            <Icon className="w-5 h-5 text-primary" />
           </div>
           <div className="flex items-center gap-2">
-            <CardTitle className="text-lg font-bold">{title}</CardTitle>
+            <h3 className="text-lg font-bold leading-none tracking-tight">{title}</h3>
             {badge && (
-              <Badge variant="secondary" className="text-[11px] px-2 py-0 bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))] border-none">
+              <Badge variant="secondary" className="text-[11px] px-2 py-0 bg-primary/10 text-primary border-none">
                 {badge}
               </Badge>
             )}
           </div>
         </div>
-      </CardHeader>
-      <CardContent>{children}</CardContent>
-    </Card>
+      </div>
+      <div className="p-6 pt-0">{children}</div>
+    </div>
   );
 }
 
@@ -112,16 +114,22 @@ function SectionHeader({ id, title, description, icon: Icon }: {
   id: string; title: string; description: string; icon: React.ElementType;
 }) {
   return (
-    <div id={id} className="scroll-mt-24 mb-8 border-b border-border/10 pb-6">
-      {/* Top accent line */}
-      <div className="w-10 h-[3px] rounded-full bg-[hsl(var(--tb-accent))] docs-accent-bar mb-4" />
-      <div className="flex items-center gap-3 mb-3">
-        <div className="w-11 h-11 rounded-xl bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center">
-          <Icon className="w-5.5 h-5.5 text-[hsl(var(--tb-accent))]" />
+    <div id={id} className="scroll-mt-24 mb-8 dashboard-card relative overflow-hidden">
+      {/* Top accent bar */}
+      <motion.div
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="absolute top-0 left-0 right-0 h-[3px] bg-primary origin-left docs-accent-bar"
+      />
+      <div className="flex items-center gap-3 mb-3 pt-2">
+        <div className="icon-badge inner-panel !p-2.5 !rounded-xl !bg-primary/8 !border-primary/15">
+          <Icon className="w-5 h-5 text-primary" />
         </div>
         <h2 className="text-2xl lg:text-3xl font-bold tracking-tight">{title}</h2>
       </div>
-      <p className="text-foreground/60 leading-relaxed max-w-3xl">{description}</p>
+      <p className="text-muted-foreground leading-relaxed max-w-3xl">{description}</p>
     </div>
   );
 }
@@ -275,9 +283,28 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               TradeBook
             </span>
           </h1>
-          <p className="text-lg text-foreground/70 max-w-2xl leading-relaxed">
+          <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
             A comprehensive guide to every feature, capability, and workflow in the platform — from your first trade log to advanced analytics.
           </p>
+          {/* Hero stats strip */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.4 }}
+            className="flex flex-wrap gap-3 mt-6"
+          >
+            {[
+              { label: "15 Sections", icon: FileText },
+              { label: "50+ Mockups", icon: Eye },
+              { label: "Every Feature", icon: Zap },
+              { label: "Free & Pro", icon: Star },
+            ].map((stat) => (
+              <div key={stat.label} className="inner-panel flex items-center gap-2 !px-4 !py-2">
+                <stat.icon className="w-3.5 h-3.5 text-primary" />
+                <span className="text-xs font-semibold text-foreground">{stat.label}</span>
+              </div>
+            ))}
+          </motion.div>
           <BentoFeatureGrid />
         </div>
       </div>
@@ -299,14 +326,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                           key={s.id}
                           onClick={() => scrollTo(s.id)}
                           className={cn(
-                            "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-all text-left relative",
+                            "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 text-left relative hover:translate-x-0.5",
                             activeSection === s.id
-                              ? "bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] font-semibold"
+                              ? "bg-primary/8 text-primary font-semibold"
                               : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                           )}
                         >
                           {activeSection === s.id && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-full bg-[hsl(var(--tb-accent))]" />
+                            <motion.div
+                              layoutId="docs-active-pill"
+                              className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-full bg-primary"
+                              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                            />
                           )}
                           <s.icon className="w-4 h-4 shrink-0" />
                           {s.label}
@@ -343,7 +374,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           <main className="flex-1 min-w-0 space-y-20 lg:pt-0 pt-14">
 
             {/* ── 1. Getting Started ─────────────────────── */}
-            <section>
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="getting-started"
                 title="Getting Started"
@@ -374,10 +405,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                 </FeatureCard>
               </div>
-            </section>
+            </motion.section>
 
             {/* ── 2. Dashboard ───────────────────────────── */}
-            <section>
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4, delay: 0.05 }}>
               <SectionHeader
                 id="dashboard"
                 title="Dashboard"
@@ -453,10 +484,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <div className="mt-4"><SegmentFilterMockup /></div>
               </FeatureCard>
-            </section>
+            </motion.section>
 
             {/* ── 3. Trade Management ────────────────────── */}
-            <section>
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="trade-management"
                 title="Trade Management"
@@ -550,10 +581,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <div className="mt-4"><TradeTemplateMockup /></div>
               </FeatureCard>
-            </section>
+            </motion.section>
 
             {/* ── 4. Alerts System ───────────────────────── */}
-            <section>
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="alerts"
                 title="Alerts System"
@@ -613,10 +644,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <div className="mt-4"><AlertManagementMockup /></div>
               </FeatureCard>
-            </section>
+            </motion.section>
 
             {/* ── 5. Studies & Research ───────────────────── */}
-            <section>
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="studies"
                 title="Studies & Research"
@@ -658,10 +689,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <div className="mt-4"><StudyAdditionalFeaturesMockup /></div>
               </FeatureCard>
-            </section>
+            </motion.section>
 
             {/* ── 6. Watchlists ──────────────────────────── */}
-            <section>
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="watchlists"
                 title="Watchlists"
@@ -693,10 +724,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
                 <div className="mt-4"><WatchlistDetailMockup /></div>
               </FeatureCard>
-            </section>
+            </motion.section>
 
             {/* ── 7. Trade Journal ───────────────────────── */}
-            <section>
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="journal"
                 title="Trade Journal"
@@ -744,10 +775,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   <div className="mt-4"><JournalFiltersSegmentationMockup /></div>
                 </FeatureCard>
               </div>
-            </section>
+            </motion.section>
 
             {/* ── 8. Analytics (Pro) ─────────────────────── */}
-            <section>
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="analytics"
                 title="Analytics"
@@ -812,10 +843,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                 </FeatureCard>
               </div>
-            </section>
+            </motion.section>
 
             {/* ── 9. Calendar & Daily Journal ────────────── */}
-            <section>
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="calendar"
                 title="Calendar & Daily Journal"
@@ -851,10 +882,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
                 <div className="mt-4"><DailyJournalWorkflowMockup /></div>
               </FeatureCard>
-            </section>
+            </motion.section>
 
             {/* ── 10. Mistakes Review ────────────────────── */}
-            <section>
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="mistakes"
                 title="Mistakes Review"
@@ -885,10 +916,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
                 <div className="mt-4"><MistakeAnalysisToolsMockup /></div>
               </FeatureCard>
-            </section>
+            </motion.section>
 
             {/* ── 11. Weekly Reports ─────────────────────── */}
-            <section>
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="reports"
                 title="Weekly Reports"
@@ -918,10 +949,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   </div>
                 </div>
               </FeatureCard>
-            </section>
+            </motion.section>
 
             {/* ── 12. Integrations ───────────────────────── */}
-            <section>
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="integrations"
                 title="Integrations"
@@ -958,10 +989,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   <div className="mt-4"><TelegramIntegrationDetailMockup /></div>
                 </FeatureCard>
               </div>
-            </section>
+            </motion.section>
 
             {/* ── 12b. AI Insights Setup ─────────────────── */}
-            <section>
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="ai-integration"
                 title="AI Trade Insights"
@@ -1038,10 +1069,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <div className="mt-5">
                 <AISettingsPreviewMockup />
               </div>
-            </section>
+            </motion.section>
 
             {/* ── 13. Keyboard Shortcuts ─────────────────── */}
-            <section>
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="shortcuts"
                 title="Keyboard Shortcuts"
@@ -1093,10 +1124,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
                 <div className="mt-4"><KeyboardShortcutsDetailMockup /></div>
               </FeatureCard>
-            </section>
+            </motion.section>
 
             {/* ── 14. Settings ───────────────────────────── */}
-            <section>
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="settings"
                 title="Settings"
@@ -1163,23 +1194,32 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   <div className="mt-4"><SettingsIntegrationsMockup /></div>
                 </FeatureCard>
               </div>
-            </section>
+            </motion.section>
 
             {/* CTA at bottom */}
             {!isInsideApp && (
-              <section className="text-center py-16 border-t border-border/20">
-                <h2 className="text-3xl font-bold mb-4">Ready to improve your trading?</h2>
-                <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-                  Start logging trades today with a 14-day free Pro trial. No credit card required.
-                </p>
-                <Button
-                  size="lg"
-                  onClick={() => navigate("/login")}
-                  className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-10 h-12 text-base gap-2"
-                >
-                  Get Started Free <ArrowRight className="w-4 h-4" />
-                </Button>
-              </section>
+              <motion.section
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="text-center py-16 rounded-2xl bg-gradient-to-b from-primary/[0.04] to-transparent relative overflow-hidden"
+              >
+                <div className="absolute inset-0 dot-pattern opacity-20" />
+                <div className="relative">
+                  <h2 className="text-3xl font-bold mb-4">Ready to improve your trading?</h2>
+                  <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
+                    Start logging trades today with a 14-day free Pro trial. No credit card required.
+                  </p>
+                  <Button
+                    size="lg"
+                    onClick={() => navigate("/login")}
+                    className="shimmer-cta bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-10 h-12 text-base gap-2"
+                  >
+                    Get Started Free <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              </motion.section>
             )}
           </main>
         </div>
@@ -1187,7 +1227,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
       {/* Footer — only on standalone */}
       {!isInsideApp && (
-        <footer className="border-t border-border/20 bg-card/30 py-10">
+        <footer className="border-t border-border/20 bg-card/50 dot-pattern py-10">
           <div className="max-w-7xl mx-auto px-6 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-muted-foreground/50">© {new Date().getFullYear()} TradeBook. All rights reserved.</p>
             <div className="flex items-center gap-4 text-xs text-muted-foreground/50">
