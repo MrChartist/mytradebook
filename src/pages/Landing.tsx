@@ -7,8 +7,10 @@ import {
   LineChart, CheckCircle2, Zap, Eye, ChevronDown, Star, Quote, Activity,
   PieChart, Layers, Clock, ArrowUpRight, ArrowDownRight, Minus, Play,
   Smartphone, Globe, Lock, Sparkles, Award, Users, Calendar, MousePointerClick,
+  Send, CandlestickChart, Gauge,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 /* ─── Animated counter ──────────────────────────────────── */
@@ -57,8 +59,8 @@ const staggerContainer = {
 };
 
 const scaleIn = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" as const } },
+  hidden: { opacity: 0, scale: 0.92 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.7, ease: "easeOut" as const } },
 };
 
 function MotionSection({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -77,14 +79,23 @@ function MotionSection({ children, className }: { children: React.ReactNode; cla
   );
 }
 
+/* ─── Section Label Badge (Luna UI inspired) ────────────── */
+function SectionBadge({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border bg-muted/50 text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground mb-6">
+      {children}
+    </div>
+  );
+}
+
 /* ─── Data ──────────────────────────────────────────────── */
 const features = [
-  { icon: BookOpen, title: "Smart Journal", description: "Multi-segment trade logging with charts, tags, notes, and pattern recognition.", color: "hsl(24 90% 55%)" },
-  { icon: BarChart3, title: "Deep Analytics", description: "Equity curves, drawdown analysis, win-rate heatmaps, and segment breakdowns.", color: "hsl(152 60% 42%)" },
-  { icon: Bell, title: "Real-Time Alerts", description: "Price alerts, scanner triggers, and instant Telegram notifications.", color: "hsl(210 80% 55%)" },
-  { icon: Target, title: "Trailing Stop Loss", description: "Segment-based TSL with configurable activation, step, gap, and cooldown.", color: "hsl(340 75% 55%)" },
-  { icon: LineChart, title: "Broker Integration", description: "Connect Dhan for live prices, portfolio auto-sync, and one-click execution.", color: "hsl(45 90% 50%)" },
-  { icon: Shield, title: "Rules Engine", description: "Pre-trade checklists, mistake tagging, and discipline enforcement.", color: "hsl(270 60% 55%)" },
+  { icon: BookOpen, title: "Smart Journal", description: "Multi-segment trade logging with charts, tags, notes, and pattern recognition. Track every trade across Equity, F&O, and Commodities.", color: "hsl(24 90% 55%)", large: true },
+  { icon: BarChart3, title: "Deep Analytics", description: "Equity curves, drawdown analysis, win-rate heatmaps, and segment breakdowns.", color: "hsl(152 60% 42%)", large: false },
+  { icon: Bell, title: "Real-Time Alerts", description: "Price alerts, scanner triggers, and instant Telegram notifications.", color: "hsl(210 80% 55%)", large: false },
+  { icon: Target, title: "Trailing Stop Loss", description: "Segment-based TSL with configurable activation, step, gap, and cooldown.", color: "hsl(340 75% 55%)", large: false },
+  { icon: LineChart, title: "Broker Integration", description: "Connect Dhan for live prices, portfolio auto-sync, and one-click execution.", color: "hsl(45 90% 50%)", large: false },
+  { icon: Shield, title: "Rules Engine", description: "Pre-trade checklists, mistake tagging, and discipline enforcement.", color: "hsl(270 60% 55%)", large: true },
 ];
 
 const steps = [
@@ -94,9 +105,9 @@ const steps = [
 ];
 
 const testimonials = [
-  { name: "Rahul M.", role: "Options Trader, Mumbai", quote: "TradeBook helped me identify that my Monday morning trades were consistently losing. After adjusting my strategy, my win rate went from 42% to 61%.", stars: 5, avatar: "R" },
-  { name: "Priya S.", role: "Swing Trader, Bangalore", quote: "The segment-level analytics are a game-changer. I can see exactly which setups work for intraday vs positional, and the Telegram alerts keep me disciplined.", stars: 5, avatar: "P" },
-  { name: "Aditya K.", role: "F&O Trader, Delhi", quote: "I tried 4 journals before TradeBook. None understood Indian markets — segments, lot sizes, MCX. Finally something built for how we actually trade.", stars: 5, avatar: "A" },
+  { name: "Rahul M.", role: "Options Trader, Mumbai", quote: "TradeBook helped me identify that my Monday morning trades were consistently losing. After adjusting my strategy, my win rate went from 42% to 61%.", stars: 5, avatar: "R", featured: true },
+  { name: "Priya S.", role: "Swing Trader, Bangalore", quote: "The segment-level analytics are a game-changer. I can see exactly which setups work for intraday vs positional.", stars: 5, avatar: "P", featured: false },
+  { name: "Aditya K.", role: "F&O Trader, Delhi", quote: "I tried 4 journals before TradeBook. None understood Indian markets — segments, lot sizes, MCX. Finally something built for how we actually trade.", stars: 5, avatar: "A", featured: false },
 ];
 
 const faqs = [
@@ -123,30 +134,6 @@ const pricingPlans = [
     name: "Team", price: "₹1,499", period: "/mo", description: "For trading desks & groups",
     features: ["Everything in Pro", "5 team members", "Shared studies & alerts", "RA compliance mode", "API access", "Dedicated manager"],
     cta: "Contact Sales", highlighted: false,
-  },
-];
-
-const segmentTabs = [
-  {
-    id: "equity", label: "Equity", icon: TrendingUp,
-    title: "Intraday & Positional Equity",
-    description: "Track cash-market trades with split segments for intraday scalps and positional swing trades.",
-    stats: [{ label: "Segments", value: "2" }, { label: "Metrics", value: "15+" }, { label: "Holding", value: "1d–90d" }],
-    features: ["Intraday vs Positional split", "Sector-wise P&L heatmap", "Day-of-week analysis", "Brokerage tracking"],
-  },
-  {
-    id: "fno", label: "F&O", icon: Activity,
-    title: "Futures & Options",
-    description: "Purpose-built for derivatives traders. Log option chains, strategy legs, and Greeks tracking.",
-    stats: [{ label: "Strategy Types", value: "10+" }, { label: "Greeks", value: "4" }, { label: "Expiries", value: "Auto" }],
-    features: ["Multi-leg strategy logging", "Option chain selector", "Lot-size aware P&L", "Expiry-based performance"],
-  },
-  {
-    id: "commodities", label: "Commodities", icon: PieChart,
-    title: "MCX Commodities",
-    description: "Track Gold, Silver, Crude, Natural Gas with commodity-specific lot sizes and session analysis.",
-    stats: [{ label: "Instruments", value: "20+" }, { label: "Sessions", value: "2" }, { label: "Margin", value: "Auto" }],
-    features: ["MCX instrument support", "Session-wise analytics", "Commodity-specific lots", "Margin utilization"],
   },
 ];
 
@@ -197,30 +184,79 @@ function FAQItem({ question, answer, index }: { question: string; answer: string
   );
 }
 
-/* ─── Marquee logos ─────────────────────────────────────── */
-function LogoMarquee() {
-  const logos = [
-    { name: "NSE", icon: Activity },
-    { name: "BSE", icon: BarChart3 },
-    { name: "MCX", icon: PieChart },
-    { name: "Dhan", icon: Zap },
-    { name: "Telegram", icon: Bell },
-  ];
+/* ─── Floating UI Elements (Acctual/Loops inspired) ─────── */
+function FloatingElements() {
   return (
-    <div className="relative overflow-hidden py-4">
-      <div className="flex animate-[marquee_20s_linear_infinite] gap-12">
-        {[...logos, ...logos, ...logos].map((l, i) => (
-          <div key={i} className="flex items-center gap-2.5 shrink-0 opacity-40 hover:opacity-70 transition-opacity">
-            <l.icon className="w-5 h-5" />
-            <span className="text-sm font-semibold tracking-wide">{l.name}</span>
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Floating mini trade card - top left */}
+      <motion.div
+        className="absolute top-28 left-[5%] hidden lg:block"
+        animate={{ y: [0, -12, 0], rotate: [-3, -1, -3] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <div className="rounded-xl border border-border/40 bg-card/90 backdrop-blur-sm p-3 shadow-lg w-44">
+          <div className="flex items-center gap-2 mb-1.5">
+            <div className="w-1.5 h-5 rounded-full bg-profit" />
+            <div>
+              <p className="text-[10px] font-semibold">RELIANCE</p>
+              <p className="text-[8px] text-muted-foreground">BUY · ₹2,945</p>
+            </div>
           </div>
-        ))}
-      </div>
+          <p className="text-[10px] font-mono font-bold text-profit">+₹2,450</p>
+        </div>
+      </motion.div>
+
+      {/* Floating alert badge - top right */}
+      <motion.div
+        className="absolute top-36 right-[6%] hidden lg:block"
+        animate={{ y: [0, -8, 0], rotate: [2, 4, 2] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+      >
+        <div className="rounded-lg border border-border/40 bg-card/90 backdrop-blur-sm px-3 py-2 shadow-lg flex items-center gap-2">
+          <div className="w-6 h-6 rounded-md bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center">
+            <Bell className="w-3 h-3 text-[hsl(var(--tb-accent))]" />
+          </div>
+          <div>
+            <p className="text-[9px] font-semibold">Alert Triggered</p>
+            <p className="text-[8px] text-muted-foreground">NIFTY crossed 24,300</p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Floating P&L badge - left side mid */}
+      <motion.div
+        className="absolute top-[55%] left-[3%] hidden xl:block"
+        animate={{ y: [0, -15, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+      >
+        <div className="rounded-lg border border-profit/20 bg-profit/5 backdrop-blur-sm px-3 py-2 shadow-md">
+          <p className="text-[9px] text-muted-foreground uppercase tracking-wider">MTD P&L</p>
+          <p className="text-sm font-bold font-mono text-profit">+₹24,850</p>
+        </div>
+      </motion.div>
+
+      {/* Floating icon scatter (Loops inspired) */}
+      {[
+        { Icon: CandlestickChart, top: "18%", left: "12%", delay: 0.5, size: "w-8 h-8" },
+        { Icon: Gauge, top: "70%", right: "8%", delay: 1.5, size: "w-7 h-7" },
+        { Icon: Activity, top: "25%", right: "14%", delay: 2, size: "w-6 h-6" },
+        { Icon: Target, top: "65%", left: "10%", delay: 0.8, size: "w-7 h-7" },
+      ].map(({ Icon, delay, size, ...pos }, i) => (
+        <motion.div
+          key={i}
+          className={cn("absolute hidden lg:flex items-center justify-center rounded-xl border border-border/30 bg-card/60 backdrop-blur-sm shadow-sm", size)}
+          style={pos as React.CSSProperties}
+          animate={{ y: [0, -8, 0], opacity: [0.4, 0.7, 0.4] }}
+          transition={{ duration: 4 + i, repeat: Infinity, ease: "easeInOut", delay }}
+        >
+          <Icon className="w-3.5 h-3.5 text-muted-foreground/50" />
+        </motion.div>
+      ))}
     </div>
   );
 }
 
-/* ─── Animated Ticker ───────────────────────────────────── */
+/* ─── Ticker Bar ────────────────────────────────────────── */
 function TickerBar() {
   const tickers = [
     { symbol: "NIFTY 50", price: "24,285", change: "+0.82%", up: true },
@@ -242,44 +278,14 @@ function TickerBar() {
   );
 }
 
-/* ─── Floating Particles (Hero BG) ──────────────────────── */
-function FloatingParticles() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(6)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-2 h-2 rounded-full bg-[hsl(var(--tb-accent)/0.15)]"
-          style={{
-            left: `${15 + i * 15}%`,
-            top: `${20 + (i % 3) * 25}%`,
-          }}
-          animate={{
-            y: [0, -30, 0],
-            opacity: [0.3, 0.6, 0.3],
-            scale: [1, 1.5, 1],
-          }}
-          transition={{
-            duration: 4 + i,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: i * 0.5,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
 /* ─── Main Component ────────────────────────────────────── */
 export default function Landing() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const [activeSegment, setActiveSegment] = useState("equity");
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 150]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
   const s3 = useCountUp(5, 1200);
   const s4 = useCountUp(50, 1500);
@@ -289,8 +295,6 @@ export default function Landing() {
     if (!loading && user) navigate("/");
   }, [user, loading, navigate]);
 
-  const activeTab = segmentTabs.find((t) => t.id === activeSegment)!;
-
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden font-sans">
       {/* ── Navbar ───────────────────────────────────────── */}
@@ -298,7 +302,7 @@ export default function Landing() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl"
+        className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl"
       >
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-16">
           <motion.div className="flex items-center gap-2.5" whileHover={{ scale: 1.02 }}>
@@ -309,7 +313,7 @@ export default function Landing() {
           </motion.div>
 
           <div className="hidden md:flex items-center gap-1 text-sm text-muted-foreground">
-            {["Features", "Segments", "Pricing", "FAQ"].map((item) => (
+            {["Features", "Pricing", "FAQ"].map((item) => (
               <motion.a
                 key={item}
                 href={`#${item.toLowerCase()}`}
@@ -339,25 +343,18 @@ export default function Landing() {
         </div>
       </motion.nav>
 
-      {/* ── Hero ─────────────────────────────────────────── */}
+      {/* ── Hero (Acctual + Loops + Manila inspired) ──────── */}
       <section ref={heroRef} className="relative overflow-hidden">
-        <FloatingParticles />
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.3]"
-          style={{
-            backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-          }}
-        />
+        <FloatingElements />
         {/* Radial glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.08)_0%,transparent_70%)] pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.06)_0%,transparent_70%)] pointer-events-none" />
 
-        <motion.div style={{ y: heroY, opacity: heroOpacity }} className="relative max-w-5xl mx-auto px-6 pt-20 pb-12 lg:pt-32 lg:pb-20 text-center">
+        <motion.div style={{ y: heroY, opacity: heroOpacity }} className="relative max-w-4xl mx-auto px-6 pt-24 pb-8 lg:pt-36 lg:pb-16 text-center">
           {/* Badge */}
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0} className="flex justify-center mb-8">
             <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[hsl(var(--tb-accent)/0.3)] bg-[hsl(var(--tb-accent)/0.06)] text-sm backdrop-blur-sm"
-              whileHover={{ scale: 1.03, borderColor: "hsl(24 90% 55% / 0.5)" }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[hsl(var(--tb-accent)/0.25)] bg-[hsl(var(--tb-accent)/0.05)] text-sm backdrop-blur-sm"
+              whileHover={{ scale: 1.03 }}
             >
               <motion.span
                 className="w-2 h-2 rounded-full bg-[hsl(var(--tb-accent))]"
@@ -365,20 +362,20 @@ export default function Landing() {
                 transition={{ duration: 2, repeat: Infinity }}
               />
               <span className="text-[hsl(var(--tb-accent))] font-semibold uppercase tracking-wider text-xs">
-                Built for Indian Markets · NSE · BSE · MCX
+                Built for Indian Markets
               </span>
             </motion.div>
           </motion.div>
 
-          {/* Heading */}
+          {/* Heading - oversized, bold (Acctual inspired) */}
           <motion.h1
             variants={fadeUp} initial="hidden" animate="visible" custom={0.1}
-            className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.08] tracking-tight mb-6"
+            className="text-5xl sm:text-6xl lg:text-[5.5rem] font-extrabold leading-[1.05] tracking-tight mb-7"
           >
             Know Your Edge.
             <br />
             <motion.span
-              className="text-[hsl(var(--tb-accent))] italic inline-block"
+              className="text-[hsl(var(--tb-accent))] inline-block"
               style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
               animate={{ rotate: [-1, 1, -1] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -391,68 +388,66 @@ export default function Landing() {
           {/* Subtitle */}
           <motion.p
             variants={fadeUp} initial="hidden" animate="visible" custom={0.2}
-            className="text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed"
+            className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
           >
             The trading journal that shows you <strong className="text-foreground">why</strong> you win and{" "}
             <strong className="text-foreground">why</strong> you lose — with segment analytics for Equity, F&O, and Commodities.
           </motion.p>
 
-          {/* CTAs */}
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.3} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-            <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
+          {/* Email CTA (Manila inspired) */}
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.3} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto mb-6">
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              className="h-13 rounded-full px-5 text-base border-border/60 bg-card shadow-sm flex-1"
+            />
+            <motion.div whileHover={{ scale: 1.04, y: -1 }} whileTap={{ scale: 0.97 }}>
               <Button
                 size="lg"
-                className="h-14 px-10 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_8px_30px_hsl(var(--tb-accent)/0.35)] font-semibold"
+                className="h-13 px-8 text-base gap-2 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_8px_30px_hsl(var(--tb-accent)/0.35)] font-semibold whitespace-nowrap"
                 onClick={() => navigate("/login")}
               >
-                Start Free — No Card Needed
+                Get Access
                 <ArrowRight className="w-4 h-4" />
-              </Button>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-              <Button
-                variant="outline"
-                size="lg"
-                className="h-14 px-8 text-base gap-2 rounded-full border-border/60 hover:border-[hsl(var(--tb-accent)/0.4)]"
-                onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })}
-              >
-                <Play className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
-                See How It Works
               </Button>
             </motion.div>
           </motion.div>
 
           {/* Micro trust */}
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.35} className="flex items-center justify-center gap-4 text-xs text-muted-foreground mb-14">
-            <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-profit" /> 14-day Pro trial</span>
-            <span className="flex items-center gap-1"><Lock className="w-3.5 h-3.5" /> Bank-grade security</span>
-            <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" /> 2-min setup</span>
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.4} className="flex items-center justify-center gap-5 text-xs text-muted-foreground mb-16">
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-profit" /> 14-day Pro trial</span>
+            <span className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5" /> Bank-grade security</span>
+            <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" /> No credit card</span>
           </motion.div>
+        </motion.div>
 
-          {/* ── Dashboard Preview ─────────────────────────── */}
+        {/* ── Dashboard Preview (perspective tilt) ─────────── */}
+        <div className="relative max-w-5xl mx-auto px-6 pb-20">
           <motion.div
             variants={scaleIn} initial="hidden" animate="visible"
-            className="relative mx-auto max-w-5xl"
+            className="relative"
           >
-            {/* Multi-layered glow */}
-            <div className="absolute -inset-8 bg-[hsl(var(--tb-accent)/0.05)] rounded-[2rem] blur-3xl" />
-            <div className="absolute -inset-4 bg-[hsl(var(--tb-accent)/0.03)] rounded-3xl blur-xl" />
+            {/* Glow behind dashboard */}
+            <div className="absolute -inset-10 bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.08)_0%,transparent_70%)] pointer-events-none" />
 
             <motion.div
-              className="relative rounded-2xl border border-border/60 bg-card overflow-hidden"
-              style={{ boxShadow: "0 25px 60px -15px rgba(0,0,0,0.1), 0 0 0 1px hsl(var(--border)/0.5)" }}
-              whileHover={{ y: -4 }}
-              transition={{ duration: 0.3 }}
+              className="relative rounded-2xl border border-border/50 bg-card overflow-hidden"
+              style={{
+                boxShadow: "0 30px 80px -20px rgba(0,0,0,0.12), 0 0 0 1px hsl(var(--border)/0.4)",
+                transform: "perspective(1200px) rotateX(2deg)",
+              }}
+              whileHover={{ y: -6 }}
+              transition={{ duration: 0.4 }}
             >
               {/* Window chrome */}
-              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/50 bg-muted/30">
+              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/40 bg-muted/20">
                 <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-loss/50" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-warning/50" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-profit/50" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-loss/40" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-warning/40" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-profit/40" />
                 </div>
                 <div className="flex-1 text-center">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-muted/50 text-[10px] text-muted-foreground font-mono">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-muted/40 text-[10px] text-muted-foreground font-mono">
                     <span className="w-1.5 h-1.5 rounded-full bg-profit/60" />
                     mytradebook.lovable.app/dashboard
                   </div>
@@ -464,24 +459,22 @@ export default function Landing() {
               {/* Dashboard content */}
               <div className="flex">
                 {/* Mini sidebar */}
-                <div className="hidden sm:flex flex-col w-14 border-r border-border/30 bg-muted/10 py-3 gap-3 items-center">
+                <div className="hidden sm:flex flex-col w-14 border-r border-border/20 bg-muted/5 py-3 gap-3 items-center">
                   {[BarChart3, BookOpen, Bell, Target, Eye, Layers, Calendar].map((Icon, i) => (
-                    <motion.div
+                    <div
                       key={i}
                       className={cn(
                         "w-8 h-8 rounded-lg flex items-center justify-center",
-                        i === 0 ? "bg-[hsl(var(--tb-accent)/0.12)] text-[hsl(var(--tb-accent))]" : "text-muted-foreground/50"
+                        i === 0 ? "bg-[hsl(var(--tb-accent)/0.12)] text-[hsl(var(--tb-accent))]" : "text-muted-foreground/40"
                       )}
-                      whileHover={{ scale: 1.15, backgroundColor: "hsl(var(--tb-accent) / 0.08)" }}
                     >
                       <Icon className="w-3.5 h-3.5" />
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
 
                 {/* Main content */}
                 <div className="flex-1 p-4 sm:p-5">
-                  {/* Header */}
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <p className="text-xs text-muted-foreground">Good Morning,</p>
@@ -489,17 +482,15 @@ export default function Landing() {
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="px-2.5 py-1 rounded-md bg-profit/10 text-profit text-[10px] font-semibold flex items-center gap-1">
-                        <ArrowUpRight className="w-3 h-3" />
-                        4 day streak
+                        <ArrowUpRight className="w-3 h-3" /> 4 day streak
                       </div>
                       <div className="px-2 py-1 rounded-md bg-muted text-muted-foreground text-[10px] flex items-center gap-1">
-                        <Activity className="w-3 h-3 text-profit animate-pulse" />
-                        Live
+                        <Activity className="w-3 h-3 text-profit animate-pulse" /> Live
                       </div>
                     </div>
                   </div>
 
-                  {/* Today's P&L Hero Card */}
+                  {/* Today's P&L Hero */}
                   <div className="mb-4 rounded-xl border border-profit/20 bg-gradient-to-r from-profit/5 to-transparent p-3.5">
                     <div className="flex items-center justify-between">
                       <div>
@@ -507,7 +498,7 @@ export default function Landing() {
                         <p className="text-xl font-bold font-mono text-profit">+₹8,450</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-[9px] text-muted-foreground">Win Rate Today</p>
+                        <p className="text-[9px] text-muted-foreground">Win Rate</p>
                         <p className="text-sm font-bold font-mono text-profit">75%</p>
                       </div>
                       <div className="text-right">
@@ -520,22 +511,22 @@ export default function Landing() {
                   {/* KPI row */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
                     {[
-                      { label: "MTD P&L", value: "+₹24,850", change: "+12.4%", up: true },
-                      { label: "Win Rate", value: "67.5%", change: "+3.2%", up: true },
-                      { label: "Open Positions", value: "3", change: "₹2.4L invested", up: true },
-                      { label: "Active Alerts", value: "8", change: "2 triggered", up: true },
+                      { label: "MTD P&L", value: "+₹24,850", change: "+12.4%", colored: true },
+                      { label: "Win Rate", value: "67.5%", change: "+3.2%", colored: true },
+                      { label: "Open Positions", value: "3", change: "₹2.4L invested", colored: false },
+                      { label: "Active Alerts", value: "8", change: "2 triggered", colored: false },
                     ].map((kpi) => (
-                      <div key={kpi.label} className="rounded-xl border border-border/40 bg-card p-3">
+                      <div key={kpi.label} className="rounded-xl border border-border/30 bg-card p-3">
                         <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">{kpi.label}</p>
-                        <p className={cn("text-base font-bold font-mono", kpi.label.includes("P&L") || kpi.label.includes("Win") ? "text-profit" : "text-foreground")}>{kpi.value}</p>
-                        {kpi.change && <p className="text-[9px] font-mono mt-0.5 text-muted-foreground">{kpi.change}</p>}
+                        <p className={cn("text-base font-bold font-mono", kpi.colored ? "text-profit" : "text-foreground")}>{kpi.value}</p>
+                        <p className="text-[9px] font-mono mt-0.5 text-muted-foreground">{kpi.change}</p>
                       </div>
                     ))}
                   </div>
 
                   {/* Equity curve + Recent trades */}
                   <div className="grid sm:grid-cols-5 gap-3">
-                    <div className="sm:col-span-3 rounded-xl border border-border/40 bg-card p-3">
+                    <div className="sm:col-span-3 rounded-xl border border-border/30 bg-card p-3">
                       <div className="flex items-center justify-between mb-2">
                         <p className="text-[10px] text-muted-foreground font-medium">Equity Curve</p>
                         <p className="text-[10px] text-profit font-mono font-semibold">+₹1,24,850</p>
@@ -551,8 +542,7 @@ export default function Landing() {
                         <path d="M0,65 C20,62 40,58 60,50 C80,42 100,48 130,40 C160,32 180,36 210,28 C240,20 260,24 290,18 C320,12 350,16 370,10 C385,6 395,8 400,5 L400,80 L0,80 Z" fill="url(#curveGrad)" />
                       </svg>
                     </div>
-
-                    <div className="sm:col-span-2 rounded-xl border border-border/40 bg-card p-3">
+                    <div className="sm:col-span-2 rounded-xl border border-border/30 bg-card p-3">
                       <p className="text-[10px] text-muted-foreground font-medium mb-2">Recent Trades</p>
                       <div className="space-y-2">
                         {[
@@ -560,7 +550,7 @@ export default function Landing() {
                           { sym: "NIFTY 24200 CE", type: "BUY", pnl: "+₹8,200", up: true },
                           { sym: "TATAMOTORS", type: "SELL", pnl: "-₹1,100", up: false },
                         ].map((t) => (
-                          <div key={t.sym} className="flex items-center justify-between py-1.5 border-b border-border/20 last:border-0">
+                          <div key={t.sym} className="flex items-center justify-between py-1.5 border-b border-border/15 last:border-0">
                             <div className="flex items-center gap-2">
                               <div className={cn("w-1 h-4 rounded-full", t.up ? "bg-profit" : "bg-loss")} />
                               <div>
@@ -578,78 +568,128 @@ export default function Landing() {
               </div>
             </motion.div>
           </motion.div>
-        </motion.div>
-      </section>
-
-      {/* ── Logo Marquee ─────────────────────────────────── */}
-      <section className="py-6 border-y border-border/50 overflow-hidden">
-        <div className="max-w-6xl mx-auto px-6">
-          <LogoMarquee />
         </div>
       </section>
 
-      {/* ── Stats Row ────────────────────────────────────── */}
-      <MotionSection className="py-16">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="flex items-center justify-center gap-8 sm:gap-16 flex-wrap">
+      {/* ── Trust Strip (static, centered — Loops/Manila) ─── */}
+      <section className="py-10 border-y border-border/30">
+        <div className="max-w-4xl mx-auto px-6">
+          <p className="text-center text-xs text-muted-foreground uppercase tracking-[0.15em] font-semibold mb-6">
+            Trusted by 1,200+ Indian Traders
+          </p>
+          <div className="flex items-center justify-center gap-10 sm:gap-16 flex-wrap">
+            {[
+              { name: "NSE", icon: Activity },
+              { name: "BSE", icon: BarChart3 },
+              { name: "MCX", icon: PieChart },
+              { name: "Dhan", icon: Zap },
+              { name: "Telegram", icon: Send },
+            ].map((l) => (
+              <motion.div
+                key={l.name}
+                className="flex items-center gap-2 text-muted-foreground/50 hover:text-muted-foreground/80 transition-colors"
+                whileHover={{ scale: 1.08 }}
+              >
+                <l.icon className="w-4.5 h-4.5" />
+                <span className="text-sm font-semibold tracking-wide">{l.name}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Stats Section (Luna UI inspired) ──────────────── */}
+      <MotionSection className="py-20 lg:py-24">
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <motion.div variants={fadeUp}>
+            <SectionBadge>By the Numbers</SectionBadge>
+          </motion.div>
+          <div className="flex items-center justify-center gap-12 sm:gap-20 flex-wrap mt-4">
             {[
               { ref: s3.ref, value: s3.count, suffix: "", label: "Market Segments" },
               { ref: s4.ref, value: s4.count, suffix: "+", label: "Analytics Metrics" },
               { ref: s5.ref, value: s5.count, suffix: "+", label: "Trades Tracked" },
             ].map((stat, i) => (
               <motion.div key={stat.label} variants={fadeUp} custom={i * 0.1} className="text-center">
-                <div className="text-3xl sm:text-5xl font-bold tracking-tight" ref={stat.ref}>
+                <div className="text-4xl sm:text-6xl font-extrabold tracking-tight" ref={stat.ref}>
                   {stat.value}{stat.suffix}
                 </div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1.5">{stat.label}</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-[0.12em] mt-2 font-medium">{stat.label}</div>
               </motion.div>
             ))}
             <motion.div variants={fadeUp} custom={0.3} className="text-center">
-              <div className="text-3xl sm:text-5xl font-bold tracking-tight flex items-center gap-1.5 justify-center">
-                <Clock className="w-7 h-7 text-[hsl(var(--tb-accent))]" />
+              <div className="text-4xl sm:text-6xl font-extrabold tracking-tight flex items-center gap-2 justify-center">
                 24/7
               </div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1.5">Cloud Access</div>
+              <div className="text-xs text-muted-foreground uppercase tracking-[0.12em] mt-2 font-medium">Cloud Access</div>
             </motion.div>
           </div>
         </div>
       </MotionSection>
 
-      {/* ── Features ─────────────────────────────────────── */}
+      {/* ── Features Bento Grid (Manila inspired) ─────────── */}
       <section id="features" className="py-20 lg:py-28">
         <MotionSection className="max-w-6xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+            <SectionBadge>Features</SectionBadge>
+            <h2 className="text-3xl lg:text-5xl font-extrabold mb-5">
               Everything You Need to{" "}
-              <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
+              <span className="text-[hsl(var(--tb-accent))]" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
                 Trade Better
               </span>
             </h2>
-            <p className="text-muted-foreground max-w-lg mx-auto">
+            <p className="text-muted-foreground max-w-lg mx-auto text-base">
               From journaling to automation — tools designed by traders, for traders.
             </p>
           </motion.div>
 
-          <motion.div variants={staggerContainer} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {/* Bento Grid */}
+          <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-6 gap-5">
             {features.map((f, i) => (
-              <motion.div key={f.title} variants={fadeUp} custom={i * 0.05}>
+              <motion.div
+                key={f.title}
+                variants={fadeUp}
+                custom={i * 0.05}
+                className={cn(f.large ? "md:col-span-4" : "md:col-span-2")}
+              >
                 <motion.div
-                  className="group rounded-2xl border border-border bg-card p-6 h-full relative overflow-hidden"
-                  whileHover={{ y: -6, borderColor: "hsl(var(--tb-accent) / 0.3)" }}
+                  className="group rounded-2xl border border-border bg-card p-7 h-full relative overflow-hidden"
+                  whileHover={{ y: -4, borderColor: "hsl(var(--tb-accent) / 0.3)" }}
                   transition={{ duration: 0.25 }}
                 >
-                  {/* Subtle gradient on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--tb-accent)/0.03)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--tb-accent)/0.02)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <div className="relative">
                     <motion.div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                      style={{ backgroundColor: `${f.color} / 0.1)`.replace("hsl(", "hsl(").replace(")", " / 0.1)") }}
+                      className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
+                      style={{ backgroundColor: `${f.color.replace(")", " / 0.1)")}` }}
                       whileHover={{ scale: 1.1, rotate: 5 }}
                     >
                       <f.icon className="w-5 h-5" style={{ color: f.color }} />
                     </motion.div>
-                    <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
+                    <h3 className="text-lg font-bold mb-2">{f.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{f.description}</p>
+
+                    {/* Mini preview inside large cards */}
+                    {f.large && f.title === "Smart Journal" && (
+                      <div className="mt-5 rounded-xl border border-border/30 bg-muted/20 p-3 grid grid-cols-3 gap-2">
+                        {["Win Rate: 68%", "Avg Win: ₹12,450", "P.F: 2.14"].map((m) => (
+                          <div key={m} className="text-center">
+                            <p className="text-[10px] text-muted-foreground">{m.split(":")[0]}</p>
+                            <p className="text-xs font-bold font-mono">{m.split(":")[1]}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {f.large && f.title === "Rules Engine" && (
+                      <div className="mt-5 space-y-2">
+                        {["Check position size ≤ 10%", "Avoid trading first 15 mins", "Max 3 trades per day"].map((r) => (
+                          <div key={r} className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-profit shrink-0" />
+                            <span>{r}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               </motion.div>
@@ -658,117 +698,35 @@ export default function Landing() {
         </MotionSection>
       </section>
 
-      {/* ── Segment Showcase ─────────────────────────────── */}
-      <section id="segments" className="py-20 lg:py-28 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none opacity-[0.15]" style={{ backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
-        <MotionSection className="relative max-w-5xl mx-auto px-6">
-          <motion.div variants={fadeUp} className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              Built for{" "}
-              <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
-                Every Segment
-              </span>
-            </h2>
-            <p className="text-muted-foreground max-w-lg mx-auto">
-              Whether you trade equity, derivatives, or commodities — TradeBook understands your market.
-            </p>
-          </motion.div>
-
-          {/* Tabs */}
-          <motion.div variants={fadeUp} className="flex items-center justify-center gap-2 mb-10">
-            {segmentTabs.map((tab) => (
-              <motion.button
-                key={tab.id}
-                onClick={() => setActiveSegment(tab.id)}
-                className={cn(
-                  "flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-200",
-                  activeSegment === tab.id
-                    ? "bg-[hsl(var(--tb-accent))] text-white shadow-[0_4px_15px_hsl(var(--tb-accent)/0.3)]"
-                    : "bg-card border border-border text-muted-foreground hover:text-foreground"
-                )}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                <tab.icon className="w-4 h-4" />
-                {tab.label}
-              </motion.button>
-            ))}
-          </motion.div>
-
-          {/* Tab content */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeSegment}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="rounded-2xl border border-border bg-card overflow-hidden"
-            >
-              <div className="grid md:grid-cols-2">
-                <div className="p-8 lg:p-10 flex flex-col justify-center">
-                  <h3 className="text-2xl font-bold mb-3">{activeTab.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-6">{activeTab.description}</p>
-                  <div className="flex items-center gap-6 mb-6">
-                    {activeTab.stats.map((s) => (
-                      <div key={s.label}>
-                        <p className="text-xl font-bold font-mono text-[hsl(var(--tb-accent))]">{s.value}</p>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{s.label}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <ul className="space-y-2.5">
-                    {activeTab.features.map((f) => (
-                      <li key={f} className="flex items-center gap-2.5 text-sm">
-                        <CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0" />
-                        <span>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="bg-muted/30 border-l border-border/50 p-8 flex items-center justify-center">
-                  <div className="w-full max-w-xs space-y-3">
-                    {activeSegment === "equity" && (
-                      <><MockTradeCard sym="RELIANCE" type="BUY" entry="₹2,890" pnl="+₹2,450" up /><MockTradeCard sym="TATAMOTORS" type="SELL" entry="₹985" pnl="-₹780" up={false} /><MockTradeCard sym="INFY" type="BUY" entry="₹1,540" pnl="+₹1,120" up /></>
-                    )}
-                    {activeSegment === "fno" && (
-                      <><MockTradeCard sym="NIFTY 24200 CE" type="BUY" entry="₹185" pnl="+₹8,200" up /><MockTradeCard sym="BANKNIFTY 51000 PE" type="BUY" entry="₹320" pnl="-₹4,500" up={false} /><MockTradeCard sym="NIFTY FUT MAR" type="SELL" entry="₹24,100" pnl="+₹3,750" up /></>
-                    )}
-                    {activeSegment === "commodities" && (
-                      <><MockTradeCard sym="GOLD APR" type="BUY" entry="₹71,200" pnl="+₹5,800" up /><MockTradeCard sym="CRUDE MAR" type="SELL" entry="₹6,540" pnl="+₹3,200" up /><MockTradeCard sym="SILVER MAR" type="BUY" entry="₹82,100" pnl="-₹2,100" up={false} /></>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </MotionSection>
-      </section>
-
       {/* ── How It Works ─────────────────────────────────── */}
-      <section id="how-it-works" className="py-20 lg:py-28">
+      <section className="py-20 lg:py-28 bg-muted/20">
         <MotionSection className="max-w-5xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Three Steps to Mastery</h2>
+            <SectionBadge>How It Works</SectionBadge>
+            <h2 className="text-3xl lg:text-5xl font-extrabold mb-4">Three Steps to Mastery</h2>
             <p className="text-muted-foreground max-w-md mx-auto">From first trade to edge mastery — in minutes.</p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-6 relative">
+            {/* Connecting lines */}
+            <div className="hidden md:block absolute top-14 left-[33%] w-[34%] border-t-2 border-dashed border-border/40" />
+            <div className="hidden md:block absolute top-14 left-[66%] w-[20%] border-t-2 border-dashed border-border/40" />
+
             {steps.map((item, i) => (
               <motion.div key={item.step} variants={fadeUp} custom={i * 0.1}>
                 <motion.div
-                  className="relative rounded-2xl border border-border bg-card p-6 h-full text-center overflow-hidden"
+                  className="relative rounded-2xl border border-border bg-card p-7 h-full text-center overflow-hidden"
                   whileHover={{ y: -4, borderColor: "hsl(var(--tb-accent) / 0.3)" }}
                 >
-                  {i < 2 && <div className="hidden md:block absolute top-14 -right-3 w-6 border-t-2 border-dashed border-border" />}
-                  <div className="absolute top-3 right-4 text-5xl font-black text-muted-foreground/8 select-none">{item.step}</div>
+                  {/* Number watermark */}
+                  <div className="absolute top-2 right-4 text-6xl font-black text-muted-foreground/[0.04] select-none">{item.step}</div>
                   <motion.div
-                    className="w-14 h-14 rounded-2xl bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center mx-auto mb-5"
+                    className="w-14 h-14 rounded-2xl bg-[hsl(var(--tb-accent)/0.08)] flex items-center justify-center mx-auto mb-5"
                     whileHover={{ scale: 1.1, rotate: -5 }}
                   >
                     <item.icon className="w-6 h-6 text-[hsl(var(--tb-accent))]" />
                   </motion.div>
-                  <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+                  <h3 className="text-lg font-bold mb-2">{item.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
                 </motion.div>
               </motion.div>
@@ -778,13 +736,13 @@ export default function Landing() {
       </section>
 
       {/* ── Comparison Table ─────────────────────────────── */}
-      <section className="py-20 lg:py-28 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none opacity-[0.15]" style={{ backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
-        <MotionSection className="relative max-w-3xl mx-auto px-6">
+      <section className="py-20 lg:py-28">
+        <MotionSection className="max-w-3xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+            <SectionBadge>Comparison</SectionBadge>
+            <h2 className="text-3xl lg:text-5xl font-extrabold mb-4">
               Why{" "}
-              <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
+              <span className="text-[hsl(var(--tb-accent))]" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
                 TradeBook
               </span>
               ?
@@ -803,7 +761,10 @@ export default function Landing() {
                 key={row.feature}
                 variants={fadeUp}
                 custom={i * 0.03}
-                className="grid grid-cols-3 gap-0 border-b border-border/50 last:border-0 px-6 py-3.5 hover:bg-muted/20 transition-colors"
+                className={cn(
+                  "grid grid-cols-3 gap-0 border-b border-border/30 last:border-0 px-6 py-3.5 transition-colors",
+                  i % 2 === 0 ? "bg-muted/10" : ""
+                )}
               >
                 <span className="text-sm">{row.feature}</span>
                 <div className="flex justify-center">
@@ -829,10 +790,11 @@ export default function Landing() {
       </section>
 
       {/* ── Pricing ──────────────────────────────────────── */}
-      <section id="pricing" className="py-20 lg:py-28">
+      <section id="pricing" className="py-20 lg:py-28 bg-muted/20">
         <MotionSection className="max-w-5xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
+            <SectionBadge>Pricing</SectionBadge>
+            <h2 className="text-3xl lg:text-5xl font-extrabold mb-4">Simple, Transparent Pricing</h2>
             <p className="text-muted-foreground max-w-md mx-auto">Start free. Upgrade when your edge demands it.</p>
           </motion.div>
 
@@ -841,7 +803,7 @@ export default function Landing() {
               <motion.div key={plan.name} variants={fadeUp} custom={i * 0.1}>
                 <motion.div
                   className={cn(
-                    "rounded-2xl border bg-card p-6 flex flex-col relative overflow-hidden",
+                    "rounded-2xl border bg-card p-7 flex flex-col relative overflow-hidden",
                     plan.highlighted
                       ? "border-[hsl(var(--tb-accent)/0.4)] ring-1 ring-[hsl(var(--tb-accent)/0.15)] scale-[1.02] lg:scale-105"
                       : "border-border"
@@ -857,7 +819,7 @@ export default function Landing() {
                   )}
                   <h3 className="text-xl font-bold">{plan.name}</h3>
                   <div className="mt-3 mb-1 flex items-baseline gap-1">
-                    <span className="text-4xl font-bold font-mono">{plan.price}</span>
+                    <span className="text-4xl font-extrabold font-mono">{plan.price}</span>
                     <span className="text-muted-foreground text-sm">{plan.period}</span>
                   </div>
                   <p className="text-sm text-muted-foreground mb-6">{plan.description}</p>
@@ -872,7 +834,7 @@ export default function Landing() {
                   <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                     <Button
                       className={cn(
-                        "w-full h-11 rounded-full",
+                        "w-full h-12 rounded-full text-base",
                         plan.highlighted ? "bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white shadow-[0_4px_15px_hsl(var(--tb-accent)/0.3)]" : ""
                       )}
                       variant={plan.highlighted ? "default" : "outline"}
@@ -889,55 +851,84 @@ export default function Landing() {
         </MotionSection>
       </section>
 
-      {/* ── Testimonials ─────────────────────────────────── */}
-      <section className="py-20 lg:py-28 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none opacity-[0.15]" style={{ backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
-        <MotionSection className="relative max-w-6xl mx-auto px-6">
+      {/* ── Testimonials (Luna UI mixed sizes) ────────────── */}
+      <section className="py-20 lg:py-28">
+        <MotionSection className="max-w-6xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+            <SectionBadge>Testimonials</SectionBadge>
+            <h2 className="text-3xl lg:text-5xl font-extrabold mb-4">
               Trusted by{" "}
-              <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
+              <span className="text-[hsl(var(--tb-accent))]" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
                 Real Traders
               </span>
             </h2>
-            <p className="text-muted-foreground max-w-md mx-auto">Here's what traders across India are saying about TradeBook.</p>
+            <p className="text-muted-foreground max-w-md mx-auto">Here's what traders across India are saying.</p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
-              <motion.div key={t.name} variants={fadeUp} custom={i * 0.1}>
-                <motion.div
-                  className="rounded-2xl border border-border bg-card p-6 h-full flex flex-col"
-                  whileHover={{ y: -4, borderColor: "hsl(var(--tb-accent) / 0.3)" }}
-                >
-                  <Quote className="w-8 h-8 text-[hsl(var(--tb-accent)/0.2)] mb-4" />
-                  <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-4">"{t.quote}"</p>
-                  <div className="flex items-center gap-1 mb-3">
-                    {[...Array(t.stars)].map((_, j) => (
-                      <Star key={j} className="w-3.5 h-3.5 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />
-                    ))}
+          <div className="grid md:grid-cols-5 gap-6">
+            {/* Featured large testimonial */}
+            <motion.div variants={fadeUp} className="md:col-span-3">
+              <motion.div
+                className="rounded-2xl border border-border bg-foreground text-background p-8 h-full flex flex-col"
+                whileHover={{ y: -4 }}
+              >
+                <Quote className="w-10 h-10 text-background/20 mb-6" />
+                <p className="text-lg leading-relaxed flex-1 mb-6 font-medium">"{testimonials[0].quote}"</p>
+                <div className="flex items-center gap-1 mb-4">
+                  {[...Array(testimonials[0].stars)].map((_, j) => (
+                    <Star key={j} className="w-4 h-4 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />
+                  ))}
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[hsl(var(--tb-accent)/0.2)] flex items-center justify-center text-sm font-bold text-[hsl(var(--tb-accent))]">
+                    {testimonials[0].avatar}
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center text-sm font-bold text-[hsl(var(--tb-accent))]">
-                      {t.avatar}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold">{t.name}</p>
-                      <p className="text-xs text-muted-foreground">{t.role}</p>
-                    </div>
+                  <div>
+                    <p className="font-semibold">{testimonials[0].name}</p>
+                    <p className="text-sm text-background/60">{testimonials[0].role}</p>
                   </div>
-                </motion.div>
+                </div>
               </motion.div>
-            ))}
+            </motion.div>
+
+            {/* Two smaller testimonials */}
+            <div className="md:col-span-2 flex flex-col gap-6">
+              {testimonials.slice(1).map((t, i) => (
+                <motion.div key={t.name} variants={fadeUp} custom={(i + 1) * 0.1}>
+                  <motion.div
+                    className="rounded-2xl border border-border bg-card p-6 h-full flex flex-col"
+                    whileHover={{ y: -4, borderColor: "hsl(var(--tb-accent) / 0.3)" }}
+                  >
+                    <Quote className="w-7 h-7 text-[hsl(var(--tb-accent)/0.15)] mb-3" />
+                    <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-4">"{t.quote}"</p>
+                    <div className="flex items-center gap-1 mb-3">
+                      {[...Array(t.stars)].map((_, j) => (
+                        <Star key={j} className="w-3.5 h-3.5 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center text-xs font-bold text-[hsl(var(--tb-accent))]">
+                        {t.avatar}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold">{t.name}</p>
+                        <p className="text-xs text-muted-foreground">{t.role}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </MotionSection>
       </section>
 
       {/* ── FAQ ──────────────────────────────────────────── */}
-      <section id="faq" className="py-20 lg:py-28">
+      <section id="faq" className="py-20 lg:py-28 bg-muted/20">
         <MotionSection className="max-w-3xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+            <SectionBadge>FAQ</SectionBadge>
+            <h2 className="text-3xl lg:text-5xl font-extrabold mb-4">Frequently Asked Questions</h2>
             <p className="text-muted-foreground max-w-md mx-auto">Everything you need to know about TradeBook.</p>
           </motion.div>
           <div className="space-y-3">
@@ -949,30 +940,30 @@ export default function Landing() {
       </section>
 
       {/* ── Final CTA ────────────────────────────────────── */}
-      <section className="py-20 lg:py-28 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.06)_0%,transparent_70%)] pointer-events-none" />
+      <section className="py-24 lg:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.08)_0%,transparent_60%)] pointer-events-none" />
         <MotionSection className="relative max-w-3xl mx-auto px-6 text-center">
-          <motion.h2 variants={fadeUp} className="text-3xl lg:text-5xl font-bold mb-6 leading-tight">
+          <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold mb-6 leading-tight">
             Stop Losing Money to
             <br />
-            <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
+            <span className="text-[hsl(var(--tb-accent))]" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
               Undisciplined
             </span>{" "}
             Trading
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-base text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed">
+          <motion.p variants={fadeUp} className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed">
             Join 1,200+ traders who journal, analyze, and compound their edge — every single day.
           </motion.p>
           <motion.div variants={fadeUp} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
             <Button
               size="lg"
-              className="h-14 px-10 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_8px_30px_hsl(var(--tb-accent)/0.35)] font-semibold"
+              className="h-14 px-12 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_8px_30px_hsl(var(--tb-accent)/0.35)] font-semibold"
               onClick={() => navigate("/login")}
             >
               Get Started — It's Free <ArrowRight className="w-4 h-4" />
             </Button>
           </motion.div>
-          <motion.p variants={fadeUp} className="text-xs text-muted-foreground mt-4 flex items-center justify-center gap-3">
+          <motion.p variants={fadeUp} className="text-xs text-muted-foreground mt-5 flex items-center justify-center gap-3">
             <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Bank-grade encryption</span>
             <span>·</span>
             <span>No credit card required</span>
@@ -999,7 +990,6 @@ export default function Landing() {
               <h4 className="font-semibold text-sm mb-3">Product</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
-                <li><a href="#segments" className="hover:text-foreground transition-colors">Segments</a></li>
                 <li><a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a></li>
               </ul>
             </div>
@@ -1025,32 +1015,5 @@ export default function Landing() {
         </div>
       </footer>
     </div>
-  );
-}
-
-/* ─── Mock trade card ───────────────────────────────────── */
-function MockTradeCard({ sym, type, entry, pnl, up }: { sym: string; type: string; entry: string; pnl: string; up: boolean }) {
-  return (
-    <motion.div
-      className="rounded-xl border border-border/50 bg-card p-3.5 flex items-center justify-between"
-      whileHover={{ scale: 1.02, borderColor: "hsl(var(--tb-accent) / 0.3)" }}
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="flex items-center gap-3">
-        <div className={cn("w-1.5 h-8 rounded-full", up ? "bg-profit" : "bg-loss")} />
-        <div>
-          <p className="text-xs font-semibold">{sym}</p>
-          <p className="text-[10px] text-muted-foreground">{type} · {entry}</p>
-        </div>
-      </div>
-      <div className="text-right">
-        <p className={cn("text-xs font-mono font-bold", up ? "text-profit" : "text-loss")}>{pnl}</p>
-        <div className="flex items-center justify-end">
-          {up ? <ArrowUpRight className="w-3 h-3 text-profit" /> : <ArrowDownRight className="w-3 h-3 text-loss" />}
-        </div>
-      </div>
-    </motion.div>
   );
 }
