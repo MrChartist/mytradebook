@@ -35,7 +35,8 @@ import {
   AlertConditionTypesMockup, RecurrenceCooldownMockup,
   DeliveryChannelsMockup, AlertManagementMockup,
   StudyCategoryWorkflowMockup, PatternTaggingMockup, StudyAdditionalFeaturesMockup,
-  WatchlistDetailMockup
+  WatchlistDetailMockup,
+  JournalDashboardTabMockup, JournalCalendarTabMockup, JournalMistakesTabMockup, JournalFiltersSegmentationMockup
 } from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
@@ -633,37 +634,49 @@ export default function Docs() {
                 <KanbanBoardMockup />
               </div>
               <div className="grid md:grid-cols-2 gap-5">
-                <FeatureCard icon={PieChart} title="Dashboard Tab">
-                  <p className="text-sm text-muted-foreground mb-3">High-level summary of your trading performance:</p>
-                  <FeatureList items={[
-                    "Summary cards: Total P&L, Win Rate, Avg Holding Time, Best Pattern, Top Mistake",
-                    "Equity curve visualization with date range selector",
-                    "Performance tables broken down by Rating (1-10) and Confidence (1-5)",
-                    "Patterns & Mistakes analysis showing which setups make/lose money",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Calendar} title="Calendar Tab">
-                  <p className="text-sm text-muted-foreground">
-                    A visual P&L heatmap calendar. Each day is colored by total P&L — deep green for big wins, deep red for big losses, neutral for flat days. Click any day to see the trades closed on that date and open the daily journal editor.
-                  </p>
-                </FeatureCard>
-                <FeatureCard icon={AlertTriangle} title="Mistakes Review Tab">
-                  <p className="text-sm text-muted-foreground mb-3">Kanban-style board for categorizing and reviewing trading mistakes:</p>
-                  <FeatureList items={[
-                    "Columns grouped by severity: Low, Medium, High",
-                    "Each card shows the mistake tag, trade details, and loss amount",
-                    "Drag cards between severity columns as you reassess",
-                    "Helps identify recurring behavioral patterns",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Filter} title="Filters & Segmentation">
-                  <FeatureList items={[
-                    "Filter by segment: All, Intraday, Positional, Futures, Options, Commodities",
-                    "Date range presets: 30 days, 60 days, 90 days",
-                    "Custom date range picker",
-                    "All tabs and analytics update based on selected filters",
-                  ]} />
-                </FeatureCard>
+                <div>
+                  <JournalDashboardTabMockup />
+                  <FeatureCard icon={PieChart} title="Dashboard Tab">
+                    <p className="text-sm text-muted-foreground mb-3">High-level summary of your trading performance:</p>
+                    <FeatureList items={[
+                      "Summary cards: Total P&L, Win Rate, Avg Holding Time, Best Pattern, Top Mistake",
+                      "Equity curve visualization with date range selector",
+                      "Performance tables broken down by Rating (1-10) and Confidence (1-5)",
+                      "Patterns & Mistakes analysis showing which setups make/lose money",
+                    ]} />
+                  </FeatureCard>
+                </div>
+                <div>
+                  <JournalCalendarTabMockup />
+                  <FeatureCard icon={Calendar} title="Calendar Tab">
+                    <p className="text-sm text-muted-foreground">
+                      A visual P&L heatmap calendar. Each day is colored by total P&L — deep green for big wins, deep red for big losses, neutral for flat days. Click any day to see the trades closed on that date and open the daily journal editor.
+                    </p>
+                  </FeatureCard>
+                </div>
+                <div>
+                  <JournalMistakesTabMockup />
+                  <FeatureCard icon={AlertTriangle} title="Mistakes Review Tab">
+                    <p className="text-sm text-muted-foreground mb-3">Kanban-style board for categorizing and reviewing trading mistakes:</p>
+                    <FeatureList items={[
+                      "Columns grouped by severity: Low, Medium, High",
+                      "Each card shows the mistake tag, trade details, and loss amount",
+                      "Drag cards between severity columns as you reassess",
+                      "Helps identify recurring behavioral patterns",
+                    ]} />
+                  </FeatureCard>
+                </div>
+                <div>
+                  <JournalFiltersSegmentationMockup />
+                  <FeatureCard icon={Filter} title="Filters & Segmentation">
+                    <FeatureList items={[
+                      "Filter by segment: All, Intraday, Positional, Futures, Options, Commodities",
+                      "Date range presets: 30 days, 60 days, 90 days",
+                      "Custom date range picker",
+                      "All tabs and analytics update based on selected filters",
+                    ]} />
+                  </FeatureCard>
+                </div>
               </div>
             </section>
 
