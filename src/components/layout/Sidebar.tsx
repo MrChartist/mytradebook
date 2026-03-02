@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSidebarContext } from "@/contexts/SidebarContext";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
@@ -42,7 +43,7 @@ const analyticsNavItems = [
 ];
 
 export function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+  const { collapsed, setCollapsed } = useSidebarContext();
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();

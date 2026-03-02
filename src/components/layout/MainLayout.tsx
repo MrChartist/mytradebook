@@ -1,21 +1,24 @@
 import { useEffect } from "react";
 import { Sidebar } from "./Sidebar";
 import { MobileBottomNav } from "./MobileBottomNav";
+import { SidebarProvider, useSidebarContext } from "@/contexts/SidebarContext";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { TrialBanner } from "@/components/TrialBanner";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-export function MainLayout({ children }: MainLayoutProps) {
+function MainLayoutInner({ children }: MainLayoutProps) {
   useKeyboardShortcuts({});
   const { settings } = useUserSettings();
   const navigate = useNavigate();
+  const { collapsed } = useSidebarContext();
 
   // Listen for service worker updates and show refresh toast
   useEffect(() => {
@@ -45,7 +48,10 @@ export function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="min-h-screen bg-background">
       <Sidebar />
-      <main className="lg:ml-[230px] min-h-screen pt-14 lg:pt-0 transition-[margin] duration-300">
+      <main className={cn(
+        "min-h-screen pt-14 lg:pt-0 transition-[margin] duration-300",
+        collapsed ? "lg:ml-[68px]" : "lg:ml-[230px]"
+      )}>
         <TrialBanner />
         {isTokenExpired && (
           <div
@@ -62,5 +68,13 @@ export function MainLayout({ children }: MainLayoutProps) {
       </main>
       <MobileBottomNav />
     </div>
+  );
+}
+
+export function MainLayout({ children }: MainLayoutProps) {
+  return (
+    <SidebarProvider>
+      <MainLayoutInner>{children}</MainLayoutInner>
+    </SidebarProvider>
   );
 }
