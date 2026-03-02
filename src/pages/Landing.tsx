@@ -374,7 +374,7 @@ export default function Landing() {
           </motion.div>
 
           <div className="hidden md:flex items-center gap-1 text-sm text-muted-foreground">
-            {["Features", "Pricing", "FAQ", "Docs"].map((item) => (
+            {["Features", "Pricing", "Docs"].map((item) => (
               <motion.a
                 key={item}
                 href={item === "Docs" ? "/docs" : `#${item.toLowerCase()}`}
@@ -993,34 +993,6 @@ export default function Landing() {
         </MotionSection>
       </section>
 
-      {/* ── Docs & FAQs ─────────────────────────────────── */}
-      <section id="faq" className="py-24 lg:py-32 bg-muted/10">
-        <MotionSection className="max-w-3xl mx-auto px-6 text-center">
-          <motion.div variants={fadeUp}>
-            <SectionBadge>Documentation</SectionBadge>
-            <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-tight">
-              Have{" "}
-              <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
-                questions
-              </span>
-              ?
-            </h2>
-            <p className="text-muted-foreground/80 max-w-md mx-auto mb-10">
-              Explore our comprehensive docs — feature guides, visual walkthroughs, FAQs, and everything you need to master TradeBook.
-            </p>
-            <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}>
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-12 px-8 text-base gap-2 rounded-full border-border/60 hover:border-[hsl(var(--tb-accent)/0.4)] hover:bg-[hsl(var(--tb-accent)/0.04)]"
-                onClick={() => navigate("/docs")}
-              >
-                <BookOpen className="w-4 h-4" /> Browse Docs & FAQs <ArrowRight className="w-4 h-4" />
-              </Button>
-            </motion.div>
-          </motion.div>
-        </MotionSection>
-      </section>
 
       {/* ── Final CTA ────────────────────────────────────── */}
       <section className="py-28 lg:py-36 relative overflow-hidden">
@@ -1084,7 +1056,7 @@ export default function Landing() {
               <h4 className="font-semibold text-sm mb-4">Support</h4>
               <ul className="space-y-2.5 text-sm text-muted-foreground/70">
                 <li><a href="mailto:support@tradebook.app" className="hover:text-foreground transition-colors">Contact Us</a></li>
-                <li><a href="/docs" className="hover:text-foreground transition-colors">Docs & FAQs</a></li>
+                <li><a href="/docs" className="hover:text-foreground transition-colors">Documentation</a></li>
               </ul>
             </div>
             <div>
