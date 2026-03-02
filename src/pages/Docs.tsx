@@ -37,7 +37,7 @@ import {
   StudyCategoryWorkflowMockup, PatternTaggingMockup, StudyAdditionalFeaturesMockup,
   WatchlistDetailMockup,
   JournalDashboardTabMockup, JournalCalendarTabMockup, JournalMistakesTabMockup, JournalFiltersSegmentationMockup,
-  DailyJournalWorkflowMockup
+  DailyJournalWorkflowMockup, MistakeAnalysisToolsMockup
 } from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
@@ -797,6 +797,7 @@ export default function Docs() {
                 icon={AlertTriangle}
               />
               <MistakeTrendMockup />
+              <MistakeAnalysisToolsMockup />
               <FeatureCard icon={AlertTriangle} title="Mistake Analysis Tools">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
