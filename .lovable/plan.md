@@ -1,28 +1,40 @@
 
-# Fix: Sidebar Collapse Leaves Empty Space
+# Apply Surgena-Style Typography to TradeBook Logo
 
-## Problem
-The sidebar collapsed state is stored locally inside `Sidebar.tsx` using `useState(false)`. Meanwhile, `MainLayout.tsx` hardcodes the main content margin as `lg:ml-[230px]` -- it never changes when the sidebar collapses to 68px, leaving a gap.
+## What is Surgena?
+Surgena is a modern geometric sans-serif font with clean lines, balanced proportions, and a premium tech feel. Since it's a commercial font (not on Google Fonts), we'll use **Space Grotesk** -- a free Google Font with the same geometric, modern, tech-forward aesthetic that closely matches Surgena's character.
 
-## Solution
-Lift the `collapsed` state out of Sidebar so MainLayout can read it and adjust the margin accordingly.
+## Why Space Grotesk?
+- Same geometric sans-serif family as Surgena
+- Clean, modern, slightly condensed proportions
+- Works beautifully for logos and headings
+- Available free on Google Fonts
+- Matches the warm orange theme perfectly when combined with letter-spacing and weight
 
-### 1. Create a Sidebar Context (`src/contexts/SidebarContext.tsx`)
-- A small React context providing `collapsed` (boolean) and `setCollapsed` (setter)
-- Default to `false` (expanded)
+## Changes
 
-### 2. Update `Sidebar.tsx`
-- Remove the local `useState(false)` for collapsed
-- Import and use `useSidebarContext()` instead
-- Everything else stays the same
+### 1. Add Space Grotesk font (`index.html`)
+- Add "Space Grotesk" to the existing Google Fonts link (weight 700 for bold logo usage)
 
-### 3. Update `MainLayout.tsx`
-- Wrap children with `SidebarProvider`
-- Read `collapsed` from context
-- Change the main element's class from hardcoded `lg:ml-[230px]` to dynamic: `lg:ml-[230px]` when expanded, `lg:ml-[68px]` when collapsed
-- Keep the existing `transition-[margin] duration-300` for smooth animation
+### 2. Create a reusable logo text class (`src/index.css`)
+- Add a `.logo-text` utility class with `font-family: 'Space Grotesk'`, `font-weight: 700`, and tight letter-spacing to nail the Surgena look
 
-### Files
-- **New:** `src/contexts/SidebarContext.tsx` (small context + provider, ~15 lines)
-- **Modified:** `src/components/layout/Sidebar.tsx` (swap local state for context)
-- **Modified:** `src/components/layout/MainLayout.tsx` (wrap with provider, dynamic margin)
+### 3. Update all "TradeBook" logo instances
+Apply the new logo font class in these locations:
+- **Sidebar mobile header** (`src/components/layout/Sidebar.tsx`, line 92)
+- **Sidebar desktop** (`src/components/layout/Sidebar.tsx`, line 121)
+- **Landing page navbar** (`src/pages/Landing.tsx`, line 389)
+- **Docs page navbar** (`src/pages/Docs.tsx`, line 209)
+- **Landing page footer** (if logo text appears there)
+
+### 4. Tailwind config (`tailwind.config.ts`)
+- Add `logo: ["Space Grotesk", "Inter", "system-ui", "sans-serif"]` to `fontFamily` so we can use `font-logo` class
+
+## Files Modified
+- `index.html` -- add font import
+- `tailwind.config.ts` -- add `logo` font family
+- `src/components/layout/Sidebar.tsx` -- apply `font-logo` to logo text
+- `src/pages/Landing.tsx` -- apply `font-logo` to navbar logo
+- `src/pages/Docs.tsx` -- apply `font-logo` to navbar logo
+
+No functional changes -- purely typographic styling for the brand logo.
