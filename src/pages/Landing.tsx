@@ -110,14 +110,6 @@ const testimonials = [
   { name: "Aditya K.", role: "F&O Trader, Delhi", quote: "I tried 4 journals before TradeBook. None understood Indian markets — segments, lot sizes, MCX. Finally something built for how we actually trade.", stars: 5, avatar: "A", featured: false },
 ];
 
-const faqs = [
-  { q: "Is TradeBook free to use?", a: "Yes! The Free plan includes up to 50 trades/month, basic analytics, and 1 watchlist — forever free. Upgrade to Pro for unlimited trades, Telegram notifications, broker integration, and advanced analytics." },
-  { q: "Which brokers are supported?", a: "Currently we support Dhan for live prices, portfolio auto-sync, and one-click order execution. More brokers (Zerodha, Angel One) are on the roadmap." },
-  { q: "Is my trading data safe?", a: "Absolutely. All data is encrypted at rest and in transit. Your data is yours — we never share, sell, or use it for any purpose other than powering your dashboard." },
-  { q: "Can I use TradeBook for Commodities and F&O?", a: "Yes! TradeBook supports 5 market segments: Equity Intraday, Equity Positional, Futures, Options, and Commodities. Each segment has its own analytics and reporting." },
-  { q: "How does the 14-day Pro trial work?", a: "Every new signup gets full Pro access for 14 days — no credit card required. After the trial, you can continue on the Free plan or upgrade to keep Pro features." },
-  { q: "Do you offer refunds?", a: "Yes, we offer a full refund within 7 days of purchase if you're not satisfied. No questions asked." },
-];
 
 const pricingPlans = [
   {
@@ -147,42 +139,6 @@ const comparisonFeatures = [
   { feature: "Pattern & mistake tagging", tradebook: true, others: false },
   { feature: "Free tier available", tradebook: true, others: "Limited" },
 ];
-
-/* ─── FAQ Accordion Item ────────────────────────────────── */
-function FAQItem({ question, answer, index }: { question: string; answer: string; index: number }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <motion.div
-      variants={fadeUp}
-      custom={index * 0.05}
-      className="border border-border/50 rounded-2xl overflow-hidden bg-card/80"
-    >
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-muted/20 transition-colors"
-      >
-        <span className="font-medium text-[15px] pr-4">{question}</span>
-        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
-          <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
-        </motion.div>
-      </button>
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-          >
-            <div className="px-6 pb-5 text-sm text-muted-foreground leading-relaxed">
-              {answer}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
 
 /* ─── Floating UI Elements ──────────────────────────────── */
 function FloatingElements() {
@@ -1037,19 +993,32 @@ export default function Landing() {
         </MotionSection>
       </section>
 
-      {/* ── FAQ ──────────────────────────────────────────── */}
+      {/* ── Docs & FAQs ─────────────────────────────────── */}
       <section id="faq" className="py-24 lg:py-32 bg-muted/10">
-        <MotionSection className="max-w-3xl mx-auto px-6">
-          <motion.div variants={fadeUp} className="text-center mb-14">
-            <SectionBadge>FAQ</SectionBadge>
-            <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-tight">Frequently Asked Questions</h2>
-            <p className="text-muted-foreground/80 max-w-md mx-auto">Everything you need to know about TradeBook.</p>
+        <MotionSection className="max-w-3xl mx-auto px-6 text-center">
+          <motion.div variants={fadeUp}>
+            <SectionBadge>Documentation</SectionBadge>
+            <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-tight">
+              Have{" "}
+              <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
+                questions
+              </span>
+              ?
+            </h2>
+            <p className="text-muted-foreground/80 max-w-md mx-auto mb-10">
+              Explore our comprehensive docs — feature guides, visual walkthroughs, FAQs, and everything you need to master TradeBook.
+            </p>
+            <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}>
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-12 px-8 text-base gap-2 rounded-full border-border/60 hover:border-[hsl(var(--tb-accent)/0.4)] hover:bg-[hsl(var(--tb-accent)/0.04)]"
+                onClick={() => navigate("/docs")}
+              >
+                <BookOpen className="w-4 h-4" /> Browse Docs & FAQs <ArrowRight className="w-4 h-4" />
+              </Button>
+            </motion.div>
           </motion.div>
-          <div className="space-y-3.5">
-            {faqs.map((faq, i) => (
-              <FAQItem key={faq.q} question={faq.q} answer={faq.a} index={i} />
-            ))}
-          </div>
         </MotionSection>
       </section>
 
@@ -1115,7 +1084,7 @@ export default function Landing() {
               <h4 className="font-semibold text-sm mb-4">Support</h4>
               <ul className="space-y-2.5 text-sm text-muted-foreground/70">
                 <li><a href="mailto:support@tradebook.app" className="hover:text-foreground transition-colors">Contact Us</a></li>
-                <li><a href="#faq" className="hover:text-foreground transition-colors">FAQ</a></li>
+                <li><a href="/docs" className="hover:text-foreground transition-colors">Docs & FAQs</a></li>
               </ul>
             </div>
             <div>
