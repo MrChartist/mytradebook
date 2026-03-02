@@ -418,10 +418,10 @@ export default function Landing() {
           </motion.div>
 
           <div className="hidden md:flex items-center gap-1 text-sm text-muted-foreground">
-            {["Features", "Pricing", "FAQ"].map((item) => (
+            {["Features", "Pricing", "FAQ", "Docs"].map((item) => (
               <motion.a
                 key={item}
-                href={`#${item.toLowerCase()}`}
+                href={item === "Docs" ? "/docs" : `#${item.toLowerCase()}`}
                 className="px-4 py-2 rounded-full hover:bg-muted/50 hover:text-foreground transition-all duration-200"
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.98 }}
@@ -1108,6 +1108,7 @@ export default function Landing() {
               <ul className="space-y-2.5 text-sm text-muted-foreground/70">
                 <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
                 <li><a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a></li>
+                <li><a href="/docs" className="hover:text-foreground transition-colors">Documentation</a></li>
               </ul>
             </div>
             <div>
