@@ -542,12 +542,6 @@ export default function Landing() {
                   <div className="w-2.5 h-2.5 rounded-full bg-warning/30" />
                   <div className="w-2.5 h-2.5 rounded-full bg-profit/30" />
                 </div>
-                <div className="flex-1 text-center">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-muted/30 text-[10px] text-muted-foreground font-mono">
-                    <span className="w-1.5 h-1.5 rounded-full bg-profit/50" />
-                    mytradebook.lovable.app/dashboard
-                  </div>
-                </div>
               </div>
 
               <TickerBar />
@@ -573,8 +567,10 @@ export default function Landing() {
                 <div className="flex-1 p-4 sm:p-5">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <p className="text-xs text-muted-foreground">Good Morning,</p>
-                      <p className="text-sm font-semibold">Dashboard</p>
+                      <h1 className="text-base sm:text-lg font-bold tracking-tight">
+                        Welcome, <span className="text-primary">Mr. Chartist</span> 👋
+                      </h1>
+                      <p className="text-[10px] text-muted-foreground">Last login: 2 Mar 2026, 09:15 AM</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="px-2.5 py-1 rounded-md bg-profit/8 text-profit text-[10px] font-semibold flex items-center gap-1">
