@@ -1,82 +1,102 @@
 
 
-# Docs Page -- Add Visuals Everywhere
+# Final Project Cleanup -- Remove Unused Files and Optimize
 
-## What's Missing
+## Scan Results
 
-Currently, 5 sections have no visual mockups at all:
-- **Studies & Research** -- text-only bullet lists
-- **Mistakes Review** -- no visual despite having Kanban in Journal section
-- **Weekly Reports** -- no visual
-- **Calendar & Daily Journal** -- no visual (calendar heatmap is in Journal section only)
-- **Integrations** -- has Dhan flow but no Telegram visual in that section
+After a deep search of every import path across the codebase, here are the findings:
 
-Additionally, existing sections could benefit from more visuals based on the actual dashboard components:
-- **Dashboard** -- missing Streak & Discipline mockup, widget customization mockup
-- **Trade Management** -- missing CSV import/template visual
-- **Analytics** -- missing Streak Tracker, Risk of Ruin, and Segment Performance visuals
+---
 
-## New Mockup Components to Add (in DocsMockups.tsx)
+## 1. Unused Files to Delete (Safe -- Zero Imports)
 
-1. **StudyCardMockup** -- A research study card showing symbol, category badge (Technical), status flow (Draft to Active), pattern tags (Double Bottom, Breakout), and live price indicator
+These files are NOT imported anywhere in the project and can be safely removed:
 
-2. **StreakDisciplineMockup** -- Mirrors the real dashboard widget: 2x2 grid with current streak (5W), Avg R:R (1:1.8), Best Trade (+Rs 8,200), Worst Trade (-Rs 3,400), plus a discipline progress bar at 78%
+### Components
+| File | Reason |
+|------|--------|
+| `src/components/NavLink.tsx` | Custom NavLink wrapper -- never imported anywhere |
+| `src/components/dashboard/PerformanceMetrics.tsx` | Legacy dashboard widget -- replaced by DashboardKPICards |
+| `src/components/dashboard/SegmentBreakdown.tsx` | Legacy dashboard widget -- never imported |
+| `src/components/dashboard/RecentTrades.tsx` | Legacy dashboard widget -- never imported |
+| `src/components/dashboard/AlertsWidget.tsx` | Legacy dashboard widget -- replaced by DashboardAlertsPanel |
+| `src/components/dashboard/OpenPositionsTable.tsx` | Legacy dashboard widget -- replaced by DashboardPositionsTable |
+| `src/components/trade/FuturesContractPicker.tsx` | Never imported -- likely replaced by InstrumentPicker |
+| `src/components/trade/ShareableTradeCard.tsx` | Never imported -- planned but unused feature |
+| `src/components/trade/TradeAutomationControls.tsx` | Never imported -- planned but unused feature |
+| `src/components/trade/UnifiedInstrumentSearch.tsx` | Never imported -- replaced by InstrumentPicker |
+| `src/components/trade/TagSearchPicker.tsx` | Never imported -- replaced by another tag component |
 
-3. **WeeklyReportMockup** -- A mini report card showing "Week of Feb 17-21, 2026" with segment rows (Intraday: +Rs 12K, 68% WR; Options: -Rs 3K, 42% WR), top setup, worst mistake, and PDF/Telegram action buttons
+### Hooks
+| File | Reason |
+|------|--------|
+| `src/hooks/useScanners.ts` | Never imported anywhere |
+| `src/hooks/useInstrumentSearch.ts` | Never imported -- replaced by InstrumentPicker's inline logic |
 
-4. **MistakeTrendMockup** -- A mini SVG bar chart showing 6-month mistake count trend (decreasing bars) with severity color coding
+### Lib
+| File | Reason |
+|------|--------|
+| `src/lib/errors.ts` | Never imported in any src file |
+| `src/lib/performance.ts` | Never imported in any src file |
 
-5. **DailyJournalMockup** -- A journal entry card showing date, pre-market plan text, post-market review, mood indicator, and linked trades count
+### Root Markdown Files (Dev-only docs, not shipped but add repo clutter)
+| File | Reason |
+|------|--------|
+| `ARCHITECTURE.md` | Dev documentation -- not needed in production |
+| `IMPROVEMENTS.md` | Dev documentation -- not needed in production |
+| `PHASE4_IMPROVEMENTS.md` | Dev documentation -- not needed in production |
+| `PR_PHASE4_DESCRIPTION.md` | Dev documentation -- not needed in production |
+| `SECURITY_NOTES.md` | Dev documentation -- not needed in production |
+| `TELEGRAM_IMPLEMENTATION.md` | Dev documentation -- not needed in production |
 
-6. **TelegramChannelsMockup** -- Shows multiple Telegram channels with segment routing (Alerts channel, EOD channel, Intraday channel) with toggle indicators
+**Total: 15 code files + 6 markdown files = 21 files to delete**
 
-7. **WidgetCustomizerMockup** -- A mini settings panel showing widget list with eye/reorder icons, mimicking the dashboard's widget customization popover
+---
 
-8. **CsvImportMockup** -- A mini file upload card with column mapping preview (Symbol to symbol, Entry to entry_price)
+## 2. Files NOT to Delete (Used -- Verified)
 
-9. **SegmentPerformanceMockup** -- A mini table showing per-segment stats (Intraday: 68% WR, 1.4 Sharpe; Options: 52% WR, 0.8 Sharpe)
+These were initially suspicious but confirmed to be in use:
+- `src/components/dashboard/StatCard.tsx` -- used by Analytics.tsx
+- `src/components/dashboard/OpenPositionsTable.tsx` -- actually used by DashboardPositionsTable indirectly... wait, let me recheck... No, it has zero imports. Safe to delete.
+- `src/lib/confetti.ts` -- used by useTrades.ts
+- `src/lib/schemas.ts` -- used by CreateStudyModal and CreateTradeModal
+- `src/hooks/useTradeTemplates.ts` -- used by Trades.tsx
+- `src/hooks/useTradeEvents.ts` -- used by TradeDetailModal.tsx
+- All settings components -- used by Settings.tsx
 
-10. **RiskOfRuinMockup** -- A mini gauge/stat showing "Risk of Ruin: 2.3%" with a colored indicator
+---
 
-## Where Each Visual Goes in Docs.tsx
+## 3. What This Achieves
 
-### Studies Section (currently 0 visuals)
-- Add `StudyCardMockup` above the feature cards
+- Removes ~15 unused code files, reducing bundle analysis complexity
+- Removes 6 dev-only markdown files that add repo clutter
+- No functionality is affected -- every deletion is verified as zero-import
+- Faster IDE indexing and cleaner project structure
 
-### Dashboard Section (has DashboardMockup, needs more)
-- Add `StreakDisciplineMockup` after the existing feature cards for the Streak & Discipline description
-- Add `WidgetCustomizerMockup` next to the Widget Customization feature card
+---
 
-### Trade Management (has TradeCard + Lifecycle)
-- Add `CsvImportMockup` next to the CSV Import & Export feature card
+## 4. Final Suggestions for the Website
 
-### Mistakes Review Section (currently 0 visuals)
-- Add `MistakeTrendMockup` as a visual above the feature card
+After this cleanup, here are the top improvements to consider:
 
-### Weekly Reports Section (currently 0 visuals)
-- Add `WeeklyReportMockup` above the feature card
+1. **SEO Meta Tags** -- Add Open Graph and Twitter card meta tags to `index.html` for better social sharing (title, description, preview image)
+2. **Loading Skeleton States** -- Add skeleton loading placeholders on Dashboard and Trades pages for better perceived performance
+3. **404 Page Polish** -- The NotFound page could have a branded illustration and navigation back to dashboard
+4. **PWA Icons** -- Currently using the same 192px icon for both sizes. Add a proper 512px icon for better app store appearance
+5. **Image Optimization** -- Add lazy loading (`loading="lazy"`) to any images in the Docs page mockups
 
-### Calendar & Daily Journal Section (currently 0 visuals)
-- Add `DailyJournalMockup` above the feature card
+---
 
-### Analytics Section (has EquityCurve + Heatmap)
-- Add `SegmentPerformanceMockup` and `RiskOfRuinMockup` as an additional visual row
+## Technical Implementation
 
-### Integrations Section (has DhanFlow)
-- Add `TelegramChannelsMockup` alongside TelegramNotifMockup (move it here from Alerts)
+### Step 1: Delete 15 unused source files
+Delete the 11 component files, 2 hook files, and 2 lib files listed above.
 
-## Technical Details
+### Step 2: Delete 6 root markdown files
+Delete ARCHITECTURE.md, IMPROVEMENTS.md, PHASE4_IMPROVEMENTS.md, PR_PHASE4_DESCRIPTION.md, SECURITY_NOTES.md, TELEGRAM_IMPLEMENTATION.md.
 
-### File Changes:
-1. **`src/components/docs/DocsMockups.tsx`** -- Add 10 new mockup components (approximately 300-400 lines added). Each uses the same `MockupFrame` wrapper, Tailwind styling, inline SVG where needed, and the app's color tokens (profit green, loss red, accent orange).
+### Step 3: Verify build
+Confirm the app builds and runs without errors after deletions.
 
-2. **`src/pages/Docs.tsx`** -- Import new mockups and place them in their respective sections. Rearrange some sections to integrate visuals inline with feature descriptions rather than always above.
-
-### Design Consistency
-- All new mockups use the existing `MockupFrame` component with `dot-pattern` background
-- Same color tokens: `hsl(var(--profit))`, `hsl(var(--loss))`, `hsl(var(--tb-accent))`, `hsl(var(--warning))`
-- Same `font-mono` for financial numbers
-- Same hover scale effect (`hover:scale-[1.01]`)
-- Responsive: mockups stack on mobile, side-by-side on desktop
-- No new dependencies -- pure CSS/JSX/SVG
+No code modifications needed -- purely file deletions.
 
