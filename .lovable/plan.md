@@ -1,52 +1,81 @@
 
+Goal: fix why preview shows old UI and why data feels “not real-time,” so updates become reliable and visible immediately.
 
-# Fix Dhan Callback "Missing consentId" Error
+What I found (from code + your answers):
+1) You’re seeing this in editor preview (not the published site), and hard refresh didn’t fix it.
+2) The app has PWA caching enabled globally (`vite-plugin-pwa` in `vite.config.ts`) with precache for JS/CSS/HTML.
+3) There is no explicit in-app “new version available, reload now” handling.
+4) Most app data hooks use React Query fetch + invalidate, but no database realtime subscriptions are implemented (except live prices polling with `setInterval` in `useLivePrices`).
+5) This combination can produce exactly your symptoms:
+   - “old UI” from service-worker cached app shell/assets
+   - “not updating in real time” for trades/settings/alerts changed in another tab/process
 
-## Root Cause
+Implementation plan
 
-The callback page at `/dhan-callback` receives only `?tokenId=xxx` from Dhan -- Dhan does NOT include the `consentId` in the redirect URL. The code tries two fallbacks:
+Phase 1 — Stabilize preview update behavior (highest priority)
+- Update PWA strategy so preview never stays stuck on old cached bundles.
+- Add environment-aware behavior:
+  - In preview/editor origins: disable or aggressively unregister service worker.
+  - In published production origin: keep PWA, but use controlled update flow.
+- Reduce over-aggressive precaching in Workbox (avoid caching patterns that preserve stale HTML shell too long).
 
-1. `searchParams.get("consentId")` -- always null (Dhan doesn't send it)
-2. `localStorage.getItem("dhan_consent_id")` -- always null in the new tab (different browser context from the preview iframe)
+Files:
+- `vite.config.ts`
+- `src/main.tsx`
 
-So the page hits the "Missing consentId" error before it ever tries the token exchange.
+Phase 2 — Add deterministic app-version refresh UX
+- Register update listener on app boot:
+  - when a new build is available, show toast/banner: “New version available — Refresh”.
+  - one-click refresh should call service-worker update + reload.
+- Add a lightweight build/version marker in UI (e.g., footer or settings) so you can confirm immediately that new code is loaded.
 
-## Solution
+Files:
+- `src/main.tsx`
+- `src/components/ui/sonner.tsx` (or existing toast entry point)
+- `src/components/settings/PreferencesSettings.tsx` (optional version display)
 
-Remove the consentId requirement from the callback page entirely. Instead, use the `tokenId` (which Dhan DOES provide) to look up the pending consent directly from the database.
+Phase 3 — Make key data actually realtime (not just refetch on mutation)
+- Add realtime subscriptions for user-scoped tables that must update instantly across tabs/sessions:
+  - `trades`
+  - `alerts`
+  - `user_settings` (important for integration states like Dhan/Telegram)
+- On subscription events, invalidate relevant React Query keys.
 
-### 1. New backend action: `resolve-by-token` in `dhan-auth` edge function
+Files:
+- `src/hooks/useTrades.ts`
+- `src/hooks/useAlerts.ts`
+- `src/hooks/useUserSettings.ts`
+- (optional shared utility) `src/hooks/useRealtimeInvalidate.ts`
 
-Add a new action that finds the user with a pending Dhan connection:
-- Query `user_settings` for rows where `dhan_consent_id IS NOT NULL` and `dhan_enabled = false`
-- Return the `user_id` and `dhan_consent_id` so the callback can proceed with the token exchange
+Phase 4 — Prevent stale auth/integration state perception
+- After callback-driven state changes (like Dhan connect), avoid full page reload as primary sync mechanism.
+- Use query invalidation + realtime updates so original tab reflects changes immediately without manual refresh.
+- Keep fallback reload only for hard recovery.
 
-This works because only one user is in the "pending authorization" state at a time.
+Files:
+- `src/components/settings/IntegrationsSettings.tsx`
+- `src/pages/DhanCallback.tsx`
 
-### 2. Update `DhanCallback.tsx`
+Phase 5 — Verification checklist (end-to-end)
+1) Preview update test:
+   - make a visible UI text change
+   - confirm preview reflects it without stale old shell
+   - verify version marker increments/changes.
+2) Multi-tab realtime test:
+   - open two tabs, create/update trade in tab A
+   - verify tab B updates within seconds without manual refresh.
+3) Integration state test:
+   - complete Dhan flow
+   - settings page reflects connected state immediately.
+4) Regression test:
+   - published site still supports PWA install + offline basics.
 
-Change the flow:
-- Only require `tokenId` from URL params (remove consentId requirement)
-- Call the new `resolve-by-token` action to get both `user_id` and `consent_id` from the database
-- Then proceed with `exchange-token` as before
+Technical notes and trade-offs
+- Keeping PWA in production is fine; the issue is uncontrolled update behavior in preview/editor plus no user-visible update prompt.
+- Realtime subscriptions will slightly increase client event traffic but are the correct UX model for “instant” cross-tab updates.
+- Query invalidation remains useful; realtime should trigger invalidations, not replace existing query hooks.
 
-### New callback flow
-
-```text
-1. Dhan redirects to /dhan-callback?tokenId=xxx
-2. Callback reads tokenId from URL
-3. Calls backend "resolve-by-token" (no params needed)
-4. Backend finds user with pending consent (dhan_consent_id IS NOT NULL, dhan_enabled = false)
-5. Returns user_id + consent_id
-6. Callback calls "exchange-token" with all three values
-7. Success -> redirect to /settings
-```
-
-## Files Modified
-
-1. **`supabase/functions/dhan-auth/index.ts`** -- Add `resolve-by-token` action that finds the pending consent user
-2. **`src/pages/DhanCallback.tsx`** -- Remove consentId requirement, use new backend lookup instead
-
-## Why Previous Fix Failed
-
-The previous fix added `resolve-consent` which still required knowing the `consent_id` upfront. But the whole problem is that the callback page has no way to get the consent_id -- Dhan doesn't send it and localStorage doesn't work cross-tab. The new approach bypasses this by finding the pending connection directly in the database.
+Expected outcome
+- No more “old UI” lingering in preview after changes.
+- Clear “new version available” refresh path when a new build is ready.
+- Trades/alerts/settings reflect cross-tab and backend-triggered changes in near real-time.
