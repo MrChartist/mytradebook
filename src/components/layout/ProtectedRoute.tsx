@@ -43,8 +43,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!user) {
-    console.log("[ProtectedRoute] No user, redirecting to /landing");
-    return <Navigate to="/landing" replace />;
+    console.log("[ProtectedRoute] No user, redirecting to /");
+    return <Navigate to="/" replace />;
   }
 
   // User exists — clear pending flag if lingering

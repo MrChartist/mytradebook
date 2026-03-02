@@ -365,7 +365,7 @@ export default function Landing() {
   const s5 = useCountUp(1200, 2000);
 
   useEffect(() => {
-    if (!loading && user) navigate("/");
+    if (!loading && user) navigate("/dashboard");
   }, [user, loading, navigate]);
 
   return (
@@ -373,7 +373,7 @@ export default function Landing() {
       <SEOHead
         title="Trading Journal for Indian Markets — NSE, MCX, F&O"
         description="Track, analyze, and improve your trades with TradeBook. Real-time alerts, broker integration, and segment-based analytics built for Equity, F&O, and Commodity traders in India."
-        path="/landing"
+        path="/"
       />
       {/* ── Navbar ───────────────────────────────────────── */}
       <motion.nav

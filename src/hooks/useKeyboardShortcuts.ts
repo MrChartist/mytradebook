@@ -42,7 +42,7 @@ export function useKeyboardShortcuts(handlers: ShortcutHandlers = {}) {
           break;
         // Navigation shortcuts with 'g' prefix pattern
         case "1":
-          navigate("/");
+          navigate("/dashboard");
           break;
         case "2":
           navigate("/trades");

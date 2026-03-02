@@ -5,7 +5,7 @@ import { useState } from "react";
 import { MobileDrawer } from "./MobileDrawer";
 
 const tabs = [
-  { icon: LayoutDashboard, label: "Home", path: "/" },
+  { icon: LayoutDashboard, label: "Home", path: "/dashboard" },
   { icon: TrendingUp, label: "Trades", path: "/trades" },
   { icon: Bell, label: "Alerts", path: "/alerts" },
   { icon: BookOpen, label: "Journal", path: "/journal" },
