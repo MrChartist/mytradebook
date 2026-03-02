@@ -401,13 +401,13 @@ export default function Landing() {
   }, [user, loading, navigate]);
 
   return (
-    <div className="light min-h-screen overflow-x-hidden font-sans" style={{ background: '#fafaf8', color: 'hsl(20 15% 10%)' }}>
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden font-sans">
       {/* ── Navbar ───────────────────────────────────────── */}
       <motion.nav
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="sticky top-0 z-50 border-b border-[hsl(30_12%_92%)] bg-[#fafaf8]/80 backdrop-blur-xl"
+        className="sticky top-0 z-50 border-b border-border/30 bg-background/80 backdrop-blur-xl"
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-10 h-16">
           <motion.div className="flex items-center gap-2.5" whileHover={{ scale: 1.02 }}>
@@ -417,12 +417,12 @@ export default function Landing() {
             <span className="text-xl font-bold tracking-tight">TradeBook</span>
           </motion.div>
 
-          <div className="hidden md:flex items-center gap-1 text-sm" style={{ color: 'hsl(20 8% 46%)' }}>
-            {["Features", "Pricing", "Docs", "FAQ"].map((item) => (
+          <div className="hidden md:flex items-center gap-1 text-sm text-muted-foreground">
+            {["Features", "Pricing", "FAQ"].map((item) => (
               <motion.a
                 key={item}
-                href={item === "Docs" ? "/docs" : `#${item.toLowerCase()}`}
-                className="px-4 py-2 rounded-full hover:bg-black/[0.04] hover:text-[hsl(20_15%_10%)] transition-all duration-200"
+                href={`#${item.toLowerCase()}`}
+                className="px-4 py-2 rounded-full hover:bg-muted/50 hover:text-foreground transition-all duration-200"
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -432,7 +432,7 @@ export default function Landing() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/login")} className="text-[hsl(20_8%_46%)] hover:text-[hsl(20_15%_10%)]">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/login")} className="text-muted-foreground hover:text-foreground">
               Sign In
             </Button>
             <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
@@ -449,17 +449,17 @@ export default function Landing() {
       </motion.nav>
 
       {/* ── Hero — Manila inspired soft gradient wash ──────── */}
-      <section ref={heroRef} className="relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #fff5ef 0%, #fafaf8 50%, #fafaf8 100%)' }}>
+      <section ref={heroRef} className="relative overflow-hidden">
         <FloatingElements />
 
-        {/* Multi-color pastel gradient wash — vivid on light bg */}
+        {/* Multi-color pastel gradient wash */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[radial-gradient(ellipse_at_center,hsl(340_80%_88%/0.4)_0%,transparent_70%)]" />
-          <div className="absolute top-10 right-1/4 w-[500px] h-[500px] bg-[radial-gradient(ellipse_at_center,hsl(24_90%_85%/0.35)_0%,transparent_70%)]" />
-          <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-[radial-gradient(ellipse_at_center,hsl(280_60%_90%/0.25)_0%,transparent_70%)]" />
+          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[radial-gradient(ellipse_at_center,hsl(340_80%_85%/0.25)_0%,transparent_70%)]" />
+          <div className="absolute top-10 right-1/4 w-[500px] h-[500px] bg-[radial-gradient(ellipse_at_center,hsl(24_90%_80%/0.2)_0%,transparent_70%)]" />
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-[radial-gradient(ellipse_at_center,hsl(280_60%_88%/0.15)_0%,transparent_70%)]" />
         </div>
 
-        <motion.div style={{ y: heroY, opacity: heroOpacity }} className="relative max-w-5xl mx-auto px-6 pt-24 pb-6 lg:pt-32 lg:pb-12 text-center">
+        <motion.div style={{ y: heroY, opacity: heroOpacity }} className="relative max-w-5xl mx-auto px-6 pt-28 pb-10 lg:pt-40 lg:pb-20 text-center">
           {/* Badge */}
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0} className="flex justify-center mb-10">
             <motion.div
@@ -523,7 +523,7 @@ export default function Landing() {
           </motion.div>
 
           {/* Micro trust */}
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.4} className="flex items-center justify-center gap-6 text-xs mb-10" style={{ color: 'hsl(20 8% 46% / 0.7)' }}>
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.4} className="flex items-center justify-center gap-6 text-xs text-muted-foreground/70 mb-20">
             <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-profit" /> 14-day Pro trial</span>
             <span className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5" /> Bank-grade security</span>
             <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" /> No credit card</span>
@@ -531,7 +531,7 @@ export default function Landing() {
         </motion.div>
 
         {/* ── Dashboard Preview with watermark ────────────── */}
-        <div className="relative max-w-6xl mx-auto px-6 pb-20">
+        <div className="relative max-w-6xl mx-auto px-6 pb-24">
           {/* Faded watermark text behind preview (Manila style) */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
             <span className="text-[8rem] lg:text-[12rem] font-black text-muted-foreground/[0.03] uppercase tracking-widest">
@@ -551,18 +551,16 @@ export default function Landing() {
             <div className="absolute inset-x-4 -bottom-2 h-6 rounded-3xl bg-foreground/[0.04] blur-md" />
 
             <motion.div
-              className="relative rounded-2xl border overflow-hidden"
+              className="relative rounded-2xl border border-border/40 bg-card overflow-hidden"
               style={{
-                boxShadow: "0 30px 80px -20px rgba(0,0,0,0.12), 0 0 0 1px hsl(30 12% 92%)",
+                boxShadow: "0 25px 60px -15px rgba(0,0,0,0.08), 0 0 0 1px hsl(var(--border)/0.3)",
                 transform: "perspective(1200px) rotateX(2deg)",
-                borderColor: 'hsl(30 12% 92%)',
-                background: '#fff',
               }}
               whileHover={{ y: -4 }}
               transition={{ duration: 0.4 }}
             >
               {/* Window chrome */}
-              <div className="flex items-center gap-2 px-4 py-2.5 border-b" style={{ borderColor: 'hsl(30 12% 92%)', background: 'hsl(30 15% 97%)' }}>
+              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/30 bg-muted/15">
                 <div className="flex gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-loss/30" />
                   <div className="w-2.5 h-2.5 rounded-full bg-warning/30" />
@@ -694,7 +692,7 @@ export default function Landing() {
       </section>
 
       {/* ── Trust Strip ──────────────────────────────────── */}
-      <section className="py-12 border-y" style={{ borderColor: 'hsl(30 12% 92%)' }}>
+      <section className="py-12 border-y border-border/20">
         <div className="max-w-5xl mx-auto px-6">
           <p className="text-center text-[11px] text-muted-foreground/60 uppercase tracking-[0.18em] font-semibold mb-8">
             Trusted by 1,200+ traders across Indian markets
@@ -748,7 +746,7 @@ export default function Landing() {
       </MotionSection>
 
       {/* ── Features Bento Grid — Manila style ────────────── */}
-      <section id="features" className="py-24 lg:py-32" style={{ background: '#fafaf8' }}>
+      <section id="features" className="py-24 lg:py-32">
         <MotionSection className="max-w-7xl mx-auto px-6 lg:px-10">
           <motion.div variants={fadeUp} className="text-center mb-20">
             <SectionBadge>Features</SectionBadge>
@@ -774,16 +772,7 @@ export default function Landing() {
                 className={cn(f.large ? "md:col-span-4" : "md:col-span-2")}
               >
                 <motion.div
-                  className="group rounded-2xl border p-7 h-full relative overflow-hidden"
-                  style={{
-                    borderColor: 'hsl(30 12% 92%)',
-                    background: i === 0 ? 'linear-gradient(135deg, hsl(24 90% 97%) 0%, #fff 100%)'
-                      : i === 1 ? 'linear-gradient(135deg, hsl(152 50% 96%) 0%, #fff 100%)'
-                      : i === 2 ? 'linear-gradient(135deg, hsl(210 70% 96%) 0%, #fff 100%)'
-                      : i === 3 ? 'linear-gradient(135deg, hsl(340 60% 97%) 0%, #fff 100%)'
-                      : i === 4 ? 'linear-gradient(135deg, hsl(45 80% 96%) 0%, #fff 100%)'
-                      : 'linear-gradient(135deg, hsl(270 50% 97%) 0%, #fff 100%)',
-                  }}
+                  className="group rounded-2xl border border-border/40 bg-card/80 p-7 h-full relative overflow-hidden"
                   whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}
                   transition={{ duration: 0.3 }}
                 >
@@ -813,7 +802,7 @@ export default function Landing() {
       </section>
 
       {/* ── How It Works ─────────────────────────────────── */}
-      <section className="py-24 lg:py-32" style={{ background: 'hsl(30 15% 97%)' }}>
+      <section className="py-24 lg:py-32 bg-muted/10">
         <MotionSection className="max-w-5xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-20">
             <SectionBadge>How It Works</SectionBadge>
@@ -834,8 +823,7 @@ export default function Landing() {
             {steps.map((item, i) => (
               <motion.div key={item.step} variants={fadeUp} custom={i * 0.1}>
                 <motion.div
-                  className="relative rounded-2xl border p-8 h-full text-center overflow-hidden"
-                  style={{ borderColor: 'hsl(30 12% 92%)', background: '#fff' }}
+                  className="relative rounded-2xl border border-border/40 bg-card/80 p-8 h-full text-center overflow-hidden"
                   whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}
                 >
                   {/* Number watermark */}
@@ -856,7 +844,7 @@ export default function Landing() {
       </section>
 
       {/* ── Comparison Table ─────────────────────────────── */}
-      <section className="py-24 lg:py-32" style={{ background: '#fafaf8' }}>
+      <section className="py-24 lg:py-32">
         <MotionSection className="max-w-3xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-14">
             <SectionBadge>Comparison</SectionBadge>
@@ -870,8 +858,8 @@ export default function Landing() {
             <p className="text-muted-foreground/80 max-w-md mx-auto">See how we compare to generic trading journals.</p>
           </motion.div>
 
-          <motion.div variants={fadeUp} className="rounded-2xl border overflow-hidden" style={{ borderColor: 'hsl(30 12% 92%)', background: '#fff' }}>
-            <div className="grid grid-cols-3 gap-0 border-b px-6 py-4" style={{ borderColor: 'hsl(30 12% 92%)', background: 'hsl(30 15% 97%)' }}>
+          <motion.div variants={fadeUp} className="rounded-2xl border border-border/40 bg-card/80 overflow-hidden">
+            <div className="grid grid-cols-3 gap-0 border-b border-border/30 px-6 py-4 bg-muted/20">
               <span className="text-sm font-medium">Feature</span>
               <span className="text-sm font-bold text-center text-[hsl(var(--tb-accent))]">TradeBook</span>
               <span className="text-sm font-medium text-center text-muted-foreground/70">Others</span>
@@ -910,7 +898,7 @@ export default function Landing() {
       </section>
 
       {/* ── Pricing ──────────────────────────────────────── */}
-      <section id="pricing" className="py-24 lg:py-32" style={{ background: 'hsl(30 15% 97%)' }}>
+      <section id="pricing" className="py-24 lg:py-32 bg-muted/10">
         <MotionSection className="max-w-5xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-20">
             <SectionBadge>Pricing</SectionBadge>
@@ -929,29 +917,19 @@ export default function Landing() {
               <motion.div key={plan.name} variants={fadeUp} custom={i * 0.1}>
                 <motion.div
                   className={cn(
-                    "rounded-2xl border p-8 flex flex-col relative overflow-hidden",
+                    "rounded-2xl border bg-card/80 p-8 flex flex-col relative overflow-hidden",
                     plan.highlighted
                       ? "border-[hsl(var(--tb-accent)/0.35)] ring-1 ring-[hsl(var(--tb-accent)/0.1)] scale-[1.02] lg:scale-105"
-                      : ""
+                      : "border-border/40"
                   )}
-                  style={{
-                    borderColor: plan.highlighted ? undefined : 'hsl(30 12% 92%)',
-                    background: plan.highlighted
-                      ? 'linear-gradient(135deg, hsl(24 90% 97%) 0%, #fff 40%, hsl(340 60% 98%) 100%)'
-                      : '#fff',
-                  }}
                   whileHover={{ y: -3 }}
                   transition={{ duration: 0.3 }}
                 >
                   {plan.highlighted && <div className="absolute top-0 left-0 right-0 h-0.5 bg-[hsl(var(--tb-accent))]" />}
                   {plan.highlighted && (
-                    <motion.div
-                      className="inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] text-xs font-semibold mb-5"
-                      animate={{ boxShadow: ["0 0 0px hsl(24 90% 55% / 0)", "0 0 12px hsl(24 90% 55% / 0.2)", "0 0 0px hsl(24 90% 55% / 0)"] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    >
+                    <div className="inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] text-xs font-semibold mb-5">
                       <Zap className="w-3 h-3" /> Most Popular
-                    </motion.div>
+                    </div>
                   )}
                   <h3 className="text-xl font-bold">{plan.name}</h3>
                   <div className="mt-4 mb-1 flex items-baseline gap-1">
@@ -988,7 +966,7 @@ export default function Landing() {
       </section>
 
       {/* ── Testimonials ─────────────────────────────────── */}
-      <section className="py-24 lg:py-32 relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #fafaf8 0%, hsl(30 15% 97%) 50%, #fafaf8 100%)' }}>
+      <section className="py-24 lg:py-32">
         <MotionSection className="max-w-6xl mx-auto px-6 lg:px-10">
           <motion.div variants={fadeUp} className="text-center mb-20">
             <SectionBadge>Testimonials</SectionBadge>
@@ -1005,8 +983,7 @@ export default function Landing() {
             {/* Featured large testimonial — dark accent card */}
             <motion.div variants={fadeUp} className="md:col-span-3">
               <motion.div
-                className="rounded-2xl border p-9 h-full flex flex-col"
-                style={{ borderColor: 'hsl(20 15% 15% / 0.1)', background: 'hsl(20 15% 10%)', color: '#fff' }}
+                className="rounded-2xl border border-foreground/10 bg-foreground text-background p-9 h-full flex flex-col"
                 whileHover={{ y: -3 }}
               >
                 <Quote className="w-10 h-10 text-background/15 mb-7" />
@@ -1033,8 +1010,7 @@ export default function Landing() {
               {testimonials.slice(1).map((t, i) => (
                 <motion.div key={t.name} variants={fadeUp} custom={(i + 1) * 0.1}>
                   <motion.div
-                    className="rounded-2xl border p-7 h-full flex flex-col"
-                    style={{ borderColor: 'hsl(30 12% 92%)', background: '#fff' }}
+                    className="rounded-2xl border border-border/40 bg-card/80 p-7 h-full flex flex-col"
                     whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}
                   >
                     <Quote className="w-7 h-7 text-[hsl(var(--tb-accent)/0.12)] mb-4" />
@@ -1062,7 +1038,7 @@ export default function Landing() {
       </section>
 
       {/* ── FAQ ──────────────────────────────────────────── */}
-      <section id="faq" className="py-24 lg:py-32" style={{ background: 'hsl(30 15% 97%)' }}>
+      <section id="faq" className="py-24 lg:py-32 bg-muted/10">
         <MotionSection className="max-w-3xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-14">
             <SectionBadge>FAQ</SectionBadge>
@@ -1078,11 +1054,11 @@ export default function Landing() {
       </section>
 
       {/* ── Final CTA ────────────────────────────────────── */}
-      <section className="py-28 lg:py-36 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(24 90% 96%) 0%, hsl(340 60% 97%) 50%, hsl(280 50% 97%) 100%)' }}>
-        {/* Floating decorative circles */}
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-[hsl(24_90%_55%/0.06)] blur-2xl" />
-        <div className="absolute bottom-10 right-10 w-40 h-40 rounded-full bg-[hsl(340_60%_55%/0.06)] blur-2xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.08)_0%,transparent_65%)] pointer-events-none" />
+      <section className="py-28 lg:py-36 relative overflow-hidden">
+        {/* Soft gradient wash */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.06)_0%,transparent_65%)]" />
+        </div>
         <MotionSection className="relative max-w-3xl mx-auto px-6 text-center">
           <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold mb-7 leading-tight">
             Stop losing money to
@@ -1113,7 +1089,7 @@ export default function Landing() {
       </section>
 
       {/* ── Footer ───────────────────────────────────────── */}
-      <footer className="border-t py-14" style={{ borderColor: 'hsl(30 12% 92%)', background: '#fff' }}>
+      <footer className="border-t border-border/20 bg-card/30 py-14">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <div className="grid md:grid-cols-4 gap-10 mb-10">
             <div className="md:col-span-1">
@@ -1129,10 +1105,9 @@ export default function Landing() {
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-4">Product</h4>
-              <ul className="space-y-2.5 text-sm" style={{ color: 'hsl(20 8% 46% / 0.7)' }}>
-                <li><a href="#features" className="hover:text-[hsl(20_15%_10%)] transition-colors">Features</a></li>
-                <li><a href="#pricing" className="hover:text-[hsl(20_15%_10%)] transition-colors">Pricing</a></li>
-                <li><a href="/docs" className="hover:text-[hsl(20_15%_10%)] transition-colors">Documentation</a></li>
+              <ul className="space-y-2.5 text-sm text-muted-foreground/70">
+                <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
+                <li><a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a></li>
               </ul>
             </div>
             <div>

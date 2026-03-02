@@ -1,79 +1,84 @@
 
 
-# Landing Page Visual Overhaul + Docs Page
+# Landing Page Visual Refinement -- Manila-Inspired Redesign
 
-## Issues Identified from Screenshot Review
+## Current Issues
+The landing page exists but the user is authenticated, so it redirects to dashboard. The code is ~1000 lines with all the right sections but needs visual refinement to match the Manila screenshot's clean, airy aesthetic more closely.
 
-1. **Dark theme kills the "clean SaaS" feel** -- The page renders in dark mode which makes it feel heavy. The inspiration screenshots all use light/white backgrounds. The landing page should force a light theme regardless of user preference.
-2. **Too much empty space between hero CTA and dashboard preview** -- There's a large gap with no content.
-3. **Dashboard preview is cut off at the bottom** -- The preview needs to be fully visible with stronger visual impact.
-4. **Trust strip and stats section feel bland** -- Just text and numbers, no visual richness.
-5. **Features section lacks embedded visuals** -- The bento cards need more visual contrast and illustration-style previews.
-6. **No Docs page exists** -- User wants a dedicated documentation/about page.
+## Key Visual Improvements (Inspired by Screenshot)
 
-## Plan
+### 1. Hero Section -- Cleaner Typography & Layout
+- Make the headline use a mix of regular weight and **italic cursive** for the accent word (like Manila's "performance" in italic)
+- Add a subtle **gradient background wash** (soft pink/orange/purple like Manila's top gradient)
+- Increase whitespace above and below the hero
+- Make the email input + CTA more prominent with a clean pill shape and proper contrast
 
-### 1. Force Light Theme on Landing Page
-- Add a wrapper div with `class="light"` and explicit light background colors on the landing page so it always renders in the light aesthetic regardless of system/user theme.
-- This single change will dramatically improve the visual quality to match the inspiration screenshots.
+### 2. Trust Strip -- Logo Row Polish
+- Match Manila's clean horizontal logo strip with more spacing
+- Add "Trusted by top-tier product companies" style subtitle text
+- Increase logo opacity and add a subtle separator line
 
-### 2. Hero Section Polish
-- Reduce the gap between the CTA trust badges and the dashboard preview.
-- Add a subtle animated gradient mesh background (pink/orange/purple pastels) that's visible in light mode.
-- Make floating elements more colorful and visible against the light background.
+### 3. Dashboard Preview -- More Realistic & Polished
+- Add subtle rotation/perspective like Manila's floating dashboard screenshots
+- Add decorative shadow layers underneath for depth
+- Clean the "Dashboard" text watermark effect like Manila's faded "Manila" text behind the preview
 
-### 3. Dashboard Preview Enhancement
-- Add a stronger drop shadow and slight scale-up for more visual dominance.
-- Add a subtle light-themed window chrome (white/gray instead of dark).
-- Ensure the full dashboard preview is visible without scrolling too far.
+### 4. Features Bento Grid -- Manila's Card Style
+- Redesign bento cards to match Manila's style: white cards with clear titles, descriptions, and embedded mini-UI previews inside the cards
+- Add avatar groups, tag chips, and mini form elements inside feature cards for visual richness
+- Use varied card heights and content types (some with images, some with stats, some with UI mockups)
 
-### 4. Features Bento Cards -- Visual Richness
-- Add colored background tints to each bento card (light pastel versions of each feature's color).
-- Add small illustration-style SVG graphics inside cards that don't have mini-previews.
-- Increase card padding and add subtle gradient overlays.
+### 5. Section Headers -- "Get your money's worth" Style
+- Use the Manila-style large serif/bold headline with a cursive accent word
+- Add descriptive subtitle underneath
+- Remove the pill badge above sections (or make it more subtle)
 
-### 5. Testimonials Section -- Add Photos/Visual Weight
-- Replace single-letter avatars with gradient-colored circles with initials.
-- Add a background pattern or subtle gradient behind the testimonials section.
+### 6. Overall Polish
+- Increase `max-w` containers slightly for more breathing room
+- Soften the radial glow behind the hero (more pastel, less orange)
+- Add subtle noise/grain texture overlay for depth
+- Ensure dark mode still looks great with all changes
 
-### 6. Pricing Cards -- More Visual Differentiation
-- Add a gradient background to the highlighted Pro card.
-- Add an animated "Popular" badge with a subtle glow.
+## Technical Plan
 
-### 7. Final CTA -- Add Visual Impact
-- Add a full-width gradient background (light orange/pink wash).
-- Add floating decorative elements around the CTA.
+### File: `src/pages/Landing.tsx` (full rewrite of JSX layout)
+- Rework the hero gradient to use a soft multi-color radial wash (pink, orange, purple blended)
+- Increase hero heading to `text-6xl lg:text-8xl` with tighter line-height
+- Redesign bento grid cards to include inline UI mockups (avatar stacks, tag chips, mini progress bars)
+- Add a faded watermark text behind the dashboard preview ("Dashboard" in large faded text, like Manila's approach)
+- Polish the trust strip with better spacing and a descriptive tagline
+- Refine pricing cards with more whitespace and cleaner typography
+- Polish footer with slightly more padding
 
-### 8. New Docs Page (`/docs`)
-- Create a new `src/pages/Docs.tsx` page with comprehensive product documentation.
-- Sections: Getting Started, Features Overview, Segments Explained, Broker Integration, Alerts & Automation, Analytics Deep Dive, Keyboard Shortcuts, FAQ.
-- Clean documentation layout with sidebar navigation and content sections.
-- Add route to `App.tsx` (public, no auth required).
-- Add "Docs" link to landing page navbar and footer.
+### File: `src/index.css` (minor additions)
+- Add a `.gradient-hero-bg` utility class for the soft multi-color hero gradient
+- Add subtle text-shadow utilities for watermark effects
 
-## Technical Details
+## Section-by-Section Changes
 
-### Files to Create
-- `src/pages/Docs.tsx` -- Full documentation page with sidebar nav and multiple content sections
+### Hero
+- Soft gradient background (pink-to-orange-to-purple radial gradient, very subtle)
+- Larger, bolder headline with cursive accent word
+- Email input pill with "Get Access" button side-by-side
+- Micro trust badges below CTA (checkmarks with text)
+- Floating decorative elements remain but with softer opacity
 
-### Files to Modify
-- `src/pages/Landing.tsx` -- Force light theme wrapper, visual polish across all sections, reduce gaps, add color tints to bento cards, enhance dashboard preview styling, add Docs link to navbar/footer
-- `src/App.tsx` -- Add `/docs` route (public)
-- `src/index.css` -- Add `.landing-light` utility class for forced light theme on landing
+### Dashboard Preview
+- Add large faded text "Dashboard" behind the preview (watermark effect like Manila)
+- Keep the perspective tilt but soften the shadow
+- Slightly wider container for the preview
 
-### Key Visual Changes
-- Force light background on entire landing page (white cards, light borders, visible gradients)
-- Colored pastel tints on bento feature cards
-- Stronger dashboard preview shadow and scale
-- Gradient wash on CTA section
-- Better floating element visibility
-- Docs link in navbar between FAQ and Sign In
+### Features Section ("Get your money's worth" style heading)
+- Large bold heading with cursive accent word
+- Bento grid with varied card content:
+  - Card 1 (large): Trade journal with mini UI preview inside showing tags, hourly rate selector style elements
+  - Card 2: Analytics with avatar stack showing team/user badges
+  - Card 3: Progress tracking with mini progress bar inside
+  - Card 4: Alerts with a mini notification card preview
+  - Card 5-6: Smaller utility cards
 
-### Docs Page Structure
-- Hero banner with "Documentation" title
-- Sidebar with section links (sticky)
-- Content sections: Getting Started, Trade Journaling, Analytics, Alerts, Broker Integration, Keyboard Shortcuts, Segments, FAQ
-- Each section with clear headings, descriptions, and feature lists
-- Responsive -- sidebar collapses to top nav on mobile
-- Uses existing design system components (cards, badges)
+### Stats, How It Works, Comparison, Pricing, Testimonials, FAQ, Footer
+- Keep existing structure but apply Manila's cleaner typography and spacing
+- Reduce visual noise, increase whitespace
+- Softer borders and shadows throughout
 

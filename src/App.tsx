@@ -12,7 +12,6 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 import Studies from "./pages/Studies";
-import Docs from "./pages/Docs";
 import Alerts from "./pages/Alerts";
 import Trades from "./pages/Trades";
 import Journal from "./pages/Journal";
@@ -48,7 +47,6 @@ const App = () => (
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/dhan-callback" element={<DhanCallback />} />
-              <Route path="/docs" element={<Docs />} />
               <Route
                 path="/"
                 element={
