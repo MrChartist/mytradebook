@@ -877,8 +877,8 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Trust Strip ──────────────────────────────────── */}
-      <section className="py-12 border-y border-border/20">
+      {/* ── Trust Strip + Stats (merged) ──────────────── */}
+      <section className="py-16 border-y border-border/20">
         <div className="max-w-5xl mx-auto px-6">
           <p className="text-center text-xs text-muted-foreground uppercase tracking-[0.18em] font-semibold mb-8">
             Trusted by 1,200+ traders across Indian markets
@@ -901,35 +901,31 @@ export default function Landing() {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* ── Stats Section ────────────────────────────────── */}
-      <MotionSection className="py-24 lg:py-28">
-        <div className="max-w-5xl mx-auto px-6 text-center">
-          <motion.div variants={fadeUp}>
-            <SectionBadge>By the Numbers</SectionBadge>
-          </motion.div>
-          <div className="flex items-center justify-center gap-14 sm:gap-24 flex-wrap mt-6">
+          {/* Gradient divider */}
+          <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.2)] to-transparent my-10" />
+
+          {/* Stats row */}
+          <div className="flex items-center justify-center gap-10 sm:gap-20 flex-wrap">
             {[
               { ref: s3.ref, value: s3.count, suffix: "", label: "Market Segments" },
               { ref: s4.ref, value: s4.count, suffix: "+", label: "Analytics Metrics" },
               { ref: s5.ref, value: s5.count, suffix: "+", label: "Trades Tracked" },
             ].map((stat, i) => (
-              <motion.div key={stat.label} variants={fadeUp} custom={i * 0.1} className="text-center">
-                <div className="text-5xl sm:text-7xl font-extrabold tracking-tight" ref={stat.ref}>
+              <div key={stat.label} className="text-center">
+                <div className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[hsl(var(--tb-accent))]" ref={stat.ref}>
                   {stat.value}{stat.suffix}
                 </div>
-                <div className="text-xs text-muted-foreground uppercase tracking-[0.14em] mt-2.5 font-medium">{stat.label}</div>
-              </motion.div>
+                <div className="text-[10px] text-muted-foreground uppercase tracking-[0.14em] mt-1.5 font-medium">{stat.label}</div>
+              </div>
             ))}
-            <motion.div variants={fadeUp} custom={0.3} className="text-center">
-              <div className="text-5xl sm:text-7xl font-extrabold tracking-tight">24/7</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-[0.14em] mt-2.5 font-medium">Cloud Access</div>
-            </motion.div>
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[hsl(var(--tb-accent))]">24/7</div>
+              <div className="text-[10px] text-muted-foreground uppercase tracking-[0.14em] mt-1.5 font-medium">Cloud Access</div>
+            </div>
           </div>
         </div>
-      </MotionSection>
+      </section>
 
       {/* ── Features Bento Grid — Manila style ────────────── */}
       <section id="features" className="py-24 lg:py-32">
