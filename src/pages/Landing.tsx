@@ -15,16 +15,53 @@ import {
   Eye,
   ChevronDown,
   Star,
+  Quote,
   Activity,
   PieChart,
   Layers,
+  Clock,
   ArrowUpRight,
-  Menu,
-  X,
-  Check,
+  ArrowDownRight,
+  Minus,
+  Twitter,
+  Linkedin,
+  Youtube,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+/* ─── Animated counter ──────────────────────────────────── */
+function useCountUp(end: number, duration = 2000) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started.current) {
+          started.current = true;
+          const start = performance.now();
+          const tick = (now: number) => {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setCount(Math.round(eased * end));
+            if (progress < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [end, duration]);
+
+  return { count, ref };
+}
 
 /* ─── Fade-in on scroll ─────────────────────────────────── */
 function FadeIn({
@@ -71,62 +108,57 @@ function FadeIn({
 }
 
 /* ─── Data ──────────────────────────────────────────────── */
-const bentoFeatures = [
+const features = [
   {
     icon: BookOpen,
-    title: "Smart Trade Journal",
-    description: "Log trades across Equity, F&O, and Commodities with chart uploads, tags, pattern recognition, and post-trade reviews.",
-    large: true,
-    mockup: "journal",
+    title: "Smart Journal",
+    description: "Multi-segment trade logging with charts, tags, notes, and pattern recognition.",
   },
   {
     icon: BarChart3,
     title: "Deep Analytics",
-    description: "Equity curves, drawdown analysis, win-rate heatmaps, day-of-week patterns, and segment breakdowns.",
-    large: false,
+    description: "Equity curves, drawdown analysis, win-rate heatmaps, and segment breakdowns.",
   },
   {
     icon: Bell,
-    title: "Smart Alerts",
-    description: "Price alerts, scanner triggers, and instant Telegram notifications when markets move.",
-    large: false,
+    title: "Real-Time Alerts",
+    description: "Price alerts, scanner triggers, and instant Telegram notifications.",
   },
   {
     icon: Target,
     title: "Trailing Stop Loss",
-    description: "Automated TSL engine with configurable activation, step, gap, and segment-specific profiles.",
-    large: true,
-    mockup: "tsl",
+    description: "Segment-based TSL with configurable activation, step, gap, and cooldown.",
   },
   {
     icon: LineChart,
     title: "Broker Integration",
     description: "Connect Dhan for live prices, portfolio auto-sync, and one-click execution.",
-    large: false,
   },
   {
     icon: Shield,
-    title: "Rules & Discipline",
-    description: "Pre-trade checklists, mistake tagging, and confidence scoring to enforce your edge.",
-    large: false,
+    title: "Rules Engine",
+    description: "Pre-trade checklists, mistake tagging, and discipline enforcement.",
   },
 ];
 
 const steps = [
   {
+    step: "01",
     icon: BookOpen,
     title: "Log Your Trades",
-    desc: "Add trades manually or auto-sync from your broker. Tag setups, patterns, and mistakes.",
+    desc: "Add trades manually or auto-sync from Dhan. Tag setups, patterns, and mistakes.",
   },
   {
+    step: "02",
     icon: Eye,
     title: "Spot Patterns",
-    desc: "Segment-level analytics reveal what's working — by setup, time, day, and market condition.",
+    desc: "Segment-level analytics reveal what's working — by setup, time, and condition.",
   },
   {
+    step: "03",
     icon: Zap,
     title: "Automate & Scale",
-    desc: "Set rules, alerts, and trailing stops. Let the system enforce your trading discipline.",
+    desc: "Set rules, alerts, and trailing stops. Let the system enforce your discipline.",
   },
 ];
 
@@ -135,21 +167,21 @@ const testimonials = [
     name: "Rahul M.",
     initials: "RM",
     role: "Options Trader, Mumbai",
-    quote: "TradeBook helped me identify that my Monday morning trades were consistently losing. After adjusting, my win rate went from 42% to 61%.",
+    quote: "TradeBook helped me identify that my Monday morning trades were consistently losing. After adjusting my strategy, my win rate went from 42% to 61%.",
     stars: 5,
   },
   {
     name: "Priya S.",
     initials: "PS",
     role: "Swing Trader, Bangalore",
-    quote: "The segment-level analytics are a game-changer. I can see exactly which setups work for intraday vs positional.",
+    quote: "The segment-level analytics are a game-changer. I can see exactly which setups work for intraday vs positional, and the Telegram alerts keep me disciplined.",
     stars: 5,
   },
   {
     name: "Aditya K.",
     initials: "AK",
     role: "F&O Trader, Delhi",
-    quote: "I tried 4 journals before TradeBook. None understood Indian markets — segments, lot sizes, MCX. Finally something built for us.",
+    quote: "I tried 4 journals before TradeBook. None understood Indian markets — segments, lot sizes, MCX. Finally something built for how we actually trade.",
     stars: 5,
   },
 ];
@@ -157,27 +189,27 @@ const testimonials = [
 const faqs = [
   {
     q: "Is TradeBook free to use?",
-    a: "Yes! The Free plan includes up to 50 trades/month, basic analytics, and 1 watchlist — forever free. Upgrade to Pro for unlimited trades and advanced features.",
+    a: "Yes! The Free plan includes up to 50 trades/month, basic analytics, and 1 watchlist — forever free. Upgrade to Pro for unlimited trades, Telegram notifications, broker integration, and advanced analytics.",
   },
   {
     q: "Which brokers are supported?",
-    a: "Currently we support Dhan for live prices, portfolio auto-sync, and one-click order execution. More brokers are on the roadmap.",
+    a: "Currently we support Dhan for live prices, portfolio auto-sync, and one-click order execution. More brokers (Zerodha, Angel One) are on the roadmap.",
   },
   {
     q: "Is my trading data safe?",
-    a: "Absolutely. All data is encrypted at rest and in transit. Your data is yours — we never share, sell, or use it for any other purpose.",
+    a: "Absolutely. All data is encrypted at rest and in transit. Your data is yours — we never share, sell, or use it for any purpose other than powering your dashboard.",
   },
   {
     q: "Can I use TradeBook for Commodities and F&O?",
-    a: "Yes! TradeBook supports 5 market segments: Equity Intraday, Equity Positional, Futures, Options, and Commodities.",
+    a: "Yes! TradeBook supports 5 market segments: Equity Intraday, Equity Positional, Futures, Options, and Commodities. Each segment has its own analytics and reporting.",
   },
   {
     q: "How does the 14-day Pro trial work?",
-    a: "Every new signup gets full Pro access for 14 days — no credit card required. After the trial, continue free or upgrade.",
+    a: "Every new signup gets full Pro access for 14 days — no credit card required. After the trial, you can continue on the Free plan or upgrade to keep Pro features.",
   },
   {
     q: "Do you offer refunds?",
-    a: "Yes, we offer a full refund within 7 days of purchase. No questions asked.",
+    a: "Yes, we offer a full refund within 7 days of purchase if you're not satisfied. No questions asked.",
   },
 ];
 
@@ -232,15 +264,25 @@ const segmentTabs = [
     label: "Equity",
     icon: TrendingUp,
     title: "Intraday & Positional Equity",
-    description: "Track cash-market trades with split segments for intraday scalps and positional swing trades.",
-    features: ["Intraday vs Positional split", "Sector-wise P&L heatmap", "Day-of-week analysis", "Brokerage tracking"],
+    description: "Track cash-market trades with split segments for intraday scalps and positional swing trades. See per-segment win rates, average holding periods, and sector breakdowns.",
+    stats: [
+      { label: "Segments", value: "2" },
+      { label: "Metrics", value: "15+" },
+      { label: "Holding", value: "1d–90d" },
+    ],
+    features: ["Intraday vs Positional split", "Sector-wise P&L heatmap", "Day-of-week analysis", "Brokerage & charges tracking"],
   },
   {
     id: "fno",
     label: "F&O",
     icon: Activity,
     title: "Futures & Options",
-    description: "Purpose-built for derivatives traders. Log option chains, strategy legs, and lot-size-aware P&L.",
+    description: "Purpose-built for derivatives traders. Log option chains, strategy legs, Greeks tracking, and lot-size-aware position sizing with expiry-based analytics.",
+    stats: [
+      { label: "Strategy Types", value: "10+" },
+      { label: "Greeks", value: "4" },
+      { label: "Expiries", value: "Auto" },
+    ],
     features: ["Multi-leg strategy logging", "Option chain selector", "Lot-size aware P&L", "Expiry-based performance"],
   },
   {
@@ -248,36 +290,69 @@ const segmentTabs = [
     label: "Commodities",
     icon: PieChart,
     title: "MCX Commodities",
-    description: "Track Gold, Silver, Crude and more with commodity-specific lot sizes and session-based analysis.",
-    features: ["MCX instrument support", "Session-wise analytics", "Commodity-specific lots", "Margin tracking"],
+    description: "Track Gold, Silver, Crude, Natural Gas, and other MCX instruments with commodity-specific lot sizes, margin requirements, and session-based analysis.",
+    stats: [
+      { label: "Instruments", value: "20+" },
+      { label: "Sessions", value: "2" },
+      { label: "Margin", value: "Auto" },
+    ],
+    features: ["MCX instrument support", "Session-wise analytics", "Commodity-specific lot sizes", "Margin utilization tracking"],
   },
 ];
 
-/* ─── FAQ Accordion Item ──────────────────────────────────── */
+/* ─── FAQ Accordion Item (smooth height animation) ──────── */
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="border-b border-border last:border-0">
+    <div className={cn(
+      "border rounded-xl overflow-hidden transition-all duration-300",
+      open ? "border-[hsl(var(--tb-accent)/0.3)] bg-card shadow-sm" : "border-border bg-card/60"
+    )}>
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between py-5 text-left group"
+        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-muted/30 transition-colors"
       >
-        <span className={cn("font-medium text-[15px] pr-4 transition-colors", open && "text-primary")}>{question}</span>
+        <span className={cn("font-medium text-sm pr-4", open && "text-[hsl(var(--tb-accent))]")}>{question}</span>
         <ChevronDown className={cn(
-          "w-4 h-4 shrink-0 transition-transform duration-300 text-muted-foreground",
-          open && "rotate-180 text-primary"
+          "w-4 h-4 shrink-0 transition-transform duration-300",
+          open ? "rotate-180 text-[hsl(var(--tb-accent))]" : "text-muted-foreground"
         )} />
       </button>
       <div
         className="overflow-hidden transition-all duration-300 ease-out"
         style={{ maxHeight: open ? contentRef.current?.scrollHeight ?? 200 : 0, opacity: open ? 1 : 0 }}
       >
-        <div ref={contentRef} className="pb-5 text-sm text-muted-foreground leading-relaxed">
+        <div ref={contentRef} className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed border-l-2 border-[hsl(var(--tb-accent)/0.3)] ml-5">
           {answer}
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ─── Animated ticker line for dashboard mockup ──────────── */
+function TickerBar() {
+  const tickers = [
+    { symbol: "NIFTY 50", price: "24,285", change: "+0.82%", up: true },
+    { symbol: "BANKNIFTY", price: "51,440", change: "-0.34%", up: false },
+    { symbol: "RELIANCE", price: "2,945", change: "+1.24%", up: true },
+    { symbol: "GOLD", price: "71,850", change: "+0.45%", up: true },
+    { symbol: "CRUDE", price: "6,420", change: "-1.12%", up: false },
+  ];
+
+  return (
+    <div className="flex items-center gap-5 px-4 py-2 border-b border-border/30 bg-muted/20 overflow-hidden text-[10px]">
+      {tickers.map((t) => (
+        <div key={t.symbol} className="flex items-center gap-1.5 shrink-0">
+          <span className="text-muted-foreground font-medium">{t.symbol}</span>
+          <span className="font-mono font-semibold text-foreground/80">{t.price}</span>
+          <span className={cn("font-mono font-semibold", t.up ? "text-profit" : "text-loss")}>
+            {t.change}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -287,7 +362,9 @@ export default function Landing() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [activeSegment, setActiveSegment] = useState("equity");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const s3 = useCountUp(5, 1200);
+  const s4 = useCountUp(50, 1500);
 
   useEffect(() => {
     if (!loading && user) {
@@ -299,108 +376,66 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden font-sans">
-      {/* ── Floating Island Navbar ─────────────────────────── */}
-      <nav className="island-nav max-w-2xl w-[calc(100%-2rem)]">
-        {/* Logo */}
-        <div className="flex items-center gap-2 pl-2 pr-4">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <TrendingUp className="w-4 h-4 text-primary-foreground" />
+      {/* ── Navbar ───────────────────────────────────────── */}
+      <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-16">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold tracking-tight">TradeBook</span>
           </div>
-          <span className="text-base font-bold tracking-tight hidden sm:inline">TradeBook</span>
-        </div>
 
-        {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-1 flex-1 justify-center">
-          {[
-            { label: "Features", href: "#features" },
-            { label: "How It Works", href: "#how-it-works" },
-            { label: "Pricing", href: "#pricing" },
-            { label: "FAQ", href: "#faq" },
-          ].map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground rounded-full hover:bg-muted/50 transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
+          <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
+            <a href="#features" className="hover:text-foreground transition-colors duration-200 px-3 py-1.5 rounded-full hover:bg-muted">Features</a>
+            <a href="#segments" className="hover:text-foreground transition-colors duration-200">Segments</a>
+            <a href="#pricing" className="hover:text-foreground transition-colors duration-200">Pricing</a>
+            <a href="#faq" className="hover:text-foreground transition-colors duration-200">FAQ</a>
+          </div>
 
-        {/* CTA */}
-        <div className="flex items-center gap-2 ml-auto md:ml-0">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate("/login")}
-            className="text-muted-foreground text-sm hidden sm:inline-flex"
-          >
-            Sign In
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => navigate("/login")}
-            className="rounded-full px-4 text-sm h-8"
-          >
-            Get Started
-          </Button>
-
-          {/* Mobile menu toggle */}
-          <button
-            className="md:hidden p-1.5 rounded-full hover:bg-muted/50 transition-colors"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile menu dropdown */}
-      {mobileMenuOpen && (
-        <div className="fixed top-16 left-4 right-4 z-50 rounded-2xl border border-border/50 bg-background/95 backdrop-blur-xl p-4 shadow-lg md:hidden">
-          <div className="flex flex-col gap-1">
-            {[
-              { label: "Features", href: "#features" },
-              { label: "How It Works", href: "#how-it-works" },
-              { label: "Pricing", href: "#pricing" },
-              { label: "FAQ", href: "#faq" },
-            ].map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="px-4 py-2.5 text-sm rounded-xl hover:bg-muted transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
+          <div className="flex items-center gap-3">
             <Button
+              variant="ghost"
               size="sm"
-              onClick={() => { navigate("/login"); setMobileMenuOpen(false); }}
-              className="mt-2 rounded-full"
+              onClick={() => navigate("/login")}
+              className="text-muted-foreground"
             >
               Sign In
             </Button>
+            <Button
+              size="sm"
+              onClick={() => navigate("/login")}
+              className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-5 shadow-none"
+            >
+              Get Started
+            </Button>
           </div>
         </div>
-      )}
+      </nav>
 
       {/* ── Hero ─────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
-        {/* Subtle radial glow */}
+        {/* Ambient radial glow */}
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] pointer-events-none"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] pointer-events-none"
           style={{
-            background: "radial-gradient(ellipse at center, hsl(var(--primary) / 0.06) 0%, transparent 70%)",
+            background: "radial-gradient(ellipse at center, hsl(var(--tb-accent) / 0.12) 0%, transparent 70%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.25]"
+          style={{
+            backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.15) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
           }}
         />
 
-        <div className="relative max-w-5xl mx-auto px-6 pt-24 pb-12 lg:pt-32 lg:pb-20 text-center">
+        <div className="relative max-w-5xl mx-auto px-6 pt-16 pb-10 lg:pt-24 lg:pb-16 text-center">
           {/* Badge */}
           <FadeIn className="flex justify-center mb-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card text-sm">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              <span className="text-muted-foreground text-xs font-medium">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[hsl(var(--tb-accent)/0.3)] bg-[hsl(var(--tb-accent)/0.08)] text-sm backdrop-blur-sm">
+              <span className="w-2 h-2 rounded-full bg-[hsl(var(--tb-accent))] animate-pulse" />
+              <span className="text-[hsl(var(--tb-accent))] font-semibold uppercase tracking-wider text-xs">
                 Built for Indian Markets · NSE · BSE · MCX
               </span>
             </div>
@@ -411,8 +446,13 @@ export default function Landing() {
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.08] tracking-tight mb-5">
               Know Your Edge.
               <br />
-              <span className="relative inline-block">
-                <span className="bg-primary/10 text-primary px-3 py-1 rounded-xl">Compound</span>
+              <span
+                className="italic relative"
+                style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
+              >
+                <span className="gradient-text-orange">Compound</span>
+                {/* Gradient underline */}
+                <span className="absolute -bottom-1 left-0 right-0 h-[3px] rounded-full" style={{ background: "linear-gradient(90deg, hsl(var(--tb-accent)), hsl(16 85% 45%))" }} />
               </span>{" "}
               It Daily.
             </h1>
@@ -420,17 +460,18 @@ export default function Landing() {
 
           {/* Subtitle */}
           <FadeIn delay={200}>
-            <p className="text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
+            <p className="text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto mb-7 leading-relaxed">
               The trading journal that shows you <strong className="text-foreground">why</strong> you win and{" "}
               <strong className="text-foreground">why</strong> you lose — with segment analytics for Equity, F&O, and Commodities.
+              Stop guessing. Start compounding.
             </p>
           </FadeIn>
 
           {/* CTAs */}
-          <FadeIn delay={300} className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
+          <FadeIn delay={300} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
             <Button
               size="lg"
-              className="h-12 px-8 text-base gap-2.5 rounded-full font-semibold shadow-none"
+              className="h-13 px-10 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-none font-semibold cta-glow-pulse"
               onClick={() => navigate("/login")}
             >
               Start Free — No Card Needed
@@ -439,58 +480,61 @@ export default function Landing() {
             <Button
               variant="outline"
               size="lg"
-              className="h-12 px-7 text-base gap-2 rounded-full"
-              onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}
+              className="h-13 px-8 text-base gap-2 rounded-full"
+              onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })}
             >
               See How It Works
             </Button>
           </FadeIn>
 
+          {/* Micro trust line */}
           <FadeIn delay={350}>
-            <p className="text-xs text-muted-foreground mb-12">
+            <p className="text-xs text-muted-foreground mb-10">
               14-day Pro trial · No credit card · 2-minute setup
             </p>
           </FadeIn>
 
-          {/* Social proof - avatar stack */}
-          <FadeIn delay={400} className="flex items-center justify-center gap-4 mb-14">
-            <div className="flex -space-x-2">
-              {["RM", "PS", "AK", "VJ", "NS"].map((initials, i) => (
-                <div
-                  key={initials}
-                  className="w-8 h-8 rounded-full border-2 border-background flex items-center justify-center text-[10px] font-bold text-primary-foreground"
-                  style={{
-                    background: `hsl(${24 + i * 30} ${70 + i * 5}% ${50 + i * 3}%)`,
-                    zIndex: 5 - i,
-                  }}
-                >
-                  {initials}
+          {/* ── Social Proof Trust Strip ───────────────────── */}
+          <FadeIn delay={400}>
+            <div className="flex items-center justify-center gap-6 sm:gap-10 mb-12 flex-wrap">
+              {["NSE", "BSE", "MCX"].map((exchange) => (
+                <div key={exchange} className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm">
+                  <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center">
+                    <Activity className="w-3.5 h-3.5 text-muted-foreground" />
+                  </div>
+                  <span className="text-sm font-semibold tracking-wide text-muted-foreground">{exchange}</span>
                 </div>
               ))}
-            </div>
-            <div className="text-left">
-              <p className="text-sm font-semibold">10,000+ traders</p>
-              <p className="text-xs text-muted-foreground">improving their edge daily</p>
+              <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
+                <Minus className="w-4 h-4" />
+                <span>All Indian exchanges supported</span>
+              </div>
             </div>
           </FadeIn>
 
           {/* ── Dashboard Preview ─────────────────────────── */}
           <FadeIn delay={500}>
-            <div className="relative mx-auto max-w-5xl">
-              <div className="relative rounded-2xl border border-border bg-card overflow-hidden shadow-2xl shadow-black/[0.08] dark:shadow-black/30">
+            <div className="relative mx-auto max-w-5xl animate-float">
+              {/* Glow effect */}
+              <div className="absolute -inset-8 bg-[hsl(var(--tb-accent)/0.08)] rounded-3xl blur-3xl" />
+              <div className="relative rounded-2xl border border-border/60 bg-card overflow-hidden shadow-2xl shadow-black/5">
                 {/* Window chrome */}
-                <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-muted/30">
+                <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/50 bg-muted/30">
                   <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-destructive/40" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-warning/40" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-profit/40" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-loss/50" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-warning/50" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-profit/50" />
                   </div>
                   <div className="flex-1 text-center">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-muted/50 text-[10px] text-muted-foreground font-mono">
+                      <span className="w-1.5 h-1.5 rounded-full bg-profit/60" />
                       mytradebook.lovable.app/dashboard
                     </div>
                   </div>
                 </div>
+
+                {/* Ticker bar */}
+                <TickerBar />
 
                 {/* Dashboard content */}
                 <div className="flex">
@@ -500,10 +544,10 @@ export default function Landing() {
                       <div
                         key={i}
                         className={cn(
-                          "w-8 h-8 rounded-lg flex items-center justify-center",
+                          "w-8 h-8 rounded-lg flex items-center justify-center transition-colors",
                           i === 0
-                            ? "bg-primary/10 text-primary"
-                            : "text-muted-foreground/40"
+                            ? "bg-[hsl(var(--tb-accent)/0.12)] text-[hsl(var(--tb-accent))]"
+                            : "text-muted-foreground/50 hover:text-muted-foreground"
                         )}
                       >
                         <Icon className="w-3.5 h-3.5" />
@@ -511,33 +555,41 @@ export default function Landing() {
                     ))}
                   </div>
 
+                  {/* Main content */}
                   <div className="flex-1 p-4 sm:p-5">
+                    {/* Welcome */}
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <p className="text-xs text-muted-foreground">Good Morning,</p>
                         <p className="text-sm font-semibold">Dashboard</p>
                       </div>
-                      <div className="px-2.5 py-1 rounded-md bg-profit/10 text-profit text-[10px] font-semibold flex items-center gap-1">
-                        <ArrowUpRight className="w-3 h-3" />
-                        4 day streak
+                      <div className="flex items-center gap-2">
+                        <div className="px-2.5 py-1 rounded-md bg-profit/10 text-profit text-[10px] font-semibold flex items-center gap-1">
+                          <ArrowUpRight className="w-3 h-3" />
+                          4 day streak
+                        </div>
                       </div>
                     </div>
 
+                    {/* KPI row */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
                       {[
-                        { label: "MTD P&L", value: "+₹24,850", sub: "+12.4%", color: true },
-                        { label: "Win Rate", value: "67.5%", sub: "+3.2%", color: true },
-                        { label: "Open Positions", value: "3", sub: "" },
-                        { label: "Active Alerts", value: "8", sub: "2 triggered" },
+                        { label: "MTD P&L", value: "+₹24,850", change: "+12.4%", up: true },
+                        { label: "Win Rate", value: "67.5%", change: "+3.2%", up: true },
+                        { label: "Open Positions", value: "3", change: "", up: true },
+                        { label: "Active Alerts", value: "8", change: "2 triggered", up: true },
                       ].map((kpi) => (
                         <div key={kpi.label} className="rounded-xl border border-border/40 bg-card p-3">
                           <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">{kpi.label}</p>
-                          <p className={cn("text-base font-bold font-mono", kpi.color ? "text-profit" : "text-foreground")}>{kpi.value}</p>
-                          {kpi.sub && <p className="text-[9px] font-mono mt-0.5 text-profit/70">{kpi.sub}</p>}
+                          <p className={cn("text-base font-bold font-mono", kpi.label.includes("P&L") || kpi.label.includes("Win") ? "text-profit" : "text-foreground")}>{kpi.value}</p>
+                          {kpi.change && (
+                            <p className={cn("text-[9px] font-mono mt-0.5", kpi.up ? "text-profit/70" : "text-loss/70")}>{kpi.change}</p>
+                          )}
                         </div>
                       ))}
                     </div>
 
+                    {/* Equity curve + Recent trades */}
                     <div className="grid sm:grid-cols-5 gap-3">
                       <div className="sm:col-span-3 rounded-xl border border-border/40 bg-card p-3">
                         <div className="flex items-center justify-between mb-2">
@@ -551,25 +603,40 @@ export default function Landing() {
                               <stop offset="100%" stopColor="hsl(var(--profit))" stopOpacity="0" />
                             </linearGradient>
                           </defs>
-                          <path d="M0,65 C20,62 40,58 60,50 C80,42 100,48 130,40 C160,32 180,36 210,28 C240,20 260,24 290,18 C320,12 350,16 370,10 C385,6 395,8 400,5" fill="none" stroke="hsl(var(--profit))" strokeWidth="2" strokeLinecap="round" />
-                          <path d="M0,65 C20,62 40,58 60,50 C80,42 100,48 130,40 C160,32 180,36 210,28 C240,20 260,24 290,18 C320,12 350,16 370,10 C385,6 395,8 400,5 L400,80 L0,80 Z" fill="url(#curveGrad)" />
+                          <path
+                            d="M0,65 C20,62 40,58 60,50 C80,42 100,48 130,40 C160,32 180,36 210,28 C240,20 260,24 290,18 C320,12 350,16 370,10 C385,6 395,8 400,5"
+                            fill="none"
+                            stroke="hsl(var(--profit))"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                          <path
+                            d="M0,65 C20,62 40,58 60,50 C80,42 100,48 130,40 C160,32 180,36 210,28 C240,20 260,24 290,18 C320,12 350,16 370,10 C385,6 395,8 400,5 L400,80 L0,80 Z"
+                            fill="url(#curveGrad)"
+                          />
                         </svg>
                       </div>
+
                       <div className="sm:col-span-2 rounded-xl border border-border/40 bg-card p-3">
                         <p className="text-[10px] text-muted-foreground font-medium mb-2">Recent Trades</p>
-                        {[
-                          { sym: "RELIANCE", pnl: "+₹2,450", up: true },
-                          { sym: "NIFTY CE", pnl: "+₹8,200", up: true },
-                          { sym: "TATAMOTORS", pnl: "-₹1,100", up: false },
-                        ].map((t) => (
-                          <div key={t.sym} className="flex items-center justify-between py-1.5 border-b border-border/20 last:border-0">
-                            <div className="flex items-center gap-2">
-                              <div className={cn("w-1 h-4 rounded-full", t.up ? "bg-profit" : "bg-loss")} />
-                              <span className="text-[10px] font-semibold">{t.sym}</span>
+                        <div className="space-y-2">
+                          {[
+                            { sym: "RELIANCE", type: "BUY", pnl: "+₹2,450", up: true },
+                            { sym: "NIFTY 24200 CE", type: "BUY", pnl: "+₹8,200", up: true },
+                            { sym: "TATAMOTORS", type: "SELL", pnl: "-₹1,100", up: false },
+                          ].map((t) => (
+                            <div key={t.sym} className="flex items-center justify-between py-1.5 border-b border-border/20 last:border-0">
+                              <div className="flex items-center gap-2">
+                                <div className={cn("w-1 h-4 rounded-full", t.up ? "bg-profit" : "bg-loss")} />
+                                <div>
+                                  <p className="text-[10px] font-semibold leading-tight">{t.sym}</p>
+                                  <p className="text-[8px] text-muted-foreground">{t.type}</p>
+                                </div>
+                              </div>
+                              <span className={cn("text-[10px] font-mono font-semibold", t.up ? "text-profit" : "text-loss")}>{t.pnl}</span>
                             </div>
-                            <span className={cn("text-[10px] font-mono font-semibold", t.up ? "text-profit" : "text-loss")}>{t.pnl}</span>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -580,27 +647,47 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Trust Strip ──────────────────────────────────── */}
-      <section className="py-12">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <p className="text-sm text-muted-foreground mb-6">Trusted by traders across all Indian exchanges</p>
-          <div className="flex items-center justify-center gap-8 sm:gap-14 flex-wrap">
-            {["NSE", "BSE", "MCX", "NCDEX"].map((exchange) => (
-              <span key={exchange} className="text-lg font-bold text-muted-foreground/30 tracking-widest">
-                {exchange}
-              </span>
-            ))}
+      {/* ── Stats Row (Glassmorphism) ────────────────────── */}
+      <section className="py-10 relative">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="glass-morph rounded-2xl px-8 py-6">
+            <div className="flex items-center justify-center gap-8 sm:gap-16 flex-wrap">
+              <div className="text-center" ref={s3.ref}>
+                <div className="text-3xl sm:text-4xl font-bold tracking-tight gradient-text-orange">{s3.count}</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Market Segments</div>
+              </div>
+              <div className="text-center" ref={s4.ref}>
+                <div className="text-3xl sm:text-4xl font-bold tracking-tight gradient-text-orange">{s4.count}+</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Analytics Metrics</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold tracking-tight gradient-text-orange">14</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Day Free Trial</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold tracking-tight flex items-center gap-1 justify-center">
+                  <Clock className="w-6 h-6 text-[hsl(var(--tb-accent))]" />
+                  <span className="gradient-text-orange">24/7</span>
+                </div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Cloud Access</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── Features — Bento Grid ────────────────────────── */}
+      {/* ── Features (Premium Glass Cards) ────────────────── */}
       <section id="features" className="py-16 lg:py-24">
         <div className="max-w-6xl mx-auto px-6">
           <FadeIn className="text-center mb-14">
-            <p className="text-sm font-medium text-primary mb-2 uppercase tracking-wider">Features</p>
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              Everything You Need to Trade Better
+              Everything You Need to{" "}
+              <span
+                className="italic"
+                style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
+              >
+                <span className="gradient-text-orange">Trade Better</span>
+              </span>
             </h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
               From journaling to automation — tools designed by traders, for traders.
@@ -608,65 +695,17 @@ export default function Landing() {
           </FadeIn>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {bentoFeatures.map((f, i) => (
-              <FadeIn
-                key={f.title}
-                delay={i * 80}
-                className={cn(f.large && "lg:col-span-2")}
-              >
-                <div className={cn(
-                  "group rounded-2xl border border-border bg-card p-6 h-full transition-all duration-300 hover:shadow-lg hover:border-primary/15 hover:-translate-y-1",
-                  f.large && "flex flex-col sm:flex-row gap-5"
-                )}>
-                  {/* Icon + Text */}
-                  <div className={cn("flex-1", f.large && "min-w-0")}>
-                    <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                      <f.icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{f.description}</p>
+            {features.map((f, i) => (
+              <FadeIn key={f.title} delay={i * 100}>
+                <div className="group glass-morph shine-overlay p-6 h-full transition-all duration-300 hover:border-[hsl(var(--tb-accent)/0.3)] hover:-translate-y-1.5">
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-all duration-300"
+                    style={{ background: "linear-gradient(135deg, hsl(var(--tb-accent) / 0.15), hsl(var(--tb-accent) / 0.05))" }}
+                  >
+                    <f.icon className="w-5 h-5 text-[hsl(var(--tb-accent))]" />
                   </div>
-
-                  {/* Mockup for large cards */}
-                  {f.large && f.mockup === "journal" && (
-                    <div className="sm:w-56 shrink-0 rounded-xl border border-border/50 bg-muted/30 p-3 space-y-2">
-                      {[
-                        { sym: "RELIANCE", tag: "Breakout", pnl: "+₹2,450", up: true },
-                        { sym: "NIFTY CE", tag: "Momentum", pnl: "+₹8,200", up: true },
-                        { sym: "TATAMOTORS", tag: "Reversal", pnl: "-₹780", up: false },
-                      ].map((t) => (
-                        <div key={t.sym} className="flex items-center justify-between py-1.5 border-b border-border/30 last:border-0">
-                          <div>
-                            <p className="text-[10px] font-semibold">{t.sym}</p>
-                            <p className="text-[8px] text-muted-foreground">{t.tag}</p>
-                          </div>
-                          <span className={cn("text-[10px] font-mono font-semibold", t.up ? "text-profit" : "text-loss")}>{t.pnl}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  {f.large && f.mockup === "tsl" && (
-                    <div className="sm:w-56 shrink-0 rounded-xl border border-border/50 bg-muted/30 p-3">
-                      <p className="text-[9px] text-muted-foreground font-medium mb-2">TSL Engine</p>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-[10px]">
-                          <span className="text-muted-foreground">Activation</span>
-                          <span className="font-mono font-semibold text-profit">1.5%</span>
-                        </div>
-                        <div className="flex justify-between text-[10px]">
-                          <span className="text-muted-foreground">Trail Step</span>
-                          <span className="font-mono font-semibold">0.5%</span>
-                        </div>
-                        <div className="flex justify-between text-[10px]">
-                          <span className="text-muted-foreground">Current SL</span>
-                          <span className="font-mono font-semibold text-primary">₹2,856</span>
-                        </div>
-                        <div className="w-full h-1.5 rounded-full bg-muted mt-2">
-                          <div className="h-full w-3/4 rounded-full bg-primary" />
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{f.description}</p>
                 </div>
               </FadeIn>
             ))}
@@ -675,58 +714,84 @@ export default function Landing() {
       </section>
 
       {/* ── Segment Showcase ─────────────────────────────── */}
-      <section id="segments" className="py-16 lg:py-24 bg-muted/30">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="segments" className="py-16 lg:py-24 relative overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.2]"
+          style={{
+            backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+        <div className="relative max-w-5xl mx-auto px-6">
           <FadeIn className="text-center mb-10">
-            <p className="text-sm font-medium text-primary mb-2 uppercase tracking-wider">Segments</p>
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              Built for Every Market
+              Built for{" "}
+              <span
+                className="italic"
+                style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
+              >
+                <span className="gradient-text-orange">Every Segment</span>
+              </span>
             </h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
               Whether you trade equity, derivatives, or commodities — TradeBook understands your market.
             </p>
           </FadeIn>
 
-          {/* Tabs — simple text underline */}
+          {/* Tabs with underline glow */}
           <FadeIn delay={100}>
-            <div className="flex items-center justify-center gap-1 mb-10 border-b border-border">
+            <div className="flex items-center justify-center gap-2 mb-10">
               {segmentTabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveSegment(tab.id)}
                   className={cn(
-                    "relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-colors",
+                    "relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300",
                     activeSegment === tab.id
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-[hsl(var(--tb-accent))] text-white shadow-lg"
+                      : "bg-card border border-border text-muted-foreground hover:text-foreground hover:border-[hsl(var(--tb-accent)/0.3)]"
                   )}
+                  style={activeSegment === tab.id ? { boxShadow: "0 4px 20px hsl(var(--tb-accent) / 0.3)" } : {}}
                 >
                   <tab.icon className="w-4 h-4" />
                   {tab.label}
-                  {activeSegment === tab.id && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t-full" />
-                  )}
                 </button>
               ))}
             </div>
           </FadeIn>
 
+          {/* Tab content */}
           <FadeIn delay={150}>
-            <div className="rounded-2xl border border-border bg-card overflow-hidden">
+            <div className="glass-morph overflow-hidden">
               <div className="grid md:grid-cols-2">
+                {/* Left: Info */}
                 <div className="p-8 lg:p-10 flex flex-col justify-center">
                   <h3 className="text-2xl font-bold mb-3">{activeTab.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-6">{activeTab.description}</p>
-                  <ul className="space-y-3">
+
+                  {/* Mini stats */}
+                  <div className="flex items-center gap-6 mb-6">
+                    {activeTab.stats.map((s) => (
+                      <div key={s.label}>
+                        <p className="text-xl font-bold font-mono gradient-text-orange">{s.value}</p>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{s.label}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Feature list */}
+                  <ul className="space-y-2.5">
                     {activeTab.features.map((f) => (
                       <li key={f} className="flex items-center gap-2.5 text-sm">
-                        <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+                        <CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0" />
                         <span>{f}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
-                <div className="border-t md:border-t-0 md:border-l border-border p-8 flex items-center justify-center bg-muted/20">
+
+                {/* Right: Visual */}
+                <div className="border-l border-border/30 p-8 flex items-center justify-center" style={{ background: "hsl(var(--card-inner))" }}>
                   <div className="w-full max-w-xs space-y-3">
                     {activeSegment === "equity" && (
                       <>
@@ -738,8 +803,8 @@ export default function Landing() {
                     {activeSegment === "fno" && (
                       <>
                         <MockTradeCard sym="NIFTY 24200 CE" type="BUY" entry="₹185" pnl="+₹8,200" up />
-                        <MockTradeCard sym="BANKNIFTY PE" type="BUY" entry="₹320" pnl="-₹4,500" up={false} />
-                        <MockTradeCard sym="NIFTY FUT" type="SELL" entry="₹24,100" pnl="+₹3,750" up />
+                        <MockTradeCard sym="BANKNIFTY 51000 PE" type="BUY" entry="₹320" pnl="-₹4,500" up={false} />
+                        <MockTradeCard sym="NIFTY FUT MAR" type="SELL" entry="₹24,100" pnl="+₹3,750" up />
                       </>
                     )}
                     {activeSegment === "commodities" && (
@@ -757,38 +822,35 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── How It Works — Step Cards with SVG Connectors ── */}
+      {/* ── How It Works (Connected Timeline) ────────────── */}
       <section id="how-it-works" className="py-16 lg:py-24">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn className="text-center mb-14">
-            <p className="text-sm font-medium text-primary mb-2 uppercase tracking-wider">How It Works</p>
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Three Steps to Trading Mastery</h2>
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Three Steps to Mastery</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
               From first trade to edge mastery — in minutes.
             </p>
           </FadeIn>
 
           <div className="relative">
-            {/* SVG curved arrow connectors (desktop only) */}
-            <svg className="hidden md:block absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 900 200" preserveAspectRatio="xMidYMid meet">
-              {/* Arrow 1→2 */}
-              <path d="M250,100 C310,60 360,60 420,100" fill="none" stroke="hsl(var(--border))" strokeWidth="2" strokeDasharray="6 4" />
-              <polygon points="415,95 425,100 415,105" fill="hsl(var(--muted-foreground))" opacity="0.4" />
-              {/* Arrow 2→3 */}
-              <path d="M490,100 C550,60 600,60 660,100" fill="none" stroke="hsl(var(--border))" strokeWidth="2" strokeDasharray="6 4" />
-              <polygon points="655,95 665,100 655,105" fill="hsl(var(--muted-foreground))" opacity="0.4" />
-            </svg>
-
-            <div className="grid md:grid-cols-3 gap-6 relative">
+            {/* Connecting gradient line (desktop) */}
+            <div className="hidden md:block absolute top-[4.5rem] left-[16.67%] right-[16.67%] h-[2px]" style={{ background: "linear-gradient(90deg, hsl(var(--tb-accent) / 0.1), hsl(var(--tb-accent) / 0.5), hsl(var(--tb-accent) / 0.1))" }} />
+            
+            <div className="grid md:grid-cols-3 gap-6">
               {steps.map((item, i) => (
-                <FadeIn key={i} delay={i * 120}>
-                  <div className="text-center">
-                    {/* Step label */}
-                    <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-4">Step {i + 1}</p>
-
-                    <div className="rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:shadow-lg hover:border-primary/15 hover:-translate-y-1">
-                      <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
-                        <item.icon className="w-6 h-6 text-primary" />
+                <FadeIn key={item.step} delay={i * 120}>
+                  <div className="relative group">
+                    {/* Step circle on timeline */}
+                    <div className="hidden md:flex absolute -top-0 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full items-center justify-center z-10" style={{ background: "linear-gradient(135deg, hsl(var(--tb-accent)), hsl(16 85% 45%))" }}>
+                      <span className="text-white text-xs font-bold">{i + 1}</span>
+                    </div>
+                    
+                    <div className="premium-card-hover text-center mt-12 md:mt-14">
+                      <div className="absolute top-3 right-4 text-5xl font-black select-none gradient-text-orange opacity-20">
+                        {item.step}
+                      </div>
+                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5" style={{ background: "linear-gradient(135deg, hsl(var(--tb-accent) / 0.15), hsl(var(--tb-accent) / 0.05))" }}>
+                        <item.icon className="w-6 h-6 text-[hsl(var(--tb-accent))]" />
                       </div>
                       <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
                       <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
@@ -802,10 +864,21 @@ export default function Landing() {
       </section>
 
       {/* ── Pricing ──────────────────────────────────────── */}
-      <section id="pricing" className="py-16 lg:py-24 bg-muted/30">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="pricing" className="py-16 lg:py-24 relative overflow-hidden">
+        {/* Ambient glow behind pricing */}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] pointer-events-none"
+          style={{ background: "radial-gradient(ellipse at center, hsl(var(--tb-accent) / 0.06) 0%, transparent 70%)" }}
+        />
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.15]"
+          style={{
+            backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+        <div className="relative max-w-5xl mx-auto px-6">
           <FadeIn className="text-center mb-14">
-            <p className="text-sm font-medium text-primary mb-2 uppercase tracking-wider">Pricing</p>
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
               Start free. Upgrade when your edge demands it.
@@ -815,53 +888,62 @@ export default function Landing() {
           <div className="grid md:grid-cols-3 gap-6 items-start">
             {pricingPlans.map((plan, i) => (
               <FadeIn key={plan.name} delay={i * 100}>
-                <div className={cn(
-                  "rounded-2xl border bg-card p-6 flex flex-col h-full transition-all duration-300 hover:shadow-lg",
-                  plan.highlighted
-                    ? "border-primary shadow-lg ring-1 ring-primary/20 scale-[1.02] lg:scale-105 relative"
-                    : "border-border hover:border-primary/15"
-                )}>
-                  {plan.highlighted && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
-                      <Zap className="w-3 h-3" /> Most Popular
+                {plan.highlighted ? (
+                  /* Pro card with gradient border */
+                  <div className="relative rounded-2xl p-[1.5px] overflow-hidden scale-[1.02] lg:scale-105" style={{ background: "linear-gradient(135deg, hsl(var(--tb-accent)), hsl(16 85% 45%), hsl(var(--tb-accent) / 0.4))" }}>
+                    <div className="bg-card rounded-[calc(1rem-1.5px)] p-6 flex flex-col relative overflow-hidden" style={{ boxShadow: "0 0 30px hsl(var(--tb-accent) / 0.15)" }}>
+                      <div className="shimmer-badge inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))] text-xs font-semibold mb-4">
+                        <Zap className="w-3 h-3" /> Most Popular
+                      </div>
+                      <h3 className="text-xl font-bold">{plan.name}</h3>
+                      <div className="mt-3 mb-1 flex items-baseline gap-1">
+                        <span className="text-4xl font-bold font-mono gradient-text-orange">{plan.price}</span>
+                        <span className="text-muted-foreground text-sm">{plan.period}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-6">{plan.description}</p>
+                      <ul className="space-y-3 flex-1 mb-8">
+                        {plan.features.map((f) => (
+                          <li key={f} className="flex items-start gap-2.5 text-sm">
+                            <CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0 mt-0.5" />
+                            <span>{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <Button
+                        className="w-full h-11 rounded-full bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white shadow-none cta-glow-pulse"
+                        onClick={() => navigate("/login")}
+                      >
+                        {plan.cta}
+                        <ArrowRight className="w-4 h-4 ml-1" />
+                      </Button>
                     </div>
-                  )}
-
-                  {/* Gradient header for highlighted */}
-                  {plan.highlighted && (
-                    <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl bg-gradient-to-r from-primary to-primary/60" />
-                  )}
-
-                  <h3 className="text-xl font-bold mt-1">{plan.name}</h3>
-                  <div className="mt-3 mb-1 flex items-baseline gap-1">
-                    <span className="text-4xl font-bold font-mono">{plan.price}</span>
-                    <span className="text-muted-foreground text-sm">{plan.period}</span>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-6">{plan.description}</p>
-
-                  <ul className="space-y-3 flex-1 mb-8">
-                    {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2.5 text-sm">
-                        <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                        <span>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    className={cn(
-                      "w-full h-11 rounded-full",
-                      plan.highlighted
-                        ? "shadow-none"
-                        : ""
-                    )}
-                    variant={plan.highlighted ? "default" : "outline"}
-                    onClick={() => navigate("/login")}
-                  >
-                    {plan.cta}
-                    {plan.highlighted && <ArrowRight className="w-4 h-4 ml-1" />}
-                  </Button>
-                </div>
+                ) : (
+                  /* Free & Team cards with glassmorphism */
+                  <div className="glass-morph p-6 flex flex-col h-full transition-all duration-300 hover:border-[hsl(var(--tb-accent)/0.2)]">
+                    <h3 className="text-xl font-bold">{plan.name}</h3>
+                    <div className="mt-3 mb-1 flex items-baseline gap-1">
+                      <span className="text-4xl font-bold font-mono gradient-text-orange">{plan.price}</span>
+                      <span className="text-muted-foreground text-sm">{plan.period}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-6">{plan.description}</p>
+                    <ul className="space-y-3 flex-1 mb-8">
+                      {plan.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2.5 text-sm">
+                          <CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0 mt-0.5" />
+                          <span>{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button
+                      className="w-full h-11 rounded-full"
+                      variant="outline"
+                      onClick={() => navigate("/login")}
+                    >
+                      {plan.cta}
+                    </Button>
+                  </div>
+                )}
               </FadeIn>
             ))}
           </div>
@@ -872,32 +954,38 @@ export default function Landing() {
       <section className="py-16 lg:py-24">
         <div className="max-w-6xl mx-auto px-6">
           <FadeIn className="text-center mb-14">
-            <p className="text-sm font-medium text-primary mb-2 uppercase tracking-wider">Testimonials</p>
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              Trusted by Real Traders
+              Trusted by{" "}
+              <span
+                className="italic"
+                style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
+              >
+                <span className="gradient-text-orange">Real Traders</span>
+              </span>
             </h2>
             <p className="text-muted-foreground max-w-md mx-auto">
-              Here's what traders across India are saying.
+              Here's what traders across India are saying about TradeBook.
             </p>
           </FadeIn>
 
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <FadeIn key={t.name} delay={i * 100}>
-                <div className="rounded-2xl border border-border bg-card p-6 h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:border-primary/15">
-                  {/* Stars */}
-                  <div className="flex items-center gap-0.5 mb-4">
-                    {[...Array(t.stars)].map((_, j) => (
-                      <Star key={j} className="w-4 h-4 fill-primary text-primary" />
-                    ))}
-                  </div>
-
-                  <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-6">
+                <div className="glass-morph p-6 h-full flex flex-col relative overflow-hidden">
+                  {/* Large decorative quote watermark */}
+                  <div className="absolute top-4 right-4 text-6xl font-serif text-[hsl(var(--tb-accent)/0.06)] leading-none select-none">"</div>
+                  <Quote className="w-8 h-8 text-[hsl(var(--tb-accent)/0.35)] mb-4" />
+                  <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-4">
                     "{t.quote}"
                   </p>
-
+                  <div className="flex items-center gap-1 mb-3">
+                    {[...Array(t.stars)].map((_, j) => (
+                      <Star key={j} className="w-3.5 h-3.5 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />
+                    ))}
+                  </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-primary-foreground bg-primary">
+                    {/* Avatar with initials */}
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0" style={{ background: "linear-gradient(135deg, hsl(var(--tb-accent)), hsl(16 85% 45%))" }}>
                       {t.initials}
                     </div>
                     <div>
@@ -912,11 +1000,17 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── FAQ ───────────────────────────────────────────── */}
-      <section id="faq" className="py-16 lg:py-24 bg-muted/30">
-        <div className="max-w-3xl mx-auto px-6">
+      {/* ── FAQ (Glassmorphism Wrapper) ───────────────────── */}
+      <section id="faq" className="py-16 lg:py-24 relative overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.15]"
+          style={{
+            backgroundImage: "radial-gradient(circle, hsl(var(--tb-accent) / 0.12) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+        <div className="relative max-w-3xl mx-auto px-6">
           <FadeIn className="text-center mb-10">
-            <p className="text-sm font-medium text-primary mb-2 uppercase tracking-wider">FAQ</p>
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
               Everything you need to know about TradeBook.
@@ -924,27 +1018,43 @@ export default function Landing() {
           </FadeIn>
 
           <FadeIn delay={100}>
-            <div className="rounded-2xl border border-border bg-card px-6 sm:px-8">
-              {faqs.map((faq) => (
-                <FAQItem key={faq.q} question={faq.q} answer={faq.a} />
-              ))}
+            <div className="glass-morph p-6 sm:p-8">
+              <div className="space-y-3">
+                {faqs.map((faq) => (
+                  <FAQItem key={faq.q} question={faq.q} answer={faq.a} />
+                ))}
+              </div>
             </div>
           </FadeIn>
         </div>
       </section>
 
-      {/* ── Final CTA ────────────────────────────────────── */}
-      <section className="py-20 lg:py-28">
-        <FadeIn className="max-w-3xl mx-auto px-6 text-center">
+      {/* ── Final CTA (Dramatic gradient bg) ─────────────── */}
+      <section className="py-16 lg:py-24 relative overflow-hidden">
+        {/* Gradient background */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 0%, hsl(var(--tb-accent) / 0.04) 30%, hsl(var(--tb-accent) / 0.08) 100%)" }} />
+        {/* Floating decorative shapes */}
+        <div className="absolute top-10 left-10 w-32 h-32 rounded-full border border-[hsl(var(--tb-accent)/0.1)] pointer-events-none animate-float" style={{ animationDelay: "1s" }} />
+        <div className="absolute bottom-10 right-10 w-20 h-20 rounded-2xl border border-[hsl(var(--tb-accent)/0.08)] pointer-events-none animate-float" style={{ animationDelay: "2s" }} />
+        
+        <FadeIn className="relative max-w-3xl mx-auto px-6 text-center">
           <h2 className="text-3xl lg:text-5xl font-bold mb-6 leading-tight">
-            Ready to Find Your Edge?
+            Stop Losing Money to
+            <br />
+            <span
+              className="italic"
+              style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}
+            >
+              <span className="gradient-text-orange">Undisciplined</span>
+            </span>{" "}
+            Trading
           </h2>
           <p className="text-base lg:text-lg text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed">
             Start journaling, analyzing, and compounding your trading edge — every single day.
           </p>
           <Button
             size="lg"
-            className="h-14 px-12 text-lg gap-2.5 rounded-full font-semibold shadow-none"
+            className="h-14 px-12 text-lg gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-none font-semibold cta-glow-pulse"
             onClick={() => navigate("/login")}
           >
             Get Started — It's Free <ArrowRight className="w-5 h-5" />
@@ -953,20 +1063,30 @@ export default function Landing() {
         </FadeIn>
       </section>
 
-      {/* ── Footer ───────────────────────────────────────── */}
-      <footer className="border-t border-border py-12 bg-card/50">
+      {/* ── Footer (Glass + gradient separator) ──────────── */}
+      <footer className="relative bg-card/60 backdrop-blur-sm py-12">
+        {/* Gradient separator */}
+        <div className="absolute top-0 left-0 right-0 h-[1px]" style={{ background: "linear-gradient(90deg, transparent, hsl(var(--tb-accent) / 0.3), transparent)" }} />
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-1">
               <div className="flex items-center gap-2.5 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-primary-foreground" />
+                <div className="w-8 h-8 rounded-lg bg-[hsl(var(--tb-accent))] flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 text-white" />
                 </div>
                 <span className="font-bold">TradeBook</span>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                 The trading journal built for Indian markets. Track, analyze, and improve.
               </p>
+              {/* Social icons */}
+              <div className="flex items-center gap-3">
+                {[Twitter, Linkedin, Youtube].map((Icon, i) => (
+                  <div key={i} className="w-8 h-8 rounded-lg bg-muted/60 flex items-center justify-center text-muted-foreground hover:text-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent)/0.1)] transition-colors cursor-pointer">
+                    <Icon className="w-3.5 h-3.5" />
+                  </div>
+                ))}
+              </div>
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-3">Product</h4>
@@ -991,7 +1111,7 @@ export default function Landing() {
               </ul>
             </div>
           </div>
-          <div className="border-t border-border pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-border/50 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-muted-foreground">
               © {new Date().getFullYear()} TradeBook. All rights reserved. Made with ❤️ in India.
             </p>
@@ -1021,7 +1141,12 @@ function MockTradeCard({ sym, type, entry, pnl, up }: { sym: string; type: strin
           <p className="text-[10px] text-muted-foreground">{type} · {entry}</p>
         </div>
       </div>
-      <span className={cn("text-xs font-mono font-semibold", up ? "text-profit" : "text-loss")}>{pnl}</span>
+      <div className="text-right">
+        <p className={cn("text-xs font-mono font-bold", up ? "text-profit" : "text-loss")}>{pnl}</p>
+        <div className="flex items-center justify-end">
+          {up ? <ArrowUpRight className="w-3 h-3 text-profit" /> : <ArrowDownRight className="w-3 h-3 text-loss" />}
+        </div>
+      </div>
     </div>
   );
 }
