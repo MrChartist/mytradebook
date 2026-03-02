@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -168,6 +169,11 @@ export default function Docs() {
 
   return (
     <DocsColorModeProvider>
+      <SEOHead
+        title="Documentation"
+        description="Complete guide to TradeBook features — dashboard, trade logging, alerts, analytics, journal, and integrations for Indian market traders."
+        path="/docs"
+      />
       <DocsContent
         navigate={navigate}
         isInsideApp={isInsideApp}

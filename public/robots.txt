@@ -12,3 +12,8 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /auth/callback
+Disallow: /dhan-callback
+Disallow: /reset-password
+
+Sitemap: https://mytradebook.lovable.app/sitemap.xml
