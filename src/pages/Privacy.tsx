@@ -1,6 +1,9 @@
+import { SEOHead } from "@/components/SEOHead";
+
 export default function Privacy() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEOHead title="Privacy Policy" path="/privacy" description="Privacy Policy for TradeBook — how we handle your data." />
       <div className="max-w-3xl mx-auto px-6 py-16">
         <h1 className="text-3xl font-bold mb-8">Privacy Policy</h1>
         <div className="prose prose-sm dark:prose-invert space-y-6 text-muted-foreground">

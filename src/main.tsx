@@ -35,4 +35,26 @@ if (isPreview && "serviceWorker" in navigator) {
   });
 }
 
+// Core Web Vitals monitoring (LCP, CLS) — lightweight, no deps
+try {
+  const logVital = (name: string, value: number) => {
+    try {
+      const log = JSON.parse(localStorage.getItem("tb_perf_log") || "[]");
+      log.unshift({ name, value: Math.round(value), ts: Date.now() });
+      localStorage.setItem("tb_perf_log", JSON.stringify(log.slice(0, 20)));
+    } catch { /* quota exceeded — ignore */ }
+  };
+  if (typeof PerformanceObserver !== "undefined") {
+    new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) logVital("LCP", entry.startTime);
+    }).observe({ type: "largest-contentful-paint", buffered: true });
+
+    new PerformanceObserver((list) => {
+      let cls = 0;
+      for (const entry of list.getEntries()) cls += (entry as any).value ?? 0;
+      if (cls > 0) logVital("CLS", cls * 1000);
+    }).observe({ type: "layout-shift", buffered: true });
+  }
+} catch { /* PerformanceObserver not supported */ }
+
 createRoot(document.getElementById("root")!).render(<App />);
