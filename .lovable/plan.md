@@ -1,71 +1,58 @@
 
 
-# Improve "How It Works" Section + Add Missing Landing Page Sections
+# Improve "Why TradeBook?" Comparison Section
 
-## Current State
-The "How It Works" section (lines 981-1021) already has a 3-step card layout with step number watermarks, icon badges, and dashed connecting lines. It closely matches the reference image but can be polished further.
+## Current Issues
+- Plain grid layout lacks visual polish compared to the reference image
+- No row hover effects or staggered animations
+- "Others" column badges (Paid, Limited) are too subtle
+- Missing more comparison features that highlight TradeBook's strengths
+- No summary CTA at the bottom of the table
+- Alternating row colors are barely visible
 
-## Improvements to "How It Works"
+## Improvements
 
-### Visual Polish (lines 995-1018)
-- **Step number watermark**: Increase opacity from `0.03` to `0.06` and use the accent color (`text-[hsl(var(--tb-accent))]`) with low opacity so it tints orange like the reference image, not invisible gray
-- **Connecting lines**: Replace dashed borders with a proper arrow/chevron connector between cards (using small `ChevronRight` icons positioned between columns)
-- **Icon badge ring**: Add a subtle outer ring/glow around the icon badge (`ring-4 ring-[hsl(var(--tb-accent)/0.04)]`) to match the reference's double-circle effect
-- **Card background**: Use solid `bg-card` instead of `bg-card/80` for more contrast, matching the crisp white cards in the reference
-- **Step label**: Add a small "STEP 01" label above the icon badge for extra clarity
+### 1. Add More Comparison Rows
+Expand from 8 to 10 rows, adding:
+- **AI-powered insights** (TradeBook: check, Others: false)
+- **Position sizing calculator** (TradeBook: check, Others: "Basic")
 
-### Content Enhancement
-- Add a 4th implicit step or a CTA below: "Ready to start? It takes less than 60 seconds" with a button
+### 2. Visual Polish for Table
+- **Row hover**: Add `hover:bg-[hsl(var(--tb-accent)/0.04)]` with smooth transition for interactive feel
+- **Alternating rows**: Increase contrast from `bg-muted/[0.04]` to `bg-muted/10` so zebra striping is visible
+- **TradeBook check icons**: Use filled green circles with a subtle glow (`drop-shadow-[0_0_4px_rgba(34,197,94,0.3)]`)
+- **"Others" badges** (Paid, Limited): Use a more visible pill style with `bg-destructive/10 text-destructive border border-destructive/20` to emphasize the competitor disadvantage
+- **Others dash icon**: Slightly larger and more visible `text-muted-foreground/40`
 
-## New Sections to Add (below "How It Works", above Comparison)
+### 3. Staggered Row Animations
+Each row animates in with a slight delay using `custom={i * 0.05}` on the fadeUp variant, creating a cascading reveal effect as the section scrolls into view.
 
-### 1. **Stats/Social Proof Bar** (new section)
-A horizontal strip showing key platform metrics with animated counters:
-- "500+ Traders" | "12,000+ Trades Logged" | "98% Uptime" | "4.8/5 Rating"
-- Uses the existing `useCountUp` hook already in the file
-- Clean single-row layout with dividers, accent-colored numbers
+### 4. Bottom CTA Strip
+Add a rounded footer row at the bottom of the table with:
+- "All features included in free beta" text on the left
+- "Start Free" button on the right linking to `/login?mode=signup`
+- Accent background tint: `bg-[hsl(var(--tb-accent)/0.06)]`
 
-### 2. **"Built for Indian Markets" Section** (new section)
-A focused callout highlighting India-specific features:
-- NSE, BSE, MCX segment support
-- INR currency throughout
-- Dhan broker integration
-- Indian market hours (9:15 AM - 3:30 PM) awareness
-- Layout: Left side text + right side showing segment pills (Equity, F&O, Commodity, Currency)
-
-### 3. **FAQ Accordion** (new section, before footer)
-Common questions traders would have:
-- "Is my data safe?" -- End-to-end encryption, no sharing
-- "Can I import from Zerodha/Angel One?" -- CSV import supports all brokers
-- "Is it really free during beta?" -- Yes, all features included
-- "Does it work on mobile?" -- PWA, works on any device
-- Uses Radix Accordion (already installed)
+### 5. Header Row Styling
+- Make "Feature" column header bolder (`font-semibold text-foreground`)
+- Add a small crown/trophy icon next to "TradeBook" header text
+- Slightly larger header padding (`py-5`)
 
 ## Technical Changes
 
 ### File: `src/pages/Landing.tsx`
 
-**"How It Works" cards (lines 1000-1018):**
-- Update watermark styling: `text-[hsl(var(--tb-accent))] opacity-[0.07]` instead of `text-muted-foreground/[0.03]`
-- Add "STEP" label above icon
-- Add ring effect to icon badge
-- Replace dashed border connectors with chevron icons between cards
+**Data array (~line 150-159):**
+- Add 2 new rows to `comparisonFeatures` array
 
-**New Stats Bar section (~15 lines, inserted after "How It Works"):**
-- 4 metrics in a horizontal flex row with `useCountUp`
-- Minimal styling with `text-4xl font-bold text-[hsl(var(--tb-accent))]` for numbers
+**Comparison section (~line 1057-1092):**
+- Update header row with trophy icon and bolder styling
+- Update row rendering with hover effect, improved badge styles, and green glow on check icons
+- Add bottom CTA row after the map
+- Increase stagger delay on `custom` prop
 
-**New "Built for India" section (~30 lines):**
-- Two-column layout: headline + description on left, segment badges on right
-- Reuses `SectionBadge` and `fadeUp` animation patterns
-
-**New FAQ section (~40 lines, before footer):**
-- Import `Accordion, AccordionItem, AccordionTrigger, AccordionContent` from existing Radix components
-- 4-5 FAQ items in a max-w-2xl centered container
-
-**New imports:**
-- Add `Accordion` components from `@/components/ui/accordion`
+**Imports:**
+- Add `Trophy` icon from lucide-react (if not already imported)
 
 ### No other files changed
-- Only `src/pages/Landing.tsx` is modified
 
