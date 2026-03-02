@@ -1,63 +1,60 @@
 
 
-# Improve Final CTA Section
+# Polish Footer to Match Header Style
 
 ## Current State
-The section already has the right structure -- bold headline, subtitle, CTA button, and trust badges. But it can be elevated with more visual depth and emotional impact.
+The footer has the right structure (4-column grid with logo, Product, Support, Legal links + bottom bar) but it feels flat and disconnected from the premium "floating island" navbar style. It lacks visual refinement like the header's backdrop-blur, rounded borders, and spacing.
 
 ## Improvements
 
-### 1. Add Social Proof Counter Strip
-Above the headline, add a small animated strip showing live-feeling stats:
-- "1,200+ traders" with a mini avatar stack (3 overlapping colored circles)
-- "42,000+ trades logged" with a chart icon
-- This adds credibility right before the CTA ask
+### 1. Logo Treatment -- Match Navbar Exactly
+The navbar logo uses a `rounded-xl` icon with a glow shadow (`shadow-[0_0_16px_hsl(var(--tb-accent)/0.25)]`) and `font-logo` text. The footer logo uses `rounded-lg` without glow. Sync them.
 
-### 2. Stronger Radial Glow Background
-The current radial gradient is very subtle (6% opacity). Increase it slightly and add a second, softer ring to create a warm "spotlight" effect that draws the eye to the CTA button.
+### 2. Footer Link Hover -- Pill Style Like Navbar
+Navbar links have `rounded-full hover:bg-muted/60` pill hover states. Footer links are plain `hover:text-foreground`. Add the same pill hover style with slight padding for consistency.
 
-### 3. Headline -- Add Word-by-Word Stagger
-Instead of the whole heading fading in at once, stagger each line slightly for a cinematic reveal effect using Framer Motion's `staggerChildren`.
+### 3. Add Social/Action Row
+Add a small row in the logo column with:
+- A "Get Started" pill button (matching the navbar CTA style)
+- A ThemeToggle (matching the navbar)
 
-### 4. CTA Button -- Add Shimmer Effect
-Add a CSS shimmer animation across the button surface to make it feel alive and draw attention, similar to premium SaaS landing pages.
+### 4. Column Headers -- Badge Style
+Replace plain `<h4>` column headers with the same `SectionBadge`-like uppercase tracking style used elsewhere, but smaller -- `text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/60` to match the `sidebar-section-label` pattern.
 
-### 5. Trust Badges -- Richer Style
-Upgrade the trust badges from plain text to mini pill badges with icons:
-- Lock icon + "Bank-grade encryption" in a subtle pill
-- Shield icon + "No credit card required" in a subtle pill  
-- Clock icon + "Setup in 2 minutes" (new badge)
+### 5. Bottom Bar -- Richer Layout
+- Add a thin decorative accent gradient line above the bottom bar (same as the CTA section separator)
+- Add the Indian tricolor micro-stripe before "Made with" text
+- Style the SEBI disclaimer with a subtle `bg-muted/30 rounded-full px-3 py-1` pill treatment
 
-### 6. Bottom Decorative Element
-Add a subtle decorative line or divider between the CTA section and footer -- a thin gradient line (saffron to transparent) that acts as a visual separator.
+### 6. Background -- Match Premium Feel
+Change from `bg-card/30` to a slightly richer treatment with the `dot-pattern` class for texture consistency with other sections.
+
+### 7. Add Extra Links
+- Add "Changelog" under Product
+- Add "FAQ" under Support (scrolls to FAQ section)
 
 ## Technical Changes
 
-### File: `src/pages/Landing.tsx` (lines 1442-1475)
+### File: `src/pages/Landing.tsx` (lines 1512-1555)
 
-**Background (line 1446):**
-- Increase radial gradient opacity from 0.06 to 0.1
-- Add a second larger, softer radial gradient ring
+**Section background (line 1513):**
+- Change to `border-t border-border/30 bg-card/50 dot-pattern py-16`
 
-**Social proof strip (before headline, after line 1448):**
-- Add a `motion.div` with 3 overlapping colored avatar circles + "1,200+ traders" and "42,000+ trades logged" stats in a flex row
+**Logo block (lines 1517-1525):**
+- Match navbar icon: `rounded-xl` + glow shadow
+- Add a mini CTA row: "Get Started" pill button + ThemeToggle
 
-**CTA Button (lines 1460-1468):**
-- Add a CSS shimmer pseudo-element via an inline style or a new `shimmer-cta` class
-- The shimmer is a diagonal white gradient that slides across the button every 3 seconds
+**Column headers (lines 1528, 1536, 1543):**
+- Change to `text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-5`
 
-**Trust badges (lines 1469-1473):**
-- Upgrade to pill-style badges with `bg-muted/50 rounded-full px-3 py-1.5` styling
-- Add a third badge: "Setup in 2 minutes" with a Clock icon
-- Use Shield icon instead of the dot separator
+**Links (lines 1530-1532, 1538-1539, 1545-1546):**
+- Add `rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50` for pill hover effect
+- Add "Changelog" and "FAQ" links
 
-**Bottom gradient line (after line 1474):**
-- Add a `div` with `h-[1px] bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.3)] to-transparent max-w-md mx-auto mt-16`
+**Bottom bar (lines 1550-1553):**
+- Add gradient separator line above
+- Wrap SEBI disclaimer in a subtle pill
+- Style "Made with" section with the tricolor micro-stripe (3 small colored dots or bars)
 
-### CSS Addition in `src/index.css`
-Add a `shimmer-cta` keyframe animation:
-- A diagonal white gradient that translates across the button surface
-- `animation: shimmer-cta 3s ease-in-out infinite`
-
-### No new dependencies needed
+### No new files or dependencies needed
 
