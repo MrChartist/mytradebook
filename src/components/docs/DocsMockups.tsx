@@ -2957,7 +2957,115 @@ export function TelegramIntegrationDetailMockup() {
 }
 
 /* ──────────────────────────────────────────────
-   52g. JournalDashboardTabMockup
+   52h. KeyboardShortcutsDetailMockup
+   ────────────────────────────────────────────── */
+export function KeyboardShortcutsDetailMockup() {
+  const quickActions = [
+    { keys: ["N"], desc: "New Trade", icon: "📊" },
+    { keys: ["A"], desc: "New Alert", icon: "🔔" },
+    { keys: ["S"], desc: "New Study", icon: "📖" },
+  ];
+  const navigation = [
+    { keys: ["1"], desc: "Dashboard" },
+    { keys: ["2"], desc: "Trades" },
+    { keys: ["3"], desc: "Alerts" },
+    { keys: ["4"], desc: "Studies" },
+    { keys: ["5"], desc: "Watchlist" },
+    { keys: ["6"], desc: "Analytics" },
+  ];
+  const commandResults = [
+    { type: "Action", label: "Create new trade", icon: "⚡" },
+    { type: "Page", label: "Go to Analytics", icon: "📊" },
+    { type: "Trade", label: "RELIANCE — BUY · +₹2,450", icon: "📈" },
+    { type: "Trade", label: "NIFTY FUT — SELL · −₹800", icon: "📉" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4">
+        <div className="flex items-center gap-2 mb-4">
+          <KeyboardIcon className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
+          <p className="text-xs font-bold">Keyboard Shortcuts & Command Palette</p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4 mb-4">
+          {/* Quick actions */}
+          <div className="rounded-lg bg-muted/20 border border-border/30 p-3">
+            <p className="text-[9px] font-bold mb-2.5">⚡ Quick Actions</p>
+            <div className="space-y-2">
+              {quickActions.map((a) => (
+                <div key={a.desc} className="flex items-center gap-2.5">
+                  <kbd className="min-w-[28px] h-7 rounded-md bg-muted border border-border/60 flex items-center justify-center text-[10px] font-mono font-bold shadow-sm">
+                    {a.keys[0]}
+                  </kbd>
+                  <span className="text-sm">{a.icon}</span>
+                  <span className="text-[10px] font-medium">{a.desc}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Navigation grid */}
+          <div className="rounded-lg bg-muted/20 border border-border/30 p-3">
+            <p className="text-[9px] font-bold mb-2.5">🧭 Navigation</p>
+            <div className="grid grid-cols-2 gap-1.5">
+              {navigation.map((n) => (
+                <div key={n.desc} className="flex items-center gap-2 rounded-md bg-card border border-border/20 px-2 py-1.5">
+                  <kbd className="w-6 h-6 rounded bg-muted border border-border/60 flex items-center justify-center text-[9px] font-mono font-bold">
+                    {n.keys[0]}
+                  </kbd>
+                  <span className="text-[9px] font-medium">{n.desc}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Command Palette mockup */}
+        <div className="rounded-xl bg-background border border-border shadow-lg overflow-hidden max-w-md mx-auto">
+          {/* Search bar */}
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-border/30">
+            <Search className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground flex-1">reli</span>
+            <div className="flex items-center gap-0.5">
+              <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/60 text-[8px] font-mono">⌘</kbd>
+              <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/60 text-[8px] font-mono">K</kbd>
+            </div>
+          </div>
+          {/* Results */}
+          <div className="py-1">
+            {commandResults.map((r, i) => (
+              <div
+                key={r.label}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-2 text-[11px] cursor-pointer transition-colors",
+                  i === 2 ? "bg-[hsl(var(--tb-accent)/0.08)]" : "hover:bg-muted/30"
+                )}
+              >
+                <span className="text-sm">{r.icon}</span>
+                <div className="flex-1">
+                  <span className={cn("font-medium", i === 2 && "text-[hsl(var(--tb-accent))]")}>{r.label}</span>
+                </div>
+                <span className="text-[8px] px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground font-semibold">{r.type}</span>
+              </div>
+            ))}
+          </div>
+          {/* Footer */}
+          <div className="flex items-center justify-between px-4 py-2 border-t border-border/20 text-[8px] text-muted-foreground bg-muted/20">
+            <div className="flex items-center gap-2">
+              <span>↑↓ Navigate</span>
+              <span>↵ Select</span>
+              <span>Esc Close</span>
+            </div>
+            <span>4 results</span>
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   52i. JournalDashboardTabMockup
    ────────────────────────────────────────────── */
 export function JournalDashboardTabMockup() {
   const summaryCards = [
