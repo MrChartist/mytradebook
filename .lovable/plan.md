@@ -1,40 +1,61 @@
 
-# Apply Surgena-Style Typography to TradeBook Logo
 
-## What is Surgena?
-Surgena is a modern geometric sans-serif font with clean lines, balanced proportions, and a premium tech feel. Since it's a commercial font (not on Google Fonts), we'll use **Space Grotesk** -- a free Google Font with the same geometric, modern, tech-forward aesthetic that closely matches Surgena's character.
+# Redesign Dashboard Sidebar -- SmartShort-Inspired Style
 
-## Why Space Grotesk?
-- Same geometric sans-serif family as Surgena
-- Clean, modern, slightly condensed proportions
-- Works beautifully for logos and headings
-- Available free on Google Fonts
-- Matches the warm orange theme perfectly when combined with letter-spacing and weight
+## Inspiration (from screenshot)
+The reference sidebar features:
+- A bold **left accent bar** (green/lime) on the active nav item
+- Active item has a subtle translucent background fill
+- Clean **uppercase section labels** ("MAIN MENU", "PROJECTS") with generous spacing
+- Generous vertical padding on each nav item for a spacious feel
+- Minimal, modern aesthetic with clear visual hierarchy
 
 ## Changes
 
-### 1. Add Space Grotesk font (`index.html`)
-- Add "Space Grotesk" to the existing Google Fonts link (weight 700 for bold logo usage)
+### 1. Update active nav item style (`Sidebar.tsx`)
+- Add a **3px left accent bar** (primary/orange color) on active items using a `before` pseudo-element or a left-border approach
+- Keep the translucent `bg-primary/8` background on active items
+- Increase nav item padding slightly (`py-2.5` instead of `py-2`) for a more spacious feel
+- Use `rounded-lg` (instead of `rounded-xl`) to match the tighter, modern look from the reference
+- Add a subtle left-border glow effect on hover items
 
-### 2. Create a reusable logo text class (`src/index.css`)
-- Add a `.logo-text` utility class with `font-family: 'Space Grotesk'`, `font-weight: 700`, and tight letter-spacing to nail the Surgena look
+### 2. Improve section labels (`Sidebar.tsx` + `index.css`)
+- Increase section label font size slightly (from `10px` to `11px`)
+- Add more top margin between sections (`mt-6` instead of `mt-5`)
+- Keep the uppercase tracking style (already matches the reference well)
 
-### 3. Update all "TradeBook" logo instances
-Apply the new logo font class in these locations:
-- **Sidebar mobile header** (`src/components/layout/Sidebar.tsx`, line 92)
-- **Sidebar desktop** (`src/components/layout/Sidebar.tsx`, line 121)
-- **Landing page navbar** (`src/pages/Landing.tsx`, line 389)
-- **Docs page navbar** (`src/pages/Docs.tsx`, line 209)
-- **Landing page footer** (if logo text appears there)
+### 3. Add accent bar CSS class (`index.css`)
+- Create a `.nav-active-bar` utility with a `before` pseudo-element:
+  - 3px wide, primary-colored rounded bar on the left edge
+  - Positioned absolutely, centered vertically, ~60% height of the item
 
-### 4. Tailwind config (`tailwind.config.ts`)
-- Add `logo: ["Space Grotesk", "Inter", "system-ui", "sans-serif"]` to `fontFamily` so we can use `font-logo` class
+### Files Modified
+- **`src/components/layout/Sidebar.tsx`** -- Update `renderNavItem` classes for active bar + spacing
+- **`src/index.css`** -- Add `.nav-active-bar` utility class, tweak section label
 
-## Files Modified
-- `index.html` -- add font import
-- `tailwind.config.ts` -- add `logo` font family
-- `src/components/layout/Sidebar.tsx` -- apply `font-logo` to logo text
-- `src/pages/Landing.tsx` -- apply `font-logo` to navbar logo
-- `src/pages/Docs.tsx` -- apply `font-logo` to navbar logo
+### Technical Details
 
-No functional changes -- purely typographic styling for the brand logo.
+**Active bar approach** (CSS pseudo-element in `index.css`):
+```css
+.nav-active-bar {
+  position: relative;
+}
+.nav-active-bar::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: hsl(var(--primary));
+}
+```
+
+**Nav item class updates** (`renderNavItem` in Sidebar.tsx):
+- Active: add `nav-active-bar` class, keep `bg-primary/8 text-primary font-medium`
+- Default: `text-muted-foreground hover:text-foreground hover:bg-muted/60`
+- Change `rounded-xl` to `rounded-lg`, increase `py-2` to `py-2.5`
+
+No functional changes -- purely visual refinement to match the premium SmartShort aesthetic.
+
