@@ -51,27 +51,32 @@ function MockupFrame({ children, className }: { children: ReactNode; className?:
    1. BentoFeatureGrid — Hero overview
    ────────────────────────────────────────────── */
 const bentoItems = [
-  { icon: LayoutDashboard, label: "Dashboard", color: "hsl(var(--tb-accent))" },
-  { icon: CandlestickChart, label: "Trades", color: "hsl(var(--profit))" },
-  { icon: Bell, label: "Alerts", color: "hsl(var(--warning))" },
-  { icon: BarChart3, label: "Analytics", color: "hsl(var(--primary))" },
-  { icon: FileText, label: "Journal", color: "hsl(var(--profit))" },
-  { icon: Layers, label: "Integrations", color: "hsl(var(--muted-foreground))" },
+  { icon: LayoutDashboard, label: "Dashboard", color: "hsl(var(--tb-accent))", sectionId: "dashboard" },
+  { icon: CandlestickChart, label: "Trades", color: "hsl(var(--profit))", sectionId: "trade-management" },
+  { icon: Bell, label: "Alerts", color: "hsl(var(--warning))", sectionId: "alerts" },
+  { icon: BarChart3, label: "Analytics", color: "hsl(var(--primary))", sectionId: "analytics" },
+  { icon: FileText, label: "Journal", color: "hsl(var(--profit))", sectionId: "journal" },
+  { icon: Layers, label: "Integrations", color: "hsl(var(--muted-foreground))", sectionId: "integrations" },
 ];
 
 export function BentoFeatureGrid() {
+  const handleClick = (sectionId: string) => {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mt-8">
       {bentoItems.map((item) => (
-        <div
+        <button
           key={item.label}
-          className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border/40 bg-card/60 hover:border-[hsl(var(--tb-accent)/0.4)] hover:shadow-md transition-all cursor-default"
+          onClick={() => handleClick(item.sectionId)}
+          className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border/40 bg-card/60 hover:border-primary/40 hover:shadow-md transition-all cursor-pointer group"
         >
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${item.color}15` }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform" style={{ backgroundColor: `${item.color}15` }}>
             <item.icon className="w-5 h-5" style={{ color: item.color }} />
           </div>
           <span className="text-xs font-semibold text-foreground">{item.label}</span>
-        </div>
+        </button>
       ))}
     </div>
   );
