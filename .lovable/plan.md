@@ -1,96 +1,111 @@
 
 
-# Move Mockup Visuals Inside FeatureCards (Below Description)
+# Docs Page - Dark & White Brainstorm Aesthetic Redesign
 
-## Current Layout
-```text
-+-------------------+
-| Mockup (separate) |
-+-------------------+
-
-+-------------------+
-| FeatureCard       |
-|   Icon + Title    |
-|   Description     |
-|   Feature List    |
-+-------------------+
-```
-
-## New Layout
-```text
-+---------------------+
-| FeatureCard         |
-|   Icon + Title      |
-|   Description       |
-|   Feature List      |
-|                     |
-|   +---------------+ |
-|   | Mockup Visual | |
-|   +---------------+ |
-+---------------------+
-```
-
-The mockup visual moves inside the card, placed after all text content. This applies to every section across the entire Docs page.
+## Overview
+Transform the Docs page into a clean, high-contrast **black and white brainstorm** aesthetic -- think whiteboard/notebook style with crisp typography, monochrome mockups, and refined micro-details throughout.
 
 ---
 
-## Changes
+## 1. Global Docs Color Mode: Black & White
 
-### File: `src/pages/Docs.tsx`
+**Add a B&W toggle** in the hero section (pill-shaped toggle next to the "Documentation" badge):
+- **Color mode**: Full-color mockups (current)
+- **B&W mode**: All mockups and accent colors shift to grayscale -- clean, distraction-free, brainstorm-board feel
 
-For every instance where a mockup component sits above a FeatureCard, move it inside the FeatureCard's children, after the existing description/FeatureList content. Add a `mt-4` spacing class wrapper around the mockup when placed inside.
-
-**Sections affected (all of them):**
-
-1. **Dashboard** -- `TodaysPnlHeroMockup`, `KPICardsDetailMockup`, `RiskGaugeDetailMockup`, `EquityCurveWidgetMockup`, `StreakDisciplineMockup`, `CalendarHeatmapWidgetMockup`, `WidgetCustomizerMockup`, `SegmentFilterMockup`
-2. **Trade Management** -- `CreateTradeMockup`, `TradeStatusLifecycleMockup`, `TSLDetailMockup`, `MultiLegStrategyDetailMockup`, `PositionSizingDetailMockup`, `PostTradeReviewMockup`, `TradeTemplateMockup`
-3. **Alerts** -- `AlertConditionTypesMockup`, `RecurrenceCooldownMockup`, `DeliveryChannelsMockup`, `AlertManagementMockup`
-4. **Studies** -- `StudyCategoryWorkflowMockup`, `PatternTaggingMockup`, `StudyAdditionalFeaturesMockup`
-5. **Watchlists** -- `WatchlistDetailMockup`
-6. **Journal** -- `JournalDashboardTabMockup`, `JournalCalendarTabMockup`, `JournalMistakesTabMockup`, `JournalFiltersSegmentationMockup`
-7. **Calendar & Daily Journal** -- `DailyJournalWorkflowMockup`
-8. **Mistakes** -- `MistakeAnalysisToolsMockup`
-9. **Weekly Reports** -- (WeeklyReportMockup stays as section-level intro)
-10. **Integrations** -- `DhanIntegrationDetailMockup`, `TelegramIntegrationDetailMockup`
-11. **Keyboard Shortcuts** -- `KeyboardShortcutsDetailMockup`
-12. **Settings** -- `SettingsProfileBillingMockup`, `SettingsPreferencesMockup`, `SettingsTagManagementMockup`, `CapitalManagementMockup`, `SettingsSecurityMockup`, `SettingsIntegrationsMockup`
-
-**Example transformation (before/after):**
-
-Before:
-```jsx
-<RiskGaugeDetailMockup />
-<FeatureCard icon={Gauge} title="Risk Gauge & Goal Tracker">
-  <p className="text-sm text-muted-foreground">
-    Visualize your daily risk...
-  </p>
-</FeatureCard>
-```
-
-After:
-```jsx
-<FeatureCard icon={Gauge} title="Risk Gauge & Goal Tracker">
-  <p className="text-sm text-muted-foreground">
-    Visualize your daily risk...
-  </p>
-  <div className="mt-4">
-    <RiskGaugeDetailMockup />
-  </div>
-</FeatureCard>
-```
-
-**Section-level overview mockups** (like `DashboardMockup`, `OnboardingFlowMockup`, `MobileAppMockup`, `StudyCardMockup`, `WatchlistMockup`, `TradeCardMockup`, the top-level alert/telegram pair, the calendar pair, and `ShortcutKeyboardMockup`) will remain outside cards as section intros since they are broad overviews, not tied to a specific FeatureCard.
-
-### File: `src/components/docs/DocsMockups.tsx`
-
-Update `MockupFrame` to remove the top/bottom margin (`my-6`, `my-4`) since spacing will now be controlled by the parent `mt-4` wrapper inside FeatureCards. Change the default margin to `my-0` and let individual standalone usages pass `className="my-6"` explicitly.
-
-Alternatively, a simpler approach: keep MockupFrame as-is but override margin when inside cards using the `mt-4` wrapper div. This avoids touching every mockup component.
+**Implementation:**
+- Create a `DocsColorModeContext` in `DocsMockups.tsx` with `'color' | 'bw'` state
+- Wrap the Docs page content in the provider
+- `MockupFrame` applies `filter: grayscale(100%)` + slightly reduced opacity when B&W mode is active
+- Add a `.docs-bw` class to the page root that overrides accent colors to neutral grays
 
 ---
 
-## Summary
-- ~50 mockup placements will be moved from above their FeatureCard to inside (below text content)
-- Section-level intro mockups remain standalone
-- No new components or dependencies needed
-- Single file primarily modified: `src/pages/Docs.tsx`
+## 2. Hero Section Polish
+
+- Add a thin **3px gradient accent bar** at the very top of the page (primary gradient in color mode, solid dark in B&W)
+- Tighten padding from `py-16 lg:py-24` to `py-12 lg:py-16`
+- Place the **Color/B&W toggle** inline next to the "Documentation" badge
+- Make the hero subtitle slightly higher contrast (`text-foreground/70` instead of `text-muted-foreground`)
+
+---
+
+## 3. Sidebar Micro-Details
+
+- Add a **3px left accent border** on the active sidebar item (matching the dashboard sidebar pattern)
+- Add subtle **separator lines** between logical sidebar groups (Getting Started | Core Features | Advanced | Settings)
+- Slightly bump padding for better touch targets (`py-2.5` instead of `py-2`)
+
+---
+
+## 4. Section Headers Refinement
+
+- Add a small **top accent line** (40px wide, 3px tall) above each section header icon
+- Increase the section description contrast (`text-foreground/60` instead of pure `text-muted-foreground`)
+- Add subtle `border-b border-border/10 pb-6` below each section header for cleaner separation
+
+---
+
+## 5. FeatureCard Attention to Detail
+
+- Add a subtle **left accent bar** (3px, rounded, primary-colored) on hover
+- Improve hover: `hover:shadow-md hover:scale-[1.003]` for micro-lift feel
+- Icon container: add a subtle `ring-1 ring-border/20` for depth
+- Badge: slightly increase font size to `text-[11px]` for readability
+- FeatureList chevrons: bump to `w-4.5 h-4.5` for better visual weight
+
+---
+
+## 6. MockupFrame B&W Mode Styling
+
+When B&W is active:
+- Apply `grayscale` CSS filter on `MockupFrame`
+- Remove the `dot-pattern` background (replace with clean white/dark bg)
+- Add a subtle **sketch-style border** feel: `border-dashed border-foreground/20`
+- Reduce `hover:scale` to `hover:scale-[1.005]` for subtlety
+
+---
+
+## 7. Mobile Tab Bar Improvements
+
+- Increase pill size: `px-4 py-2` (from `px-3 py-1.5`)
+- Add `shadow-sm` under the sticky tab bar for depth separation
+- Active pill: add subtle `ring-1 ring-primary/30`
+
+---
+
+## 8. Typography & Spacing Fine-Tuning
+
+- FeatureCard title: bump to `text-lg font-bold` (ensure consistent)
+- Section spacing: keep `space-y-20` but add `mt-2` gap between consecutive FeatureCards within a section (currently they stack tight)
+- Inner text in mockups: ensure minimum `text-[10px]` for readability
+- Add `leading-relaxed` to all description paragraphs consistently
+
+---
+
+## 9. CSS Addition
+
+Add to `src/index.css`:
+```css
+.grayscale {
+  filter: grayscale(100%);
+  transition: filter 0.3s ease;
+}
+
+.docs-bw .gradient-text {
+  background-image: none;
+  color: hsl(var(--foreground));
+}
+```
+
+---
+
+## Technical Changes
+
+### Files Modified:
+1. **`src/components/docs/DocsMockups.tsx`** -- Add `DocsColorModeContext`, update `MockupFrame` with grayscale support
+2. **`src/pages/Docs.tsx`** -- Add B&W toggle, context provider, sidebar accent bars, section header refinements, FeatureCard hover improvements, mobile tab polish
+3. **`src/index.css`** -- Add `.grayscale` and `.docs-bw` utility classes
+
+### No new dependencies needed.
+
