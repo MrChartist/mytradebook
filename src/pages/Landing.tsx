@@ -9,7 +9,7 @@ import {
   PieChart, Layers, Clock, ArrowUpRight, ArrowDownRight, Minus, Play,
   Smartphone, Globe, Lock, Sparkles, Award, Users, Calendar, MousePointerClick,
   Send, CandlestickChart, Gauge, Home, ChevronRight, Brain, List, Calculator,
-  FileSpreadsheet, MessageSquare, Lightbulb, FileUp, ArrowUp, ArrowDown,
+  FileSpreadsheet, MessageSquare, Lightbulb, FileUp, ArrowUp, ArrowDown, Trophy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -151,6 +151,8 @@ const comparisonFeatures = [
   { feature: "Multi-segment support", tradebook: true, others: false },
   { feature: "Indian market focus (NSE/BSE/MCX)", tradebook: true, others: false },
   { feature: "Trailing stop loss engine", tradebook: true, others: false },
+  { feature: "AI-powered trade insights", tradebook: true, others: false },
+  { feature: "Position sizing calculator", tradebook: true, others: "Basic" },
   { feature: "Telegram notifications", tradebook: true, others: "Paid" },
   { feature: "Broker integration", tradebook: true, others: "Limited" },
   { feature: "Equity curve & drawdown", tradebook: true, others: true },
@@ -1054,41 +1056,53 @@ export default function Landing() {
             <p className="text-muted-foreground max-w-md mx-auto text-base">See how we compare to generic trading journals.</p>
           </motion.div>
 
-          <motion.div variants={fadeUp} className="rounded-2xl border border-border/40 bg-card/80 overflow-hidden">
-            <div className="grid grid-cols-3 gap-0 border-b border-border/30 px-6 py-4 bg-muted/20">
-              <span className="text-base font-medium">Feature</span>
-              <span className="text-sm font-bold text-center text-[hsl(var(--tb-accent))]">TradeBook</span>
+          <motion.div variants={fadeUp} className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm">
+            {/* Header */}
+            <div className="grid grid-cols-3 gap-0 border-b border-border/40 px-6 py-5 bg-muted/30">
+              <span className="text-base font-semibold text-foreground">Feature</span>
+              <span className="text-sm font-bold text-center text-[hsl(var(--tb-accent))] flex items-center justify-center gap-1.5">
+                <Trophy className="w-4 h-4" />
+                TradeBook
+              </span>
               <span className="text-sm font-medium text-center text-muted-foreground/70">Others</span>
             </div>
+            {/* Rows */}
             {comparisonFeatures.map((row, i) => (
               <motion.div
                 key={row.feature}
                 variants={fadeUp}
-                custom={i * 0.03}
+                custom={i * 0.05}
                 className={cn(
-                  "grid grid-cols-3 gap-0 border-b border-border/20 last:border-0 px-6 py-4 transition-colors",
-                  i % 2 === 0 ? "bg-muted/[0.04]" : ""
+                  "grid grid-cols-3 gap-0 border-b border-border/20 last:border-0 px-6 py-4 transition-colors duration-200 hover:bg-[hsl(var(--tb-accent)/0.04)]",
+                  i % 2 === 0 ? "bg-muted/10" : ""
                 )}
               >
-                <span className="text-base">{row.feature}</span>
+                <span className="text-base text-foreground/90">{row.feature}</span>
                 <div className="flex justify-center">
                   {row.tradebook === true ? (
-                    <CheckCircle2 className="w-5 h-5 text-profit" />
+                    <CheckCircle2 className="w-5 h-5 text-profit drop-shadow-[0_0_4px_rgba(34,197,94,0.3)]" />
                   ) : (
                     <span className="text-sm text-muted-foreground">{String(row.tradebook)}</span>
                   )}
                 </div>
                 <div className="flex justify-center">
                   {row.others === true ? (
-                    <CheckCircle2 className="w-5 h-5 text-muted-foreground/30" />
+                    <CheckCircle2 className="w-5 h-5 text-muted-foreground/40" />
                   ) : row.others === false ? (
-                    <Minus className="w-5 h-5 text-muted-foreground/20" />
+                    <Minus className="w-5 h-5 text-muted-foreground/30" />
                   ) : (
-                    <span className="text-xs text-muted-foreground/60 px-2 py-0.5 rounded-full bg-muted/40">{String(row.others)}</span>
+                    <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-destructive/10 text-destructive border border-destructive/20">{String(row.others)}</span>
                   )}
                 </div>
               </motion.div>
             ))}
+            {/* CTA footer */}
+            <div className="flex items-center justify-between px-6 py-4 bg-[hsl(var(--tb-accent)/0.06)] border-t border-border/30">
+              <p className="text-sm text-muted-foreground">All features included in <span className="font-semibold text-foreground">free beta</span></p>
+              <Button size="sm" className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white" onClick={() => navigate("/login?mode=signup")}>
+                Start Free <ArrowRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
           </motion.div>
         </MotionSection>
       </section>
