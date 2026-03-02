@@ -26,7 +26,16 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_STORAGE_KEY = `sb-nuilpmoipiazjafpjaft-auth-token`;
-const MAX_LOADING_MS = 1200; // fast-fail loading guard for snappy auth UX
+
+// Detect OAuth callback — URL hash contains access_token or has auth params
+const isOAuthCallback = () => {
+  const hash = window.location.hash;
+  const search = window.location.search;
+  return hash.includes('access_token') || hash.includes('refresh_token') || search.includes('code=');
+};
+
+// Use longer timeout during OAuth callbacks (token exchange takes time on published site)
+const MAX_LOADING_MS = isOAuthCallback() ? 8000 : 1200;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
