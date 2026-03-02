@@ -878,7 +878,7 @@ export default function Landing() {
       </section>
 
       {/* ── Trust Strip + Stats (merged) ──────────────── */}
-      <section className="py-16 border-y border-border/20">
+      <section className="py-20 bg-muted/10 dot-pattern">
         <div className="max-w-5xl mx-auto px-6">
           <p className="text-center text-xs text-muted-foreground uppercase tracking-[0.18em] font-semibold mb-8">
             Trusted by 1,200+ traders across Indian markets
@@ -926,6 +926,8 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
 
       {/* ── Features Bento Grid — Manila style ────────────── */}
       <section id="features" className="py-24 lg:py-32">
@@ -991,8 +993,10 @@ export default function Landing() {
         </MotionSection>
       </section>
 
+      <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
+
       {/* ── How It Works ─────────────────────────────────── */}
-      <section className="py-24 lg:py-32 bg-muted/10">
+      <section className="py-24 lg:py-32 bg-muted/10 dot-pattern">
         <MotionSection className="max-w-5xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-20">
             <SectionBadge>How It Works</SectionBadge>
@@ -1050,6 +1054,8 @@ export default function Landing() {
           </motion.div>
         </MotionSection>
       </section>
+
+      <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
 
       {/* ── Comparison Table ─────────────────────────────── */}
       <section className="py-24 lg:py-32">
@@ -1116,6 +1122,8 @@ export default function Landing() {
           </motion.div>
         </MotionSection>
       </section>
+
+      <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
 
       {/* ── Pricing ──────────────────────────────────────── */}
       <section id="pricing" className="py-24 lg:py-32 bg-muted/10 dot-pattern">
@@ -1223,8 +1231,10 @@ export default function Landing() {
         </MotionSection>
       </section>
 
+      <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
+
       {/* ── Testimonials ─────────────────────────────────── */}
-      <section className="py-24 lg:py-32 dot-pattern">
+      <section className="py-24 lg:py-32">
         <MotionSection className="max-w-6xl mx-auto px-6 lg:px-10">
           <motion.div variants={fadeUp} className="text-center mb-20">
             <SectionBadge>Testimonials</SectionBadge>
@@ -1429,13 +1439,15 @@ export default function Landing() {
       </section>
 
 
+      <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
+
       {/* ── Built for Indian Markets ────────────────────── */}
       <section className="py-24 lg:py-32 bg-muted/10 dot-pattern">
         <MotionSection className="max-w-5xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-14 items-center">
             <motion.div variants={fadeUp}>
               <SectionBadge>Made in India</SectionBadge>
-              <h2 className="text-3xl lg:text-5xl font-extrabold mb-5 leading-tight">
+              <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-tight">
                 Built for{" "}
                 <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
                   Indian
@@ -1517,12 +1529,14 @@ export default function Landing() {
         </MotionSection>
       </section>
 
+      <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
+
       {/* ── FAQ ──────────────────────────────────────────── */}
-      <section className="py-24 lg:py-32 dot-pattern">
+      <section className="py-24 lg:py-32 bg-muted/10 dot-pattern">
         <MotionSection className="max-w-4xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-14">
             <SectionBadge>FAQ</SectionBadge>
-            <h2 className="text-3xl lg:text-5xl font-extrabold mb-4 leading-tight">
+            <h2 className="text-4xl lg:text-6xl font-extrabold mb-4 leading-tight">
               Got{" "}
               <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
                 questions
@@ -1611,6 +1625,8 @@ export default function Landing() {
           </motion.div>
         </MotionSection>
       </section>
+
+      <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
 
       {/* ── Final CTA ────────────────────────────────────── */}
       <section className="py-28 lg:py-36 relative overflow-hidden">
