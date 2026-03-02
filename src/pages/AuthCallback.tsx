@@ -19,7 +19,7 @@ export default function AuthCallback() {
       console.log("[AuthCallback] User confirmed, navigating to dashboard");
       // Clear the pending-auth flag
       try { sessionStorage.removeItem("tb-auth-pending"); } catch (_) {}
-      navigate("/", { replace: true });
+      navigate("/dashboard", { replace: true });
     }
   }, [user, navigate]);
 
@@ -65,7 +65,7 @@ export default function AuthCallback() {
               <RefreshCw className="w-4 h-4 mr-2" />
               Try Again
             </Button>
-            <Button variant="ghost" onClick={() => { window.location.href = "/landing"; }} className="w-full">
+            <Button variant="ghost" onClick={() => { window.location.href = "/"; }} className="w-full">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
             </Button>

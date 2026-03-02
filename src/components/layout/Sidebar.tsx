@@ -27,7 +27,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useSubscription } from "@/hooks/useSubscription";
 
 const mainNavItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
   { icon: TrendingUp, label: "Trades", path: "/trades" },
   { icon: Bell, label: "Alerts", path: "/alerts" },
   { icon: BookOpen, label: "Journal", path: "/journal" },

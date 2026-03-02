@@ -72,6 +72,7 @@ const App = () => (
               <Suspense fallback={<PageLoader />}>
                 <main id="main-content">
                 <Routes>
+                  <Route path="/" element={<Landing />} />
                   <Route path="/landing" element={<Landing />} />
                   <Route path="/docs" element={<Docs />} />
                   <Route path="/login" element={<Login />} />
@@ -81,7 +82,7 @@ const App = () => (
                   <Route path="/auth/callback" element={<AuthCallback />} />
                   <Route path="/dhan-callback" element={<DhanCallback />} />
                   <Route
-                    path="/"
+                    path="/dashboard"
                     element={
                       <ProtectedRoute>
                         <Index />

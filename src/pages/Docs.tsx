@@ -204,7 +204,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       {/* Navbar — always visible */}
       <nav className="sticky top-0 z-50 border-b border-border/30 bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-10 h-16">
-          <button onClick={() => navigate(isInsideApp ? "/dashboard" : "/landing")} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+          <button onClick={() => navigate(isInsideApp ? "/dashboard" : "/")} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
             <div className="w-9 h-9 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_20px_hsl(var(--tb-accent)/0.25)]">
               <TrendingUp className="w-5 h-5 text-white" />
             </div>
@@ -218,7 +218,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </Button>
             ) : (
               <>
-                <Button variant="ghost" size="sm" onClick={() => navigate("/landing")} className="text-muted-foreground">
+                <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="text-muted-foreground">
                   Home
                 </Button>
                 <Button
@@ -1179,7 +1179,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             <div className="flex items-center gap-4 text-xs text-muted-foreground/50">
               <a href="/privacy" className="hover:text-foreground transition-colors">Privacy</a>
               <a href="/terms" className="hover:text-foreground transition-colors">Terms</a>
-              <a href="/landing" className="hover:text-foreground transition-colors">Home</a>
+              <a href="/" className="hover:text-foreground transition-colors">Home</a>
             </div>
           </div>
         </footer>
