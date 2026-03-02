@@ -2,7 +2,8 @@ import { cn } from "@/lib/utils";
 import {
   TrendingUp, BarChart3, Bell, Eye, Activity, Calendar, Target,
   ArrowRight, CandlestickChart, Send, LayoutDashboard, BookOpen,
-  Layers, Keyboard as KeyboardIcon, Settings, Zap, FileText, Upload
+  Layers, Keyboard as KeyboardIcon, Settings, Zap, FileText, Upload,
+  List, Grid3X3, Sparkles, Smartphone, ArrowUpRight, ArrowDownRight
 } from "lucide-react";
 
 /* ──────────────────────────────────────────────
@@ -1027,6 +1028,224 @@ export function RiskOfRuinMockup() {
             <p className="text-muted-foreground">Risk%</p>
             <p className="font-bold">1%</p>
           </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   28. TradeViewsMockup — List vs Grid toggle
+   ────────────────────────────────────────────── */
+export function TradeViewsMockup() {
+  const trades = [
+    { sym: "RELIANCE", type: "BUY", pnl: "+₹1,540", status: "OPEN", seg: "Intraday" },
+    { sym: "NIFTY FUT", type: "SELL", pnl: "-₹820", status: "CLOSED", seg: "Futures" },
+    { sym: "HDFCBANK", type: "BUY", pnl: "+₹3,200", status: "CLOSED", seg: "Positional" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-[10px] font-semibold text-muted-foreground">Trade Book — Views</p>
+        <div className="flex gap-1">
+          <div className="px-2 py-1 rounded-md bg-[hsl(var(--tb-accent))] text-white text-[9px] font-semibold flex items-center gap-1">
+            <List className="w-3 h-3" /> List
+          </div>
+          <div className="px-2 py-1 rounded-md bg-muted/50 text-muted-foreground text-[9px] font-semibold flex items-center gap-1">
+            <Grid3X3 className="w-3 h-3" /> Grid
+          </div>
+        </div>
+      </div>
+      <div className="rounded-xl bg-card border border-border/40 overflow-hidden">
+        <div className="grid grid-cols-5 gap-2 px-3 py-2 bg-muted/40 text-[9px] font-semibold text-muted-foreground">
+          <span>Symbol</span><span className="text-center">Type</span><span className="text-center">Segment</span><span className="text-center">Status</span><span className="text-right">P&L</span>
+        </div>
+        {trades.map((t) => (
+          <div key={t.sym} className="grid grid-cols-5 gap-2 px-3 py-2.5 border-t border-border/20 text-[10px] hover:bg-muted/20 transition-colors items-center">
+            <div className="flex items-center gap-1.5">
+              {t.type === "BUY" ? <ArrowUpRight className="w-3 h-3 text-profit" /> : <ArrowDownRight className="w-3 h-3 text-loss" />}
+              <span className="font-semibold">{t.sym}</span>
+            </div>
+            <span className={cn("text-center font-semibold", t.type === "BUY" ? "text-profit" : "text-loss")}>{t.type}</span>
+            <span className="text-center text-muted-foreground">{t.seg}</span>
+            <div className="flex justify-center">
+              <span className={cn(
+                "px-1.5 py-0.5 rounded-full text-[8px] font-semibold",
+                t.status === "OPEN" ? "bg-profit/10 text-profit" : "bg-muted/60 text-muted-foreground"
+              )}>{t.status}</span>
+            </div>
+            <span className={cn("text-right font-mono font-bold", t.pnl.startsWith("+") ? "text-profit" : "text-loss")}>{t.pnl}</span>
+          </div>
+        ))}
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   29. AIInsightsMockup — AI-powered trade insights
+   ────────────────────────────────────────────── */
+export function AIInsightsMockup() {
+  const insights = [
+    { emoji: "🎯", title: "Best Setup: Breakout", desc: "68% win rate across 47 trades. Avg R:R of 1:2.4", type: "positive" },
+    { emoji: "⏰", title: "Peak Hours: 9:30–10:30 AM", desc: "73% of your profits come from the first hour", type: "positive" },
+    { emoji: "⚠️", title: "Options Weakness", desc: "Win rate drops to 38% in Options. Consider reducing size", type: "warning" },
+    { emoji: "📈", title: "Improving Trend", desc: "Your discipline score improved 22% this month", type: "positive" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="flex items-center gap-2 mb-3">
+        <Sparkles className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" />
+        <p className="text-[10px] font-semibold text-muted-foreground">AI Trade Insights</p>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        {insights.map((ins) => (
+          <div
+            key={ins.title}
+            className={cn(
+              "rounded-lg border p-3 transition-colors",
+              ins.type === "warning"
+                ? "border-[hsl(var(--warning)/0.3)] bg-[hsl(var(--warning)/0.04)]"
+                : "border-profit/20 bg-profit/[0.03]"
+            )}
+          >
+            <div className="flex items-start gap-2">
+              <span className="text-sm mt-0.5">{ins.emoji}</span>
+              <div>
+                <p className="text-[11px] font-semibold">{ins.title}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{ins.desc}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   30. MobileAppMockup — Mobile responsiveness
+   ────────────────────────────────────────────── */
+export function MobileAppMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="flex items-center justify-center gap-6">
+        {/* Phone frame */}
+        <div className="w-[160px] rounded-2xl border-2 border-border/60 bg-card overflow-hidden shadow-lg">
+          {/* Status bar */}
+          <div className="h-5 bg-muted/50 flex items-center justify-between px-3">
+            <span className="text-[7px] font-semibold">9:41</span>
+            <div className="flex gap-0.5">
+              <div className="w-2.5 h-1.5 rounded-sm bg-foreground/30" />
+              <div className="w-2.5 h-1.5 rounded-sm bg-foreground/30" />
+              <div className="w-4 h-1.5 rounded-sm bg-profit/60" />
+            </div>
+          </div>
+          {/* Header */}
+          <div className="px-3 py-2 border-b border-border/20">
+            <p className="text-[8px] font-bold flex items-center gap-1">
+              <TrendingUp className="w-2.5 h-2.5 text-[hsl(var(--tb-accent))]" /> TradeBook
+            </p>
+          </div>
+          {/* Mini dashboard */}
+          <div className="p-2 space-y-1.5">
+            <div className="rounded-md bg-profit/10 p-1.5 text-center">
+              <p className="text-[6px] text-muted-foreground">Today's P&L</p>
+              <p className="text-[10px] font-bold text-profit font-mono">+₹12,450</p>
+            </div>
+            <div className="grid grid-cols-2 gap-1">
+              <div className="rounded-md bg-muted/30 p-1 text-center">
+                <p className="text-[5px] text-muted-foreground">Win Rate</p>
+                <p className="text-[8px] font-bold text-profit">62%</p>
+              </div>
+              <div className="rounded-md bg-muted/30 p-1 text-center">
+                <p className="text-[5px] text-muted-foreground">Open</p>
+                <p className="text-[8px] font-bold">4</p>
+              </div>
+            </div>
+            {/* Mini chart */}
+            <div className="rounded-md bg-muted/20 p-1.5">
+              <svg viewBox="0 0 100 25" className="w-full h-4">
+                <path d="M0 20 L15 18 L30 15 L45 17 L60 10 L75 8 L100 4" fill="none" stroke="hsl(var(--profit))" strokeWidth="1.5" />
+              </svg>
+            </div>
+          </div>
+          {/* Bottom nav */}
+          <div className="flex items-center justify-around py-1.5 border-t border-border/20 bg-muted/20">
+            {[LayoutDashboard, CandlestickChart, Bell, BarChart3, Settings].map((Icon, i) => (
+              <Icon key={i} className={cn("w-3 h-3", i === 0 ? "text-[hsl(var(--tb-accent))]" : "text-muted-foreground/50")} />
+            ))}
+          </div>
+        </div>
+        {/* Labels */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Smartphone className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
+            <div>
+              <p className="text-[11px] font-semibold">Fully Responsive</p>
+              <p className="text-[9px] text-muted-foreground">Works on all screen sizes</p>
+            </div>
+          </div>
+          {[
+            "Bottom navigation bar",
+            "Touch-optimized controls",
+            "Swipe-friendly layouts",
+            "PWA installable",
+          ].map((f) => (
+            <div key={f} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+              <ArrowRight className="w-3 h-3 text-[hsl(var(--tb-accent))]" />
+              {f}
+            </div>
+          ))}
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   31. CalendarDayDetailMockup — Day detail with trades
+   ────────────────────────────────────────────── */
+export function CalendarDayDetailMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-md mx-auto">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 rounded-xl bg-profit/10 border border-profit/20 flex flex-col items-center justify-center">
+              <span className="text-[8px] font-semibold text-profit leading-none">TUE</span>
+              <span className="text-sm font-bold text-profit leading-none mt-0.5">18</span>
+            </div>
+            <div>
+              <p className="text-xs font-bold">Feb 18, 2026</p>
+              <p className="text-[10px] text-muted-foreground">3 trades · +₹4,720</p>
+            </div>
+          </div>
+          <span className="text-lg">😊</span>
+        </div>
+        {/* Trades that day */}
+        <div className="space-y-1.5 mb-3">
+          {[
+            { sym: "RELIANCE", pnl: "+₹2,340", time: "9:32 AM", type: "BUY" },
+            { sym: "NIFTY 50", pnl: "+₹3,180", time: "10:15 AM", type: "BUY" },
+            { sym: "INFY", pnl: "-₹800", time: "1:45 PM", type: "SELL" },
+          ].map((t) => (
+            <div key={t.sym} className="flex items-center justify-between rounded-lg bg-muted/30 px-3 py-2">
+              <div className="flex items-center gap-2">
+                {t.type === "BUY" ? <ArrowUpRight className="w-3 h-3 text-profit" /> : <ArrowDownRight className="w-3 h-3 text-loss" />}
+                <div>
+                  <p className="text-[10px] font-semibold">{t.sym}</p>
+                  <p className="text-[8px] text-muted-foreground">{t.time}</p>
+                </div>
+              </div>
+              <span className={cn("text-[10px] font-mono font-bold", t.pnl.startsWith("+") ? "text-profit" : "text-loss")}>{t.pnl}</span>
+            </div>
+          ))}
+        </div>
+        {/* Journal snippet */}
+        <div className="rounded-lg bg-[hsl(var(--tb-accent)/0.05)] border border-[hsl(var(--tb-accent)/0.15)] p-2.5">
+          <p className="text-[9px] font-semibold text-[hsl(var(--tb-accent))] mb-1">📝 Journal Note</p>
+          <p className="text-[9px] text-muted-foreground leading-relaxed">Good day overall. Followed the pre-market plan. RELIANCE breakout worked as expected. Need to improve INFY exit timing.</p>
         </div>
       </div>
     </MockupFrame>
