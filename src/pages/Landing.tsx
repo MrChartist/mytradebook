@@ -119,12 +119,12 @@ const pricingPlans = [
     cta: "Start Free", highlighted: false,
   },
   {
-    name: "Pro", price: "₹499", period: "/mo", description: "For active, serious traders",
+    name: "Pro", price: "₹0", period: "/mo", description: "For active, serious traders",
     features: ["Unlimited trades", "Advanced analytics & reports", "Telegram notifications", "Trailing stop loss engine", "Broker integration (Dhan)", "10 watchlists", "Priority support"],
     cta: "Start 14-Day Trial", highlighted: true,
   },
   {
-    name: "Team", price: "₹1,499", period: "/mo", description: "For trading desks & groups",
+    name: "Team", price: "₹0", period: "/mo", description: "For trading desks & groups",
     features: ["Everything in Pro", "5 team members", "Shared studies & alerts", "RA compliance mode", "API access", "Dedicated manager"],
     cta: "Contact Sales", highlighted: false,
   },
