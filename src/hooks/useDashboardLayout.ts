@@ -14,17 +14,16 @@ interface UserSettingsWithLayout {
 }
 
 const DEFAULT_WIDGETS: WidgetConfig[] = [
-  { id: "todayPnl", label: "Today's P&L", visible: true, order: 0 },
-  { id: "kpi", label: "KPI Cards", visible: true, order: 1 },
-  { id: "riskGoal", label: "Risk Gauge & Goals", visible: true, order: 2 },
-  { id: "chart", label: "Daily Chart", visible: true, order: 3 },
-  { id: "alerts", label: "Alerts Panel", visible: true, order: 4 },
-  { id: "equityCurve", label: "Equity Curve", visible: true, order: 5 },
-  { id: "positions", label: "Open Positions", visible: true, order: 6 },
-  { id: "streakCalendar", label: "Streak & Calendar", visible: true, order: 7 },
-  { id: "monthly", label: "Monthly Metrics", visible: true, order: 8 },
-  { id: "actions", label: "Quick Actions", visible: true, order: 9 },
-  { id: "aiInsights", label: "AI Insights", visible: true, order: 10 },
+  { id: "kpi", label: "KPI Cards", visible: true, order: 0 },
+  { id: "riskGoal", label: "Risk Gauge & Goals", visible: true, order: 1 },
+  { id: "chart", label: "Daily Chart", visible: true, order: 2 },
+  { id: "alerts", label: "Alerts Panel", visible: true, order: 3 },
+  { id: "equityCurve", label: "Equity Curve", visible: true, order: 4 },
+  { id: "positions", label: "Open Positions", visible: true, order: 5 },
+  { id: "streakCalendar", label: "Streak & Calendar", visible: true, order: 6 },
+  { id: "monthly", label: "Monthly Metrics", visible: true, order: 7 },
+  { id: "actions", label: "Quick Actions", visible: true, order: 8 },
+  { id: "aiInsights", label: "AI Insights", visible: true, order: 9 },
 ];
 
 export function useDashboardLayout() {
@@ -36,7 +35,7 @@ export function useDashboardLayout() {
     const saved = settingsWithLayout?.dashboard_layout;
 
     if (saved && Array.isArray(saved)) {
-      // Merge saved with defaults to handle new widgets
+      // Merge saved with defaults to handle new widgets + removed widgets
       const merged = DEFAULT_WIDGETS.map((dw) => {
         const found = saved.find((s) => s.id === dw.id);
         return found ? { ...dw, visible: found.visible, order: found.order } : dw;

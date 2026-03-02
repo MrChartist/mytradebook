@@ -38,23 +38,15 @@ export function DashboardGreeting() {
     return email.split("@")[0]?.replace(/[._-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) || "Trader";
   }, [user]);
 
-  const lastLogin = useMemo(() => {
-    const d = user?.last_sign_in_at ? new Date(user.last_sign_in_at) : new Date();
-    return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
-  }, [user]);
-
   return (
-    <div className="space-y-1">
-      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-        {greeting}, <span className="text-primary">{displayName}</span> 👋
+    <div className="flex items-center gap-3">
+      <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
+        {greeting}, <span className="text-primary">{displayName}</span>
       </h1>
-      <div className="flex items-center gap-3">
-        <span className="text-sm text-muted-foreground">Last login: {lastLogin}</span>
-        <span className="text-muted-foreground/40">•</span>
-        <div className="flex items-center gap-1.5">
-          <span className={`w-2 h-2 rounded-full ${market.isOpen ? "bg-profit animate-pulse" : "bg-muted-foreground"}`} />
-          <span className="text-sm text-muted-foreground">{market.label}</span>
-        </div>
+      <span className="text-muted-foreground/40">•</span>
+      <div className="flex items-center gap-1.5">
+        <span className={`w-2 h-2 rounded-full ${market.isOpen ? "bg-profit animate-pulse" : "bg-muted-foreground"}`} />
+        <span className="text-sm text-muted-foreground">{market.label}</span>
       </div>
     </div>
   );

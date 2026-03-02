@@ -1,7 +1,7 @@
 import { useDashboard } from "@/pages/Dashboard";
 import { cn } from "@/lib/utils";
 import { useMemo, useState } from "react";
-import { ArrowUpRight, ArrowDownRight, LayoutList } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, LayoutList, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { QuickClosePopover } from "@/components/trade/QuickClosePopover";
 import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
@@ -69,9 +69,19 @@ export function DashboardPositionsTable() {
       )}
 
       {positions.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-sm text-muted-foreground mb-3">No open positions</p>
-          <Link to="/trades" className="text-xs text-primary hover:underline font-medium">Create a trade →</Link>
+        <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-border/40 rounded-2xl">
+          <div className="w-14 h-14 rounded-2xl bg-muted/50 flex items-center justify-center mb-4">
+            <LayoutList className="w-6 h-6 text-muted-foreground/50" />
+          </div>
+          <p className="text-sm font-medium mb-1">No open positions</p>
+          <p className="text-xs text-muted-foreground mb-4">Your active trades will appear here</p>
+          <Link
+            to="/trades"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            Create a trade
+          </Link>
         </div>
       ) : (
         <div className="overflow-x-auto -mx-6 px-6">
