@@ -1,44 +1,93 @@
 
 
-# Add Landing Page Floating Island Navbar to Docs Page
+# Bring Dashboard Visual Language to the Docs Page
+
+## Problem
+
+The Docs page uses a flat, static design while the Dashboard uses a rich "Quantix" fintech aesthetic with premium cards, dot-pattern decorations, accent bars, inner panels, and entrance animations. Visitors going from Landing to Docs feel a visual downgrade.
 
 ## What Changes
 
-Replace the Docs page's current sticky full-width navbar with the same "floating island" pill-shaped navbar used on the Landing and Login pages. This creates visual continuity across all public-facing pages.
+Apply the dashboard's visual system to the Docs page content while keeping the docs layout and navigation intact. This covers:
 
-## Current vs. After
-
-```text
-CURRENT (Docs):
-+--full-width-sticky-bar-------------------------------------+
-| [Logo TradeBook]                    [ThemeToggle] [Home] [Get Started] |
-+------------------------------------------------------------+
-
-AFTER (Docs):
-         +--floating-island-pill (max-w-3xl, centered)--+
-         | [Logo]  Features  Pricing  Docs  [Theme] [Get Started] |
-         +----------------------------------------------+
-```
-
-For logged-in users, the right side shows "Dashboard" button instead of "Sign In" + "Get Started" (same logic as now, just in the new shell).
+1. **Entrance animations on content sections** (staggered fade-in)
+2. **Premium card treatment for FeatureCards** (upgrade from basic Card to `premium-card-hover` with dot-pattern corners)
+3. **Dashboard-style SectionHeader** (use `dashboard-card` wrapper with icon badges matching StatCard's `inner-panel` treatment)
+4. **Animated KPI-like stats in the hero** (replace the static badge with a mini stats strip showing doc section count, feature count, etc.)
+5. **Sidebar active state polish** (add the 3px accent bar animation from the dashboard sidebar)
+6. **Bottom CTA section** (upgrade to match Landing's Final CTA with gradient background and glow button)
+7. **Footer visual sync** (add `dot-pattern` to match Landing footer)
 
 ## Technical Changes
 
 ### File: `src/pages/Docs.tsx`
 
-1. **Add `motion` import** from `framer-motion` (already used elsewhere in the app)
+**1. Add staggered entrance animations to sections**
 
-2. **Replace the navbar block (lines 202-235)** with the floating island navbar:
-   - Remove the full-width `sticky top-0` nav and the `h-[3px]` accent bar above it
-   - Add a `fixed top-4 left-0 right-0 z-50 mx-auto max-w-3xl px-4` motion nav (identical structure to Landing page)
-   - Pill-shaped container: `rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg`
-   - Center links: "Features" and "Pricing" link to `/#features` and `/#pricing` (navigate to landing page anchors), "Docs" scrolls to top
-   - Right side: ThemeToggle + conditional Dashboard/Sign In + Get Started buttons (same logic as current)
-   - Entry animation: `initial={{ y: -40, opacity: 0 }}` with spring ease
+Wrap each `<section>` in a `motion.section` with staggered `fade-in` using `whileInView`:
 
-3. **Add top padding to content** — since the navbar is now `fixed` instead of `sticky`, add `pt-16` to the main content wrapper so the hero isn't hidden behind the navbar
+```tsx
+<motion.section
+  initial={{ opacity: 0, y: 20 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true, margin: "-50px" }}
+  transition={{ duration: 0.4 }}
+>
+```
 
-4. **Keep the B&W toggle** in its current position inside the hero section (it's docs-specific, not a navbar concern)
+This uses the `motion` import already present in the file.
 
-### No other files change. No new dependencies (framer-motion already installed).
+**2. Upgrade FeatureCard component (lines 84-108)**
+
+- Replace `Card` base with `premium-card-hover` classes from the dashboard design system
+- Add a decorative dot-pattern corner (same as `StatCard`): `<div className="absolute top-0 right-0 w-20 h-20 dot-pattern opacity-30 rounded-bl-2xl" />`
+- Add subtle scale-on-hover via `hover:scale-[1.005]` (already partially there at `1.003`, bump slightly)
+- Upgrade the icon container to use `inner-panel` styling like dashboard cards
+
+**3. Upgrade SectionHeader component (lines 111-127)**
+
+- Wrap in a `dashboard-card` style container with the accent top-bar
+- Change the icon badge to use the dashboard's `icon-badge` class with `inner-panel` background
+- Add a subtle `motion.div` fade for the accent line
+
+**4. Add hero stats strip below the subtitle (line 281)**
+
+Add a mini row of 3-4 stats below the hero description, styled like compact KPI cards:
+
+```text
+[ 15 Sections ] [ 50+ Mockups ] [ Every Feature ] [ Free & Pro ]
+```
+
+Using `inner-panel` containers with small text, matching the dashboard's metric card aesthetic.
+
+**5. Polish sidebar active state (lines 298-314)**
+
+- Add `transition-all duration-200` to sidebar buttons
+- Animate the active accent bar with `motion.div` layoutId for smooth sliding between items
+- Add `hover:translate-x-0.5` micro-interaction on sidebar items
+
+**6. Upgrade bottom CTA section (lines 1168-1183)**
+
+- Add `bg-gradient-to-b from-[hsl(var(--tb-accent)/0.04)] to-transparent` background
+- Use `shimmer-cta` class on the button (already defined in CSS)
+- Add `motion.div` entrance animation
+
+**7. Upgrade footer (lines 1188-1199)**
+
+- Add `dot-pattern` class to match Landing footer treatment
+- Change `bg-card/30` to `bg-card/50 dot-pattern`
+
+### Summary
+
+| Element | Before | After |
+|---------|--------|-------|
+| Feature cards | Basic `Card` with hover border | `premium-card-hover` + dot-pattern corner + inner-panel icon |
+| Section headers | Static div with accent line | Dashboard-card wrapper + icon-badge + motion fade |
+| Content sections | No animation | Staggered `whileInView` fade-in |
+| Hero area | Badge + text only | Badge + text + mini stats strip |
+| Sidebar active | Static highlight | Animated accent bar with `layoutId` |
+| Bottom CTA | Plain border-t section | Gradient bg + shimmer button + motion entrance |
+| Footer | `bg-card/30` | `bg-card/50 dot-pattern` |
+
+No new files or dependencies. All classes (`premium-card-hover`, `dashboard-card`, `inner-panel`, `dot-pattern`, `icon-badge`, `shimmer-cta`) are already defined in `src/index.css`. `motion` is already imported.
 
