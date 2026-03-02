@@ -1441,37 +1441,72 @@ export default function Landing() {
 
       {/* ── Final CTA ────────────────────────────────────── */}
       <section className="py-28 lg:py-36 relative overflow-hidden">
-        {/* Soft gradient wash */}
+        {/* Stronger radial glow with double ring */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.06)_0%,transparent_65%)]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.12)_0%,transparent_60%)]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.04)_0%,transparent_70%)]" />
         </div>
         <MotionSection className="relative max-w-3xl mx-auto px-6 text-center">
-          <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold mb-7 leading-tight">
-            Stop losing money to
-            <br />
-            <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
-              undisciplined
-            </span>{" "}
-            trading
-          </motion.h2>
+          {/* Social proof strip */}
+          <motion.div variants={fadeUp} className="flex items-center justify-center gap-6 mb-8">
+            <div className="flex items-center gap-2">
+              <div className="flex -space-x-2">
+                {["bg-[hsl(var(--tb-accent))]", "bg-[hsl(var(--profit))]", "bg-[hsl(var(--ring))]"].map((bg, i) => (
+                  <div key={i} className={`w-6 h-6 rounded-full ${bg} border-2 border-background`} />
+                ))}
+              </div>
+              <span className="text-sm font-semibold">1,200+ traders</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-sm font-semibold">
+              <BarChart3 className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" />
+              42,000+ trades logged
+            </div>
+          </motion.div>
+
+          {/* Staggered headline */}
+          <motion.div variants={{ visible: { transition: { staggerChildren: 0.12 } } }} className="mb-7">
+            <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-tight">
+              Stop losing money to
+            </motion.h2>
+            <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-tight">
+              <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
+                undisciplined
+              </span>{" "}
+              trading
+            </motion.h2>
+          </motion.div>
+
           <motion.p variants={fadeUp} className="text-lg text-muted-foreground mb-12 max-w-xl mx-auto leading-relaxed">
             Join 1,200+ traders who journal, analyze, and compound their edge — every single day.
           </motion.p>
+
+          {/* CTA with shimmer */}
           <motion.div variants={fadeUp} whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}>
             <Button
               size="lg"
-              className="h-14 px-12 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_6px_24px_hsl(var(--tb-accent)/0.3)] font-semibold"
+              className="shimmer-cta h-14 px-12 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_6px_24px_hsl(var(--tb-accent)/0.3)] font-semibold"
               onClick={() => navigate("/login?mode=signup")}
             >
               Get Started — It's Free <ArrowRight className="w-4 h-4" />
             </Button>
           </motion.div>
-          <motion.p variants={fadeUp} className="text-xs text-muted-foreground mt-6 flex items-center justify-center gap-3">
-            <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Bank-grade encryption</span>
-            <span>·</span>
-            <span>No credit card required</span>
-          </motion.p>
+
+          {/* Trust badges as pills */}
+          <motion.div variants={fadeUp} className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 rounded-full px-3 py-1.5">
+              <Lock className="w-3 h-3" /> Bank-grade encryption
+            </span>
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 rounded-full px-3 py-1.5">
+              <Shield className="w-3 h-3" /> No credit card required
+            </span>
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 rounded-full px-3 py-1.5">
+              <Clock className="w-3 h-3" /> Setup in 2 minutes
+            </span>
+          </motion.div>
         </MotionSection>
+
+        {/* Bottom gradient separator */}
+        <div className="h-[1px] bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.3)] to-transparent max-w-md mx-auto mt-16" />
       </section>
 
       {/* ── Footer ───────────────────────────────────────── */}
