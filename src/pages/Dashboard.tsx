@@ -8,7 +8,6 @@ import { DashboardAlertsPanel } from "@/components/dashboard/DashboardAlertsPane
 import { DashboardPositionsTable } from "@/components/dashboard/DashboardPositionsTable";
 import { DashboardMonthlyMetrics } from "@/components/dashboard/DashboardMonthlyMetrics";
 import { QuickActions } from "@/components/dashboard/QuickActions";
-import { TodaysPnl } from "@/components/dashboard/TodaysPnl";
 import { EquityCurve } from "@/components/dashboard/EquityCurve";
 import { StreakDiscipline } from "@/components/dashboard/StreakDiscipline";
 import { JournalCalendarView } from "@/components/journal/JournalCalendarView";
@@ -18,7 +17,7 @@ import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useLivePrices } from "@/hooks/useLivePrices";
 import { useDashboardLayout, type WidgetConfig } from "@/hooks/useDashboardLayout";
-import { Radio, Settings2, ChevronUp, ChevronDown, Eye, EyeOff, RotateCcw, Home, ChevronRight } from "lucide-react";
+import { Radio, Settings2, ChevronUp, ChevronDown, Eye, EyeOff, RotateCcw } from "lucide-react";
 import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -120,6 +119,9 @@ export default function Dashboard() {
     navigate("/calendar");
   }, [navigate]);
 
+  // Check if alerts widget is visible for dynamic chart width
+  const alertsVisible = widgets.find((w) => w.id === "alerts")?.visible ?? true;
+
   const ctx: DashboardContextValue = {
     selectedMonth, setSelectedMonth, segment,
     trades, monthTrades, openTrades,
@@ -130,17 +132,15 @@ export default function Dashboard() {
   const renderWidget = (w: WidgetConfig) => {
     if (!w.visible) return null;
     switch (w.id) {
-      case "todayPnl":
-        return <TodaysPnl key={w.id} />;
       case "kpi":
         return <DashboardKPICards key={w.id} alerts={alerts} />;
       case "riskGoal":
         return <RiskGoalWidget key={w.id} />;
       case "chart":
         return (
-          <div key={w.id} className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <div className="lg:col-span-2"><DailySectorChart /></div>
-            <DashboardAlertsPanel alerts={alerts} />
+          <div key={w.id} className={cn("grid grid-cols-1 gap-5", alertsVisible ? "lg:grid-cols-3" : "")}>
+            <div className={alertsVisible ? "lg:col-span-2" : ""}><DailySectorChart /></div>
+            {alertsVisible && <DashboardAlertsPanel alerts={alerts} />}
           </div>
         );
       case "alerts":
@@ -152,15 +152,19 @@ export default function Dashboard() {
       case "streakCalendar":
         return (
           <div key={w.id} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <StreakDiscipline />
-            <JournalCalendarView
-              calendarData={calendarData}
-              isLoading={tradesLoading}
-              onTradeClick={() => {}}
-              compact
-              showLink
-              onDayClick={handleCalendarDayClick}
-            />
+            <div className="min-h-[360px]">
+              <StreakDiscipline />
+            </div>
+            <div className="min-h-[360px]">
+              <JournalCalendarView
+                calendarData={calendarData}
+                isLoading={tradesLoading}
+                onTradeClick={() => {}}
+                compact
+                showLink
+                onDayClick={handleCalendarDayClick}
+              />
+            </div>
           </div>
         );
       case "monthly":
@@ -179,50 +183,24 @@ export default function Dashboard() {
       <div className="space-y-6 animate-fade-in">
         <OnboardingWelcome />
 
-        {/* Breadcrumb bar */}
-        <div className="flex items-center justify-between">
-          <div className="breadcrumb-bar">
-            <Home className="w-4 h-4" />
-            <ChevronRight className="w-3 h-3 text-muted-foreground/50" />
-            <span>Overview</span>
-            <ChevronRight className="w-3 h-3 text-muted-foreground/50" />
-            <span className="breadcrumb-active">Dashboard</span>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            {isPolling && openInstruments.length > 0 ? (
-              <>
-                <Radio className="w-3 h-3 text-profit animate-pulse" />
-                <span className="text-profit font-medium">Live</span>
-                {lastUpdated && <span>• Last update: {format(lastUpdated, "h:mm a")}</span>}
-              </>
-            ) : (
-              <>
-                <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
-                <span>Offline</span>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Header with greeting */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        {/* Row 1: Greeting + Live status + Settings */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <DashboardGreeting />
           <div className="flex items-center gap-3">
-            {/* Month selector */}
-            <div className="flex gap-1 bg-muted rounded-full p-0.5">
-              {[subMonths(new Date(), 2), subMonths(new Date(), 1), new Date()].map((m) => (
-                <button
-                  key={m.toISOString()}
-                  onClick={() => setSelectedMonth(m)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all ${
-                    format(selectedMonth, "MMM yy") === format(m, "MMM yy")
-                      ? "bg-background shadow-sm text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {format(m, "MMM")}
-                </button>
-              ))}
+            {/* Live status indicator */}
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              {isPolling && openInstruments.length > 0 ? (
+                <>
+                  <Radio className="w-3 h-3 text-profit animate-pulse" />
+                  <span className="text-profit font-medium">Live</span>
+                  {lastUpdated && <span>• {format(lastUpdated, "h:mm a")}</span>}
+                </>
+              ) : (
+                <>
+                  <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
+                  <span>Offline</span>
+                </>
+              )}
             </div>
 
             {/* Widget customization */}
@@ -265,13 +243,33 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Segment filter */}
-        <div className="flex gap-2 flex-wrap">
+        {/* Row 2: Month selector + Segment filter combined */}
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* Month selector */}
+          <div className="flex gap-1 bg-muted rounded-full p-0.5">
+            {[subMonths(new Date(), 2), subMonths(new Date(), 1), new Date()].map((m) => (
+              <button
+                key={m.toISOString()}
+                onClick={() => setSelectedMonth(m)}
+                className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all ${
+                  format(selectedMonth, "MMM yy") === format(m, "MMM yy")
+                    ? "bg-background shadow-sm text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {format(m, "MMM")}
+              </button>
+            ))}
+          </div>
+
+          <div className="w-px h-5 bg-border/40" />
+
+          {/* Segment filter */}
           {SEGMENT_OPTIONS.map((opt) => (
             <button
               key={opt.value}
               onClick={() => setSegment(opt.value)}
-              className={`px-4 py-2 text-xs font-medium rounded-full border transition-all ${
+              className={`px-4 py-1.5 text-xs font-medium rounded-full border transition-all ${
                 segment === opt.value
                   ? "bg-primary text-primary-foreground border-primary"
                   : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/20"

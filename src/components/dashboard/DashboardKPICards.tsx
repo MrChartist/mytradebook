@@ -1,11 +1,13 @@
 import { useMemo } from "react";
 import { useDashboard } from "@/pages/Dashboard";
 import { cn } from "@/lib/utils";
-import { Wallet, Target, TrendingUp, Bell, Plus } from "lucide-react";
+import { Flame, Wallet, Target, TrendingUp, Bell, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { calculatePnL } from "@/lib/calculations";
+import { calculatePnL, calculatePnLPercent } from "@/lib/calculations";
 import { formatCurrency } from "@/lib/formatting";
 import { TradeStatus } from "@/lib/constants";
+import { useTrades } from "@/hooks/useTrades";
+import { useLivePrices } from "@/hooks/useLivePrices";
 
 interface Props {
   alerts: { id: string; last_triggered: string | null; condition_type: string }[];
@@ -15,6 +17,28 @@ export function DashboardKPICards({ alerts }: Props) {
   const { monthTrades, openTrades, prices } = useDashboard();
   const navigate = useNavigate();
 
+  // --- Today's P&L logic (merged from TodaysPnl) ---
+  const { trades: allTrades } = useTrades();
+  const today = new Date().toDateString();
+  const closedToday = allTrades.filter(
+    (t) => t.status === TradeStatus.CLOSED && t.closed_at && new Date(t.closed_at).toDateString() === today
+  );
+  const openTradesAll = allTrades.filter((t) => t.status === TradeStatus.OPEN);
+  const openInstruments = useMemo(() => openTradesAll.map((t) => ({
+    symbol: t.symbol, security_id: t.security_id, exchange_segment: t.exchange_segment,
+  })), [openTradesAll]);
+  const { prices: todayPrices } = useLivePrices(openInstruments);
+
+  const realizedToday = closedToday.reduce((acc, t) => acc + (t.pnl || 0), 0);
+  const unrealizedToday = openTradesAll.reduce((acc, t) => {
+    const ltp = todayPrices[t.symbol]?.ltp || t.current_price || t.entry_price;
+    const entry = t.entry_price || 0;
+    const tradeType = t.trade_type === "BUY" ? "LONG" : "SHORT";
+    return acc + calculatePnL(entry, ltp, t.quantity, tradeType);
+  }, 0);
+  const totalTodayPnl = realizedToday + unrealizedToday;
+
+  // --- MTD logic ---
   const closedMonth = useMemo(() => monthTrades.filter((t) => t.status === TradeStatus.CLOSED), [monthTrades]);
   const wins = closedMonth.filter((t) => (t.pnl || 0) > 0);
   const losses = closedMonth.filter((t) => (t.pnl || 0) < 0);
@@ -26,11 +50,6 @@ export function DashboardKPICards({ alerts }: Props) {
     const tradeType = t.trade_type === "BUY" ? "LONG" : "SHORT";
     return a + calculatePnL(entry, ltp, t.quantity, tradeType);
   }, 0);
-
-  const todayClosed = closedMonth.filter(
-    (t) => t.closed_at && new Date(t.closed_at).toDateString() === new Date().toDateString()
-  );
-  const todayPnl = todayClosed.reduce((a, t) => a + (t.pnl || 0), 0);
 
   const riskAtSL = openTrades.reduce((a, t) => {
     if (!t.stop_loss || !t.entry_price) return a;
@@ -44,7 +63,7 @@ export function DashboardKPICards({ alerts }: Props) {
   const expectancy = closedMonth.length > 0 ? realizedPnl / closedMonth.length : 0;
 
   const triggeredToday = alerts.filter(
-    (a) => a.last_triggered && new Date(a.last_triggered).toDateString() === new Date().toDateString()
+    (a) => a.last_triggered && new Date(a.last_triggered).toDateString() === today
   ).length;
 
   const priceAlerts = alerts.filter((a) => ["PRICE_GT", "PRICE_LT"].includes(a.condition_type)).length;
@@ -53,8 +72,46 @@ export function DashboardKPICards({ alerts }: Props) {
   const cardBase = "dashboard-card-hover block cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98] transition-transform";
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* Total P&L */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      {/* Today's P&L — hero card */}
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={`Today's P&L: ${formatCurrency(totalTodayPnl)}`}
+        className={cn(cardBase, "relative overflow-hidden sm:col-span-2 lg:col-span-1")}
+        onClick={() => navigate("/reports")}
+        onKeyDown={(e) => { if (e.key === "Enter") navigate("/reports"); }}
+      >
+        {/* Accent top bar */}
+        <div className={cn(
+          "absolute top-0 left-0 right-0 h-[3px] rounded-t-2xl",
+          totalTodayPnl >= 0 ? "bg-profit" : "bg-loss"
+        )} />
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Today's P&L</span>
+          <div className={cn("icon-badge", totalTodayPnl >= 0 ? "bg-profit/10" : "bg-loss/10")}>
+            <Flame className={cn("w-4.5 h-4.5", totalTodayPnl >= 0 ? "text-profit" : "text-loss")} />
+          </div>
+        </div>
+        <p className={cn("text-2xl font-bold font-mono", totalTodayPnl >= 0 ? "text-profit" : "text-loss")}>
+          {formatCurrency(totalTodayPnl)}
+        </p>
+        <div className="flex gap-3 mt-3">
+          <div>
+            <p className="text-[10px] text-muted-foreground">Realized</p>
+            <p className={cn("text-xs font-bold font-mono", realizedToday >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(realizedToday)}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-muted-foreground">Unrealized</p>
+            <p className={cn("text-xs font-bold font-mono", unrealizedToday >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(unrealizedToday)}</p>
+          </div>
+        </div>
+        <p className="text-[10px] text-muted-foreground mt-2">
+          {closedToday.length} closed • {openTradesAll.length} open
+        </p>
+      </div>
+
+      {/* MTD P&L */}
       <div
         role="button"
         tabIndex={0}
@@ -81,12 +138,6 @@ export function DashboardKPICards({ alerts }: Props) {
             <p className="text-[10px] text-muted-foreground">Unrealized</p>
             <p className={cn("text-xs font-bold font-mono", unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(unrealizedPnl)}</p>
           </div>
-        </div>
-        <div className="flex items-center gap-1 mt-3 text-[10px] text-muted-foreground">
-          <span>Today: </span>
-          <span className={cn("font-medium", todayPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(todayPnl)}</span>
-          <span className="mx-1">•</span>
-          <span>Closed: {closedMonth.length} | Open: {openTrades.length}</span>
         </div>
       </div>
 

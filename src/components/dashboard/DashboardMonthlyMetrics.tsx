@@ -56,11 +56,11 @@ export function DashboardMonthlyMetrics() {
   };
 
   const metrics: MetricItem[] = [
-    { label: "Closed Trades", value: String(cm.closed), delta: delta(cm.closed, pm.closed), highlight: true },
-    { label: "Win Rate", value: `${cm.winRate.toFixed(1)}%`, delta: cm.winRate - pm.winRate },
+    { label: "Closed Trades", value: String(cm.closed), delta: delta(cm.closed, pm.closed) },
+    { label: "Win Rate", value: `${cm.winRate.toFixed(1)}%`, delta: cm.winRate - pm.winRate, highlight: true },
     { label: "Avg Win", value: `₹${cm.avgWin.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`, delta: delta(cm.avgWin, pm.avgWin) },
     { label: "Avg Loss", value: `₹${cm.avgLoss.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`, delta: delta(cm.avgLoss, pm.avgLoss) },
-    { label: "Profit Factor", value: cm.profitFactor.toFixed(2), delta: delta(cm.profitFactor, pm.profitFactor) },
+    { label: "Profit Factor", value: cm.profitFactor.toFixed(2), delta: delta(cm.profitFactor, pm.profitFactor), highlight: true },
     { label: "Expectancy", value: `₹${cm.expectancy.toLocaleString("en-IN", { maximumFractionDigits: 0 })}/trade`, delta: delta(cm.expectancy, pm.expectancy) },
     { label: "Best Trade", value: `+${fmt(cm.bestTrade)}` },
     { label: "Worst Trade", value: `-${fmt(Math.abs(cm.worstTrade))}` },
