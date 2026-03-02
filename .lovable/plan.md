@@ -1,102 +1,96 @@
 
 
-# Final Project Cleanup -- Remove Unused Files and Optimize
+# Move Mockup Visuals Inside FeatureCards (Below Description)
 
-## Scan Results
+## Current Layout
+```text
++-------------------+
+| Mockup (separate) |
++-------------------+
 
-After a deep search of every import path across the codebase, here are the findings:
++-------------------+
+| FeatureCard       |
+|   Icon + Title    |
+|   Description     |
+|   Feature List    |
++-------------------+
+```
 
----
+## New Layout
+```text
++---------------------+
+| FeatureCard         |
+|   Icon + Title      |
+|   Description       |
+|   Feature List      |
+|                     |
+|   +---------------+ |
+|   | Mockup Visual | |
+|   +---------------+ |
++---------------------+
+```
 
-## 1. Unused Files to Delete (Safe -- Zero Imports)
-
-These files are NOT imported anywhere in the project and can be safely removed:
-
-### Components
-| File | Reason |
-|------|--------|
-| `src/components/NavLink.tsx` | Custom NavLink wrapper -- never imported anywhere |
-| `src/components/dashboard/PerformanceMetrics.tsx` | Legacy dashboard widget -- replaced by DashboardKPICards |
-| `src/components/dashboard/SegmentBreakdown.tsx` | Legacy dashboard widget -- never imported |
-| `src/components/dashboard/RecentTrades.tsx` | Legacy dashboard widget -- never imported |
-| `src/components/dashboard/AlertsWidget.tsx` | Legacy dashboard widget -- replaced by DashboardAlertsPanel |
-| `src/components/dashboard/OpenPositionsTable.tsx` | Legacy dashboard widget -- replaced by DashboardPositionsTable |
-| `src/components/trade/FuturesContractPicker.tsx` | Never imported -- likely replaced by InstrumentPicker |
-| `src/components/trade/ShareableTradeCard.tsx` | Never imported -- planned but unused feature |
-| `src/components/trade/TradeAutomationControls.tsx` | Never imported -- planned but unused feature |
-| `src/components/trade/UnifiedInstrumentSearch.tsx` | Never imported -- replaced by InstrumentPicker |
-| `src/components/trade/TagSearchPicker.tsx` | Never imported -- replaced by another tag component |
-
-### Hooks
-| File | Reason |
-|------|--------|
-| `src/hooks/useScanners.ts` | Never imported anywhere |
-| `src/hooks/useInstrumentSearch.ts` | Never imported -- replaced by InstrumentPicker's inline logic |
-
-### Lib
-| File | Reason |
-|------|--------|
-| `src/lib/errors.ts` | Never imported in any src file |
-| `src/lib/performance.ts` | Never imported in any src file |
-
-### Root Markdown Files (Dev-only docs, not shipped but add repo clutter)
-| File | Reason |
-|------|--------|
-| `ARCHITECTURE.md` | Dev documentation -- not needed in production |
-| `IMPROVEMENTS.md` | Dev documentation -- not needed in production |
-| `PHASE4_IMPROVEMENTS.md` | Dev documentation -- not needed in production |
-| `PR_PHASE4_DESCRIPTION.md` | Dev documentation -- not needed in production |
-| `SECURITY_NOTES.md` | Dev documentation -- not needed in production |
-| `TELEGRAM_IMPLEMENTATION.md` | Dev documentation -- not needed in production |
-
-**Total: 15 code files + 6 markdown files = 21 files to delete**
+The mockup visual moves inside the card, placed after all text content. This applies to every section across the entire Docs page.
 
 ---
 
-## 2. Files NOT to Delete (Used -- Verified)
+## Changes
 
-These were initially suspicious but confirmed to be in use:
-- `src/components/dashboard/StatCard.tsx` -- used by Analytics.tsx
-- `src/components/dashboard/OpenPositionsTable.tsx` -- actually used by DashboardPositionsTable indirectly... wait, let me recheck... No, it has zero imports. Safe to delete.
-- `src/lib/confetti.ts` -- used by useTrades.ts
-- `src/lib/schemas.ts` -- used by CreateStudyModal and CreateTradeModal
-- `src/hooks/useTradeTemplates.ts` -- used by Trades.tsx
-- `src/hooks/useTradeEvents.ts` -- used by TradeDetailModal.tsx
-- All settings components -- used by Settings.tsx
+### File: `src/pages/Docs.tsx`
+
+For every instance where a mockup component sits above a FeatureCard, move it inside the FeatureCard's children, after the existing description/FeatureList content. Add a `mt-4` spacing class wrapper around the mockup when placed inside.
+
+**Sections affected (all of them):**
+
+1. **Dashboard** -- `TodaysPnlHeroMockup`, `KPICardsDetailMockup`, `RiskGaugeDetailMockup`, `EquityCurveWidgetMockup`, `StreakDisciplineMockup`, `CalendarHeatmapWidgetMockup`, `WidgetCustomizerMockup`, `SegmentFilterMockup`
+2. **Trade Management** -- `CreateTradeMockup`, `TradeStatusLifecycleMockup`, `TSLDetailMockup`, `MultiLegStrategyDetailMockup`, `PositionSizingDetailMockup`, `PostTradeReviewMockup`, `TradeTemplateMockup`
+3. **Alerts** -- `AlertConditionTypesMockup`, `RecurrenceCooldownMockup`, `DeliveryChannelsMockup`, `AlertManagementMockup`
+4. **Studies** -- `StudyCategoryWorkflowMockup`, `PatternTaggingMockup`, `StudyAdditionalFeaturesMockup`
+5. **Watchlists** -- `WatchlistDetailMockup`
+6. **Journal** -- `JournalDashboardTabMockup`, `JournalCalendarTabMockup`, `JournalMistakesTabMockup`, `JournalFiltersSegmentationMockup`
+7. **Calendar & Daily Journal** -- `DailyJournalWorkflowMockup`
+8. **Mistakes** -- `MistakeAnalysisToolsMockup`
+9. **Weekly Reports** -- (WeeklyReportMockup stays as section-level intro)
+10. **Integrations** -- `DhanIntegrationDetailMockup`, `TelegramIntegrationDetailMockup`
+11. **Keyboard Shortcuts** -- `KeyboardShortcutsDetailMockup`
+12. **Settings** -- `SettingsProfileBillingMockup`, `SettingsPreferencesMockup`, `SettingsTagManagementMockup`, `CapitalManagementMockup`, `SettingsSecurityMockup`, `SettingsIntegrationsMockup`
+
+**Example transformation (before/after):**
+
+Before:
+```jsx
+<RiskGaugeDetailMockup />
+<FeatureCard icon={Gauge} title="Risk Gauge & Goal Tracker">
+  <p className="text-sm text-muted-foreground">
+    Visualize your daily risk...
+  </p>
+</FeatureCard>
+```
+
+After:
+```jsx
+<FeatureCard icon={Gauge} title="Risk Gauge & Goal Tracker">
+  <p className="text-sm text-muted-foreground">
+    Visualize your daily risk...
+  </p>
+  <div className="mt-4">
+    <RiskGaugeDetailMockup />
+  </div>
+</FeatureCard>
+```
+
+**Section-level overview mockups** (like `DashboardMockup`, `OnboardingFlowMockup`, `MobileAppMockup`, `StudyCardMockup`, `WatchlistMockup`, `TradeCardMockup`, the top-level alert/telegram pair, the calendar pair, and `ShortcutKeyboardMockup`) will remain outside cards as section intros since they are broad overviews, not tied to a specific FeatureCard.
+
+### File: `src/components/docs/DocsMockups.tsx`
+
+Update `MockupFrame` to remove the top/bottom margin (`my-6`, `my-4`) since spacing will now be controlled by the parent `mt-4` wrapper inside FeatureCards. Change the default margin to `my-0` and let individual standalone usages pass `className="my-6"` explicitly.
+
+Alternatively, a simpler approach: keep MockupFrame as-is but override margin when inside cards using the `mt-4` wrapper div. This avoids touching every mockup component.
 
 ---
 
-## 3. What This Achieves
-
-- Removes ~15 unused code files, reducing bundle analysis complexity
-- Removes 6 dev-only markdown files that add repo clutter
-- No functionality is affected -- every deletion is verified as zero-import
-- Faster IDE indexing and cleaner project structure
-
----
-
-## 4. Final Suggestions for the Website
-
-After this cleanup, here are the top improvements to consider:
-
-1. **SEO Meta Tags** -- Add Open Graph and Twitter card meta tags to `index.html` for better social sharing (title, description, preview image)
-2. **Loading Skeleton States** -- Add skeleton loading placeholders on Dashboard and Trades pages for better perceived performance
-3. **404 Page Polish** -- The NotFound page could have a branded illustration and navigation back to dashboard
-4. **PWA Icons** -- Currently using the same 192px icon for both sizes. Add a proper 512px icon for better app store appearance
-5. **Image Optimization** -- Add lazy loading (`loading="lazy"`) to any images in the Docs page mockups
-
----
-
-## Technical Implementation
-
-### Step 1: Delete 15 unused source files
-Delete the 11 component files, 2 hook files, and 2 lib files listed above.
-
-### Step 2: Delete 6 root markdown files
-Delete ARCHITECTURE.md, IMPROVEMENTS.md, PHASE4_IMPROVEMENTS.md, PR_PHASE4_DESCRIPTION.md, SECURITY_NOTES.md, TELEGRAM_IMPLEMENTATION.md.
-
-### Step 3: Verify build
-Confirm the app builds and runs without errors after deletions.
-
-No code modifications needed -- purely file deletions.
-
+## Summary
+- ~50 mockup placements will be moved from above their FeatureCard to inside (below text content)
+- Section-level intro mockups remain standalone
+- No new components or dependencies needed
+- Single file primarily modified: `src/pages/Docs.tsx`
