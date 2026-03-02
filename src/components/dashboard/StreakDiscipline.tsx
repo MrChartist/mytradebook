@@ -15,7 +15,6 @@ export function StreakDiscipline() {
       return { currentStreak: 0, streakType: "win" as const, avgRR: 0, bestTrade: 0, worstTrade: 0, disciplineScore: 0 };
     }
 
-    // Current streak
     let streak = 0;
     const lastPnl = closed[closed.length - 1]?.pnl || 0;
     const streakType = lastPnl >= 0 ? ("win" as const) : ("loss" as const);
@@ -26,19 +25,16 @@ export function StreakDiscipline() {
       } else break;
     }
 
-    // Avg RR
     const wins = closed.filter((t) => (t.pnl || 0) > 0);
     const losses = closed.filter((t) => (t.pnl || 0) < 0);
     const avgWin = wins.length > 0 ? wins.reduce((a, t) => a + (t.pnl || 0), 0) / wins.length : 0;
     const avgLoss = losses.length > 0 ? Math.abs(losses.reduce((a, t) => a + (t.pnl || 0), 0) / losses.length) : 1;
     const avgRR = avgLoss > 0 ? avgWin / avgLoss : 0;
 
-    // Best/worst
     const pnls = closed.map((t) => t.pnl || 0);
     const bestTrade = Math.max(...pnls);
     const worstTrade = Math.min(...pnls);
 
-    // Discipline: % of trades that had a SL set
     const withSl = closed.filter((t) => t.stop_loss !== null).length;
     const disciplineScore = closed.length > 0 ? Math.round((withSl / closed.length) * 100) : 0;
 
@@ -46,16 +42,21 @@ export function StreakDiscipline() {
   }, [trades]);
 
   return (
-    <div className="glass-card p-5">
-      <div className="mb-4">
-        <h3 className="font-semibold text-lg">🏆 Streak & Discipline</h3>
-        <p className="text-sm text-muted-foreground">Trading consistency</p>
+    <div className="dashboard-card">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="icon-badge-sm bg-primary/10">
+          <Trophy className="w-4 h-4 text-primary" />
+        </div>
+        <div>
+          <h3 className="font-semibold">Streak & Discipline</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">Trading consistency</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         {/* Current Streak */}
         <div className={cn(
-          "p-3 rounded-lg",
+          "p-3.5 rounded-xl",
           stats.streakType === "win" ? "bg-profit/10 border border-profit/20" : "bg-loss/10 border border-loss/20"
         )}>
           <div className="flex items-center gap-1.5 mb-1">
@@ -72,7 +73,7 @@ export function StreakDiscipline() {
         </div>
 
         {/* Avg RR */}
-        <div className="p-3 rounded-lg bg-accent/30">
+        <div className="p-3.5 rounded-xl bg-muted/50">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Avg R:R</p>
           <p className={cn("text-xl font-bold mt-1", stats.avgRR >= 1.5 ? "text-profit" : stats.avgRR >= 1 ? "text-foreground" : "text-loss")}>
             1:{stats.avgRR.toFixed(1)}
@@ -80,7 +81,7 @@ export function StreakDiscipline() {
         </div>
 
         {/* Best Trade */}
-        <div className="p-3 rounded-lg bg-accent/30">
+        <div className="p-3.5 rounded-xl bg-muted/50">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Best Trade</p>
           <p className="text-lg font-bold mt-1 text-profit font-mono">
             +₹{stats.bestTrade.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
@@ -88,7 +89,7 @@ export function StreakDiscipline() {
         </div>
 
         {/* Worst Trade */}
-        <div className="p-3 rounded-lg bg-accent/30">
+        <div className="p-3.5 rounded-xl bg-muted/50">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Worst Trade</p>
           <p className="text-lg font-bold mt-1 text-loss font-mono">
             -₹{Math.abs(stats.worstTrade).toLocaleString("en-IN", { maximumFractionDigits: 0 })}
@@ -97,12 +98,12 @@ export function StreakDiscipline() {
       </div>
 
       {/* Discipline bar */}
-      <div className="mt-3 p-3 rounded-lg bg-accent/30">
-        <div className="flex items-center justify-between mb-1.5">
+      <div className="mt-3 p-3.5 rounded-xl bg-muted/50">
+        <div className="flex items-center justify-between mb-2">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">SL Discipline</p>
           <p className="text-xs font-semibold">{stats.disciplineScore}%</p>
         </div>
-        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+        <div className="h-2 bg-muted rounded-full overflow-hidden">
           <div
             className={cn(
               "h-full rounded-full transition-all",

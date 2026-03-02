@@ -18,7 +18,7 @@ import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useLivePrices } from "@/hooks/useLivePrices";
 import { useDashboardLayout, type WidgetConfig } from "@/hooks/useDashboardLayout";
-import { Radio, Settings2, ChevronUp, ChevronDown, Eye, EyeOff, RotateCcw } from "lucide-react";
+import { Radio, Settings2, ChevronUp, ChevronDown, Eye, EyeOff, RotateCcw, Home, ChevronRight } from "lucide-react";
 import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -176,20 +176,45 @@ export default function Dashboard() {
 
   return (
     <DashboardContext.Provider value={ctx}>
-      <div className="space-y-5 animate-fade-in">
+      <div className="space-y-6 animate-fade-in">
         <OnboardingWelcome />
 
+        {/* Breadcrumb bar */}
+        <div className="flex items-center justify-between">
+          <div className="breadcrumb-bar">
+            <Home className="w-4 h-4" />
+            <ChevronRight className="w-3 h-3 text-muted-foreground/50" />
+            <span>Overview</span>
+            <ChevronRight className="w-3 h-3 text-muted-foreground/50" />
+            <span className="breadcrumb-active">Dashboard</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            {isPolling && openInstruments.length > 0 ? (
+              <>
+                <Radio className="w-3 h-3 text-profit animate-pulse" />
+                <span className="text-profit font-medium">Live</span>
+                {lastUpdated && <span>• Last update: {format(lastUpdated, "h:mm a")}</span>}
+              </>
+            ) : (
+              <>
+                <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
+                <span>Offline</span>
+              </>
+            )}
+          </div>
+        </div>
+
         {/* Header with greeting */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <DashboardGreeting />
           <div className="flex items-center gap-3">
             {/* Month selector */}
-            <div className="flex gap-1 bg-muted rounded-lg p-0.5">
+            <div className="flex gap-1 bg-muted rounded-full p-0.5">
               {[subMonths(new Date(), 2), subMonths(new Date(), 1), new Date()].map((m) => (
                 <button
                   key={m.toISOString()}
                   onClick={() => setSelectedMonth(m)}
-                  className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+                  className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all ${
                     format(selectedMonth, "MMM yy") === format(m, "MMM yy")
                       ? "bg-background shadow-sm text-foreground"
                       : "text-muted-foreground hover:text-foreground"
@@ -198,21 +223,6 @@ export default function Dashboard() {
                   {format(m, "MMM")}
                 </button>
               ))}
-            </div>
-            {/* Live indicator */}
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              {isPolling && openInstruments.length > 0 ? (
-                <>
-                  <Radio className="w-3 h-3 text-profit animate-pulse" />
-                  <span className="text-profit font-medium">Live</span>
-                  {lastUpdated && <span>• {format(lastUpdated, "h:mm a")}</span>}
-                </>
-              ) : (
-                <>
-                  <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
-                  <span>Offline</span>
-                </>
-              )}
             </div>
 
             {/* Widget customization */}
@@ -256,12 +266,12 @@ export default function Dashboard() {
         </div>
 
         {/* Segment filter */}
-        <div className="flex gap-1.5 flex-wrap">
+        <div className="flex gap-2 flex-wrap">
           {SEGMENT_OPTIONS.map((opt) => (
             <button
               key={opt.value}
               onClick={() => setSegment(opt.value)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
+              className={`px-4 py-2 text-xs font-medium rounded-full border transition-all ${
                 segment === opt.value
                   ? "bg-primary text-primary-foreground border-primary"
                   : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/20"

@@ -263,6 +263,37 @@
     border-radius: 0 3px 3px 0;
     background: hsl(var(--primary));
   }
+
+  /* ── Dashboard Utilities ───────────────────────── */
+  .dashboard-card {
+    @apply bg-card rounded-2xl border border-border/60 p-6;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .dashboard-card-hover {
+    @apply dashboard-card transition-all duration-200;
+  }
+
+  .dashboard-card-hover:hover {
+    box-shadow: var(--shadow-md);
+    border-color: hsl(var(--primary) / 0.12);
+  }
+
+  .icon-badge {
+    @apply w-10 h-10 rounded-full flex items-center justify-center shrink-0;
+  }
+
+  .icon-badge-sm {
+    @apply w-8 h-8 rounded-full flex items-center justify-center shrink-0;
+  }
+
+  .breadcrumb-bar {
+    @apply flex items-center gap-2 text-sm text-muted-foreground;
+  }
+
+  .breadcrumb-bar .breadcrumb-active {
+    @apply text-foreground font-semibold;
+  }
 }
 
 @layer utilities {

@@ -1,7 +1,7 @@
 import { useDashboard } from "@/pages/Dashboard";
 import { cn } from "@/lib/utils";
 import { useMemo, useState } from "react";
-import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, LayoutList } from "lucide-react";
 import { Link } from "react-router-dom";
 import { QuickClosePopover } from "@/components/trade/QuickClosePopover";
 import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
@@ -33,33 +33,37 @@ export function DashboardPositionsTable() {
   const totalUnrealized = positions.reduce((a, p) => a + p.pnl, 0);
 
   return (
-    <div className="surface-card p-5">
+    <div className="dashboard-card">
       <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="font-semibold">Open Positions</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">{positions.length} positions • Live prices</p>
+        <div className="flex items-center gap-3">
+          <div className="icon-badge-sm bg-primary/10">
+            <LayoutList className="w-4 h-4 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-semibold">Open Positions</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">{positions.length} positions • Live prices</p>
+          </div>
         </div>
         <Link to="/trades?status=OPEN" className="text-xs text-primary hover:underline font-medium">View All →</Link>
       </div>
 
-      {/* Summary strip */}
       {positions.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-          <div className="bg-muted/50 rounded-lg p-2.5">
-            <p className="text-[10px] text-muted-foreground">Exposure</p>
-            <p className="text-sm font-semibold">₹{totalExposure.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</p>
+          <div className="bg-muted/50 rounded-xl p-3">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Exposure</p>
+            <p className="text-sm font-semibold mt-1">₹{totalExposure.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</p>
           </div>
-          <div className="bg-muted/50 rounded-lg p-2.5">
-            <p className="text-[10px] text-muted-foreground">Risk (to SL)</p>
-            <p className="text-sm font-semibold text-loss">₹{totalRisk.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</p>
+          <div className="bg-muted/50 rounded-xl p-3">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Risk (to SL)</p>
+            <p className="text-sm font-semibold text-loss mt-1">₹{totalRisk.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</p>
           </div>
-          <div className="bg-muted/50 rounded-lg p-2.5">
-            <p className="text-[10px] text-muted-foreground">Unrealized P&L</p>
-            <p className={cn("text-sm font-semibold", totalUnrealized >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(totalUnrealized)}</p>
+          <div className="bg-muted/50 rounded-xl p-3">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Unrealized P&L</p>
+            <p className={cn("text-sm font-semibold mt-1", totalUnrealized >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(totalUnrealized)}</p>
           </div>
-          <div className="bg-muted/50 rounded-lg p-2.5">
-            <p className="text-[10px] text-muted-foreground">Positions</p>
-            <p className="text-sm font-semibold">{positions.length}</p>
+          <div className="bg-muted/50 rounded-xl p-3">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Positions</p>
+            <p className="text-sm font-semibold mt-1">{positions.length}</p>
           </div>
         </div>
       )}
@@ -70,20 +74,20 @@ export function DashboardPositionsTable() {
           <Link to="/trades" className="text-xs text-primary hover:underline font-medium">Create a trade →</Link>
         </div>
       ) : (
-        <div className="overflow-x-auto -mx-5 px-5">
+        <div className="overflow-x-auto -mx-6 px-6">
           <table className="w-full text-xs">
             <thead>
-              <tr className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                <th className="text-left pb-2 font-medium">Symbol</th>
-                <th className="text-left pb-2 font-medium hidden md:table-cell">Segment</th>
-                <th className="text-center pb-2 font-medium">Side</th>
-                <th className="text-right pb-2 font-medium">Qty</th>
-                <th className="text-right pb-2 font-medium">Entry</th>
-                <th className="text-right pb-2 font-medium">LTP</th>
-                <th className="text-right pb-2 font-medium">P&L</th>
-                <th className="text-right pb-2 font-medium hidden sm:table-cell">SL</th>
-                <th className="text-right pb-2 font-medium hidden sm:table-cell">SL Dist.</th>
-                <th className="text-right pb-2 font-medium w-8"></th>
+              <tr className="text-[11px] text-muted-foreground uppercase tracking-wider">
+                <th className="text-left pb-3 font-medium">Symbol</th>
+                <th className="text-left pb-3 font-medium hidden md:table-cell">Segment</th>
+                <th className="text-center pb-3 font-medium">Side</th>
+                <th className="text-right pb-3 font-medium">Qty</th>
+                <th className="text-right pb-3 font-medium">Entry</th>
+                <th className="text-right pb-3 font-medium">LTP</th>
+                <th className="text-right pb-3 font-medium">P&L</th>
+                <th className="text-right pb-3 font-medium hidden sm:table-cell">SL</th>
+                <th className="text-right pb-3 font-medium hidden sm:table-cell">SL Dist.</th>
+                <th className="text-right pb-3 font-medium w-8"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/30">
@@ -97,23 +101,23 @@ export function DashboardPositionsTable() {
                   onClick={() => setSelectedTrade(p)}
                   onKeyDown={(e) => { if (e.key === "Enter") setSelectedTrade(p); }}
                 >
-                  <td className="py-2 font-medium">{p.symbol}</td>
-                  <td className="py-2 hidden md:table-cell">
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                  <td className="py-2.5 font-medium">{p.symbol}</td>
+                  <td className="py-2.5 hidden md:table-cell">
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
                       {p.segment.replace("_", " ")}
                     </span>
                   </td>
-                  <td className="py-2 text-center">
+                  <td className="py-2.5 text-center">
                     {p.trade_type === "BUY" ? (
                       <ArrowUpRight className="w-3.5 h-3.5 text-profit inline" />
                     ) : (
                       <ArrowDownRight className="w-3.5 h-3.5 text-loss inline" />
                     )}
                   </td>
-                  <td className="py-2 text-right font-mono">{p.quantity}</td>
-                  <td className="py-2 text-right font-mono text-muted-foreground">₹{(p.entry_price || 0).toLocaleString()}</td>
-                  <td className="py-2 text-right font-mono">₹{p.ltp.toLocaleString()}</td>
-                  <td className="py-2 text-right">
+                  <td className="py-2.5 text-right font-mono">{p.quantity}</td>
+                  <td className="py-2.5 text-right font-mono text-muted-foreground">₹{(p.entry_price || 0).toLocaleString()}</td>
+                  <td className="py-2.5 text-right font-mono">₹{p.ltp.toLocaleString()}</td>
+                  <td className="py-2.5 text-right">
                     <span className={cn("font-semibold font-mono", p.pnl >= 0 ? "text-profit" : "text-loss")}>
                       {formatCurrency(p.pnl)}
                     </span>
@@ -121,20 +125,20 @@ export function DashboardPositionsTable() {
                       {p.pnlPct >= 0 ? "+" : ""}{p.pnlPct.toFixed(1)}%
                     </span>
                   </td>
-                  <td className="py-2 text-right font-mono text-muted-foreground hidden sm:table-cell">
+                  <td className="py-2.5 text-right font-mono text-muted-foreground hidden sm:table-cell">
                     {p.stop_loss ? `₹${p.stop_loss.toLocaleString()}` : "—"}
                   </td>
-                  <td className="py-2 text-right hidden sm:table-cell">
+                  <td className="py-2.5 text-right hidden sm:table-cell">
                     {p.slDist !== null ? (
                       <span className={cn(
-                        "text-[9px] font-mono px-1.5 py-0.5 rounded",
+                        "text-[9px] font-mono px-1.5 py-0.5 rounded-full",
                         p.slDist > 3 ? "bg-profit/10 text-profit" : p.slDist > 1 ? "bg-warning/10 text-warning" : "bg-loss/10 text-loss"
                       )}>
                         {p.slDist.toFixed(1)}%
                       </span>
                     ) : "—"}
                   </td>
-                  <td className="py-2 text-right" onClick={(e) => e.stopPropagation()}>
+                  <td className="py-2.5 text-right" onClick={(e) => e.stopPropagation()}>
                     <QuickClosePopover
                       tradeId={p.id}
                       symbol={p.symbol}
