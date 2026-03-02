@@ -1,60 +1,64 @@
 
 
-# Polish Footer to Match Header Style
+# Refine Testimonials Section
 
 ## Current State
-The footer has the right structure (4-column grid with logo, Product, Support, Legal links + bottom bar) but it feels flat and disconnected from the premium "floating island" navbar style. It lacks visual refinement like the header's backdrop-blur, rounded borders, and spacing.
+3 testimonials in a 3+2 column bento layout (1 large featured card on the left, 2 smaller cards stacked on the right). The content and layout match the screenshot reference well. The section works but can be more impactful with richer content and polish.
 
 ## Improvements
 
-### 1. Logo Treatment -- Match Navbar Exactly
-The navbar logo uses a `rounded-xl` icon with a glow shadow (`shadow-[0_0_16px_hsl(var(--tb-accent)/0.25)]`) and `font-logo` text. The footer logo uses `rounded-lg` without glow. Sync them.
+### 1. Add 2 More Testimonials (Total: 5)
+Expand from 3 to 5 testimonials to fill a richer layout. New testimonials:
+- **Vikram T.** -- Scalper, Hyderabad -- focuses on the trading rules checklist helping him avoid revenge trading
+- **Sneha R.** -- Positional Trader, Pune -- highlights the Telegram alerts and EOD report features
 
-### 2. Footer Link Hover -- Pill Style Like Navbar
-Navbar links have `rounded-full hover:bg-muted/60` pill hover states. Footer links are plain `hover:text-foreground`. Add the same pill hover style with slight padding for consistency.
+### 2. New Layout: 3-Column Masonry-Style Grid
+Replace the current 3+2 split with a more dynamic layout:
+- **Row 1**: 1 large featured card (col-span-2) + 1 regular card (col-span-1)
+- **Row 2**: 1 regular card (col-span-1) + 1 large featured card (col-span-2)
+- This creates a zigzag visual rhythm that feels more dynamic than the current stacked right column
+- Uses `grid-cols-1 md:grid-cols-3` with alternating `col-span-2` placement
+- The 5th testimonial sits as a full-width accent strip below the grid
 
-### 3. Add Social/Action Row
-Add a small row in the logo column with:
-- A "Get Started" pill button (matching the navbar CTA style)
-- A ThemeToggle (matching the navbar)
+### 3. Visual Enhancements per Card
+- Add a subtle **highlight keyword** in each quote using accent color (the key metric or feature mentioned)
+- Add a **trading style tag** pill below each name (e.g., "Options", "Swing", "F&O", "Scalping", "Positional") -- gives immediate context
+- Featured cards get a subtle `dot-pattern` background texture for depth
+- Smaller cards get a subtle left accent border on hover (`border-l-2 border-[hsl(var(--tb-accent))]`)
 
-### 4. Column Headers -- Badge Style
-Replace plain `<h4>` column headers with the same `SectionBadge`-like uppercase tracking style used elsewhere, but smaller -- `text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/60` to match the `sidebar-section-label` pattern.
+### 4. Bottom Stats Strip
+Below the testimonial cards, add a horizontal stats strip:
+- "4.9/5 average rating" with filled stars
+- "1,200+ active traders"
+- "42,000+ trades tracked"
+- Displayed as inline pill badges in a centered flex row with subtle separators
 
-### 5. Bottom Bar -- Richer Layout
-- Add a thin decorative accent gradient line above the bottom bar (same as the CTA section separator)
-- Add the Indian tricolor micro-stripe before "Made with" text
-- Style the SEBI disclaimer with a subtle `bg-muted/30 rounded-full px-3 py-1` pill treatment
-
-### 6. Background -- Match Premium Feel
-Change from `bg-card/30` to a slightly richer treatment with the `dot-pattern` class for texture consistency with other sections.
-
-### 7. Add Extra Links
-- Add "Changelog" under Product
-- Add "FAQ" under Support (scrolls to FAQ section)
+### 5. Section Background
+Add a subtle `dot-pattern` background to the section for consistency with other sections.
 
 ## Technical Changes
 
-### File: `src/pages/Landing.tsx` (lines 1512-1555)
+### File: `src/pages/Landing.tsx`
 
-**Section background (line 1513):**
-- Change to `border-t border-border/30 bg-card/50 dot-pattern py-16`
+**Testimonials data array (lines 116-120):**
+- Add 2 new testimonials (Vikram T. and Sneha R.) with a `style` field for the trading style tag
+- Add `highlight` field to each testimonial containing the key phrase to accent-color
 
-**Logo block (lines 1517-1525):**
-- Match navbar icon: `rounded-xl` + glow shadow
-- Add a mini CTA row: "Get Started" pill button + ThemeToggle
+**Section wrapper (line 1187):**
+- Add `dot-pattern` class to section background
 
-**Column headers (lines 1528, 1536, 1543):**
-- Change to `text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-5`
+**Grid layout (lines 1200-1254):**
+- Replace the current `grid-cols-5` layout with a new `grid-cols-1 md:grid-cols-3` grid
+- First row: featured card (`md:col-span-2`) + regular card (`md:col-span-1`)
+- Second row: regular card (`md:col-span-1`) + featured card (`md:col-span-2`)
+- 5th testimonial as a full-width card below with a different style (horizontal layout, accent border)
 
-**Links (lines 1530-1532, 1538-1539, 1545-1546):**
-- Add `rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50` for pill hover effect
-- Add "Changelog" and "FAQ" links
+**Card internals:**
+- Add trading style pill below the name/role (`bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] rounded-full px-2 py-0.5 text-[10px]`)
+- Highlight key phrases in quotes by wrapping them in `<span className="text-[hsl(var(--tb-accent))] font-semibold">`
 
-**Bottom bar (lines 1550-1553):**
-- Add gradient separator line above
-- Wrap SEBI disclaimer in a subtle pill
-- Style "Made with" section with the tricolor micro-stripe (3 small colored dots or bars)
+**Stats strip (after grid, before section close):**
+- Add a centered flex row with 3 stat pills separated by dot dividers
 
 ### No new files or dependencies needed
 
