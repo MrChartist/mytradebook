@@ -112,21 +112,30 @@ const testimonials = [
 ];
 
 
+const allFeatures = [
+  "Unlimited trades",
+  "Advanced analytics & reports",
+  "Telegram notifications",
+  "Trailing stop loss engine",
+  "Broker integration (Dhan)",
+  "Unlimited watchlists",
+  "Pattern & mistake tracking",
+  "Weekly reports",
+  "Priority support",
+];
+
 const pricingPlans = [
   {
-    name: "Free", price: "₹0", period: "forever", description: "Get started with the basics",
-    features: ["Up to 50 trades/month", "Basic analytics", "1 watchlist", "Community support"],
-    cta: "Start Free", highlighted: false,
+    name: "Monthly", price: "₹0", originalPrice: "₹199", period: "/mo", description: "Full access, billed monthly",
+    features: allFeatures, cta: "Start Free", highlighted: false, isBeta: true,
   },
   {
-    name: "Pro", price: "₹0", period: "/mo", description: "For active, serious traders",
-    features: ["Unlimited trades", "Advanced analytics & reports", "Telegram notifications", "Trailing stop loss engine", "Broker integration (Dhan)", "10 watchlists", "Priority support"],
-    cta: "Start 14-Day Trial", highlighted: true,
+    name: "Quarterly", price: "₹0", originalPrice: "₹499", period: "/quarter", description: "All features, best for active traders",
+    features: allFeatures, cta: "Start Free", highlighted: true, isBeta: true,
   },
   {
-    name: "Team", price: "₹0", period: "/mo", description: "For trading desks & groups",
-    features: ["Everything in Pro", "5 team members", "Shared studies & alerts", "RA compliance mode", "API access", "Dedicated manager"],
-    cta: "Contact Sales", highlighted: false,
+    name: "Yearly", price: "₹1,499", originalPrice: null, period: "/year", description: "All features, best value",
+    features: allFeatures, cta: "Subscribe", highlighted: false, isBeta: false,
   },
 ];
 
@@ -871,7 +880,7 @@ export default function Landing() {
               </span>{" "}
               pricing
             </h2>
-            <p className="text-muted-foreground/80 max-w-md mx-auto">Start free. Upgrade when your edge demands it.</p>
+            <p className="text-muted-foreground/80 max-w-md mx-auto">One plan. All features. Pick your billing cycle.</p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-7 items-start">
@@ -894,7 +903,15 @@ export default function Landing() {
                     </div>
                   )}
                   <h3 className="text-xl font-bold">{plan.name}</h3>
+                  {plan.isBeta && (
+                    <div className="inline-flex self-start items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-profit/10 text-profit text-[11px] font-semibold mt-2">
+                      Free During Beta
+                    </div>
+                  )}
                   <div className="mt-4 mb-1 flex items-baseline gap-1">
+                    {plan.originalPrice && (
+                      <span className="text-lg text-muted-foreground/50 line-through mr-1">{plan.originalPrice}</span>
+                    )}
                     <span className="text-4xl font-extrabold font-mono">{plan.price}</span>
                     <span className="text-muted-foreground/70 text-sm">{plan.period}</span>
                   </div>
