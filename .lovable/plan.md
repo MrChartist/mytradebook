@@ -1,61 +1,82 @@
 
 
-# Redesign Dashboard Sidebar -- SmartShort-Inspired Style
+# Dashboard Rework -- Quantix-Inspired Redesign
 
-## Inspiration (from screenshot)
-The reference sidebar features:
-- A bold **left accent bar** (green/lime) on the active nav item
-- Active item has a subtle translucent background fill
-- Clean **uppercase section labels** ("MAIN MENU", "PROJECTS") with generous spacing
-- Generous vertical padding on each nav item for a spacious feel
-- Minimal, modern aesthetic with clear visual hierarchy
+Taking inspiration from the Quantix crypto dashboard screenshot, this plan refines the entire dashboard layout, greeting area, KPI cards, widget cards, and overall visual hierarchy to match that premium dark-mode fintech aesthetic.
+
+## Key Design Principles from Screenshot
+- **Large welcome greeting** with user name prominently displayed and "Last login" subtitle
+- **Breadcrumb navigation** at the top of the content area (e.g., "Overview / Dashboard")
+- **Spacious card layouts** with subtle borders, rounded corners, and inner glow effects
+- **Prominent live data indicators** (dot + "Last update: X min ago")
+- **Refined typography hierarchy** -- larger headings, more whitespace between sections
+- **Cards with icon badges** using colored circular backgrounds (not square panels)
+- **Clean segment/filter pills** styled as rounded capsules
 
 ## Changes
 
-### 1. Update active nav item style (`Sidebar.tsx`)
-- Add a **3px left accent bar** (primary/orange color) on active items using a `before` pseudo-element or a left-border approach
-- Keep the translucent `bg-primary/8` background on active items
-- Increase nav item padding slightly (`py-2.5` instead of `py-2`) for a more spacious feel
-- Use `rounded-lg` (instead of `rounded-xl`) to match the tighter, modern look from the reference
-- Add a subtle left-border glow effect on hover items
+### 1. Dashboard Header Rework (`Dashboard.tsx`)
+- Add a **breadcrumb bar** at the top: "Overview / **Dashboard**" with a search icon
+- Replace the compact greeting with a **large welcome block** inspired by the screenshot: "Welcome Back, {Name}" in bold ~2xl text with "Last login: {date}" subtitle below
+- Move the live indicator to the breadcrumb area as a dot + "Last update: X min ago" style
+- Restyle the month selector pills as rounded capsules with more padding
+- Restyle segment filter pills to be softer, rounder capsules with more generous padding
 
-### 2. Improve section labels (`Sidebar.tsx` + `index.css`)
-- Increase section label font size slightly (from `10px` to `11px`)
-- Add more top margin between sections (`mt-6` instead of `mt-5`)
-- Keep the uppercase tracking style (already matches the reference well)
+### 2. DashboardGreeting Rework (`DashboardGreeting.tsx`)
+- Increase heading size from `text-xl` to `text-2xl` or `text-3xl`
+- Display as "Welcome Back, {Name}" (two-line layout like the screenshot)
+- Show "Last login: {date}" as a subtitle in muted text instead of market status inline
+- Move market status to a separate small badge/chip
 
-### 3. Add accent bar CSS class (`index.css`)
-- Create a `.nav-active-bar` utility with a `before` pseudo-element:
-  - 3px wide, primary-colored rounded bar on the left edge
-  - Positioned absolutely, centered vertically, ~60% height of the item
+### 3. TodaysPnl Card Refinement (`TodaysPnl.tsx`)
+- Use **circular icon badges** (round colored circle with icon) instead of square rounded panels
+- Add a subtle sparkline or percentage change chip (like the "+1.09%" badge in the screenshot)
+- Increase card padding and inner spacing for a more spacious feel
+- Add a thin top-border accent line in the card's P&L color
 
-### Files Modified
-- **`src/components/layout/Sidebar.tsx`** -- Update `renderNavItem` classes for active bar + spacing
-- **`src/index.css`** -- Add `.nav-active-bar` utility class, tweak section label
+### 4. KPI Cards Refinement (`DashboardKPICards.tsx`)
+- Switch icon containers from square `inner-panel` to **circular badges** (w-10 h-10 rounded-full) with colored backgrounds
+- Increase card padding from `p-5` to `p-6`
+- Add more vertical spacing between the label, value, and sub-metrics
+- Remove the dot-pattern decorative element for a cleaner look (matching the screenshot's minimal style)
+- Style the sub-stats with slightly larger text and better contrast
 
-### Technical Details
+### 5. Chart & Widget Cards Refinement
+- **DailySectorChart**: Increase heading font weight, add a thin colored top border accent
+- **EquityCurve**: Same treatment -- cleaner header, larger title
+- **DashboardPositionsTable**: Style the table header row with `text-[11px]` uppercase tracking, add subtle row hover highlights
+- **DashboardAlertsPanel**: Add circular icon badge for the bell icon, increase item padding
+- **DashboardMonthlyMetrics**: Use rounded-2xl on metric cards, increase padding
+- **StreakDiscipline**: Replace emoji heading with an icon badge, increase padding
 
-**Active bar approach** (CSS pseudo-element in `index.css`):
-```css
-.nav-active-bar {
-  position: relative;
-}
-.nav-active-bar::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 15%;
-  bottom: 15%;
-  width: 3px;
-  border-radius: 0 3px 3px 0;
-  background: hsl(var(--primary));
-}
-```
+### 6. RiskGoalWidget Refinement (`RiskGoalWidget.tsx`)
+- Use circular icon badges instead of square panels
+- Add thicker progress bars (h-3 instead of h-2.5) for more visual weight
+- Increase overall card padding
 
-**Nav item class updates** (`renderNavItem` in Sidebar.tsx):
-- Active: add `nav-active-bar` class, keep `bg-primary/8 text-primary font-medium`
-- Default: `text-muted-foreground hover:text-foreground hover:bg-muted/60`
-- Change `rounded-xl` to `rounded-lg`, increase `py-2` to `py-2.5`
+### 7. Global Card Styling (`index.css`)
+- Add a new `.dashboard-card` utility class combining: `bg-card rounded-2xl border border-border/60 p-6 shadow-sm`
+- Add `.icon-badge` utility: circular colored icon container `w-10 h-10 rounded-full flex items-center justify-center`
+- Add `.breadcrumb-bar` utility for the top navigation breadcrumb
 
-No functional changes -- purely visual refinement to match the premium SmartShort aesthetic.
+### 8. Sidebar Welcome Section (`Sidebar.tsx`)
+- In the expanded sidebar profile area, increase the greeting display to show "Welcome Back, {Name}" matching the screenshot's sidebar greeting style
+- Add "Last login" text under the profile name
+
+## Files Modified
+- **`src/pages/Dashboard.tsx`** -- Breadcrumb bar, restructured header, refined segment pills
+- **`src/components/dashboard/DashboardGreeting.tsx`** -- Larger welcome text, last login subtitle
+- **`src/components/dashboard/TodaysPnl.tsx`** -- Circular icon badge, accent line, spacious layout
+- **`src/components/dashboard/DashboardKPICards.tsx`** -- Circular icon badges, removed dot pattern, more padding
+- **`src/components/dashboard/RiskGoalWidget.tsx`** -- Circular badges, thicker progress bars
+- **`src/components/dashboard/EquityCurve.tsx`** -- Refined card header styling
+- **`src/components/dashboard/DailySectorChart.tsx`** -- Refined card header
+- **`src/components/dashboard/DashboardPositionsTable.tsx`** -- Refined table styling
+- **`src/components/dashboard/DashboardAlertsPanel.tsx`** -- Circular icon badge
+- **`src/components/dashboard/DashboardMonthlyMetrics.tsx`** -- Larger rounded cards, more padding
+- **`src/components/dashboard/StreakDiscipline.tsx`** -- Icon badge instead of emoji, padding increase
+- **`src/index.css`** -- New utility classes (dashboard-card, icon-badge, breadcrumb)
+
+## No Functional Changes
+All changes are purely visual/styling. No business logic, data flow, or API calls are modified.
 
