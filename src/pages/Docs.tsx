@@ -36,7 +36,8 @@ import {
   DeliveryChannelsMockup, AlertManagementMockup,
   StudyCategoryWorkflowMockup, PatternTaggingMockup, StudyAdditionalFeaturesMockup,
   WatchlistDetailMockup,
-  JournalDashboardTabMockup, JournalCalendarTabMockup, JournalMistakesTabMockup, JournalFiltersSegmentationMockup
+  JournalDashboardTabMockup, JournalCalendarTabMockup, JournalMistakesTabMockup, JournalFiltersSegmentationMockup,
+  DailyJournalWorkflowMockup
 } from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
@@ -760,6 +761,7 @@ export default function Docs() {
                 <DailyJournalMockup />
                 <CalendarDayDetailMockup />
               </div>
+              <DailyJournalWorkflowMockup />
               <FeatureCard icon={Calendar} title="Daily Journal Workflow">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>

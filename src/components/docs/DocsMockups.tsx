@@ -2488,7 +2488,117 @@ export function StudyAdditionalFeaturesMockup() {
 }
 
 /* ──────────────────────────────────────────────
-   52. JournalDashboardTabMockup
+   52a. DailyJournalWorkflowMockup
+   ────────────────────────────────────────────── */
+export function DailyJournalWorkflowMockup() {
+  const trades = [
+    { symbol: "RELIANCE", type: "BUY", pnl: "+₹2,450", color: "text-profit" },
+    { symbol: "NIFTY FUT", type: "SELL", pnl: "−₹800", color: "text-loss" },
+    { symbol: "HDFCBANK", type: "BUY", pnl: "+₹1,120", color: "text-profit" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-lg mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
+            <p className="text-xs font-bold">Daily Journal — 26 Feb 2026</p>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-base">😊</span>
+            <span className="text-[9px] font-semibold text-profit">Confident</span>
+          </div>
+        </div>
+
+        {/* Calendar mini strip */}
+        <div className="flex gap-1 mb-4">
+          {["24", "25", "26", "27", "28"].map((d, i) => (
+            <div key={d} className={cn(
+              "flex-1 rounded-lg py-1.5 text-center cursor-pointer transition-all",
+              d === "26"
+                ? "bg-[hsl(var(--tb-accent))] text-white shadow-sm"
+                : i === 0 || i === 3
+                ? "bg-profit/10"
+                : i === 1
+                ? "bg-loss/10"
+                : "bg-muted/30"
+            )}>
+              <p className="text-[8px] text-inherit opacity-70">{["Mon", "Tue", "Wed", "Thu", "Fri"][i]}</p>
+              <p className="text-[10px] font-bold">{d}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Pre-market plan */}
+        <div className="rounded-lg bg-[hsl(var(--tb-accent)/0.04)] border border-[hsl(var(--tb-accent)/0.12)] p-3 mb-3">
+          <p className="text-[9px] font-bold text-[hsl(var(--tb-accent))] mb-1.5">📋 Pre-Market Plan</p>
+          <p className="text-[9px] text-muted-foreground leading-relaxed">
+            Watch RELIANCE for breakout above 2850 zone. NIFTY support at 22,300 — avoid shorts below. HDFCBANK retest of trendline expected, plan partial entry.
+          </p>
+        </div>
+
+        {/* Market outlook */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 p-3 mb-3">
+          <p className="text-[9px] font-bold mb-1.5">🌐 Market Outlook</p>
+          <p className="text-[9px] text-muted-foreground leading-relaxed">
+            Global cues positive. FII data shows net buying. Expecting range-bound action with upside bias. Key event: RBI policy at 10 AM.
+          </p>
+        </div>
+
+        {/* Trades closed today */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 p-3 mb-3">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[9px] font-bold">📊 Trades Closed Today</p>
+            <span className="text-[8px] font-mono font-bold text-profit">Net: +₹2,770</span>
+          </div>
+          <div className="space-y-1">
+            {trades.map((t) => (
+              <div key={t.symbol} className="flex items-center justify-between rounded bg-card border border-border/20 px-2 py-1">
+                <div className="flex items-center gap-1.5">
+                  <span className={cn(
+                    "px-1 py-0.5 rounded text-[7px] font-bold",
+                    t.type === "BUY" ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss"
+                  )}>{t.type}</span>
+                  <span className="text-[9px] font-semibold">{t.symbol}</span>
+                </div>
+                <span className={cn("text-[9px] font-mono font-bold", t.color)}>{t.pnl}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Post-market review */}
+        <div className="rounded-lg bg-profit/5 border border-profit/15 p-3 mb-3">
+          <p className="text-[9px] font-bold text-profit mb-1.5">✅ Post-Market Review</p>
+          <p className="text-[9px] text-muted-foreground leading-relaxed">
+            Followed plan well on RELIANCE — entered on breakout and trailed SL. NIFTY short was against thesis, should have skipped. HDFCBANK entry was textbook retest.
+          </p>
+        </div>
+
+        {/* Lessons learned */}
+        <div className="rounded-lg bg-[hsl(var(--warning)/0.06)] border border-[hsl(var(--warning)/0.15)] p-3">
+          <p className="text-[9px] font-bold text-[hsl(var(--warning))] mb-1.5">💡 Lessons Learned</p>
+          <ul className="space-y-1">
+            {[
+              "Stick to plan — the NIFTY counter-trend trade cost me",
+              "Trailing SL works better than fixed targets on trending days",
+              "RBI events create volatility — reduce size next time"
+            ].map((l, i) => (
+              <li key={i} className="text-[9px] text-muted-foreground flex items-start gap-1.5">
+                <span className="text-[hsl(var(--warning))] mt-0.5">•</span>
+                {l}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   52b. JournalDashboardTabMockup
    ────────────────────────────────────────────── */
 export function JournalDashboardTabMockup() {
   const summaryCards = [
