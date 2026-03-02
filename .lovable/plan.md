@@ -1,57 +1,36 @@
 
-# Add Navbar and Visual Refinements to Login Page
+# Fix Duplicate Sign In / Get Started Buttons
 
 ## Problem
-1. The login page has no navigation bar or back button -- users are trapped with no way to return to the landing page.
-2. The login page visual style (plain card layout, basic typography) doesn't match the polished hero section of the landing page.
+Both "Sign In" and "Get Started" in the landing page navbar navigate to `/login` and land on the same sign-in form. They should serve different intents:
+- **Sign In** = existing users logging in
+- **Get Started** = new users creating an account
 
-## Changes (all in `src/pages/Login.tsx`)
+## Solution
+Use a query parameter to differentiate the two flows:
 
-### 1. Add Landing-Style Navbar at the Top
-Add a sticky top navbar matching the landing page design:
-- Logo (TrendingUp icon + "TradeBook" text) linking back to `/`
-- Navigation links: Features (#features), Pricing (#pricing), Docs (/docs)
-- ThemeToggle component
-- "Home" ghost button navigating to `/`
-- Same styling: `sticky top-0 z-50 border-b border-border/30 bg-background/80 backdrop-blur-xl`
+- **Sign In** navigates to `/login` (defaults to sign-in tab)
+- **Get Started** navigates to `/login?mode=signup` (opens on sign-up tab)
 
-### 2. Update Left Panel Branding to Match Hero
-- Use the hero's accent color styling: `bg-[hsl(var(--tb-accent))]` for the logo icon instead of `bg-gradient-primary`
-- Add the italic cursive "Edge" accent from the hero: heading becomes "Know Your *Edge*." with Dancing Script font
-- Update subtitle to match the hero's description tone
-- Update the feature bullet points to mention newer features (Trailing Stop Loss, AI Insights, Rules Engine)
+The Login page will read the `mode` query param on mount and set `authMode` accordingly.
 
-### 3. Improve Right Panel Typography and Contrast
-- Increase heading size from `text-2xl` to `text-3xl` for better hierarchy
-- Bump description text from `text-sm` to `text-base` for readability
-- Ensure proper `text-muted-foreground` without opacity modifiers
-- Style the mobile logo to match the accent color scheme
+## Changes
 
-### 4. Update Mobile Experience
-- On mobile (where left panel is hidden), the navbar provides the back navigation
-- Mobile logo block updated to use the accent color scheme matching the landing page
+### 1. `src/pages/Landing.tsx`
+- Change the "Get Started" button's `onClick` from `navigate("/login")` to `navigate("/login?mode=signup")`
+- Apply the same change to the bottom CTA "Get Started -- It's Free" button
+- Keep "Sign In" pointing to `/login` (no param needed, defaults to login)
+
+### 2. `src/pages/Login.tsx`
+- Read `mode` from URL search params on mount using `useSearchParams` (or `useLocation`)
+- If `mode=signup`, initialize `authMode` to `"signup"` instead of `"login"`
+- This way, clicking "Get Started" lands users directly on the sign-up tab
 
 ## Technical Details
-
-### Imports to Add
-- `ThemeToggle` from `@/components/ui/theme-toggle`
-- `Link` or use `navigate` for logo click
-
-### Navbar Structure (matching Landing.tsx)
-```text
-[Logo + TradeBook] --- [Features | Pricing | Docs] --- [ThemeToggle] [Home btn]
-```
-
-### Left Panel Heading Update
-```text
-Current:  "Master Your Trades. Track Your Edge."
-Updated:  "Know Your Edge. Compound It Daily." (matching hero)
-          with "Edge" in Dancing Script italic + accent color
-```
-
-### Layout Change
-- Change outer wrapper from `flex` to `flex-col` so navbar sits above the split panels
-- The split panels remain as a `flex flex-1` row below the navbar
+- Import `useSearchParams` from `react-router-dom` in Login.tsx
+- Add a `useEffect` or initial state logic: `const initialMode = searchParams.get("mode") === "signup" ? "signup" : "login"`
+- Use that as the default for `useState<"login" | "signup" | "forgot">(initialMode)`
 
 ## Files Modified
-- **`src/pages/Login.tsx`** -- Add navbar, update branding typography, improve contrast
+- `src/pages/Landing.tsx` -- Update "Get Started" button navigation targets
+- `src/pages/Login.tsx` -- Read query param to set initial auth mode
