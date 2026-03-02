@@ -1,57 +1,63 @@
 
 
-# Enhance FAQ Section -- More Questions + Docs Preview + Better UI
+# Improve Final CTA Section
 
 ## Current State
-The FAQ section has 5 questions in a simple accordion layout. It works but feels thin -- traders would have more questions, and there's no connection to the comprehensive Docs page that already exists.
+The section already has the right structure -- bold headline, subtitle, CTA button, and trust badges. But it can be elevated with more visual depth and emotional impact.
 
-## Plan
+## Improvements
 
-### 1. Expand to 10 FAQs (Grouped into Two Columns)
-Add 5 more trader-relevant questions and split them into a **2-column grid on desktop** (single column on mobile) to fill the space better and feel more comprehensive:
+### 1. Add Social Proof Counter Strip
+Above the headline, add a small animated strip showing live-feeling stats:
+- "1,200+ traders" with a mini avatar stack (3 overlapping colored circles)
+- "42,000+ trades logged" with a chart icon
+- This adds credibility right before the CTA ask
 
-**New FAQs to add:**
-- "What broker integrations are supported?" -- Currently Dhan with live sync; CSV import for all brokers (Zerodha, Angel One, Groww, Upstox, etc.)
-- "Can I track F&O and multi-leg strategies?" -- Yes, full options support with multi-leg strategies, Greeks tracking, and strategy-level P&L
-- "Do you have AI-powered insights?" -- Yes, AI analyzes your trading patterns, identifies recurring mistakes, and suggests improvements
-- "Can I set alerts and notifications?" -- Price alerts, portfolio alerts, and Telegram notifications for real-time monitoring
-- "Is there a trading rules checklist?" -- Yes, create pre-trade checklists to enforce discipline before every trade
+### 2. Stronger Radial Glow Background
+The current radial gradient is very subtle (6% opacity). Increase it slightly and add a second, softer ring to create a warm "spotlight" effect that draws the eye to the CTA button.
 
-### 2. Add "Explore Full Docs" CTA Below FAQ
-After the accordion, add a visually rich card that previews the Docs page:
-- A compact card with a gradient border showing: "Want to dive deeper?" heading
-- 3-4 mini topic pills (Getting Started, Trade Management, Analytics, AI Insights) representing doc sections
-- A "Browse Documentation" button linking to `/docs`
-- This bridges FAQ curiosity to the full documentation hub
+### 3. Headline -- Add Word-by-Word Stagger
+Instead of the whole heading fading in at once, stagger each line slightly for a cinematic reveal effect using Framer Motion's `staggerChildren`.
 
-### 3. Visual Polish
-- Widen the container from `max-w-2xl` to `max-w-3xl` to accommodate the 2-column layout
-- Add a subtle description line below the heading: "Everything you need to know about TradeBook"
-- Add numbered category labels on each accordion item (subtle, like the reference)
-- On open, show a subtle accent left-border highlight on the active item
-- Add `dot-pattern` background to the section for consistency with other sections
+### 4. CTA Button -- Add Shimmer Effect
+Add a CSS shimmer animation across the button surface to make it feel alive and draw attention, similar to premium SaaS landing pages.
+
+### 5. Trust Badges -- Richer Style
+Upgrade the trust badges from plain text to mini pill badges with icons:
+- Lock icon + "Bank-grade encryption" in a subtle pill
+- Shield icon + "No credit card required" in a subtle pill  
+- Clock icon + "Setup in 2 minutes" (new badge)
+
+### 6. Bottom Decorative Element
+Add a subtle decorative line or divider between the CTA section and footer -- a thin gradient line (saffron to transparent) that acts as a visual separator.
 
 ## Technical Changes
 
-### File: `src/pages/Landing.tsx`
+### File: `src/pages/Landing.tsx` (lines 1442-1475)
 
-**FAQ data array (lines 1362-1367):**
-- Expand from 5 to 10 FAQ items with richer answers
+**Background (line 1446):**
+- Increase radial gradient opacity from 0.06 to 0.1
+- Add a second larger, softer radial gradient ring
 
-**FAQ layout (lines 1361-1378):**
-- Change container from `max-w-2xl` to `max-w-3xl`
-- Split the accordion into a 2-column `grid grid-cols-1 md:grid-cols-2 gap-x-6` layout
-- Each column gets its own `Accordion` with 5 items each
+**Social proof strip (before headline, after line 1448):**
+- Add a `motion.div` with 3 overlapping colored avatar circles + "1,200+ traders" and "42,000+ trades logged" stats in a flex row
 
-**Section wrapper (line 1348):**
-- Add `dot-pattern` class to section background
+**CTA Button (lines 1460-1468):**
+- Add a CSS shimmer pseudo-element via an inline style or a new `shimmer-cta` class
+- The shimmer is a diagonal white gradient that slides across the button every 3 seconds
 
-**New Docs preview card (after line 1378):**
-- Insert a `motion.div` card with gradient border, topic pills, and CTA button linking to `/docs`
-- Uses existing `Button` component and `BookOpen` icon from lucide-react
+**Trust badges (lines 1469-1473):**
+- Upgrade to pill-style badges with `bg-muted/50 rounded-full px-3 py-1.5` styling
+- Add a third badge: "Setup in 2 minutes" with a Clock icon
+- Use Shield icon instead of the dot separator
 
-**Heading area (lines 1350-1359):**
-- Add subtitle paragraph: "Everything you need to know about TradeBook"
+**Bottom gradient line (after line 1474):**
+- Add a `div` with `h-[1px] bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.3)] to-transparent max-w-md mx-auto mt-16`
 
-### No new files or dependencies needed
+### CSS Addition in `src/index.css`
+Add a `shimmer-cta` keyframe animation:
+- A diagonal white gradient that translates across the button surface
+- `animation: shimmer-cta 3s ease-in-out infinite`
+
+### No new dependencies needed
 
