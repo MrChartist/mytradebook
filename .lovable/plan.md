@@ -1,99 +1,82 @@
 
 
-# Docs Page Enhancement -- Visual Mockups and Advanced Detail
+# Docs Page -- Add Visuals Everywhere
 
-## Problem
-The current Docs page is entirely text-based -- bullet lists and cards with no visual elements. It lacks the "show, don't tell" approach that makes documentation engaging and easy to understand.
+## What's Missing
 
-## Solution
-Add inline visual mockups, diagrams, and interactive previews throughout every section to visually demonstrate each feature. These are built with pure CSS/JSX (no images needed).
+Currently, 5 sections have no visual mockups at all:
+- **Studies & Research** -- text-only bullet lists
+- **Mistakes Review** -- no visual despite having Kanban in Journal section
+- **Weekly Reports** -- no visual
+- **Calendar & Daily Journal** -- no visual (calendar heatmap is in Journal section only)
+- **Integrations** -- has Dhan flow but no Telegram visual in that section
 
-## Visual Components to Add
+Additionally, existing sections could benefit from more visuals based on the actual dashboard components:
+- **Dashboard** -- missing Streak & Discipline mockup, widget customization mockup
+- **Trade Management** -- missing CSV import/template visual
+- **Analytics** -- missing Streak Tracker, Risk of Ruin, and Segment Performance visuals
 
-### New Reusable Mini-Mockup Components (inside Docs.tsx)
+## New Mockup Components to Add (in DocsMockups.tsx)
 
-1. **DashboardMockup** -- A mini dashboard wireframe showing KPI cards, equity curve, and calendar heatmap with sample data
-2. **TradeCardMockup** -- A realistic trade entry card showing symbol, entry/exit, P&L, tags, and status badge
-3. **AlertCardMockup** -- An alert notification card with condition, LTP, distance bar, and status indicator
-4. **CalendarHeatmapMockup** -- A 5x7 grid of colored cells showing a month's P&L heatmap
-5. **EquityCurveMockup** -- A mini SVG line chart showing a sample equity curve with drawdown shading
-6. **KanbanBoardMockup** -- Three columns (Low/Medium/High) with mistake cards
-7. **AnalyticsHeatmapMockup** -- A colored grid showing time-of-day performance
-8. **ShortcutVisualMockup** -- A keyboard layout highlighting the shortcut keys
-9. **WatchlistMockup** -- A mini table showing symbols with LTP, change%, and action buttons
-10. **TelegramNotifMockup** -- A chat-bubble style notification showing alert trigger message
-11. **BentoFeatureGrid** -- A visual overview at the top showing all major features as an interactive bento grid
-12. **PricingComparisonMockup** -- Visual comparison of Free vs Pro vs Team plans
+1. **StudyCardMockup** -- A research study card showing symbol, category badge (Technical), status flow (Draft to Active), pattern tags (Double Bottom, Breakout), and live price indicator
 
-## Section-by-Section Enhancements
+2. **StreakDisciplineMockup** -- Mirrors the real dashboard widget: 2x2 grid with current streak (5W), Avg R:R (1:1.8), Best Trade (+Rs 8,200), Worst Trade (-Rs 3,400), plus a discipline progress bar at 78%
 
-### Hero Section
-- Add a horizontal "feature at a glance" bento strip below the subtitle showing 6 mini icons with labels (Dashboard, Trades, Alerts, Analytics, Journal, Integrations)
-- Add a "Jump to section" visual grid with icon cards
+3. **WeeklyReportMockup** -- A mini report card showing "Week of Feb 17-21, 2026" with segment rows (Intraday: +Rs 12K, 68% WR; Options: -Rs 3K, 42% WR), top setup, worst mistake, and PDF/Telegram action buttons
 
-### Getting Started
-- Add a **3-step onboarding flow visual** (Sign Up -> Set Capital -> Start Trading) with connecting arrows and numbered circles
-- Add a mini sidebar navigation mockup showing all the menu items
+4. **MistakeTrendMockup** -- A mini SVG bar chart showing 6-month mistake count trend (decreasing bars) with severity color coding
 
-### Dashboard
-- Add **DashboardMockup** -- a full mini-dashboard wireframe with:
-  - Today's P&L hero card (green, showing +Rs 12,450)
-  - 4 KPI metric cards in a row
-  - Mini equity curve SVG
-  - Mini calendar heatmap grid
-  - Risk gauge arc
-- Place this as a full-width visual above the feature cards
+5. **DailyJournalMockup** -- A journal entry card showing date, pre-market plan text, post-market review, mood indicator, and linked trades count
 
-### Trade Management  
-- Add **TradeCardMockup** showing a sample RELIANCE trade with all fields filled
-- Add a **trade lifecycle flow diagram** (Planned -> Open -> Closed) with colored status badges
-- Add a mini **position sizing calculator** visual
+6. **TelegramChannelsMockup** -- Shows multiple Telegram channels with segment routing (Alerts channel, EOD channel, Intraday channel) with toggle indicators
 
-### Alerts
-- Add **AlertCardMockup** showing "NIFTY > 22,500" with a progress bar showing distance to trigger
-- Add a **TelegramNotifMockup** showing the alert notification message format
+7. **WidgetCustomizerMockup** -- A mini settings panel showing widget list with eye/reorder icons, mimicking the dashboard's widget customization popover
 
-### Watchlists
-- Add **WatchlistMockup** -- a mini table with 4-5 instruments, live price columns, and action buttons
+8. **CsvImportMockup** -- A mini file upload card with column mapping preview (Symbol to symbol, Entry to entry_price)
 
-### Journal
-- Add **CalendarHeatmapMockup** -- a visual 5-week calendar with colored cells
-- Add **KanbanBoardMockup** -- three columns with mistake cards
+9. **SegmentPerformanceMockup** -- A mini table showing per-segment stats (Intraday: 68% WR, 1.4 Sharpe; Options: 52% WR, 0.8 Sharpe)
 
-### Analytics
-- Add **EquityCurveMockup** -- SVG chart with drawdown shading
-- Add **AnalyticsHeatmapMockup** -- time-of-day colored grid
-- Add sample metric cards (Win Rate 62%, Profit Factor 1.8, Sharpe 1.4)
+10. **RiskOfRuinMockup** -- A mini gauge/stat showing "Risk of Ruin: 2.3%" with a colored indicator
 
-### Integrations
-- Add **Dhan flow diagram** (Connect -> Sync -> Live Prices -> Execute)
-- Add **TelegramNotifMockup** showing different notification types
+## Where Each Visual Goes in Docs.tsx
 
-### Keyboard Shortcuts
-- Add a visual keyboard layout with highlighted keys
-- Make it interactive -- hover over a key to see its action
+### Studies Section (currently 0 visuals)
+- Add `StudyCardMockup` above the feature cards
 
-### Settings
-- Add a mini settings panel mockup showing the tab layout
+### Dashboard Section (has DashboardMockup, needs more)
+- Add `StreakDisciplineMockup` after the existing feature cards for the Streak & Discipline description
+- Add `WidgetCustomizerMockup` next to the Widget Customization feature card
+
+### Trade Management (has TradeCard + Lifecycle)
+- Add `CsvImportMockup` next to the CSV Import & Export feature card
+
+### Mistakes Review Section (currently 0 visuals)
+- Add `MistakeTrendMockup` as a visual above the feature card
+
+### Weekly Reports Section (currently 0 visuals)
+- Add `WeeklyReportMockup` above the feature card
+
+### Calendar & Daily Journal Section (currently 0 visuals)
+- Add `DailyJournalMockup` above the feature card
+
+### Analytics Section (has EquityCurve + Heatmap)
+- Add `SegmentPerformanceMockup` and `RiskOfRuinMockup` as an additional visual row
+
+### Integrations Section (has DhanFlow)
+- Add `TelegramChannelsMockup` alongside TelegramNotifMockup (move it here from Alerts)
 
 ## Technical Details
 
-### File: `src/pages/Docs.tsx` (major enhancement)
-- Add ~15 inline visual mockup components at the top of the file
-- Each mockup is a pure CSS/JSX component using existing design tokens
-- Uses Tailwind for all styling, SVG for charts
-- Sample data is hardcoded (static mockups, not connected to real data)
-- Responsive -- mockups stack vertically on mobile
-- All mockups use the app's color system (profit green, loss red, accent orange)
+### File Changes:
+1. **`src/components/docs/DocsMockups.tsx`** -- Add 10 new mockup components (approximately 300-400 lines added). Each uses the same `MockupFrame` wrapper, Tailwind styling, inline SVG where needed, and the app's color tokens (profit green, loss red, accent orange).
 
-### Visual Design Approach
-- Each mockup sits inside a subtle bordered container with rounded corners and soft shadow
-- Background uses `bg-muted/20` with a subtle dot grid pattern
-- Mockups have a slight scale-up on hover for interactivity
-- Color coding matches the actual app (green for profit, red for loss, orange for accent)
+2. **`src/pages/Docs.tsx`** -- Import new mockups and place them in their respective sections. Rearrange some sections to integrate visuals inline with feature descriptions rather than always above.
 
-### No New Dependencies
-- All visuals built with Tailwind CSS + inline SVGs
-- No external image assets needed
-- No new npm packages
+### Design Consistency
+- All new mockups use the existing `MockupFrame` component with `dot-pattern` background
+- Same color tokens: `hsl(var(--profit))`, `hsl(var(--loss))`, `hsl(var(--tb-accent))`, `hsl(var(--warning))`
+- Same `font-mono` for financial numbers
+- Same hover scale effect (`hover:scale-[1.01]`)
+- Responsive: mockups stack on mobile, side-by-side on desktop
+- No new dependencies -- pure CSS/JSX/SVG
 
