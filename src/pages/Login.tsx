@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { SEOHead } from "@/components/SEOHead";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { TrendingUp, ArrowRight, Loader2, Eye, EyeOff, Mail, ArrowLeft, Home } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -117,34 +118,56 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col pt-16">
       <SEOHead title="Login" description="Sign in or create your TradeBook account to start journaling trades." path="/login" />
 
-      {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-border/30 bg-background/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 h-14">
-          <Link to="/landing" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[hsl(var(--tb-accent))] flex items-center justify-center">
-              <TrendingUp className="w-4.5 h-4.5 text-white" />
-            </div>
-            <span className="text-lg font-bold tracking-tight">TradeBook</span>
-          </Link>
+      {/* Navbar — Floating Island (matches Landing) */}
+      <motion.nav
+        initial={{ y: -40, opacity: 0, scale: 0.95 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="fixed top-4 left-0 right-0 z-50 mx-auto max-w-3xl px-4"
+      >
+        <div className="flex items-center justify-between px-3 pl-4 py-2 rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg shadow-foreground/[0.03]">
+          <motion.div className="flex items-center gap-2" whileHover={{ scale: 1.03 }}>
+            <Link to="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_16px_hsl(var(--tb-accent)/0.25)]">
+                <TrendingUp className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-lg font-logo font-bold tracking-tight">TradeBook</span>
+            </Link>
+          </motion.div>
 
-          <div className="hidden sm:flex items-center gap-6 text-sm font-medium text-muted-foreground">
-            <Link to="/landing#features" className="hover:text-foreground transition-colors">Features</Link>
-            <Link to="/landing#pricing" className="hover:text-foreground transition-colors">Pricing</Link>
-            <Link to="/docs" className="hover:text-foreground transition-colors">Docs</Link>
+          <div className="hidden md:flex items-center gap-0.5 text-sm text-muted-foreground">
+            {["Features", "Pricing", "Docs"].map((item) => (
+              <motion.a
+                key={item}
+                href={item === "Docs" ? "/docs" : `/#${item.toLowerCase()}`}
+                className="px-3.5 py-1.5 rounded-full hover:bg-muted/60 hover:text-foreground transition-colors duration-200 text-[13px] font-medium"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                {item}
+              </motion.a>
+            ))}
           </div>
 
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Button variant="ghost" size="sm" onClick={() => navigate("/landing")} className="gap-1.5">
-              <Home className="w-4 h-4" />
-              <span className="hidden sm:inline">Home</span>
-            </Button>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.96 }}>
+              <Button
+                size="sm"
+                onClick={() => navigate("/")}
+                variant="ghost"
+                className="text-muted-foreground hover:text-foreground text-[13px] h-8 px-3 rounded-full gap-1.5"
+              >
+                <Home className="w-4 h-4" />
+                <span className="hidden sm:inline">Home</span>
+              </Button>
+            </motion.div>
           </div>
         </div>
-      </nav>
+      </motion.nav>
 
       {/* Split Panels */}
       <div className="flex flex-1">

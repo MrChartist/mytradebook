@@ -514,7 +514,7 @@ export default function Landing() {
         initial={{ y: -40, opacity: 0, scale: 0.95 }}
         animate={{ y: 0, opacity: 1, scale: 1 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="sticky top-4 z-50 mx-auto max-w-3xl px-4"
+        className="fixed top-4 left-0 right-0 z-50 mx-auto max-w-3xl px-4"
       >
         <div className="flex items-center justify-between px-3 pl-4 py-2 rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg shadow-foreground/[0.03]">
           {/* Logo */}
