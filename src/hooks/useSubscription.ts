@@ -32,40 +32,23 @@ export interface PlanLimits {
   apiAccess: boolean;
 }
 
+// During beta: all features unlocked for everyone
+const BETA_LIMITS: PlanLimits = {
+  maxTradesPerMonth: Infinity,
+  maxWatchlists: Infinity,
+  advancedAnalytics: true,
+  telegramNotifications: true,
+  brokerIntegration: true,
+  weeklyReports: true,
+  trailingSL: true,
+  teamMembers: 5,
+  apiAccess: true,
+};
+
 const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
-  free: {
-    maxTradesPerMonth: 50,
-    maxWatchlists: 1,
-    advancedAnalytics: false,
-    telegramNotifications: false,
-    brokerIntegration: false,
-    weeklyReports: false,
-    trailingSL: false,
-    teamMembers: 0,
-    apiAccess: false,
-  },
-  pro: {
-    maxTradesPerMonth: Infinity,
-    maxWatchlists: 10,
-    advancedAnalytics: true,
-    telegramNotifications: true,
-    brokerIntegration: true,
-    weeklyReports: true,
-    trailingSL: true,
-    teamMembers: 0,
-    apiAccess: false,
-  },
-  team: {
-    maxTradesPerMonth: Infinity,
-    maxWatchlists: Infinity,
-    advancedAnalytics: true,
-    telegramNotifications: true,
-    brokerIntegration: true,
-    weeklyReports: true,
-    trailingSL: true,
-    teamMembers: 5,
-    apiAccess: true,
-  },
+  free: BETA_LIMITS,
+  pro: BETA_LIMITS,
+  team: BETA_LIMITS,
 };
 
 export function useSubscription() {
@@ -89,42 +72,23 @@ export function useSubscription() {
     enabled: !!user?.id,
   });
 
-  const isTrialing = subscription?.status === "trialing";
-  const trialEndsAt = subscription?.trial_ends_at
-    ? new Date(subscription.trial_ends_at)
-    : null;
-  const trialDaysLeft = trialEndsAt
-    ? Math.max(0, Math.ceil((trialEndsAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-    : 0;
-  const isTrialExpired = isTrialing && trialDaysLeft <= 0;
-
-  // Effective plan: if trial expired and no payment, fall back to free
-  const effectivePlan: PlanType =
-    isTrialExpired ? "free" : (subscription?.plan as PlanType) || "free";
-
+  // During beta, everyone gets full access
+  const effectivePlan: PlanType = "pro";
   const limits = PLAN_LIMITS[effectivePlan];
 
-  const canAccess = (feature: keyof PlanLimits): boolean => {
-    const value = limits[feature];
-    if (typeof value === "boolean") return value;
-    if (typeof value === "number") return value > 0;
-    return false;
-  };
-
-  const isPro = effectivePlan === "pro" || effectivePlan === "team";
-  const isTeam = effectivePlan === "team";
+  const canAccess = (_feature: keyof PlanLimits): boolean => true;
 
   return {
     subscription,
     isLoading,
     plan: effectivePlan,
     limits,
-    isPro,
-    isTeam,
-    isTrialing,
-    isTrialExpired,
-    trialDaysLeft,
-    trialEndsAt,
+    isPro: true,
+    isTeam: true,
+    isTrialing: false,
+    isTrialExpired: false,
+    trialDaysLeft: 0,
+    trialEndsAt: null,
     canAccess,
   };
 }
