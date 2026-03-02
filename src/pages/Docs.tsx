@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,13 @@ import {
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
   Wallet, Share2, MessageSquare, Command, Hash
 } from "lucide-react";
+import {
+  BentoFeatureGrid, OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
+  TradeLifecycleFlow, AlertCardMockup, TelegramNotifMockup, WatchlistMockup,
+  CalendarHeatmapMockup, KanbanBoardMockup, EquityCurveMockup,
+  AnalyticsHeatmapMockup, AnalyticsMetricCards, ShortcutKeyboardMockup,
+  DhanFlowDiagram, SettingsPanelMockup, PositionSizingMockup
+} from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
   { id: "getting-started", label: "Getting Started", icon: Play },
@@ -162,6 +169,9 @@ export default function Docs() {
           <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
             A comprehensive guide to every feature, capability, and workflow in the platform — from your first trade log to advanced analytics.
           </p>
+
+          {/* Bento feature grid */}
+          <BentoFeatureGrid />
         </div>
       </div>
 
@@ -224,6 +234,7 @@ export default function Docs() {
                 description="TradeBook is a professional trading journal built specifically for Indian markets — NSE, BSE, and MCX. Whether you trade equities, futures, options, or commodities, it gives you the tools to log, analyze, and improve your trading."
                 icon={Play}
               />
+              <OnboardingFlowMockup />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Users} title="Create Your Account">
                   <p className="text-sm text-muted-foreground mb-3">Sign up with email and verify your account. You'll get a 14-day Pro trial with full access to every feature — no credit card required.</p>
@@ -256,6 +267,7 @@ export default function Docs() {
                 description="Your trading cockpit. A single screen that shows your P&L, risk exposure, open positions, and trading discipline — all updated in real-time during market hours."
                 icon={LayoutDashboard}
               />
+              <DashboardMockup />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Activity} title="Today's P&L Hero Card">
                   <p className="text-sm text-muted-foreground">
@@ -319,6 +331,13 @@ export default function Docs() {
                 description="The core of TradeBook. Log every trade with detailed metadata — entry, exit, stop loss, targets, tags, chart images, and post-trade reviews. Manage your entire trading book from one screen."
                 icon={CandlestickChart}
               />
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <TradeCardMockup />
+                <div className="space-y-4">
+                  <TradeLifecycleFlow />
+                  <PositionSizingMockup />
+                </div>
+              </div>
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Search} title="Creating a Trade">
                   <p className="text-sm text-muted-foreground mb-3">Step-by-step trade creation with smart defaults:</p>
@@ -400,6 +419,10 @@ export default function Docs() {
                 description="Set price alerts, percentage change triggers, volume spike detectors, and custom conditions. Get notified instantly via in-app notifications or Telegram."
                 icon={Bell}
               />
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <AlertCardMockup />
+                <TelegramNotifMockup />
+              </div>
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Bell} title="Alert Condition Types">
                   <FeatureList items={[
@@ -493,6 +516,7 @@ export default function Docs() {
                 description="Create multiple named watchlists to track instruments you're interested in. See live prices, quick-sort by performance, and act directly from the watchlist."
                 icon={Eye}
               />
+              <WatchlistMockup />
               <FeatureCard icon={Eye} title="Watchlist Capabilities">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -526,6 +550,10 @@ export default function Docs() {
                 description="A multi-view journal that combines summary analytics, equity curves, performance tables, pattern analysis, and a Kanban board for reviewing mistakes."
                 icon={FileText}
               />
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <CalendarHeatmapMockup />
+                <KanbanBoardMockup />
+              </div>
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={PieChart} title="Dashboard Tab">
                   <p className="text-sm text-muted-foreground mb-3">High-level summary of your trading performance:</p>
@@ -569,6 +597,11 @@ export default function Docs() {
                 description="Deep performance analytics powered by your trade data. Understand your edge with heatmaps, breakdowns, and statistical measures. Available on the Pro plan."
                 icon={BarChart3}
               />
+              <AnalyticsMetricCards />
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <EquityCurveMockup />
+                <AnalyticsHeatmapMockup />
+              </div>
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={BarChart3} title="Core Metrics" badge="Pro">
                   <FeatureList items={[
@@ -725,6 +758,7 @@ export default function Docs() {
                 description="Connect your broker and messaging apps to automate data flow, get live prices, and receive instant notifications."
                 icon={Layers}
               />
+              <DhanFlowDiagram />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={LineChart} title="Dhan Broker Integration">
                   <p className="text-sm text-muted-foreground mb-3">Connect your Dhan trading account for seamless data sync:</p>
@@ -759,6 +793,7 @@ export default function Docs() {
                 description="Power-user keyboard shortcuts to navigate and take actions without touching the mouse. Plus a Command Palette for instant search."
                 icon={Keyboard}
               />
+              <ShortcutKeyboardMockup />
               <FeatureCard icon={Command} title="All Shortcuts">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
@@ -812,6 +847,7 @@ export default function Docs() {
                 description="Configure your account, preferences, integrations, and subscription. Manage your tags, capital, and security settings."
                 icon={Settings}
               />
+              <SettingsPanelMockup />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Users} title="Profile & Billing">
                   <FeatureList items={[
