@@ -15,5 +15,16 @@ Allow: /
 Disallow: /auth/callback
 Disallow: /dhan-callback
 Disallow: /reset-password
+Disallow: /dashboard
+Disallow: /trades
+Disallow: /alerts
+Disallow: /journal
+Disallow: /analytics
+Disallow: /calendar
+Disallow: /mistakes
+Disallow: /reports
+Disallow: /settings
+Disallow: /studies
+Disallow: /watchlist
 
 Sitemap: https://mytradebook.lovable.app/sitemap.xml
