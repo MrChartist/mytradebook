@@ -1,85 +1,109 @@
 
 
-# Unify Landing Page Visual Structure
+# Dashboard Refinement Plan
 
-## Problem
-The landing page has grown organically, resulting in inconsistent visual patterns across sections:
-- **Backgrounds**: Some sections have `bg-muted/10`, some are transparent, `dot-pattern` is applied randomly
-- **Padding**: Varies between `py-16`, `py-24 lg:py-32`, and `py-28 lg:py-36`
-- **Separators**: Mix of `border-y`, gradient lines, and nothing between sections
-- **Heading sizes**: Most use `text-4xl lg:text-6xl` but some use `text-3xl lg:text-5xl`
+## Current State Analysis
 
-## Design System
+The dashboard currently has 11 widgets rendered in a vertical stack with `space-y-6`. While feature-rich, there are several areas that can be tightened for a more polished trading desk experience:
 
-Establish a consistent visual rhythm:
+**Issues Identified:**
+- **Visual monotony**: Every widget is a full-width `dashboard-card` stacked vertically -- no visual hierarchy distinguishing "glanceable" vs "deep-dive" content
+- **Redundant data**: Today's P&L widget and KPI cards both show today's realized/unrealized breakdown separately, duplicating queries and screen space
+- **Header area is busy**: Breadcrumb bar, greeting, month selector, segment pills, and settings popover spread across 4 separate rows before any data appears
+- **Chart + Alerts pairing is rigid**: The 2/3 + 1/3 layout hardcodes chart and alerts together -- if user hides alerts, chart still only takes 2/3
+- **Empty states are plain**: "No open positions" and "No closed trades" just show text links with no visual warmth
+- **Monthly Metrics grid**: 8 metrics in a 2x4 grid all look the same -- no visual emphasis on the most important ones (Win Rate, Profit Factor)
+
+---
+
+## Proposed Refinements
+
+### 1. Consolidate the Header into 2 Rows (from 4)
+
+**Row 1**: Greeting (left) + Live status indicator + Settings gear (right)
+**Row 2**: Month selector pills + Segment filter pills (combined into one horizontal bar)
+
+This removes the breadcrumb bar entirely (it's redundant -- the user knows they're on the dashboard) and merges month + segment selectors into a single controls row.
+
+### 2. Merge Today's P&L into the KPI Row
+
+Instead of a separate full-width `TodaysPnl` card followed by 4 KPI cards, make it a **5-column hero strip**:
 
 ```text
-Section A  (transparent)         -- Hero, Features, Comparison, Testimonials, Final CTA
-Section B  (bg-muted/10)         -- Trust+Stats, How It Works, Pricing, Built for India, FAQ
+[ Today's P&L (wider, accent-bordered) ][ MTD P&L ][ Open Pos ][ Win Rate ][ Alerts ]
 ```
 
-- **All main sections**: `py-24 lg:py-32` (Final CTA gets `py-28 lg:py-36` as the one exception for emphasis)
-- **Trust+Stats strip**: Bump from `py-16` to `py-20` for better breathing room, use `bg-muted/10`
-- **dot-pattern**: Apply ONLY to `bg-muted/10` sections consistently (the shaded band gets texture, the clear band stays clean)
-- **Separators**: Remove all `border-y` and replace with consistent gradient accent dividers between every section pair
-- **Headings**: Standardize all section headings to `text-4xl lg:text-6xl` (fix "Built for Indian Markets" and "FAQ" which currently use `text-3xl lg:text-5xl`)
+The Today's P&L card becomes the first KPI card with the accent top-bar treatment, eliminating the standalone widget. On mobile, this becomes a 2-column grid with Today's P&L spanning full width on top.
+
+### 3. Make Chart Expand When Alerts Are Hidden
+
+When the `alerts` widget is toggled off in settings, the chart should span `lg:col-span-3` (full width) instead of staying at `lg:col-span-2`. Simple conditional class.
+
+### 4. Enhance Empty States
+
+Replace plain text empty states with illustrated empty states using the existing `empty-state` component pattern:
+- Open Positions: Show a subtle dashed-border card with "No positions yet" and a primary CTA button
+- Charts: Show a muted chart skeleton placeholder instead of plain text
+
+### 5. Visual Hierarchy for Monthly Metrics
+
+Highlight the 2 most important metrics (Win Rate, Profit Factor) with the `bg-primary/5 border border-primary/10` treatment, and keep the rest in `bg-muted/50`. Currently only "Closed Trades" is highlighted.
+
+### 6. Streak + Calendar Grid Balance
+
+The Streak card is much shorter than the Calendar card, creating visual imbalance. Add a "Trading Tip of the Day" or "Market Quote" micro-card below the Streak card to fill the vertical space, OR make both cards `min-h-[360px]` so they align.
+
+---
 
 ## Technical Changes
 
-### File: `src/pages/Landing.tsx`
+### File: `src/pages/Dashboard.tsx`
 
-**1. Trust Strip + Stats section (line 881)**
-- Change `py-16 border-y border-border/20` to `py-20 bg-muted/10 dot-pattern`
-- Add gradient divider line after section close (before Features)
+1. **Remove breadcrumb bar** (lines 182-205) -- the sidebar already shows active page
+2. **Merge greeting + controls into one flex row**: Greeting left, month pills + segment pills + settings right
+3. **Remove `todayPnl` from widget render** -- merge into KPI cards
+4. **Update chart widget render**: Check if alerts widget is visible before setting col-span
 
-**2. Features section (line 931)**
-- Keep as-is (transparent, no dot-pattern) -- already correct
-- Add gradient divider after section
+### File: `src/components/dashboard/DashboardKPICards.tsx`
 
-**3. How It Works section (line 995)**
-- Change `bg-muted/10` to `bg-muted/10 dot-pattern` for consistency
-- Already has correct padding
+1. Change grid from `grid-cols-4` to `grid-cols-2 lg:grid-cols-5`
+2. Add a "Today's P&L" card as the first item (pull logic from `TodaysPnl.tsx`)
+3. Give Today's card the accent top-bar (`border-t-[3px] border-primary`) and slightly wider span on desktop
 
-**4. Comparison section (line 1055)**
-- Keep transparent -- already correct
-- Add gradient divider after
+### File: `src/components/dashboard/DashboardMonthlyMetrics.tsx`
 
-**5. Pricing section (line 1121)**
-- Already has `bg-muted/10 dot-pattern` -- correct
+1. Change `highlight` to apply to Win Rate and Profit Factor instead of just Closed Trades
 
-**6. Testimonials section (line 1227)**
-- Remove `dot-pattern` (it's a transparent/clear section)
-- Keep padding as-is
+### File: `src/components/dashboard/DashboardGreeting.tsx`
 
-**7. Built for Indian Markets section (line 1433)**
-- Already has `bg-muted/10 dot-pattern` -- correct
-- Fix heading from `text-3xl lg:text-5xl` to `text-4xl lg:text-6xl`
+1. Simplify: Remove "Last login" line (low-value info), keep greeting + market status only
+2. Make it more compact (single line)
 
-**8. FAQ section (line 1521)**
-- Remove standalone `dot-pattern`, change to `bg-muted/10 dot-pattern` (it's a shaded section but was missing the bg)
-- Fix heading from `text-3xl lg:text-5xl` to `text-4xl lg:text-6xl`
+### File: `src/hooks/useDashboardLayout.ts`
 
-**9. Add gradient dividers between sections**
-- Insert a reusable gradient `<div>` (`h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto`) between each major section boundary where there isn't already one
+1. Remove `todayPnl` from `DEFAULT_WIDGETS` array (merged into KPI)
+2. Renumber order indices
 
-**10. Footer**
-- Keep `bg-card/50 dot-pattern` as the distinct footer treatment
+### File: `src/components/dashboard/DashboardPositionsTable.tsx`
 
-### Summary of background pattern:
+1. Enhance empty state with a bordered dashed card + icon + CTA button
 
-| Section | Background | dot-pattern | Heading size |
-|---------|-----------|-------------|--------------|
-| Hero | transparent + gradients | No | (custom) |
-| Trust+Stats | bg-muted/10 | Yes | (no heading) |
-| Features | transparent | No | 4xl/6xl |
-| How It Works | bg-muted/10 | Yes | 4xl/6xl |
-| Comparison | transparent | No | 4xl/6xl |
-| Pricing | bg-muted/10 | Yes | 4xl/6xl |
-| Testimonials | transparent | No | 4xl/6xl |
-| Built for India | bg-muted/10 | Yes | 4xl/6xl |
-| FAQ | bg-muted/10 | Yes | 4xl/6xl |
-| Final CTA | transparent | No | 4xl/6xl |
-| Footer | bg-card/50 | Yes | -- |
+### File: `src/components/dashboard/DailySectorChart.tsx`
 
-No new files, dependencies, or data changes. Pure class name adjustments across ~12 lines.
+1. Accept an optional `fullWidth` prop to conditionally render at full width
+
+---
+
+## Summary of Impact
+
+| Change | Before | After |
+|--------|--------|-------|
+| Rows before data | 4 (breadcrumb, greeting, controls, segments) | 2 (greeting+controls, segments) |
+| Today's P&L | Standalone full-width card | Merged into KPI strip |
+| Widget count | 11 | 10 (one merged) |
+| Chart when alerts hidden | Still 2/3 width | Expands to full width |
+| Monthly metrics emphasis | Only "Closed Trades" | Win Rate + Profit Factor highlighted |
+| Empty states | Plain text | Visual cards with icons + CTAs |
+
+No new dependencies. No database changes. Pure frontend refinement.
 
