@@ -10,6 +10,7 @@ import {
   Smartphone, Globe, Lock, Sparkles, Award, Users, Calendar, MousePointerClick,
   Send, CandlestickChart, Gauge, Home, ChevronRight, Brain, List, Calculator,
   FileSpreadsheet, MessageSquare, Lightbulb, FileUp, ArrowUp, ArrowDown, Trophy,
+  Crown, RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -134,18 +135,29 @@ const allFeatures = [
   "Priority support",
 ];
 
+const shortFeatures = [
+  "Unlimited trade logging",
+  "AI-powered trade insights",
+  "Advanced analytics suite",
+  "Trailing stop loss engine",
+  "Broker integration (Dhan)",
+];
+
 const pricingPlans = [
   {
     name: "Monthly", price: "₹0", originalPrice: "₹199", period: "/mo", description: "Full access, billed monthly",
-    features: allFeatures, cta: "Start Free", highlighted: false, isBeta: true,
+    features: shortFeatures, cta: "Start Free", highlighted: false, isBeta: true,
+    saveBadge: null, badge: null, badgeIcon: null, showAllNote: true,
   },
   {
     name: "Quarterly", price: "₹0", originalPrice: "₹499", period: "/quarter", description: "All features, best for active traders",
     features: allFeatures, cta: "Start Free", highlighted: true, isBeta: true,
+    saveBadge: "Save 17%", badge: "Most Popular", badgeIcon: Zap, showAllNote: false,
   },
   {
     name: "Yearly", price: "₹1,499", originalPrice: null, period: "/year", description: "All features, best value",
-    features: allFeatures, cta: "Subscribe", highlighted: false, isBeta: false,
+    features: shortFeatures, cta: "Subscribe", highlighted: false, isBeta: false,
+    saveBadge: "Save 37%", badge: "Best Value", badgeIcon: Crown, showAllNote: true,
   },
 ];
 
@@ -1110,9 +1122,9 @@ export default function Landing() {
       </section>
 
       {/* ── Pricing ──────────────────────────────────────── */}
-      <section id="pricing" className="py-24 lg:py-32 bg-muted/10">
+      <section id="pricing" className="py-24 lg:py-32 bg-muted/10 dot-pattern">
         <MotionSection className="max-w-5xl mx-auto px-6">
-          <motion.div variants={fadeUp} className="text-center mb-20">
+          <motion.div variants={fadeUp} className="text-center mb-14">
             <SectionBadge>Pricing</SectionBadge>
             <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-tight">
               Simple,{" "}
@@ -1124,6 +1136,14 @@ export default function Landing() {
             <p className="text-muted-foreground max-w-md mx-auto text-base">One plan. All features. Pick your billing cycle.</p>
           </motion.div>
 
+          {/* Billing toggle (decorative) */}
+          <motion.div variants={fadeUp} className="flex justify-center mb-12">
+            <div className="inline-flex items-center bg-muted/50 rounded-full p-1 gap-0.5">
+              <button className="px-5 py-2 rounded-full text-sm font-medium bg-card shadow-sm text-foreground transition-colors">Monthly</button>
+              <button className="px-5 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Annual</button>
+            </div>
+          </motion.div>
+
           <div className="grid md:grid-cols-3 gap-7 items-start">
             {pricingPlans.map((plan, i) => (
               <motion.div key={plan.name} variants={fadeUp} custom={i * 0.1}>
@@ -1131,16 +1151,16 @@ export default function Landing() {
                   className={cn(
                     "rounded-2xl border bg-card/80 p-8 flex flex-col relative overflow-hidden",
                     plan.highlighted
-                      ? "border-[hsl(var(--tb-accent)/0.35)] ring-1 ring-[hsl(var(--tb-accent)/0.1)] scale-[1.02] lg:scale-105"
+                      ? "border-[hsl(var(--tb-accent)/0.35)] ring-1 ring-[hsl(var(--tb-accent)/0.1)] scale-[1.02] lg:scale-105 shadow-glow shimmer-cta dot-pattern"
                       : "border-border/40"
                   )}
                   whileHover={{ y: -3 }}
                   transition={{ duration: 0.3 }}
                 >
                   {plan.highlighted && <div className="absolute top-0 left-0 right-0 h-0.5 bg-[hsl(var(--tb-accent))]" />}
-                  {plan.highlighted && (
+                  {plan.badge && (
                     <div className="inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] text-xs font-semibold mb-5">
-                      <Zap className="w-3 h-3" /> Most Popular
+                      {plan.badgeIcon && <plan.badgeIcon className="w-3 h-3" />} {plan.badge}
                     </div>
                   )}
                   <h3 className="text-xl font-bold">{plan.name}</h3>
@@ -1149,15 +1169,18 @@ export default function Landing() {
                       Free During Beta
                     </div>
                   )}
-                  <div className="mt-4 mb-1 flex items-baseline gap-1">
+                  <div className="mt-4 mb-1 flex items-baseline gap-1 flex-wrap">
                     {plan.originalPrice && (
                       <span className="text-lg text-muted-foreground/50 line-through mr-1">{plan.originalPrice}</span>
                     )}
                     <span className="text-4xl font-extrabold font-mono">{plan.price}</span>
                     <span className="text-muted-foreground/70 text-sm">{plan.period}</span>
+                    {plan.saveBadge && (
+                      <span className="ml-2 px-2 py-0.5 rounded-full bg-profit/10 text-profit text-[10px] font-bold">{plan.saveBadge}</span>
+                    )}
                   </div>
                   <p className="text-sm text-muted-foreground mb-7">{plan.description}</p>
-                  <ul className="space-y-3.5 flex-1 mb-9">
+                  <ul className="space-y-3.5 flex-1 mb-4">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm">
                         <CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0 mt-0.5" />
@@ -1165,14 +1188,19 @@ export default function Landing() {
                       </li>
                     ))}
                   </ul>
-                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                  {plan.showAllNote && (
+                    <p className="text-xs text-muted-foreground mb-6 flex items-center gap-1.5">
+                      <Sparkles className="w-3 h-3 text-[hsl(var(--tb-accent))]" /> All features included
+                    </p>
+                  )}
+                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className={!plan.showAllNote ? "mt-5" : ""}>
                     <Button
                       className={cn(
                         "w-full h-12 rounded-full text-base",
                         plan.highlighted ? "bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white shadow-[0_4px_12px_hsl(var(--tb-accent)/0.25)]" : ""
                       )}
                       variant={plan.highlighted ? "default" : "outline"}
-              onClick={() => navigate("/login?mode=signup")}
+                      onClick={() => navigate("/login?mode=signup")}
                     >
                       {plan.cta}
                       {plan.highlighted && <ArrowRight className="w-4 h-4 ml-1" />}
@@ -1182,6 +1210,20 @@ export default function Landing() {
               </motion.div>
             ))}
           </div>
+
+          {/* Trust strip */}
+          <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4 mt-14">
+            {[
+              { icon: Lock, text: "No credit card required" },
+              { icon: RefreshCw, text: "Cancel anytime" },
+              { icon: Shield, text: "14-day money-back guarantee" },
+            ].map((item) => (
+              <div key={item.text} className="flex items-center gap-2 bg-muted/40 rounded-full px-4 py-2 text-sm text-muted-foreground">
+                <item.icon className="w-3.5 h-3.5" />
+                <span>{item.text}</span>
+              </div>
+            ))}
+          </motion.div>
         </MotionSection>
       </section>
 
