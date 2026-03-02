@@ -26,7 +26,9 @@ import {
   MistakeTrendMockup, DailyJournalMockup, TelegramChannelsMockup,
   WidgetCustomizerMockup, CsvImportMockup, SegmentPerformanceMockup,
   RiskOfRuinMockup, TradeViewsMockup, AIInsightsMockup,
-  MobileAppMockup, CalendarDayDetailMockup
+  MobileAppMockup, CalendarDayDetailMockup,
+  TodaysPnlHeroMockup, KPICardsDetailMockup, RiskGaugeDetailMockup,
+  EquityCurveWidgetMockup, CalendarHeatmapWidgetMockup, SegmentFilterMockup
 } from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
@@ -281,63 +283,82 @@ export default function Docs() {
                 icon={LayoutDashboard}
               />
               <DashboardMockup />
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <StreakDisciplineMockup />
-                <WidgetCustomizerMockup />
-              </div>
-              <div className="grid md:grid-cols-2 gap-5">
-                <FeatureCard icon={Activity} title="Today's P&L Hero Card">
-                  <p className="text-sm text-muted-foreground">
-                    The top hero card shows your total P&L for the day with a large, color-coded number. Green for profit, red for loss. Updates in real-time if you have live prices enabled via Dhan integration.
-                  </p>
-                </FeatureCard>
-                <FeatureCard icon={BarChart3} title="KPI Cards">
-                  <p className="text-sm text-muted-foreground mb-3">Four key metrics at a glance:</p>
-                  <FeatureList items={[
-                    "MTD P&L — month-to-date profit/loss with trend indicator",
-                    "Open Positions — count of currently active trades",
-                    "Win Rate — percentage of profitable closed trades this month",
-                    "Active Alerts — number of currently monitoring alerts",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Gauge} title="Risk Gauge & Goal Tracker">
-                  <p className="text-sm text-muted-foreground">
-                    Visualize your daily risk as a percentage of capital (target: stay under 1% daily risk). The goal tracker shows progress toward your monthly P&L target (default: 5% of capital). Both are calculated from your starting capital setting.
-                  </p>
-                </FeatureCard>
-                <FeatureCard icon={TrendingUp} title="Equity Curve Widget">
-                  <p className="text-sm text-muted-foreground">
-                    A compact equity curve chart showing your cumulative P&L over the selected month. Hover over data points to see exact values. The curve updates automatically as you close trades.
-                  </p>
-                </FeatureCard>
-                <FeatureCard icon={Award} title="Streak & Discipline Tracker">
-                  <p className="text-sm text-muted-foreground">
-                    Tracks your consecutive profitable days (winning streak) and consecutive losing days. Flags "oversize trades" — any trade that risks more than 10% of your capital — as discipline warnings.
-                  </p>
-                </FeatureCard>
-                <FeatureCard icon={Calendar} title="Calendar Heatmap">
-                  <p className="text-sm text-muted-foreground">
-                    A compact monthly calendar where each day is color-coded by P&L — green shades for profitable days, red shades for losses. Click any day to jump to the full calendar view with daily journal.
-                  </p>
-                </FeatureCard>
-                <FeatureCard icon={Settings} title="Widget Customization">
-                  <p className="text-sm text-muted-foreground mb-3">Personalize your dashboard by showing/hiding widgets and reordering them:</p>
-                  <FeatureList items={[
-                    "Toggle visibility of any widget (P&L, KPIs, equity curve, etc.)",
-                    "Reorder widgets by moving them up or down",
-                    "Reset to default layout anytime",
-                    "Layout persists across sessions",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Filter} title="Segment & Month Filters">
-                  <p className="text-sm text-muted-foreground mb-3">Filter the entire dashboard by market segment and time period:</p>
-                  <FeatureList items={[
-                    "Segments: All, Intraday, Positional, Futures, Options, Commodities",
-                    "Quick month selector for the last 3 months",
-                    "All KPIs, charts, and widgets update based on filters",
-                  ]} />
-                </FeatureCard>
-              </div>
+
+              {/* Today's P&L */}
+              <TodaysPnlHeroMockup />
+              <FeatureCard icon={Activity} title="Today's P&L Hero Card">
+                <p className="text-sm text-muted-foreground">
+                  The top hero card shows your total P&L for the day with a large, color-coded number. Green for profit, red for loss. Breaks down realized vs unrealized gains and shows win/loss count. Updates in real-time if you have live prices enabled via Dhan integration.
+                </p>
+              </FeatureCard>
+
+              {/* KPI Cards */}
+              <KPICardsDetailMockup />
+              <FeatureCard icon={BarChart3} title="KPI Cards">
+                <p className="text-sm text-muted-foreground mb-3">Four key metrics at a glance, each clickable to navigate to the relevant page:</p>
+                <FeatureList items={[
+                  "MTD P&L — month-to-date profit/loss with realized/unrealized split → Reports",
+                  "Open Positions — count of active trades with capital at risk → Trades",
+                  "Win Rate — percentage with expectancy per trade → Analytics",
+                  "Active Alerts — triggered today count with price/technical split → Alerts",
+                ]} />
+              </FeatureCard>
+
+              {/* Risk Gauge & Goal Tracker */}
+              <RiskGaugeDetailMockup />
+              <FeatureCard icon={Gauge} title="Risk Gauge & Goal Tracker">
+                <p className="text-sm text-muted-foreground">
+                  Visualize your daily risk as a percentage of capital with a color-coded gauge (green under 1%, yellow up to 1.5%, red above). The goal tracker shows progress bars for daily (1%) and monthly (5%) profit targets, both calculated from your starting capital.
+                </p>
+              </FeatureCard>
+
+              {/* Equity Curve */}
+              <EquityCurveWidgetMockup />
+              <FeatureCard icon={TrendingUp} title="Equity Curve Widget">
+                <p className="text-sm text-muted-foreground">
+                  A compact equity curve chart showing your cumulative P&L over the selected month with gradient fill. Shows peak equity, max drawdown, and date labels. Hover over data points to see exact values. The curve updates automatically as you close trades.
+                </p>
+              </FeatureCard>
+
+              {/* Streak & Discipline */}
+              <StreakDisciplineMockup />
+              <FeatureCard icon={Award} title="Streak & Discipline Tracker">
+                <p className="text-sm text-muted-foreground">
+                  Tracks your consecutive profitable days (winning streak) and consecutive losing days. Flags "oversize trades" — any trade that risks more than 10% of your capital — as discipline warnings. Helps maintain consistent position sizing habits.
+                </p>
+              </FeatureCard>
+
+              {/* Calendar Heatmap */}
+              <CalendarHeatmapWidgetMockup />
+              <FeatureCard icon={Calendar} title="Calendar Heatmap">
+                <p className="text-sm text-muted-foreground">
+                  A compact monthly calendar where each day is color-coded by P&L — green shades for profitable days, red shades for losses. Shows P&L amounts in each cell. Click any day to jump to the full calendar view with daily journal and trade details.
+                </p>
+              </FeatureCard>
+
+              {/* Widget Customization */}
+              <WidgetCustomizerMockup />
+              <FeatureCard icon={Settings} title="Widget Customization">
+                <p className="text-sm text-muted-foreground mb-3">Personalize your dashboard by showing/hiding widgets and reordering them:</p>
+                <FeatureList items={[
+                  "Toggle visibility of any widget (P&L, KPIs, equity curve, etc.)",
+                  "Reorder widgets by moving them up or down",
+                  "Reset to default layout anytime",
+                  "Layout persists across sessions",
+                ]} />
+              </FeatureCard>
+
+              {/* Segment & Month Filters */}
+              <SegmentFilterMockup />
+              <FeatureCard icon={Filter} title="Segment & Month Filters">
+                <p className="text-sm text-muted-foreground mb-3">Filter the entire dashboard by market segment and time period:</p>
+                <FeatureList items={[
+                  "Segments: All, Intraday, Positional, Futures, Options, Commodities",
+                  "Quick month selector for the last 3 months",
+                  "Live indicator shows streaming status and last update time",
+                  "All KPIs, charts, and widgets update based on filters",
+                ]} />
+              </FeatureCard>
             </section>
 
             {/* ── 3. Trade Management ────────────────────── */}

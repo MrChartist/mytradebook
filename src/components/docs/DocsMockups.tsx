@@ -1206,6 +1206,350 @@ export function MobileAppMockup() {
 /* ──────────────────────────────────────────────
    31. CalendarDayDetailMockup — Day detail with trades
    ────────────────────────────────────────────── */
+/* ──────────────────────────────────────────────
+   32. TodaysPnlHeroMockup — Detailed hero card
+   ────────────────────────────────────────────── */
+export function TodaysPnlHeroMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-2xl bg-gradient-to-br from-profit/10 via-profit/5 to-transparent border border-profit/20 p-5 max-w-md mx-auto relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 dot-pattern opacity-20 rounded-bl-3xl" />
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Today's P&L</span>
+          <span className="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-profit/15 text-profit animate-pulse">● Live</span>
+        </div>
+        <p className="text-4xl font-bold text-profit font-mono mb-1">+₹12,450</p>
+        <p className="text-xs text-profit/70 mb-4">+1.24% of capital</p>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="rounded-lg bg-card/60 border border-border/30 p-2.5 text-center">
+            <p className="text-[9px] text-muted-foreground">Realized</p>
+            <p className="text-sm font-bold font-mono text-profit">+₹8,200</p>
+          </div>
+          <div className="rounded-lg bg-card/60 border border-border/30 p-2.5 text-center">
+            <p className="text-[9px] text-muted-foreground">Unrealized</p>
+            <p className="text-sm font-bold font-mono text-profit">+₹4,250</p>
+          </div>
+          <div className="rounded-lg bg-card/60 border border-border/30 p-2.5 text-center">
+            <p className="text-[9px] text-muted-foreground">Trades</p>
+            <p className="text-sm font-bold font-mono">5</p>
+          </div>
+        </div>
+        <div className="mt-3 flex items-center gap-2 text-[10px] text-muted-foreground">
+          <span className="w-1.5 h-1.5 rounded-full bg-profit animate-pulse" />
+          <span>Last updated: 2:45 PM IST</span>
+          <span className="mx-1">•</span>
+          <span>W: 4 | L: 1</span>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   33. KPICardsDetailMockup — 4 detailed KPI cards
+   ────────────────────────────────────────────── */
+export function KPICardsDetailMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {/* MTD P&L */}
+        <div className="rounded-xl bg-card border border-border/40 p-3.5 relative overflow-hidden">
+          <div className="absolute -top-3 -right-3 w-12 h-12 dot-pattern opacity-20 rounded-bl-2xl" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">MTD P&L</span>
+            <div className="w-7 h-7 rounded-lg bg-profit/10 flex items-center justify-center">
+              <TrendingUp className="w-3.5 h-3.5 text-profit" />
+            </div>
+          </div>
+          <p className="text-xl font-bold font-mono text-profit">+₹28,350</p>
+          <div className="flex gap-3 mt-1.5">
+            <div><p className="text-[8px] text-muted-foreground">Realized</p><p className="text-[10px] font-mono font-bold text-profit">+₹24,100</p></div>
+            <div><p className="text-[8px] text-muted-foreground">Unrealized</p><p className="text-[10px] font-mono font-bold text-profit">+₹4,250</p></div>
+          </div>
+          <p className="text-[8px] text-muted-foreground mt-1.5">Today: <span className="text-profit font-medium">+₹12,450</span> • Closed: 18 | Open: 4</p>
+        </div>
+        {/* Open Positions */}
+        <div className="rounded-xl bg-card border border-border/40 p-3.5 relative overflow-hidden">
+          <div className="absolute -top-3 -right-3 w-12 h-12 dot-pattern opacity-20 rounded-bl-2xl" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">Open Positions</span>
+            <div className="w-7 h-7 rounded-lg bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center">
+              <Target className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" />
+            </div>
+          </div>
+          <p className="text-xl font-bold font-mono">4</p>
+          <p className="text-[9px] text-muted-foreground mt-1">₹6,420 at risk (to SL)</p>
+          <p className="text-[8px] text-muted-foreground mt-1">22 total trades this month</p>
+        </div>
+        {/* Win Rate */}
+        <div className="rounded-xl bg-card border border-border/40 p-3.5 relative overflow-hidden">
+          <div className="absolute -top-3 -right-3 w-12 h-12 dot-pattern opacity-20 rounded-bl-2xl" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">Win Rate</span>
+            <div className="w-7 h-7 rounded-lg bg-profit/10 flex items-center justify-center">
+              <Activity className="w-3.5 h-3.5 text-profit" />
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <p className="text-xl font-bold font-mono text-profit">62.5%</p>
+            <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-profit/10 text-profit">Exp: +₹842/trade</span>
+          </div>
+          <p className="text-[8px] text-muted-foreground mt-1.5">Closed: 16 | W: 10 | L: 6</p>
+        </div>
+        {/* Active Alerts */}
+        <div className="rounded-xl bg-card border border-border/40 p-3.5 relative overflow-hidden">
+          <div className="absolute -top-3 -right-3 w-12 h-12 dot-pattern opacity-20 rounded-bl-2xl" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">Active Alerts</span>
+            <div className="w-7 h-7 rounded-lg bg-[hsl(var(--warning)/0.1)] flex items-center justify-center">
+              <Bell className="w-3.5 h-3.5 text-[hsl(var(--warning))]" />
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <p className="text-xl font-bold font-mono">7</p>
+            <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-[hsl(var(--warning)/0.1)] text-[hsl(var(--warning))]">2 triggered today</span>
+          </div>
+          <p className="text-[8px] text-muted-foreground mt-1.5">Price: 4 | Technical: 3</p>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   34. RiskGaugeDetailMockup — Full risk & goal widget
+   ────────────────────────────────────────────── */
+export function RiskGaugeDetailMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="grid md:grid-cols-2 gap-4 max-w-lg mx-auto">
+        {/* Risk Gauge */}
+        <div className="rounded-xl bg-card border border-border/40 p-4">
+          <p className="text-[10px] font-semibold text-muted-foreground mb-3">Capital at Risk</p>
+          <div className="flex items-center gap-4">
+            <svg width="80" height="48" viewBox="0 0 80 48">
+              <path d="M8 40 A32 32 0 0 1 72 40" fill="none" stroke="hsl(var(--border))" strokeWidth="6" strokeLinecap="round" />
+              <path d="M8 40 A32 32 0 0 1 72 40" fill="none" stroke="hsl(var(--profit))" strokeWidth="6" strokeLinecap="round"
+                strokeDasharray="40 100" />
+              <text x="40" y="36" textAnchor="middle" className="text-xs font-bold font-mono" fill="hsl(var(--profit))">0.6%</text>
+            </svg>
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2 text-[10px]">
+                <span className="w-2 h-2 rounded-full bg-profit" />
+                <span className="text-muted-foreground">Safe zone (&lt;1%)</span>
+              </div>
+              <div className="flex items-center gap-2 text-[10px]">
+                <span className="w-2 h-2 rounded-full bg-[hsl(var(--warning))]" />
+                <span className="text-muted-foreground">Caution (1-1.5%)</span>
+              </div>
+              <div className="flex items-center gap-2 text-[10px]">
+                <span className="w-2 h-2 rounded-full bg-loss" />
+                <span className="text-muted-foreground">High risk (&gt;1.5%)</span>
+              </div>
+            </div>
+          </div>
+          <p className="text-[9px] text-muted-foreground mt-2">₹6,420 of ₹10,00,000 capital</p>
+        </div>
+        {/* Goal Tracker */}
+        <div className="rounded-xl bg-card border border-border/40 p-4">
+          <p className="text-[10px] font-semibold text-muted-foreground mb-3">Monthly Goal Progress</p>
+          <div className="space-y-3">
+            <div>
+              <div className="flex justify-between text-[10px] mb-1">
+                <span className="text-muted-foreground">Daily Target (1%)</span>
+                <span className="font-mono font-bold text-profit">124% ✓</span>
+              </div>
+              <div className="h-2 rounded-full bg-muted overflow-hidden">
+                <div className="h-full rounded-full bg-profit" style={{ width: '100%' }} />
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between text-[10px] mb-1">
+                <span className="text-muted-foreground">Monthly Target (5%)</span>
+                <span className="font-mono font-bold text-[hsl(var(--tb-accent))]">56.7%</span>
+              </div>
+              <div className="h-2 rounded-full bg-muted overflow-hidden">
+                <div className="h-full rounded-full bg-[hsl(var(--tb-accent))]" style={{ width: '56.7%' }} />
+              </div>
+            </div>
+            <p className="text-[9px] text-muted-foreground">₹28,350 of ₹50,000 target</p>
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   35. EquityCurveWidgetMockup — Dashboard-style widget
+   ────────────────────────────────────────────── */
+export function EquityCurveWidgetMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-lg mx-auto">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <p className="text-xs font-bold">Equity Curve</p>
+            <p className="text-[10px] text-muted-foreground">Feb 2026</p>
+          </div>
+          <div className="flex items-center gap-2 text-[10px]">
+            <span className="px-2 py-0.5 rounded-full bg-profit/10 text-profit font-semibold">+₹28,350</span>
+            <span className="text-muted-foreground">Peak: ₹10,32,400</span>
+          </div>
+        </div>
+        <svg viewBox="0 0 400 120" className="w-full h-28">
+          <defs>
+            <linearGradient id="eqWidgetFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="hsl(var(--profit))" stopOpacity="0.2" />
+              <stop offset="100%" stopColor="hsl(var(--profit))" stopOpacity="0.02" />
+            </linearGradient>
+          </defs>
+          {/* Grid lines */}
+          {[30, 50, 70, 90].map(y => (
+            <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="hsl(var(--border))" strokeWidth="0.5" strokeDasharray="4 4" opacity="0.4" />
+          ))}
+          {/* Equity fill */}
+          <path d="M0 95 L25 90 L50 85 L75 80 L100 70 L125 65 L150 72 L175 60 L200 55 L225 48 L250 52 L275 42 L300 35 L325 30 L350 25 L375 20 L400 15 L400 110 L0 110 Z" fill="url(#eqWidgetFill)" />
+          {/* Equity line */}
+          <path d="M0 95 L25 90 L50 85 L75 80 L100 70 L125 65 L150 72 L175 60 L200 55 L225 48 L250 52 L275 42 L300 35 L325 30 L350 25 L375 20 L400 15" fill="none" stroke="hsl(var(--profit))" strokeWidth="2.5" strokeLinejoin="round" />
+          {/* Tooltip dot */}
+          <circle cx="275" cy="42" r="4" fill="hsl(var(--profit))" stroke="hsl(var(--card))" strokeWidth="2" />
+        </svg>
+        <div className="flex items-center justify-between mt-2 text-[9px] text-muted-foreground">
+          <span>1 Feb</span><span>7 Feb</span><span>14 Feb</span><span>21 Feb</span><span>28 Feb</span>
+        </div>
+        {/* Drawdown indicator */}
+        <div className="mt-3 flex items-center gap-3 text-[10px]">
+          <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-profit rounded" /> Equity</span>
+          <span className="text-muted-foreground">Max DD: <span className="text-loss font-mono">-₹4,200</span> (0.42%)</span>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   36. CalendarHeatmapWidgetMockup — Dashboard compact calendar
+   ────────────────────────────────────────────── */
+export function CalendarHeatmapWidgetMockup() {
+  const days = ["M", "T", "W", "T", "F"];
+  const weeks = [
+    [2400, -800, 1200, 500, -300],
+    [-600, 3100, 800, -200, 1500],
+    [400, -1200, 2800, 600, -500],
+    [1800, 300, -900, 2200, 1100],
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-sm mx-auto">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-xs font-bold">Calendar Heatmap</p>
+          <span className="text-[10px] text-muted-foreground">Feb 2026</span>
+        </div>
+        <div className="space-y-1.5">
+          <div className="grid grid-cols-5 gap-1.5">
+            {days.map((d, i) => <span key={i} className="text-[9px] text-center text-muted-foreground font-medium">{d}</span>)}
+          </div>
+          {weeks.map((week, wi) => (
+            <div key={wi} className="grid grid-cols-5 gap-1.5">
+              {week.map((v, di) => (
+                <div
+                  key={di}
+                  className="aspect-square rounded-lg flex flex-col items-center justify-center cursor-pointer hover:ring-1 hover:ring-foreground/20 transition-all"
+                  style={{
+                    backgroundColor: v > 0
+                      ? `hsl(var(--profit) / ${Math.min(0.12 + (v / 3500) * 0.55, 0.65)})`
+                      : `hsl(var(--loss) / ${Math.min(0.12 + (Math.abs(v) / 1500) * 0.55, 0.65)})`
+                  }}
+                >
+                  <span className="text-[8px] font-mono font-bold" style={{
+                    color: v > 0 ? 'hsl(var(--profit))' : 'hsl(var(--loss))'
+                  }}>
+                    {v > 0 ? `+${(v/1000).toFixed(1)}k` : `${(v/1000).toFixed(1)}k`}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center justify-between mt-3 text-[9px] text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <span className="w-3 h-3 rounded bg-loss/30" /><span>Loss</span>
+            <span className="w-3 h-3 rounded bg-muted/40 mx-1" /><span>Break-even</span>
+            <span className="w-3 h-3 rounded bg-profit/30" /><span>Profit</span>
+          </div>
+          <span className="text-[hsl(var(--tb-accent))] font-medium cursor-pointer">View full →</span>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   37. SegmentFilterMockup — Segment + month filters
+   ────────────────────────────────────────────── */
+export function SegmentFilterMockup() {
+  const segments = [
+    { label: "All", active: false },
+    { label: "Intraday", active: true },
+    { label: "Positional", active: false },
+    { label: "Futures", active: false },
+    { label: "Options", active: false },
+    { label: "Commodities", active: false },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="max-w-lg mx-auto space-y-4">
+        {/* Segment filter bar */}
+        <div>
+          <p className="text-[10px] font-semibold text-muted-foreground mb-2">Market Segment</p>
+          <div className="flex gap-1.5 flex-wrap">
+            {segments.map((s) => (
+              <span
+                key={s.label}
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-[10px] font-semibold border transition-all cursor-pointer",
+                  s.active
+                    ? "bg-[hsl(var(--tb-accent))] text-white border-[hsl(var(--tb-accent))] shadow-sm"
+                    : "border-border/60 text-muted-foreground hover:text-foreground hover:border-foreground/20"
+                )}
+              >
+                {s.label}
+              </span>
+            ))}
+          </div>
+        </div>
+        {/* Month selector */}
+        <div>
+          <p className="text-[10px] font-semibold text-muted-foreground mb-2">Quick Month Selector</p>
+          <div className="flex gap-1 bg-muted/50 rounded-lg p-0.5 w-fit">
+            {["Dec", "Jan", "Feb"].map((m, i) => (
+              <span
+                key={m}
+                className={cn(
+                  "px-3 py-1.5 rounded-md text-[10px] font-semibold transition-all cursor-pointer",
+                  i === 2 ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {m}
+              </span>
+            ))}
+          </div>
+        </div>
+        {/* Live status */}
+        <div className="flex items-center gap-2">
+          <span className="flex items-center gap-1.5 text-[10px]">
+            <span className="w-2 h-2 rounded-full bg-profit animate-pulse" />
+            <span className="text-profit font-semibold">Live</span>
+          </span>
+          <span className="text-[10px] text-muted-foreground">• 2:45 PM</span>
+          <span className="text-[10px] text-muted-foreground">• 4 open positions streaming</span>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
 export function CalendarDayDetailMockup() {
   return (
     <MockupFrame className="my-6">
