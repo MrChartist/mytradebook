@@ -1257,7 +1257,7 @@ export default function Landing() {
 
 
       {/* ── Built for Indian Markets ────────────────────── */}
-      <section className="py-24 lg:py-32 bg-muted/10">
+      <section className="py-24 lg:py-32 bg-muted/10 dot-pattern">
         <MotionSection className="max-w-5xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-14 items-center">
             <motion.div variants={fadeUp}>
@@ -1272,38 +1272,73 @@ export default function Landing() {
               <p className="text-muted-foreground text-base leading-relaxed mb-6">
                 Unlike generic journals, TradeBook understands Indian market structure — segments, lot sizes, INR formatting, and market hours (9:15 AM – 3:30 PM).
               </p>
-              <ul className="space-y-3">
+              <ul className="space-y-2.5 mb-8">
                 {[
                   "NSE, BSE & MCX exchange support",
                   "INR currency with Indian numbering (Lakhs, Crores)",
                   "Dhan broker integration for auto-sync",
                   "Indian market hours & holiday awareness",
                 ].map((item) => (
-                  <li key={item} className="flex items-center gap-2.5 text-sm">
+                  <li key={item} className="flex items-center gap-2.5 text-sm rounded-lg bg-muted/5 px-3 py-2.5 group hover:bg-muted/15 transition-colors cursor-default">
                     <CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0" />
-                    <span>{item}</span>
+                    <span className="flex-1">{item}</span>
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/0 group-hover:text-muted-foreground/40 transition-colors" />
                   </li>
                 ))}
               </ul>
+              <Button
+                size="lg"
+                className="rounded-full bg-gradient-primary text-primary-foreground"
+                onClick={() => navigate("/login?mode=signup")}
+              >
+                Start Journaling <ArrowRight className="w-4 h-4 ml-1" />
+              </Button>
             </motion.div>
-            <motion.div variants={fadeUp} custom={0.15} className="flex flex-wrap gap-3 justify-center">
-              {[
-                { label: "Equity", color: "hsl(152 60% 42%)" },
-                { label: "F&O", color: "hsl(24 90% 55%)" },
-                { label: "Commodity", color: "hsl(45 90% 50%)" },
-                { label: "Currency", color: "hsl(210 80% 55%)" },
-                { label: "Intraday", color: "hsl(340 75% 55%)" },
-                { label: "Positional", color: "hsl(270 60% 55%)" },
-              ].map((seg) => (
-                <motion.div
-                  key={seg.label}
-                  className="px-5 py-3 rounded-2xl border border-border/40 bg-card text-sm font-semibold"
-                  style={{ borderColor: `${seg.color.replace(")", " / 0.25)")}` }}
-                  whileHover={{ scale: 1.06, y: -2 }}
-                >
-                  <span style={{ color: seg.color }}>{seg.label}</span>
-                </motion.div>
-              ))}
+
+            {/* Mock Exchange Card */}
+            <motion.div variants={fadeUp} custom={0.15}>
+              <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+                {/* Indian tricolor stripe */}
+                <div className="h-[3px] flex">
+                  <div className="flex-1 bg-[#FF9933]" />
+                  <div className="flex-1 bg-white" />
+                  <div className="flex-1 bg-[#128807]" />
+                </div>
+                <div className="p-6">
+                  <h4 className="text-sm font-semibold text-foreground mb-4">Market Segments</h4>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {[
+                      { label: "Equity", color: "hsl(152 60% 42%)", Icon: TrendingUp },
+                      { label: "F&O", color: "hsl(24 90% 55%)", Icon: Layers },
+                      { label: "Commodity", color: "hsl(45 90% 50%)", Icon: CandlestickChart },
+                      { label: "Currency", color: "hsl(210 80% 55%)", Icon: Globe },
+                      { label: "Intraday", color: "hsl(340 75% 55%)", Icon: Zap },
+                      { label: "Positional", color: "hsl(270 60% 55%)", Icon: Clock },
+                    ].map((seg) => (
+                      <motion.div
+                        key={seg.label}
+                        className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-border/40 bg-card text-sm font-semibold cursor-default transition-colors"
+                        style={{ borderColor: `${seg.color.replace(")", " / 0.25)")}` }}
+                        whileHover={{
+                          backgroundColor: `${seg.color.replace(")", " / 0.08)")}`,
+                          scale: 1.03,
+                        }}
+                      >
+                        <seg.Icon className="w-3.5 h-3.5 shrink-0" style={{ color: seg.color }} />
+                        <span style={{ color: seg.color }}>{seg.label}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                  {/* Market status strip */}
+                  <div className="mt-5 pt-4 border-t border-border/50 flex items-center gap-2 text-xs text-muted-foreground">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-profit opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-profit" />
+                    </span>
+                    <span>Market Open — 09:15 AM to 03:30 PM IST</span>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
         </MotionSection>
