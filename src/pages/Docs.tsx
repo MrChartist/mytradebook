@@ -14,7 +14,7 @@ import {
   Lock, Sparkles, FileText, Download, Upload, Filter, Grid3X3,
   List, Search, Tag, AlertTriangle, CheckCircle2, TrendingDown,
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
-  Wallet, Share2, MessageSquare, Command, Hash, HelpCircle
+  Wallet, Share2, MessageSquare, Command, Hash
 } from "lucide-react";
 import {
   BentoFeatureGrid, OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
@@ -25,7 +25,8 @@ import {
   StudyCardMockup, StreakDisciplineMockup, WeeklyReportMockup,
   MistakeTrendMockup, DailyJournalMockup, TelegramChannelsMockup,
   WidgetCustomizerMockup, CsvImportMockup, SegmentPerformanceMockup,
-  RiskOfRuinMockup
+  RiskOfRuinMockup, TradeViewsMockup, AIInsightsMockup,
+  MobileAppMockup, CalendarDayDetailMockup
 } from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
@@ -43,7 +44,6 @@ const SECTIONS = [
   { id: "integrations", label: "Integrations", icon: Layers },
   { id: "shortcuts", label: "Keyboard Shortcuts", icon: Keyboard },
   { id: "settings", label: "Settings", icon: Settings },
-  { id: "faq", label: "FAQs", icon: HelpCircle },
 ];
 
 function FeatureList({ items }: { items: string[] }) {
@@ -247,6 +247,7 @@ export default function Docs() {
                 icon={Play}
               />
               <OnboardingFlowMockup />
+              <MobileAppMockup />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Users} title="Create Your Account">
                   <p className="text-sm text-muted-foreground mb-3">Sign up with email and verify your account. You'll get a 14-day Pro trial with full access to every feature — no credit card required.</p>
@@ -354,6 +355,7 @@ export default function Docs() {
                   <PositionSizingMockup />
                 </div>
               </div>
+              <TradeViewsMockup />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Search} title="Creating a Trade">
                   <p className="text-sm text-muted-foreground mb-3">Step-by-step trade creation with smart defaults:</p>
@@ -616,6 +618,7 @@ export default function Docs() {
                 icon={BarChart3}
               />
               <AnalyticsMetricCards />
+              <AIInsightsMockup />
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 <EquityCurveMockup />
                 <AnalyticsHeatmapMockup />
@@ -682,7 +685,10 @@ export default function Docs() {
                 description="A monthly calendar view with daily journal entries. Write pre-market plans, post-market reviews, and track your mood and lessons for each trading day."
                 icon={Calendar}
               />
-              <DailyJournalMockup />
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <DailyJournalMockup />
+                <CalendarDayDetailMockup />
+              </div>
               <FeatureCard icon={Calendar} title="Daily Journal Workflow">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -928,40 +934,6 @@ export default function Docs() {
                     "Segment-level routing for Telegram messages",
                   ]} />
                 </FeatureCard>
-              </div>
-            </section>
-
-            {/* ── 15. FAQs ──────────────────────────────── */}
-            <section>
-              <SectionHeader
-                id="faq"
-                title="Frequently Asked Questions"
-                description="Quick answers to common questions about TradeBook features, billing, and data."
-                icon={HelpCircle}
-              />
-              <div className="space-y-4">
-                {[
-                  { q: "Is my trading data secure?", a: "Yes. All data is encrypted at rest and in transit. Your trades and journal entries are private to your account and protected by row-level security policies. No one else can see your data." },
-                  { q: "Can I import trades from my broker?", a: "You can import trades via CSV upload with automatic column mapping. If you use Dhan as your broker, you can connect it directly for auto-sync of portfolio positions and live prices." },
-                  { q: "What happens after my 14-day trial ends?", a: "You'll be moved to the Free plan. You keep all your trade data and basic features (logging, journal, calendar). Pro features like Analytics, AI Insights, Weekly Reports, and advanced heatmaps require upgrading." },
-                  { q: "Does TradeBook support F&O trading?", a: "Yes. TradeBook supports all segments — Equity Intraday, Equity Positional, Futures, Options, and Commodities. You can search for any NSE/BSE/MCX instrument including option chains with strike/expiry selection." },
-                  { q: "How do Telegram notifications work?", a: "Connect your Telegram bot in Settings → Integrations. You can set up multiple channels with segment-level routing — for example, send only Intraday alerts to one channel and EOD reports to another." },
-                  { q: "Can I track multi-leg option strategies?", a: "Yes. Create a parent strategy (Bull Call Spread, Iron Condor, etc.) and add individual trade legs. Combined P&L is calculated automatically across all legs." },
-                  { q: "How is the Risk of Ruin calculated?", a: "It uses your win rate, average risk-reward ratio, and risk per trade to calculate the statistical probability of losing your entire account. Lower is better — under 5% is considered safe." },
-                  { q: "Can I use TradeBook on mobile?", a: "Yes. TradeBook is fully responsive with a mobile-optimized bottom navigation bar. All features work on mobile — trade logging, journal, analytics, and alerts." },
-                  { q: "How do I track my trading mistakes?", a: "Tag trades with mistake tags (customizable in Settings). The Mistakes page shows a Kanban board by severity, repeat pattern analysis, and a 6-month improvement trend chart." },
-                  { q: "What is the Discipline Score?", a: "It measures the percentage of your trades that had a stop loss set. A higher score means better risk management discipline. It's displayed in the Streak & Discipline widget on your dashboard." },
-                ].map((faq) => (
-                  <details key={faq.q} className="group rounded-xl border border-border/40 bg-card/60 overflow-hidden">
-                    <summary className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-muted/30 transition-colors">
-                      <span className="text-sm font-semibold pr-4">{faq.q}</span>
-                      <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0 transition-transform group-open:rotate-90" />
-                    </summary>
-                    <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed border-t border-border/20 pt-3">
-                      {faq.a}
-                    </div>
-                  </details>
-                ))}
               </div>
             </section>
 
