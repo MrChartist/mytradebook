@@ -84,7 +84,7 @@ function MotionSection({ children, className }: { children: React.ReactNode; cla
 /* ─── Section Label Badge ───────────────────────────────── */
 function SectionBadge({ children }: { children: React.ReactNode }) {
   return (
-    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border/60 bg-muted/30 text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/70 mb-5">
+    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border/60 bg-muted/30 text-xs font-bold uppercase tracking-[0.15em] text-muted-foreground mb-5">
       {children}
     </div>
   );
@@ -499,7 +499,7 @@ export default function Landing() {
           </motion.div>
 
           {/* Micro trust */}
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.4} className="flex items-center justify-center gap-6 text-xs text-muted-foreground/70 mb-20">
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.4} className="flex items-center justify-center gap-6 text-xs text-muted-foreground mb-20">
             <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-profit" /> Free during beta</span>
             <span className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5" /> Bank-grade security</span>
             <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" /> No credit card</span>
@@ -670,7 +670,7 @@ export default function Landing() {
       {/* ── Trust Strip ──────────────────────────────────── */}
       <section className="py-12 border-y border-border/20">
         <div className="max-w-5xl mx-auto px-6">
-          <p className="text-center text-[11px] text-muted-foreground/60 uppercase tracking-[0.18em] font-semibold mb-8">
+          <p className="text-center text-xs text-muted-foreground uppercase tracking-[0.18em] font-semibold mb-8">
             Trusted by 1,200+ traders across Indian markets
           </p>
           <div className="flex items-center justify-center gap-12 sm:gap-20 flex-wrap">
@@ -683,7 +683,7 @@ export default function Landing() {
             ].map((l) => (
               <motion.div
                 key={l.name}
-                className="flex items-center gap-2.5 text-muted-foreground/40 hover:text-muted-foreground/70 transition-colors duration-300"
+                className="flex items-center gap-2.5 text-muted-foreground/70 hover:text-muted-foreground transition-colors duration-300"
                 whileHover={{ scale: 1.06 }}
               >
                 <l.icon className="w-4.5 h-4.5" />
@@ -710,12 +710,12 @@ export default function Landing() {
                 <div className="text-5xl sm:text-7xl font-extrabold tracking-tight" ref={stat.ref}>
                   {stat.value}{stat.suffix}
                 </div>
-                <div className="text-[11px] text-muted-foreground/60 uppercase tracking-[0.14em] mt-2.5 font-medium">{stat.label}</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-[0.14em] mt-2.5 font-medium">{stat.label}</div>
               </motion.div>
             ))}
             <motion.div variants={fadeUp} custom={0.3} className="text-center">
               <div className="text-5xl sm:text-7xl font-extrabold tracking-tight">24/7</div>
-              <div className="text-[11px] text-muted-foreground/60 uppercase tracking-[0.14em] mt-2.5 font-medium">Cloud Access</div>
+              <div className="text-xs text-muted-foreground uppercase tracking-[0.14em] mt-2.5 font-medium">Cloud Access</div>
             </motion.div>
           </div>
         </div>
@@ -733,7 +733,7 @@ export default function Landing() {
               </span>{" "}
               worth
             </h2>
-            <p className="text-muted-foreground/80 max-w-lg mx-auto text-base leading-relaxed">
+            <p className="text-muted-foreground max-w-lg mx-auto text-base leading-relaxed">
               From journaling to automation — tools designed by traders, for traders.
             </p>
           </motion.div>
@@ -761,8 +761,8 @@ export default function Landing() {
                     >
                       <f.icon className="w-5 h-5" style={{ color: f.color }} />
                     </motion.div>
-                    <h3 className="text-lg font-bold mb-2">{f.title}</h3>
-                    <p className="text-sm text-muted-foreground/80 leading-relaxed">{f.description}</p>
+                    <h3 className="text-xl font-bold mb-2">{f.title}</h3>
+                    <p className="text-base text-muted-foreground leading-relaxed">{f.description}</p>
 
                     {/* Mini UI previews inside cards */}
                     {f.large && f.title === "Smart Journal" && <JournalMiniPreview />}
@@ -788,7 +788,7 @@ export default function Landing() {
                 mastery
               </span>
             </h2>
-            <p className="text-muted-foreground/80 max-w-md mx-auto">From first trade to edge mastery — in minutes.</p>
+            <p className="text-muted-foreground max-w-md mx-auto text-base">From first trade to edge mastery — in minutes.</p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8 relative">
@@ -810,8 +810,8 @@ export default function Landing() {
                   >
                     <item.icon className="w-6 h-6 text-[hsl(var(--tb-accent))]" />
                   </motion.div>
-                  <h3 className="text-lg font-bold mb-3">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground/80 leading-relaxed">{item.desc}</p>
+                  <h3 className="text-xl font-bold mb-3">{item.title}</h3>
+                  <p className="text-base text-muted-foreground leading-relaxed">{item.desc}</p>
                 </motion.div>
               </motion.div>
             ))}
@@ -831,12 +831,12 @@ export default function Landing() {
               </span>
               ?
             </h2>
-            <p className="text-muted-foreground/80 max-w-md mx-auto">See how we compare to generic trading journals.</p>
+            <p className="text-muted-foreground max-w-md mx-auto text-base">See how we compare to generic trading journals.</p>
           </motion.div>
 
           <motion.div variants={fadeUp} className="rounded-2xl border border-border/40 bg-card/80 overflow-hidden">
             <div className="grid grid-cols-3 gap-0 border-b border-border/30 px-6 py-4 bg-muted/20">
-              <span className="text-sm font-medium">Feature</span>
+              <span className="text-base font-medium">Feature</span>
               <span className="text-sm font-bold text-center text-[hsl(var(--tb-accent))]">TradeBook</span>
               <span className="text-sm font-medium text-center text-muted-foreground/70">Others</span>
             </div>
@@ -850,7 +850,7 @@ export default function Landing() {
                   i % 2 === 0 ? "bg-muted/[0.04]" : ""
                 )}
               >
-                <span className="text-sm">{row.feature}</span>
+                <span className="text-base">{row.feature}</span>
                 <div className="flex justify-center">
                   {row.tradebook === true ? (
                     <CheckCircle2 className="w-5 h-5 text-profit" />
@@ -885,7 +885,7 @@ export default function Landing() {
               </span>{" "}
               pricing
             </h2>
-            <p className="text-muted-foreground/80 max-w-md mx-auto">One plan. All features. Pick your billing cycle.</p>
+            <p className="text-muted-foreground max-w-md mx-auto text-base">One plan. All features. Pick your billing cycle.</p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-7 items-start">
@@ -920,7 +920,7 @@ export default function Landing() {
                     <span className="text-4xl font-extrabold font-mono">{plan.price}</span>
                     <span className="text-muted-foreground/70 text-sm">{plan.period}</span>
                   </div>
-                  <p className="text-sm text-muted-foreground/70 mb-7">{plan.description}</p>
+                  <p className="text-sm text-muted-foreground mb-7">{plan.description}</p>
                   <ul className="space-y-3.5 flex-1 mb-9">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm">
@@ -960,7 +960,7 @@ export default function Landing() {
                 real traders
               </span>
             </h2>
-            <p className="text-muted-foreground/80 max-w-md mx-auto">Here's what traders across India are saying.</p>
+            <p className="text-muted-foreground max-w-md mx-auto text-base">Here's what traders across India are saying.</p>
           </motion.div>
 
           <div className="grid md:grid-cols-5 gap-7">
@@ -998,7 +998,7 @@ export default function Landing() {
                     whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}
                   >
                     <Quote className="w-7 h-7 text-[hsl(var(--tb-accent)/0.12)] mb-4" />
-                    <p className="text-sm text-muted-foreground/80 leading-relaxed flex-1 mb-5">"{t.quote}"</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-5">"{t.quote}"</p>
                     <div className="flex items-center gap-1.5 mb-3">
                       {[...Array(t.stars)].map((_, j) => (
                         <Star key={j} className="w-3.5 h-3.5 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />
@@ -1037,7 +1037,7 @@ export default function Landing() {
             </span>{" "}
             trading
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-lg text-muted-foreground/80 mb-12 max-w-xl mx-auto leading-relaxed">
+          <motion.p variants={fadeUp} className="text-lg text-muted-foreground mb-12 max-w-xl mx-auto leading-relaxed">
             Join 1,200+ traders who journal, analyze, and compound their edge — every single day.
           </motion.p>
           <motion.div variants={fadeUp} whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}>
@@ -1049,7 +1049,7 @@ export default function Landing() {
               Get Started — It's Free <ArrowRight className="w-4 h-4" />
             </Button>
           </motion.div>
-          <motion.p variants={fadeUp} className="text-xs text-muted-foreground/60 mt-6 flex items-center justify-center gap-3">
+          <motion.p variants={fadeUp} className="text-xs text-muted-foreground mt-6 flex items-center justify-center gap-3">
             <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Bank-grade encryption</span>
             <span>·</span>
             <span>No credit card required</span>
@@ -1068,13 +1068,13 @@ export default function Landing() {
                 </div>
                 <span className="font-logo font-bold tracking-tight">TradeBook</span>
               </div>
-              <p className="text-sm text-muted-foreground/70 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 The trading journal built for Indian markets. Track, analyze, and improve.
               </p>
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-4">Product</h4>
-              <ul className="space-y-2.5 text-sm text-muted-foreground/70">
+              <ul className="space-y-2.5 text-sm text-muted-foreground">
                 <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
                 <li><a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a></li>
                 <li><a href="/docs" className="hover:text-foreground transition-colors">Documentation</a></li>
@@ -1082,22 +1082,22 @@ export default function Landing() {
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-4">Support</h4>
-              <ul className="space-y-2.5 text-sm text-muted-foreground/70">
+              <ul className="space-y-2.5 text-sm text-muted-foreground">
                 <li><a href="mailto:founder@mrchartist.com" className="hover:text-foreground transition-colors">Contact Us</a></li>
                 <li><a href="/docs" className="hover:text-foreground transition-colors">Documentation</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-4">Legal</h4>
-              <ul className="space-y-2.5 text-sm text-muted-foreground/70">
+              <ul className="space-y-2.5 text-sm text-muted-foreground">
                 <li><a href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</a></li>
                 <li><a href="/terms" className="hover:text-foreground transition-colors">Terms of Service</a></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-border/15 pt-7 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-muted-foreground/50">© {new Date().getFullYear()} TradeBook. All rights reserved. Made with ❤️ in India.</p>
-            <p className="text-xs text-muted-foreground/50">Not SEBI registered. For educational purposes only.</p>
+            <p className="text-xs text-muted-foreground/80">© {new Date().getFullYear()} TradeBook. All rights reserved. Made with ❤️ in India.</p>
+            <p className="text-xs text-muted-foreground/80">Not SEBI registered. For educational purposes only.</p>
           </div>
         </div>
       </footer>
