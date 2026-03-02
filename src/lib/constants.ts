@@ -44,8 +44,8 @@ export const MAX_TRADES_WITHOUT_PAGINATION = 100;
 /** Maximum alerts per user (soft limit) */
 export const MAX_ALERTS_PER_USER = 100;
 
-/** Maximum chart images per trade */
-export const MAX_CHART_IMAGES_PER_TRADE = 5;
+/** Maximum chart links per trade */
+export const MAX_CHART_LINKS_PER_TRADE = 5;
 
 // ============================================
 // VALIDATION LIMITS
@@ -107,11 +107,6 @@ export const DEFAULT_ALERT_COOLDOWN_MINUTES = 15;
 // FILE UPLOAD LIMITS
 // ============================================
 
-/** Maximum chart image size (5 MB) */
-export const MAX_CHART_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
-
-/** Allowed chart image formats */
-export const ALLOWED_IMAGE_FORMATS = ['image/jpeg', 'image/png', 'image/webp'] as const;
 
 // ============================================
 // CACHE CONFIGURATION

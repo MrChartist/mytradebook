@@ -1173,28 +1173,42 @@ export function TradeDetailModal({
           </div>
         </div>
 
-        {/* Chart Images */}
+        {/* Chart Snapshots */}
         {trade.chart_images && Array.isArray(trade.chart_images) && trade.chart_images.length > 0 && (
           <>
             <Separator />
             <div className="space-y-3">
-              <h4 className="font-medium">Chart Images</h4>
+              <h4 className="font-medium">Chart Snapshots</h4>
               <div className="grid grid-cols-2 gap-2">
-                {(trade.chart_images as string[]).map((url, index) => (
-                  <a
-                    key={index}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block aspect-video rounded-lg overflow-hidden border border-border bg-accent hover:opacity-80 transition-opacity"
-                  >
-                    <img
-                      src={url}
-                      alt={`Chart ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </a>
-                ))}
+                {(trade.chart_images as string[]).map((url, index) => {
+                  const isImage = /\.(png|jpe?g|gif|webp|svg)(\?.*)?$/i.test(url) || url.includes("/storage/v1/object/");
+                  return isImage ? (
+                    <a
+                      key={index}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block aspect-video rounded-lg overflow-hidden border border-border bg-accent hover:opacity-80 transition-opacity"
+                    >
+                      <img
+                        src={url}
+                        alt={`Chart ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </a>
+                  ) : (
+                    <a
+                      key={index}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 p-3 rounded-lg border border-border bg-accent/50 hover:bg-accent transition-colors"
+                    >
+                      <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0" />
+                      <span className="text-xs text-primary truncate">{(() => { try { return new URL(url).hostname.replace("www.", ""); } catch { return url; } })()}</span>
+                    </a>
+                  );
+                })}
               </div>
             </div>
           </>

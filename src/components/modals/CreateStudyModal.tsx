@@ -16,7 +16,7 @@ import {
 import {
   Collapsible, CollapsibleContent, CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChartImageUpload } from "@/components/ui/chart-image-upload";
+import { ChartLinkInput } from "@/components/ui/chart-link-input";
 import { createStudySchema, type CreateStudyInput, studyCategories } from "@/lib/schemas";
 import { useStudies } from "@/hooks/useStudies";
 import { InstrumentPicker, type SelectedInstrument } from "@/components/trade/InstrumentPicker";
@@ -400,11 +400,11 @@ export function CreateStudyModal({ open, onOpenChange }: CreateStudyModalProps) 
               />
             </div>
 
-            <ChartImageUpload
-              images={attachments}
-              onImagesChange={setAttachments}
-              bucket="study-attachments"
-              maxImages={5}
+            <ChartLinkInput
+              links={attachments}
+              onLinksChange={setAttachments}
+              maxLinks={5}
+              placeholder="Paste chart image or TradingView URL..."
             />
             
             {/* Link attachments */}
