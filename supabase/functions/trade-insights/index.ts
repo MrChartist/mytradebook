@@ -29,6 +29,30 @@ serve(async (req) => {
     }
     const userId = claimsData.claims.sub;
 
+    // Read user's AI config using service role
+    const serviceClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
+    const { data: userSettings, error: settingsErr } = await serviceClient
+      .from("user_settings")
+      .select("ai_provider, ai_api_key")
+      .eq("user_id", userId)
+      .single();
+
+    if (settingsErr) throw settingsErr;
+
+    const aiProvider = userSettings?.ai_provider;
+    const aiApiKey = userSettings?.ai_api_key;
+
+    if (!aiProvider || !aiApiKey) {
+      return new Response(JSON.stringify({
+        error: "no_ai_key",
+        message: "Configure your AI API key in Settings → Integrations to unlock AI-powered insights.",
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     const { period = "30d" } = await req.json().catch(() => ({}));
 
     // Determine date filter
@@ -75,7 +99,6 @@ serve(async (req) => {
     const losses = trades.filter((t: any) => (t.pnl || 0) < 0);
     const winRate = ((wins.length / totalTrades) * 100).toFixed(1);
 
-    // Segment breakdown
     const segments: Record<string, { total: number; wins: number; totalPnl: number }> = {};
     trades.forEach((t: any) => {
       if (!segments[t.segment]) segments[t.segment] = { total: 0, wins: 0, totalPnl: 0 };
@@ -84,7 +107,6 @@ serve(async (req) => {
       segments[t.segment].totalPnl += t.pnl || 0;
     });
 
-    // Time of day breakdown
     const hourBuckets: Record<string, { total: number; wins: number }> = {};
     trades.forEach((t: any) => {
       const hour = new Date(t.entry_time).getHours();
@@ -94,7 +116,6 @@ serve(async (req) => {
       if ((t.pnl || 0) > 0) hourBuckets[bucket].wins++;
     });
 
-    // Day of week breakdown
     const dayBuckets: Record<string, { total: number; wins: number }> = {};
     const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     trades.forEach((t: any) => {
@@ -104,7 +125,6 @@ serve(async (req) => {
       if ((t.pnl || 0) > 0) dayBuckets[day].wins++;
     });
 
-    // Pattern performance
     const patternStats: Record<string, { total: number; wins: number }> = {};
     (patternsRes.data || []).forEach((p: any) => {
       const name = p.pattern_tags?.name || "Unknown";
@@ -114,25 +134,21 @@ serve(async (req) => {
       if (trade && (trade.pnl || 0) > 0) patternStats[name].wins++;
     });
 
-    // Mistake frequency
     const mistakeStats: Record<string, number> = {};
     (mistakesRes.data || []).forEach((m: any) => {
       const name = m.mistake_tags?.name || "Unknown";
       mistakeStats[name] = (mistakeStats[name] || 0) + 1;
     });
 
-    // Confidence vs outcome
     const confTrades = trades.filter((t: any) => t.confidence_score != null);
     const highConf = confTrades.filter((t: any) => t.confidence_score >= 7);
     const lowConf = confTrades.filter((t: any) => t.confidence_score <= 4);
     const highConfWinRate = highConf.length ? ((highConf.filter((t: any) => (t.pnl || 0) > 0).length / highConf.length) * 100).toFixed(1) : null;
     const lowConfWinRate = lowConf.length ? ((lowConf.filter((t: any) => (t.pnl || 0) > 0).length / lowConf.length) * 100).toFixed(1) : null;
 
-    // Avg win / avg loss
     const avgWin = wins.length ? (wins.reduce((a: number, t: any) => a + (t.pnl || 0), 0) / wins.length).toFixed(0) : "0";
     const avgLoss = losses.length ? Math.abs(losses.reduce((a: number, t: any) => a + (t.pnl || 0), 0) / losses.length).toFixed(0) : "0";
 
-    // Streak analysis
     let maxWinStreak = 0, maxLossStreak = 0, curWin = 0, curLoss = 0;
     const sorted = [...trades].sort((a: any, b: any) => new Date(a.closed_at).getTime() - new Date(b.closed_at).getTime());
     sorted.forEach((t: any) => {
@@ -150,54 +166,27 @@ serve(async (req) => {
       avgLoss: `₹${avgLoss}`,
       profitFactor: Number(avgLoss) > 0 ? ((Number(avgWin) * wins.length) / (Number(avgLoss) * losses.length)).toFixed(2) : "N/A",
       segmentBreakdown: Object.entries(segments).map(([seg, d]) => ({
-        segment: seg,
-        trades: d.total,
-        winRate: `${((d.wins / d.total) * 100).toFixed(1)}%`,
-        totalPnl: `₹${d.totalPnl.toFixed(0)}`,
+        segment: seg, trades: d.total, winRate: `${((d.wins / d.total) * 100).toFixed(1)}%`, totalPnl: `₹${d.totalPnl.toFixed(0)}`,
       })),
       timeOfDayBreakdown: Object.entries(hourBuckets).map(([slot, d]) => ({
-        slot,
-        trades: d.total,
-        winRate: `${((d.wins / d.total) * 100).toFixed(1)}%`,
+        slot, trades: d.total, winRate: `${((d.wins / d.total) * 100).toFixed(1)}%`,
       })),
       dayOfWeekBreakdown: Object.entries(dayBuckets).map(([day, d]) => ({
-        day,
-        trades: d.total,
-        winRate: `${((d.wins / d.total) * 100).toFixed(1)}%`,
+        day, trades: d.total, winRate: `${((d.wins / d.total) * 100).toFixed(1)}%`,
       })),
-      topPatterns: Object.entries(patternStats)
-        .sort((a, b) => b[1].total - a[1].total)
-        .slice(0, 5)
+      topPatterns: Object.entries(patternStats).sort((a, b) => b[1].total - a[1].total).slice(0, 5)
         .map(([name, d]) => ({ pattern: name, trades: d.total, winRate: `${((d.wins / d.total) * 100).toFixed(1)}%` })),
-      topMistakes: Object.entries(mistakeStats)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5)
+      topMistakes: Object.entries(mistakeStats).sort((a, b) => b[1] - a[1]).slice(0, 5)
         .map(([name, count]) => ({ mistake: name, occurrences: count })),
       confidenceAnalysis: highConfWinRate || lowConfWinRate ? {
         highConfidenceWinRate: highConfWinRate ? `${highConfWinRate}%` : "N/A",
         lowConfidenceWinRate: lowConfWinRate ? `${lowConfWinRate}%` : "N/A",
-        highConfCount: highConf.length,
-        lowConfCount: lowConf.length,
+        highConfCount: highConf.length, lowConfCount: lowConf.length,
       } : null,
       streaks: { maxWinStreak, maxLossStreak },
     };
 
-    // Call Lovable AI
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
-
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          {
-            role: "system",
-            content: `You are an expert trading performance coach for Indian stock markets (NSE/BSE). Analyze the trader's anonymized statistics and provide exactly 3-5 specific, actionable insights. Focus on patterns that can immediately improve their performance.
+    const systemPrompt = `You are an expert trading performance coach for Indian stock markets (NSE/BSE). Analyze the trader's anonymized statistics and provide exactly 3-5 specific, actionable insights. Focus on patterns that can immediately improve their performance.
 
 Rules:
 - Be specific with numbers from the data (e.g., "Your win rate in Options is 72% vs 45% in Futures")
@@ -206,72 +195,113 @@ Rules:
 - Categories: "behavioral" (discipline, overtrading), "timing" (time/day patterns), "risk" (position sizing, R:R), "pattern" (setup effectiveness), "strength" (what's working well)
 - Severity: "success" (doing well, keep it up), "warning" (needs attention), "info" (neutral observation)
 - Keep descriptions under 2 sentences each
-- Currency is INR (₹)`,
+- Currency is INR (₹)`;
+
+    const userPrompt = `Here are my trading statistics for the last ${period}:\n\n${JSON.stringify(stats, null, 2)}\n\nProvide 3-5 specific insights.`;
+
+    const insightsSchema = {
+      type: "object" as const,
+      properties: {
+        insights: {
+          type: "array" as const,
+          items: {
+            type: "object" as const,
+            properties: {
+              title: { type: "string" as const },
+              description: { type: "string" as const },
+              category: { type: "string" as const, enum: ["behavioral", "timing", "risk", "pattern", "strength"] },
+              severity: { type: "string" as const, enum: ["success", "warning", "info"] },
+            },
+            required: ["title", "description", "category", "severity"],
+            additionalProperties: false,
           },
-          {
-            role: "user",
-            content: `Here are my trading statistics for the last ${period}:\n\n${JSON.stringify(stats, null, 2)}\n\nProvide 3-5 specific insights.`,
-          },
-        ],
-        tools: [
-          {
+        },
+      },
+      required: ["insights"],
+      additionalProperties: false,
+    };
+
+    let insights;
+
+    if (aiProvider === "gemini") {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${aiApiKey}`;
+      const geminiBody = {
+        contents: [{ parts: [{ text: `${systemPrompt}\n\n${userPrompt}\n\nReturn a JSON object with an "insights" array. Each item has: title, description, category (behavioral|timing|risk|pattern|strength), severity (success|warning|info).` }] }],
+        generationConfig: { responseMimeType: "application/json", responseSchema: insightsSchema },
+      };
+
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(geminiBody),
+      });
+
+      if (!resp.ok) {
+        const errText = await resp.text();
+        console.error("Gemini error:", resp.status, errText);
+        if (resp.status === 400 && errText.includes("API_KEY_INVALID")) {
+          return new Response(JSON.stringify({ error: "Invalid Gemini API key. Please check your key in Settings → Integrations." }), {
+            status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        throw new Error(`Gemini API error: ${resp.status}`);
+      }
+
+      const geminiResult = await resp.json();
+      const text = geminiResult.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (text) {
+        const parsed = JSON.parse(text);
+        insights = parsed.insights;
+      }
+    } else if (aiProvider === "openai") {
+      const resp = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${aiApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          tools: [{
             type: "function",
             function: {
               name: "provide_insights",
               description: "Return trading performance insights",
-              parameters: {
-                type: "object",
-                properties: {
-                  insights: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        title: { type: "string", description: "Short insight title (5-8 words)" },
-                        description: { type: "string", description: "Detailed explanation with specific numbers and actionable advice (1-2 sentences)" },
-                        category: { type: "string", enum: ["behavioral", "timing", "risk", "pattern", "strength"] },
-                        severity: { type: "string", enum: ["success", "warning", "info"] },
-                      },
-                      required: ["title", "description", "category", "severity"],
-                      additionalProperties: false,
-                    },
-                  },
-                },
-                required: ["insights"],
-                additionalProperties: false,
-              },
+              parameters: insightsSchema,
             },
-          },
-        ],
-        tool_choice: { type: "function", function: { name: "provide_insights" } },
-      }),
-    });
+          }],
+          tool_choice: { type: "function", function: { name: "provide_insights" } },
+        }),
+      });
 
-    if (!aiResponse.ok) {
-      if (aiResponse.status === 429) {
-        return new Response(JSON.stringify({ error: "AI rate limit reached. Please try again in a minute." }), {
-          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+      if (!resp.ok) {
+        const errText = await resp.text();
+        console.error("OpenAI error:", resp.status, errText);
+        if (resp.status === 401) {
+          return new Response(JSON.stringify({ error: "Invalid OpenAI API key. Please check your key in Settings → Integrations." }), {
+            status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        throw new Error(`OpenAI API error: ${resp.status}`);
       }
-      if (aiResponse.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits exhausted. Please add credits in workspace settings." }), {
-          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+
+      const openaiResult = await resp.json();
+      const toolCall = openaiResult.choices?.[0]?.message?.tool_calls?.[0];
+      if (toolCall?.function?.arguments) {
+        const parsed = JSON.parse(toolCall.function.arguments);
+        insights = parsed.insights;
       }
-      const errText = await aiResponse.text();
-      console.error("AI gateway error:", aiResponse.status, errText);
-      throw new Error("AI analysis failed");
+    } else {
+      return new Response(JSON.stringify({ error: `Unsupported AI provider: ${aiProvider}` }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    const aiResult = await aiResponse.json();
-    const toolCall = aiResult.choices?.[0]?.message?.tool_calls?.[0];
-    
-    let insights;
-    if (toolCall?.function?.arguments) {
-      const parsed = JSON.parse(toolCall.function.arguments);
-      insights = parsed.insights;
-    } else {
-      // Fallback: try to parse from content
+    if (!insights) {
       insights = [{
         title: "Analysis Complete",
         description: "Your trading data has been analyzed. Keep tracking your trades for more detailed insights.",
@@ -280,7 +310,7 @@ Rules:
       }];
     }
 
-    return new Response(JSON.stringify({ insights, stats }), {
+    return new Response(JSON.stringify({ insights, stats, provider: aiProvider }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {

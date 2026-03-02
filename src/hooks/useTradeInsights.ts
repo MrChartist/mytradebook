@@ -27,6 +27,14 @@ export function useTradeInsights() {
         throw new Error(msg);
       }
 
+      if (data?.error === "no_ai_key") {
+        toast({
+          title: "AI Key Required",
+          description: data.message || "Configure your AI API key in Settings → Integrations.",
+        });
+        return;
+      }
+
       if (data?.error) {
         toast({
           title: "AI Insights",

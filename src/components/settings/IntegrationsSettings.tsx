@@ -3,13 +3,15 @@ import { PlanGate } from "@/components/PlanGate";
 import { 
   Loader2, Send, RefreshCw, CheckCircle, 
   Smartphone, Database, Clock, AlertTriangle, 
-  MessageCircle, Unplug, Key, Eye, EyeOff, Shield
+  MessageCircle, Unplug, Key, Eye, EyeOff, Shield,
+  Sparkles, Trash2
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -44,6 +46,12 @@ export default function IntegrationsSettings() {
   // Dhan sync state
   const [syncingOrders, setSyncingOrders] = useState(false);
 
+  // AI Provider state
+  const [aiProvider, setAiProvider] = useState<"gemini" | "openai">("gemini");
+  const [aiApiKey, setAiApiKey] = useState("");
+  const [showAiKey, setShowAiKey] = useState(false);
+  const [savingAi, setSavingAi] = useState(false);
+
   // Instrument Master state
   const [syncingInstruments, setSyncingInstruments] = useState(false);
   const [syncStatus, setSyncStatus] = useState<{
@@ -58,6 +66,7 @@ export default function IntegrationsSettings() {
   useEffect(() => {
     if (settings) {
       setDhanClientId(settings.dhan_client_id || "");
+      if (settings.ai_provider) setAiProvider(settings.ai_provider as "gemini" | "openai");
     }
   }, [settings]);
   
@@ -281,9 +290,170 @@ export default function IntegrationsSettings() {
   const isTelegramConnected = !!settings?.telegram_chat_id && !!settings?.telegram_verified_at;
   const isDhanConnected = !!settings?.dhan_access_token && !!settings?.dhan_enabled;
   const totalInstruments = syncStatus.nseEqCount + syncStatus.nfoCount + syncStatus.mcxCount;
+  const isAiConnected = !!settings?.ai_provider && !!settings?.ai_api_key;
+
+  const handleSaveAi = async () => {
+    if (!aiApiKey.trim()) {
+      toast.error("Please enter your API key");
+      return;
+    }
+    // Basic format validation
+    if (aiProvider === "gemini" && aiApiKey.length < 20) {
+      toast.error("Invalid Gemini API key format");
+      return;
+    }
+    if (aiProvider === "openai" && !aiApiKey.startsWith("sk-")) {
+      toast.error("OpenAI keys start with 'sk-'");
+      return;
+    }
+    setSavingAi(true);
+    try {
+      await updateSettings.mutateAsync({ ai_provider: aiProvider, ai_api_key: aiApiKey.trim() } as any);
+      setAiApiKey("");
+      toast.success(`${aiProvider === "gemini" ? "Gemini" : "OpenAI"} connected successfully!`);
+    } catch {
+      // error handled by hook
+    } finally {
+      setSavingAi(false);
+    }
+  };
+
+  const handleDisconnectAi = async () => {
+    setSavingAi(true);
+    try {
+      await updateSettings.mutateAsync({ ai_provider: null, ai_api_key: null } as any);
+      toast.success("AI provider disconnected");
+    } catch {
+      // error handled by hook
+    } finally {
+      setSavingAi(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
+      {/* AI Provider Integration */}
+      <div className="glass-card p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="icon-badge bg-primary/10">
+            <Sparkles className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-semibold">AI Trade Insights</h3>
+            <p className="text-sm text-muted-foreground">Connect your own Gemini or OpenAI key for AI-powered analysis</p>
+          </div>
+          {isAiConnected && (
+            <div className="ml-auto flex items-center gap-2 text-profit">
+              <CheckCircle className="w-4 h-4" />
+              <span className="text-sm font-medium">{settings?.ai_provider === "gemini" ? "Gemini" : "OpenAI"}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-4">
+          {isAiConnected ? (
+            <>
+              <div className="p-3 rounded-lg bg-profit/10 border border-profit/20">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-profit" />
+                    <span className="text-sm font-medium">
+                      {settings?.ai_provider === "gemini" ? "Google Gemini" : "OpenAI"} connected
+                    </span>
+                  </div>
+                  <Badge variant="outline" className="text-[10px]">BYOK</Badge>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                onClick={handleDisconnectAi}
+                disabled={savingAi}
+                className="text-loss hover:text-loss"
+              >
+                {savingAi ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+                Disconnect
+              </Button>
+            </>
+          ) : (
+            <>
+              {/* Provider tabs */}
+              <div className="flex gap-1 p-1 rounded-lg bg-accent">
+                <button
+                  type="button"
+                  onClick={() => setAiProvider("gemini")}
+                  className={cn(
+                    "flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors",
+                    aiProvider === "gemini"
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  Google Gemini
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAiProvider("openai")}
+                  className={cn(
+                    "flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors",
+                    aiProvider === "openai"
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  OpenAI
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="ai-api-key">
+                  {aiProvider === "gemini" ? "Gemini API Key" : "OpenAI API Key"}
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="ai-api-key"
+                    type={showAiKey ? "text" : "password"}
+                    value={aiApiKey}
+                    onChange={(e) => setAiApiKey(e.target.value)}
+                    className="bg-accent border-border pr-10"
+                    placeholder={aiProvider === "gemini" ? "AIza..." : "sk-..."}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+                    onClick={() => setShowAiKey(!showAiKey)}
+                  >
+                    {showAiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Get your key from{" "}
+                  {aiProvider === "gemini" ? (
+                    <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                      aistudio.google.com/apikey
+                    </a>
+                  ) : (
+                    <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                      platform.openai.com/api-keys
+                    </a>
+                  )}
+                </p>
+              </div>
+
+              <Button onClick={handleSaveAi} disabled={savingAi || !aiApiKey.trim()} className="w-full">
+                {savingAi ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Key className="w-4 h-4 mr-2" />}
+                Save & Connect
+              </Button>
+
+              <p className="text-xs text-muted-foreground text-center">
+                Your key is stored securely and only used server-side. You control your own AI costs.
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+
       {/* Telegram Integration — Multi-chat system */}
       <PlanGate plan="pro" feature="telegramNotifications" message="Upgrade to Pro to enable Telegram notifications.">
         <TelegramSettings />

@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Brain, Clock, Shield, Target, TrendingUp, Sparkles, RefreshCw, ChevronDown } from "lucide-react";
+import { Brain, Clock, Shield, Target, TrendingUp, Sparkles, RefreshCw, ChevronDown, Settings, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTradeInsights, type TradeInsight } from "@/hooks/useTradeInsights";
+import { useUserSettings } from "@/hooks/useUserSettings";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 const CATEGORY_CONFIG: Record<string, { icon: typeof Brain; label: string }> = {
   behavioral: { icon: Brain, label: "Behavioral" },
@@ -62,8 +64,13 @@ interface AITradeInsightsProps {
 
 export function AITradeInsights({ compact = false, maxInsights }: AITradeInsightsProps) {
   const { insights, isLoading, lastFetched, fetchInsights } = useTradeInsights();
+  const { settings } = useUserSettings();
+  const navigate = useNavigate();
   const [period, setPeriod] = useState("30d");
   const [showAll, setShowAll] = useState(false);
+
+  const hasAiKey = !!settings?.ai_provider && !!settings?.ai_api_key;
+  const providerLabel = settings?.ai_provider === "gemini" ? "Gemini" : settings?.ai_provider === "openai" ? "OpenAI" : null;
 
   const displayInsights = maxInsights && !showAll ? insights.slice(0, maxInsights) : insights;
   const hasMore = maxInsights ? insights.length > maxInsights : false;
@@ -95,6 +102,14 @@ export function AITradeInsights({ compact = false, maxInsights }: AITradeInsight
               <Skeleton className="h-16 w-full rounded-lg" />
               <Skeleton className="h-16 w-full rounded-lg" />
             </>
+          ) : !hasAiKey ? (
+            <div className="text-center py-4">
+              <Settings className="w-8 h-8 mx-auto text-muted-foreground/40 mb-2" />
+              <p className="text-xs text-muted-foreground mb-2">Connect your Gemini or OpenAI key to unlock AI insights</p>
+              <Button variant="outline" size="sm" className="text-xs" onClick={() => navigate("/settings?tab=integrations")}>
+                <ExternalLink className="w-3 h-3 mr-1" /> Setup AI Key
+              </Button>
+            </div>
           ) : insights.length === 0 ? (
             <div className="text-center py-4">
               <Sparkles className="w-8 h-8 mx-auto text-muted-foreground/40 mb-2" />
@@ -167,6 +182,17 @@ export function AITradeInsights({ compact = false, maxInsights }: AITradeInsight
             <Skeleton className="h-20 w-full rounded-lg" />
             <Skeleton className="h-20 w-full rounded-lg" />
           </div>
+        ) : !hasAiKey ? (
+          <div className="text-center py-8">
+            <Settings className="w-12 h-12 mx-auto text-muted-foreground/40 mb-3" />
+            <h3 className="text-base font-semibold mb-1">Connect Your AI Provider</h3>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto mb-4">
+              Configure your Gemini or OpenAI API key in Settings to unlock AI-powered trade insights — your key, your cost.
+            </p>
+            <Button variant="outline" onClick={() => navigate("/settings?tab=integrations")}>
+              <ExternalLink className="w-4 h-4 mr-2" /> Go to Settings
+            </Button>
+          </div>
         ) : insights.length === 0 ? (
           <div className="text-center py-8">
             <Brain className="w-12 h-12 mx-auto text-muted-foreground/40 mb-3" />
@@ -181,9 +207,16 @@ export function AITradeInsights({ compact = false, maxInsights }: AITradeInsight
               <InsightCard key={i} insight={insight} />
             ))}
             {lastFetched && (
-              <p className="text-xs text-muted-foreground text-right pt-1">
-                Analyzed at {format(lastFetched, "h:mm a, MMM d")} • {period === "all" ? "All time" : `Last ${period}`}
-              </p>
+              <div className="flex items-center justify-between pt-1">
+                {providerLabel && (
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4">
+                    Powered by {providerLabel}
+                  </Badge>
+                )}
+                <p className="text-xs text-muted-foreground text-right">
+                  Analyzed at {format(lastFetched, "h:mm a, MMM d")} • {period === "all" ? "All time" : `Last ${period}`}
+                </p>
+              </div>
             )}
           </>
         )}

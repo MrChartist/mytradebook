@@ -1213,6 +1213,8 @@ export type Database = {
       }
       user_settings: {
         Row: {
+          ai_api_key: string | null
+          ai_provider: string | null
           alert_frequency_minutes: number | null
           auto_sync_portfolio: boolean | null
           created_at: string | null
@@ -1251,6 +1253,8 @@ export type Database = {
           webhook_url: string | null
         }
         Insert: {
+          ai_api_key?: string | null
+          ai_provider?: string | null
           alert_frequency_minutes?: number | null
           auto_sync_portfolio?: boolean | null
           created_at?: string | null
@@ -1289,6 +1293,8 @@ export type Database = {
           webhook_url?: string | null
         }
         Update: {
+          ai_api_key?: string | null
+          ai_provider?: string | null
           alert_frequency_minutes?: number | null
           auto_sync_portfolio?: boolean | null
           created_at?: string | null
