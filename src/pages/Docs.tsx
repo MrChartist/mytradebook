@@ -38,7 +38,8 @@ import {
   WatchlistDetailMockup,
   JournalDashboardTabMockup, JournalCalendarTabMockup, JournalMistakesTabMockup, JournalFiltersSegmentationMockup,
   DailyJournalWorkflowMockup, MistakeAnalysisToolsMockup,
-  DhanIntegrationDetailMockup, TelegramIntegrationDetailMockup
+  DhanIntegrationDetailMockup, TelegramIntegrationDetailMockup,
+  KeyboardShortcutsDetailMockup
 } from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
@@ -909,6 +910,7 @@ export default function Docs() {
                 icon={Keyboard}
               />
               <ShortcutKeyboardMockup />
+              <KeyboardShortcutsDetailMockup />
               <FeatureCard icon={Command} title="All Shortcuts">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
