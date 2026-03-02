@@ -128,7 +128,6 @@ export default function Docs() {
   const { user } = useAuth();
   const [activeSection, setActiveSection] = useState("getting-started");
 
-  // If user is logged in, hide the standalone nav/footer/CTA
   const isInsideApp = !!user;
 
   useEffect(() => {
@@ -196,8 +195,6 @@ export default function Docs() {
           <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
             A comprehensive guide to every feature, capability, and workflow in the platform — from your first trade log to advanced analytics.
           </p>
-
-          {/* Bento feature grid */}
           <BentoFeatureGrid />
         </div>
       </div>
@@ -297,16 +294,13 @@ export default function Docs() {
               />
               <DashboardMockup />
 
-              {/* Today's P&L */}
-              <TodaysPnlHeroMockup />
               <FeatureCard icon={Activity} title="Today's P&L Hero Card">
                 <p className="text-sm text-muted-foreground">
                   The top hero card shows your total P&L for the day with a large, color-coded number. Green for profit, red for loss. Breaks down realized vs unrealized gains and shows win/loss count. Updates in real-time if you have live prices enabled via Dhan integration.
                 </p>
+                <div className="mt-4"><TodaysPnlHeroMockup /></div>
               </FeatureCard>
 
-              {/* KPI Cards */}
-              <KPICardsDetailMockup />
               <FeatureCard icon={BarChart3} title="KPI Cards">
                 <p className="text-sm text-muted-foreground mb-3">Four key metrics at a glance, each clickable to navigate to the relevant page:</p>
                 <FeatureList items={[
@@ -315,42 +309,37 @@ export default function Docs() {
                   "Win Rate — percentage with expectancy per trade → Analytics",
                   "Active Alerts — triggered today count with price/technical split → Alerts",
                 ]} />
+                <div className="mt-4"><KPICardsDetailMockup /></div>
               </FeatureCard>
 
-              {/* Risk Gauge & Goal Tracker */}
-              <RiskGaugeDetailMockup />
               <FeatureCard icon={Gauge} title="Risk Gauge & Goal Tracker">
                 <p className="text-sm text-muted-foreground">
                   Visualize your daily risk as a percentage of capital with a color-coded gauge (green under 1%, yellow up to 1.5%, red above). The goal tracker shows progress bars for daily (1%) and monthly (5%) profit targets, both calculated from your starting capital.
                 </p>
+                <div className="mt-4"><RiskGaugeDetailMockup /></div>
               </FeatureCard>
 
-              {/* Equity Curve */}
-              <EquityCurveWidgetMockup />
               <FeatureCard icon={TrendingUp} title="Equity Curve Widget">
                 <p className="text-sm text-muted-foreground">
                   A compact equity curve chart showing your cumulative P&L over the selected month with gradient fill. Shows peak equity, max drawdown, and date labels. Hover over data points to see exact values. The curve updates automatically as you close trades.
                 </p>
+                <div className="mt-4"><EquityCurveWidgetMockup /></div>
               </FeatureCard>
 
-              {/* Streak & Discipline */}
-              <StreakDisciplineMockup />
               <FeatureCard icon={Award} title="Streak & Discipline Tracker">
                 <p className="text-sm text-muted-foreground">
                   Tracks your consecutive profitable days (winning streak) and consecutive losing days. Flags "oversize trades" — any trade that risks more than 10% of your capital — as discipline warnings. Helps maintain consistent position sizing habits.
                 </p>
+                <div className="mt-4"><StreakDisciplineMockup /></div>
               </FeatureCard>
 
-              {/* Calendar Heatmap */}
-              <CalendarHeatmapWidgetMockup />
               <FeatureCard icon={Calendar} title="Calendar Heatmap">
                 <p className="text-sm text-muted-foreground">
                   A compact monthly calendar where each day is color-coded by P&L — green shades for profitable days, red shades for losses. Shows P&L amounts in each cell. Click any day to jump to the full calendar view with daily journal and trade details.
                 </p>
+                <div className="mt-4"><CalendarHeatmapWidgetMockup /></div>
               </FeatureCard>
 
-              {/* Widget Customization */}
-              <WidgetCustomizerMockup />
               <FeatureCard icon={Settings} title="Widget Customization">
                 <p className="text-sm text-muted-foreground mb-3">Personalize your dashboard by showing/hiding widgets and reordering them:</p>
                 <FeatureList items={[
@@ -359,10 +348,9 @@ export default function Docs() {
                   "Reset to default layout anytime",
                   "Layout persists across sessions",
                 ]} />
+                <div className="mt-4"><WidgetCustomizerMockup /></div>
               </FeatureCard>
 
-              {/* Segment & Month Filters */}
-              <SegmentFilterMockup />
               <FeatureCard icon={Filter} title="Segment & Month Filters">
                 <p className="text-sm text-muted-foreground mb-3">Filter the entire dashboard by market segment and time period:</p>
                 <FeatureList items={[
@@ -371,6 +359,7 @@ export default function Docs() {
                   "Live indicator shows streaming status and last update time",
                   "All KPIs, charts, and widgets update based on filters",
                 ]} />
+                <div className="mt-4"><SegmentFilterMockup /></div>
               </FeatureCard>
             </section>
 
@@ -382,8 +371,7 @@ export default function Docs() {
                 description="The core of TradeBook. Log every trade with detailed metadata — entry, exit, stop loss, targets, tags, chart images, and post-trade reviews. Manage your entire trading book from one screen."
                 icon={CandlestickChart}
               />
-              {/* Creating a Trade */}
-              <CreateTradeMockup />
+
               <FeatureCard icon={Search} title="Creating a Trade">
                 <p className="text-sm text-muted-foreground mb-3">Step-by-step trade creation with smart defaults:</p>
                 <FeatureList items={[
@@ -395,10 +383,9 @@ export default function Docs() {
                   "Attach setup tags, pattern tags, and notes",
                   "Upload up to 5 chart images per trade",
                 ]} />
+                <div className="mt-4"><CreateTradeMockup /></div>
               </FeatureCard>
 
-              {/* Trade Statuses & Lifecycle */}
-              <TradeStatusLifecycleMockup />
               <FeatureCard icon={Layers} title="Trade Statuses & Lifecycle">
                 <p className="text-sm text-muted-foreground mb-3">Every trade flows through a clear lifecycle:</p>
                 <FeatureList items={[
@@ -407,10 +394,9 @@ export default function Docs() {
                   "Closed — position exited, P&L calculated",
                   "Cancelled — trade idea abandoned before entry",
                 ]} />
+                <div className="mt-4"><TradeStatusLifecycleMockup /></div>
               </FeatureCard>
 
-              {/* Trailing Stop Loss */}
-              <TSLDetailMockup />
               <FeatureCard icon={Target} title="Trailing Stop Loss (TSL)">
                 <p className="text-sm text-muted-foreground mb-3">Automated stop loss management for open positions:</p>
                 <FeatureList items={[
@@ -420,10 +406,9 @@ export default function Docs() {
                   "Per-segment TSL profiles (different settings for intraday vs positional)",
                   "Telegram notifications when TSL updates or gets hit",
                 ]} />
+                <div className="mt-4"><TSLDetailMockup /></div>
               </FeatureCard>
 
-              {/* Multi-Leg Strategies */}
-              <MultiLegStrategyDetailMockup />
               <FeatureCard icon={Grid3X3} title="Multi-Leg Strategies">
                 <p className="text-sm text-muted-foreground mb-3">Group related trades under a single strategy:</p>
                 <FeatureList items={[
@@ -432,18 +417,16 @@ export default function Docs() {
                   "Combined P&L and net premium calculated automatically",
                   "Strategy-level notes and status tracking",
                 ]} />
+                <div className="mt-4"><MultiLegStrategyDetailMockup /></div>
               </FeatureCard>
 
-              {/* Position Sizing Calculator */}
-              <PositionSizingDetailMockup />
               <FeatureCard icon={Gauge} title="Position Sizing Calculator">
                 <p className="text-sm text-muted-foreground">
                   Built into the trade creation form. Enter your risk per trade (as % of capital or fixed amount), and the calculator tells you the optimal quantity based on your entry price and stop loss distance. Shows position value and max loss in rupees.
                 </p>
+                <div className="mt-4"><PositionSizingDetailMockup /></div>
               </FeatureCard>
 
-              {/* Post-Trade Review */}
-              <PostTradeReviewMockup />
               <FeatureCard icon={Star} title="Post-Trade Review">
                 <p className="text-sm text-muted-foreground mb-3">When you close a trade, a review modal prompts you to reflect:</p>
                 <FeatureList items={[
@@ -454,18 +437,17 @@ export default function Docs() {
                   "Overall trade rating (1-10 stars)",
                   "Review data feeds into journal analytics",
                 ]} />
+                <div className="mt-4"><PostTradeReviewMockup /></div>
               </FeatureCard>
 
-              <TradeViewsMockup />
               <FeatureCard icon={Download} title="CSV Import & Export">
-                <CsvImportMockup />
                 <p className="text-sm text-muted-foreground">
                   Import trades from CSV files with column mapping. Export your entire trade history to CSV for backup or external analysis. The export includes all trade fields, tags, and review data.
                 </p>
+                <div className="mt-4"><TradeViewsMockup /></div>
+                <div className="mt-4"><CsvImportMockup /></div>
               </FeatureCard>
 
-              {/* Trade Templates */}
-              <TradeTemplateMockup />
               <FeatureCard icon={Zap} title="Trade Templates">
                 <p className="text-sm text-muted-foreground mb-3">Save frequently-used trade setups as templates for quick entry:</p>
                 <FeatureList items={[
@@ -474,6 +456,7 @@ export default function Docs() {
                   "Enable/disable auto-tracking and Telegram posting per template",
                   "One-click 'Use' button when creating new trades",
                 ]} />
+                <div className="mt-4"><TradeTemplateMockup /></div>
               </FeatureCard>
             </section>
 
@@ -490,8 +473,6 @@ export default function Docs() {
                 <TelegramNotifMockup />
               </div>
 
-              {/* Alert Condition Types */}
-              <AlertConditionTypesMockup />
               <FeatureCard icon={Bell} title="Alert Condition Types">
                 <FeatureList items={[
                   "Price Above — triggers when LTP exceeds your threshold",
@@ -502,10 +483,9 @@ export default function Docs() {
                   "Volume Spike — triggers when volume exceeds normal levels",
                   "Custom — define your own condition logic",
                 ]} />
+                <div className="mt-4"><AlertConditionTypesMockup /></div>
               </FeatureCard>
 
-              {/* Recurrence & Cooldowns */}
-              <RecurrenceCooldownMockup />
               <FeatureCard icon={RefreshCw} title="Recurrence & Cooldowns">
                 <FeatureList items={[
                   "Once — fires once and auto-deactivates",
@@ -515,10 +495,9 @@ export default function Docs() {
                   "Market hours only toggle (9:15 AM – 3:30 PM IST)",
                   "Set expiry dates for time-limited alerts",
                 ]} />
+                <div className="mt-4"><RecurrenceCooldownMockup /></div>
               </FeatureCard>
 
-              {/* Delivery Channels */}
-              <DeliveryChannelsMockup />
               <FeatureCard icon={Send} title="Delivery Channels">
                 <p className="text-sm text-muted-foreground mb-3">Choose how you receive alert notifications:</p>
                 <FeatureList items={[
@@ -528,10 +507,9 @@ export default function Docs() {
                   "Snooze alerts for 1 hour or rest of the day",
                   "Bulk pause/resume all alerts at once",
                 ]} />
+                <div className="mt-4"><DeliveryChannelsMockup /></div>
               </FeatureCard>
 
-              {/* Alert Management */}
-              <AlertManagementMockup />
               <FeatureCard icon={Eye} title="Alert Management">
                 <p className="text-sm text-muted-foreground mb-3">Organize and monitor your alerts:</p>
                 <FeatureList items={[
@@ -541,6 +519,7 @@ export default function Docs() {
                   "Link alerts to studies or watchlist items",
                   "Trigger count tracking per alert",
                 ]} />
+                <div className="mt-4"><AlertManagementMockup /></div>
               </FeatureCard>
             </section>
 
@@ -553,8 +532,7 @@ export default function Docs() {
                 icon={BookOpen}
               />
               <StudyCardMockup />
-              {/* Categories & Status Workflow */}
-              <StudyCategoryWorkflowMockup />
+
               <FeatureCard icon={Layers} title="Categories & Status Workflow">
                 <p className="text-sm text-muted-foreground mb-3">Organize studies by type and track their lifecycle:</p>
                 <FeatureList items={[
@@ -563,10 +541,9 @@ export default function Docs() {
                   "Each status change is tracked with timestamps",
                   "Filter and sort by category or status",
                 ]} />
+                <div className="mt-4"><StudyCategoryWorkflowMockup /></div>
               </FeatureCard>
 
-              {/* Pattern Tagging System */}
-              <PatternTaggingMockup />
               <FeatureCard icon={Tag} title="Pattern Tagging System">
                 <p className="text-sm text-muted-foreground mb-3">Rich tagging for pattern recognition:</p>
                 <FeatureList items={[
@@ -576,10 +553,9 @@ export default function Docs() {
                   "Custom tags for your own classifications",
                   "Tag-based filtering with occurrence counts",
                 ]} />
+                <div className="mt-4"><PatternTaggingMockup /></div>
               </FeatureCard>
 
-              {/* Additional Features */}
-              <StudyAdditionalFeaturesMockup />
               <FeatureCard icon={Clock} title="Additional Features">
                 <FeatureList items={[
                   "Live prices displayed for active/draft studies",
@@ -588,6 +564,7 @@ export default function Docs() {
                   "Free-form notes with rich context",
                   "Link studies to alerts for automatic monitoring",
                 ]} />
+                <div className="mt-4"><StudyAdditionalFeaturesMockup /></div>
               </FeatureCard>
             </section>
 
@@ -600,7 +577,6 @@ export default function Docs() {
                 icon={Eye}
               />
               <WatchlistMockup />
-              <WatchlistDetailMockup />
               <FeatureCard icon={Eye} title="Watchlist Capabilities">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -623,6 +599,7 @@ export default function Docs() {
                     ]} />
                   </div>
                 </div>
+                <div className="mt-4"><WatchlistDetailMockup /></div>
               </FeatureCard>
             </section>
 
@@ -639,49 +616,41 @@ export default function Docs() {
                 <KanbanBoardMockup />
               </div>
               <div className="grid md:grid-cols-2 gap-5">
-                <div>
-                  <JournalDashboardTabMockup />
-                  <FeatureCard icon={PieChart} title="Dashboard Tab">
-                    <p className="text-sm text-muted-foreground mb-3">High-level summary of your trading performance:</p>
-                    <FeatureList items={[
-                      "Summary cards: Total P&L, Win Rate, Avg Holding Time, Best Pattern, Top Mistake",
-                      "Equity curve visualization with date range selector",
-                      "Performance tables broken down by Rating (1-10) and Confidence (1-5)",
-                      "Patterns & Mistakes analysis showing which setups make/lose money",
-                    ]} />
-                  </FeatureCard>
-                </div>
-                <div>
-                  <JournalCalendarTabMockup />
-                  <FeatureCard icon={Calendar} title="Calendar Tab">
-                    <p className="text-sm text-muted-foreground">
-                      A visual P&L heatmap calendar. Each day is colored by total P&L — deep green for big wins, deep red for big losses, neutral for flat days. Click any day to see the trades closed on that date and open the daily journal editor.
-                    </p>
-                  </FeatureCard>
-                </div>
-                <div>
-                  <JournalMistakesTabMockup />
-                  <FeatureCard icon={AlertTriangle} title="Mistakes Review Tab">
-                    <p className="text-sm text-muted-foreground mb-3">Kanban-style board for categorizing and reviewing trading mistakes:</p>
-                    <FeatureList items={[
-                      "Columns grouped by severity: Low, Medium, High",
-                      "Each card shows the mistake tag, trade details, and loss amount",
-                      "Drag cards between severity columns as you reassess",
-                      "Helps identify recurring behavioral patterns",
-                    ]} />
-                  </FeatureCard>
-                </div>
-                <div>
-                  <JournalFiltersSegmentationMockup />
-                  <FeatureCard icon={Filter} title="Filters & Segmentation">
-                    <FeatureList items={[
-                      "Filter by segment: All, Intraday, Positional, Futures, Options, Commodities",
-                      "Date range presets: 30 days, 60 days, 90 days",
-                      "Custom date range picker",
-                      "All tabs and analytics update based on selected filters",
-                    ]} />
-                  </FeatureCard>
-                </div>
+                <FeatureCard icon={PieChart} title="Dashboard Tab">
+                  <p className="text-sm text-muted-foreground mb-3">High-level summary of your trading performance:</p>
+                  <FeatureList items={[
+                    "Summary cards: Total P&L, Win Rate, Avg Holding Time, Best Pattern, Top Mistake",
+                    "Equity curve visualization with date range selector",
+                    "Performance tables broken down by Rating (1-10) and Confidence (1-5)",
+                    "Patterns & Mistakes analysis showing which setups make/lose money",
+                  ]} />
+                  <div className="mt-4"><JournalDashboardTabMockup /></div>
+                </FeatureCard>
+                <FeatureCard icon={Calendar} title="Calendar Tab">
+                  <p className="text-sm text-muted-foreground">
+                    A visual P&L heatmap calendar. Each day is colored by total P&L — deep green for big wins, deep red for big losses, neutral for flat days. Click any day to see the trades closed on that date and open the daily journal editor.
+                  </p>
+                  <div className="mt-4"><JournalCalendarTabMockup /></div>
+                </FeatureCard>
+                <FeatureCard icon={AlertTriangle} title="Mistakes Review Tab">
+                  <p className="text-sm text-muted-foreground mb-3">Kanban-style board for categorizing and reviewing trading mistakes:</p>
+                  <FeatureList items={[
+                    "Columns grouped by severity: Low, Medium, High",
+                    "Each card shows the mistake tag, trade details, and loss amount",
+                    "Drag cards between severity columns as you reassess",
+                    "Helps identify recurring behavioral patterns",
+                  ]} />
+                  <div className="mt-4"><JournalMistakesTabMockup /></div>
+                </FeatureCard>
+                <FeatureCard icon={Filter} title="Filters & Segmentation">
+                  <FeatureList items={[
+                    "Filter by segment: All, Intraday, Positional, Futures, Options, Commodities",
+                    "Date range presets: 30 days, 60 days, 90 days",
+                    "Custom date range picker",
+                    "All tabs and analytics update based on selected filters",
+                  ]} />
+                  <div className="mt-4"><JournalFiltersSegmentationMockup /></div>
+                </FeatureCard>
               </div>
             </section>
 
@@ -765,7 +734,6 @@ export default function Docs() {
                 <DailyJournalMockup />
                 <CalendarDayDetailMockup />
               </div>
-              <DailyJournalWorkflowMockup />
               <FeatureCard icon={Calendar} title="Daily Journal Workflow">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -789,6 +757,7 @@ export default function Docs() {
                     ]} />
                   </div>
                 </div>
+                <div className="mt-4"><DailyJournalWorkflowMockup /></div>
               </FeatureCard>
             </section>
 
@@ -801,7 +770,6 @@ export default function Docs() {
                 icon={AlertTriangle}
               />
               <MistakeTrendMockup />
-              <MistakeAnalysisToolsMockup />
               <FeatureCard icon={AlertTriangle} title="Mistake Analysis Tools">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -823,6 +791,7 @@ export default function Docs() {
                     ]} />
                   </div>
                 </div>
+                <div className="mt-4"><MistakeAnalysisToolsMockup /></div>
               </FeatureCard>
             </section>
 
@@ -872,34 +841,30 @@ export default function Docs() {
                 <TelegramChannelsMockup />
               </div>
               <div className="grid md:grid-cols-2 gap-5">
-                <div>
-                  <DhanIntegrationDetailMockup />
-                  <FeatureCard icon={LineChart} title="Dhan Broker Integration">
-                    <p className="text-sm text-muted-foreground mb-3">Connect your Dhan trading account for seamless data sync:</p>
-                    <FeatureList items={[
-                      "OAuth-based secure authentication",
-                      "Auto-sync portfolio positions",
-                      "Live LTP (Last Traded Price) for open positions",
-                      "One-click trade execution from TradeBook",
-                      "Real-time P&L tracking with live prices",
-                      "Instrument master data sync for accurate symbol search",
-                    ]} />
-                  </FeatureCard>
-                </div>
-                <div>
-                  <TelegramIntegrationDetailMockup />
-                  <FeatureCard icon={Send} title="Telegram Integration">
-                    <p className="text-sm text-muted-foreground mb-3">Get instant notifications on your phone via Telegram:</p>
-                    <FeatureList items={[
-                      "Alert triggers — instant notification when price conditions are met",
-                      "EOD (End of Day) reports — daily P&L summary after market close",
-                      "Morning briefings — pre-market overview of your open positions",
-                      "Weekly reports — full performance summary every Monday",
-                      "TSL updates — trailing stop loss movement notifications",
-                      "Multiple chat channels with segment-level routing",
-                    ]} />
-                  </FeatureCard>
-                </div>
+                <FeatureCard icon={LineChart} title="Dhan Broker Integration">
+                  <p className="text-sm text-muted-foreground mb-3">Connect your Dhan trading account for seamless data sync:</p>
+                  <FeatureList items={[
+                    "OAuth-based secure authentication",
+                    "Auto-sync portfolio positions",
+                    "Live LTP (Last Traded Price) for open positions",
+                    "One-click trade execution from TradeBook",
+                    "Real-time P&L tracking with live prices",
+                    "Instrument master data sync for accurate symbol search",
+                  ]} />
+                  <div className="mt-4"><DhanIntegrationDetailMockup /></div>
+                </FeatureCard>
+                <FeatureCard icon={Send} title="Telegram Integration">
+                  <p className="text-sm text-muted-foreground mb-3">Get instant notifications on your phone via Telegram:</p>
+                  <FeatureList items={[
+                    "Alert triggers — instant notification when price conditions are met",
+                    "EOD (End of Day) reports — daily P&L summary after market close",
+                    "Morning briefings — pre-market overview of your open positions",
+                    "Weekly reports — full performance summary every Monday",
+                    "TSL updates — trailing stop loss movement notifications",
+                    "Multiple chat channels with segment-level routing",
+                  ]} />
+                  <div className="mt-4"><TelegramIntegrationDetailMockup /></div>
+                </FeatureCard>
               </div>
             </section>
 
@@ -912,7 +877,6 @@ export default function Docs() {
                 icon={Keyboard}
               />
               <ShortcutKeyboardMockup />
-              <KeyboardShortcutsDetailMockup />
               <FeatureCard icon={Command} title="All Shortcuts">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
@@ -955,6 +919,7 @@ export default function Docs() {
                     <span className="font-semibold text-foreground">Command Palette:</span> Press <ShortcutKey>/</ShortcutKey> to open the command palette. Type to search for any action, page, or trade — jump anywhere instantly.
                   </p>
                 </div>
+                <div className="mt-4"><KeyboardShortcutsDetailMockup /></div>
               </FeatureCard>
             </section>
 
@@ -968,75 +933,63 @@ export default function Docs() {
               />
               <SettingsPanelMockup />
               <div className="grid md:grid-cols-2 gap-5">
-                <div>
-                  <SettingsProfileBillingMockup />
-                  <FeatureCard icon={Users} title="Profile & Billing">
-                    <FeatureList items={[
-                      "Update your name, email, and phone number",
-                      "View current subscription plan and status",
-                      "Upgrade/downgrade between Free, Pro, and Team plans",
-                      "14-day Pro trial for new accounts",
-                      "Manage billing and payment methods",
-                    ]} />
-                  </FeatureCard>
-                </div>
-                <div>
-                  <SettingsPreferencesMockup />
-                  <FeatureCard icon={Settings} title="Preferences">
-                    <FeatureList items={[
-                      "Toggle between light and dark theme",
-                      "Set your starting capital amount",
-                      "Configure default stop loss percentage",
-                      "Set preferred timezone",
-                      "Alert check frequency (how often alerts are evaluated)",
-                    ]} />
-                  </FeatureCard>
-                </div>
-                <div>
-                  <SettingsTagManagementMockup />
-                  <FeatureCard icon={Tag} title="Tag Management">
-                    <p className="text-sm text-muted-foreground mb-3">Create and manage your custom tags:</p>
-                    <FeatureList items={[
-                      "Setup tags — your trading setups (Breakout, Retest, Gap, etc.)",
-                      "Mistake tags — common mistakes with severity levels",
-                      "Pattern tags — chart patterns you trade",
-                      "Tags are used across trades, studies, and analytics",
-                    ]} />
-                  </FeatureCard>
-                </div>
-                <div>
-                  <CapitalManagementMockup />
-                  <FeatureCard icon={Wallet} title="Capital Management">
-                    <FeatureList items={[
-                      "Track deposits and withdrawals from your trading capital",
-                      "View capital transaction history",
-                      "Adjusted capital used for risk calculations",
-                      "Separate from P&L — tracks actual money in/out",
-                    ]} />
-                  </FeatureCard>
-                </div>
-                <div>
-                  <SettingsSecurityMockup />
-                  <FeatureCard icon={Lock} title="Security">
-                    <FeatureList items={[
-                      "Change your password",
-                      "Email-based password reset",
-                      "Secure session management",
-                      "All data encrypted at rest and in transit",
-                    ]} />
-                  </FeatureCard>
-                </div>
-                <div>
-                  <SettingsIntegrationsMockup />
-                  <FeatureCard icon={Layers} title="Integration Settings">
-                    <FeatureList items={[
-                      "Dhan broker: connect/disconnect, view sync status",
-                      "Telegram: link bot, verify connection, manage channels",
-                      "Configure notification types per Telegram channel",
-                      "Segment-level routing for Telegram messages",
-                    ]} />
-                  </FeatureCard>
-                </div>
+                <FeatureCard icon={Users} title="Profile & Billing">
+                  <FeatureList items={[
+                    "Update your name, email, and phone number",
+                    "View current subscription plan and status",
+                    "Upgrade/downgrade between Free, Pro, and Team plans",
+                    "14-day Pro trial for new accounts",
+                    "Manage billing and payment methods",
+                  ]} />
+                  <div className="mt-4"><SettingsProfileBillingMockup /></div>
+                </FeatureCard>
+                <FeatureCard icon={Settings} title="Preferences">
+                  <FeatureList items={[
+                    "Toggle between light and dark theme",
+                    "Set your starting capital amount",
+                    "Configure default stop loss percentage",
+                    "Set preferred timezone",
+                    "Alert check frequency (how often alerts are evaluated)",
+                  ]} />
+                  <div className="mt-4"><SettingsPreferencesMockup /></div>
+                </FeatureCard>
+                <FeatureCard icon={Tag} title="Tag Management">
+                  <p className="text-sm text-muted-foreground mb-3">Create and manage your custom tags:</p>
+                  <FeatureList items={[
+                    "Setup tags — your trading setups (Breakout, Retest, Gap, etc.)",
+                    "Mistake tags — common mistakes with severity levels",
+                    "Pattern tags — chart patterns you trade",
+                    "Tags are used across trades, studies, and analytics",
+                  ]} />
+                  <div className="mt-4"><SettingsTagManagementMockup /></div>
+                </FeatureCard>
+                <FeatureCard icon={Wallet} title="Capital Management">
+                  <FeatureList items={[
+                    "Track deposits and withdrawals from your trading capital",
+                    "View capital transaction history",
+                    "Adjusted capital used for risk calculations",
+                    "Separate from P&L — tracks actual money in/out",
+                  ]} />
+                  <div className="mt-4"><CapitalManagementMockup /></div>
+                </FeatureCard>
+                <FeatureCard icon={Lock} title="Security">
+                  <FeatureList items={[
+                    "Change your password",
+                    "Email-based password reset",
+                    "Secure session management",
+                    "All data encrypted at rest and in transit",
+                  ]} />
+                  <div className="mt-4"><SettingsSecurityMockup /></div>
+                </FeatureCard>
+                <FeatureCard icon={Layers} title="Integration Settings">
+                  <FeatureList items={[
+                    "Dhan broker: connect/disconnect, view sync status",
+                    "Telegram: link bot, verify connection, manage channels",
+                    "Configure notification types per Telegram channel",
+                    "Segment-level routing for Telegram messages",
+                  ]} />
+                  <div className="mt-4"><SettingsIntegrationsMockup /></div>
+                </FeatureCard>
               </div>
             </section>
 
