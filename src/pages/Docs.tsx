@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { SEOHead } from "@/components/SEOHead";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -199,32 +200,45 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
   return (
     <div className={cn("min-h-screen bg-background text-foreground", isInsideApp && "pb-6", mode === "bw" && "docs-bw")}>
-      {/* Top accent bar */}
-      <div className="h-[3px] w-full bg-gradient-primary docs-accent-bar" />
-      {/* Navbar — always visible */}
-      <nav className="sticky top-0 z-50 border-b border-border/30 bg-background/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-10 h-16">
-          <button onClick={() => navigate(isInsideApp ? "/dashboard" : "/")} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-            <div className="w-9 h-9 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_20px_hsl(var(--tb-accent)/0.25)]">
-              <TrendingUp className="w-5 h-5 text-white" />
+      {/* Floating island navbar */}
+      <motion.nav
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+        className="fixed top-4 left-0 right-0 z-50 mx-auto max-w-3xl px-4"
+      >
+        <div className="flex items-center justify-between rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg px-4 sm:px-6 h-14">
+          {/* Logo */}
+          <button onClick={() => navigate("/")} className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_16px_hsl(var(--tb-accent)/0.25)]">
+              <TrendingUp className="w-4 h-4 text-white" />
             </div>
-            <span className="text-xl font-logo font-bold tracking-tight">TradeBook</span>
+            <span className="text-lg font-logo font-bold tracking-tight hidden sm:inline">TradeBook</span>
           </button>
-          <div className="flex items-center gap-3">
+
+          {/* Center links */}
+          <div className="hidden sm:flex items-center gap-1">
+            <Button variant="ghost" size="sm" className="text-muted-foreground rounded-full text-sm" onClick={() => navigate("/#features")}>Features</Button>
+            <Button variant="ghost" size="sm" className="text-muted-foreground rounded-full text-sm" onClick={() => navigate("/#pricing")}>Pricing</Button>
+            <Button variant="ghost" size="sm" className="text-foreground font-semibold rounded-full text-sm" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Docs</Button>
+          </div>
+
+          {/* Right side */}
+          <div className="flex items-center gap-2">
             <ThemeToggle />
             {isInsideApp ? (
-              <Button size="sm" onClick={() => navigate("/dashboard")} className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-5">
+              <Button size="sm" onClick={() => navigate("/dashboard")} className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 text-sm h-9">
                 Dashboard
               </Button>
             ) : (
               <>
-                <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="text-muted-foreground">
-                  Home
+                <Button variant="ghost" size="sm" onClick={() => navigate("/login")} className="text-muted-foreground rounded-full text-sm hidden sm:inline-flex">
+                  Sign In
                 </Button>
                 <Button
                   size="sm"
-                  onClick={() => navigate("/login")}
-                  className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-5"
+                  onClick={() => navigate("/login?mode=signup")}
+                  className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 text-sm h-9"
                 >
                   Get Started
                 </Button>
@@ -232,10 +246,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             )}
           </div>
         </div>
-      </nav>
+      </motion.nav>
 
-      {/* Hero */}
-      <div className={cn("border-b border-border/20 bg-gradient-to-b from-[hsl(var(--tb-accent)/0.04)] to-transparent", isInsideApp && "border-none")}>
+      {/* Hero — extra top padding for fixed navbar */}
+      <div className={cn("pt-20 border-b border-border/20 bg-gradient-to-b from-[hsl(var(--tb-accent)/0.04)] to-transparent", isInsideApp && "border-none")}>
         <div className="max-w-7xl mx-auto px-6 lg:px-10 py-12 lg:py-16">
           <div className="flex items-center gap-3 mb-5">
             <Badge variant="secondary" className="bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] border-none">
@@ -306,7 +320,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </aside>
 
           {/* Mobile tabs */}
-          <div className="lg:hidden fixed top-16 left-0 right-0 z-40 bg-background/90 backdrop-blur-lg border-b border-border/20 shadow-sm">
+          <div className="lg:hidden fixed top-20 left-0 right-0 z-40 bg-background/90 backdrop-blur-lg border-b border-border/20 shadow-sm">
             <div className="flex gap-1.5 overflow-x-auto px-4 py-2.5 no-scrollbar">
               {SECTIONS.map((s) => (
                 <button
