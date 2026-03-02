@@ -4,7 +4,7 @@ import {
   ArrowRight, CandlestickChart, Send, LayoutDashboard, BookOpen,
   Layers, Keyboard as KeyboardIcon, Settings, Zap, FileText, Upload,
   List, Grid3X3, Sparkles, Smartphone, ArrowUpRight, ArrowDownRight,
-  Search
+  Search, Star
 } from "lucide-react";
 
 /* ──────────────────────────────────────────────
@@ -2488,7 +2488,317 @@ export function StudyAdditionalFeaturesMockup() {
 }
 
 /* ──────────────────────────────────────────────
-   52. WatchlistDetailMockup — Full watchlist capabilities
+   52. JournalDashboardTabMockup
+   ────────────────────────────────────────────── */
+export function JournalDashboardTabMockup() {
+  const summaryCards = [
+    { label: "Total P&L", value: "+₹42,850", color: "text-profit", sub: "62 trades" },
+    { label: "Win Rate", value: "64.5%", color: "text-profit", sub: "40W / 22L" },
+    { label: "Avg Hold", value: "2.4 hrs", color: "text-foreground", sub: "Intraday dominant" },
+    { label: "Best Pattern", value: "Breakout", color: "text-[hsl(var(--tb-accent))]", sub: "+₹18,200" },
+    { label: "Top Mistake", value: "Early Exit", color: "text-loss", sub: "−₹6,400" },
+  ];
+  const ratingRows = [
+    { rating: "8–10", trades: 12, winRate: "83%", pnl: "+₹22,400", color: "text-profit" },
+    { rating: "5–7", trades: 28, winRate: "64%", pnl: "+₹18,100", color: "text-profit" },
+    { rating: "1–4", trades: 22, winRate: "45%", pnl: "+₹2,350", color: "text-profit" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4">
+        <div className="flex items-center gap-2 mb-4">
+          <LayoutDashboard className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
+          <p className="text-xs font-bold">Journal — Dashboard Tab</p>
+        </div>
+        {/* Summary cards */}
+        <div className="grid grid-cols-5 gap-2 mb-4">
+          {summaryCards.map((c) => (
+            <div key={c.label} className="rounded-lg bg-muted/30 border border-border/30 p-2.5 text-center">
+              <p className="text-[8px] text-muted-foreground mb-0.5">{c.label}</p>
+              <p className={cn("text-sm font-bold font-mono", c.color)}>{c.value}</p>
+              <p className="text-[7px] text-muted-foreground mt-0.5">{c.sub}</p>
+            </div>
+          ))}
+        </div>
+        {/* Mini equity curve */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 p-3 mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[9px] font-semibold text-muted-foreground">Equity Curve</p>
+            <div className="flex gap-1">
+              {["30D", "60D", "90D"].map((r, i) => (
+                <span key={r} className={cn(
+                  "px-1.5 py-0.5 rounded text-[7px] font-semibold",
+                  i === 0 ? "bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))]" : "text-muted-foreground"
+                )}>{r}</span>
+              ))}
+            </div>
+          </div>
+          <svg viewBox="0 0 300 50" className="w-full h-10">
+            <defs>
+              <linearGradient id="journalEqFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="hsl(var(--profit))" stopOpacity="0.15" />
+                <stop offset="100%" stopColor="hsl(var(--profit))" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <path d="M0 40 L30 38 L60 35 L90 32 L120 28 L150 30 L180 22 L210 18 L240 15 L270 12 L300 8" fill="none" stroke="hsl(var(--profit))" strokeWidth="1.5" />
+            <path d="M0 40 L30 38 L60 35 L90 32 L120 28 L150 30 L180 22 L210 18 L240 15 L270 12 L300 8 L300 50 L0 50 Z" fill="url(#journalEqFill)" />
+          </svg>
+        </div>
+        {/* Performance by rating table */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 overflow-hidden">
+          <div className="grid grid-cols-4 gap-2 px-3 py-1.5 text-[8px] font-semibold text-muted-foreground border-b border-border/20">
+            <span>Rating</span><span className="text-right">Trades</span><span className="text-right">Win Rate</span><span className="text-right">P&L</span>
+          </div>
+          {ratingRows.map((r) => (
+            <div key={r.rating} className="grid grid-cols-4 gap-2 px-3 py-1.5 text-[9px] border-b border-border/10 last:border-0">
+              <span className="font-semibold flex items-center gap-1">
+                <Star className="w-3 h-3 text-[hsl(var(--warning))]" />
+                {r.rating}
+              </span>
+              <span className="text-right font-mono">{r.trades}</span>
+              <span className="text-right font-mono font-semibold">{r.winRate}</span>
+              <span className={cn("text-right font-mono font-bold", r.color)}>{r.pnl}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   53. JournalCalendarTabMockup
+   ────────────────────────────────────────────── */
+export function JournalCalendarTabMockup() {
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+  const weeks = [
+    [{ pnl: 3200, trades: 3 }, { pnl: -850, trades: 2 }, { pnl: 1400, trades: 4 }, { pnl: 0, trades: 0 }, { pnl: 2100, trades: 2 }],
+    [{ pnl: -1200, trades: 3 }, { pnl: 4500, trades: 5 }, { pnl: 600, trades: 1 }, { pnl: -300, trades: 2 }, { pnl: 1800, trades: 3 }],
+    [{ pnl: 900, trades: 2 }, { pnl: -2100, trades: 4 }, { pnl: 5200, trades: 6 }, { pnl: 350, trades: 1 }, { pnl: -600, trades: 2 }],
+    [{ pnl: 1500, trades: 3 }, { pnl: 200, trades: 1 }, { pnl: -1400, trades: 3 }, { pnl: 2800, trades: 4 }, { pnl: 1100, trades: 2 }],
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
+            <p className="text-xs font-bold">Journal — Calendar Tab</p>
+          </div>
+          <p className="text-[10px] font-semibold text-muted-foreground">February 2026</p>
+        </div>
+        {/* Day headers */}
+        <div className="grid grid-cols-5 gap-1.5 mb-1.5">
+          {days.map((d) => <span key={d} className="text-[8px] font-semibold text-center text-muted-foreground">{d}</span>)}
+        </div>
+        {/* Calendar grid */}
+        <div className="space-y-1.5">
+          {weeks.map((week, wi) => (
+            <div key={wi} className="grid grid-cols-5 gap-1.5">
+              {week.map((day, di) => {
+                const dateNum = wi * 5 + di + 3;
+                return (
+                  <div
+                    key={di}
+                    className={cn(
+                      "rounded-lg p-2 text-center cursor-pointer transition-all hover:ring-1 hover:ring-[hsl(var(--tb-accent)/0.3)]",
+                      day.trades === 0
+                        ? "bg-muted/20"
+                        : day.pnl > 2000
+                        ? "bg-profit/20 border border-profit/20"
+                        : day.pnl > 0
+                        ? "bg-profit/10"
+                        : day.pnl < -1000
+                        ? "bg-loss/20 border border-loss/20"
+                        : "bg-loss/10"
+                    )}
+                  >
+                    <p className="text-[8px] text-muted-foreground">{dateNum}</p>
+                    {day.trades > 0 ? (
+                      <>
+                        <p className={cn("text-[10px] font-bold font-mono", day.pnl >= 0 ? "text-profit" : "text-loss")}>
+                          {day.pnl >= 0 ? "+" : ""}₹{Math.abs(day.pnl).toLocaleString()}
+                        </p>
+                        <p className="text-[7px] text-muted-foreground">{day.trades} trades</p>
+                      </>
+                    ) : (
+                      <p className="text-[8px] text-muted-foreground/50 mt-1">No trades</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+        {/* Legend */}
+        <div className="mt-3 flex items-center justify-center gap-4 text-[8px] text-muted-foreground">
+          <div className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-profit/20 border border-profit/20" /> Big Win</div>
+          <div className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-profit/10" /> Small Win</div>
+          <div className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-loss/10" /> Small Loss</div>
+          <div className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-loss/20 border border-loss/20" /> Big Loss</div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   54. JournalMistakesTabMockup — Kanban board
+   ────────────────────────────────────────────── */
+export function JournalMistakesTabMockup() {
+  const columns = [
+    {
+      severity: "Low", color: "text-[hsl(var(--warning))]", bg: "bg-[hsl(var(--warning)/0.06)]", border: "border-[hsl(var(--warning)/0.15)]",
+      cards: [
+        { mistake: "Late Entry", symbol: "INFY", loss: "−₹180", detail: "Missed 1st candle close" },
+        { mistake: "No SL Set", symbol: "SBIN", loss: "−₹320", detail: "Forgot to place SL order" },
+      ]
+    },
+    {
+      severity: "Medium", color: "text-[hsl(var(--tb-accent))]", bg: "bg-[hsl(var(--tb-accent)/0.04)]", border: "border-[hsl(var(--tb-accent)/0.15)]",
+      cards: [
+        { mistake: "Oversize Position", symbol: "RELIANCE", loss: "−₹1,200", detail: "2x normal size" },
+        { mistake: "Early Exit", symbol: "TCS", loss: "−₹850", detail: "Exited before T1 hit" },
+        { mistake: "Revenge Trade", symbol: "NIFTY FUT", loss: "−₹1,600", detail: "Re-entered after SL" },
+      ]
+    },
+    {
+      severity: "High", color: "text-loss", bg: "bg-loss/5", border: "border-loss/15",
+      cards: [
+        { mistake: "No Plan", symbol: "BANKNIFTY", loss: "−₹3,400", detail: "Impulsive entry" },
+        { mistake: "Held Overnight", symbol: "TATAMOTORS", loss: "−₹2,800", detail: "Intraday → positional" },
+      ]
+    },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4">
+        <div className="flex items-center gap-2 mb-4">
+          <Target className="w-4 h-4 text-loss" />
+          <p className="text-xs font-bold">Journal — Mistakes Review Tab</p>
+          <span className="text-[8px] text-muted-foreground ml-auto">Drag cards between columns to reassess severity</span>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          {columns.map((col) => (
+            <div key={col.severity} className={cn("rounded-lg p-2.5 border", col.bg, col.border)}>
+              <div className="flex items-center justify-between mb-2.5">
+                <span className={cn("text-[10px] font-bold", col.color)}>{col.severity}</span>
+                <span className="text-[8px] bg-muted/40 px-1.5 py-0.5 rounded-full font-semibold">{col.cards.length}</span>
+              </div>
+              <div className="space-y-1.5">
+                {col.cards.map((card, i) => (
+                  <div key={i} className="rounded-lg bg-card border border-border/30 p-2 cursor-grab hover:shadow-sm transition-shadow">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[9px] font-bold">{card.mistake}</span>
+                      <span className="text-[8px] font-mono font-bold text-loss">{card.loss}</span>
+                    </div>
+                    <p className="text-[8px] text-muted-foreground">{card.symbol} · {card.detail}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   55. JournalFiltersSegmentationMockup
+   ────────────────────────────────────────────── */
+export function JournalFiltersSegmentationMockup() {
+  const segments = [
+    { label: "All", active: true, count: 62 },
+    { label: "Intraday", active: false, count: 34 },
+    { label: "Positional", active: false, count: 12 },
+    { label: "Futures", active: false, count: 8 },
+    { label: "Options", active: false, count: 6 },
+    { label: "Commodities", active: false, count: 2 },
+  ];
+  const datePresets = [
+    { label: "30 Days", active: true },
+    { label: "60 Days", active: false },
+    { label: "90 Days", active: false },
+    { label: "Custom", active: false },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4">
+        <div className="flex items-center gap-2 mb-4">
+          <Activity className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
+          <p className="text-xs font-bold">Journal — Filters & Segmentation</p>
+        </div>
+        {/* Segment pills */}
+        <div className="mb-4">
+          <p className="text-[9px] font-semibold text-muted-foreground mb-2">Segment Filter</p>
+          <div className="flex gap-1.5 flex-wrap">
+            {segments.map((s) => (
+              <div key={s.label} className={cn(
+                "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold border cursor-pointer transition-all",
+                s.active
+                  ? "bg-[hsl(var(--tb-accent))] text-white border-[hsl(var(--tb-accent))]"
+                  : "border-border/40 text-muted-foreground hover:text-foreground hover:border-foreground/20"
+              )}>
+                {s.label}
+                <span className={cn(
+                  "text-[7px] px-1 py-0.5 rounded-full font-bold",
+                  s.active ? "bg-white/20" : "bg-muted/60"
+                )}>{s.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Date range presets */}
+        <div className="mb-4">
+          <p className="text-[9px] font-semibold text-muted-foreground mb-2">Date Range</p>
+          <div className="flex items-center gap-2">
+            <div className="flex gap-1 bg-muted/30 rounded-lg p-0.5">
+              {datePresets.map((d) => (
+                <span key={d.label} className={cn(
+                  "px-2.5 py-1 rounded-md text-[9px] font-semibold transition-all cursor-pointer",
+                  d.active
+                    ? "bg-background shadow-sm text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                )}>{d.label}</span>
+              ))}
+            </div>
+            <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground border border-border/30 rounded-lg px-2.5 py-1">
+              <Calendar className="w-3 h-3" />
+              <span>Feb 01 – Feb 28, 2026</span>
+            </div>
+          </div>
+        </div>
+        {/* Preview of filtered stats */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 p-3">
+          <p className="text-[8px] font-semibold text-muted-foreground mb-2">Filtered Results Preview</p>
+          <div className="grid grid-cols-4 gap-2">
+            {[
+              { label: "Trades", value: "62", icon: "📊" },
+              { label: "Net P&L", value: "+₹42,850", color: "text-profit", icon: "💰" },
+              { label: "Win Rate", value: "64.5%", color: "text-profit", icon: "🎯" },
+              { label: "Avg R:R", value: "1:2.3", icon: "⚖️" },
+            ].map((s) => (
+              <div key={s.label} className="text-center">
+                <span className="text-base">{s.icon}</span>
+                <p className={cn("text-[10px] font-bold font-mono mt-0.5", s.color || "text-foreground")}>{s.value}</p>
+                <p className="text-[7px] text-muted-foreground">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Note about tab sync */}
+        <div className="mt-3 flex items-center gap-2 text-[8px] text-muted-foreground">
+          <span className="text-base">🔄</span>
+          <span>Filters apply across <span className="font-semibold text-foreground">all tabs</span> — Dashboard, Calendar, and Mistakes update in sync.</span>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   56. WatchlistDetailMockup — Full watchlist capabilities
    ────────────────────────────────────────────── */
 export function WatchlistDetailMockup() {
   const watchlists = [
