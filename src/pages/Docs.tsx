@@ -14,7 +14,7 @@ import {
   Lock, Sparkles, FileText, Download, Upload, Filter, Grid3X3,
   List, Search, Tag, AlertTriangle, CheckCircle2, TrendingDown,
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
-  Wallet, Share2, MessageSquare, Command, Hash, Palette, Circle
+  Wallet, Share2, MessageSquare, Command, Hash
 } from "lucide-react";
 import {
   BentoFeatureGrid, OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
@@ -41,8 +41,7 @@ import {
   DhanIntegrationDetailMockup, TelegramIntegrationDetailMockup,
   KeyboardShortcutsDetailMockup,
   SettingsProfileBillingMockup, SettingsPreferencesMockup, SettingsTagManagementMockup,
-  SettingsSecurityMockup, SettingsIntegrationsMockup, CapitalManagementMockup,
-  DocsColorModeContext
+  SettingsSecurityMockup, SettingsIntegrationsMockup, CapitalManagementMockup
 } from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
@@ -67,7 +66,7 @@ function FeatureList({ items }: { items: string[] }) {
     <ul className="space-y-2.5 mt-4">
       {items.map((item) => (
         <li key={item} className="flex items-start gap-2.5 text-sm text-muted-foreground leading-relaxed">
-          <ChevronRight className="w-4.5 h-4.5 text-[hsl(var(--tb-accent))] mt-0.5 shrink-0" />
+          <ChevronRight className="w-4 h-4 text-[hsl(var(--tb-accent))] mt-0.5 shrink-0" />
           <span>{item}</span>
         </li>
       ))}
@@ -79,7 +78,7 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
 }) {
   return (
-    <Card className="border-border/40 bg-card/80 hover:border-[hsl(var(--tb-accent)/0.3)] transition-all hover:scale-[1.003] mb-3">
+    <Card className="border-border/40 bg-card/80 hover:border-[hsl(var(--tb-accent)/0.3)] transition-colors">
       <CardHeader className="pb-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[hsl(var(--tb-accent)/0.08)] flex items-center justify-center">
@@ -105,14 +104,13 @@ function SectionHeader({ id, title, description, icon: Icon }: {
 }) {
   return (
     <div id={id} className="scroll-mt-24 mb-8">
-      <div className="w-8 h-1 rounded-full bg-[hsl(var(--tb-accent))] mb-3" />
       <div className="flex items-center gap-3 mb-3">
         <div className="w-11 h-11 rounded-xl bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center">
           <Icon className="w-5.5 h-5.5 text-[hsl(var(--tb-accent))]" />
         </div>
         <h2 className="text-2xl lg:text-3xl font-bold tracking-tight">{title}</h2>
       </div>
-      <p className="text-foreground/70 leading-relaxed max-w-3xl">{description}</p>
+      <p className="text-muted-foreground leading-relaxed max-w-3xl">{description}</p>
     </div>
   );
 }
@@ -129,7 +127,6 @@ export default function Docs() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [activeSection, setActiveSection] = useState("getting-started");
-  const [colorMode, setColorMode] = useState<'color' | 'bw'>('color');
 
   // If user is logged in, hide the standalone nav/footer/CTA
   const isInsideApp = !!user;
@@ -157,7 +154,6 @@ export default function Docs() {
   };
 
   return (
-    <DocsColorModeContext.Provider value={colorMode}>
     <div className={cn("min-h-screen bg-background text-foreground", isInsideApp && "pb-6")}>
       {/* Navbar — only show on standalone page */}
       {!isInsideApp && (
@@ -185,44 +181,12 @@ export default function Docs() {
         </nav>
       )}
 
-      {/* Top accent line */}
-      <div className="h-[3px] w-full" style={{ background: 'var(--gradient-primary)' }} />
-
       {/* Hero */}
       <div className={cn("border-b border-border/20 bg-gradient-to-b from-[hsl(var(--tb-accent)/0.04)] to-transparent", isInsideApp && "border-none")}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-12 lg:py-16">
-          <div className="flex items-center gap-3 mb-5 flex-wrap">
-            <Badge variant="secondary" className="bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] border-none">
-              Documentation
-            </Badge>
-            {/* B&W / Color toggle */}
-            <div className="flex items-center rounded-xl border border-border p-0.5 bg-card">
-              <Button
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  "h-8 px-3 rounded-lg transition-all duration-200 gap-1.5 text-xs",
-                  colorMode === 'color' && "bg-primary/10 text-primary shadow-sm"
-                )}
-                onClick={() => setColorMode('color')}
-              >
-                <Palette className="w-3.5 h-3.5" />
-                Color
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  "h-8 px-3 rounded-lg transition-all duration-200 gap-1.5 text-xs",
-                  colorMode === 'bw' && "bg-primary/10 text-primary shadow-sm"
-                )}
-                onClick={() => setColorMode('bw')}
-              >
-                <Circle className="w-3.5 h-3.5" />
-                B&W
-              </Button>
-            </div>
-          </div>
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-16 lg:py-24">
+          <Badge variant="secondary" className="mb-5 bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] border-none">
+            Documentation
+          </Badge>
           <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight mb-4">
             Everything you need to know about{" "}
             <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', cursive" }}>
@@ -246,44 +210,35 @@ export default function Docs() {
               <ScrollArea className="h-[calc(100vh-8rem)]">
                 <nav className="space-y-1 pr-4">
                   <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 mb-3 px-3">On this page</p>
-                  {SECTIONS.map((s, i) => {
-                    // Add divider between groups: after Getting Started, after Mistakes
-                    const showDivider = i > 0 && (i === 1 || i === 7 || i === 11);
-                    return (
-                      <div key={s.id}>
-                        {showDivider && <div className="h-px bg-border/50 my-2 mx-3" />}
-                        <button
-                          onClick={() => scrollTo(s.id)}
-                          className={cn(
-                            "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-all text-left relative",
-                            activeSection === s.id
-                              ? "bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] font-semibold"
-                              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                          )}
-                        >
-                          {activeSection === s.id && (
-                            <div className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full bg-[hsl(var(--tb-accent))]" />
-                          )}
-                          <s.icon className="w-4 h-4 shrink-0" />
-                          {s.label}
-                        </button>
-                      </div>
-                    );
-                  })}
+                  {SECTIONS.map((s) => (
+                    <button
+                      key={s.id}
+                      onClick={() => scrollTo(s.id)}
+                      className={cn(
+                        "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all text-left",
+                        activeSection === s.id
+                          ? "bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] font-semibold"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      )}
+                    >
+                      <s.icon className="w-4 h-4 shrink-0" />
+                      {s.label}
+                    </button>
+                  ))}
                 </nav>
               </ScrollArea>
             </div>
           </aside>
 
           {/* Mobile tabs */}
-          <div className="lg:hidden fixed top-16 left-0 right-0 z-40 bg-background/90 backdrop-blur-lg border-b border-border/20 shadow-md">
-            <div className="flex gap-1.5 overflow-x-auto px-4 py-2.5 no-scrollbar">
+          <div className="lg:hidden fixed top-16 left-0 right-0 z-40 bg-background/90 backdrop-blur-lg border-b border-border/20">
+            <div className="flex gap-1 overflow-x-auto px-4 py-2 no-scrollbar">
               {SECTIONS.map((s) => (
                 <button
                   key={s.id}
                   onClick={() => scrollTo(s.id)}
                   className={cn(
-                    "shrink-0 px-4 py-2 rounded-full text-xs font-medium transition-all whitespace-nowrap",
+                    "shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap",
                     activeSection === s.id
                       ? "bg-[hsl(var(--tb-accent))] text-white"
                       : "bg-muted/50 text-muted-foreground"
@@ -1119,6 +1074,5 @@ export default function Docs() {
         </footer>
       )}
     </div>
-    </DocsColorModeContext.Provider>
   );
 }

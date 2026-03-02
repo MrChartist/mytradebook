@@ -280,11 +280,6 @@
     animation: glow 2s ease-in-out infinite alternate;
   }
 
-  .grayscale {
-    filter: grayscale(100%);
-    transition: filter 0.3s ease;
-  }
-
   @keyframes glow {
     from { box-shadow: 0 0 10px hsl(var(--primary) / 0.1); }
     to { box-shadow: 0 0 20px hsl(var(--primary) / 0.2); }
