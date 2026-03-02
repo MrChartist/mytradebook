@@ -165,15 +165,6 @@ export default function Login() {
           <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-profit/10 rounded-full blur-[100px]" />
 
           <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-glow">
-                <TrendingUp className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold">TradeBook</h1>
-                <p className="text-muted-foreground text-sm">Trading Journal</p>
-              </div>
-            </div>
 
             <h2 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
               Know Your{" "}
