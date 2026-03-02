@@ -26,17 +26,31 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_STORAGE_KEY = `sb-nuilpmoipiazjafpjaft-auth-token`;
+const PENDING_FLAG = "tb-auth-pending";
 
-/** Detect if the current page load is an auth callback (OAuth redirect, email verification, etc.) */
+/** Check if the pending-auth flag is set */
+const hasPendingFlag = (): boolean => {
+  try { return sessionStorage.getItem(PENDING_FLAG) === "1"; } catch { return false; }
+};
+
+/** Clear the pending-auth flag */
+const clearPendingFlag = () => {
+  try { sessionStorage.removeItem(PENDING_FLAG); } catch (_) {}
+};
+
+/** Set the pending-auth flag */
+const setPendingFlag = () => {
+  try { sessionStorage.setItem(PENDING_FLAG, "1"); } catch (_) {}
+};
+
+/** Detect if the current page load is an auth callback */
 const detectAuthCallback = (): boolean => {
   const path = window.location.pathname;
   const hash = window.location.hash;
   const search = window.location.search;
 
-  // Path-based detection (our dedicated callback route)
   if (path === "/auth/callback") return true;
 
-  // Token/param-based detection (Supabase redirects tokens in hash)
   return (
     hash.includes("access_token") ||
     hash.includes("refresh_token") ||
@@ -48,8 +62,10 @@ const detectAuthCallback = (): boolean => {
 };
 
 const IS_AUTH_CALLBACK = detectAuthCallback();
-// Normal page loads: resolve fast. Auth callbacks: generous timeout.
-const MAX_LOADING_MS = IS_AUTH_CALLBACK ? 15000 : 1500;
+const IS_PENDING = hasPendingFlag();
+
+// Key fix: extend timeout when pending flag is set (Google OAuth may redirect to / not /auth/callback)
+const MAX_LOADING_MS = (IS_AUTH_CALLBACK || IS_PENDING) ? 15000 : 1500;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -57,12 +73,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const loadingResolved = useRef(false);
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const resolveLoading = (reason: string) => {
     if (!loadingResolved.current) {
       loadingResolved.current = true;
       console.log("[Auth] Loading resolved:", reason);
       setLoading(false);
+      // Stop polling if running
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+      }
     }
   };
 
@@ -84,14 +106,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    console.log("[Auth] Init | origin:", window.location.origin, "| callback:", IS_AUTH_CALLBACK, "| path:", window.location.pathname);
+    console.log("[Auth] Init | callback:", IS_AUTH_CALLBACK, "| pending:", IS_PENDING, "| timeout:", MAX_LOADING_MS);
 
     // Safety timeout — NEVER let loading hang forever
     const safetyTimer = setTimeout(() => {
       resolveLoading("safety-timeout");
     }, MAX_LOADING_MS);
 
-    // 1. Set up auth state listener FIRST (before getSession)
+    // 1. Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         console.log("[Auth] onAuthStateChange:", event, currentSession?.user?.email ?? "no-user");
@@ -99,16 +121,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (currentSession?.user) {
           setSession(currentSession);
           setUser(currentSession.user);
+          // Clear pending flag on successful auth
+          clearPendingFlag();
           fetchProfile(currentSession.user.id);
           resolveLoading(`auth-event:${event}`);
         } else if (event === "SIGNED_OUT") {
           setSession(null);
           setUser(null);
           setProfile(null);
+          clearPendingFlag();
           resolveLoading("signed-out-event");
         }
-        // For other events without a session (e.g. TOKEN_REFRESHED failure during callback),
-        // do NOT resolve — let the safety timeout or a subsequent event handle it.
       }
     );
 
@@ -119,34 +142,64 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (error) {
           console.error("[Auth] getSession error:", error);
-          // Only clear storage for non-callback flows to avoid destroying in-flight token exchange
-          if (!IS_AUTH_CALLBACK) {
+          if (!IS_AUTH_CALLBACK && !IS_PENDING) {
             try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch (_) {}
           }
-          if (!IS_AUTH_CALLBACK) resolveLoading("getSession-error");
+          if (!IS_AUTH_CALLBACK && !IS_PENDING) resolveLoading("getSession-error");
           return;
         }
 
         if (existingSession?.user) {
           setSession(existingSession);
           setUser(existingSession.user);
+          clearPendingFlag();
           console.log("[Auth] Existing session:", existingSession.user.email);
           fetchProfile(existingSession.user.id);
           resolveLoading("existing-session");
-        } else if (!IS_AUTH_CALLBACK) {
-          // No session AND not a callback — safe to declare "no user"
+        } else if (!IS_AUTH_CALLBACK && !IS_PENDING) {
           setSession(null);
           setUser(null);
           resolveLoading("no-session-no-callback");
+        } else {
+          // Callback or pending: start polling for session
+          console.log("[Auth] No session yet, starting poll...");
+          startSessionPolling();
         }
-        // If IS_AUTH_CALLBACK but no session yet: wait for onAuthStateChange or safety timeout
       } catch (err) {
         console.error("[Auth] Session init exception:", err);
-        if (!IS_AUTH_CALLBACK) {
+        if (!IS_AUTH_CALLBACK && !IS_PENDING) {
           try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch (_) {}
         }
-        if (!IS_AUTH_CALLBACK) resolveLoading("init-exception");
+        if (!IS_AUTH_CALLBACK && !IS_PENDING) resolveLoading("init-exception");
       }
+    };
+
+    // 3. Session polling: retry getSession() periodically during callback/pending flows
+    const startSessionPolling = () => {
+      let attempts = 0;
+      const MAX_ATTEMPTS = 6; // ~9s of polling
+      pollingRef.current = setInterval(async () => {
+        attempts++;
+        console.log("[Auth] Poll attempt", attempts);
+        try {
+          const { data: { session: polledSession } } = await supabase.auth.getSession();
+          if (polledSession?.user) {
+            setSession(polledSession);
+            setUser(polledSession.user);
+            clearPendingFlag();
+            fetchProfile(polledSession.user.id);
+            resolveLoading(`poll-success:${attempts}`);
+          } else if (attempts >= MAX_ATTEMPTS) {
+            console.log("[Auth] Poll exhausted, waiting for safety timeout");
+            if (pollingRef.current) {
+              clearInterval(pollingRef.current);
+              pollingRef.current = null;
+            }
+          }
+        } catch (err) {
+          console.error("[Auth] Poll error:", err);
+        }
+      }, 1500);
     };
 
     initSession();
@@ -154,20 +207,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       clearTimeout(safetyTimer);
       subscription.unsubscribe();
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+      }
     };
   }, []);
 
   const signInWithEmail = async (email: string, password: string) => {
-    // Set pending flag so route guard shows loader instead of redirecting
-    try { sessionStorage.setItem("tb-auth-pending", "1"); } catch (_) {}
+    setPendingFlag();
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        try { sessionStorage.removeItem("tb-auth-pending"); } catch (_) {}
+        clearPendingFlag();
       }
       return { error };
     } catch (err) {
-      try { sessionStorage.removeItem("tb-auth-pending"); } catch (_) {}
+      clearPendingFlag();
       throw err;
     }
   };
@@ -185,19 +241,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signInWithGoogle = async () => {
-    // Set pending flag
-    try { sessionStorage.setItem("tb-auth-pending", "1"); } catch (_) {}
+    setPendingFlag();
     const { error } = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: `${window.location.origin}/auth/callback`,
     });
     if (error) {
-      try { sessionStorage.removeItem("tb-auth-pending"); } catch (_) {}
+      clearPendingFlag();
     }
     return { error: error ?? null };
   };
 
   const signOut = async () => {
-    try { sessionStorage.removeItem("tb-auth-pending"); } catch (_) {}
+    clearPendingFlag();
     try {
       await supabase.auth.signOut();
     } catch (err) {
