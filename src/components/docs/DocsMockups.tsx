@@ -29,20 +29,44 @@ export function useDocsColorMode() {
 }
 
 /* ──────────────────────────────────────────────
-   Shared wrapper for all mockups
+   Shared wrapper for all mockups — App window chrome
    ────────────────────────────────────────────── */
-function MockupFrame({ children, className }: { children: ReactNode; className?: string }) {
+function MockupFrame({ children, className, label }: { children: ReactNode; className?: string; label?: string }) {
   const { mode } = useDocsColorMode();
   const isBw = mode === "bw";
   return (
     <div className={cn(
-      "rounded-2xl border p-4 md:p-6 overflow-hidden transition-all duration-300",
+      "rounded-2xl border overflow-hidden transition-all duration-300 group/frame",
       isBw
         ? "docs-bw-filter border-dashed border-foreground/20 bg-card hover:scale-[1.005]"
-        : "border-border/50 bg-muted/20 dot-pattern hover:scale-[1.01]",
+        : "border-border/40 bg-card shadow-sm hover:shadow-md hover:border-border/60",
       className
     )}>
-      {children}
+      {/* Window chrome title bar */}
+      <div className={cn(
+        "flex items-center gap-2 px-4 py-2 border-b",
+        isBw ? "border-foreground/10 bg-muted/30" : "border-border/30 bg-muted/30"
+      )}>
+        <div className="flex items-center gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-loss/50" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[hsl(var(--warning)/0.5)]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-profit/50" />
+        </div>
+        {label && (
+          <span className="text-[9px] font-semibold text-muted-foreground/60 ml-2 tracking-wide uppercase">{label}</span>
+        )}
+        <div className="ml-auto flex items-center gap-1">
+          <div className="w-4 h-[3px] rounded-full bg-muted-foreground/10" />
+          <div className="w-4 h-[3px] rounded-full bg-muted-foreground/10" />
+        </div>
+      </div>
+      {/* Content area */}
+      <div className={cn(
+        "p-4 md:p-6",
+        !isBw && "bg-gradient-to-b from-card to-muted/10"
+      )}>
+        {children}
+      </div>
     </div>
   );
 }
