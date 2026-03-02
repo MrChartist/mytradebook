@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -14,7 +15,7 @@ import {
   Lock, Sparkles, FileText, Download, Upload, Filter, Grid3X3,
   List, Search, Tag, AlertTriangle, CheckCircle2, TrendingDown,
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
-  Wallet, Share2, MessageSquare, Command, Hash
+  Wallet, Share2, MessageSquare, Command, Hash, Palette
 } from "lucide-react";
 import {
   BentoFeatureGrid, OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
@@ -41,7 +42,8 @@ import {
   DhanIntegrationDetailMockup, TelegramIntegrationDetailMockup,
   KeyboardShortcutsDetailMockup,
   SettingsProfileBillingMockup, SettingsPreferencesMockup, SettingsTagManagementMockup,
-  SettingsSecurityMockup, SettingsIntegrationsMockup, CapitalManagementMockup
+  SettingsSecurityMockup, SettingsIntegrationsMockup, CapitalManagementMockup,
+  DocsColorModeProvider, useDocsColorMode
 } from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
@@ -66,7 +68,7 @@ function FeatureList({ items }: { items: string[] }) {
     <ul className="space-y-2.5 mt-4">
       {items.map((item) => (
         <li key={item} className="flex items-start gap-2.5 text-sm text-muted-foreground leading-relaxed">
-          <ChevronRight className="w-4 h-4 text-[hsl(var(--tb-accent))] mt-0.5 shrink-0" />
+          <ChevronRight className="w-[18px] h-[18px] text-[hsl(var(--tb-accent))] mt-0.5 shrink-0" />
           <span>{item}</span>
         </li>
       ))}
@@ -78,16 +80,18 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
 }) {
   return (
-    <Card className="border-border/40 bg-card/80 hover:border-[hsl(var(--tb-accent)/0.3)] transition-colors">
+    <Card className="border-border/40 bg-card/80 hover:border-[hsl(var(--tb-accent)/0.3)] hover:shadow-md hover:scale-[1.003] transition-all duration-200 relative group overflow-hidden">
+      {/* Left accent bar on hover */}
+      <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-[hsl(var(--tb-accent))] opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
       <CardHeader className="pb-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[hsl(var(--tb-accent)/0.08)] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-[hsl(var(--tb-accent)/0.08)] flex items-center justify-center ring-1 ring-border/20">
             <Icon className="w-5 h-5 text-[hsl(var(--tb-accent))]" />
           </div>
           <div className="flex items-center gap-2">
-            <CardTitle className="text-lg">{title}</CardTitle>
+            <CardTitle className="text-lg font-bold">{title}</CardTitle>
             {badge && (
-              <Badge variant="secondary" className="text-[10px] px-2 py-0 bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))] border-none">
+              <Badge variant="secondary" className="text-[11px] px-2 py-0 bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))] border-none">
                 {badge}
               </Badge>
             )}
@@ -103,14 +107,16 @@ function SectionHeader({ id, title, description, icon: Icon }: {
   id: string; title: string; description: string; icon: React.ElementType;
 }) {
   return (
-    <div id={id} className="scroll-mt-24 mb-8">
+    <div id={id} className="scroll-mt-24 mb-8 border-b border-border/10 pb-6">
+      {/* Top accent line */}
+      <div className="w-10 h-[3px] rounded-full bg-[hsl(var(--tb-accent))] docs-accent-bar mb-4" />
       <div className="flex items-center gap-3 mb-3">
         <div className="w-11 h-11 rounded-xl bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center">
           <Icon className="w-5.5 h-5.5 text-[hsl(var(--tb-accent))]" />
         </div>
         <h2 className="text-2xl lg:text-3xl font-bold tracking-tight">{title}</h2>
       </div>
-      <p className="text-muted-foreground leading-relaxed max-w-3xl">{description}</p>
+      <p className="text-foreground/60 leading-relaxed max-w-3xl">{description}</p>
     </div>
   );
 }
@@ -152,8 +158,40 @@ export default function Docs() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Sidebar group separators
+  const sidebarGroups = [
+    { label: "Getting Started", ids: ["getting-started"] },
+    { label: "Core Features", ids: ["dashboard", "trade-management", "alerts", "studies", "watchlists", "journal"] },
+    { label: "Advanced", ids: ["analytics", "calendar", "mistakes", "reports"] },
+    { label: "Settings & Tools", ids: ["integrations", "shortcuts", "settings"] },
+  ];
+
   return (
-    <div className={cn("min-h-screen bg-background text-foreground", isInsideApp && "pb-6")}>
+    <DocsColorModeProvider>
+      <DocsContent
+        navigate={navigate}
+        isInsideApp={isInsideApp}
+        activeSection={activeSection}
+        scrollTo={scrollTo}
+        sidebarGroups={sidebarGroups}
+      />
+    </DocsColorModeProvider>
+  );
+}
+
+function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGroups }: {
+  navigate: (path: string) => void;
+  isInsideApp: boolean;
+  activeSection: string;
+  scrollTo: (id: string) => void;
+  sidebarGroups: { label: string; ids: string[] }[];
+}) {
+  const { mode, toggle } = useDocsColorMode();
+
+  return (
+    <div className={cn("min-h-screen bg-background text-foreground", isInsideApp && "pb-6", mode === "bw" && "docs-bw")}>
+      {/* Top accent bar */}
+      <div className="h-[3px] w-full bg-gradient-primary docs-accent-bar" />
       {/* Navbar — only show on standalone page */}
       {!isInsideApp && (
         <nav className="sticky top-0 z-50 border-b border-border/30 bg-background/80 backdrop-blur-xl">
@@ -182,17 +220,32 @@ export default function Docs() {
 
       {/* Hero */}
       <div className={cn("border-b border-border/20 bg-gradient-to-b from-[hsl(var(--tb-accent)/0.04)] to-transparent", isInsideApp && "border-none")}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-16 lg:py-24">
-          <Badge variant="secondary" className="mb-5 bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] border-none">
-            Documentation
-          </Badge>
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-12 lg:py-16">
+          <div className="flex items-center gap-3 mb-5">
+            <Badge variant="secondary" className="bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] border-none">
+              Documentation
+            </Badge>
+            {/* B&W Toggle */}
+            <button
+              onClick={toggle}
+              className={cn(
+                "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold transition-all border",
+                mode === "bw"
+                  ? "bg-foreground text-background border-foreground"
+                  : "bg-muted/50 text-muted-foreground border-border/40 hover:border-foreground/30"
+              )}
+            >
+              <Palette className="w-3.5 h-3.5" />
+              {mode === "bw" ? "B&W" : "Color"}
+            </button>
+          </div>
           <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight mb-4">
             Everything you need to know about{" "}
             <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', cursive" }}>
               TradeBook
             </span>
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
+          <p className="text-lg text-foreground/70 max-w-2xl leading-relaxed">
             A comprehensive guide to every feature, capability, and workflow in the platform — from your first trade log to advanced analytics.
           </p>
           <BentoFeatureGrid />
@@ -205,22 +258,31 @@ export default function Docs() {
           <aside className="hidden lg:block w-64 shrink-0">
             <div className="sticky top-24">
               <ScrollArea className="h-[calc(100vh-8rem)]">
-                <nav className="space-y-1 pr-4">
+                <nav className="pr-4">
                   <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 mb-3 px-3">On this page</p>
-                  {SECTIONS.map((s) => (
-                    <button
-                      key={s.id}
-                      onClick={() => scrollTo(s.id)}
-                      className={cn(
-                        "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all text-left",
-                        activeSection === s.id
-                          ? "bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] font-semibold"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                      )}
-                    >
-                      <s.icon className="w-4 h-4 shrink-0" />
-                      {s.label}
-                    </button>
+                  {sidebarGroups.map((group, gi) => (
+                    <div key={group.label}>
+                      {gi > 0 && <Separator className="my-2 mx-3" />}
+                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground/50 px-3 py-1.5">{group.label}</p>
+                      {SECTIONS.filter((s) => group.ids.includes(s.id)).map((s) => (
+                        <button
+                          key={s.id}
+                          onClick={() => scrollTo(s.id)}
+                          className={cn(
+                            "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-all text-left relative",
+                            activeSection === s.id
+                              ? "bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] font-semibold"
+                              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                          )}
+                        >
+                          {activeSection === s.id && (
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-full bg-[hsl(var(--tb-accent))]" />
+                          )}
+                          <s.icon className="w-4 h-4 shrink-0" />
+                          {s.label}
+                        </button>
+                      ))}
+                    </div>
                   ))}
                 </nav>
               </ScrollArea>
@@ -228,16 +290,16 @@ export default function Docs() {
           </aside>
 
           {/* Mobile tabs */}
-          <div className="lg:hidden fixed top-16 left-0 right-0 z-40 bg-background/90 backdrop-blur-lg border-b border-border/20">
-            <div className="flex gap-1 overflow-x-auto px-4 py-2 no-scrollbar">
+          <div className="lg:hidden fixed top-16 left-0 right-0 z-40 bg-background/90 backdrop-blur-lg border-b border-border/20 shadow-sm">
+            <div className="flex gap-1.5 overflow-x-auto px-4 py-2.5 no-scrollbar">
               {SECTIONS.map((s) => (
                 <button
                   key={s.id}
                   onClick={() => scrollTo(s.id)}
                   className={cn(
-                    "shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap",
+                    "shrink-0 px-4 py-2 rounded-full text-xs font-medium transition-all whitespace-nowrap",
                     activeSection === s.id
-                      ? "bg-[hsl(var(--tb-accent))] text-white"
+                      ? "bg-[hsl(var(--tb-accent))] text-white ring-1 ring-[hsl(var(--tb-accent)/0.3)]"
                       : "bg-muted/50 text-muted-foreground"
                   )}
                 >

@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { createContext, useContext, useState, type ReactNode } from "react";
 import {
   TrendingUp, BarChart3, Bell, Eye, Activity, Calendar, Target,
   ArrowRight, CandlestickChart, Send, LayoutDashboard, BookOpen,
@@ -8,12 +9,37 @@ import {
 } from "lucide-react";
 
 /* ──────────────────────────────────────────────
+   Docs Color Mode Context (Color / B&W)
+   ────────────────────────────────────────────── */
+type DocsColorMode = "color" | "bw";
+const DocsColorModeContext = createContext<{ mode: DocsColorMode; toggle: () => void }>({ mode: "color", toggle: () => {} });
+
+export function DocsColorModeProvider({ children }: { children: ReactNode }) {
+  const [mode, setMode] = useState<DocsColorMode>("color");
+  const toggle = () => setMode((m) => (m === "color" ? "bw" : "color"));
+  return (
+    <DocsColorModeContext.Provider value={{ mode, toggle }}>
+      {children}
+    </DocsColorModeContext.Provider>
+  );
+}
+
+export function useDocsColorMode() {
+  return useContext(DocsColorModeContext);
+}
+
+/* ──────────────────────────────────────────────
    Shared wrapper for all mockups
    ────────────────────────────────────────────── */
-function MockupFrame({ children, className }: { children: React.ReactNode; className?: string }) {
+function MockupFrame({ children, className }: { children: ReactNode; className?: string }) {
+  const { mode } = useDocsColorMode();
+  const isBw = mode === "bw";
   return (
     <div className={cn(
-      "rounded-2xl border border-border/50 bg-muted/20 dot-pattern p-4 md:p-6 overflow-hidden transition-transform duration-300 hover:scale-[1.01]",
+      "rounded-2xl border p-4 md:p-6 overflow-hidden transition-all duration-300",
+      isBw
+        ? "docs-bw-filter border-dashed border-foreground/20 bg-card hover:scale-[1.005]"
+        : "border-border/50 bg-muted/20 dot-pattern hover:scale-[1.01]",
       className
     )}>
       {children}
