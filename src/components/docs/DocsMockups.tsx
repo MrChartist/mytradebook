@@ -2598,7 +2598,130 @@ export function DailyJournalWorkflowMockup() {
 }
 
 /* ──────────────────────────────────────────────
-   52b. JournalDashboardTabMockup
+   52c. MistakeAnalysisToolsMockup
+   ────────────────────────────────────────────── */
+export function MistakeAnalysisToolsMockup() {
+  const mistakeRows = [
+    { tag: "Early Exit", count: 14, totalLoss: "−₹6,400", trend: "↓", trendColor: "text-profit", bar: 70 },
+    { tag: "No Stop-Loss", count: 9, totalLoss: "−₹8,200", trend: "↓", trendColor: "text-profit", bar: 82 },
+    { tag: "Oversize Position", count: 7, totalLoss: "−₹5,100", trend: "→", trendColor: "text-muted-foreground", bar: 51 },
+    { tag: "Revenge Trade", count: 5, totalLoss: "−₹4,800", trend: "↑", trendColor: "text-loss", bar: 48 },
+    { tag: "Entered Too Early", count: 4, totalLoss: "−₹1,900", trend: "↓", trendColor: "text-profit", bar: 19 },
+  ];
+  const months = ["Sep", "Oct", "Nov", "Dec", "Jan", "Feb"];
+  const trendValues = [12, 10, 8, 9, 6, 4];
+  const maxVal = Math.max(...trendValues);
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4">
+        <div className="flex items-center gap-2 mb-4">
+          <Target className="w-4 h-4 text-loss" />
+          <p className="text-xs font-bold">Mistake Analysis</p>
+          <span className="text-[8px] text-muted-foreground ml-auto">Last 6 months · 39 tagged mistakes</span>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          {/* Left: Repeat pattern table */}
+          <div className="rounded-lg bg-muted/20 border border-border/30 overflow-hidden">
+            <div className="px-3 py-1.5 bg-muted/30 border-b border-border/20">
+              <p className="text-[9px] font-bold">Repeat Pattern Analysis</p>
+            </div>
+            <div className="grid grid-cols-12 gap-1 px-3 py-1 text-[7px] font-semibold text-muted-foreground border-b border-border/10">
+              <span className="col-span-4">Mistake</span>
+              <span className="col-span-1 text-right">#</span>
+              <span className="col-span-3 text-right">Total Loss</span>
+              <span className="col-span-3">Impact</span>
+              <span className="col-span-1 text-center">Δ</span>
+            </div>
+            {mistakeRows.map((m) => (
+              <div key={m.tag} className="grid grid-cols-12 gap-1 px-3 py-1.5 text-[9px] border-b border-border/10 last:border-0 items-center">
+                <span className="col-span-4 font-semibold truncate">{m.tag}</span>
+                <span className="col-span-1 text-right font-mono">{m.count}</span>
+                <span className="col-span-3 text-right font-mono font-bold text-loss">{m.totalLoss}</span>
+                <div className="col-span-3">
+                  <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                    <div className="h-full rounded-full bg-loss/60" style={{ width: `${m.bar}%` }} />
+                  </div>
+                </div>
+                <span className={cn("col-span-1 text-center font-bold", m.trendColor)}>{m.trend}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Right: 6-month trend + severity */}
+          <div className="space-y-3">
+            {/* Trend chart */}
+            <div className="rounded-lg bg-muted/20 border border-border/30 p-3">
+              <p className="text-[9px] font-bold mb-2">6-Month Mistake Trend</p>
+              <div className="flex items-end gap-2 h-16">
+                {trendValues.map((v, i) => (
+                  <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                    <div className="w-full relative">
+                      <div
+                        className={cn(
+                          "w-full rounded-t-sm transition-all",
+                          i === trendValues.length - 1 ? "bg-profit/60" : "bg-loss/40"
+                        )}
+                        style={{ height: `${(v / maxVal) * 48}px` }}
+                      />
+                    </div>
+                    <span className="text-[7px] text-muted-foreground">{months[i]}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-2 flex items-center gap-1 text-[8px] text-profit">
+                <ArrowDownRight className="w-3 h-3" />
+                <span className="font-semibold">67% fewer mistakes vs 6 months ago</span>
+              </div>
+            </div>
+
+            {/* Severity breakdown */}
+            <div className="rounded-lg bg-muted/20 border border-border/30 p-3">
+              <p className="text-[9px] font-bold mb-2">Severity Breakdown</p>
+              <div className="space-y-2">
+                {[
+                  { level: "High", count: 7, loss: "−₹16,200", pct: 62, color: "bg-loss", textColor: "text-loss" },
+                  { level: "Medium", count: 16, loss: "−₹8,400", pct: 32, color: "bg-[hsl(var(--warning))]", textColor: "text-[hsl(var(--warning))]" },
+                  { level: "Low", count: 16, loss: "−₹1,800", pct: 6, color: "bg-muted-foreground", textColor: "text-muted-foreground" },
+                ].map((s) => (
+                  <div key={s.level}>
+                    <div className="flex items-center justify-between text-[8px] mb-0.5">
+                      <span className={cn("font-semibold", s.textColor)}>{s.level} <span className="text-muted-foreground font-normal">({s.count})</span></span>
+                      <span className="font-mono font-bold text-loss">{s.loss}</span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                      <div className={cn("h-full rounded-full", s.color)} style={{ width: `${s.pct}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Most common vs most costly */}
+            <div className="rounded-lg bg-muted/20 border border-border/30 p-3">
+              <p className="text-[9px] font-bold mb-2">Common vs Costly</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="rounded bg-muted/30 p-2 text-center">
+                  <p className="text-[7px] text-muted-foreground">Most Common</p>
+                  <p className="text-[10px] font-bold mt-0.5">Early Exit</p>
+                  <p className="text-[8px] text-muted-foreground">14 times</p>
+                </div>
+                <div className="rounded bg-loss/5 border border-loss/10 p-2 text-center">
+                  <p className="text-[7px] text-muted-foreground">Most Costly</p>
+                  <p className="text-[10px] font-bold text-loss mt-0.5">No Stop-Loss</p>
+                  <p className="text-[8px] text-loss">−₹8,200 total</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   52d. JournalDashboardTabMockup
    ────────────────────────────────────────────── */
 export function JournalDashboardTabMockup() {
   const summaryCards = [
