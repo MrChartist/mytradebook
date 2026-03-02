@@ -1,79 +1,59 @@
 
 
-# Final Production Readiness Pass
+# Restructure Pricing: Monthly / Quarterly / Yearly
 
-Your app already has solid foundations (code splitting, SEO, CSP, error boundary, a11y, PWA). This plan addresses the **remaining gaps** found during audit.
-
----
-
-## What's Already Done (no changes needed)
-- Route-level code splitting with React.lazy
-- SEOHead component with OG/Twitter tags on Landing, Docs, Login
-- Content Security Policy meta tag
-- ErrorBoundary with localStorage logging
-- Skip-to-content link, focus-visible rings, prefers-reduced-motion
-- PWA manifest, service worker update prompt, 5MB cache limit
-- Font preloading and preconnect hints
-- robots.txt and sitemap.xml
+Replace the current Free/Pro/Team tier model with a single plan offering **all features**, sold across three billing cycles. During the current testing rollout, Monthly and Quarterly are free (100% discount), while Yearly is at full price.
 
 ---
 
-## Remaining Items
+## Pricing Structure
 
-### 1. Add SEOHead to All Public Pages (noIndex on auth pages)
+| Billing Cycle | Regular Price | Current Discount | Displayed Price |
+|--------------|---------------|-----------------|-----------------|
+| Monthly      | ~~₹199/mo~~   | 100% off        | **₹0/mo** (Free during beta) |
+| Quarterly    | ~~₹499/quarter~~ | 100% off     | **₹0/quarter** (Free during beta) |
+| Yearly       | ₹1,499/year   | None            | **₹1,499/year** |
 
-Add `<SEOHead>` to pages that are currently missing it:
-
-| Page | Title | noIndex? |
-|------|-------|----------|
-| NotFound | "Page Not Found" | yes |
-| Terms | "Terms of Service" | no |
-| Privacy | "Privacy Policy" | no |
-| ResetPassword | "Reset Password" | yes |
-
-Protected pages (Dashboard, Trades, etc.) don't need SEO since they're behind auth, but the 404 page should have `noIndex` to prevent search engines from indexing error pages.
-
-### 2. Upgrade 404 Page
-
-The current NotFound page is very basic. Improve it with:
-- SEOHead with `noIndex: true`
-- Branded styling consistent with the rest of the app (use the ErrorBoundary card pattern)
-- A proper "Go Home" button instead of a plain link
-- HTTP status awareness (show the attempted path)
-
-### 3. Web Vitals Monitoring
-
-Add lightweight **Core Web Vitals** reporting in `main.tsx` using the browser's native `PerformanceObserver` API (no new dependencies). Log LCP, FID, and CLS to `localStorage` under `tb_perf_log` for diagnostics.
-
-### 4. Image Lazy Loading Utility
-
-Create a reusable `LazyImage` component that uses `loading="lazy"` and `decoding="async"` HTML attributes, plus a fade-in transition on load. This benefits the Landing page which has several decorative elements.
-
-### 5. Security: Fix RLS "Always True" Warning
-
-The database linter flagged an overly permissive RLS policy using `USING (true)` for write operations. Audit and tighten the affected policy to scope writes to the authenticated user (`auth.uid() = user_id`).
-
-### 6. Add `lastmod` to Sitemap
-
-Update `sitemap.xml` entries with `<lastmod>` dates so search engines know when content was last updated.
+All plans include the **same full feature set**: unlimited trades, advanced analytics, Telegram notifications, broker integration, trailing SL, watchlists, reports, pattern tracking, etc.
 
 ---
 
-## Technical Details
+## Changes
 
-### Files Created:
-- `src/components/ui/lazy-image.tsx` -- reusable LazyImage component
+### 1. Landing Page Pricing Section (`src/pages/Landing.tsx`)
+- Replace `pricingPlans` array (3 tiers) with 3 billing-cycle cards: Monthly, Quarterly, Yearly
+- Monthly card: show ~~₹199~~ crossed out, ₹0, badge "Free During Beta"
+- Quarterly card (highlighted/popular): show ~~₹499~~ crossed out, ₹0, badge "Free During Beta"
+- Yearly card: show ₹1,499/year, no discount badge
+- All three cards share the same feature list
+- Update section subtitle to something like "One plan. All features. Pick your billing cycle."
+- CTAs: Monthly/Quarterly say "Start Free", Yearly says "Subscribe"
 
-### Files Modified:
-- `src/pages/NotFound.tsx` -- branded 404 with SEOHead
-- `src/pages/Terms.tsx` -- add SEOHead
-- `src/pages/Privacy.tsx` -- add SEOHead
-- `src/pages/ResetPassword.tsx` -- add SEOHead with noIndex
-- `src/main.tsx` -- add Web Vitals observer (15 lines)
-- `public/sitemap.xml` -- add lastmod dates
+### 2. Billing Settings Page (`src/components/settings/BillingSettings.tsx`)
+- Replace Free/Pro/Team plan cards with Monthly/Quarterly/Yearly cards matching the same structure
+- Show strikethrough pricing and "Free During Beta" badges on Monthly and Quarterly
+- Keep the "Payment integration coming soon" notice
+- Remove trial-related banners (no longer relevant with this model)
 
-### Database Migration:
-- Tighten the flagged RLS policy from `USING (true)` to proper user-scoped conditions
+### 3. Subscription Hook (`src/hooks/useSubscription.ts`)
+- Update `PlanType` from `"free" | "pro" | "team"` to a single type (e.g., keep `"pro"` as the active plan type) since all features are now included
+- Update `PLAN_LIMITS` so the default/active plan has all features unlocked (unlimited trades, unlimited watchlists, all flags true)
+- This effectively removes feature gating during the beta period
 
-### No new dependencies required.
+### 4. PlanGate Component (`src/components/PlanGate.tsx`)
+- Since all features are unlocked, update logic so `hasAccess` always returns true (or simplify the gate to always render children)
+- Keep the component structure for future use when paid enforcement returns
+
+### 5. Trial Banner (`src/components/TrialBanner.tsx`)
+- Hide the banner entirely during beta (return null) since there's no trial concept in this model
+- Keep the component file for future reactivation
+
+---
+
+## Technical Notes
+
+- No database changes needed -- this is purely a UI/pricing display update
+- The subscription hook will default everyone to full access, removing feature gating during beta
+- The component structure (PlanGate, TrialBanner, BillingSettings) is preserved so paid enforcement can be re-enabled later by simply updating the pricing values and restoring gating logic
+- 4 files modified, 0 files created
 
