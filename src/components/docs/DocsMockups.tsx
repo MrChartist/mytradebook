@@ -3065,7 +3065,350 @@ export function KeyboardShortcutsDetailMockup() {
 }
 
 /* ──────────────────────────────────────────────
-   52i. JournalDashboardTabMockup
+   52j. SettingsProfileBillingMockup
+   ────────────────────────────────────────────── */
+export function SettingsProfileBillingMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-md mx-auto">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-10 h-10 rounded-full bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center text-sm font-bold text-[hsl(var(--tb-accent))]">RK</div>
+          <div className="flex-1">
+            <p className="text-xs font-bold">Rahul Kumar</p>
+            <p className="text-[8px] text-muted-foreground">rahul@example.com · +91 98765 43210</p>
+          </div>
+          <span className="px-2 py-0.5 rounded-full text-[8px] font-bold bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))]">Pro</span>
+        </div>
+        {/* Subscription card */}
+        <div className="rounded-lg bg-[hsl(var(--tb-accent)/0.04)] border border-[hsl(var(--tb-accent)/0.12)] p-3 mb-3">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[9px] font-bold">Current Plan</p>
+            <span className="text-[8px] text-profit font-semibold">Active</span>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { plan: "Free", price: "₹0", features: "50 trades/mo", active: false },
+              { plan: "Pro", price: "₹499", features: "Unlimited", active: true },
+              { plan: "Team", price: "₹1,499", features: "Multi-user", active: false },
+            ].map((p) => (
+              <div key={p.plan} className={cn(
+                "rounded-lg p-2 text-center border transition-all",
+                p.active
+                  ? "border-[hsl(var(--tb-accent))] bg-[hsl(var(--tb-accent)/0.08)]"
+                  : "border-border/30 bg-muted/20"
+              )}>
+                <p className={cn("text-[9px] font-bold", p.active && "text-[hsl(var(--tb-accent))]")}>{p.plan}</p>
+                <p className="text-[10px] font-mono font-bold mt-0.5">{p.price}</p>
+                <p className="text-[7px] text-muted-foreground">{p.features}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-2 flex items-center gap-1.5 text-[8px] text-muted-foreground">
+            <span>Trial ends: <span className="font-semibold text-foreground">12 Mar 2026</span></span>
+            <span className="text-muted-foreground/40">·</span>
+            <span>12 days left</span>
+          </div>
+        </div>
+        {/* Usage meter */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 p-2.5">
+          <div className="flex items-center justify-between text-[8px] mb-1">
+            <span className="font-semibold">Monthly Usage</span>
+            <span className="font-mono">38 / ∞ trades</span>
+          </div>
+          <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+            <div className="h-full rounded-full bg-[hsl(var(--tb-accent))]" style={{ width: "38%" }} />
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   52k. SettingsPreferencesMockup
+   ────────────────────────────────────────────── */
+export function SettingsPreferencesMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-md mx-auto">
+        <p className="text-xs font-bold mb-3">Preferences</p>
+        <div className="space-y-3">
+          {/* Theme toggle */}
+          <div className="flex items-center justify-between rounded-lg bg-muted/20 border border-border/30 p-2.5">
+            <div>
+              <p className="text-[9px] font-semibold">Theme</p>
+              <p className="text-[7px] text-muted-foreground">Switch between light and dark mode</p>
+            </div>
+            <div className="flex items-center gap-1 bg-muted rounded-lg p-0.5">
+              <span className="px-2 py-1 rounded-md text-[8px] font-semibold text-muted-foreground">☀️</span>
+              <span className="px-2 py-1 rounded-md text-[8px] font-semibold bg-background shadow-sm">🌙</span>
+            </div>
+          </div>
+          {/* Starting capital */}
+          <div className="flex items-center justify-between rounded-lg bg-muted/20 border border-border/30 p-2.5">
+            <div>
+              <p className="text-[9px] font-semibold">Starting Capital</p>
+              <p className="text-[7px] text-muted-foreground">Base amount for risk calculations</p>
+            </div>
+            <span className="text-[10px] font-mono font-bold bg-muted/40 border border-border/30 rounded px-2 py-1">₹10,00,000</span>
+          </div>
+          {/* Default SL */}
+          <div className="flex items-center justify-between rounded-lg bg-muted/20 border border-border/30 p-2.5">
+            <div>
+              <p className="text-[9px] font-semibold">Default Stop Loss</p>
+              <p className="text-[7px] text-muted-foreground">Auto-filled in new trade forms</p>
+            </div>
+            <span className="text-[10px] font-mono font-bold bg-muted/40 border border-border/30 rounded px-2 py-1">1.5%</span>
+          </div>
+          {/* Timezone */}
+          <div className="flex items-center justify-between rounded-lg bg-muted/20 border border-border/30 p-2.5">
+            <div>
+              <p className="text-[9px] font-semibold">Timezone</p>
+              <p className="text-[7px] text-muted-foreground">Used for journal dates and alerts</p>
+            </div>
+            <span className="text-[9px] font-semibold bg-muted/40 border border-border/30 rounded px-2 py-1">Asia/Kolkata</span>
+          </div>
+          {/* Alert frequency */}
+          <div className="flex items-center justify-between rounded-lg bg-muted/20 border border-border/30 p-2.5">
+            <div>
+              <p className="text-[9px] font-semibold">Alert Check Frequency</p>
+              <p className="text-[7px] text-muted-foreground">How often alerts are evaluated</p>
+            </div>
+            <span className="text-[9px] font-semibold bg-muted/40 border border-border/30 rounded px-2 py-1">Every 5 min</span>
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   52l. SettingsTagManagementMockup
+   ────────────────────────────────────────────── */
+export function SettingsTagManagementMockup() {
+  const setupTags = ["Breakout", "Retest", "Gap Up", "Pullback", "Reversal"];
+  const mistakeTags = [
+    { name: "Early Exit", severity: "Medium", color: "text-[hsl(var(--warning))]" },
+    { name: "No Stop-Loss", severity: "High", color: "text-loss" },
+    { name: "Oversize", severity: "High", color: "text-loss" },
+    { name: "FOMO Entry", severity: "Medium", color: "text-[hsl(var(--warning))]" },
+    { name: "Late Entry", severity: "Low", color: "text-muted-foreground" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-md mx-auto">
+        <p className="text-xs font-bold mb-3">Tag Management</p>
+        {/* Setup tags */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 p-3 mb-3">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[9px] font-bold">🏷️ Setup Tags</p>
+            <span className="text-[7px] text-[hsl(var(--tb-accent))] font-semibold cursor-pointer">+ Add</span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {setupTags.map((t) => (
+              <div key={t} className="flex items-center gap-1 px-2 py-1 rounded-lg border border-[hsl(var(--tb-accent)/0.2)] bg-[hsl(var(--tb-accent)/0.06)] text-[9px] font-semibold text-[hsl(var(--tb-accent))]">
+                {t}
+                <span className="text-[7px] opacity-50 cursor-pointer hover:opacity-100">×</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Mistake tags with severity */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 p-3 mb-3">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[9px] font-bold">⚠️ Mistake Tags</p>
+            <span className="text-[7px] text-[hsl(var(--tb-accent))] font-semibold cursor-pointer">+ Add</span>
+          </div>
+          <div className="space-y-1">
+            {mistakeTags.map((t) => (
+              <div key={t.name} className="flex items-center justify-between rounded bg-card border border-border/20 px-2 py-1.5">
+                <span className="text-[9px] font-semibold">{t.name}</span>
+                <div className="flex items-center gap-1.5">
+                  <span className={cn("text-[7px] font-bold", t.color)}>{t.severity}</span>
+                  <span className="text-[7px] text-muted-foreground/40 cursor-pointer hover:text-loss">×</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Pattern tags */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 p-3">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[9px] font-bold">📊 Pattern Tags</p>
+            <span className="text-[7px] text-[hsl(var(--tb-accent))] font-semibold cursor-pointer">+ Add</span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {["Double Bottom", "Cup & Handle", "Head & Shoulders", "Ascending Triangle", "Bull Flag"].map((t) => (
+              <span key={t} className="px-2 py-1 rounded-lg border border-border/30 bg-muted/30 text-[9px] font-semibold text-muted-foreground">{t}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   52m. SettingsSecurityMockup
+   ────────────────────────────────────────────── */
+export function SettingsSecurityMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-md mx-auto">
+        <p className="text-xs font-bold mb-3">Security</p>
+        <div className="space-y-3">
+          {/* Password */}
+          <div className="rounded-lg bg-muted/20 border border-border/30 p-3">
+            <div className="flex items-center justify-between mb-1.5">
+              <p className="text-[9px] font-bold">🔒 Password</p>
+              <span className="text-[7px] text-[hsl(var(--tb-accent))] font-semibold cursor-pointer">Change</span>
+            </div>
+            <p className="text-[8px] text-muted-foreground">Last changed: 14 Feb 2026</p>
+          </div>
+          {/* Session */}
+          <div className="rounded-lg bg-muted/20 border border-border/30 p-3">
+            <p className="text-[9px] font-bold mb-1.5">📱 Active Sessions</p>
+            <div className="space-y-1.5">
+              {[
+                { device: "Chrome · MacOS", location: "Mumbai, IN", current: true },
+                { device: "Safari · iPhone", location: "Mumbai, IN", current: false },
+              ].map((s) => (
+                <div key={s.device} className="flex items-center justify-between rounded bg-card border border-border/20 px-2 py-1.5">
+                  <div>
+                    <p className="text-[8px] font-semibold">{s.device}</p>
+                    <p className="text-[7px] text-muted-foreground">{s.location}</p>
+                  </div>
+                  {s.current ? (
+                    <span className="text-[7px] font-bold text-profit">Current</span>
+                  ) : (
+                    <span className="text-[7px] text-loss font-semibold cursor-pointer">Revoke</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Encryption status */}
+          <div className="rounded-lg bg-profit/5 border border-profit/15 p-3">
+            <div className="flex items-center gap-2">
+              <span className="text-sm">🛡️</span>
+              <div>
+                <p className="text-[9px] font-bold text-profit">Data Protection Active</p>
+                <p className="text-[7px] text-muted-foreground">TLS encryption · API secrets masked · JWT 24h expiry</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   52n. SettingsIntegrationsMockup
+   ────────────────────────────────────────────── */
+export function SettingsIntegrationsMockup() {
+  const integrations = [
+    { name: "Dhan Broker", icon: "📈", status: "Connected", statusColor: "text-profit", detail: "2 API keys · Last sync: 5 min ago" },
+    { name: "Telegram Bot", icon: "📲", status: "3 Channels", statusColor: "text-profit", detail: "@MyTradeBot · Verified" },
+    { name: "TrueData", icon: "📊", status: "Not Connected", statusColor: "text-muted-foreground", detail: "Secondary market data source" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-md mx-auto">
+        <p className="text-xs font-bold mb-3">Integrations</p>
+        <div className="space-y-2">
+          {integrations.map((intg) => (
+            <div key={intg.name} className="rounded-lg bg-muted/20 border border-border/30 p-3">
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm">{intg.icon}</span>
+                  <p className="text-[10px] font-bold">{intg.name}</p>
+                </div>
+                <span className={cn("text-[8px] font-semibold", intg.statusColor)}>{intg.status}</span>
+              </div>
+              <p className="text-[8px] text-muted-foreground ml-6">{intg.detail}</p>
+            </div>
+          ))}
+        </div>
+        {/* Notification routing summary */}
+        <div className="mt-3 rounded-lg bg-[#229ED9]/5 border border-[#229ED9]/15 p-3">
+          <p className="text-[9px] font-bold mb-2">Notification Routing</p>
+          <div className="grid grid-cols-2 gap-1.5">
+            {[
+              { type: "Trade Updates", dest: "Personal" },
+              { type: "Alert Triggers", dest: "Personal + Group" },
+              { type: "EOD Reports", dest: "Reports Channel" },
+              { type: "TSL Updates", dest: "Options Group" },
+            ].map((r) => (
+              <div key={r.type} className="flex items-center justify-between rounded bg-card border border-border/20 px-2 py-1">
+                <span className="text-[8px] font-semibold">{r.type}</span>
+                <span className="text-[7px] text-[#229ED9] font-semibold">{r.dest}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   52o. CapitalManagementMockup
+   ────────────────────────────────────────────── */
+export function CapitalManagementMockup() {
+  const transactions = [
+    { date: "01 Feb", type: "Deposit", amount: "+₹2,00,000", color: "text-profit", balance: "₹12,00,000" },
+    { date: "10 Feb", type: "Withdrawal", amount: "−₹50,000", color: "text-loss", balance: "₹11,50,000" },
+    { date: "20 Feb", type: "Deposit", amount: "+₹1,00,000", color: "text-profit", balance: "₹12,50,000" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-md mx-auto">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-xs font-bold">Capital Management</p>
+          <span className="text-[7px] text-[hsl(var(--tb-accent))] font-semibold cursor-pointer">+ Add Transaction</span>
+        </div>
+        {/* Summary */}
+        <div className="grid grid-cols-3 gap-2 mb-3">
+          <div className="rounded-lg bg-muted/30 border border-border/30 p-2.5 text-center">
+            <p className="text-[7px] text-muted-foreground">Starting Capital</p>
+            <p className="text-[10px] font-bold font-mono">₹10,00,000</p>
+          </div>
+          <div className="rounded-lg bg-profit/5 border border-profit/15 p-2.5 text-center">
+            <p className="text-[7px] text-muted-foreground">Net Deposits</p>
+            <p className="text-[10px] font-bold font-mono text-profit">+₹2,50,000</p>
+          </div>
+          <div className="rounded-lg bg-[hsl(var(--tb-accent)/0.04)] border border-[hsl(var(--tb-accent)/0.12)] p-2.5 text-center">
+            <p className="text-[7px] text-muted-foreground">Current Capital</p>
+            <p className="text-[10px] font-bold font-mono text-[hsl(var(--tb-accent))]">₹12,50,000</p>
+          </div>
+        </div>
+        {/* Transaction log */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 overflow-hidden mb-3">
+          <div className="grid grid-cols-4 gap-1 px-3 py-1.5 text-[7px] font-semibold text-muted-foreground border-b border-border/20">
+            <span>Date</span><span>Type</span><span className="text-right">Amount</span><span className="text-right">Balance</span>
+          </div>
+          {transactions.map((t) => (
+            <div key={t.date} className="grid grid-cols-4 gap-1 px-3 py-1.5 text-[9px] border-b border-border/10 last:border-0">
+              <span className="text-muted-foreground">{t.date}</span>
+              <span className="font-semibold">{t.type}</span>
+              <span className={cn("text-right font-mono font-bold", t.color)}>{t.amount}</span>
+              <span className="text-right font-mono">{t.balance}</span>
+            </div>
+          ))}
+        </div>
+        {/* Note */}
+        <div className="flex items-center gap-2 text-[8px] text-muted-foreground">
+          <span className="text-base">💡</span>
+          <span>Capital transactions are <span className="font-semibold text-foreground">separate from P&L</span> — they track actual money in/out and adjust risk calculations without distorting trading performance.</span>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   52p. JournalDashboardTabMockup
    ────────────────────────────────────────────── */
 export function JournalDashboardTabMockup() {
   const summaryCards = [
