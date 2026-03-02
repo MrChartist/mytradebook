@@ -1,18 +1,34 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
+const PENDING_FLAG = "tb-auth-pending";
+const PENDING_TIMEOUT_MS = 12000; // 12s escape hatch
+
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
 
-  // Check if an auth attempt is in flight (login button pressed, OAuth redirect)
-  const isPending = (() => {
-    try { return sessionStorage.getItem("tb-auth-pending") === "1"; } catch { return false; }
-  })();
+  const [isPending, setIsPending] = useState(() => {
+    try { return sessionStorage.getItem(PENDING_FLAG) === "1"; } catch { return false; }
+  });
+
+  // Safety timeout: if pending but no user after 12s, clear flag and stop blocking
+  useEffect(() => {
+    if (!isPending || user) return;
+
+    const timer = setTimeout(() => {
+      console.log("[ProtectedRoute] Pending timeout reached, clearing flag");
+      try { sessionStorage.removeItem(PENDING_FLAG); } catch (_) {}
+      setIsPending(false);
+    }, PENDING_TIMEOUT_MS);
+
+    return () => clearTimeout(timer);
+  }, [isPending, user]);
 
   // While auth is loading OR a pending auth attempt exists, show loader
   if (loading || (!user && isPending)) {
@@ -32,7 +48,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   // User exists — clear pending flag if lingering
-  try { sessionStorage.removeItem("tb-auth-pending"); } catch (_) {}
+  try { sessionStorage.removeItem(PENDING_FLAG); } catch (_) {}
 
   return <>{children}</>;
 }
