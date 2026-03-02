@@ -49,7 +49,22 @@ export interface DashboardContextValue {
 }
 
 export const DashboardContext = createContext<DashboardContextValue | null>(null);
-export const useDashboard = () => useContext(DashboardContext)!;
+const DASHBOARD_DEFAULTS: DashboardContextValue = {
+  selectedMonth: new Date(),
+  setSelectedMonth: () => {},
+  segment: "All",
+  trades: [],
+  monthTrades: [],
+  openTrades: [],
+  prices: {},
+  isPolling: false,
+  lastUpdated: null,
+};
+
+export const useDashboard = () => {
+  const ctx = useContext(DashboardContext);
+  return ctx ?? DASHBOARD_DEFAULTS;
+};
 
 export default function Dashboard() {
   const [selectedMonth, setSelectedMonth] = useState(new Date());
