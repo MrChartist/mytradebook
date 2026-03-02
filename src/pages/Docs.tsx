@@ -28,7 +28,10 @@ import {
   RiskOfRuinMockup, TradeViewsMockup, AIInsightsMockup,
   MobileAppMockup, CalendarDayDetailMockup,
   TodaysPnlHeroMockup, KPICardsDetailMockup, RiskGaugeDetailMockup,
-  EquityCurveWidgetMockup, CalendarHeatmapWidgetMockup, SegmentFilterMockup
+  EquityCurveWidgetMockup, CalendarHeatmapWidgetMockup, SegmentFilterMockup,
+  CreateTradeMockup, TradeStatusLifecycleMockup, TSLDetailMockup,
+  MultiLegStrategyDetailMockup, PositionSizingDetailMockup,
+  PostTradeReviewMockup, TradeTemplateMockup
 } from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
@@ -369,86 +372,99 @@ export default function Docs() {
                 description="The core of TradeBook. Log every trade with detailed metadata — entry, exit, stop loss, targets, tags, chart images, and post-trade reviews. Manage your entire trading book from one screen."
                 icon={CandlestickChart}
               />
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <TradeCardMockup />
-                <div className="space-y-4">
-                  <TradeLifecycleFlow />
-                  <PositionSizingMockup />
-                </div>
-              </div>
+              {/* Creating a Trade */}
+              <CreateTradeMockup />
+              <FeatureCard icon={Search} title="Creating a Trade">
+                <p className="text-sm text-muted-foreground mb-3">Step-by-step trade creation with smart defaults:</p>
+                <FeatureList items={[
+                  "Unified instrument search across NSE, BSE, MCX (equity, futures, options)",
+                  "Auto-detect segment based on instrument type",
+                  "Set entry price, stop loss, and up to 5 target levels",
+                  "Choose trade type: BUY or SELL",
+                  "Add confidence score (1-5) and rating (1-10)",
+                  "Attach setup tags, pattern tags, and notes",
+                  "Upload up to 5 chart images per trade",
+                ]} />
+              </FeatureCard>
+
+              {/* Trade Statuses & Lifecycle */}
+              <TradeStatusLifecycleMockup />
+              <FeatureCard icon={Layers} title="Trade Statuses & Lifecycle">
+                <p className="text-sm text-muted-foreground mb-3">Every trade flows through a clear lifecycle:</p>
+                <FeatureList items={[
+                  "Planned — trade idea logged but not yet executed",
+                  "Open — active position in the market",
+                  "Closed — position exited, P&L calculated",
+                  "Cancelled — trade idea abandoned before entry",
+                ]} />
+              </FeatureCard>
+
+              {/* Trailing Stop Loss */}
+              <TSLDetailMockup />
+              <FeatureCard icon={Target} title="Trailing Stop Loss (TSL)">
+                <p className="text-sm text-muted-foreground mb-3">Automated stop loss management for open positions:</p>
+                <FeatureList items={[
+                  "Configure TSL by percentage, fixed points, or trigger price",
+                  "TSL activates only after price moves in your favor (Activation %)",
+                  "Configurable step size, gap, and cooldown between updates",
+                  "Per-segment TSL profiles (different settings for intraday vs positional)",
+                  "Telegram notifications when TSL updates or gets hit",
+                ]} />
+              </FeatureCard>
+
+              {/* Multi-Leg Strategies */}
+              <MultiLegStrategyDetailMockup />
+              <FeatureCard icon={Grid3X3} title="Multi-Leg Strategies">
+                <p className="text-sm text-muted-foreground mb-3">Group related trades under a single strategy:</p>
+                <FeatureList items={[
+                  "10+ strategy templates (Bull Call Spread, Iron Condor, Straddle, etc.)",
+                  "Add up to 4 individual trade legs under the parent",
+                  "Combined P&L and net premium calculated automatically",
+                  "Strategy-level notes and status tracking",
+                ]} />
+              </FeatureCard>
+
+              {/* Position Sizing Calculator */}
+              <PositionSizingDetailMockup />
+              <FeatureCard icon={Gauge} title="Position Sizing Calculator">
+                <p className="text-sm text-muted-foreground">
+                  Built into the trade creation form. Enter your risk per trade (as % of capital or fixed amount), and the calculator tells you the optimal quantity based on your entry price and stop loss distance. Shows position value and max loss in rupees.
+                </p>
+              </FeatureCard>
+
+              {/* Post-Trade Review */}
+              <PostTradeReviewMockup />
+              <FeatureCard icon={Star} title="Post-Trade Review">
+                <p className="text-sm text-muted-foreground mb-3">When you close a trade, a review modal prompts you to reflect:</p>
+                <FeatureList items={[
+                  "Rate execution quality (1-5 bar scale)",
+                  "Did you follow your trading rules? (Yes/No toggle)",
+                  "What worked well? (free text reflection)",
+                  "What failed or could improve? (free text reflection)",
+                  "Overall trade rating (1-10 stars)",
+                  "Review data feeds into journal analytics",
+                ]} />
+              </FeatureCard>
+
               <TradeViewsMockup />
-              <div className="grid md:grid-cols-2 gap-5">
-                <FeatureCard icon={Search} title="Creating a Trade">
-                  <p className="text-sm text-muted-foreground mb-3">Step-by-step trade creation with smart defaults:</p>
-                  <FeatureList items={[
-                    "Unified instrument search across NSE, BSE, MCX (equity, futures, options)",
-                    "Auto-detect segment based on instrument type",
-                    "Set entry price, stop loss, and up to 5 target levels",
-                    "Choose trade type: BUY or SELL",
-                    "Add confidence score (1-5) and rating (1-10)",
-                    "Attach setup tags, pattern tags, and notes",
-                    "Upload up to 5 chart images per trade",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Layers} title="Trade Statuses & Lifecycle">
-                  <p className="text-sm text-muted-foreground mb-3">Every trade flows through a clear lifecycle:</p>
-                  <FeatureList items={[
-                    "Planned — trade idea logged but not yet executed",
-                    "Open — active position in the market",
-                    "Closed — position exited, P&L calculated",
-                    "Cancelled — trade idea abandoned before entry",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Target} title="Trailing Stop Loss (TSL)">
-                  <p className="text-sm text-muted-foreground mb-3">Automated stop loss management for open positions:</p>
-                  <FeatureList items={[
-                    "Configure TSL by percentage, fixed points, or trigger price",
-                    "TSL activates only after price moves in your favor",
-                    "Configurable step size, gap, and cooldown between updates",
-                    "Per-segment TSL profiles (different settings for intraday vs positional)",
-                    "Telegram notifications when TSL updates or gets hit",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Grid3X3} title="Multi-Leg Strategies">
-                  <p className="text-sm text-muted-foreground mb-3">Group related trades under a single strategy:</p>
-                  <FeatureList items={[
-                    "Create parent strategies (Bull Call Spread, Iron Condor, etc.)",
-                    "Add individual trade legs under the parent",
-                    "Combined P&L calculated automatically across all legs",
-                    "Strategy-level notes and status tracking",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Gauge} title="Position Sizing Calculator">
-                  <p className="text-sm text-muted-foreground">
-                    Built into the trade creation form. Enter your risk per trade (as % of capital or fixed amount), and the calculator tells you the optimal quantity based on your entry price and stop loss distance.
-                  </p>
-                </FeatureCard>
-                <FeatureCard icon={Star} title="Post-Trade Review">
-                  <p className="text-sm text-muted-foreground mb-3">When you close a trade, a review modal prompts you to reflect:</p>
-                  <FeatureList items={[
-                    "Rate execution quality (1-5)",
-                    "Did you follow your trading rules? (Yes/No)",
-                    "What worked well? (free text)",
-                    "What failed or could improve? (free text)",
-                    "Review data feeds into journal analytics",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Download} title="CSV Import & Export">
-                  <CsvImportMockup />
-                  <p className="text-sm text-muted-foreground">
-                    Import trades from CSV files with column mapping. Export your entire trade history to CSV for backup or external analysis. The export includes all trade fields, tags, and review data.
-                  </p>
-                </FeatureCard>
-                <FeatureCard icon={Zap} title="Trade Templates">
-                  <p className="text-sm text-muted-foreground mb-3">Save frequently-used trade setups as templates for quick entry:</p>
-                  <FeatureList items={[
-                    "Pre-fill segment, trade type, default SL %, tags",
-                    "Optional notes template and timeframe",
-                    "Enable/disable auto-tracking and Telegram posting per template",
-                    "One-click apply when creating new trades",
-                  ]} />
-                </FeatureCard>
-              </div>
+              <FeatureCard icon={Download} title="CSV Import & Export">
+                <CsvImportMockup />
+                <p className="text-sm text-muted-foreground">
+                  Import trades from CSV files with column mapping. Export your entire trade history to CSV for backup or external analysis. The export includes all trade fields, tags, and review data.
+                </p>
+              </FeatureCard>
+
+              {/* Trade Templates */}
+              <TradeTemplateMockup />
+              <FeatureCard icon={Zap} title="Trade Templates">
+                <p className="text-sm text-muted-foreground mb-3">Save frequently-used trade setups as templates for quick entry:</p>
+                <FeatureList items={[
+                  "Pre-fill segment, trade type, default SL %, tags",
+                  "Optional notes template and timeframe",
+                  "Enable/disable auto-tracking and Telegram posting per template",
+                  "One-click 'Use' button when creating new trades",
+                ]} />
+              </FeatureCard>
             </section>
 
             {/* ── 4. Alerts System ───────────────────────── */}
