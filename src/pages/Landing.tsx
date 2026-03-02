@@ -582,6 +582,17 @@ export default function Landing() {
         title="Trading Journal for Indian Markets — NSE, MCX, F&O"
         description="Track, analyze, and improve your trades with TradeBook. Real-time alerts, broker integration, and segment-based analytics built for Equity, F&O, and Commodity traders in India."
         path="/"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "TradeBook",
+          "applicationCategory": "FinanceApplication",
+          "operatingSystem": "Web",
+          "description": "Trading journal and analytics platform for Indian markets — NSE, BSE, MCX.",
+          "url": "https://mytradebook.lovable.app",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+          "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "ratingCount": "1200", "bestRating": "5" }
+        }}
       />
       {/* ── Navbar — Floating Island ────────────────────── */}
       <motion.nav
@@ -634,7 +645,7 @@ export default function Landing() {
       </motion.nav>
 
       {/* ── Hero — Manila inspired soft gradient wash ──────── */}
-      <section ref={heroRef} className="relative overflow-hidden">
+      <section ref={heroRef} className="relative overflow-hidden" aria-label="Hero">
         <FloatingElements />
 
         {/* Multi-color pastel gradient wash */}
@@ -657,7 +668,7 @@ export default function Landing() {
                 transition={{ duration: 2, repeat: Infinity }}
               />
               <span className="text-muted-foreground font-medium text-xs tracking-wide">
-                Built for Indian Markets
+                Built for Indian Markets · NSE · BSE · MCX
               </span>
             </motion.div>
           </motion.div>
@@ -682,38 +693,40 @@ export default function Landing() {
           {/* Subtitle */}
           <motion.p
             variants={fadeUp} initial="hidden" animate="visible" custom={0.2}
-            className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed"
+            className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed px-2"
           >
-            The trading journal that shows you <strong className="text-foreground font-semibold">why</strong> you win and{" "}
-            <strong className="text-foreground font-semibold">why</strong> you lose — with segment analytics for Equity, F&O, and Commodities.
+            The only trading journal that shows you <strong className="text-foreground font-semibold">why</strong> you win and{" "}
+            <strong className="text-foreground font-semibold">why</strong> you lose — with segment-level analytics for Equity, F&O, and Commodities.
           </motion.p>
 
           {/* Email CTA — pill shape */}
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.3} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-lg mx-auto mb-7">
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.3} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-lg mx-auto mb-7 px-2">
             <Input
               type="email"
               placeholder="Enter your email"
               value={heroEmail}
               onChange={(e) => setHeroEmail(e.target.value)}
-              className="h-14 rounded-full px-6 text-base border-border/40 bg-card/80 backdrop-blur-sm shadow-sm flex-1 focus-visible:ring-[hsl(var(--tb-accent)/0.3)]"
+              aria-label="Email address for signup"
+              className="h-12 sm:h-14 rounded-full px-6 text-base border-border/40 bg-card/80 backdrop-blur-sm shadow-sm flex-1 w-full focus-visible:ring-[hsl(var(--tb-accent)/0.3)]"
             />
-            <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.97 }}>
+            <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
               <Button
                 size="lg"
-                className="h-14 px-8 text-base gap-2 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_6px_24px_hsl(var(--tb-accent)/0.3)] font-semibold whitespace-nowrap"
-                onClick={() => navigate(`/login${heroEmail ? `?email=${encodeURIComponent(heroEmail)}` : ""}`)}
+                className="h-12 sm:h-14 px-8 text-base gap-2 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_6px_24px_hsl(var(--tb-accent)/0.3)] font-semibold whitespace-nowrap w-full sm:w-auto"
+                onClick={() => navigate(`/login?mode=signup${heroEmail ? `&email=${encodeURIComponent(heroEmail)}` : ""}`)}
               >
-                Get Access
+                Start Free
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </motion.div>
           </motion.div>
 
           {/* Micro trust */}
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.4} className="flex items-center justify-center gap-6 text-xs text-muted-foreground mb-20">
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.4} className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-muted-foreground mb-20">
             <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-profit" /> Free during beta</span>
             <span className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5" /> Bank-grade security</span>
             <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" /> No credit card</span>
+            <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> Setup in 2 min</span>
           </motion.div>
         </motion.div>
 
@@ -952,7 +965,7 @@ export default function Landing() {
       </section>
 
       {/* ── Trust Strip + Stats (merged) ──────────────── */}
-      <section className="py-20 bg-muted/10 dot-pattern">
+      <section className="py-20 bg-muted/10 dot-pattern" aria-label="Trust and statistics">
         <div className="max-w-5xl mx-auto px-6">
           <p className="text-center text-xs text-muted-foreground uppercase tracking-[0.18em] font-semibold mb-8">
             Trusted by 1,200+ traders across Indian markets
@@ -1004,7 +1017,7 @@ export default function Landing() {
       <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
 
       {/* ── Features Bento Grid — Manila style ────────────── */}
-      <section id="features" className="py-24 lg:py-32">
+      <section id="features" className="py-24 lg:py-32" aria-label="Features">
         <MotionSection className="max-w-7xl mx-auto px-6 lg:px-10">
           <motion.div variants={fadeUp} className="text-center mb-20">
             <SectionBadge>Features</SectionBadge>
@@ -1070,7 +1083,7 @@ export default function Landing() {
       <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
 
       {/* ── How It Works ─────────────────────────────────── */}
-      <section className="py-24 lg:py-32 bg-muted/10 dot-pattern">
+      <section className="py-24 lg:py-32 bg-muted/10 dot-pattern" aria-label="How it works">
         <MotionSection className="max-w-5xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-20">
             <SectionBadge>How It Works</SectionBadge>
@@ -1132,7 +1145,7 @@ export default function Landing() {
       <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
 
       {/* ── Comparison Table ─────────────────────────────── */}
-      <section className="py-24 lg:py-32">
+      <section className="py-24 lg:py-32" aria-label="Comparison">
         <MotionSection className="max-w-3xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-14">
             <SectionBadge>Comparison</SectionBadge>
@@ -1200,7 +1213,7 @@ export default function Landing() {
       <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
 
       {/* ── Pricing ──────────────────────────────────────── */}
-      <section id="pricing" className="py-24 lg:py-32 bg-muted/10 dot-pattern">
+      <section id="pricing" className="py-24 lg:py-32 bg-muted/10 dot-pattern" aria-label="Pricing">
         <MotionSection className="max-w-5xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-14">
             <SectionBadge>Pricing</SectionBadge>
@@ -1308,7 +1321,7 @@ export default function Landing() {
       <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
 
       {/* ── Testimonials ─────────────────────────────────── */}
-      <section className="py-24 lg:py-32">
+      <section className="py-24 lg:py-32" aria-label="Testimonials">
         <MotionSection className="max-w-6xl mx-auto px-6 lg:px-10">
           <motion.div variants={fadeUp} className="text-center mb-20">
             <SectionBadge>Testimonials</SectionBadge>
@@ -1516,7 +1529,7 @@ export default function Landing() {
       <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
 
       {/* ── Built for Indian Markets ────────────────────── */}
-      <section className="py-24 lg:py-32 bg-muted/10 dot-pattern">
+      <section className="py-24 lg:py-32 bg-muted/10 dot-pattern" aria-label="Built for Indian markets">
         <MotionSection className="max-w-5xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-14 items-center">
             <motion.div variants={fadeUp}>
@@ -1606,7 +1619,7 @@ export default function Landing() {
       <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
 
       {/* ── FAQ ──────────────────────────────────────────── */}
-      <section className="py-24 lg:py-32 bg-muted/10 dot-pattern">
+      <section id="faq" className="py-24 lg:py-32 bg-muted/10 dot-pattern" aria-label="Frequently asked questions">
         <MotionSection className="max-w-4xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-14">
             <SectionBadge>FAQ</SectionBadge>
@@ -1703,7 +1716,7 @@ export default function Landing() {
       <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />
 
       {/* ── Final CTA ────────────────────────────────────── */}
-      <section className="py-28 lg:py-36 relative overflow-hidden">
+      <section className="py-28 lg:py-36 relative overflow-hidden" aria-label="Call to action">
         {/* Stronger radial glow with double ring */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.12)_0%,transparent_60%)]" />
@@ -1750,7 +1763,7 @@ export default function Landing() {
               className="shimmer-cta h-14 px-12 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_6px_24px_hsl(var(--tb-accent)/0.3)] font-semibold"
               onClick={() => navigate("/login?mode=signup")}
             >
-              Get Started — It's Free <ArrowRight className="w-4 h-4" />
+              Get Started — It's Free <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Button>
           </motion.div>
 
