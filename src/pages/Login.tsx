@@ -178,19 +178,24 @@ export default function Login() {
               markets. Log trades, track performance, and build lasting discipline.
             </p>
 
-            <div className="flex flex-wrap gap-6">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-profit" />
-                <span className="text-sm text-muted-foreground">Trailing Stop Loss</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-primary" />
-                <span className="text-sm text-muted-foreground">AI Insights</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[hsl(var(--tb-accent))]" />
-                <span className="text-sm text-muted-foreground">Rules Engine</span>
-              </div>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+              {[
+                { color: "bg-profit", label: "Trailing Stop Loss" },
+                { color: "bg-primary", label: "AI Insights" },
+                { color: "bg-[hsl(var(--tb-accent))]", label: "Rules Engine" },
+                { color: "bg-profit", label: "Telegram Alerts" },
+                { color: "bg-primary", label: "CSV Import / Export" },
+                { color: "bg-[hsl(var(--tb-accent))]", label: "Multi-Leg Strategies" },
+                { color: "bg-profit", label: "Watchlists & Scanners" },
+                { color: "bg-primary", label: "Weekly Reports" },
+                { color: "bg-[hsl(var(--tb-accent))]", label: "Daily Journal" },
+                { color: "bg-profit", label: "Position Sizing" },
+              ].map((f) => (
+                <div key={f.label} className="flex items-center gap-2">
+                  <div className={cn("w-2 h-2 rounded-full shrink-0", f.color)} />
+                  <span className="text-sm text-muted-foreground">{f.label}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
