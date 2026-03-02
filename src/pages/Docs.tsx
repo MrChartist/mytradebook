@@ -34,7 +34,8 @@ import {
   PostTradeReviewMockup, TradeTemplateMockup,
   AlertConditionTypesMockup, RecurrenceCooldownMockup,
   DeliveryChannelsMockup, AlertManagementMockup,
-  StudyCategoryWorkflowMockup, PatternTaggingMockup, StudyAdditionalFeaturesMockup
+  StudyCategoryWorkflowMockup, PatternTaggingMockup, StudyAdditionalFeaturesMockup,
+  WatchlistDetailMockup
 } from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
@@ -593,6 +594,7 @@ export default function Docs() {
                 icon={Eye}
               />
               <WatchlistMockup />
+              <WatchlistDetailMockup />
               <FeatureCard icon={Eye} title="Watchlist Capabilities">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>

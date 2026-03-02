@@ -2486,3 +2486,91 @@ export function StudyAdditionalFeaturesMockup() {
     </MockupFrame>
   );
 }
+
+/* ──────────────────────────────────────────────
+   52. WatchlistDetailMockup — Full watchlist capabilities
+   ────────────────────────────────────────────── */
+export function WatchlistDetailMockup() {
+  const watchlists = [
+    { name: "Nifty 50 Picks", color: "bg-[hsl(var(--tb-accent))]", count: 8, active: true },
+    { name: "Bank Stocks", color: "bg-[#229ED9]", count: 5, active: false },
+    { name: "Momentum", color: "bg-profit", count: 3, active: false },
+  ];
+  const items = [
+    { symbol: "RELIANCE", ltp: "₹2,867.30", change: "+1.42%", vol: "12.4M", high: "₹2,890", low: "₹2,835", changeColor: "text-profit", bgColor: "bg-profit/5" },
+    { symbol: "HDFCBANK", ltp: "₹1,678.50", change: "-0.65%", vol: "8.7M", high: "₹1,695", low: "₹1,670", changeColor: "text-loss", bgColor: "bg-loss/5" },
+    { symbol: "TCS", ltp: "₹3,542.00", change: "+0.88%", vol: "3.2M", high: "₹3,560", low: "₹3,510", changeColor: "text-profit", bgColor: "bg-profit/5" },
+    { symbol: "INFY", ltp: "₹1,456.75", change: "+2.15%", vol: "6.1M", high: "₹1,462", low: "₹1,425", changeColor: "text-profit", bgColor: "bg-profit/5" },
+    { symbol: "TATAMOTORS", ltp: "₹745.20", change: "-1.20%", vol: "15.8M", high: "₹758", low: "₹740", changeColor: "text-loss", bgColor: "bg-loss/5" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4">
+        {/* Watchlist tabs */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex gap-1.5">
+            {watchlists.map((w) => (
+              <div key={w.name} className={cn(
+                "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold border cursor-pointer transition-all",
+                w.active
+                  ? "border-[hsl(var(--tb-accent)/0.4)] bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))]"
+                  : "border-border/30 text-muted-foreground hover:border-border"
+              )}>
+                <span className={cn("w-2 h-2 rounded-full", w.color)} />
+                <span>{w.name}</span>
+                <span className="text-[8px] bg-muted/60 px-1 py-0.5 rounded-full">{w.count}</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1 rounded-lg bg-muted/40 px-2 py-1">
+              <Search className="w-3 h-3 text-muted-foreground" />
+              <span className="text-[9px] text-muted-foreground">Add symbol…</span>
+            </div>
+            <div className="flex items-center gap-1 text-[8px] text-muted-foreground">
+              <span>Sort:</span>
+              <span className="font-semibold text-foreground">% Change ↓</span>
+            </div>
+          </div>
+        </div>
+        {/* Table header */}
+        <div className="grid grid-cols-7 gap-2 px-3 py-1.5 text-[8px] font-semibold text-muted-foreground border-b border-border/30">
+          <span className="col-span-2">Symbol</span>
+          <span className="text-right">LTP</span>
+          <span className="text-right">Change</span>
+          <span className="text-right">Volume</span>
+          <span className="text-right">High / Low</span>
+          <span className="text-right">Actions</span>
+        </div>
+        {/* Items */}
+        <div className="divide-y divide-border/20">
+          {items.map((item) => (
+            <div key={item.symbol} className={cn("grid grid-cols-7 gap-2 px-3 py-2 items-center hover:bg-muted/20 transition-colors cursor-grab", item.bgColor)}>
+              <div className="col-span-2 flex items-center gap-2">
+                <span className="text-muted-foreground/30 text-[10px] cursor-grab">⠿</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-profit" />
+                <span className="text-[11px] font-bold">{item.symbol}</span>
+              </div>
+              <span className="text-right text-[10px] font-mono font-bold">{item.ltp}</span>
+              <span className={cn("text-right text-[10px] font-mono font-bold", item.changeColor)}>{item.change}</span>
+              <span className="text-right text-[9px] font-mono text-muted-foreground">{item.vol}</span>
+              <span className="text-right text-[8px] font-mono text-muted-foreground">{item.high} / {item.low}</span>
+              <div className="flex items-center justify-end gap-1">
+                <span className="px-1.5 py-0.5 rounded text-[7px] font-bold bg-[hsl(var(--warning)/0.1)] text-[hsl(var(--warning))] cursor-pointer hover:bg-[hsl(var(--warning)/0.2)]">Alert</span>
+                <span className="px-1.5 py-0.5 rounded text-[7px] font-bold bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))] cursor-pointer hover:bg-[hsl(var(--tb-accent)/0.2)]">Trade</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Market status */}
+        <div className="mt-2 flex items-center justify-between rounded-lg bg-muted/20 p-2 text-[9px] text-muted-foreground">
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-profit animate-pulse" />
+            <span>Market Open · NSE</span>
+          </div>
+          <span>Last updated: 11:42 AM IST</span>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
