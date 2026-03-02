@@ -1510,46 +1510,72 @@ export default function Landing() {
       </section>
 
       {/* ── Footer ───────────────────────────────────────── */}
-      <footer className="border-t border-border/20 bg-card/30 py-14">
+      <footer className="border-t border-border/30 bg-card/50 dot-pattern py-16">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <div className="grid md:grid-cols-4 gap-10 mb-10">
             <div className="md:col-span-1">
               <div className="flex items-center gap-2.5 mb-5">
-                <div className="w-8 h-8 rounded-lg bg-[hsl(var(--tb-accent))] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_16px_hsl(var(--tb-accent)/0.25)]">
                   <TrendingUp className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-logo font-bold tracking-tight">TradeBook</span>
+                <span className="font-logo font-bold tracking-tight text-lg">TradeBook</span>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-5">
                 The trading journal built for Indian markets. Track, analyze, and improve.
               </p>
+              <div className="flex items-center gap-2">
+                <a
+                  href="/login?mode=signup"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold bg-[hsl(var(--tb-accent))] text-white rounded-full px-4 py-1.5 hover:bg-[hsl(var(--tb-accent-hover))] transition-colors"
+                >
+                  Get Started <ArrowRight className="w-3 h-3" />
+                </a>
+                <ThemeToggle />
+              </div>
             </div>
             <div>
-              <h4 className="font-semibold text-sm mb-4">Product</h4>
-              <ul className="space-y-2.5 text-sm text-muted-foreground">
-                <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
-                <li><a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a></li>
-                <li><a href="/docs" className="hover:text-foreground transition-colors">Documentation</a></li>
+              <h4 className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-5">Product</h4>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                <li><a href="#features" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Features</a></li>
+                <li><a href="#pricing" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Pricing</a></li>
+                <li><a href="/docs" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Documentation</a></li>
+                <li><a href="#" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Changelog</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-sm mb-4">Support</h4>
-              <ul className="space-y-2.5 text-sm text-muted-foreground">
-                <li><a href="mailto:founder@mrchartist.com" className="hover:text-foreground transition-colors">Contact Us</a></li>
-                <li><a href="/docs" className="hover:text-foreground transition-colors">Documentation</a></li>
+              <h4 className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-5">Support</h4>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                <li><a href="mailto:founder@mrchartist.com" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Contact Us</a></li>
+                <li><a href="/docs" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Documentation</a></li>
+                <li><a href="#faq" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">FAQ</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-sm mb-4">Legal</h4>
-              <ul className="space-y-2.5 text-sm text-muted-foreground">
-                <li><a href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</a></li>
-                <li><a href="/terms" className="hover:text-foreground transition-colors">Terms of Service</a></li>
+              <h4 className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-5">Legal</h4>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                <li><a href="/privacy" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Terms of Service</a></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-border/15 pt-7 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-muted-foreground/80">© {new Date().getFullYear()} TradeBook. All rights reserved. Made with ❤️ in India.</p>
-            <p className="text-xs text-muted-foreground/80">Not SEBI registered. For educational purposes only.</p>
+
+          {/* Gradient separator */}
+          <div className="h-[1px] bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.25)] to-transparent mb-7" />
+
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-muted-foreground/80 flex items-center gap-1.5">
+              © {new Date().getFullYear()} TradeBook. All rights reserved.
+              <span className="inline-flex items-center gap-1">
+                Made with ❤️ in
+                <span className="inline-flex gap-[2px]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF9933]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white border border-border/40" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#138808]" />
+                </span>
+                India
+              </span>
+            </p>
+            <span className="text-[10px] text-muted-foreground/60 bg-muted/30 rounded-full px-3 py-1">Not SEBI registered · For educational purposes only</span>
           </div>
         </div>
       </footer>
