@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { SEOHead } from "@/components/SEOHead";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -82,6 +83,7 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-6">
+      <SEOHead title="Reset Password" path="/reset-password" noIndex />
       <div className="w-full max-w-md">
         <div className="surface-card p-8">
           <div className="text-center mb-8">
