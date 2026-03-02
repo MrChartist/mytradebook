@@ -2721,7 +2721,243 @@ export function MistakeAnalysisToolsMockup() {
 }
 
 /* ──────────────────────────────────────────────
-   52d. JournalDashboardTabMockup
+   52e. DhanIntegrationDetailMockup
+   ────────────────────────────────────────────── */
+export function DhanIntegrationDetailMockup() {
+  const apiKeys = [
+    { name: "Primary Key", status: "Connected", expiry: "12 Mar 2027", priority: 1, active: true },
+    { name: "Backup Key", status: "Connected", expiry: "05 Aug 2026", priority: 2, active: false },
+  ];
+  const syncItems = [
+    { label: "Portfolio Sync", detail: "Every 5 min during market hours", status: "Active", statusColor: "text-profit" },
+    { label: "Live Prices", detail: "Real-time LTP for open positions", status: "Streaming", statusColor: "text-profit" },
+    { label: "Instrument Master", detail: "Last synced: 26 Feb, 6:00 AM", status: "Up to date", statusColor: "text-muted-foreground" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center">
+              <TrendingUp className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
+            </div>
+            <div>
+              <p className="text-xs font-bold">Dhan Broker</p>
+              <p className="text-[8px] text-muted-foreground">OAuth 2.0 · Secure Connection</p>
+            </div>
+          </div>
+          <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[8px] font-semibold bg-profit/10 text-profit">
+            <span className="w-1.5 h-1.5 rounded-full bg-profit animate-pulse" />
+            Connected
+          </span>
+        </div>
+
+        {/* Auth flow diagram */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 p-3 mb-3">
+          <p className="text-[9px] font-bold mb-2">Authentication Flow</p>
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            {[
+              { label: "TradeBook", sub: "Initiate OAuth" },
+              { label: "Dhan Login", sub: "Authorize access" },
+              { label: "Token Issued", sub: "12-month validity" },
+              { label: "Auto Sync", sub: "Portfolio + Prices" },
+            ].map((step, i) => (
+              <div key={step.label} className="flex items-center gap-2">
+                <div className="flex flex-col items-center gap-0.5">
+                  <div className="w-8 h-8 rounded-full bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center text-[9px] font-bold text-[hsl(var(--tb-accent))]">
+                    {i + 1}
+                  </div>
+                  <span className="text-[8px] font-semibold">{step.label}</span>
+                  <span className="text-[7px] text-muted-foreground">{step.sub}</span>
+                </div>
+                {i < 3 && <ArrowRight className="w-3 h-3 text-muted-foreground shrink-0 -mt-3" />}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* API Keys table */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 overflow-hidden mb-3">
+          <div className="px-3 py-1.5 bg-muted/30 border-b border-border/20 flex items-center justify-between">
+            <p className="text-[9px] font-bold">API Keys</p>
+            <span className="text-[7px] text-[hsl(var(--tb-accent))] font-semibold cursor-pointer">+ Add Key</span>
+          </div>
+          {apiKeys.map((k) => (
+            <div key={k.name} className="flex items-center justify-between px-3 py-2 border-b border-border/10 last:border-0">
+              <div className="flex items-center gap-2">
+                <span className={cn(
+                  "w-5 h-5 rounded-full flex items-center justify-center text-[7px] font-bold",
+                  k.active ? "bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))]" : "bg-muted text-muted-foreground"
+                )}>P{k.priority}</span>
+                <div>
+                  <p className="text-[9px] font-semibold">{k.name}</p>
+                  <p className="text-[7px] text-muted-foreground">Expires: {k.expiry}</p>
+                </div>
+              </div>
+              <span className="text-[8px] font-semibold text-profit">{k.status}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Live sync status */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 p-3 mb-3">
+          <p className="text-[9px] font-bold mb-2">Sync Status</p>
+          <div className="space-y-2">
+            {syncItems.map((s) => (
+              <div key={s.label} className="flex items-center justify-between">
+                <div>
+                  <p className="text-[9px] font-semibold">{s.label}</p>
+                  <p className="text-[7px] text-muted-foreground">{s.detail}</p>
+                </div>
+                <span className={cn("text-[8px] font-semibold", s.statusColor)}>{s.status}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Execution preview */}
+        <div className="rounded-lg bg-profit/5 border border-profit/15 p-3">
+          <p className="text-[9px] font-bold text-profit mb-1.5">⚡ One-Click Execution</p>
+          <div className="flex items-center gap-3">
+            <div className="flex-1 rounded bg-card border border-border/20 p-2 text-center">
+              <p className="text-[8px] text-muted-foreground">BUY RELIANCE</p>
+              <p className="text-[10px] font-bold font-mono">₹2,845 × 10</p>
+            </div>
+            <ArrowRight className="w-3 h-3 text-profit shrink-0" />
+            <div className="flex-1 rounded bg-profit/10 border border-profit/20 p-2 text-center">
+              <p className="text-[8px] text-profit font-semibold">Order Placed ✓</p>
+              <p className="text-[7px] text-muted-foreground">via Dhan API</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   52f. TelegramIntegrationDetailMockup
+   ────────────────────────────────────────────── */
+export function TelegramIntegrationDetailMockup() {
+  const channels = [
+    { label: "Personal", chatId: "123456789", types: ["Trades", "Alerts"], segments: ["All"], status: "Verified", icon: "👤" },
+    { label: "Options Group", chatId: "-100198...", types: ["Alerts", "TSL"], segments: ["Options"], status: "Verified", icon: "👥" },
+    { label: "Daily Reports", chatId: "-100245...", types: ["EOD", "Weekly"], segments: ["All"], status: "Verified", icon: "📢" },
+  ];
+  const deliveryLog = [
+    { type: "Alert", symbol: "NIFTY", time: "10:34 AM", status: "✓ Delivered", color: "text-profit" },
+    { type: "TSL Update", symbol: "RELIANCE", time: "11:12 AM", status: "✓ Delivered", color: "text-profit" },
+    { type: "EOD Report", symbol: "—", time: "3:45 PM", status: "⏳ Pending", color: "text-[hsl(var(--warning))]" },
+  ];
+  return (
+    <MockupFrame className="my-6">
+      <div className="rounded-xl bg-card border border-border/40 p-4">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-[#229ED9]/10 flex items-center justify-center">
+              <Send className="w-4 h-4 text-[#229ED9]" />
+            </div>
+            <div>
+              <p className="text-xs font-bold">Telegram</p>
+              <p className="text-[8px] text-muted-foreground">@MyTradeBot · Custom Bot</p>
+            </div>
+          </div>
+          <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[8px] font-semibold bg-profit/10 text-profit">
+            <span className="w-1.5 h-1.5 rounded-full bg-profit animate-pulse" />
+            3 Active Channels
+          </span>
+        </div>
+
+        {/* Bot setup flow */}
+        <div className="rounded-lg bg-[#229ED9]/5 border border-[#229ED9]/15 p-3 mb-3">
+          <p className="text-[9px] font-bold mb-2">Setup Flow</p>
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            {[
+              { step: "1", label: "Create Bot", sub: "@BotFather" },
+              { step: "2", label: "Paste Token", sub: "Bot API key" },
+              { step: "3", label: "Verify", sub: "Send /start" },
+              { step: "4", label: "Add Channels", sub: "Route notifications" },
+            ].map((s, i) => (
+              <div key={s.step} className="flex items-center gap-2">
+                <div className="flex flex-col items-center gap-0.5">
+                  <div className="w-7 h-7 rounded-full bg-[#229ED9]/15 flex items-center justify-center text-[9px] font-bold text-[#229ED9]">
+                    {s.step}
+                  </div>
+                  <span className="text-[8px] font-semibold">{s.label}</span>
+                  <span className="text-[7px] text-muted-foreground">{s.sub}</span>
+                </div>
+                {i < 3 && <ArrowRight className="w-3 h-3 text-muted-foreground shrink-0 -mt-3" />}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Channel routing */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 overflow-hidden mb-3">
+          <div className="px-3 py-1.5 bg-muted/30 border-b border-border/20 flex items-center justify-between">
+            <p className="text-[9px] font-bold">Channel Routing</p>
+            <span className="text-[7px] text-[#229ED9] font-semibold cursor-pointer">+ Add Channel</span>
+          </div>
+          {channels.map((ch) => (
+            <div key={ch.label} className="px-3 py-2 border-b border-border/10 last:border-0">
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm">{ch.icon}</span>
+                  <span className="text-[9px] font-bold">{ch.label}</span>
+                  <span className="text-[7px] text-muted-foreground font-mono">{ch.chatId}</span>
+                </div>
+                <span className="text-[7px] font-semibold text-profit">{ch.status}</span>
+              </div>
+              <div className="flex items-center gap-1 flex-wrap">
+                {ch.types.map((t) => (
+                  <span key={t} className="px-1.5 py-0.5 rounded text-[7px] font-semibold bg-[#229ED9]/8 text-[#229ED9]">{t}</span>
+                ))}
+                <span className="text-[7px] text-muted-foreground mx-1">·</span>
+                {ch.segments.map((s) => (
+                  <span key={s} className="px-1.5 py-0.5 rounded text-[7px] font-semibold bg-muted/50 text-muted-foreground">{s}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Notification preview */}
+        <div className="rounded-lg overflow-hidden mb-3">
+          <div className="bg-[#1a2733] p-3 text-white space-y-1.5">
+            <p className="text-[10px] font-bold text-[#229ED9]">🔔 Alert Triggered</p>
+            <p className="text-[9px] opacity-90">NIFTY 50 crossed above <span className="font-mono font-bold">₹22,500</span></p>
+            <p className="text-[8px] opacity-60">LTP: ₹22,512.30 · Time: 10:34 AM IST</p>
+            <div className="border-t border-white/10 pt-1.5 mt-1">
+              <p className="text-[8px] opacity-50">via TradeBook · @MyTradeBot</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Delivery log */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 overflow-hidden">
+          <div className="px-3 py-1.5 bg-muted/30 border-b border-border/20">
+            <p className="text-[9px] font-bold">Recent Deliveries</p>
+          </div>
+          {deliveryLog.map((d, i) => (
+            <div key={i} className="flex items-center justify-between px-3 py-1.5 border-b border-border/10 last:border-0 text-[8px]">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold">{d.type}</span>
+                {d.symbol !== "—" && <span className="text-muted-foreground font-mono">{d.symbol}</span>}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground">{d.time}</span>
+                <span className={cn("font-semibold", d.color)}>{d.status}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   52g. JournalDashboardTabMockup
    ────────────────────────────────────────────── */
 export function JournalDashboardTabMockup() {
   const summaryCards = [

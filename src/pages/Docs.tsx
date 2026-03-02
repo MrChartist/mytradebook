@@ -37,7 +37,8 @@ import {
   StudyCategoryWorkflowMockup, PatternTaggingMockup, StudyAdditionalFeaturesMockup,
   WatchlistDetailMockup,
   JournalDashboardTabMockup, JournalCalendarTabMockup, JournalMistakesTabMockup, JournalFiltersSegmentationMockup,
-  DailyJournalWorkflowMockup, MistakeAnalysisToolsMockup
+  DailyJournalWorkflowMockup, MistakeAnalysisToolsMockup,
+  DhanIntegrationDetailMockup, TelegramIntegrationDetailMockup
 } from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
@@ -868,28 +869,34 @@ export default function Docs() {
                 <TelegramChannelsMockup />
               </div>
               <div className="grid md:grid-cols-2 gap-5">
-                <FeatureCard icon={LineChart} title="Dhan Broker Integration">
-                  <p className="text-sm text-muted-foreground mb-3">Connect your Dhan trading account for seamless data sync:</p>
-                  <FeatureList items={[
-                    "OAuth-based secure authentication",
-                    "Auto-sync portfolio positions",
-                    "Live LTP (Last Traded Price) for open positions",
-                    "One-click trade execution from TradeBook",
-                    "Real-time P&L tracking with live prices",
-                    "Instrument master data sync for accurate symbol search",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Send} title="Telegram Integration">
-                  <p className="text-sm text-muted-foreground mb-3">Get instant notifications on your phone via Telegram:</p>
-                  <FeatureList items={[
-                    "Alert triggers — instant notification when price conditions are met",
-                    "EOD (End of Day) reports — daily P&L summary after market close",
-                    "Morning briefings — pre-market overview of your open positions",
-                    "Weekly reports — full performance summary every Monday",
-                    "TSL updates — trailing stop loss movement notifications",
-                    "Multiple chat channels with segment-level routing",
-                  ]} />
-                </FeatureCard>
+                <div>
+                  <DhanIntegrationDetailMockup />
+                  <FeatureCard icon={LineChart} title="Dhan Broker Integration">
+                    <p className="text-sm text-muted-foreground mb-3">Connect your Dhan trading account for seamless data sync:</p>
+                    <FeatureList items={[
+                      "OAuth-based secure authentication",
+                      "Auto-sync portfolio positions",
+                      "Live LTP (Last Traded Price) for open positions",
+                      "One-click trade execution from TradeBook",
+                      "Real-time P&L tracking with live prices",
+                      "Instrument master data sync for accurate symbol search",
+                    ]} />
+                  </FeatureCard>
+                </div>
+                <div>
+                  <TelegramIntegrationDetailMockup />
+                  <FeatureCard icon={Send} title="Telegram Integration">
+                    <p className="text-sm text-muted-foreground mb-3">Get instant notifications on your phone via Telegram:</p>
+                    <FeatureList items={[
+                      "Alert triggers — instant notification when price conditions are met",
+                      "EOD (End of Day) reports — daily P&L summary after market close",
+                      "Morning briefings — pre-market overview of your open positions",
+                      "Weekly reports — full performance summary every Monday",
+                      "TSL updates — trailing stop loss movement notifications",
+                      "Multiple chat channels with segment-level routing",
+                    ]} />
+                  </FeatureCard>
+                </div>
               </div>
             </section>
 
