@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRealtimeInvalidate } from "@/hooks/useRealtimeInvalidate";
 import { toast } from "sonner";
 
 interface UserSettings {
@@ -36,6 +37,9 @@ interface UserSettings {
 export function useUserSettings() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  
+  // Realtime: auto-invalidate settings on DB changes (e.g. from another tab)
+  useRealtimeInvalidate("user_settings", "user-settings");
 
   const { data: settings, isLoading } = useQuery({
     queryKey: ["user-settings", user?.id],

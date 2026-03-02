@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { notifyNewTrade, notifyTradeClosed, notifySLModified } from "@/lib/telegram";
 import { fireProfitConfetti } from "@/lib/confetti";
+import { useRealtimeInvalidate } from "@/hooks/useRealtimeInvalidate";
 import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 
 export type Trade = Tables<"trades">;
@@ -22,6 +23,9 @@ export function useTrades(filters?: TradeFilters) {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Realtime: auto-invalidate trades query on DB changes
+  useRealtimeInvalidate("trades", "trades");
 
   const tradesQuery = useQuery({
     queryKey: ["trades", user?.id, filters],

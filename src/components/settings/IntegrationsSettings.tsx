@@ -133,7 +133,7 @@ export default function IntegrationsSettings() {
       if (updateError) throw updateError;
 
       toast.success("Telegram connected successfully!");
-      window.location.reload();
+      // Realtime subscription will auto-refresh settings
     } catch (e) {
       console.error("Telegram save error:", e);
       toast.error(e instanceof Error ? e.message : "Failed to connect. Check your Chat ID.");
@@ -164,7 +164,7 @@ export default function IntegrationsSettings() {
       if (data?.success) {
         toast.success(`Connected as ${data.account_name}`);
         setDhanAccessToken(""); // Clear token from UI
-        window.location.reload();
+        // Realtime subscription will auto-refresh settings
       } else {
         toast.error(data?.error || "Verification failed");
       }
@@ -227,7 +227,7 @@ export default function IntegrationsSettings() {
       if (error) throw error;
       if (data?.success) {
         toast.success("Dhan disconnected");
-        window.location.reload();
+        // Realtime subscription will auto-refresh settings
       }
     } catch (e) {
       toast.error("Failed to disconnect");
