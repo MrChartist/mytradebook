@@ -1345,37 +1345,96 @@ export default function Landing() {
       </section>
 
       {/* ── FAQ ──────────────────────────────────────────── */}
-      <section className="py-24 lg:py-32">
-        <MotionSection className="max-w-2xl mx-auto px-6">
+      <section className="py-24 lg:py-32 dot-pattern">
+        <MotionSection className="max-w-4xl mx-auto px-6">
           <motion.div variants={fadeUp} className="text-center mb-14">
             <SectionBadge>FAQ</SectionBadge>
-            <h2 className="text-3xl lg:text-5xl font-extrabold mb-5 leading-tight">
+            <h2 className="text-3xl lg:text-5xl font-extrabold mb-4 leading-tight">
               Got{" "}
               <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>
                 questions
               </span>
               ?
             </h2>
+            <p className="text-muted-foreground text-base">Everything you need to know about TradeBook</p>
           </motion.div>
           <motion.div variants={fadeUp}>
-            <Accordion type="single" collapsible className="space-y-3">
-              {[
+            {(() => {
+              const faqs = [
                 { q: "Is my data safe?", a: "Absolutely. All data is encrypted at rest and in transit with bank-grade security. We never share or sell your trading data to anyone." },
                 { q: "Can I import from Zerodha, Angel One, or other brokers?", a: "Yes! Our CSV import supports all major Indian brokers. Simply export your trade history as CSV and import it into TradeBook with automatic column mapping." },
                 { q: "Is it really free during beta?", a: "Yes — all features are completely free during the beta period. No credit card required. We'll notify you before any pricing changes." },
                 { q: "Does it work on mobile?", a: "TradeBook is a Progressive Web App (PWA) that works beautifully on any device — phone, tablet, or desktop. Install it on your home screen for a native app experience." },
                 { q: "How is TradeBook different from a spreadsheet?", a: "Unlike spreadsheets, TradeBook offers automated analytics, segment-level breakdowns, trailing stop loss tracking, real-time alerts, and AI-powered insights — all purpose-built for Indian market traders." },
-              ].map((faq, i) => (
-                <AccordionItem key={i} value={`faq-${i}`} className="rounded-xl border border-border/40 bg-card/80 px-5 data-[state=open]:border-[hsl(var(--tb-accent)/0.25)]">
-                  <AccordionTrigger className="text-left text-sm font-semibold hover:no-underline py-4">
-                    {faq.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
-                    {faq.a}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+                { q: "What broker integrations are supported?", a: "Currently Dhan is supported with live sync for real-time portfolio tracking. For all other brokers — Zerodha, Angel One, Groww, Upstox, and more — you can import trades via CSV with smart column mapping." },
+                { q: "Can I track F&O and multi-leg strategies?", a: "Yes! Full options support with multi-leg strategies, strategy-level P&L tracking, and segment-wise breakdowns for Futures, Options, and Commodities." },
+                { q: "Do you have AI-powered insights?", a: "Yes — AI analyzes your trading patterns, identifies recurring mistakes, highlights your best setups, and suggests actionable improvements to sharpen your edge." },
+                { q: "Can I set alerts and notifications?", a: "Set price alerts, percentage-change alerts, and volume spike alerts. Get notified via in-app notifications or Telegram for real-time monitoring." },
+                { q: "Is there a trading rules checklist?", a: "Yes! Create custom pre-trade checklists to enforce discipline. Review your rules before every trade and track how often you follow them." },
+              ];
+              const left = faqs.slice(0, 5);
+              const right = faqs.slice(5);
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-0">
+                  <Accordion type="single" collapsible className="space-y-3">
+                    {left.map((faq, i) => (
+                      <AccordionItem key={i} value={`faq-l-${i}`} className="rounded-xl border border-border/40 bg-card/80 px-5 data-[state=open]:border-l-2 data-[state=open]:border-l-[hsl(var(--tb-accent))] data-[state=open]:border-[hsl(var(--tb-accent)/0.25)]">
+                        <AccordionTrigger className="text-left text-sm font-semibold hover:no-underline py-4">
+                          <span className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono text-muted-foreground/60">{String(i + 1).padStart(2, "0")}</span>
+                            {faq.q}
+                          </span>
+                        </AccordionTrigger>
+                        <AccordionContent className="text-sm text-muted-foreground leading-relaxed pl-8">
+                          {faq.a}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                  <Accordion type="single" collapsible className="space-y-3">
+                    {right.map((faq, i) => (
+                      <AccordionItem key={i} value={`faq-r-${i}`} className="rounded-xl border border-border/40 bg-card/80 px-5 data-[state=open]:border-l-2 data-[state=open]:border-l-[hsl(var(--tb-accent))] data-[state=open]:border-[hsl(var(--tb-accent)/0.25)]">
+                        <AccordionTrigger className="text-left text-sm font-semibold hover:no-underline py-4">
+                          <span className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono text-muted-foreground/60">{String(i + 6).padStart(2, "0")}</span>
+                            {faq.q}
+                          </span>
+                        </AccordionTrigger>
+                        <AccordionContent className="text-sm text-muted-foreground leading-relaxed pl-8">
+                          {faq.a}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+              );
+            })()}
+          </motion.div>
+
+          {/* Docs Preview CTA */}
+          <motion.div variants={fadeUp} className="mt-14">
+            <div className="relative p-[1px] rounded-2xl bg-gradient-to-r from-[hsl(var(--tb-accent)/0.4)] via-border/30 to-[hsl(var(--tb-accent)/0.4)]">
+              <div className="rounded-2xl bg-card p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                  <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-[hsl(var(--tb-accent))]" />
+                    Want to dive deeper?
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-3">Explore our comprehensive documentation with visual guides</p>
+                  <div className="flex flex-wrap gap-2">
+                    {["Getting Started", "Trade Management", "Analytics", "AI Insights", "Alerts & Notifications"].map(tag => (
+                      <span key={tag} className="text-[10px] uppercase tracking-wider font-medium bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <Button onClick={() => navigate("/docs")} className="gap-2 shrink-0">
+                  <BookOpen className="w-4 h-4" />
+                  Browse Documentation
+                </Button>
+              </div>
+            </div>
           </motion.div>
         </MotionSection>
       </section>
