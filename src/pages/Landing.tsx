@@ -8,7 +8,7 @@ import {
   LineChart, CheckCircle2, Zap, Eye, ChevronDown, Star, Quote, Activity,
   PieChart, Layers, Clock, ArrowUpRight, ArrowDownRight, Minus, Play,
   Smartphone, Globe, Lock, Sparkles, Award, Users, Calendar, MousePointerClick,
-  Send, CandlestickChart, Gauge,
+  Send, CandlestickChart, Gauge, Home, ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -565,92 +565,169 @@ export default function Landing() {
 
                 {/* Main content */}
                 <div className="flex-1 p-4 sm:p-5">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h1 className="text-base sm:text-lg font-bold tracking-tight">
-                        Welcome, <span className="text-primary">Mr. Chartist</span> 👋
-                      </h1>
-                      <p className="text-[10px] text-muted-foreground">Last login: 2 Mar 2026, 09:15 AM</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="px-2.5 py-1 rounded-md bg-profit/8 text-profit text-[10px] font-semibold flex items-center gap-1">
-                        <ArrowUpRight className="w-3 h-3" /> 4 day streak
-                      </div>
-                      <div className="px-2 py-1 rounded-md bg-muted/50 text-muted-foreground text-[10px] flex items-center gap-1">
-                        <Activity className="w-3 h-3 text-profit animate-pulse" /> Live
-                      </div>
+                  {/* Breadcrumb */}
+                  <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-3">
+                    <Home className="w-3 h-3" />
+                    <ChevronRight className="w-2.5 h-2.5 opacity-40" />
+                    <span>Overview</span>
+                    <ChevronRight className="w-2.5 h-2.5 opacity-40" />
+                    <span className="text-foreground font-medium">Dashboard</span>
+                    <div className="ml-auto flex items-center gap-1">
+                      <Activity className="w-3 h-3 text-profit animate-pulse" />
+                      <span className="text-profit font-medium">Live</span>
                     </div>
                   </div>
 
+                  {/* Greeting row */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h1 className="text-base sm:text-xl font-bold tracking-tight">
+                        Good morning, <span className="text-primary">Mr. Chartist</span> 👋
+                      </h1>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <p className="text-[10px] text-muted-foreground">Last login: 2 Mar 2026, 09:15 AM</p>
+                        <span className="text-muted-foreground/30 text-[10px]">•</span>
+                        <div className="flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-profit animate-pulse" />
+                          <span className="text-[10px] text-muted-foreground">Market Open</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="hidden sm:flex items-center gap-1 bg-muted/40 rounded-full p-0.5">
+                      {["Jan", "Feb", "Mar"].map((m, i) => (
+                        <span key={m} className={cn(
+                          "px-2.5 py-1 text-[9px] font-medium rounded-full",
+                          i === 2 ? "bg-background shadow-sm text-foreground" : "text-muted-foreground"
+                        )}>{m}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Segment filters */}
+                  <div className="flex gap-1.5 mb-3 flex-wrap">
+                    {["All", "Intraday", "Positional", "Futures", "Options", "Commodities"].map((s, i) => (
+                      <span key={s} className={cn(
+                        "px-2.5 py-1 text-[9px] font-medium rounded-full border",
+                        i === 0 ? "bg-primary text-primary-foreground border-primary" : "border-border/40 text-muted-foreground"
+                      )}>{s}</span>
+                    ))}
+                  </div>
+
                   {/* Today's P&L Hero */}
-                  <div className="mb-4 rounded-xl border border-profit/15 bg-gradient-to-r from-profit/5 to-transparent p-3.5">
-                    <div className="flex items-center justify-between">
+                  <div className="mb-3 rounded-xl border border-profit/15 bg-gradient-to-r from-profit/5 to-transparent p-3">
+                    <div className="flex items-center justify-between mb-2">
                       <div>
                         <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-0.5">Today's P&L</p>
-                        <p className="text-xl font-bold font-mono text-profit">+₹8,450</p>
+                        <p className="text-xl font-bold font-mono text-profit">+₹12,450</p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-[9px] text-muted-foreground">Win Rate</p>
-                        <p className="text-sm font-bold font-mono text-profit">75%</p>
+                      <div className="w-8 h-8 rounded-full bg-profit/10 flex items-center justify-center">
+                        <ArrowUpRight className="w-4 h-4 text-profit" />
                       </div>
-                      <div className="text-right">
-                        <p className="text-[9px] text-muted-foreground">Trades</p>
-                        <p className="text-sm font-bold font-mono">4/4</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border/10">
+                      <div>
+                        <p className="text-[8px] text-muted-foreground">Realized</p>
+                        <p className="text-xs font-bold font-mono text-profit">+₹8,450</p>
+                        <p className="text-[8px] text-muted-foreground">3 closed</p>
+                      </div>
+                      <div>
+                        <p className="text-[8px] text-muted-foreground">Unrealized</p>
+                        <p className="text-xs font-bold font-mono text-profit">+₹4,000</p>
+                        <p className="text-[8px] text-muted-foreground">2 open</p>
                       </div>
                     </div>
                   </div>
 
                   {/* KPI row */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
                     {[
-                      { label: "MTD P&L", value: "+₹24,850", change: "+12.4%", colored: true },
-                      { label: "Win Rate", value: "67.5%", change: "+3.2%", colored: true },
-                      { label: "Open Positions", value: "3", change: "₹2.4L invested", colored: false },
-                      { label: "Active Alerts", value: "8", change: "2 triggered", colored: false },
+                      { label: "MTD P&L", value: "+₹24,850", sub: "Realized +₹18.2K  Unrealized +₹6.6K", icon: BarChart3, iconColor: "text-profit", iconBg: "bg-profit/10", colored: true },
+                      { label: "OPEN POSITIONS", value: "3", sub: "₹2.4L at risk (to SL)", icon: Target, iconColor: "text-[hsl(var(--tb-accent))]", iconBg: "bg-[hsl(var(--tb-accent)/0.1)]", colored: false },
+                      { label: "WIN RATE", value: "67.5%", sub: "Closed: 12 | W: 8 | L: 4", icon: TrendingUp, iconColor: "text-primary", iconBg: "bg-primary/10", colored: true },
+                      { label: "ACTIVE ALERTS", value: "8", sub: "Price: 5 | Technical: 3", icon: Bell, iconColor: "text-[hsl(var(--tb-accent))]", iconBg: "bg-[hsl(var(--tb-accent)/0.1)]", colored: false },
                     ].map((kpi) => (
-                      <div key={kpi.label} className="rounded-xl border border-border/20 bg-card p-3">
-                        <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">{kpi.label}</p>
-                        <p className={cn("text-base font-bold font-mono", kpi.colored ? "text-profit" : "text-foreground")}>{kpi.value}</p>
-                        <p className="text-[9px] font-mono mt-0.5 text-muted-foreground">{kpi.change}</p>
+                      <div key={kpi.label} className="rounded-xl border border-border/20 bg-card p-2.5">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <p className="text-[8px] text-muted-foreground uppercase tracking-wider">{kpi.label}</p>
+                          <div className={cn("w-6 h-6 rounded-full flex items-center justify-center", kpi.iconBg)}>
+                            <kpi.icon className={cn("w-3 h-3", kpi.iconColor)} />
+                          </div>
+                        </div>
+                        <p className={cn("text-sm font-bold font-mono", kpi.colored ? "text-profit" : "text-foreground")}>{kpi.value}</p>
+                        <p className="text-[7px] font-mono mt-0.5 text-muted-foreground">{kpi.sub}</p>
                       </div>
                     ))}
                   </div>
 
-                  {/* Equity curve + Recent trades */}
-                  <div className="grid sm:grid-cols-5 gap-3">
+                  {/* Chart + Alerts row */}
+                  <div className="grid sm:grid-cols-5 gap-2">
                     <div className="sm:col-span-3 rounded-xl border border-border/20 bg-card p-3">
                       <div className="flex items-center justify-between mb-2">
-                        <p className="text-[10px] text-muted-foreground font-medium">Equity Curve</p>
-                        <p className="text-[10px] text-profit font-mono font-semibold">+₹1,24,850</p>
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
+                            <BarChart3 className="w-3 h-3 text-primary" />
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-semibold">Daily P&L by Segment</p>
+                            <p className="text-[8px] text-muted-foreground">Stacked by market segment</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-0.5 bg-muted/40 rounded-full p-0.5">
+                          {["1W", "1M", "3M"].map((t, i) => (
+                            <span key={t} className={cn(
+                              "px-2 py-0.5 text-[8px] font-medium rounded-full",
+                              i === 1 ? "bg-background shadow-sm text-foreground" : "text-muted-foreground"
+                            )}>{t}</span>
+                          ))}
+                        </div>
                       </div>
-                      <svg viewBox="0 0 400 80" className="w-full h-14">
+                      <svg viewBox="0 0 400 70" className="w-full h-12">
                         <defs>
                           <linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="0%" stopColor="hsl(var(--profit))" stopOpacity="0.2" />
                             <stop offset="100%" stopColor="hsl(var(--profit))" stopOpacity="0" />
                           </linearGradient>
                         </defs>
-                        <path d="M0,65 C20,62 40,58 60,50 C80,42 100,48 130,40 C160,32 180,36 210,28 C240,20 260,24 290,18 C320,12 350,16 370,10 C385,6 395,8 400,5" fill="none" stroke="hsl(var(--profit))" strokeWidth="2" strokeLinecap="round" />
-                        <path d="M0,65 C20,62 40,58 60,50 C80,42 100,48 130,40 C160,32 180,36 210,28 C240,20 260,24 290,18 C320,12 350,16 370,10 C385,6 395,8 400,5 L400,80 L0,80 Z" fill="url(#curveGrad)" />
+                        {/* Bar chart mockup */}
+                        {[
+                          { x: 20, h: 30, color: "hsl(var(--profit))" },
+                          { x: 60, h: 15, color: "hsl(var(--loss))" },
+                          { x: 100, h: 40, color: "hsl(var(--profit))" },
+                          { x: 140, h: 25, color: "hsl(var(--profit))" },
+                          { x: 180, h: 10, color: "hsl(var(--loss))" },
+                          { x: 220, h: 45, color: "hsl(var(--profit))" },
+                          { x: 260, h: 20, color: "hsl(var(--profit))" },
+                          { x: 300, h: 35, color: "hsl(var(--profit))" },
+                          { x: 340, h: 8, color: "hsl(var(--loss))" },
+                          { x: 380, h: 50, color: "hsl(var(--profit))" },
+                        ].map((bar, i) => (
+                          <rect key={i} x={bar.x} y={70 - bar.h} width="24" height={bar.h} rx="3" fill={bar.color} opacity="0.7" />
+                        ))}
                       </svg>
                     </div>
                     <div className="sm:col-span-2 rounded-xl border border-border/20 bg-card p-3">
-                      <p className="text-[10px] text-muted-foreground font-medium mb-2">Recent Trades</p>
-                      <div className="space-y-2">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-1.5">
+                          <Bell className="w-3 h-3 text-primary" />
+                          <div>
+                            <p className="text-[10px] font-semibold">Alerts</p>
+                            <p className="text-[8px] text-muted-foreground">3 active</p>
+                          </div>
+                        </div>
+                        <span className="text-[9px] text-primary font-medium">Manage →</span>
+                      </div>
+                      <div className="space-y-1.5">
                         {[
-                          { sym: "RELIANCE", type: "BUY", pnl: "+₹2,450", up: true },
-                          { sym: "NIFTY 24200 CE", type: "BUY", pnl: "+₹8,200", up: true },
-                          { sym: "TATAMOTORS", type: "SELL", pnl: "-₹1,100", up: false },
-                        ].map((t) => (
-                          <div key={t.sym} className="flex items-center justify-between py-1.5 border-b border-border/10 last:border-0">
-                            <div className="flex items-center gap-2">
-                              <div className={cn("w-1 h-4 rounded-full", t.up ? "bg-profit" : "bg-loss")} />
-                              <div>
-                                <p className="text-[10px] font-semibold leading-tight">{t.sym}</p>
-                                <p className="text-[8px] text-muted-foreground">{t.type}</p>
-                              </div>
+                          { sym: "RELIANCE", cond: "Price > ₹2,950", type: "Price" },
+                          { sym: "NIFTY", cond: "RSI < 30", type: "Technical" },
+                          { sym: "HDFCBANK", cond: "Price < ₹1,600", type: "Price" },
+                        ].map((a) => (
+                          <div key={a.sym} className="flex items-center justify-between py-1 border-b border-border/10 last:border-0">
+                            <div>
+                              <p className="text-[9px] font-semibold">{a.sym}</p>
+                              <p className="text-[7px] text-muted-foreground">{a.cond}</p>
                             </div>
-                            <span className={cn("text-[10px] font-mono font-semibold", t.up ? "text-profit" : "text-loss")}>{t.pnl}</span>
+                            <span className="text-[7px] px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">{a.type}</span>
                           </div>
                         ))}
                       </div>
