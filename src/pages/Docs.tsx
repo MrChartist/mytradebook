@@ -44,6 +44,7 @@ import {
   KeyboardShortcutsDetailMockup,
   SettingsProfileBillingMockup, SettingsPreferencesMockup, SettingsTagManagementMockup,
   SettingsSecurityMockup, SettingsIntegrationsMockup, CapitalManagementMockup,
+  AIApiSetupMockup, AIProviderComparisonMockup, AISettingsPreviewMockup, AIInsightSampleMockup,
   DocsColorModeProvider, useDocsColorMode
 } from "@/components/docs/DocsMockups";
 
@@ -60,6 +61,7 @@ const SECTIONS = [
   { id: "mistakes", label: "Mistakes Review", icon: AlertTriangle },
   { id: "reports", label: "Weekly Reports", icon: PieChart },
   { id: "integrations", label: "Integrations", icon: Layers },
+  { id: "ai-integration", label: "AI Insights Setup", icon: Sparkles },
   { id: "shortcuts", label: "Keyboard Shortcuts", icon: Keyboard },
   { id: "settings", label: "Settings", icon: Settings },
 ];
@@ -164,7 +166,7 @@ export default function Docs() {
     { label: "Getting Started", ids: ["getting-started"] },
     { label: "Core Features", ids: ["dashboard", "trade-management", "alerts", "studies", "watchlists", "journal"] },
     { label: "Advanced", ids: ["analytics", "calendar", "mistakes", "reports"] },
-    { label: "Settings & Tools", ids: ["integrations", "shortcuts", "settings"] },
+    { label: "Settings & Tools", ids: ["integrations", "ai-integration", "shortcuts", "settings"] },
   ];
 
   return (
@@ -933,6 +935,86 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                   <div className="mt-4"><TelegramIntegrationDetailMockup /></div>
                 </FeatureCard>
+              </div>
+            </section>
+
+            {/* ── 12b. AI Insights Setup ─────────────────── */}
+            <section>
+              <SectionHeader
+                id="ai-integration"
+                title="AI Trade Insights"
+                description="Get AI-powered analysis of your trading patterns, timing, and risk management. Uses a Bring Your Own Key (BYOK) model — your key, your cost, zero cost to us. We strongly recommend Google Gemini as it offers a generous free tier."
+                icon={Sparkles}
+              />
+              <AIApiSetupMockup />
+              <AIProviderComparisonMockup />
+
+              <div className="grid md:grid-cols-2 gap-5">
+                <FeatureCard icon={Star} title="Google Gemini (Recommended)" badge="Free">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    <span className="font-semibold text-profit">Completely free</span> — Gemini's free tier is more than enough for daily trade analysis. No credit card required.
+                  </p>
+                  <h4 className="text-sm font-semibold mb-2">How to get your free API key:</h4>
+                  <FeatureList items={[
+                    "Go to aistudio.google.com/app/apikey",
+                    "Sign in with your Google account",
+                    "Click \"Create API Key\" — it's instant",
+                    "Copy the key and paste it in Settings → Integrations → AI Trade Insights",
+                    "That's it! You get 15 requests/minute and 1 million tokens/day for free",
+                  ]} />
+                  <div className="mt-4 p-3 rounded-xl bg-profit/5 border border-profit/20 text-[11px] text-profit font-medium">
+                    💡 Most users will never exceed the free tier. One trade analysis uses ~2,000 tokens — that's 500 analyses per day for free.
+                  </div>
+                </FeatureCard>
+
+                <FeatureCard icon={Zap} title="OpenAI (Alternative)">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    For users who prefer OpenAI's GPT-4o Mini. Note: OpenAI requires paid credits from day one — there is no free API tier.
+                  </p>
+                  <h4 className="text-sm font-semibold mb-2">Setup steps:</h4>
+                  <FeatureList items={[
+                    "Go to platform.openai.com/api-keys",
+                    "Create an account and add billing credits",
+                    "Generate a new API key",
+                    "Paste it in Settings → Integrations → AI Trade Insights",
+                    "Cost: approximately ₹1–2 per analysis",
+                  ]} />
+                  <div className="mt-4 p-3 rounded-xl bg-[hsl(var(--warning)/0.05)] border border-[hsl(var(--warning)/0.2)] text-[11px] text-[hsl(var(--warning))] font-medium">
+                    ⚠️ OpenAI charges per token used. No free tier available for API access.
+                  </div>
+                </FeatureCard>
+              </div>
+
+              <div className="mt-5">
+                <FeatureCard icon={Shield} title="How It Works & Privacy">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="text-sm font-semibold mb-2">What AI Analyzes</h4>
+                      <FeatureList items={[
+                        "Aggregated win/loss statistics (not raw trade data)",
+                        "Timing patterns — best entry hours and days",
+                        "Risk management trends — SL hit rate, R:R ratios",
+                        "Behavioral patterns — early exits, overtrading",
+                        "Mistake frequency and recurring patterns",
+                      ]} />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold mb-2">Privacy & Security</h4>
+                      <FeatureList items={[
+                        "Your API key is stored securely in the database",
+                        "Keys are only used server-side — never exposed to the browser",
+                        "We never see or log your API key",
+                        "Your key, your cost — TradeBook incurs zero AI cost",
+                        "You can disconnect anytime in Settings",
+                      ]} />
+                    </div>
+                  </div>
+                  <div className="mt-4"><AIInsightSampleMockup /></div>
+                </FeatureCard>
+              </div>
+
+              <div className="mt-5">
+                <AISettingsPreviewMockup />
               </div>
             </section>
 
