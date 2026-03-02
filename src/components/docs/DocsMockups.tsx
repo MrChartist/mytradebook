@@ -62,7 +62,7 @@ function MockupFrame({ children, className, label }: { children: ReactNode; clas
       </div>
       {/* Content area */}
       <div className={cn(
-        "p-4 md:p-6",
+        "p-5 md:p-8",
         !isBw && "bg-gradient-to-b from-card to-muted/10"
       )}>
         {children}
@@ -249,7 +249,7 @@ function RiskGaugeMini({ value }: { value: number }) {
 export function TradeCardMockup() {
   return (
     <MockupFrame className="my-6">
-      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-sm mx-auto">
+      <div className="rounded-xl bg-card border border-border/40 p-5 max-w-xl mx-auto">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-profit/10 flex items-center justify-center">
@@ -318,7 +318,7 @@ export function AlertCardMockup() {
   const progress = 87;
   return (
     <MockupFrame className="my-6">
-      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-sm mx-auto">
+      <div className="rounded-xl bg-card border border-border/40 p-5 max-w-xl mx-auto">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Bell className="w-4 h-4 text-[hsl(var(--warning))]" />
@@ -352,7 +352,7 @@ export function AlertCardMockup() {
 export function TelegramNotifMockup() {
   return (
     <MockupFrame className="my-4">
-      <div className="max-w-xs mx-auto">
+      <div className="max-w-md mx-auto">
         <div className="bg-[#1a2733] rounded-2xl p-4 text-white text-xs space-y-1 font-mono">
           <p className="text-[hsl(var(--tb-accent))] font-bold text-sm">🔔 Alert Triggered</p>
           <p className="opacity-90">NIFTY 50 crossed above ₹22,500</p>
@@ -681,7 +681,7 @@ export function SettingsPanelMockup() {
 export function PositionSizingMockup() {
   return (
     <MockupFrame className="my-4">
-      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-xs mx-auto">
+      <div className="rounded-xl bg-card border border-border/40 p-5 max-w-md mx-auto">
         <p className="text-xs font-bold mb-3 flex items-center gap-1.5">
           <Target className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" /> Position Sizing Calculator
         </p>
@@ -704,7 +704,7 @@ export function PositionSizingMockup() {
 export function StudyCardMockup() {
   return (
     <MockupFrame className="my-6">
-      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-sm mx-auto">
+      <div className="rounded-xl bg-card border border-border/40 p-5 max-w-xl mx-auto">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center">
@@ -748,7 +748,7 @@ export function StudyCardMockup() {
 export function StreakDisciplineMockup() {
   return (
     <MockupFrame className="my-6">
-      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-sm mx-auto">
+      <div className="rounded-xl bg-card border border-border/40 p-5 max-w-xl mx-auto">
         <div className="flex items-center gap-2 mb-3">
           <span className="text-base">🏆</span>
           <div>
@@ -964,7 +964,7 @@ export function WidgetCustomizerMockup() {
   ];
   return (
     <MockupFrame className="my-6">
-      <div className="rounded-xl bg-card border border-border/40 p-3 max-w-xs mx-auto">
+      <div className="rounded-xl bg-card border border-border/40 p-5 max-w-md mx-auto">
         <div className="flex items-center justify-between mb-2">
           <p className="text-[10px] font-bold">Dashboard Widgets</p>
           <span className="text-[9px] text-[hsl(var(--tb-accent))] font-medium cursor-default">↺ Reset</span>
@@ -1001,7 +1001,7 @@ export function CsvImportMockup() {
   ];
   return (
     <MockupFrame className="my-6">
-      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-xs mx-auto">
+      <div className="rounded-xl bg-card border border-border/40 p-5 max-w-md mx-auto">
         <p className="text-xs font-bold mb-3 flex items-center gap-1.5">
           <Upload className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" /> CSV Import
         </p>
@@ -1062,9 +1062,9 @@ export function SegmentPerformanceMockup() {
 export function RiskOfRuinMockup() {
   return (
     <MockupFrame className="my-6">
-      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-xs mx-auto text-center">
+      <div className="rounded-xl bg-card border border-border/40 p-5 max-w-md mx-auto text-center">
         <p className="text-[10px] font-semibold text-muted-foreground mb-3">Risk of Ruin Calculator</p>
-        <svg viewBox="0 0 100 55" className="w-24 h-14 mx-auto mb-2">
+        <svg viewBox="0 0 100 55" className="w-32 h-20 mx-auto mb-2">
           <path d="M10 50 A40 40 0 0 1 90 50" fill="none" stroke="hsl(var(--border))" strokeWidth="6" strokeLinecap="round" />
           <path d="M10 50 A40 40 0 0 1 90 50" fill="none" stroke="hsl(var(--profit))" strokeWidth="6" strokeLinecap="round"
             strokeDasharray="8 118" />
@@ -1497,7 +1497,7 @@ export function CalendarHeatmapWidgetMockup() {
   ];
   return (
     <MockupFrame className="my-6">
-      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-sm mx-auto">
+      <div className="rounded-xl bg-card border border-border/40 p-5 max-w-xl mx-auto">
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs font-bold">Calendar Heatmap</p>
           <span className="text-[10px] text-muted-foreground">Feb 2026</span>
@@ -1909,7 +1909,7 @@ export function MultiLegStrategyDetailMockup() {
 export function PositionSizingDetailMockup() {
   return (
     <MockupFrame className="my-6">
-      <div className="rounded-xl bg-card border border-border/40 p-4 max-w-sm mx-auto">
+      <div className="rounded-xl bg-card border border-border/40 p-5 max-w-xl mx-auto">
         <div className="flex items-center gap-2 mb-4">
           <div className="w-8 h-8 rounded-lg bg-[hsl(var(--tb-accent)/0.1)] flex items-center justify-center">
             <Target className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
@@ -3971,7 +3971,7 @@ export function AIProviderComparisonMockup() {
 export function AISettingsPreviewMockup() {
   return (
     <MockupFrame className="my-6">
-      <div className="max-w-sm mx-auto rounded-xl bg-card border border-border/40 p-4">
+      <div className="max-w-xl mx-auto rounded-xl bg-card border border-border/40 p-5">
         <div className="flex items-center gap-2 mb-3">
           <Sparkles className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
           <p className="text-sm font-bold">AI Trade Insights</p>
