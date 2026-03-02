@@ -51,7 +51,7 @@ export function DashboardKPICards({ alerts }: Props) {
   const priceAlerts = alerts.filter((a) => ["PRICE_GT", "PRICE_LT"].includes(a.condition_type)).length;
   const techAlerts = alerts.length - priceAlerts;
 
-  const cardBase = "glass-morph shine-overlay p-5 block cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98] transition-all duration-300 hover:translate-y-[-2px]";
+  const cardBase = "premium-card-hover !p-5 block cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98]";
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

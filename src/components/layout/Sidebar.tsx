@@ -60,23 +60,20 @@ export function Sidebar() {
         key={item.path}
         to={item.path}
         className={cn(
-          "sidebar-nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl group",
+          "flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 group",
           isActive
-            ? "glass-nav-active font-medium"
-            : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+            ? "bg-primary/8 text-primary font-medium"
+            : "text-muted-foreground hover:text-foreground hover:bg-muted"
         )}
       >
         <item.icon
           className={cn(
-            "w-[18px] h-[18px] flex-shrink-0 icon-bounce",
+            "w-[18px] h-[18px] flex-shrink-0",
             isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
           )}
         />
         {!collapsed && (
           <span className="text-[13px]">{item.label}</span>
-        )}
-        {isActive && !collapsed && (
-          <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary animate-pulse-slow" />
         )}
       </NavLink>
     );
@@ -108,8 +105,7 @@ export function Sidebar() {
       {/* Desktop Sidebar */}
       <aside
         className={cn(
-          "hidden lg:flex fixed left-0 top-0 z-40 h-screen flex-col border-r transition-all duration-300",
-          "bg-card/80 backdrop-blur-xl border-border/60",
+          "hidden lg:flex fixed left-0 top-0 z-40 h-screen flex-col bg-card border-r border-border transition-all duration-300",
           collapsed ? "w-[68px]" : "w-[230px]"
         )}
       >
@@ -183,13 +179,13 @@ export function Sidebar() {
           <NavLink
             to="/settings"
             className={cn(
-              "sidebar-nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl group",
+              "flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 group",
               location.pathname === "/settings"
-                ? "glass-nav-active font-medium"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                ? "bg-primary/8 text-primary font-medium"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted"
             )}
           >
-            <Settings className={cn("w-[18px] h-[18px] icon-bounce", location.pathname === "/settings" && "text-primary")} />
+            <Settings className="w-[18px] h-[18px]" />
             {!collapsed && <span className="text-[13px]">Settings</span>}
           </NavLink>
 
