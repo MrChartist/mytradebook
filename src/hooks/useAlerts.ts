@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { notifyAlertCreated, notifyAlertPaused, notifyAlertDeleted } from "@/lib/telegram";
+import { useRealtimeInvalidate } from "@/hooks/useRealtimeInvalidate";
 import type { Database } from "@/integrations/supabase/types";
 
 type Alert = Database["public"]["Tables"]["alerts"]["Row"];
@@ -32,6 +33,9 @@ export function useAlerts(filters?: AlertFilters) {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Realtime: auto-invalidate alerts query on DB changes
+  useRealtimeInvalidate("alerts", "alerts");
 
   const alertsQuery = useQuery({
     queryKey: ["alerts", user?.id, filters],

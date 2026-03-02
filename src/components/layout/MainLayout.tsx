@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Sidebar } from "./Sidebar";
 import { MobileBottomNav } from "./MobileBottomNav";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
@@ -5,6 +6,7 @@ import { useUserSettings } from "@/hooks/useUserSettings";
 import { AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { TrialBanner } from "@/components/TrialBanner";
+import { toast } from "sonner";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -14,6 +16,26 @@ export function MainLayout({ children }: MainLayoutProps) {
   useKeyboardShortcuts({});
   const { settings } = useUserSettings();
   const navigate = useNavigate();
+
+  // Listen for service worker updates and show refresh toast
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const registration = (e as CustomEvent).detail as ServiceWorkerRegistration;
+      toast("New version available", {
+        description: "Refresh to get the latest updates.",
+        action: {
+          label: "Refresh",
+          onClick: () => {
+            registration.waiting?.postMessage({ type: "SKIP_WAITING" });
+            window.location.reload();
+          },
+        },
+        duration: Infinity,
+      });
+    };
+    window.addEventListener("sw-update-available", handler);
+    return () => window.removeEventListener("sw-update-available", handler);
+  }, []);
 
   // Check if Dhan token is expired
   const isDhanConnected = !!settings?.dhan_access_token && !!settings?.dhan_enabled;
