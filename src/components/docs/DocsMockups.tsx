@@ -5,7 +5,7 @@ import {
   ArrowRight, CandlestickChart, Send, LayoutDashboard, BookOpen,
   Layers, Keyboard as KeyboardIcon, Settings, Zap, FileText, Upload,
   List, Grid3X3, Sparkles, Smartphone, ArrowUpRight, ArrowDownRight,
-  Search, Star
+  Search, Star, ExternalLink
 } from "lucide-react";
 
 /* ──────────────────────────────────────────────
@@ -3826,6 +3826,191 @@ export function WatchlistDetailMockup() {
           </div>
           <span>Last updated: 11:42 AM IST</span>
         </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   57. AIApiSetupMockup — 3-step BYOK setup flow
+   ────────────────────────────────────────────── */
+const aiSetupSteps = [
+  { num: 1, label: "Get Free API Key", sub: "Google AI Studio", icon: "🔑" },
+  { num: 2, label: "Paste in Settings", sub: "Settings → Integrations", icon: "⚙️" },
+  { num: 3, label: "Get AI Insights", sub: "Analyze your trades", icon: "✨" },
+];
+
+export function AIApiSetupMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="text-center mb-4">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Setup in 3 Simple Steps</p>
+      </div>
+      <div className="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
+        {aiSetupSteps.map((step, i) => (
+          <div key={step.num} className="flex items-center gap-2 md:gap-4">
+            <div className="flex flex-col items-center gap-1.5">
+              <div className="w-12 h-12 rounded-2xl bg-[hsl(var(--tb-accent)/0.1)] border border-[hsl(var(--tb-accent)/0.2)] flex items-center justify-center text-xl">
+                {step.icon}
+              </div>
+              <div className="w-6 h-6 rounded-full bg-[hsl(var(--tb-accent))] text-white flex items-center justify-center font-bold text-[10px] shadow-glow -mt-1">
+                {step.num}
+              </div>
+              <span className="text-xs font-semibold">{step.label}</span>
+              <span className="text-[10px] text-muted-foreground">{step.sub}</span>
+            </div>
+            {i < aiSetupSteps.length - 1 && (
+              <ArrowRight className="w-5 h-5 text-[hsl(var(--tb-accent))] shrink-0 -mt-6" />
+            )}
+          </div>
+        ))}
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   58. AIProviderComparisonMockup — Gemini vs OpenAI
+   ────────────────────────────────────────────── */
+export function AIProviderComparisonMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="grid md:grid-cols-2 gap-4">
+        {/* Gemini — Recommended */}
+        <div className="rounded-xl border-2 border-[hsl(var(--tb-accent)/0.4)] bg-[hsl(var(--tb-accent)/0.04)] p-4 relative">
+          <div className="absolute -top-2.5 left-4 flex gap-1.5">
+            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[hsl(var(--tb-accent))] text-white shadow-sm">★ Recommended</span>
+            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-profit/20 text-profit border border-profit/30">Free</span>
+          </div>
+          <div className="mt-3 flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-[hsl(var(--tb-accent)/0.15)] flex items-center justify-center text-lg">🤖</div>
+            <div>
+              <p className="text-sm font-bold">Google Gemini</p>
+              <p className="text-[10px] text-muted-foreground">Gemini 2.0 Flash</p>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {[
+              { label: "Free Tier", value: "15 requests/min", highlight: true },
+              { label: "Daily Limit", value: "1M tokens/day", highlight: true },
+              { label: "Cost", value: "₹0 — completely free", highlight: true },
+              { label: "Quality", value: "Excellent for trade analysis" },
+              { label: "Setup Time", value: "~2 minutes" },
+            ].map((row) => (
+              <div key={row.label} className="flex items-center justify-between text-[10px]">
+                <span className="text-muted-foreground">{row.label}</span>
+                <span className={cn("font-semibold", row.highlight ? "text-profit" : "text-foreground")}>{row.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* OpenAI — Alternative */}
+        <div className="rounded-xl border border-border/40 bg-card/60 p-4 relative">
+          <div className="absolute -top-2.5 left-4">
+            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-muted text-muted-foreground border border-border/40">Alternative</span>
+          </div>
+          <div className="mt-3 flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-muted/40 flex items-center justify-center text-lg">🧠</div>
+            <div>
+              <p className="text-sm font-bold">OpenAI</p>
+              <p className="text-[10px] text-muted-foreground">GPT-4o Mini</p>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {[
+              { label: "Free Tier", value: "No free tier", warning: true },
+              { label: "Cost Model", value: "Pay-per-token", warning: true },
+              { label: "Approx Cost", value: "~₹1-2 per analysis" },
+              { label: "Quality", value: "Excellent for trade analysis" },
+              { label: "Setup Time", value: "~3 minutes" },
+            ].map((row) => (
+              <div key={row.label} className="flex items-center justify-between text-[10px]">
+                <span className="text-muted-foreground">{row.label}</span>
+                <span className={cn("font-semibold", row.warning ? "text-[hsl(var(--warning))]" : "text-foreground")}>{row.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   59. AISettingsPreviewMockup — Settings UI preview
+   ────────────────────────────────────────────── */
+export function AISettingsPreviewMockup() {
+  return (
+    <MockupFrame className="my-6">
+      <div className="max-w-sm mx-auto rounded-xl bg-card border border-border/40 p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <Sparkles className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
+          <p className="text-sm font-bold">AI Trade Insights</p>
+          <span className="ml-auto px-2 py-0.5 rounded-full text-[9px] font-bold bg-profit/10 text-profit border border-profit/20">Connected</span>
+        </div>
+        {/* Provider toggle */}
+        <div className="flex gap-1 bg-muted/40 rounded-lg p-0.5 mb-3">
+          <span className="flex-1 text-center px-3 py-1.5 rounded-md text-[10px] font-semibold bg-background shadow-sm text-foreground">
+            Google Gemini
+          </span>
+          <span className="flex-1 text-center px-3 py-1.5 rounded-md text-[10px] font-semibold text-muted-foreground">
+            OpenAI
+          </span>
+        </div>
+        {/* API key input */}
+        <div className="mb-3">
+          <label className="text-[10px] font-semibold text-muted-foreground mb-1 block">API Key</label>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-8 rounded-lg bg-muted/30 border border-border/40 px-3 flex items-center">
+              <span className="text-[10px] font-mono text-muted-foreground">AIza••••••••••••••••kQ</span>
+            </div>
+            <Eye className="w-3.5 h-3.5 text-muted-foreground cursor-pointer" />
+          </div>
+        </div>
+        {/* Save button */}
+        <div className="flex items-center gap-2">
+          <div className="flex-1 h-8 rounded-lg bg-[hsl(var(--tb-accent))] flex items-center justify-center">
+            <span className="text-[10px] font-semibold text-white">Save & Connect</span>
+          </div>
+          <div className="h-8 px-3 rounded-lg border border-border/40 flex items-center justify-center">
+            <span className="text-[10px] text-muted-foreground">Disconnect</span>
+          </div>
+        </div>
+        {/* Help link */}
+        <div className="mt-3 flex items-center gap-1.5 text-[9px] text-[hsl(var(--tb-accent))]">
+          <ExternalLink className="w-3 h-3" />
+          <span className="font-semibold">Get free API key → aistudio.google.com/apikey</span>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   60. AIInsightSampleMockup — Sample insight output
+   ────────────────────────────────────────────── */
+export function AIInsightSampleMockup() {
+  const sampleInsights = [
+    { icon: "🧠", title: "Behavioral Pattern Detected", desc: "You tend to exit winning trades 40% earlier than your average target. Consider using a trailing stop-loss to let winners run.", severity: "warning" },
+    { icon: "⏰", title: "Best Trading Window", desc: "Your win rate is 72% for trades entered between 9:30-10:30 AM. Consider focusing your entries in this window.", severity: "success" },
+    { icon: "🛡️", title: "Risk Management Improving", desc: "Your average risk per trade has dropped from 2.1% to 1.4% over the last 30 days. Great discipline!", severity: "success" },
+  ];
+  return (
+    <MockupFrame className="my-4">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3 text-center">Sample AI Insights Output</p>
+      <div className="space-y-2 max-w-md mx-auto">
+        {sampleInsights.map((insight) => (
+          <div key={insight.title} className={cn(
+            "rounded-lg border p-3 space-y-1",
+            insight.severity === "success" ? "bg-profit/5 border-profit/20" : "bg-[hsl(var(--warning)/0.05)] border-[hsl(var(--warning)/0.2)]"
+          )}>
+            <div className="flex items-center gap-2">
+              <span className="text-sm">{insight.icon}</span>
+              <span className="text-[11px] font-bold">{insight.title}</span>
+            </div>
+            <p className="text-[10px] text-muted-foreground leading-relaxed pl-6">{insight.desc}</p>
+          </div>
+        ))}
       </div>
     </MockupFrame>
   );
