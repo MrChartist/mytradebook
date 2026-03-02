@@ -196,9 +196,18 @@ export default function Docs() {
   return (
     <DocsColorModeProvider>
       <SEOHead
-        title="Documentation"
+        title="Documentation — Complete Feature Guide"
         description="Complete guide to TradeBook features — dashboard, trade logging, alerts, analytics, journal, and integrations for Indian market traders."
         path="/docs"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "TechArticle",
+          "name": "TradeBook Documentation",
+          "description": "Complete guide to every TradeBook feature — from trade logging to AI-powered analytics for Indian market traders.",
+          "url": "https://mytradebook.lovable.app/docs",
+          "author": { "@type": "Organization", "name": "TradeBook" },
+          "about": { "@type": "SoftwareApplication", "name": "TradeBook" }
+        }}
       />
       <DocsContent
         navigate={navigate}
@@ -244,13 +253,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
   }, []);
 
   return (
-    <div className={cn("min-h-screen bg-background text-foreground", isInsideApp && "pb-6", mode === "bw" && "docs-bw")}>
+    <div className={cn("min-h-screen bg-background text-foreground", isInsideApp && "pb-6", mode === "bw" && "docs-bw")} role="document">
       {/* Floating island navbar */}
       <motion.nav
         initial={{ y: -40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
         className="fixed top-4 left-0 right-0 z-50 mx-auto max-w-3xl px-4"
+        aria-label="Documentation navigation"
       >
         <div className="flex items-center justify-between rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg px-4 sm:px-6 h-14">
           {/* Logo */}
@@ -425,7 +435,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </TooltipProvider>
 
           {/* Mobile tabs */}
-          <div className="lg:hidden fixed top-20 left-0 right-0 z-40 bg-background/90 backdrop-blur-lg border-b border-border/20 shadow-sm">
+          <nav className="lg:hidden fixed top-20 left-0 right-0 z-40 bg-background/90 backdrop-blur-lg border-b border-border/20 shadow-sm" aria-label="Section navigation">
             <div className="flex gap-1.5 overflow-x-auto px-4 py-2.5 no-scrollbar">
               {SECTIONS.map((s) => (
                 <button
@@ -442,7 +452,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </button>
               ))}
             </div>
-          </div>
+          </nav>
 
           {/* Main content */}
           <main className={cn("flex-1 min-w-0 space-y-24 lg:pt-0 pt-14 transition-all duration-300", sidebarCollapsed ? "max-w-5xl" : "max-w-4xl")}>
@@ -1315,10 +1325,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   </p>
                   <Button
                     size="lg"
-                    onClick={() => navigate("/login")}
+                    onClick={() => navigate("/login?mode=signup")}
                     className="shimmer-cta bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-10 h-12 text-base gap-2"
                   >
-                    Get Started Free <ArrowRight className="w-4 h-4" />
+                    Start Free — No Credit Card <ArrowRight className="w-4 h-4" aria-hidden="true" />
                   </Button>
                 </div>
               </motion.section>
@@ -1329,14 +1339,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
       {/* Footer — only on standalone */}
       {!isInsideApp && (
-        <footer className="border-t border-border/20 bg-card/50 dot-pattern py-10">
+        <footer className="border-t border-border/20 bg-card/50 dot-pattern py-10" role="contentinfo">
           <div className="max-w-7xl mx-auto px-6 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-muted-foreground/50">© {new Date().getFullYear()} TradeBook. All rights reserved.</p>
-            <div className="flex items-center gap-4 text-xs text-muted-foreground/50">
+            <nav className="flex items-center gap-4 text-xs text-muted-foreground/50" aria-label="Footer links">
               <a href="/privacy" className="hover:text-foreground transition-colors">Privacy</a>
               <a href="/terms" className="hover:text-foreground transition-colors">Terms</a>
               <a href="/" className="hover:text-foreground transition-colors">Home</a>
-            </div>
+            </nav>
           </div>
         </footer>
       )}
