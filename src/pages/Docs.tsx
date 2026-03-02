@@ -20,7 +20,11 @@ import {
   TradeLifecycleFlow, AlertCardMockup, TelegramNotifMockup, WatchlistMockup,
   CalendarHeatmapMockup, KanbanBoardMockup, EquityCurveMockup,
   AnalyticsHeatmapMockup, AnalyticsMetricCards, ShortcutKeyboardMockup,
-  DhanFlowDiagram, SettingsPanelMockup, PositionSizingMockup
+  DhanFlowDiagram, SettingsPanelMockup, PositionSizingMockup,
+  StudyCardMockup, StreakDisciplineMockup, WeeklyReportMockup,
+  MistakeTrendMockup, DailyJournalMockup, TelegramChannelsMockup,
+  WidgetCustomizerMockup, CsvImportMockup, SegmentPerformanceMockup,
+  RiskOfRuinMockup
 } from "@/components/docs/DocsMockups";
 
 const SECTIONS = [
@@ -268,6 +272,10 @@ export default function Docs() {
                 icon={LayoutDashboard}
               />
               <DashboardMockup />
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <StreakDisciplineMockup />
+                <WidgetCustomizerMockup />
+              </div>
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Activity} title="Today's P&L Hero Card">
                   <p className="text-sm text-muted-foreground">
@@ -395,6 +403,7 @@ export default function Docs() {
                   ]} />
                 </FeatureCard>
                 <FeatureCard icon={Download} title="CSV Import & Export">
+                  <CsvImportMockup />
                   <p className="text-sm text-muted-foreground">
                     Import trades from CSV files with column mapping. Export your entire trade history to CSV for backup or external analysis. The export includes all trade fields, tags, and review data.
                   </p>
@@ -476,6 +485,7 @@ export default function Docs() {
                 description="Document your trade ideas, chart analyses, and research findings. Tag with patterns, track status through a workflow, and link studies to actual trades."
                 icon={BookOpen}
               />
+              <StudyCardMockup />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Layers} title="Categories & Status Workflow">
                   <p className="text-sm text-muted-foreground mb-3">Organize studies by type and track their lifecycle:</p>
@@ -602,6 +612,10 @@ export default function Docs() {
                 <EquityCurveMockup />
                 <AnalyticsHeatmapMockup />
               </div>
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <SegmentPerformanceMockup />
+                <RiskOfRuinMockup />
+              </div>
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={BarChart3} title="Core Metrics" badge="Pro">
                   <FeatureList items={[
@@ -660,6 +674,7 @@ export default function Docs() {
                 description="A monthly calendar view with daily journal entries. Write pre-market plans, post-market reviews, and track your mood and lessons for each trading day."
                 icon={Calendar}
               />
+              <DailyJournalMockup />
               <FeatureCard icon={Calendar} title="Daily Journal Workflow">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -694,6 +709,7 @@ export default function Docs() {
                 description="Dedicated page for analyzing your trading mistakes. Identify repeat patterns, track loss severity, and monitor improvement trends over time."
                 icon={AlertTriangle}
               />
+              <MistakeTrendMockup />
               <FeatureCard icon={AlertTriangle} title="Mistake Analysis Tools">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -726,6 +742,7 @@ export default function Docs() {
                 description="Auto-generated weekly performance reports with segment-by-segment breakdowns. Review your week, download as PDF, or send to Telegram."
                 icon={PieChart}
               />
+              <WeeklyReportMockup />
               <FeatureCard icon={FileText} title="Report Features" badge="Pro">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -758,7 +775,10 @@ export default function Docs() {
                 description="Connect your broker and messaging apps to automate data flow, get live prices, and receive instant notifications."
                 icon={Layers}
               />
-              <DhanFlowDiagram />
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <DhanFlowDiagram />
+                <TelegramChannelsMockup />
+              </div>
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={LineChart} title="Dhan Broker Integration">
                   <p className="text-sm text-muted-foreground mb-3">Connect your Dhan trading account for seamless data sync:</p>
