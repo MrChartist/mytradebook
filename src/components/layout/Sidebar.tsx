@@ -17,6 +17,7 @@ import {
   Search,
   Eye,
   Sparkles,
+  HelpCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileDrawer } from "./MobileDrawer";
@@ -175,6 +176,19 @@ export function Sidebar() {
               </div>
             </div>
           )}
+
+          <NavLink
+            to="/docs"
+            className={cn(
+              "flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 group",
+              location.pathname === "/docs"
+                ? "bg-primary/8 text-primary font-medium"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+            )}
+          >
+            <HelpCircle className="w-[18px] h-[18px]" />
+            {!collapsed && <span className="text-[13px]">Docs & FAQs</span>}
+          </NavLink>
 
           <NavLink
             to="/settings"

@@ -12,6 +12,7 @@ import {
   Settings,
   LogOut,
   Eye,
+  HelpCircle,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
@@ -107,7 +108,20 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
           <div className="sidebar-section-label mt-4 mb-1">Analytics</div>
           {analyticsNavItems.map(renderNavItem)}
 
-          <div className="mt-3 pt-3 border-t border-border">
+          <div className="mt-3 pt-3 border-t border-border space-y-0.5">
+            <NavLink
+              to="/docs"
+              onClick={() => onOpenChange(false)}
+              className={cn(
+                "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+                location.pathname === "/docs"
+                  ? "glass-nav-active text-primary font-medium"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
+              )}
+            >
+              <HelpCircle className="w-5 h-5" />
+              <span className="text-sm">Docs & FAQs</span>
+            </NavLink>
             <NavLink
               to="/settings"
               onClick={() => onOpenChange(false)}

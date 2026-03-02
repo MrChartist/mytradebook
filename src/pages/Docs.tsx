@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   TrendingUp, BarChart3, Bell, BookOpen, Target, LineChart, Shield,
   LayoutDashboard, ArrowRight, ChevronRight, Zap, Eye, Activity,
@@ -13,7 +14,7 @@ import {
   Lock, Sparkles, FileText, Download, Upload, Filter, Grid3X3,
   List, Search, Tag, AlertTriangle, CheckCircle2, TrendingDown,
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
-  Wallet, Share2, MessageSquare, Command, Hash
+  Wallet, Share2, MessageSquare, Command, Hash, HelpCircle
 } from "lucide-react";
 import {
   BentoFeatureGrid, OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
@@ -42,6 +43,7 @@ const SECTIONS = [
   { id: "integrations", label: "Integrations", icon: Layers },
   { id: "shortcuts", label: "Keyboard Shortcuts", icon: Keyboard },
   { id: "settings", label: "Settings", icon: Settings },
+  { id: "faq", label: "FAQs", icon: HelpCircle },
 ];
 
 function FeatureList({ items }: { items: string[] }) {
@@ -108,7 +110,11 @@ function ShortcutKey({ children }: { children: string }) {
 
 export default function Docs() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [activeSection, setActiveSection] = useState("getting-started");
+
+  // If user is logged in, hide the standalone nav/footer/CTA
+  const isInsideApp = !!user;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -133,33 +139,35 @@ export default function Docs() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-border/30 bg-background/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-10 h-16">
-          <button onClick={() => navigate("/landing")} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-            <div className="w-9 h-9 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_20px_hsl(var(--tb-accent)/0.25)]">
-              <TrendingUp className="w-5 h-5 text-white" />
+    <div className={cn("min-h-screen bg-background text-foreground", isInsideApp && "pb-6")}>
+      {/* Navbar — only show on standalone page */}
+      {!isInsideApp && (
+        <nav className="sticky top-0 z-50 border-b border-border/30 bg-background/80 backdrop-blur-xl">
+          <div className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-10 h-16">
+            <button onClick={() => navigate("/landing")} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+              <div className="w-9 h-9 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_20px_hsl(var(--tb-accent)/0.25)]">
+                <TrendingUp className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-bold tracking-tight">TradeBook</span>
+            </button>
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" size="sm" onClick={() => navigate("/landing")} className="text-muted-foreground">
+                Home
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => navigate("/login")}
+                className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-5"
+              >
+                Get Started
+              </Button>
             </div>
-            <span className="text-xl font-bold tracking-tight">TradeBook</span>
-          </button>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/landing")} className="text-muted-foreground">
-              Home
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => navigate("/login")}
-              className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-5"
-            >
-              Get Started
-            </Button>
           </div>
-        </div>
-      </nav>
+        </nav>
+      )}
 
       {/* Hero */}
-      <div className="border-b border-border/20 bg-gradient-to-b from-[hsl(var(--tb-accent)/0.04)] to-transparent">
+      <div className={cn("border-b border-border/20 bg-gradient-to-b from-[hsl(var(--tb-accent)/0.04)] to-transparent", isInsideApp && "border-none")}>
         <div className="max-w-7xl mx-auto px-6 lg:px-10 py-16 lg:py-24">
           <Badge variant="secondary" className="mb-5 bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] border-none">
             Documentation
@@ -923,35 +931,73 @@ export default function Docs() {
               </div>
             </section>
 
-            {/* CTA at bottom */}
-            <section className="text-center py-16 border-t border-border/20">
-              <h2 className="text-3xl font-bold mb-4">Ready to improve your trading?</h2>
-              <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-                Start logging trades today with a 14-day free Pro trial. No credit card required.
-              </p>
-              <Button
-                size="lg"
-                onClick={() => navigate("/login")}
-                className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-10 h-12 text-base gap-2"
-              >
-                Get Started Free <ArrowRight className="w-4 h-4" />
-              </Button>
+            {/* ── 15. FAQs ──────────────────────────────── */}
+            <section>
+              <SectionHeader
+                id="faq"
+                title="Frequently Asked Questions"
+                description="Quick answers to common questions about TradeBook features, billing, and data."
+                icon={HelpCircle}
+              />
+              <div className="space-y-4">
+                {[
+                  { q: "Is my trading data secure?", a: "Yes. All data is encrypted at rest and in transit. Your trades and journal entries are private to your account and protected by row-level security policies. No one else can see your data." },
+                  { q: "Can I import trades from my broker?", a: "You can import trades via CSV upload with automatic column mapping. If you use Dhan as your broker, you can connect it directly for auto-sync of portfolio positions and live prices." },
+                  { q: "What happens after my 14-day trial ends?", a: "You'll be moved to the Free plan. You keep all your trade data and basic features (logging, journal, calendar). Pro features like Analytics, AI Insights, Weekly Reports, and advanced heatmaps require upgrading." },
+                  { q: "Does TradeBook support F&O trading?", a: "Yes. TradeBook supports all segments — Equity Intraday, Equity Positional, Futures, Options, and Commodities. You can search for any NSE/BSE/MCX instrument including option chains with strike/expiry selection." },
+                  { q: "How do Telegram notifications work?", a: "Connect your Telegram bot in Settings → Integrations. You can set up multiple channels with segment-level routing — for example, send only Intraday alerts to one channel and EOD reports to another." },
+                  { q: "Can I track multi-leg option strategies?", a: "Yes. Create a parent strategy (Bull Call Spread, Iron Condor, etc.) and add individual trade legs. Combined P&L is calculated automatically across all legs." },
+                  { q: "How is the Risk of Ruin calculated?", a: "It uses your win rate, average risk-reward ratio, and risk per trade to calculate the statistical probability of losing your entire account. Lower is better — under 5% is considered safe." },
+                  { q: "Can I use TradeBook on mobile?", a: "Yes. TradeBook is fully responsive with a mobile-optimized bottom navigation bar. All features work on mobile — trade logging, journal, analytics, and alerts." },
+                  { q: "How do I track my trading mistakes?", a: "Tag trades with mistake tags (customizable in Settings). The Mistakes page shows a Kanban board by severity, repeat pattern analysis, and a 6-month improvement trend chart." },
+                  { q: "What is the Discipline Score?", a: "It measures the percentage of your trades that had a stop loss set. A higher score means better risk management discipline. It's displayed in the Streak & Discipline widget on your dashboard." },
+                ].map((faq) => (
+                  <details key={faq.q} className="group rounded-xl border border-border/40 bg-card/60 overflow-hidden">
+                    <summary className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-muted/30 transition-colors">
+                      <span className="text-sm font-semibold pr-4">{faq.q}</span>
+                      <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0 transition-transform group-open:rotate-90" />
+                    </summary>
+                    <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed border-t border-border/20 pt-3">
+                      {faq.a}
+                    </div>
+                  </details>
+                ))}
+              </div>
             </section>
+
+            {/* CTA at bottom */}
+            {!isInsideApp && (
+              <section className="text-center py-16 border-t border-border/20">
+                <h2 className="text-3xl font-bold mb-4">Ready to improve your trading?</h2>
+                <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
+                  Start logging trades today with a 14-day free Pro trial. No credit card required.
+                </p>
+                <Button
+                  size="lg"
+                  onClick={() => navigate("/login")}
+                  className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-10 h-12 text-base gap-2"
+                >
+                  Get Started Free <ArrowRight className="w-4 h-4" />
+                </Button>
+              </section>
+            )}
           </main>
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="border-t border-border/20 bg-card/30 py-10">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground/50">© {new Date().getFullYear()} TradeBook. All rights reserved.</p>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground/50">
-            <a href="/privacy" className="hover:text-foreground transition-colors">Privacy</a>
-            <a href="/terms" className="hover:text-foreground transition-colors">Terms</a>
-            <a href="/landing" className="hover:text-foreground transition-colors">Home</a>
+      {/* Footer — only on standalone */}
+      {!isInsideApp && (
+        <footer className="border-t border-border/20 bg-card/30 py-10">
+          <div className="max-w-7xl mx-auto px-6 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-muted-foreground/50">© {new Date().getFullYear()} TradeBook. All rights reserved.</p>
+            <div className="flex items-center gap-4 text-xs text-muted-foreground/50">
+              <a href="/privacy" className="hover:text-foreground transition-colors">Privacy</a>
+              <a href="/terms" className="hover:text-foreground transition-colors">Terms</a>
+              <a href="/landing" className="hover:text-foreground transition-colors">Home</a>
+            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      )}
     </div>
   );
 }
