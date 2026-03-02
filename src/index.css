@@ -334,6 +334,28 @@
     0% { transform: translateX(0); }
     100% { transform: translateX(-33.33%); }
   }
+
+  @keyframes shimmer-cta-slide {
+    0% { transform: translateX(-100%) skewX(-15deg); }
+    100% { transform: translateX(200%) skewX(-15deg); }
+  }
+}
+
+/* Shimmer CTA effect */
+.shimmer-cta {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-cta::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: shimmer-cta-slide 3s ease-in-out infinite;
+  pointer-events: none;
 }
 
 /* Safe area for mobile bottom nav */
