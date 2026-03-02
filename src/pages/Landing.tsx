@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { SEOHead } from "@/components/SEOHead";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from "framer-motion";
@@ -358,6 +359,11 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden font-sans">
+      <SEOHead
+        title="Trading Journal for Indian Markets — NSE, MCX, F&O"
+        description="Track, analyze, and improve your trades with TradeBook. Real-time alerts, broker integration, and segment-based analytics built for Equity, F&O, and Commodity traders in India."
+        path="/landing"
+      />
       {/* ── Navbar ───────────────────────────────────────── */}
       <motion.nav
         initial={{ y: -20, opacity: 0 }}

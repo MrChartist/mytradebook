@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import { useNavigate } from "react-router-dom";
 import { TrendingUp, ArrowRight, Loader2, Eye, EyeOff, Mail, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -118,6 +119,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex">
+      <SEOHead title="Login" description="Sign in or create your TradeBook account to start journaling trades." path="/login" />
       {/* Left Panel - Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/5 via-background to-primary/10 relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.03]">
