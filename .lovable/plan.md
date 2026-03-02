@@ -1,87 +1,70 @@
 
 
-# Enhance Features Bento Grid -- Add Missing Features + Match Reference UI
+# Improve "How It Works" Section + Add Missing Landing Page Sections
 
-## Overview
+## Current State
+The "How It Works" section (lines 981-1021) already has a 3-step card layout with step number watermarks, icon badges, and dashed connecting lines. It closely matches the reference image but can be polished further.
 
-The current features section has 6 cards in a bento grid. The app has several more capabilities not showcased. We'll add the missing features, reorganize the grid layout to match the reference image's clean card style, and add mini-preview mockups for the new cards.
+## Improvements to "How It Works"
 
-## Missing Features to Add
+### Visual Polish (lines 995-1018)
+- **Step number watermark**: Increase opacity from `0.03` to `0.06` and use the accent color (`text-[hsl(var(--tb-accent))]`) with low opacity so it tints orange like the reference image, not invisible gray
+- **Connecting lines**: Replace dashed borders with a proper arrow/chevron connector between cards (using small `ChevronRight` icons positioned between columns)
+- **Icon badge ring**: Add a subtle outer ring/glow around the icon badge (`ring-4 ring-[hsl(var(--tb-accent)/0.04)]`) to match the reference's double-circle effect
+- **Card background**: Use solid `bg-card` instead of `bg-card/80` for more contrast, matching the crisp white cards in the reference
+- **Step label**: Add a small "STEP 01" label above the icon badge for extra clarity
 
-1. **AI Trade Insights** -- AI-powered analysis of trading patterns and behavioral suggestions (exists in `AITradeInsights.tsx`)
-2. **Watchlist & Scanner** -- Multi-watchlist instrument monitoring with live prices (exists in `Watchlist.tsx`, `useWatchlists.ts`)
-3. **Position Sizing Calculator** -- Risk-based lot/quantity calculator with capital management (exists in `PositionSizingCalculator.tsx`)
-4. **Telegram Bot** -- Automated trade notifications, EOD reports, and morning briefings via Telegram (exists in `TelegramSettings.tsx`, `telegram-notify` edge function)
-5. **CSV Import/Export** -- Bulk import trades from broker CSVs and export reports (exists in `CsvImportModal.tsx`, `csv-export.ts`)
+### Content Enhancement
+- Add a 4th implicit step or a CTA below: "Ready to start? It takes less than 60 seconds" with a button
 
-## Layout Redesign (Matching Reference Image)
+## New Sections to Add (below "How It Works", above Comparison)
 
-The reference image shows a clean bento grid with:
-- **Row 1**: Large card (col-span-4) + smaller card (col-span-2) -- like the current layout
-- **Row 2**: Three equal cards (col-span-2 each)
-- **Row 3**: Repeat the pattern for new features
+### 1. **Stats/Social Proof Bar** (new section)
+A horizontal strip showing key platform metrics with animated counters:
+- "500+ Traders" | "12,000+ Trades Logged" | "98% Uptime" | "4.8/5 Rating"
+- Uses the existing `useCountUp` hook already in the file
+- Clean single-row layout with dividers, accent-colored numbers
 
-We'll reorganize to **10-11 features** across 3 rows in a 6-column grid:
+### 2. **"Built for Indian Markets" Section** (new section)
+A focused callout highlighting India-specific features:
+- NSE, BSE, MCX segment support
+- INR currency throughout
+- Dhan broker integration
+- Indian market hours (9:15 AM - 3:30 PM) awareness
+- Layout: Left side text + right side showing segment pills (Equity, F&O, Commodity, Currency)
 
-```text
-Row 1: [Smart Journal (4col)]     [Deep Analytics (2col)]
-Row 2: [Alerts (2col)] [TSL (2col)] [Broker (2col)]
-Row 3: [AI Insights (4col)]       [Watchlist (2col)]
-Row 4: [Telegram (2col)] [Position Sizing (2col)] [CSV Import (2col)]
-```
-
-The Rules Engine card moves to a smaller 2-col and is replaced in the large slot by AI Insights.
-
-## UI/UX Improvements per Reference
-
-1. **Card hover** -- Subtle `y: -4` lift with accent border glow (already partially done, polish it)
-2. **Icon badges** -- Consistent `w-11 h-11 rounded-xl` with soft color backgrounds matching each feature's theme color
-3. **Mini mockups** -- Each feature card (even small ones) gets a mini data preview:
-   - **AI Insights**: Show a mini insight card with a lightbulb icon and sample suggestion text
-   - **Watchlist**: Show 2-3 ticker rows with live prices and change %
-   - **Position Sizing**: Show a mini calculator with lot size output
-   - **Telegram**: Show a mini chat bubble with notification preview
-   - **CSV Import**: Show a mini file icon with "234 trades imported" badge
-4. **Typography** -- Title `text-lg font-bold`, description `text-sm text-muted-foreground leading-relaxed`
-5. **Spacing** -- `p-6 sm:p-7` padding, `gap-4 sm:gap-5` grid gap
-
-## New Mini Preview Components
-
-### `WatchlistMiniPreview`
-- 2-3 rows: ticker name, price, change % with profit/loss coloring
-- Mimics the watchlist table rows
-
-### `AIInsightsMiniPreview`  
-- A lightbulb icon with a sample insight: "Your win rate drops 23% after 2 PM. Consider limiting afternoon trades."
-- A small "View 3 more insights" link
-
-### `TelegramMiniPreview`
-- Mini chat bubble showing: "EOD Report: +Rs 12,450 | 5W-2L | Win Rate 71%"
-
-### `PositionSizingMiniPreview`
-- Mini calculator showing: Capital Rs 5L, Risk 2%, Lot Size: 3 lots
-
-### `CSVImportMiniPreview`
-- File icon with "trades_feb2026.csv" and "234 trades imported" badge
+### 3. **FAQ Accordion** (new section, before footer)
+Common questions traders would have:
+- "Is my data safe?" -- End-to-end encryption, no sharing
+- "Can I import from Zerodha/Angel One?" -- CSV import supports all brokers
+- "Is it really free during beta?" -- Yes, all features included
+- "Does it work on mobile?" -- PWA, works on any device
+- Uses Radix Accordion (already installed)
 
 ## Technical Changes
 
 ### File: `src/pages/Landing.tsx`
 
-**Data array (lines 94-101):**
-- Expand `features` array from 6 to 11 items
-- Each item gets: `icon`, `title`, `description`, `color`, `large` (boolean), and `previewKey` (string identifier for which mini preview to render)
+**"How It Works" cards (lines 1000-1018):**
+- Update watermark styling: `text-[hsl(var(--tb-accent))] opacity-[0.07]` instead of `text-muted-foreground/[0.03]`
+- Add "STEP" label above icon
+- Add ring effect to icon badge
+- Replace dashed border connectors with chevron icons between cards
 
-**New mini-preview components (around lines 248-350):**
-- Add 5 new mini-preview function components: `WatchlistMiniPreview`, `AIInsightsMiniPreview`, `TelegramMiniPreview`, `PositionSizingMiniPreview`, `CSVImportMiniPreview`
+**New Stats Bar section (~15 lines, inserted after "How It Works"):**
+- 4 metrics in a horizontal flex row with `useCountUp`
+- Minimal styling with `text-4xl font-bold text-[hsl(var(--tb-accent))]` for numbers
 
-**Features grid section (lines 800-854):**
-- Update the bento grid rendering to map `previewKey` to the correct mini preview component
-- Adjust grid column spans for the new layout
-- Polish card styles: consistent padding, hover states, and typography
+**New "Built for India" section (~30 lines):**
+- Two-column layout: headline + description on left, segment badges on right
+- Reuses `SectionBadge` and `fadeUp` animation patterns
 
-**New icon imports (line 6-12):**
-- Add: `Brain` (AI), `List` (Watchlist), `Calculator` (Position Sizing), `FileSpreadsheet` (CSV), `MessageSquare` (Telegram)
+**New FAQ section (~40 lines, before footer):**
+- Import `Accordion, AccordionItem, AccordionTrigger, AccordionContent` from existing Radix components
+- 4-5 FAQ items in a max-w-2xl centered container
+
+**New imports:**
+- Add `Accordion` components from `@/components/ui/accordion`
 
 ### No other files changed
 - Only `src/pages/Landing.tsx` is modified
