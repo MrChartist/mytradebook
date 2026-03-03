@@ -1,6 +1,5 @@
 import { useState, useMemo, useCallback, createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { SEOHead } from "@/components/SEOHead";
 import { OnboardingWelcome } from "@/components/dashboard/OnboardingWelcome";
 import { DashboardGreeting } from "@/components/dashboard/DashboardGreeting";
 import { DashboardKPICards } from "@/components/dashboard/DashboardKPICards";
@@ -181,8 +180,7 @@ export default function Dashboard() {
 
   return (
     <DashboardContext.Provider value={ctx}>
-      <div className="space-y-6 animate-fade-in" role="main" aria-label="Trading dashboard">
-        <SEOHead title="Dashboard" path="/dashboard" noIndex />
+      <div className="space-y-6 animate-fade-in">
         <OnboardingWelcome />
 
         {/* Row 1: Greeting + Live status + Settings */}
@@ -208,7 +206,7 @@ export default function Dashboard() {
             {/* Widget customization */}
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Customize dashboard widgets">
+                <Button variant="ghost" size="icon" className="h-8 w-8">
                   <Settings2 className="w-4 h-4" />
                 </Button>
               </PopoverTrigger>
@@ -246,9 +244,9 @@ export default function Dashboard() {
         </div>
 
         {/* Row 2: Month selector + Segment filter combined */}
-        <div className="flex items-center gap-3 flex-wrap" role="toolbar" aria-label="Month and segment filters">
+        <div className="flex items-center gap-3 flex-wrap">
           {/* Month selector */}
-          <div className="flex gap-1 bg-muted rounded-full p-0.5" role="group" aria-label="Month selector">
+          <div className="flex gap-1 bg-muted rounded-full p-0.5">
             {[subMonths(new Date(), 2), subMonths(new Date(), 1), new Date()].map((m) => (
               <button
                 key={m.toISOString()}
