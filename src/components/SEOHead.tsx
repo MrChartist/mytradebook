@@ -9,7 +9,7 @@ interface SEOHeadProps {
   ogImage?: string;
 }
 
-const SITE_URL = "https://tradebook.mrchartist.com";
+const SITE_URL = "https://mytradebook.lovable.app";
 const SITE_NAME = "TradeBook";
 const DEFAULT_DESCRIPTION =
   "Track, analyze, and improve your trades with TradeBook. Real-time alerts, broker integration, and segment-based analytics built for Equity, F&O, and Commodity traders in India.";
