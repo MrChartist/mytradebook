@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://mytradebook.lovable.app/</loc>
-    <lastmod>2026-03-02</lastmod>
+    <loc>https://tradebook.mrchartist.com/</loc>
+    <lastmod>2026-03-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://mytradebook.lovable.app/docs</loc>
-    <lastmod>2026-03-02</lastmod>
+    <loc>https://tradebook.mrchartist.com/docs</loc>
+    <lastmod>2026-03-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mytradebook.lovable.app/login</loc>
-    <lastmod>2026-03-02</lastmod>
+    <loc>https://tradebook.mrchartist.com/login</loc>
+    <lastmod>2026-03-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://mytradebook.lovable.app/terms</loc>
+    <loc>https://tradebook.mrchartist.com/terms</loc>
     <lastmod>2026-03-01</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://mytradebook.lovable.app/privacy</loc>
+    <loc>https://tradebook.mrchartist.com/privacy</loc>
     <lastmod>2026-03-01</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
