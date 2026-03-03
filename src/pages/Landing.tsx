@@ -10,7 +10,7 @@ import {
   Smartphone, Globe, Lock, Sparkles, Award, Users, Calendar, MousePointerClick,
   Send, CandlestickChart, Gauge, Home, ChevronRight, Brain, List, Calculator,
   FileSpreadsheet, MessageSquare, Lightbulb, FileUp, ArrowUp, ArrowDown, Trophy,
-  Crown, RefreshCw,
+  Crown, RefreshCw, Menu, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -563,6 +563,7 @@ export default function Landing() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [heroEmail, setHeroEmail] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 100]);
@@ -610,7 +611,7 @@ export default function Landing() {
             <span className="text-lg font-logo font-bold tracking-tight">TradeBook</span>
           </motion.div>
 
-          {/* Center links */}
+          {/* Center links — desktop */}
           <div className="hidden md:flex items-center gap-0.5 text-sm text-muted-foreground">
             {["Features", "Pricing", "Docs"].map((item) => (
               <motion.a
@@ -628,7 +629,15 @@ export default function Landing() {
           {/* Right actions */}
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Button variant="ghost" size="sm" onClick={() => navigate("/login")} className="text-muted-foreground hover:text-foreground text-[13px] h-8 px-3 rounded-full">
+            {/* Mobile hamburger */}
+            <button
+              className="md:hidden w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted/60 transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/login")} className="hidden sm:inline-flex text-muted-foreground hover:text-foreground text-[13px] h-8 px-3 rounded-full">
               Sign In
             </Button>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.96 }}>
@@ -642,6 +651,44 @@ export default function Landing() {
             </motion.div>
           </div>
         </div>
+
+        {/* Mobile dropdown menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -8, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.97 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden mt-2 rounded-2xl border border-border/40 bg-card/95 backdrop-blur-xl shadow-lg p-4 space-y-1"
+            >
+              {[
+                { label: "Features", href: "#features" },
+                { label: "Pricing", href: "#pricing" },
+                { label: "Docs", href: "/docs" },
+                { label: "FAQ", href: "#faq" },
+              ].map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted/50 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+                >
+                  {item.label}
+                </a>
+              ))}
+              <div className="pt-2 border-t border-border/30 mt-2">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-center rounded-xl text-sm"
+                  onClick={() => { setMobileMenuOpen(false); navigate("/login"); }}
+                >
+                  Sign In
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.nav>
 
       {/* ── Hero — Manila inspired soft gradient wash ──────── */}
