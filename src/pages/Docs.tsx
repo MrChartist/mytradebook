@@ -163,6 +163,11 @@ export default function Docs() {
 
   const isInsideApp = !!user;
 
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -196,7 +201,7 @@ export default function Docs() {
   return (
     <DocsColorModeProvider>
       <SEOHead
-        title="Documentation — Complete Feature Guide"
+        title="Docs"
         description="Complete guide to TradeBook features — dashboard, trade logging, alerts, analytics, journal, and integrations for Indian market traders."
         path="/docs"
         jsonLd={{
@@ -1343,9 +1348,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           <div className="max-w-7xl mx-auto px-6 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-muted-foreground/50">© {new Date().getFullYear()} TradeBook. All rights reserved.</p>
             <nav className="flex items-center gap-4 text-xs text-muted-foreground/50" aria-label="Footer links">
-              <a href="/privacy" className="hover:text-foreground transition-colors">Privacy</a>
-              <a href="/terms" className="hover:text-foreground transition-colors">Terms</a>
-              <a href="/" className="hover:text-foreground transition-colors">Home</a>
+              <button onClick={() => navigate("/privacy")} className="hover:text-foreground transition-colors">Privacy</button>
+              <button onClick={() => navigate("/terms")} className="hover:text-foreground transition-colors">Terms</button>
+              <button onClick={() => navigate("/")} className="hover:text-foreground transition-colors">Home</button>
             </nav>
           </div>
         </footer>
