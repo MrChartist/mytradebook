@@ -1,80 +1,73 @@
-<div align="center">
+# Welcome to your Lovable project
 
+## Project info
 
+**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
 
+## How can I edit this code?
 
-# 🗒️ MyTradeBook
+There are several ways of editing your application.
 
+**Use Lovable**
 
+Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
 
+Changes made via Lovable will be committed automatically to this repo.
 
-### *Professional Trading Journal for Indian Markets — NSE, MCX, F&O*
+**Use your preferred IDE**
 
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
+Follow these steps:
 
-[![Built By](https://img.shields.io/badge/Built%20By-Mr.%20Chartist-gold?style=flat&logo=github)](https://github.com/MrChartist)
-[![TypeScript](https://img.shields.io/badge/TypeScript-97%25-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
-[![Supabase](https://img.shields.io/badge/Backend-Supabase-3ECF8E?style=flat&logo=supabase)](https://supabase.com)
-[![Live Demo](https://img.shields.io/badge/Live-preview--mytradebook.lovable.app-green?style=flat)](https://preview--mytradebook.lovable.app/)
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
 
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
 
+# Step 3: Install the necessary dependencies.
+npm i
 
+# Step 4: Start the development server with auto-reloading and an instant preview.
+npm run dev
+```
 
-</div>
+**Edit a file directly in GitHub**
 
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
+**Use GitHub Codespaces**
 
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
----
+## What technologies are used for this project?
 
+This project is built with:
 
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
+## How can I deploy this project?
 
-## 🎯 About
+Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
 
+## Can I connect a custom domain to my Lovable project?
 
+Yes, you can!
 
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-**MyTradeBook** is a feature-rich, full-stack trading journal built specifically for Indian market traders. Track every trade across NSE equities, MCX commodities, and F&O derivatives with detailed analytics, profit/loss summaries, and performance dashboards.
-
-
-
-
-Built by **Rohit Singh (Mr. Chartist)** — SEBI Registered Research Analyst and award-winning market educator — to fill the gap left by generic journaling tools that don't understand Indian market structure.
-
-
-
-
----
-
-
-
-
-## 🚀 Features
-
-
-
-
-- **📋 Trade Logging** — Log equity, F&O, and MCX trades with full detail (entry, exit, SL, target, segment)
-- **📊 P&L Analytics** — Real-time profit/loss summaries with charts (daily, weekly, monthly)
-- **📈 Performance Dashboard** — Win rate, R-multiple, profit factor, and streak tracking
-- **🔍 Trade Review** — Filter and review trades by date, segment, symbol, or outcome
-- **📱 Mobile Responsive** — Fully usable on phone and tablet
-- **🔐 Secure Auth** — Supabase Auth with personal data isolation
-- **⚡ Fast & Animated** — Framer Motion transitions for a premium feel
-
-
-
-
----
-
-
-
-
-## 🛠️ Tech Stack
-
-
-
-
-| Layer | Technology |
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
