@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Save, Loader2, CheckCircle } from "lucide-react";
+import { Save, Loader2, CheckCircle, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -141,6 +141,57 @@ export default function ProfileSettings() {
 
       {/* Capital Management */}
       <CapitalManagementCard />
+
+      {/* Data Export */}
+      <DataExportCard />
+    </div>
+  );
+}
+
+function DataExportCard() {
+  const [exporting, setExporting] = useState(false);
+  const { session } = useAuth();
+
+  const handleExport = async () => {
+    if (!session?.access_token) {
+      toast.error("Please log in to export data");
+      return;
+    }
+    setExporting(true);
+    try {
+      const res = await supabase.functions.invoke("export-data");
+      if (res.error) throw res.error;
+
+      const blob = new Blob([JSON.stringify(res.data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `tradebook-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Backup downloaded successfully");
+    } catch (err) {
+      console.error("Export error:", err);
+      toast.error("Failed to export data");
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  return (
+    <div className="mt-6 pt-6 border-t border-border">
+      <h2 className="text-lg font-semibold mb-2">Data Export</h2>
+      <p className="text-sm text-muted-foreground mb-4">
+        Download a complete backup of all your data — trades, journal entries, alerts, studies, watchlists, templates, and settings — as a JSON file.
+      </p>
+      <Button variant="outline" onClick={handleExport} disabled={exporting}>
+        {exporting ? (
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+        ) : (
+          <Download className="w-4 h-4 mr-2" />
+        )}
+        {exporting ? "Exporting…" : "Download Full Backup"}
+      </Button>
     </div>
   );
 }
