@@ -22,6 +22,7 @@ import {
   PanelLeftClose, PanelLeftOpen
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import docsLogo from "@/assets/logo.png";
 import {
   BentoFeatureGrid, OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
   TradeLifecycleFlow, AlertCardMockup, TelegramNotifMockup, WatchlistMockup,
@@ -270,10 +271,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         <div className="flex items-center justify-between rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg px-4 sm:px-6 h-14">
           {/* Logo */}
           <button onClick={() => navigate("/")} className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0">
-            <div className="w-8 h-8 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_16px_hsl(var(--tb-accent)/0.25)]">
-              <TrendingUp className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-logo font-bold tracking-tight hidden sm:inline">TradeBook</span>
+            <img src={docsLogo} alt="TradeBook" className="h-8 object-contain" />
           </button>
 
           {/* Center links */}

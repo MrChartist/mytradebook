@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import landingLogo from "@/assets/logo.png";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 /* ─── Animated counter ──────────────────────────────────── */
@@ -604,11 +605,8 @@ export default function Landing() {
       >
         <div className="flex items-center justify-between px-3 pl-4 py-2 rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg shadow-foreground/[0.03]">
           {/* Logo */}
-          <motion.div className="flex items-center gap-2" whileHover={{ scale: 1.03 }}>
-            <div className="w-8 h-8 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_16px_hsl(var(--tb-accent)/0.25)]">
-              <TrendingUp className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-logo font-bold tracking-tight">TradeBook</span>
+           <motion.div className="flex items-center gap-2" whileHover={{ scale: 1.03 }}>
+            <img src={landingLogo} alt="TradeBook" className="h-8 object-contain" />
           </motion.div>
 
           {/* Center links — desktop */}
@@ -1838,10 +1836,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-4 gap-10 mb-10">
             <div className="md:col-span-1">
               <div className="flex items-center gap-2.5 mb-5">
-                <div className="w-8 h-8 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_16px_hsl(var(--tb-accent)/0.25)]">
-                  <TrendingUp className="w-4 h-4 text-white" />
-                </div>
-                <span className="font-logo font-bold tracking-tight text-lg">TradeBook</span>
+                <img src={landingLogo} alt="TradeBook" className="h-8 object-contain" />
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed mb-5">
                 The trading journal built for Indian markets. Track, analyze, and improve.

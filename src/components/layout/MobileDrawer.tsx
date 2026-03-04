@@ -17,6 +17,7 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import logo from "@/assets/logo.png";
 
 const mainNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
@@ -74,13 +75,8 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
       <SheetContent side="left" className="w-72 p-0 bg-card border-border">
         <SheetHeader className="p-4 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-gradient-primary flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <div>
-              <SheetTitle className="text-left font-bold text-base">TradeBook</SheetTitle>
-              <p className="text-[11px] text-muted-foreground">Trading Journal</p>
-            </div>
+            <img src={logo} alt="TradeBook" className="h-9 object-contain" />
+            <SheetTitle className="sr-only">TradeBook</SheetTitle>
           </div>
         </SheetHeader>
 
