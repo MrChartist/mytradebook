@@ -288,9 +288,9 @@ export default function IntegrationsSettings() {
   }
 
   const isTelegramConnected = !!settings?.telegram_chat_id && !!settings?.telegram_verified_at;
-  const isDhanConnected = !!settings?.dhan_access_token && !!settings?.dhan_enabled;
+  const isDhanConnected = !!settings?.dhan_verified_at && !!settings?.dhan_enabled;
   const totalInstruments = syncStatus.nseEqCount + syncStatus.nfoCount + syncStatus.mcxCount;
-  const isAiConnected = !!settings?.ai_provider && !!settings?.ai_api_key;
+  const isAiConnected = !!settings?.ai_provider;
 
   const handleSaveAi = async () => {
     if (!aiApiKey.trim()) {

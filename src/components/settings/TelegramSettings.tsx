@@ -21,7 +21,7 @@ const SEGMENT_KEYS = Object.keys(SEGMENT_LABELS);
 
 // --- Bot Source Badge ---
 function BotSourceBadge({ chat, hasPersonalBot }: { chat: TelegramChat; hasPersonalBot: boolean }) {
-  if (chat.bot_token) {
+  if (chat.bot_username) {
     return <Badge className="text-[9px] bg-sky-500/10 text-sky-400 border-sky-500/30">Custom Bot</Badge>;
   }
   if (hasPersonalBot) {
@@ -230,7 +230,7 @@ export default function TelegramSettings() {
   // Delivery log panel state
   const [showDeliveryLog, setShowDeliveryLog] = useState(false);
 
-  const hasPersonalBot = !!settings?.telegram_bot_token;
+  const hasPersonalBot = !!settings?.telegram_bot_username;
 
   // Auto-verify bot token when pasted
   const handleBotTokenChange = async (token: string) => {
@@ -290,11 +290,11 @@ export default function TelegramSettings() {
   };
 
   const handleTestBot = async () => {
-    if (!settings?.telegram_bot_token) return;
+    if (!settings?.telegram_bot_username) return;
     setTestingBot(true);
     const firstChat = chats[0];
     if (firstChat) {
-      await testChat(firstChat.chat_id, settings.telegram_bot_token);
+      await testChat(firstChat.chat_id);
     }
     setTestingBot(false);
   };
@@ -319,7 +319,7 @@ export default function TelegramSettings() {
 
   const handleTestChat = async (chat: TelegramChat) => {
     setTestingId(chat.id);
-    await testChat(chat.chat_id, chat.bot_token);
+    await testChat(chat.chat_id);
     setTestingId(null);
   };
 
@@ -385,7 +385,7 @@ export default function TelegramSettings() {
                   {testingBot ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Send className="w-3 h-3 mr-1" />}
                   Test
                 </Button>
-                <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => { setEditingBot(true); setBotTokenInput(settings?.telegram_bot_token || ""); setVerifiedBotInfo(null); }}>
+                <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => { setEditingBot(true); setBotTokenInput(""); setVerifiedBotInfo(null); }}>
                   Edit
                 </Button>
                 <Button variant="ghost" size="sm" className="h-7 text-xs text-loss hover:text-loss" onClick={handleRemoveBot} disabled={savingBot}>
@@ -393,7 +393,7 @@ export default function TelegramSettings() {
                 </Button>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">Token: ••••{settings?.telegram_bot_token?.slice(-8)}</p>
+            <p className="text-xs text-muted-foreground mt-1">Bot: @{settings?.telegram_bot_username}</p>
           </div>
         ) : (
           <div className="p-4 rounded-lg border border-border bg-card space-y-3">
@@ -485,7 +485,7 @@ export default function TelegramSettings() {
                       <BotSourceBadge chat={chat} hasPersonalBot={hasPersonalBot} />
                     </div>
                     <p className="text-xs text-muted-foreground font-mono">{chat.chat_id}</p>
-                    {chat.bot_token && chat.bot_username && (
+                    {chat.bot_username && (
                       <p className="text-xs text-sky-400">@{chat.bot_username}</p>
                     )}
                   </div>

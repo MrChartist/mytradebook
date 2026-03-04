@@ -23,7 +23,6 @@ export interface TelegramChat {
   chat_id: string;
   label: string;
   segments: string[];
-  bot_token: string | null;
   bot_username: string | null;
   enabled: boolean;
   notification_types: NotificationTypeRouting | null;
@@ -97,7 +96,7 @@ export function useTelegramChats() {
       if (!user?.id) return [];
       const { data, error } = await supabase
         .from("telegram_chats")
-        .select("*")
+        .select("id, user_id, chat_id, label, segments, bot_username, enabled, notification_types, last_verified_at, verification_status, created_at")
         .eq("user_id", user.id)
         .order("created_at", { ascending: true });
       if (error) throw error;
@@ -303,7 +302,7 @@ export function useTelegramChats() {
     const chats = chatsQuery.data || [];
     let successCount = 0;
     for (const chat of chats) {
-      const ok = await testChat(chat.chat_id, chat.bot_token);
+      const ok = await testChat(chat.chat_id);
       if (ok) successCount++;
     }
     if (successCount === chats.length) {

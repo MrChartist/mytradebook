@@ -41,7 +41,7 @@ function MainLayoutInner({ children }: MainLayoutProps) {
   }, []);
 
   // Check if Dhan token is expired
-  const isDhanConnected = !!settings?.dhan_access_token && !!settings?.dhan_enabled;
+  const isDhanConnected = !!settings?.dhan_verified_at && !!settings?.dhan_enabled;
   const tokenExpiry = settings?.dhan_token_expiry ? new Date(settings.dhan_token_expiry) : null;
   const isTokenExpired = isDhanConnected && tokenExpiry && tokenExpiry < new Date();
 
