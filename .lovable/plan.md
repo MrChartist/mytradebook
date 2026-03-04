@@ -1,128 +1,46 @@
 
 
-# Hero Section Floating Elements Enhancement
+## Calendar Page — Production Polish Plan
 
-## Current State
-The hero has 6 floating elements: a RELIANCE trade card (top-left), an alert badge (top-right), an MTD P&L badge (mid-left), and 4 scattered icon badges. The right side and bottom areas feel empty, and the elements don't fully convey the product's breadth.
+### Problems Identified (from screenshot & code)
 
-## Changes to `FloatingElements` in `src/pages/Landing.tsx`
+1. **Calendar grid is cramped** — day cells use `min-h-[80px]` with `aspect-square` which renders tiny on desktop; weekday headers overlap ("MoTuWeThFri" mashed together)
+2. **Layout is 3-column but unbalanced** — the `JournalCalendarView` internally renders its own sidebar (trade detail panel) AND the page adds a third column for the journal editor, creating a nested 2+1 layout that wastes space
+3. **Day cells lack visual hierarchy** — no P&L heatmap coloring in full mode (only compact mode has it), no "today" highlight, no journal-entry indicator dots
+4. **Journal editor doesn't sync with calendar clicks** — clicking a day updates `selectedDate` but the journal editor doesn't visually indicate if an entry already exists for that day
+5. **No monthly summary stats** — unlike the compact widget, the full page shows no win/loss day counts or total P&L
+6. **Mobile layout breaks** — 3-column grid collapses to single column but calendar cells become unusably small
 
-### New Floating Tags (5 additions)
+### Plan
 
-1. **Win Rate Badge (bottom-right)** -- A small glassmorphic card showing "Win Rate 68%" with a green progress arc, floating with a gentle bob animation. Conveys analytics at a glance.
+#### 1. Restructure Calendar Page Layout
+- Remove the internal sidebar from `JournalCalendarView` in full mode — the page already provides the trade list and journal editor
+- New layout: **2-column on desktop** — Left: calendar grid (wide), Right: stacked trade list + journal editor in a scrollable panel
+- Mobile: calendar on top, detail panel below
 
-2. **Streak Badge (mid-right)** -- "5-Day Win Streak" with a fire/trophy icon and a warm glow. Reinforces the discipline/gamification angle.
+#### 2. Upgrade Calendar Grid Cells
+- Add P&L heatmap coloring to full-mode cells (reuse the compact mode's green/red intensity logic)
+- Add a small dot indicator for days that have a journal entry (query `daily_journal_entries`)
+- Highlight today's date with a ring/accent border
+- Increase cell size with proper `gap-2` and `min-h-[90px]` for readability
+- Fix weekday header spacing
 
-3. **AI Insight Chip (bottom-left)** -- A compact tag reading "AI: Reduce position size on Mondays" with a Brain icon and purple accent. Highlights the AI feature.
+#### 3. Add Monthly Summary Bar
+- Below the month navigation header, show a stats strip: Total P&L | Win Days / Loss Days | Best Day | Worst Day
+- Computed from `calendarData` filtered to current month
 
-4. **Trade Count Ticker (top-center-left area)** -- A tiny pill showing "47 Trades This Week" with an Activity icon. Shows active usage.
+#### 4. Improve Journal Editor Integration
+- Show a small "saved" badge or filled dot on the journal editor when an entry exists for the selected date
+- Auto-save debounce (optional enhancement) — for now, keep explicit save but add unsaved-changes indicator
 
-5. **Risk-Reward Tag (top-center-right area)** -- A small badge showing "R:R 1:2.4" with a Target icon. Speaks to serious traders.
+#### 5. Polish & Animations
+- Staggered fade-in for day cells on month change
+- Smooth transition when switching selected date in the detail panel
+- Skeleton loading states that match the actual grid layout (7-column skeleton grid)
 
-### Improvements to Existing Elements
-
-- Stagger animation delays more evenly so elements don't all bob in sync
-- Add subtle `shadow-[0_8px_32px_rgba(0,0,0,0.08)]` to all cards for more depth
-- Make existing icon scatters slightly larger and more visible (opacity bump from 0.3-0.55 to 0.35-0.6)
-
-### Visual Balance
-- New elements are distributed to fill the empty zones: bottom-right, mid-right, bottom-left, and the upper mid-zones
-- All use the existing glassmorphic style: `rounded-2xl border border-border/30 bg-card/80 backdrop-blur-md`
-- Each has a unique bob timing (5-8s) and delay to create organic, non-synchronized floating
-
-## Technical Details
-
-### File: `src/pages/Landing.tsx` -- `FloatingElements` component (lines 178-246)
-
-Add 5 new `motion.div` blocks after the existing floating elements, before the icon scatter array:
-
-```tsx
-{/* Win Rate badge - bottom right */}
-<motion.div
-  className="absolute bottom-[28%] right-[5%] hidden lg:block"
-  animate={{ y: [0, -10, 0], rotate: [1, -1, 1] }}
-  transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
->
-  <div className="rounded-2xl border border-profit/15 bg-card/80 backdrop-blur-md px-4 py-2.5 shadow-lg">
-    <div className="flex items-center gap-2">
-      <div className="w-7 h-7 rounded-lg bg-profit/10 flex items-center justify-center">
-        <PieChart className="w-3.5 h-3.5 text-profit" />
-      </div>
-      <div>
-        <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Win Rate</p>
-        <p className="text-sm font-bold font-mono text-profit">68.4%</p>
-      </div>
-    </div>
-  </div>
-</motion.div>
-
-{/* Streak badge - mid right */}
-<motion.div
-  className="absolute top-[52%] right-[6%] hidden xl:block"
-  animate={{ y: [0, -8, 0] }}
-  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 3 }}
->
-  <div className="rounded-2xl border border-[hsl(var(--tb-accent)/0.2)] bg-card/80 backdrop-blur-md px-3.5 py-2 shadow-lg flex items-center gap-2">
-    <Trophy className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
-    <div>
-      <p className="text-[10px] font-semibold">5-Day Streak</p>
-      <p className="text-[8px] text-muted-foreground">All targets hit</p>
-    </div>
-  </div>
-</motion.div>
-
-{/* AI Insight chip - bottom left */}
-<motion.div
-  className="absolute bottom-[22%] left-[5%] hidden xl:block"
-  animate={{ y: [0, -9, 0], rotate: [0, 1, 0] }}
-  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
->
-  <div className="rounded-2xl border border-[hsl(270_60%_55%/0.15)] bg-card/80 backdrop-blur-md px-3.5 py-2.5 shadow-lg flex items-center gap-2.5 max-w-[200px]">
-    <div className="w-7 h-7 rounded-lg bg-[hsl(270_60%_55%/0.1)] flex items-center justify-center shrink-0">
-      <Brain className="w-3.5 h-3.5 text-[hsl(270_60%_55%)]" />
-    </div>
-    <p className="text-[9px] text-muted-foreground leading-tight">
-      <span className="font-semibold text-foreground/80">AI:</span> Reduce size on Mondays
-    </p>
-  </div>
-</motion.div>
-
-{/* Trade count pill - upper area */}
-<motion.div
-  className="absolute top-24 left-[22%] hidden xl:block"
-  animate={{ y: [0, -6, 0] }}
-  transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2.5 }}
->
-  <div className="rounded-full border border-border/30 bg-card/70 backdrop-blur-md px-3 py-1.5 shadow-sm flex items-center gap-1.5">
-    <Activity className="w-3 h-3 text-muted-foreground/50" />
-    <span className="text-[9px] font-medium text-muted-foreground">47 trades this week</span>
-  </div>
-</motion.div>
-
-{/* Risk-Reward tag - upper right area */}
-<motion.div
-  className="absolute top-28 right-[20%] hidden xl:block"
-  animate={{ y: [0, -7, 0] }}
-  transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut", delay: 1.8 }}
->
-  <div className="rounded-full border border-border/30 bg-card/70 backdrop-blur-md px-3 py-1.5 shadow-sm flex items-center gap-1.5">
-    <Target className="w-3 h-3 text-[hsl(var(--tb-accent)/0.6)]" />
-    <span className="text-[9px] font-mono font-semibold text-muted-foreground">R:R 1:2.4</span>
-  </div>
-</motion.div>
-```
-
-Update existing icon scatter opacity from `[0.3, 0.55, 0.3]` to `[0.35, 0.6, 0.35]` for better visibility.
-
-### Summary
-
-| Element | Position | Purpose |
-|---------|----------|---------|
-| Win Rate 68.4% | Bottom-right | Showcases analytics |
-| 5-Day Streak | Mid-right | Highlights gamification |
-| AI Insight | Bottom-left | Promotes AI features |
-| 47 Trades | Upper-left area | Shows active usage |
-| R:R 1:2.4 | Upper-right area | Appeals to serious traders |
-
-Single file change: `src/pages/Landing.tsx`. No new dependencies.
+### Files to Modify
+- `src/pages/Calendar.tsx` — restructure layout, add monthly stats
+- `src/components/journal/JournalCalendarView.tsx` — remove internal sidebar from full mode, add heatmap colors + journal dots + today highlight to full cells, fix spacing
+- `src/components/journal/DailyJournalEditor.tsx` — add saved-entry indicator
+- `src/hooks/useDailyJournal.ts` — expose entries list for dot indicators on calendar
 
