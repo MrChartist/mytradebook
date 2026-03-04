@@ -105,35 +105,58 @@ export function OptionChainSelector({ onSelect, className }: OptionChainSelector
 
   const expiries = useMemo(() => generateExpiryDates(), []);
 
-  const filteredStocks = underlyingSearch
-    ? stocks.filter((u) => u.toLowerCase().includes(underlyingSearch.toLowerCase()))
-    : stocks.slice(0, 30);
+  const filteredStocks = useMemo(() => {
+    if (underlyingSearch) {
+      return stocks.filter((u) => u.toLowerCase().includes(underlyingSearch.toLowerCase()));
+    }
+    return stocks; // Show all F&O stocks
+  }, [stocks, underlyingSearch]);
+
+  const [priceSource, setPriceSource] = useState<string>("");
 
   // Fetch ATM price when underlying changes
   useEffect(() => {
     if (!underlying) return;
+    let cancelled = false;
     const fetchPrice = async () => {
       setIsLoading(true);
+      setPriceSource("");
       try {
         const { data } = await supabase.functions.invoke("get-live-prices", {
           body: { symbols: [underlying] },
         });
+        if (cancelled) return;
         if (data?.success && data?.prices?.[underlying]) {
-          setAtmPrice(data.prices[underlying].ltp);
+          const ltp = data.prices[underlying].ltp;
+          if (ltp && ltp > 0) {
+            setAtmPrice(ltp);
+            setPriceSource(data.prices[underlying].source || data.source || "live");
+            return;
+          }
         }
-      } catch (e) {
-        console.error("Failed to fetch price:", e);
-        const mockPrices: Record<string, number> = {
-          NIFTY: 22500, BANKNIFTY: 48000, FINNIFTY: 21500,
-          RELIANCE: 2450, TCS: 3850, INFY: 1520,
-          HDFCBANK: 1680, ICICIBANK: 1120, SBIN: 780,
+        // Fallback: use well-known approximate prices for indices
+        console.warn("Live price unavailable for", underlying, "— using fallback");
+        const fallbackPrices: Record<string, number> = {
+          NIFTY: 24500, BANKNIFTY: 52000, FINNIFTY: 23500,
+          SENSEX: 80000, MIDCPNIFTY: 12000, NIFTYNXT50: 65000,
         };
-        setAtmPrice(mockPrices[underlying] || 1000);
+        setAtmPrice(fallbackPrices[underlying] || 0);
+        setPriceSource(fallbackPrices[underlying] ? "fallback" : "");
+      } catch (e) {
+        if (cancelled) return;
+        console.error("Failed to fetch price:", e);
+        const fallbackPrices: Record<string, number> = {
+          NIFTY: 24500, BANKNIFTY: 52000, FINNIFTY: 23500,
+          SENSEX: 80000, MIDCPNIFTY: 12000, NIFTYNXT50: 65000,
+        };
+        setAtmPrice(fallbackPrices[underlying] || 0);
+        setPriceSource(fallbackPrices[underlying] ? "fallback" : "");
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     };
     fetchPrice();
+    return () => { cancelled = true; };
   }, [underlying]);
 
   const atmStrike = atmPrice > 0 ? getAtmStrike(underlying, atmPrice) : 0;
@@ -156,16 +179,21 @@ export function OptionChainSelector({ onSelect, className }: OptionChainSelector
     return filtered;
   }, [allStrikes, rangeNum, strikeSearch]);
 
-  // Mock option LTP
+  // Estimated option LTP (intrinsic + approximate time value)
+  // Real option chain prices require a market data subscription
   const getOptionLtp = useCallback(
     (strikePrice: number, type: "CE" | "PE"): number => {
       if (!atmPrice) return 0;
       const diff = type === "CE" ? atmPrice - strikePrice : strikePrice - atmPrice;
       const intrinsic = Math.max(0, diff);
-      const timeValue = 30 + (strikePrice % 100) / 10;
+      const step = getStrikeStep(underlying, atmPrice);
+      const distanceFromAtm = Math.abs(strikePrice - getAtmStrike(underlying, atmPrice)) / step;
+      // Time value decays with distance from ATM
+      const baseTimeValue = atmPrice * 0.015; // ~1.5% of underlying
+      const timeValue = Math.max(5, baseTimeValue * Math.exp(-0.15 * distanceFromAtm));
       return parseFloat((intrinsic + timeValue).toFixed(2));
     },
-    [atmPrice]
+    [atmPrice, underlying]
   );
 
   // Auto-scroll to ATM row
@@ -209,8 +237,13 @@ export function OptionChainSelector({ onSelect, className }: OptionChainSelector
         <span className="text-xs font-medium text-muted-foreground">Underlying</span>
         {atmPrice > 0 && (
           <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4">
-            ATM ₹{atmPrice.toLocaleString()}
+            ATM ₹{atmPrice.toLocaleString()}{priceSource === "fallback" ? " (approx)" : ""}
           </Badge>
+        )}
+        {underlying && atmPrice > 0 && (
+          <span className="text-[10px] text-muted-foreground italic ml-auto">
+            {priceSource === "fallback" ? "⚠ Live price unavailable — estimates shown" : "LTPs are estimated"}
+          </span>
         )}
       </div>
 
@@ -243,11 +276,16 @@ export function OptionChainSelector({ onSelect, className }: OptionChainSelector
                 </Badge>
               ))}
             </div>
-            {filteredStocks.length > 0 && (
+            {filteredStocks.length > 0 ? (
               <>
                 <Separator />
-                <ScrollArea className="h-24">
-                  <div className="flex flex-wrap gap-1.5">
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-[10px] text-muted-foreground">
+                    F&O Stocks ({filteredStocks.length}{underlyingSearch ? ` matching "${underlyingSearch}"` : ` of ${stocks.length}`})
+                  </span>
+                </div>
+                <ScrollArea className="h-40">
+                  <div className="flex flex-wrap gap-1.5 pb-1">
                     {filteredStocks.map((u) => (
                       <Badge
                         key={u}
@@ -261,7 +299,11 @@ export function OptionChainSelector({ onSelect, className }: OptionChainSelector
                   </div>
                 </ScrollArea>
               </>
-            )}
+            ) : underlyingSearch ? (
+              <p className="text-xs text-muted-foreground py-2 text-center">
+                No F&O stocks matching "{underlyingSearch}"
+              </p>
+            ) : null}
           </div>
         )}
       </div>
