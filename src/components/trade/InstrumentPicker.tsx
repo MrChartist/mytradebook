@@ -1,12 +1,13 @@
- import { useState, useCallback, useEffect, useRef, useMemo } from "react";
- import { Input } from "@/components/ui/input";
- import { Label } from "@/components/ui/label";
- import { Button } from "@/components/ui/button";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 // Native <select> used instead of Radix Select to avoid infinite re-render loop inside Dialog
- import { NativeToggle } from "@/components/ui/native-toggle";
- import { Loader2, Search, Star, Clock, Zap, Keyboard } from "lucide-react";
- import { supabase } from "@/integrations/supabase/client";
- import { cn } from "@/lib/utils";
+import { NativeToggle } from "@/components/ui/native-toggle";
+import { Loader2, Search, Star, Clock, Zap, Keyboard, Link2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
+import { OptionChainSelector } from "./OptionChainSelector";
  
  export interface SelectedInstrument {
    symbol: string;
@@ -49,8 +50,9 @@
    showLtpFetch = true,
    className 
  }: InstrumentPickerProps) {
-   // Mode: search or manual
-   const [mode, setMode] = useState<"search" | "manual">("search");
+    // Mode: search, chain (option chain), or manual
+    const isOptionsSegment = segment === "Options";
+    const [mode, setMode] = useState<"search" | "chain" | "manual">(isOptionsSegment ? "chain" : "search");
    
    // Search mode state
    const [query, setQuery] = useState("");
@@ -85,22 +87,30 @@
    
    const debounceRef = useRef<NodeJS.Timeout | null>(null);
    
-   // Auto-set exchange based on segment
-   useEffect(() => {
-     if (segment === "Options" || segment === "Futures") {
-       setExchangeFilter("NFO");
-       setManualExchange("NFO");
-       setManualType(segment === "Options" ? "OPT" : "FUT");
-     } else if (segment === "Commodities") {
-       setExchangeFilter("MCX");
-       setManualExchange("MCX");
-       setManualType("FUT");
-     } else {
-       setExchangeFilter("NSE");
-       setManualExchange("NSE");
-       setManualType("EQ");
-     }
-   }, [segment]);
+    // Auto-set exchange and mode based on segment
+    useEffect(() => {
+      if (segment === "Options") {
+        setExchangeFilter("NFO");
+        setManualExchange("NFO");
+        setManualType("OPT");
+        setMode("chain");
+      } else if (segment === "Futures") {
+        setExchangeFilter("NFO");
+        setManualExchange("NFO");
+        setManualType("FUT");
+        setMode("search");
+      } else if (segment === "Commodities") {
+        setExchangeFilter("MCX");
+        setManualExchange("MCX");
+        setManualType("FUT");
+        setMode("search");
+      } else {
+        setExchangeFilter("NSE");
+        setManualExchange("NSE");
+        setManualType("EQ");
+        setMode("search");
+      }
+    }, [segment]);
    
    // Debounced search
    useEffect(() => {
@@ -380,110 +390,149 @@
    return (
      <div className={cn("space-y-3", className)}>
        <div className="flex items-center justify-between">
-         <Label>Select Instrument *</Label>
-         <div className="flex items-center gap-2 text-xs">
-           <span className={cn(mode === "search" ? "text-foreground" : "text-muted-foreground")}>
-             <Search className="w-3 h-3 inline mr-0.5" />
-             Search
-           </span>
-            <NativeToggle
-              checked={mode === "manual"}
-              onCheckedChange={(checked) => setMode(checked ? "manual" : "search")}
-              className="scale-75"
-            />
-           <span className={cn(mode === "manual" ? "text-foreground" : "text-muted-foreground")}>
-             <Keyboard className="w-3 h-3 inline mr-0.5" />
-             Manual
-           </span>
-         </div>
+          <Label>Select Instrument *</Label>
+          <div className="flex items-center gap-1 text-xs">
+            <button
+              type="button"
+              onClick={() => setMode("search")}
+              className={cn(
+                "px-2 py-1 rounded-md transition-colors",
+                mode === "search" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"
+              )}
+            >
+              <Search className="w-3 h-3 inline mr-0.5" />
+              Search
+            </button>
+            {isOptionsSegment && (
+              <button
+                type="button"
+                onClick={() => setMode("chain")}
+                className={cn(
+                  "px-2 py-1 rounded-md transition-colors",
+                  mode === "chain" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"
+                )}
+              >
+                <Link2 className="w-3 h-3 inline mr-0.5" />
+                Option Chain
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setMode("manual")}
+              className={cn(
+                "px-2 py-1 rounded-md transition-colors",
+                mode === "manual" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"
+              )}
+            >
+              <Keyboard className="w-3 h-3 inline mr-0.5" />
+              Manual
+            </button>
+          </div>
        </div>
        
-       {mode === "search" ? (
-         <div className="space-y-2">
-           {/* Exchange filter */}
-           <div className="flex gap-1">
-             {(["ALL", "NSE", "NFO", "MCX"] as const).map((ex) => (
-               <Button
-                 key={ex}
-                 type="button"
-                 variant={exchangeFilter === ex ? "default" : "outline"}
-                 size="sm"
-                 onClick={() => setExchangeFilter(ex)}
-                 className="text-xs h-7 px-2"
-               >
-                 {ex}
-               </Button>
-             ))}
-           </div>
-           
-           {/* Tabs */}
-           <div className="flex gap-1 border-b">
-             <button
-               type="button"
-               onClick={() => setActiveTab("search")}
-               className={cn(
-                 "px-2 py-1 text-xs transition-colors",
-                 activeTab === "search" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"
-               )}
-             >
-               <Search className="w-3 h-3 inline mr-0.5" />
-               Search
-             </button>
-             <button
-               type="button"
-               onClick={() => setActiveTab("recent")}
-               className={cn(
-                 "px-2 py-1 text-xs transition-colors",
-                 activeTab === "recent" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"
-               )}
-             >
-               <Clock className="w-3 h-3 inline mr-0.5" />
-               Recent
-             </button>
-             <button
-               type="button"
-               onClick={() => setActiveTab("favorites")}
-               className={cn(
-                 "px-2 py-1 text-xs transition-colors",
-                 activeTab === "favorites" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"
-               )}
-             >
-               <Star className="w-3 h-3 inline mr-0.5" />
-               Favorites
-             </button>
-           </div>
-           
-           {/* Search input */}
-           {activeTab === "search" && (
-             <div className="relative">
-               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-               <Input
-                 placeholder="Type symbol..."
-                 value={query}
-                 onChange={(e) => setQuery(e.target.value)}
-                 className="pl-8 h-9 text-sm"
-               />
-             </div>
-           )}
-           
-           {/* Results list */}
-           <div className="max-h-40 overflow-y-auto space-y-0.5 border rounded-md p-1">
-             {isSearching && activeTab === "search" ? (
-               <div className="flex items-center justify-center py-3">
-                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                 <span className="text-xs text-muted-foreground">Searching...</span>
-               </div>
-             ) : displayList.length === 0 ? (
-               <p className="text-xs text-muted-foreground text-center py-3">
-                 {activeTab === "search" ? "No results. Try a different search or use Manual mode." : 
-                  activeTab === "recent" ? "No recent items" : "No favorites"}
-               </p>
-             ) : (
-               displayList.map(renderItem)
-             )}
-           </div>
-         </div>
-       ) : (
+        {mode === "search" ? (
+          <div className="space-y-2">
+            {/* Exchange filter */}
+            <div className="flex gap-1">
+              {(["ALL", "NSE", "NFO", "MCX"] as const).map((ex) => (
+                <Button
+                  key={ex}
+                  type="button"
+                  variant={exchangeFilter === ex ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setExchangeFilter(ex)}
+                  className="text-xs h-7 px-2"
+                >
+                  {ex}
+                </Button>
+              ))}
+            </div>
+            
+            {/* Tabs */}
+            <div className="flex gap-1 border-b">
+              <button
+                type="button"
+                onClick={() => setActiveTab("search")}
+                className={cn(
+                  "px-2 py-1 text-xs transition-colors",
+                  activeTab === "search" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"
+                )}
+              >
+                <Search className="w-3 h-3 inline mr-0.5" />
+                Search
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("recent")}
+                className={cn(
+                  "px-2 py-1 text-xs transition-colors",
+                  activeTab === "recent" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"
+                )}
+              >
+                <Clock className="w-3 h-3 inline mr-0.5" />
+                Recent
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("favorites")}
+                className={cn(
+                  "px-2 py-1 text-xs transition-colors",
+                  activeTab === "favorites" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"
+                )}
+              >
+                <Star className="w-3 h-3 inline mr-0.5" />
+                Favorites
+              </button>
+            </div>
+            
+            {/* Search input */}
+            {activeTab === "search" && (
+              <div className="relative">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                <Input
+                  placeholder="Type symbol..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="pl-8 h-9 text-sm"
+                />
+              </div>
+            )}
+            
+            {/* Results list */}
+            <div className="max-h-40 overflow-y-auto space-y-0.5 border rounded-md p-1">
+              {isSearching && activeTab === "search" ? (
+                <div className="flex items-center justify-center py-3">
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  <span className="text-xs text-muted-foreground">Searching...</span>
+                </div>
+              ) : displayList.length === 0 ? (
+                <p className="text-xs text-muted-foreground text-center py-3">
+                  {activeTab === "search" ? "No results. Try a different search or use Manual mode." : 
+                   activeTab === "recent" ? "No recent items" : "No favorites"}
+                </p>
+              ) : (
+                displayList.map(renderItem)
+              )}
+            </div>
+          </div>
+        ) : mode === "chain" ? (
+          /* Option Chain mode */
+          <OptionChainSelector
+            onSelect={(contract) => {
+              const instrument: SelectedInstrument = {
+                symbol: contract.symbol,
+                security_id: null,
+                exchange_segment: contract.exchange_segment,
+                exchange: contract.exchange,
+                instrument_type: contract.instrument_type,
+                ltp: contract.ltp,
+              };
+              setSelected(instrument);
+              addToRecent(instrument);
+              onSelect(instrument);
+            }}
+          />
+        ) : (
          /* Manual mode */
          <div className="space-y-3 p-3 border rounded-lg bg-accent/30">
            <div className="grid grid-cols-2 gap-2">
