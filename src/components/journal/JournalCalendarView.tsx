@@ -204,21 +204,21 @@ export function JournalCalendarView({
         <Button variant="ghost" size="icon" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
           <ChevronLeft className="w-5 h-5" />
         </Button>
-        <h3 className="text-lg font-semibold">{format(currentMonth, "MMMM yyyy")}</h3>
+        <h3 className="text-xl font-bold">{format(currentMonth, "MMMM yyyy")}</h3>
         <Button variant="ghost" size="icon" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
           <ChevronRight className="w-5 h-5" />
         </Button>
       </div>
 
       {/* Week Day Headers */}
-      <div className="grid grid-cols-7 gap-2 mb-2">
+      <div className="grid grid-cols-7 border-b border-border">
         {weekDays.map((day) => (
-          <div key={day} className="text-center text-xs font-medium text-muted-foreground py-1.5">{day}</div>
+          <div key={day} className="text-center text-xs font-medium text-muted-foreground py-2">{day}</div>
         ))}
       </div>
 
       {/* Calendar Days */}
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 border-l border-border">
         {days.map((day) => {
           const key = format(day, "yyyy-MM-dd");
           const dayData = getDayData(day);
@@ -237,11 +237,11 @@ export function JournalCalendarView({
                 if (onDayClick && isCurrentMonth) onDayClick(key);
               }}
               className={cn(
-                "p-1.5 rounded-xl transition-all text-left flex flex-col relative min-h-[90px]",
+                "p-1.5 border-r border-b border-border transition-colors text-left flex flex-col relative min-h-[100px]",
                 isCurrentMonth ? "hover:bg-accent/60" : "opacity-30 pointer-events-none",
                 isFuture && isCurrentMonth && "opacity-50",
-                isSelected && "ring-2 ring-primary shadow-sm",
-                isToday && !isSelected && "ring-1 ring-primary/40",
+                isSelected && "border-2 border-dashed border-primary",
+                isToday && !isSelected && "border-2 border-dashed border-primary/60",
                 // Heatmap background
                 !dayData && isCurrentMonth && "bg-card",
                 dayData && pnl !== undefined && pnl > 0 && getIntensity(pnl) === "low" && "bg-profit/10",
@@ -261,7 +261,6 @@ export function JournalCalendarView({
                 )}>
                   {format(day, "d")}
                 </span>
-                {/* Journal dot */}
                 {hasJournal && (
                   <span className="w-1.5 h-1.5 rounded-full bg-primary/60" title="Journal entry" />
                 )}

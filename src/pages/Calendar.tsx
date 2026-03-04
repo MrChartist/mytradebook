@@ -61,12 +61,6 @@ export default function Calendar() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-bold">Calendar</h1>
-        <p className="text-muted-foreground text-sm">
-          Daily trading activity timeline — click a date to view trades and journal.
-        </p>
-      </div>
 
       {/* Monthly Summary Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
