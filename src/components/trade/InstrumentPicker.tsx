@@ -389,46 +389,52 @@ import { OptionChainSelector } from "./OptionChainSelector";
    
    return (
      <div className={cn("space-y-3", className)}>
-       <div className="flex items-center justify-between">
-          <Label>Select Instrument *</Label>
-          <div className="flex items-center gap-1 text-xs">
-            <button
-              type="button"
-              onClick={() => setMode("search")}
-              className={cn(
-                "px-2 py-1 rounded-md transition-colors",
-                mode === "search" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"
-              )}
-            >
-              <Search className="w-3 h-3 inline mr-0.5" />
-              Search
-            </button>
-            {isOptionsSegment && (
-              <button
-                type="button"
-                onClick={() => setMode("chain")}
-                className={cn(
-                  "px-2 py-1 rounded-md transition-colors",
-                  mode === "chain" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"
-                )}
-              >
-                <Link2 className="w-3 h-3 inline mr-0.5" />
-                Option Chain
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => setMode("manual")}
-              className={cn(
-                "px-2 py-1 rounded-md transition-colors",
-                mode === "manual" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"
-              )}
-            >
-              <Keyboard className="w-3 h-3 inline mr-0.5" />
-              Manual
-            </button>
+      <div className="flex items-center justify-between">
+           <Label>Select Instrument *</Label>
+           <div className="flex items-center gap-1 text-xs">
+             <button
+               type="button"
+               onClick={() => setMode("search")}
+               className={cn(
+                 "px-2 py-1 rounded-md transition-colors",
+                 mode === "search" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"
+               )}
+             >
+               <Search className="w-3 h-3 inline mr-0.5" />
+               Search
+             </button>
+             {isOptionsSegment && (
+               <button
+                 type="button"
+                 onClick={() => setMode("chain")}
+                 className={cn(
+                   "px-2 py-1 rounded-md transition-colors",
+                   mode === "chain" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"
+                 )}
+               >
+                 <Link2 className="w-3 h-3 inline mr-0.5" />
+                 Option Chain
+               </button>
+             )}
+             <button
+               type="button"
+               onClick={() => setMode("manual")}
+               className={cn(
+                 "px-2 py-1 rounded-md transition-colors",
+                 mode === "manual" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"
+               )}
+             >
+               <Keyboard className="w-3 h-3 inline mr-0.5" />
+               Manual
+             </button>
+           </div>
+        </div>
+
+        {!isOptionsSegment && exchangeFilter === "NFO" && mode === "search" && (
+          <div className="rounded-md border border-primary/30 bg-primary/5 px-2.5 py-2 text-xs text-muted-foreground">
+            For the new CE | Strike | PE grid, set <span className="font-medium text-foreground">Segment = Options</span> and switch to <span className="font-medium text-foreground">Option Chain</span>.
           </div>
-       </div>
+        )}
        
         {mode === "search" ? (
           <div className="space-y-2">
