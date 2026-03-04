@@ -23,6 +23,9 @@ interface OptionChainSelectorProps {
     ltp: number;
     instrumentToken?: string;
     contractKey: string;
+    exchange: string;
+    instrument_type: string;
+    exchange_segment: string;
   }) => void;
   className?: string;
 }
@@ -166,6 +169,9 @@ export function OptionChainSelector({ onSelect, className }: OptionChainSelector
       symbol,
       ltp,
       contractKey,
+      exchange: "NFO",
+      instrument_type: "OPT",
+      exchange_segment: "NSE_FNO",
     });
   };
 
