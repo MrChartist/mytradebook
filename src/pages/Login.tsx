@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import logo from "@/assets/logo.png";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -165,10 +166,7 @@ export default function Login() {
         <div className="flex items-center justify-between px-3 pl-4 py-2 rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg shadow-foreground/[0.03]">
           <motion.div className="flex items-center gap-2" whileHover={{ scale: 1.03 }}>
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center shadow-[0_0_16px_hsl(var(--tb-accent)/0.25)]">
-                <TrendingUp className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-lg font-logo font-bold tracking-tight">TradeBook</span>
+              <img src={logo} alt="TradeBook" className="h-8 object-contain" />
             </Link>
           </motion.div>
 
@@ -266,10 +264,7 @@ export default function Login() {
           >
             {/* Mobile Logo */}
             <div className="lg:hidden flex items-center gap-3 mb-6 justify-center">
-              <div className="w-10 h-10 rounded-xl bg-[hsl(var(--tb-accent))] flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xl font-bold">TradeBook</span>
+              <img src={logo} alt="TradeBook" className="h-10 object-contain" />
             </div>
 
             <div className="surface-card p-6 sm:p-8">

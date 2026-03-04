@@ -25,6 +25,7 @@ import { MobileDrawer } from "./MobileDrawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useSubscription } from "@/hooks/useSubscription";
+import logo from "@/assets/logo.png";
 
 const mainNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
@@ -85,12 +86,7 @@ export function Sidebar() {
     <>
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-card border-b border-border flex items-center justify-between px-4">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-primary flex items-center justify-center">
-            <TrendingUp className="w-4 h-4 text-primary-foreground" />
-          </div>
-          <span className="font-logo font-bold text-[15px] tracking-tight">TradeBook</span>
-        </div>
+        <img src={logo} alt="TradeBook" className="h-8 object-contain" />
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <Button variant="ghost" size="icon" className="h-9 w-9">
@@ -113,13 +109,10 @@ export function Sidebar() {
       >
         {/* Logo */}
         <div className="flex items-center gap-2.5 px-4 h-[60px] border-b border-border">
-          <div className="w-8 h-8 rounded-xl bg-gradient-primary flex items-center justify-center flex-shrink-0">
-            <TrendingUp className="w-[18px] h-[18px] text-primary-foreground" />
-          </div>
-          {!collapsed && (
-            <div className="animate-fade-in">
-              <h1 className="font-logo font-bold text-[15px] leading-tight tracking-tight">TradeBook</h1>
-            </div>
+          {collapsed ? (
+            <img src={logo} alt="TradeBook" className="h-7 w-7 object-contain flex-shrink-0" />
+          ) : (
+            <img src={logo} alt="TradeBook" className="h-8 object-contain animate-fade-in" />
           )}
           {!collapsed && (
             <button
