@@ -203,19 +203,19 @@ export function OptionChainSelector({ onSelect, className }: OptionChainSelector
   };
 
   return (
-    <div className={cn("space-y-4 p-4 rounded-lg border bg-muted/30", className)}>
-      <div className="flex items-center justify-between">
-        <Label className="text-sm font-medium">Option Chain Selector</Label>
+    <div className={cn("space-y-3 rounded-lg border bg-muted/30 p-3", className)}>
+      {/* Header: compact with ATM inline */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-xs font-medium text-muted-foreground">Underlying</span>
         {atmPrice > 0 && (
-          <Badge variant="outline" className="text-xs">
-            ATM: ₹{atmPrice.toLocaleString()}
+          <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4">
+            ATM ₹{atmPrice.toLocaleString()}
           </Badge>
         )}
       </div>
 
       {/* Step 1: Underlying */}
-      <div className="space-y-2">
-        <Label className="text-xs text-muted-foreground">1. Select Underlying</Label>
+      <div className="space-y-1.5">
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
@@ -269,8 +269,8 @@ export function OptionChainSelector({ onSelect, className }: OptionChainSelector
       {underlying && (
         <>
           {/* Step 2: Expiry */}
-          <div className="space-y-2">
-            <Label className="text-xs text-muted-foreground">2. Select Expiry</Label>
+          <div className="space-y-1.5">
+            <span className="text-xs text-muted-foreground">Expiry</span>
             <Select value={expiry} onValueChange={(v) => { setExpiry(v); setSelected(null); }}>
               <SelectTrigger>
                 <SelectValue placeholder="Select expiry date" />
@@ -288,8 +288,8 @@ export function OptionChainSelector({ onSelect, className }: OptionChainSelector
           {expiry && (
             <>
               {/* Controls: Range + Strike Search + ATM shortcuts */}
-              <div className="space-y-2">
-                <Label className="text-xs text-muted-foreground">3. Select Contract</Label>
+              <div className="space-y-1.5">
+                <span className="text-xs text-muted-foreground">Strike</span>
                 <div className="flex items-center gap-2 flex-wrap">
                   <ToggleGroup
                     type="single"
