@@ -13,25 +13,26 @@ interface UserSettings {
   theme: string | null;
   timezone: string | null;
   telegram_chat_id: string | null;
-  telegram_link_code: string | null;
   telegram_link_expires_at: string | null;
   telegram_verified_at: string | null;
   telegram_enabled: boolean | null;
   dhan_client_id: string | null;
-  dhan_access_token: string | null;
   dhan_verified_at: string | null;
   dhan_enabled: boolean | null;
   dhan_account_name: string | null;
   dhan_token_expiry: string | null;
-  dhan_api_key: string | null;
-  dhan_api_secret: string | null;
+  dhan_consent_id: string | null;
   ai_provider: string | null;
-  ai_api_key: string | null;
-  telegram_bot_token: string | null;
   telegram_bot_username: string | null;
   ra_public_mode: boolean | null;
   ra_disclaimer: string | null;
   starting_capital: number | null;
+  dashboard_layout: any;
+  tsl_profiles: any;
+  truedata_enabled: boolean | null;
+  truedata_verified_at: string | null;
+  truedata_username: string | null;
+  webhook_url: string | null;
   created_at: string | null;
   updated_at: string | null;
 }
@@ -50,7 +51,7 @@ export function useUserSettings() {
       
       const { data, error } = await supabase
         .from("user_settings")
-        .select("*")
+        .select("id, user_id, default_sl_percent, alert_frequency_minutes, auto_sync_portfolio, theme, timezone, telegram_chat_id, telegram_verified_at, telegram_enabled, dhan_client_id, dhan_verified_at, dhan_enabled, dhan_account_name, dhan_token_expiry, ai_provider, ra_public_mode, ra_disclaimer, starting_capital, dashboard_layout, tsl_profiles, truedata_enabled, truedata_verified_at, truedata_username, webhook_url, dhan_consent_id, telegram_link_expires_at, telegram_bot_username, created_at, updated_at")
         .eq("user_id", user.id)
         .single();
 

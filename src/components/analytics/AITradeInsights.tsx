@@ -69,7 +69,7 @@ export function AITradeInsights({ compact = false, maxInsights }: AITradeInsight
   const [period, setPeriod] = useState("30d");
   const [showAll, setShowAll] = useState(false);
 
-  const hasAiKey = !!settings?.ai_provider && !!settings?.ai_api_key;
+  const hasAiKey = !!settings?.ai_provider;
   const providerLabel = settings?.ai_provider === "gemini" ? "Gemini" : settings?.ai_provider === "openai" ? "OpenAI" : null;
 
   const displayInsights = maxInsights && !showAll ? insights.slice(0, maxInsights) : insights;
