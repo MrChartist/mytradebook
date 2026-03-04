@@ -1,32 +1,58 @@
 
 
-## Add Option Chain Selector to Instrument Picker
+## Revamp Option Chain Selector UX
 
 ### Problem
-When searching for options in the NFO exchange, too many contracts appear (multiple strikes, expiries for each underlying), making it hard to find the right one.
+The current strike list shows 40+ badges in a flat grid, making it hard to find the right strike. No way to quickly jump to ATM or filter the range.
 
-### Solution
-Add an "Option Chain" mode to the `InstrumentPicker` that appears when segment is "Options". This uses the existing `OptionChainSelector` component which provides a guided step-by-step flow: **Underlying → Expiry → Strike → CE/PE**.
+### Changes to `src/components/trade/OptionChainSelector.tsx`
 
-### Changes
+#### 1. Option Chain Grid View (CE | Strike | PE)
+Replace the badge grid + separate CE/PE step with a traditional option chain table layout:
+- Three columns: **CALL LTP | Strike | PUT LTP**
+- ATM row highlighted with a distinct background
+- Click any CE or PUT cell to select that contract instantly (removes the separate Step 4)
+- Reduces steps from 4 to 3 (Underlying → Expiry → Click on chain)
 
-#### `src/components/trade/InstrumentPicker.tsx`
-- Add a third mode: `"search" | "chain" | "manual"` (instead of just search/manual)
-- When `segment === "Options"`, default to `"chain"` mode and show a 3-way toggle (Search / Option Chain / Manual)
-- In `"chain"` mode, render the existing `OptionChainSelector` component
-- Map the `OptionChainSelector`'s output (`symbol`, `ltp`, `contractKey`) to the `SelectedInstrument` interface so `onSelect` works seamlessly
+#### 2. Strike Range Filter
+Add a compact range control above the chain:
+- Three quick buttons: `±5`, `±10`, `±20` (default ±10)
+- Reduces visible rows from 40 to a manageable count
 
-#### `src/components/trade/OptionChainSelector.tsx`
-- Minor adjustment: ensure the `onSelect` callback provides `exchange` and `instrument_type` fields so the parent can construct a proper `SelectedInstrument`
+#### 3. Auto-scroll to ATM
+- Use a `useRef` + `scrollIntoView` to center the ATM row when strikes load
 
-### Flow
-1. User selects "Options" segment in Create Trade modal
-2. InstrumentPicker defaults to "Option Chain" mode
-3. User picks underlying (NIFTY, BANKNIFTY, etc.) → expiry → strike → CE/PE
-4. On confirm, the contract is set as the selected instrument with symbol like `BANKNIFTY 05MAR26 48000CE`
-5. User can still switch to Search or Manual mode if preferred
+#### 4. Quick ATM Shortcut
+- Add an "ATM" button that instantly selects the at-the-money strike and opens CE/PE choice
+
+#### 5. Strike Search Input
+- Small input field above the chain: type a number to jump/filter to that strike
+
+### UI Layout (after selecting underlying + expiry)
+
+```text
+┌─────────────────────────────────────────┐
+│  Range: [±5] [±10] [±20]   Strike: [___]│
+├──────────┬─────────┬───────────────────┤
+│  CE LTP  │ Strike  │  PE LTP           │
+├──────────┼─────────┼───────────────────┤
+│   120.50 │  22400  │   45.30           │
+│    85.20 │  22450  │   62.80           │
+│    52.10 │ ★22500  │   88.40  ← ATM    │
+│    30.80 │  22550  │  118.50           │
+│    15.40 │  22600  │  152.20           │
+├──────────┴─────────┴───────────────────┤
+│ Selected: NIFTY 06MAR26 22500CE        │
+│ LTP: ₹52.10           [Use Contract]  │
+└─────────────────────────────────────────┘
+```
+
+### Flow Change
+- Steps 1-2 remain the same (Underlying → Expiry)
+- Step 3 becomes the grid: user clicks a CE or PE cell directly
+- Step 4 (CE/PE toggle) is eliminated — the click on the cell determines it
+- Preview and confirm bar appears below the grid
 
 ### Files
-- `src/components/trade/InstrumentPicker.tsx`
-- `src/components/trade/OptionChainSelector.tsx`
+- `src/components/trade/OptionChainSelector.tsx` — full rewrite of the strike selection area
 
