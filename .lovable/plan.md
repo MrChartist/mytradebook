@@ -1,34 +1,35 @@
 
 
-## Calendar Page Style Fix
+## Use Uploaded Logo & Favicon
 
-Comparing the screenshot to current code, here are the mismatches and fixes:
-
-### Issues
-1. **Page title wastes space** — "Calendar" heading and subtitle not present in the reference
-2. **Calendar cells too rounded** — current `rounded-xl` looks blobby; reference shows a clean table-grid with subtle borders
-3. **Today highlight wrong** — current uses `ring-1 ring-primary/40`; reference shows an **orange dashed border**
-4. **Grid uses gap spacing** — reference uses contiguous cells with border dividers (traditional calendar table look)
-5. **Selected date ring too heavy** — reference shows thin dashed orange border, not thick solid ring
-6. **Month header styling** — needs to be larger/bolder to match reference
+The user uploaded two files:
+1. `user-uploads://logo.png` — full TradeBook logo with icon + text
+2. `user-uploads://favicon-32x32.png` — small favicon icon
 
 ### Changes
 
-#### `src/pages/Calendar.tsx`
-- Remove the `<h1>Calendar</h1>` and `<p>` description block — the stats strip is enough context
+#### 1. Copy files into project
+- Copy `user-uploads://logo.png` → `src/assets/logo.png` (for React component imports)
+- Copy `user-uploads://favicon-32x32.png` → `public/favicon-32x32.png` (for HTML favicon)
 
-#### `src/components/journal/JournalCalendarView.tsx` (full grid mode only)
-- Change grid from `gap-2` to `gap-0` with `border border-border` on each cell for a table-grid look
-- Change cell rounding from `rounded-xl` to `rounded-none` (first/last row cells get corner rounding)
-- Change today highlight from `ring-1 ring-primary/40` to `border-2 border-dashed border-primary`
-- Change selected highlight from `ring-2 ring-primary` to `border-2 border-primary border-dashed`
-- Increase month title to `text-xl font-bold`
-- Wrap the grid in a bordered container with rounded outer corners
-- Make weekday headers have a bottom border separator
+#### 2. Update favicon in `index.html`
+- Change `<link rel="icon" href="/favicon.ico">` to reference `/favicon-32x32.png`
+- Update `<link rel="apple-touch-icon">` similarly
 
-These are purely CSS/className changes — no logic changes needed.
+#### 3. Replace icon-based logos with the image across all components
+Replace the current `<div className="w-8 h-8 rounded-xl bg-gradient-primary"><TrendingUp /></div> + <span>TradeBook</span>` pattern with `<img src={logo} alt="TradeBook" className="h-8" />` in:
 
-### Files
-- `src/pages/Calendar.tsx` — remove heading block
-- `src/components/journal/JournalCalendarView.tsx` — restyle full grid cells
+- `src/components/layout/Sidebar.tsx` — both mobile header and desktop sidebar logo (2 spots)
+- `src/pages/Landing.tsx` — navbar logo and footer logo (2 spots)
+- `src/pages/Login.tsx` — desktop sidebar logo and mobile logo (2 spots)
+- `src/pages/Docs.tsx` — navbar logo (1 spot)
+
+Each spot replaces the icon div + text span with a single `<img>` tag importing from `@/assets/logo.png`.
+
+### Files Modified
+- `index.html`
+- `src/components/layout/Sidebar.tsx`
+- `src/pages/Landing.tsx`
+- `src/pages/Login.tsx`
+- `src/pages/Docs.tsx`
 
