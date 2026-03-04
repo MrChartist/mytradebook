@@ -40,8 +40,18 @@ interface JournalCalendarViewProps {
   compact?: boolean;
   /** Show a link to the full calendar page (compact mode) */
   showLink?: boolean;
-  /** Called when a day cell is clicked in compact mode */
+  /** Called when a day cell is clicked */
   onDayClick?: (dateStr: string) => void;
+  /** Grid-only mode: no internal sidebar, parent manages detail panel */
+  gridOnly?: boolean;
+  /** Controlled selected date */
+  selectedDate?: Date;
+  /** Controlled current month */
+  currentMonth?: Date;
+  /** Month change handler for controlled mode */
+  onMonthChange?: (month: Date) => void;
+  /** Set of dates (yyyy-MM-dd) that have journal entries */
+  journalDates?: Set<string>;
 }
 
 export function JournalCalendarView({
@@ -51,9 +61,18 @@ export function JournalCalendarView({
   compact = false,
   showLink = false,
   onDayClick,
+  gridOnly = false,
+  selectedDate: controlledSelectedDate,
+  currentMonth: controlledMonth,
+  onMonthChange,
+  journalDates,
 }: JournalCalendarViewProps) {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [internalMonth, setInternalMonth] = useState(new Date());
+  const [internalSelectedDate, setInternalSelectedDate] = useState<Date | null>(null);
+
+  const currentMonth = controlledMonth ?? internalMonth;
+  const setCurrentMonth = onMonthChange ?? setInternalMonth;
+  const selectedDate = controlledSelectedDate ?? internalSelectedDate;
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -73,27 +92,32 @@ export function JournalCalendarView({
   const tradingDays = calendarData.length;
   const profitDays = calendarData.filter((d) => d.pnl > 0).length;
 
+  // Heatmap intensity helper
+  const getIntensity = (pnl: number) => {
+    const maxAbs = Math.max(...calendarData.map((d) => Math.abs(d.pnl)), 1);
+    const ratio = Math.min(Math.abs(pnl) / maxAbs, 1);
+    if (ratio < 0.25) return "low";
+    if (ratio < 0.6) return "mid";
+    return "high";
+  };
+
+  const today = format(new Date(), "yyyy-MM-dd");
+
   if (isLoading) {
     return (
       <div className="glass-card p-5">
         <Skeleton className="h-8 w-48 mb-4" />
-        <Skeleton className={compact ? "h-[200px] w-full" : "h-[400px] w-full"} />
+        <div className="grid grid-cols-7 gap-1">
+          {Array.from({ length: 35 }).map((_, i) => (
+            <Skeleton key={i} className={compact ? "aspect-square rounded-sm" : "h-[90px] rounded-lg"} />
+          ))}
+        </div>
       </div>
     );
   }
 
   /* ─── Compact heatmap mode (dashboard widget) ─── */
   if (compact) {
-    const today = format(new Date(), "yyyy-MM-dd");
-
-    const getIntensity = (pnl: number) => {
-      const maxAbs = Math.max(...calendarData.map((d) => Math.abs(d.pnl)), 1);
-      const ratio = Math.min(Math.abs(pnl) / maxAbs, 1);
-      if (ratio < 0.25) return "low";
-      if (ratio < 0.6) return "mid";
-      return "high";
-    };
-
     return (
       <div className="glass-card p-5">
         <div className="flex items-center justify-between mb-4">
@@ -119,14 +143,12 @@ export function JournalCalendarView({
           </div>
         </div>
 
-        {/* Day labels */}
         <div className="grid grid-cols-7 gap-1 mb-1">
           {weekDays.map((d, i) => (
             <div key={i} className="text-center text-[10px] text-muted-foreground font-medium">{d}</div>
           ))}
         </div>
 
-        {/* Compact grid */}
         <div className="grid grid-cols-7 gap-1">
           {days.map((day) => {
             const key = format(day, "yyyy-MM-dd");
@@ -137,9 +159,7 @@ export function JournalCalendarView({
             const pnl = dayData?.pnl;
             const clickable = !!onDayClick && !isFuture && isCurrentMonth;
 
-            if (!isCurrentMonth) {
-              return <div key={key} className="aspect-square" />;
-            }
+            if (!isCurrentMonth) return <div key={key} className="aspect-square" />;
 
             return (
               <div
@@ -167,7 +187,6 @@ export function JournalCalendarView({
           })}
         </div>
 
-        {/* Legend */}
         <div className="flex items-center justify-center gap-3 mt-3 text-[10px] text-muted-foreground">
           <div className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-loss/40" /> Loss</div>
           <div className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-accent/30" /> No trade</div>
@@ -177,65 +196,108 @@ export function JournalCalendarView({
     );
   }
 
-  /* ─── Full calendar mode ─── */
-  return (
-    <div className="flex flex-col lg:flex-row gap-6">
-      {/* Calendar Grid */}
-      <div className="glass-card p-5 flex-1">
-        {/* Month Navigation */}
-        <div className="flex items-center justify-between mb-6">
-          <Button variant="ghost" size="icon" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
-            <ChevronLeft className="w-5 h-5" />
-          </Button>
-          <h3 className="text-lg font-semibold">{format(currentMonth, "MMMM yyyy")}</h3>
-          <Button variant="ghost" size="icon" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
-            <ChevronRight className="w-5 h-5" />
-          </Button>
-        </div>
+  /* ─── Full calendar grid mode ─── */
+  const calendarGrid = (
+    <div className="glass-card p-5">
+      {/* Month Navigation */}
+      <div className="flex items-center justify-between mb-5">
+        <Button variant="ghost" size="icon" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
+          <ChevronLeft className="w-5 h-5" />
+        </Button>
+        <h3 className="text-lg font-semibold">{format(currentMonth, "MMMM yyyy")}</h3>
+        <Button variant="ghost" size="icon" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
+          <ChevronRight className="w-5 h-5" />
+        </Button>
+      </div>
 
-        {/* Week Day Headers */}
-        <div className="grid grid-cols-7 gap-1 mb-2">
-          {weekDays.map((day) => (
-            <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">{day}</div>
-          ))}
-        </div>
+      {/* Week Day Headers */}
+      <div className="grid grid-cols-7 gap-2 mb-2">
+        {weekDays.map((day) => (
+          <div key={day} className="text-center text-xs font-medium text-muted-foreground py-1.5">{day}</div>
+        ))}
+      </div>
 
-        {/* Calendar Days */}
-        <div className="grid grid-cols-7 gap-1">
-          {days.map((day) => {
-            const dayData = getDayData(day);
-            const isCurrentMonth = isSameMonth(day, currentMonth);
-            const isSelected = selectedDate && isSameDay(day, selectedDate);
+      {/* Calendar Days */}
+      <div className="grid grid-cols-7 gap-2">
+        {days.map((day) => {
+          const key = format(day, "yyyy-MM-dd");
+          const dayData = getDayData(day);
+          const isCurrentMonth = isSameMonth(day, currentMonth);
+          const isSelected = selectedDate && isSameDay(day, selectedDate);
+          const isToday = key === today;
+          const isFuture = day > new Date();
+          const hasJournal = journalDates?.has(key);
+          const pnl = dayData?.pnl;
 
-            return (
-              <button
-                key={day.toISOString()}
-                onClick={() => setSelectedDate(day)}
-                className={cn(
-                  "aspect-square p-1 rounded-lg transition-colors text-left flex flex-col relative min-h-[80px]",
-                  isCurrentMonth ? "hover:bg-accent" : "opacity-40 hover:opacity-60",
-                  isSelected && "ring-2 ring-primary bg-primary/10"
-                )}
-              >
-                <span className={cn("text-sm font-medium", !isCurrentMonth && "text-muted-foreground")}>
+          return (
+            <button
+              key={day.toISOString()}
+              onClick={() => {
+                if (!gridOnly) setInternalSelectedDate(day);
+                if (onDayClick && isCurrentMonth) onDayClick(key);
+              }}
+              className={cn(
+                "p-1.5 rounded-xl transition-all text-left flex flex-col relative min-h-[90px]",
+                isCurrentMonth ? "hover:bg-accent/60" : "opacity-30 pointer-events-none",
+                isFuture && isCurrentMonth && "opacity-50",
+                isSelected && "ring-2 ring-primary shadow-sm",
+                isToday && !isSelected && "ring-1 ring-primary/40",
+                // Heatmap background
+                !dayData && isCurrentMonth && "bg-card",
+                dayData && pnl !== undefined && pnl > 0 && getIntensity(pnl) === "low" && "bg-profit/10",
+                dayData && pnl !== undefined && pnl > 0 && getIntensity(pnl) === "mid" && "bg-profit/20",
+                dayData && pnl !== undefined && pnl > 0 && getIntensity(pnl) === "high" && "bg-profit/30",
+                dayData && pnl !== undefined && pnl < 0 && getIntensity(pnl) === "low" && "bg-loss/10",
+                dayData && pnl !== undefined && pnl < 0 && getIntensity(pnl) === "mid" && "bg-loss/20",
+                dayData && pnl !== undefined && pnl < 0 && getIntensity(pnl) === "high" && "bg-loss/30",
+                dayData && pnl === 0 && "bg-muted/30"
+              )}
+            >
+              <div className="flex items-center justify-between w-full">
+                <span className={cn(
+                  "text-xs font-medium leading-none",
+                  !isCurrentMonth && "text-muted-foreground",
+                  isToday && "text-primary font-bold"
+                )}>
                   {format(day, "d")}
                 </span>
-                {dayData && dayData.tradeCount > 0 && (
-                  <>
-                    <span className="text-xs text-muted-foreground mt-1">
-                      {dayData.tradeCount} trade{dayData.tradeCount > 1 ? "s" : ""}
-                    </span>
-                    <span className={cn("text-xs font-semibold mt-auto", dayData.pnl >= 0 ? "text-profit" : "text-loss")}>
-                      {dayData.pnl >= 0 ? "+" : ""}₹{dayData.pnl.toLocaleString()}
-                    </span>
-                    <div className={cn("absolute top-1 right-1 w-2 h-2 rounded-full", dayData.pnl >= 0 ? "bg-profit" : "bg-loss")} />
-                  </>
+                {/* Journal dot */}
+                {hasJournal && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary/60" title="Journal entry" />
                 )}
-              </button>
-            );
-          })}
-        </div>
+              </div>
+
+              {dayData && dayData.tradeCount > 0 && (
+                <>
+                  <span className="text-[10px] text-muted-foreground mt-1">
+                    {dayData.tradeCount} trade{dayData.tradeCount > 1 ? "s" : ""}
+                  </span>
+                  <span className={cn("text-xs font-semibold mt-auto", pnl !== undefined && pnl >= 0 ? "text-profit" : "text-loss")}>
+                    {pnl !== undefined && pnl >= 0 ? "+" : ""}₹{(pnl ?? 0).toLocaleString()}
+                  </span>
+                </>
+              )}
+            </button>
+          );
+        })}
       </div>
+
+      {/* Legend */}
+      <div className="flex items-center justify-center gap-4 mt-4 text-[10px] text-muted-foreground">
+        <div className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-loss/30" /> Loss</div>
+        <div className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-card border border-border" /> No trade</div>
+        <div className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-profit/30" /> Profit</div>
+        <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-primary/60" /> Journal</div>
+      </div>
+    </div>
+  );
+
+  if (gridOnly) return calendarGrid;
+
+  /* ─── Full calendar with internal sidebar (legacy/standalone usage) ─── */
+  return (
+    <div className="flex flex-col lg:flex-row gap-6">
+      {calendarGrid}
 
       {/* Day Detail Sidebar */}
       <div className="glass-card p-5 lg:w-80">
