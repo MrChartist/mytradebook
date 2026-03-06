@@ -1,52 +1,58 @@
 
 
-# Premium Stock Detail Modal Redesign
+## Improve Instrument Selection UX Across Trades, Alerts & Studies
 
-## What Changes
-Completely redesign `StockPopupCard.tsx` with a premium editorial SaaS aesthetic matching the TradeBook design system.
+### Current Pain Points
+1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
+2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
+3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
+4. **Selected state is disconnected** — after selecting, "Change" button resets everything
+5. **No keyboard navigation** — can't arrow through results or press Enter to select
+6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
+7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
 
-## Key Design Elements
+### Proposed Improvements
 
-### Header
-- **Left**: Bold stock symbol (e.g. "RELIANCE"), company name below in muted text, meta line with exchange badge ("NSE"), sector badge, and market-cap classification badge (Large/Mid/Small Cap)
-- **Right**: Large current price in JetBrains Mono, daily change % with green/red pill badge, small "Delayed · HH:MM" timestamp below
-- **Close button**: Circular ghost button with subtle hover state (already handled by Dialog's built-in close)
+#### 1. Unified Combobox-Style Picker (biggest UX win)
+Replace the current search input + results list with a **combobox pattern**:
+- Single input field that shows results as you type (dropdown below)
+- Recent items shown immediately on focus (before typing)
+- Favorites pinned at the top with a star
+- Arrow keys to navigate, Enter to select, Escape to close
+- Taller results area (max-h-64 instead of max-h-40)
 
-### Tab Bar
-- Compact segmented control with `bg-muted` track and active tab gets `bg-card` with subtle shadow — already close to what we have, just refine sizing and spacing
+#### 2. Smarter Defaults & Context
+- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
+- Remember last used exchange filter per segment in localStorage
+- Show lot size inline for F&O instruments in results
 
-### Overview Tab
-- 2×3 grid of metric cards with white bg, soft border, 14px radius — each card has muted label (11px), bold value (14px), optional sub-context text
-- Dedicated 52W Range section with labeled low/high/current + gradient range bar with circular price marker (refine existing `RangeBar`)
+#### 3. Improved Selected State
+- Show a compact **chip-style** selected instrument instead of the current full-width bar
+- "Change" opens the picker inline (no full reset) — preserves recent search context
+- LTP fetch button more prominent with last-fetched timestamp
 
-### Valuation Tab
-- Fix duplicate Dividend Yield card (line 131-132 bug)
-- Clean 2×3 grid
+#### 4. Keyboard Navigation in Search Results
+- Add `onKeyDown` handler to search input
+- ArrowUp/ArrowDown to highlight results
+- Enter to select highlighted item
+- Track `highlightedIndex` state
 
-### Financials Tab
-- 3×3 grid, same card style
+#### 5. Option Chain Quick Access
+- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
+- Make the chain component more compact — remove redundant labels
 
-### Technicals Tab
-- RSI gauge, Beta/ATR card, SMA section, Performance section, 52W range — keep structure, upgrade card styling
+#### 6. Exchange Filter as Chips (not buttons)
+- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
 
-### Bottom Actions
-- Sticky footer with two buttons: "View Full Details" (outline) and "Add to Watchlist" (primary) — new addition
+### Files to Modify
+- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
+- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
 
-### Styling Upgrades
-- Modal: `rounded-2xl` with clean shadow, max-w-2xl
-- Metric cards: `bg-card border border-border rounded-[14px] p-3.5` instead of `bg-muted/50`
-- Stronger spacing between sections
-- Font: financial values in `font-mono` for the numbers
-
-## Files to Modify
-
-| File | Change |
-|---|---|
-| `src/components/trade/StockPopupCard.tsx` | Full redesign with premium styling, fix duplicate card bug, add bottom actions, add meta badges, add timestamp |
-
-## Implementation Notes
-- Single file change — all modifications in `StockPopupCard.tsx`
-- Fix the duplicate Dividend Yield MetricCard on line 131-132
-- Add market-cap classification helper: Large Cap (>₹20K Cr), Mid Cap (₹5K-20K Cr), Small Cap (<₹5K Cr)
-- Keep all existing data fields and tab structure
+### Implementation Order
+1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
+2. Increase results area height and show lot size for F&O
+3. Replace exchange filter buttons with compact chips
+4. Add "remember last exchange" per segment
+5. Improve selected state with chip-style display
+6. Add focus-triggered recent items display
 
