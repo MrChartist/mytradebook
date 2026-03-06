@@ -68,9 +68,16 @@ const FIELD_KEY_MAP: Record<string, string> = {
 const cache = new Map<string, { data: unknown; ts: number }>();
 const CACHE_TTL = 5 * 60 * 1000;
 
-function getCacheKey(symbols: string[] | undefined, mode: string): string {
-  if (mode === "top") return "__top50__";
-  return (symbols ?? []).slice().sort().join(",");
+function getCacheKey(body: Record<string, unknown>): string {
+  const mode = body.mode || "top";
+  const symbols = body.symbols as string[] | undefined;
+  if (mode === "symbols" && symbols) return symbols.slice().sort().join(",");
+  const limit = body.limit ?? 500;
+  const offset = body.offset ?? 0;
+  const sortBy = body.sortBy ?? "market_cap";
+  const sortOrder = body.sortOrder ?? "desc";
+  const filters = JSON.stringify(body.filters ?? []);
+  return `${mode}:${limit}:${offset}:${sortBy}:${sortOrder}:${filters}`;
 }
 
 serve(async (req) => {
@@ -83,7 +90,7 @@ serve(async (req) => {
     const symbols: string[] | undefined = body.symbols;
     const mode: string = body.mode || (symbols ? "symbols" : "top");
 
-    const cacheKey = getCacheKey(symbols, mode);
+    const cacheKey = getCacheKey(body);
     const cached = cache.get(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
       return new Response(JSON.stringify(cached.data), {
@@ -93,8 +100,10 @@ serve(async (req) => {
 
     let filter: unknown[] = [];
     let tvSymbols: unknown = undefined;
+    const limit: number = body.limit ?? 500;
+    const offset: number = body.offset ?? 0;
     let sort: unknown = { sortBy: "market_cap_basic", sortOrder: "desc" };
-    let range: unknown = [0, 50];
+    let range: unknown = [offset, offset + limit];
 
     if (mode === "symbols" && symbols?.length) {
       tvSymbols = {
@@ -108,6 +117,22 @@ serve(async (req) => {
         { left: "is_primary", operation: "equal", right: true },
         { left: "type", operation: "equal", right: "stock" },
       ];
+
+      // Apply server-side filters from request
+      const filters: { field: string; op: string; value: number }[] = body.filters ?? [];
+      for (const f of filters) {
+        filter.push({ left: f.field, operation: f.op, right: f.value });
+      }
+
+      if (body.sortBy) {
+        // Map friendly keys back to TV field names
+        const reverseMap: Record<string, string> = {};
+        for (const [tvField, friendlyKey] of Object.entries(FIELD_KEY_MAP)) {
+          reverseMap[friendlyKey] = tvField;
+        }
+        const tvSortField = reverseMap[body.sortBy] || body.sortBy;
+        sort = { sortBy: tvSortField, sortOrder: body.sortOrder || "desc" };
+      }
     }
 
     const tvPayload: Record<string, unknown> = {
