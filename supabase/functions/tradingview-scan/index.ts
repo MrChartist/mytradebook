@@ -93,8 +93,10 @@ serve(async (req) => {
 
     let filter: unknown[] = [];
     let tvSymbols: unknown = undefined;
+    const limit: number = body.limit ?? 500;
+    const offset: number = body.offset ?? 0;
     let sort: unknown = { sortBy: "market_cap_basic", sortOrder: "desc" };
-    let range: unknown = [0, 50];
+    let range: unknown = [offset, offset + limit];
 
     if (mode === "symbols" && symbols?.length) {
       tvSymbols = {
@@ -108,6 +110,22 @@ serve(async (req) => {
         { left: "is_primary", operation: "equal", right: true },
         { left: "type", operation: "equal", right: "stock" },
       ];
+
+      // Apply server-side filters from request
+      const filters: { field: string; op: string; value: number }[] = body.filters ?? [];
+      for (const f of filters) {
+        filter.push({ left: f.field, operation: f.op, right: f.value });
+      }
+
+      if (body.sortBy) {
+        // Map friendly keys back to TV field names
+        const reverseMap: Record<string, string> = {};
+        for (const [tvField, friendlyKey] of Object.entries(FIELD_KEY_MAP)) {
+          reverseMap[friendlyKey] = tvField;
+        }
+        const tvSortField = reverseMap[body.sortBy] || body.sortBy;
+        sort = { sortBy: tvSortField, sortOrder: body.sortOrder || "desc" };
+      }
     }
 
     const tvPayload: Record<string, unknown> = {
