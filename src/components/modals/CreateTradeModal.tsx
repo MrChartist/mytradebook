@@ -361,7 +361,7 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
                       onClick={() => {
                         setValue("segment", st.segment as any, { shouldValidate: true });
                         setValue("trade_type", st.trade_type as any, { shouldValidate: true });
-                        if (st.timeframe) setValue("timeframe", st.timeframe);
+                        if (st.timeframe) setValue("timeframe", st.timeframe as any);
                       }}
                       className="px-2.5 py-1.5 rounded-lg border border-primary/20 bg-primary/5 text-[11px] font-medium text-primary hover:bg-primary/10 transition-colors"
                       title={`Avg SL: ${st.avgSl ? st.avgSl + "%" : "N/A"} · Avg gain: ${st.avgTarget ? "+" + st.avgTarget + "%" : "N/A"}`}
@@ -377,8 +377,8 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
                       onClick={() => {
                         setValue("segment", t.segment as any, { shouldValidate: true });
                         setValue("trade_type", t.trade_type as any, { shouldValidate: true });
-                        if (t.timeframe) setValue("timeframe", t.timeframe);
-                        if (t.holding_period) setValue("holding_period", t.holding_period);
+                        if (t.timeframe) setValue("timeframe", t.timeframe as any);
+                        if (t.holding_period) setValue("holding_period", t.holding_period as any);
                         if (t.default_sl_percent) {
                           // Will be applied contextually when entry price is set
                         }
