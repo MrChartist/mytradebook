@@ -1341,7 +1341,68 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 14. Settings ───────────────────────────── */}
+            {/* ── 14b. Mobile & PWA ──────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <SectionHeader
+                id="pwa"
+                title="Mobile & PWA"
+                description="TradeBook is a fully installable Progressive Web App. Add it to your home screen for a native-like experience with offline capabilities."
+                icon={Smartphone}
+              />
+              <div className="grid md:grid-cols-2 gap-5">
+                <FeatureCard icon={Smartphone} title="Install as App">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    TradeBook works as a PWA — install it on your phone or desktop for instant access without the browser chrome.
+                  </p>
+                  <FeatureList items={[
+                    "Add to Home Screen on iOS and Android",
+                    "Full-screen app experience — no browser UI",
+                    "Maskable icon for clean home screen appearance",
+                    "Auto-updates when new versions are deployed",
+                    "Refresh prompt when a new version is available",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Activity} title="Offline Trade Queue" badge="New">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Log trades even when you're offline. Trades are queued locally and automatically synced when connectivity is restored.
+                  </p>
+                  <FeatureList items={[
+                    "Detects online/offline status automatically",
+                    "Offline banner appears in the app header",
+                    "Trades are saved to local storage when offline",
+                    "Auto-syncs queued trades when back online",
+                    "Toast notifications confirm each synced trade",
+                    "Shows count of queued trades in the offline banner",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={LayoutDashboard} title="Mobile Navigation">
+                  <FeatureList items={[
+                    "Bottom navigation bar with key pages: Dashboard, Trades, Alerts, Journal",
+                    "Touch-optimized with safe-area insets for modern devices",
+                    "Responsive layouts across all pages",
+                    "Floating Quick Actions button for fast trade/alert/review creation",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Play} title="Onboarding Checklist" badge="Enhanced">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    A guided 6-step onboarding flow on the dashboard for new users:
+                  </p>
+                  <FeatureList items={[
+                    "Log your first trade — auto-detected when you have any trades",
+                    "Create a watchlist — detected when you have watchlists",
+                    "Set a price alert — detected when you have alerts",
+                    "Connect your broker — detected via Dhan verification",
+                    "Write a journal entry — detected from daily journal entries",
+                    "Review analytics — detected when you have closed trades",
+                    "Progress bar and auto-dismiss when all steps complete",
+                  ]} />
+                </FeatureCard>
+              </div>
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── 15. Settings ───────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="settings"
