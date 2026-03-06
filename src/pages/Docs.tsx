@@ -690,13 +690,16 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><CsvImportMockup /></div>
               </FeatureCard>
 
-              <FeatureCard icon={Zap} title="Trade Templates">
-                <p className="text-sm text-muted-foreground mb-3">Save frequently-used trade setups as templates for quick entry:</p>
+              <FeatureCard icon={Zap} title="Trade Templates & Smart Suggestions">
+                <p className="text-sm text-muted-foreground mb-3">Save frequently-used trade setups as templates, plus get AI-suggested setups based on your trading history:</p>
                 <FeatureList items={[
                   "Pre-fill segment, trade type, default SL %, tags",
                   "Optional notes template and timeframe",
                   "Enable/disable auto-tracking and Telegram posting per template",
                   "One-click 'Use' button when creating new trades",
+                  "Smart Suggestions — analyzes your closed trades to surface your most common setups",
+                  "Shows top 3 frequent combos (e.g., 'Options BUY 5min — used 23 times')",
+                  "One-click pre-fill from any suggestion",
                 ]} />
                 <div className="mt-4"><TradeTemplateMockup /></div>
               </FeatureCard>
@@ -1221,6 +1224,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Keyboard}
               />
               <ShortcutKeyboardMockup />
+              <FeatureCard icon={Command} title="Command Palette (⌘K)" badge="Enhanced">
+                <p className="text-sm text-muted-foreground mb-3">
+                  A global search that goes beyond navigation. Press <ShortcutKey>⌘K</ShortcutKey> or <ShortcutKey>/</ShortcutKey> to open and search across everything:
+                </p>
+                <FeatureList items={[
+                  "Navigate to any page instantly",
+                  "Quick actions: New Trade, New Alert, New Study",
+                  "Search your trades by symbol — shows P&L badge and status",
+                  "Search alerts by symbol — shows condition type and threshold",
+                  "Search journal entries — matches text in plans, reviews, and lessons",
+                  "Dynamic results appear after typing 2+ characters",
+                ]} />
+              </FeatureCard>
               <FeatureCard icon={Command} title="All Shortcuts">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
