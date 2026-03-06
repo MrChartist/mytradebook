@@ -1,12 +1,17 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator,
+  CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator,
 } from "@/components/ui/command";
 import {
   LayoutDashboard, TrendingUp, Bell, BookOpen, CalendarDays, AlertTriangle,
   BarChart3, FileText, Settings, Eye, Sparkles, Plus, Search,
 } from "lucide-react";
+import { useTrades } from "@/hooks/useTrades";
+import { useAlerts } from "@/hooks/useAlerts";
+import { useDailyJournal } from "@/hooks/useDailyJournal";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard, group: "Navigate" },
@@ -34,7 +39,12 @@ interface CommandPaletteProps {
 
 export function CommandPalette({ onAction }: CommandPaletteProps) {
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const navigate = useNavigate();
+
+  const { trades } = useTrades();
+  const { alerts } = useAlerts();
+  const { entries: journalEntries } = useDailyJournal();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -47,27 +57,74 @@ export function CommandPalette({ onAction }: CommandPaletteProps) {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
+  // Reset query when dialog closes
+  useEffect(() => {
+    if (!open) setQuery("");
+  }, [open]);
+
+  const q = query.toLowerCase().trim();
+  const showDynamic = q.length >= 2;
+
+  const filteredTrades = useMemo(() => {
+    if (!showDynamic) return [];
+    return trades
+      .filter((t) => t.symbol.toLowerCase().includes(q))
+      .slice(0, 5);
+  }, [trades, q, showDynamic]);
+
+  const filteredAlerts = useMemo(() => {
+    if (!showDynamic) return [];
+    return alerts
+      .filter((a) => a.symbol.toLowerCase().includes(q))
+      .slice(0, 5);
+  }, [alerts, q, showDynamic]);
+
+  const filteredJournal = useMemo(() => {
+    if (!showDynamic) return [];
+    return journalEntries
+      .filter((j) => {
+        const searchable = [j.pre_market_plan, j.post_market_review, j.lessons_learned, j.market_outlook]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        return searchable.includes(q);
+      })
+      .slice(0, 3);
+  }, [journalEntries, q, showDynamic]);
+
   const handleSelect = useCallback((value: string) => {
     setOpen(false);
-    // Check if it's a nav item
     const navItem = NAV_ITEMS.find((n) => n.label.toLowerCase() === value);
-    if (navItem) {
-      navigate(navItem.path);
-      return;
-    }
-    // Check if it's an action
+    if (navItem) { navigate(navItem.path); return; }
     const actionItem = ACTIONS.find((a) => a.label.toLowerCase() === value);
-    if (actionItem) {
-      onAction?.(actionItem.action);
+    if (actionItem) { onAction?.(actionItem.action); return; }
+
+    // Trade by id
+    if (value.startsWith("trade:")) {
+      navigate(`/trades?search=${encodeURIComponent(value.replace("trade:", ""))}`);
       return;
     }
-    // Search trades by symbol
+    // Alert
+    if (value.startsWith("alert:")) {
+      navigate("/alerts");
+      return;
+    }
+    // Journal
+    if (value.startsWith("journal:")) {
+      navigate("/journal");
+      return;
+    }
+
     navigate(`/trades?search=${encodeURIComponent(value)}`);
   }, [navigate, onAction]);
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandInput placeholder="Search pages, trades, actions..." />
+      <CommandInput
+        placeholder="Search pages, trades, alerts… (⌘K)"
+        value={query}
+        onValueChange={setQuery}
+      />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
 
@@ -90,6 +147,75 @@ export function CommandPalette({ onAction }: CommandPaletteProps) {
             </CommandItem>
           ))}
         </CommandGroup>
+
+        {filteredTrades.length > 0 && (
+          <>
+            <CommandSeparator />
+            <CommandGroup heading="Trades">
+              {filteredTrades.map((t) => (
+                <CommandItem
+                  key={t.id}
+                  value={`trade:${t.symbol}`}
+                  onSelect={handleSelect}
+                >
+                  <TrendingUp className="w-4 h-4 mr-2 text-muted-foreground" />
+                  <span className="flex-1">{t.symbol}</span>
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      "ml-2 text-xs",
+                      t.pnl && t.pnl > 0 ? "text-profit border-profit/30" : t.pnl && t.pnl < 0 ? "text-loss border-loss/30" : ""
+                    )}
+                  >
+                    {t.status} {t.pnl != null ? `₹${t.pnl.toFixed(0)}` : ""}
+                  </Badge>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </>
+        )}
+
+        {filteredAlerts.length > 0 && (
+          <>
+            <CommandSeparator />
+            <CommandGroup heading="Alerts">
+              {filteredAlerts.map((a) => (
+                <CommandItem
+                  key={a.id}
+                  value={`alert:${a.symbol}`}
+                  onSelect={handleSelect}
+                >
+                  <Bell className="w-4 h-4 mr-2 text-warning" />
+                  <span className="flex-1">{a.symbol}</span>
+                  <span className="text-xs text-muted-foreground ml-2">
+                    {a.condition_type.replace(/_/g, " ")} {a.threshold}
+                  </span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </>
+        )}
+
+        {filteredJournal.length > 0 && (
+          <>
+            <CommandSeparator />
+            <CommandGroup heading="Journal">
+              {filteredJournal.map((j) => (
+                <CommandItem
+                  key={j.id}
+                  value={`journal:${j.entry_date}`}
+                  onSelect={handleSelect}
+                >
+                  <BookOpen className="w-4 h-4 mr-2 text-primary" />
+                  <span className="flex-1">{j.entry_date}</span>
+                  {j.mood && (
+                    <span className="text-xs text-muted-foreground ml-2 capitalize">{j.mood}</span>
+                  )}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </>
+        )}
       </CommandList>
     </CommandDialog>
   );

@@ -2,17 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTrades } from "@/hooks/useTrades";
+import { useWatchlists } from "@/hooks/useWatchlists";
+import { useAlerts } from "@/hooks/useAlerts";
+import { useUserSettings } from "@/hooks/useUserSettings";
+import { useDailyJournal } from "@/hooks/useDailyJournal";
 import {
-  BookOpen,
-  Bell,
-  BarChart3,
-  Eye,
-  ArrowRight,
-  X,
-  CheckCircle2,
-  Sparkles,
+  BookOpen, Bell, BarChart3, Eye, ArrowRight, X, CheckCircle2, Sparkles, Link, FileText,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const ONBOARDING_KEY = "tradebook_onboarding_dismissed";
@@ -22,7 +18,6 @@ interface Step {
   icon: React.ElementType;
   title: string;
   description: string;
-  action: string;
   route: string;
   completed?: boolean;
 }
@@ -31,6 +26,10 @@ export function OnboardingWelcome() {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const { trades } = useTrades();
+  const { watchlists } = useWatchlists();
+  const { alerts } = useAlerts();
+  const { settings } = useUserSettings();
+  const { entries: journalEntries } = useDailyJournal();
   const [dismissed, setDismissed] = useState(true);
 
   useEffect(() => {
@@ -43,9 +42,11 @@ export function OnboardingWelcome() {
     setDismissed(true);
   };
 
-  if (dismissed) return null;
-
   const hasTradesLogged = trades.length > 0;
+  const hasWatchlists = watchlists.length > 0;
+  const hasAlerts = alerts.length > 0;
+  const hasBrokerConnected = !!settings?.dhan_verified_at;
+  const hasJournalEntry = journalEntries.length > 0;
   const hasClosedTrades = trades.some((t) => t.status === "CLOSED");
 
   const steps: Step[] = [
@@ -54,7 +55,6 @@ export function OnboardingWelcome() {
       icon: BookOpen,
       title: "Log Your First Trade",
       description: "Add a trade manually or sync from your broker.",
-      action: "Add Trade",
       route: "/trades",
       completed: hasTradesLogged,
     },
@@ -63,23 +63,38 @@ export function OnboardingWelcome() {
       icon: Eye,
       title: "Create a Watchlist",
       description: "Track symbols you're watching for setups.",
-      action: "Open Watchlist",
       route: "/watchlist",
+      completed: hasWatchlists,
     },
     {
       id: "alert",
       icon: Bell,
       title: "Set a Price Alert",
       description: "Get notified when price hits your level.",
-      action: "Create Alert",
       route: "/alerts",
+      completed: hasAlerts,
+    },
+    {
+      id: "broker",
+      icon: Link,
+      title: "Connect Your Broker",
+      description: "Link your Dhan account for auto-sync.",
+      route: "/settings",
+      completed: hasBrokerConnected,
+    },
+    {
+      id: "journal",
+      icon: FileText,
+      title: "Write a Journal Entry",
+      description: "Reflect on your trading day.",
+      route: "/journal",
+      completed: hasJournalEntry,
     },
     {
       id: "analytics",
       icon: BarChart3,
       title: "Review Your Analytics",
       description: "See win rate, equity curve, and segment breakdown.",
-      action: "View Analytics",
       route: "/analytics",
       completed: hasClosedTrades,
     },
@@ -89,13 +104,20 @@ export function OnboardingWelcome() {
   const progress = (completedCount / steps.length) * 100;
   const name = profile?.name || "Trader";
 
+  // Auto-dismiss when all steps complete
+  useEffect(() => {
+    if (completedCount === steps.length && !dismissed) {
+      dismiss();
+    }
+  }, [completedCount, steps.length, dismissed]);
+
+  if (dismissed) return null;
+
   return (
     <div className="relative rounded-2xl border border-[hsl(var(--tb-accent)/0.3)] bg-card overflow-hidden mb-5">
-      {/* Top accent bar */}
       <div className="h-1 bg-[hsl(var(--tb-accent))]" />
 
       <div className="p-5 sm:p-6">
-        {/* Header */}
         <div className="flex items-start justify-between mb-5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[hsl(var(--tb-accent)/0.12)] flex items-center justify-center">
@@ -116,7 +138,6 @@ export function OnboardingWelcome() {
           </button>
         </div>
 
-        {/* Progress bar */}
         <div className="mb-5">
           <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
             <span>{completedCount} of {steps.length} completed</span>
@@ -130,8 +151,7 @@ export function OnboardingWelcome() {
           </div>
         </div>
 
-        {/* Steps */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {steps.map((step) => (
             <button
               key={step.id}
@@ -153,7 +173,7 @@ export function OnboardingWelcome() {
                   )}
                 >
                   {step.completed ? (
-                    <CheckCircle2 className="w-4 h-4 text-[hsl(var(--profit))]" />
+                    <CheckCircle2 className="w-4 h-4 text-profit" />
                   ) : (
                     <step.icon className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
                   )}
@@ -168,7 +188,6 @@ export function OnboardingWelcome() {
           ))}
         </div>
 
-        {/* Quick dismiss */}
         <div className="mt-4 text-center">
           <button
             onClick={dismiss}
