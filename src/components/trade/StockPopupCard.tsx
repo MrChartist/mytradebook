@@ -273,25 +273,35 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 rounded-2xl gap-0 shadow-2xl border-border/50 bg-card">
+      <DialogContent className="w-[95vw] max-w-2xl max-h-[92vh] overflow-y-auto p-0 rounded-2xl gap-0 shadow-2xl border-border/50 bg-card sm:w-full">
         {/* ── Hero Header ── */}
-        <DialogHeader className="relative p-5 pb-4 overflow-hidden">
+        <DialogHeader className="relative p-4 sm:p-5 pb-3 sm:pb-4 overflow-hidden">
           {/* Subtle gradient accent */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] via-transparent to-transparent pointer-events-none" />
           <div className="absolute top-0 right-0 w-48 h-48 bg-primary/[0.03] rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none" />
 
-          <div className="relative flex items-start justify-between gap-4">
+          <div className="relative flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div className="space-y-2 min-w-0">
               <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                  <Building2 className="w-4.5 h-4.5 text-primary" />
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <Building2 className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-primary" />
                 </div>
-                <div className="min-w-0">
-                  <DialogTitle className="text-xl font-bold tracking-tight leading-none">{symbol}</DialogTitle>
-                  <p className="text-xs text-muted-foreground truncate mt-0.5">{stock.description || stock.name || "—"}</p>
+                <div className="min-w-0 flex-1">
+                  <DialogTitle className="text-lg sm:text-xl font-bold tracking-tight leading-none">{symbol}</DialogTitle>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground truncate mt-0.5">{stock.description || stock.name || "—"}</p>
+                </div>
+                {/* Price on mobile - inline */}
+                <div className="sm:hidden text-right shrink-0">
+                  <p className="text-lg font-bold font-mono tracking-tight leading-none">
+                    {stock.close != null ? `₹${stock.close.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "—"}
+                  </p>
+                  <div className={cn("inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold mt-0.5", isPositive ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss")}>
+                    {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                    {isPositive && "+"}{formatPercent(stock.change)}
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-1">
                 <Badge variant="secondary" className="text-[9px] font-semibold tracking-wider h-5">NSE</Badge>
                 {stock.sector && <Badge variant="outline" className="text-[9px] h-5">{stock.sector}</Badge>}
                 {stock.industry && <Badge variant="outline" className="text-[9px] h-5 hidden sm:inline-flex">{stock.industry}</Badge>}
@@ -301,7 +311,8 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
               </div>
             </div>
 
-            <div className="text-right shrink-0 space-y-1.5">
+            {/* Price on desktop */}
+            <div className="hidden sm:block text-right shrink-0 space-y-1.5">
               <div className="flex items-baseline gap-1 justify-end">
                 <IndianRupee className="w-4 h-4 text-muted-foreground mb-0.5" />
                 <p className="text-2xl font-bold font-mono tracking-tight leading-none">
@@ -323,34 +334,30 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
         </DialogHeader>
 
         {/* ── Market Summary Strip ── */}
-        <div className="flex items-center justify-around gap-1 px-5 py-2.5 border-y border-border bg-muted/20">
+        <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-around gap-2 sm:gap-1 px-4 sm:px-5 py-2.5 border-y border-border bg-muted/20">
           <SummaryStat label="Mkt Cap" value={formatMarketCap(stock.market_cap)} highlight />
-          <div className="w-px h-7 bg-border/60" />
           <SummaryStat label="P/E" value={formatRatio(stock.pe_ratio)} />
-          <div className="w-px h-7 bg-border/60" />
           <SummaryStat label="Volume" value={formatVolume(stock.volume)} />
-          <div className="w-px h-7 bg-border/60" />
           <SummaryStat label="52W High" value={`-${pctFrom52H}%`} />
-          <div className="w-px h-7 bg-border/60 hidden sm:block" />
           <div className="hidden sm:block">
             <SummaryStat label="Div Yield" value={stock.dividend_yield != null ? `${stock.dividend_yield.toFixed(2)}%` : "—"} />
           </div>
         </div>
 
         {/* ── Tabs ── */}
-        <Tabs defaultValue="overview" className="px-5 pt-4 pb-0">
-          <TabsList className="w-full grid grid-cols-4 mb-4 h-9 bg-muted/50 rounded-xl p-0.5">
-            <TabsTrigger value="overview" className="text-[11px] gap-1 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:font-bold">
-              <BarChart3 className="w-3.5 h-3.5" />Overview
+        <Tabs defaultValue="overview" className="px-4 sm:px-5 pt-3 sm:pt-4 pb-0">
+          <TabsList className="w-full grid grid-cols-4 mb-3 sm:mb-4 h-8 sm:h-9 bg-muted/50 rounded-xl p-0.5">
+            <TabsTrigger value="overview" className="text-[10px] sm:text-[11px] gap-0.5 sm:gap-1 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:font-bold">
+              <BarChart3 className="w-3 h-3 sm:w-3.5 sm:h-3.5" /><span className="hidden xs:inline">Overview</span><span className="xs:hidden">Info</span>
             </TabsTrigger>
-            <TabsTrigger value="valuation" className="text-[11px] gap-1 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:font-bold">
-              <DollarSign className="w-3.5 h-3.5" />Valuation
+            <TabsTrigger value="valuation" className="text-[10px] sm:text-[11px] gap-0.5 sm:gap-1 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:font-bold">
+              <DollarSign className="w-3 h-3 sm:w-3.5 sm:h-3.5" /><span className="hidden xs:inline">Valuation</span><span className="xs:hidden">Val</span>
             </TabsTrigger>
-            <TabsTrigger value="financials" className="text-[11px] gap-1 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:font-bold">
-              <Layers className="w-3.5 h-3.5" />Financials
+            <TabsTrigger value="financials" className="text-[10px] sm:text-[11px] gap-0.5 sm:gap-1 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:font-bold">
+              <Layers className="w-3 h-3 sm:w-3.5 sm:h-3.5" /><span className="hidden xs:inline">Financials</span><span className="xs:hidden">Fin</span>
             </TabsTrigger>
-            <TabsTrigger value="technicals" className="text-[11px] gap-1 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:font-bold">
-              <Activity className="w-3.5 h-3.5" />Technicals
+            <TabsTrigger value="technicals" className="text-[10px] sm:text-[11px] gap-0.5 sm:gap-1 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:font-bold">
+              <Activity className="w-3 h-3 sm:w-3.5 sm:h-3.5" /><span className="hidden xs:inline">Technicals</span><span className="xs:hidden">Tech</span>
             </TabsTrigger>
           </TabsList>
 
@@ -452,7 +459,7 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
 
           {/* Technicals */}
           <TabsContent value="technicals" className="space-y-3 pb-4">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <RSIGauge value={stock.rsi} />
               <div className="rounded-xl bg-muted/40 border border-border/60 p-4 space-y-2">
                 <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">Volatility</p>
@@ -482,7 +489,7 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
             {/* Performance */}
             <div className="rounded-xl bg-muted/40 border border-border/60 p-4 space-y-3">
               <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">Performance</p>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <PerfPill label="1W" value={stock.perf_w} />
                 <PerfPill label="1M" value={stock.perf_1m} />
                 <PerfPill label="3M" value={stock.perf_3m} />
@@ -496,26 +503,26 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
         </Tabs>
 
         {/* ── Bottom Actions ── */}
-        <div className="sticky bottom-0 border-t border-border bg-card/95 backdrop-blur-md p-4 space-y-3 rounded-b-2xl">
-          <div className="grid grid-cols-4 gap-2">
-            <Button variant="outline" className="flex-col gap-1 text-[11px] h-auto py-2.5 rounded-xl hover:border-primary/30 hover:bg-primary/5 transition-colors">
-              <ShoppingCart className="w-4 h-4 text-primary" />
+        <div className="sticky bottom-0 border-t border-border bg-card/95 backdrop-blur-md p-3 sm:p-4 space-y-2 sm:space-y-3 rounded-b-2xl">
+          <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+            <Button variant="outline" className="flex-col gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] h-auto py-2 sm:py-2.5 rounded-xl hover:border-primary/30 hover:bg-primary/5 transition-colors">
+              <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
               Trade
             </Button>
-            <Button variant="outline" className="flex-col gap-1 text-[11px] h-auto py-2.5 rounded-xl hover:border-primary/30 hover:bg-primary/5 transition-colors">
-              <Bell className="w-4 h-4 text-primary" />
+            <Button variant="outline" className="flex-col gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] h-auto py-2 sm:py-2.5 rounded-xl hover:border-primary/30 hover:bg-primary/5 transition-colors">
+              <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
               Alert
             </Button>
-            <Button variant="outline" className="flex-col gap-1 text-[11px] h-auto py-2.5 rounded-xl hover:border-primary/30 hover:bg-primary/5 transition-colors">
-              <BookOpen className="w-4 h-4 text-primary" />
+            <Button variant="outline" className="flex-col gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] h-auto py-2 sm:py-2.5 rounded-xl hover:border-primary/30 hover:bg-primary/5 transition-colors">
+              <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
               Study
             </Button>
-            <Button className="flex-col gap-1 text-[11px] h-auto py-2.5 rounded-xl shadow-sm hover:shadow-md transition-all">
-              <Bookmark className="w-4 h-4" />
+            <Button className="flex-col gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] h-auto py-2 sm:py-2.5 rounded-xl shadow-sm hover:shadow-md transition-all">
+              <Bookmark className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               Watchlist
             </Button>
           </div>
-          <Button variant="ghost" size="sm" className="w-full gap-1.5 text-[11px] text-muted-foreground h-8 hover:text-foreground">
+          <Button variant="ghost" size="sm" className="w-full gap-1.5 text-[10px] sm:text-[11px] text-muted-foreground h-7 sm:h-8 hover:text-foreground">
             <ExternalLink className="w-3 h-3" />
             View on TradingView
           </Button>
