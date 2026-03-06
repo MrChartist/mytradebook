@@ -1,23 +1,28 @@
 {
-  "files": [],
-  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
   "compilerOptions": {
-    "baseUrl": ".",
+    "allowJs": true,
+    "alwaysStrict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": false,
+    "noImplicitThis": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
-    // Strict type checking (progressively enabled)
-    "noImplicitAny": true,          // Enabled: Catch implicit any types
-    "strictNullChecks": true,        // Enabled: Catch null/undefined errors
-    "noUnusedParameters": false,     // Keep disabled: Many unused params in callbacks
-    "noUnusedLocals": true,          // Enabled: Catch unused variables
-    "skipLibCheck": true,            // Keep enabled: Skip lib type checking for speed
-    "allowJs": true,                 // Keep enabled: Allow JS files
-
-    // Additional helpful checks
-    "noFallthroughCasesInSwitch": true,  // Catch missing break in switch
-    "noImplicitReturns": false,          // TODO: Enable later
-    "noImplicitThis": false,             // TODO: Enable later
-    "alwaysStrict": true                 // Enable ES6 strict mode
-  }
+    "skipLibCheck": true,
+    "strictNullChecks": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }
