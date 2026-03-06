@@ -306,6 +306,42 @@ export default function Fundamentals() {
               ))}
             </div>
           ))}
+          {/* Saved Presets */}
+          {savedPresets.length > 0 && (
+            <>
+              <div className="w-px h-5 bg-border mx-1.5 shrink-0" />
+              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mr-1 shrink-0">My Presets</span>
+              {savedPresets.map((sp) => (
+                <div key={sp.id} className="flex items-center gap-0.5 shrink-0">
+                  <Button
+                    variant={presetId === `saved_${sp.id}` ? "default" : "ghost"}
+                    size="sm"
+                    className={cn(
+                      "h-7 text-[11px] rounded-full px-3 transition-all",
+                      presetId === `saved_${sp.id}` && "shadow-[0_0_12px_hsl(var(--primary)/0.3)]"
+                    )}
+                    onClick={() => {
+                      setAppliedFilters(sp.filters);
+                      setPresetId(`saved_${sp.id}`);
+                      setCustomFilters(sp.filters.map((f) => ({ field: f.field, op: f.op, value: String(f.value) })));
+                      if (sp.sort_by) setSortKey(sp.sort_by as SortKey);
+                      if (sp.sort_order) setSortAsc(sp.sort_order === "asc");
+                      setPage(0);
+                    }}
+                  >
+                    <Bookmark className="w-3 h-3 mr-1" />
+                    {sp.name}
+                  </Button>
+                  <button
+                    onClick={() => deletePreset.mutate(sp.id)}
+                    className="p-0.5 text-muted-foreground hover:text-destructive transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+            </>
+          )}
           {/* Custom Filter Toggle */}
           <div className="w-px h-5 bg-border mx-1.5 shrink-0" />
           <Button
