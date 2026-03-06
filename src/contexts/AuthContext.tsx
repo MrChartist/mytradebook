@@ -243,7 +243,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithGoogle = async () => {
     setPendingFlag();
     const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/auth/callback`,
+      redirect_uri: window.location.origin,
+      extraParams: { prompt: "select_account" },
     });
     if (error) {
       clearPendingFlag();
