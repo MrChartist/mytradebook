@@ -429,6 +429,20 @@ export default function Fundamentals() {
                 </Button>
                 <div className="flex-1" />
                 <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7 text-xs px-3 gap-1"
+                  onClick={() => {
+                    const valid = customFilters.filter((f) => f.value !== "" && !isNaN(Number(f.value)));
+                    if (valid.length === 0) return;
+                    setShowSaveDialog(true);
+                  }}
+                  disabled={customFilters.every((f) => f.value === "")}
+                >
+                  <Save className="w-3 h-3" />
+                  Save
+                </Button>
+                <Button
                   size="sm"
                   className="h-7 text-xs px-4"
                   onClick={applyCustomFilters}
