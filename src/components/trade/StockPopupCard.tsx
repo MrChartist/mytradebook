@@ -278,20 +278,9 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
       ? (((stock.high_52w - stock.close) / stock.high_52w) * 100).toFixed(1)
       : "—";
 
-  const handleTrade = () => {
-    onOpenChange(false);
-    setTimeout(() => setShowTradeModal(true), 200);
-  };
-
-  const handleAlert = () => {
-    onOpenChange(false);
-    setTimeout(() => setShowAlertModal(true), 200);
-  };
-
-  const handleStudy = () => {
-    onOpenChange(false);
-    setTimeout(() => setShowStudyModal(true), 200);
-  };
+  const handleTrade = () => handleNavigate("/trades");
+  const handleAlert = () => handleNavigate("/alerts");
+  const handleStudy = () => handleNavigate("/studies");
 
   const handleWatchlist = () => {
     if (!firstWatchlist) {
