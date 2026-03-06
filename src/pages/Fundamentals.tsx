@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Progress } from "@/components/ui/progress";
 import { StockPopupCard } from "@/components/trade/StockPopupCard";
 import {
   useFundamentals,
@@ -21,7 +20,8 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Search, Filter, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, X, BarChart3, TrendingUp } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Search, Filter, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, X, BarChart3, Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /* ─── Types ─── */
@@ -61,6 +61,39 @@ const PRESET_GROUPS: { key: string; label: string }[] = [
 
 const PAGE_SIZE_OPTIONS = [25, 50, 100, 200];
 
+/* ─── Custom Filter Constants ─── */
+const FILTER_FIELDS = [
+  { label: "P/E Ratio", value: "price_earnings_ttm" },
+  { label: "P/B Ratio", value: "price_book_ratio" },
+  { label: "ROE (%)", value: "return_on_equity" },
+  { label: "Net Margin (%)", value: "net_margin" },
+  { label: "Dividend Yield (%)", value: "dividends_yield" },
+  { label: "Debt/Equity", value: "debt_to_equity" },
+  { label: "Current Ratio", value: "current_ratio" },
+  { label: "Market Cap", value: "market_cap_basic" },
+  { label: "RSI", value: "RSI" },
+  { label: "Change (%)", value: "change" },
+  { label: "Volume", value: "volume" },
+  { label: "Relative Volume", value: "relative_volume_10d_calc" },
+  { label: "EPS", value: "earnings_per_share_basic_ttm" },
+  { label: "Beta", value: "beta_1_year" },
+];
+
+const FILTER_OPS = [
+  { label: ">", value: "greater" },
+  { label: "<", value: "less" },
+];
+
+type CustomFilter = { field: string; op: string; value: string };
+
+function getFieldLabel(field: string) {
+  return FILTER_FIELDS.find((f) => f.value === field)?.label ?? field;
+}
+
+function getOpLabel(op: string) {
+  return FILTER_OPS.find((o) => o.value === op)?.label ?? op;
+}
+
 export default function Fundamentals() {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("market_cap");
@@ -70,14 +103,22 @@ export default function Fundamentals() {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(50);
 
+  // Custom filter state
+  const [showFilterBuilder, setShowFilterBuilder] = useState(false);
+  const [customFilters, setCustomFilters] = useState<CustomFilter[]>([]);
+  const [appliedFilters, setAppliedFilters] = useState<ScanFilter[]>([]);
+
+  const isCustomMode = presetId === "custom";
   const preset = SCANNER_PRESETS.find((p) => p.id === presetId) ?? SCANNER_PRESETS[0];
+
+  const activeFilters = isCustomMode ? appliedFilters : preset.filters;
 
   const { data: result, isLoading, isFetching } = useFundamentals({
     limit: pageSize,
     offset: page * pageSize,
-    sortBy: preset.sortBy || sortKey,
-    sortOrder: preset.sortOrder || (sortAsc ? "asc" : "desc"),
-    filters: preset.filters,
+    sortBy: isCustomMode ? sortKey : (preset.sortBy || sortKey),
+    sortOrder: isCustomMode ? (sortAsc ? "asc" : "desc") : (preset.sortOrder || (sortAsc ? "asc" : "desc")),
+    filters: activeFilters,
   });
 
   const stocks = useMemo(() => {
@@ -117,7 +158,57 @@ export default function Fundamentals() {
     setPresetId(id);
     setPage(0);
     setSearch("");
+    if (id !== "custom") {
+      setShowFilterBuilder(false);
+      setCustomFilters([]);
+      setAppliedFilters([]);
+    }
   }, []);
+
+  // Custom filter handlers
+  const addFilterRow = useCallback(() => {
+    if (customFilters.length >= 8) return;
+    setCustomFilters((prev) => [...prev, { field: "price_earnings_ttm", op: "greater", value: "" }]);
+  }, [customFilters.length]);
+
+  const updateFilterRow = useCallback((idx: number, patch: Partial<CustomFilter>) => {
+    setCustomFilters((prev) => prev.map((f, i) => (i === idx ? { ...f, ...patch } : f)));
+  }, []);
+
+  const removeFilterRow = useCallback((idx: number) => {
+    setCustomFilters((prev) => prev.filter((_, i) => i !== idx));
+  }, []);
+
+  const applyCustomFilters = useCallback(() => {
+    const valid = customFilters.filter((f) => f.value !== "" && !isNaN(Number(f.value)));
+    if (valid.length === 0) return;
+    const scanFilters: ScanFilter[] = valid.map((f) => ({
+      field: f.field,
+      op: f.op,
+      value: Number(f.value),
+    }));
+    setAppliedFilters(scanFilters);
+    setPresetId("custom");
+    setPage(0);
+  }, [customFilters]);
+
+  const clearCustomFilters = useCallback(() => {
+    setCustomFilters([]);
+    setAppliedFilters([]);
+    setShowFilterBuilder(false);
+    setPresetId("all");
+    setPage(0);
+  }, []);
+
+  const toggleFilterBuilder = useCallback(() => {
+    setShowFilterBuilder((prev) => {
+      const next = !prev;
+      if (next && customFilters.length === 0) {
+        setCustomFilters([{ field: "price_earnings_ttm", op: "greater", value: "" }]);
+      }
+      return next;
+    });
+  }, [customFilters.length]);
 
   const SortIcon = ({ field }: { field: SortKey }) => {
     if (sortKey !== field) return <ChevronDown className="w-3 h-3 opacity-30" />;
@@ -134,7 +225,6 @@ export default function Fundamentals() {
     </button>
   );
 
-  // Pagination page numbers (up to 5 visible)
   const pageNumbers = useMemo(() => {
     const pages: number[] = [];
     let start = Math.max(0, page - 2);
@@ -151,7 +241,6 @@ export default function Fundamentals() {
       <div className="space-y-4">
         {/* ── Header Card ── */}
         <div className="rounded-2xl bg-card border border-border p-5 relative overflow-hidden">
-          {/* Dot grid background */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(hsl(var(--foreground)) 1px, transparent 1px)", backgroundSize: "16px 16px" }} />
           <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -164,7 +253,9 @@ export default function Fundamentals() {
                   <span className="font-mono font-bold text-foreground">{totalCount.toLocaleString()}</span>
                   <span>NSE stocks</span>
                   <span className="text-muted-foreground/50">·</span>
-                  <Badge variant="secondary" className="text-[10px] h-5">{preset.label}</Badge>
+                  <Badge variant="secondary" className="text-[10px] h-5">
+                    {isCustomMode ? `Custom (${appliedFilters.length})` : preset.label}
+                  </Badge>
                 </div>
               </div>
             </div>
@@ -209,7 +300,119 @@ export default function Fundamentals() {
               ))}
             </div>
           ))}
+          {/* Custom Filter Toggle */}
+          <div className="w-px h-5 bg-border mx-1.5 shrink-0" />
+          <Button
+            variant={isCustomMode ? "default" : "outline"}
+            size="sm"
+            className={cn(
+              "h-7 text-[11px] rounded-full px-3 shrink-0 transition-all gap-1.5",
+              isCustomMode && "shadow-[0_0_12px_hsl(var(--primary)/0.3)]"
+            )}
+            onClick={toggleFilterBuilder}
+          >
+            <SlidersHorizontal className="w-3 h-3" />
+            Custom
+            {isCustomMode && appliedFilters.length > 0 && (
+              <span className="ml-0.5 inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary-foreground text-primary text-[9px] font-bold">
+                {appliedFilters.length}
+              </span>
+            )}
+          </Button>
         </div>
+
+        {/* ── Custom Filter Builder ── */}
+        <Collapsible open={showFilterBuilder} onOpenChange={setShowFilterBuilder}>
+          <CollapsibleContent>
+            <div className="rounded-xl border border-border bg-card p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-semibold text-foreground">Filter Conditions <span className="text-muted-foreground font-normal">(AND logic)</span></p>
+                <Button variant="ghost" size="sm" className="h-6 text-[10px] text-muted-foreground" onClick={clearCustomFilters}>
+                  Clear all
+                </Button>
+              </div>
+
+              <div className="space-y-2">
+                {customFilters.map((f, idx) => (
+                  <div key={idx} className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                    <Select value={f.field} onValueChange={(v) => updateFilterRow(idx, { field: v })}>
+                      <SelectTrigger className="h-8 text-xs w-full sm:w-44">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {FILTER_FIELDS.map((ff) => (
+                          <SelectItem key={ff.value} value={ff.value} className="text-xs">{ff.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select value={f.op} onValueChange={(v) => updateFilterRow(idx, { op: v })}>
+                      <SelectTrigger className="h-8 text-xs w-16 shrink-0">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {FILTER_OPS.map((o) => (
+                          <SelectItem key={o.value} value={o.value} className="text-xs">{o.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      type="number"
+                      placeholder="Value"
+                      value={f.value}
+                      onChange={(e) => updateFilterRow(idx, { value: e.target.value })}
+                      className="h-8 text-xs w-full sm:w-28"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
+                      onClick={() => removeFilterRow(idx)}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-xs gap-1"
+                  onClick={addFilterRow}
+                  disabled={customFilters.length >= 8}
+                >
+                  <Plus className="w-3 h-3" />
+                  Add condition
+                </Button>
+                <div className="flex-1" />
+                <Button
+                  size="sm"
+                  className="h-7 text-xs px-4"
+                  onClick={applyCustomFilters}
+                  disabled={customFilters.every((f) => f.value === "")}
+                >
+                  Apply Filters
+                </Button>
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* ── Active Custom Filter Chips ── */}
+        {isCustomMode && appliedFilters.length > 0 && (
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Active:</span>
+            {appliedFilters.map((f, idx) => (
+              <Badge key={idx} variant="secondary" className="text-[10px] h-5 gap-1 font-normal">
+                {getFieldLabel(f.field)} {getOpLabel(f.op)} {f.value}
+              </Badge>
+            ))}
+            <button onClick={clearCustomFilters} className="text-[10px] text-muted-foreground hover:text-foreground ml-1 underline underline-offset-2">
+              Clear
+            </button>
+          </div>
+        )}
 
         {/* ── Table ── */}
         {isLoading ? (
@@ -230,7 +433,6 @@ export default function Fundamentals() {
           </div>
         ) : (
           <div className="rounded-xl border border-border overflow-hidden bg-card relative">
-            {/* Loading progress bar */}
             {isFetching && (
               <div className="absolute top-0 left-0 right-0 z-20">
                 <div className="h-0.5 bg-primary/20 overflow-hidden">
