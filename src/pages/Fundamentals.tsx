@@ -167,6 +167,8 @@ export default function Fundamentals() {
                   <TableHead className="text-right hidden lg:table-cell"><SortHeader label="P/B" field="pb_ratio" /></TableHead>
                   <TableHead className="text-right hidden xl:table-cell"><SortHeader label="ROE" field="roe" /></TableHead>
                   <TableHead className="text-right hidden xl:table-cell"><SortHeader label="Div%" field="dividend_yield" /></TableHead>
+                  <TableHead className="text-right hidden xl:table-cell">52W High</TableHead>
+                  <TableHead className="text-right hidden xl:table-cell">52W Low</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
