@@ -1,58 +1,78 @@
 
 
-## Improve Instrument Selection UX Across Trades, Alerts & Studies
+# Implementation Plan: 4 Features
 
-### Current Pain Points
-1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
-2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
-3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
-4. **Selected state is disconnected** — after selecting, "Change" button resets everything
-5. **No keyboard navigation** — can't arrow through results or press Enter to select
-6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
-7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
+## 1. Portfolio Heat Map (Dashboard Widget)
 
-### Proposed Improvements
+**What**: A new dashboard widget showing a treemap-style heat map of the user's open positions, grouped by sector/symbol, color-coded by P&L (green/red), and sized by position value.
 
-#### 1. Unified Combobox-Style Picker (biggest UX win)
-Replace the current search input + results list with a **combobox pattern**:
-- Single input field that shows results as you type (dropdown below)
-- Recent items shown immediately on focus (before typing)
-- Favorites pinned at the top with a star
-- Arrow keys to navigate, Enter to select, Escape to close
-- Taller results area (max-h-64 instead of max-h-40)
+**Files**:
+- `src/components/dashboard/PortfolioHeatMap.tsx` (new) -- Treemap grid using CSS grid with `flex-grow` tiles. Each tile shows symbol, P&L %, and value. Colors range from deep red (big loss) to deep green (big profit) using interpolation. Falls back to an empty state if no open positions.
+- `src/pages/Dashboard.tsx` -- Add `"heatMap"` to `DEFAULT_WIDGETS` in `useDashboardLayout`, render `<PortfolioHeatMap />` in `renderWidget`.
+- `src/hooks/useDashboardLayout.ts` -- Add `{ id: "heatMap", label: "Portfolio Heat Map", visible: true, order: 5 }` to `DEFAULT_WIDGETS`.
 
-#### 2. Smarter Defaults & Context
-- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
-- Remember last used exchange filter per segment in localStorage
-- Show lot size inline for F&O instruments in results
+**Data source**: Reuses `openTrades` + `prices` from `DashboardContext`. Computes position value as `quantity * ltp` and unrealized P&L per trade. Groups by symbol (or sector if available from trade notes/tags).
 
-#### 3. Improved Selected State
-- Show a compact **chip-style** selected instrument instead of the current full-width bar
-- "Change" opens the picker inline (no full reset) — preserves recent search context
-- LTP fetch button more prominent with last-fetched timestamp
+**Design**: CSS grid of rounded tiles with dynamic `background-color` (hsl-based gradient from red through neutral to green). Tile size proportional to position value via `flex-grow`. Hover shows tooltip with full details. Mobile: 2-column grid with smaller tiles.
 
-#### 4. Keyboard Navigation in Search Results
-- Add `onKeyDown` handler to search input
-- ArrowUp/ArrowDown to highlight results
-- Enter to select highlighted item
-- Track `highlightedIndex` state
+---
 
-#### 5. Option Chain Quick Access
-- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
-- Make the chain component more compact — remove redundant labels
+## 2. Smart Trade Templates
 
-#### 6. Exchange Filter as Chips (not buttons)
-- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
+**What**: When opening the Create Trade modal, show a "Suggested Templates" section that analyzes the user's past closed trades and surfaces the most common setups (segment + trade_type + timeframe combos) as one-click pre-fill options.
 
-### Files to Modify
-- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
-- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
+**Files**:
+- `src/components/modals/CreateTradeModal.tsx` -- Add a collapsible "Suggested Setups" section at the top. Query closed trades, compute the top 3 most frequent (segment, trade_type, timeframe, avg SL) combos, display as clickable chips. On click, pre-fill the form fields. Also show existing saved templates from `useTradeTemplates`.
+- `src/hooks/useSmartTemplates.ts` (new) -- Hook that takes all closed trades, groups by (segment, trade_type, timeframe), computes frequency + avg entry metrics (SL%, typical targets), returns top 3 suggestions with friendly labels like "NIFTY Options Scalp (used 23 times)".
 
-### Implementation Order
-1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
-2. Increase results area height and show lot size for F&O
-3. Replace exchange filter buttons with compact chips
-4. Add "remember last exchange" per segment
-5. Improve selected state with chip-style display
-6. Add focus-triggered recent items display
+**No DB changes needed** -- derived from existing trades data + existing `trade_templates` table.
+
+---
+
+## 3. Daily Review Wizard
+
+**What**: A guided end-of-day review flow accessible from Dashboard (via Quick Actions or a floating prompt after market hours). Steps through: discipline rating, best/worst trade tagging, mood, lessons learned. Saves to `daily_journal_entries`.
+
+**Files**:
+- `src/components/dashboard/DailyReviewWizard.tsx` (new) -- Multi-step dialog/sheet:
+  - **Step 1**: Mood selector (reuse MOODS from DailyJournalEditor) + discipline rating (1-5 stars)
+  - **Step 2**: Auto-lists today's closed trades, lets user tag best/worst trade with one tap
+  - **Step 3**: Text areas for "What worked?", "What to improve?", "Lessons learned"
+  - **Step 4**: Summary + Save. Upserts into `daily_journal_entries` via `useDailyJournal`.
+- `src/pages/Dashboard.tsx` -- Add a "Review Day" button in QuickActions or as a floating CTA that appears after 3:30 PM IST if no journal entry exists for today.
+- `src/components/dashboard/QuickActions.tsx` -- Add "Daily Review" action card.
+
+**DB**: Uses existing `daily_journal_entries` table. The best/worst trade tags and discipline rating can be stored in `post_market_review` and `lessons_learned` fields (JSON-stringified or plain text). No schema changes needed.
+
+---
+
+## 4. Save & Load Custom Scanner Presets
+
+**What**: Let users name and save their custom filter combinations to the database. Add a "My Presets" section in the scanner preset strip.
+
+**DB Migration**:
+```sql
+CREATE TABLE public.saved_scanner_presets (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  name text NOT NULL,
+  filters jsonb NOT NULL DEFAULT '[]',
+  sort_by text,
+  sort_order text DEFAULT 'desc',
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE public.saved_scanner_presets ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own presets" ON public.saved_scanner_presets
+  FOR SELECT TO authenticated USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own presets" ON public.saved_scanner_presets
+  FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can delete own presets" ON public.saved_scanner_presets
+  FOR DELETE TO authenticated USING (auth.uid() = user_id);
+```
+
+**Files**:
+- `src/hooks/useSavedScannerPresets.ts` (new) -- CRUD hook for `saved_scanner_presets` table (query, create, delete mutations).
+- `src/pages/Fundamentals.tsx` -- Add "Save" button in the filter builder that opens a name input dialog. Add "My Presets" group in the preset strip (after the existing groups) showing saved presets as clickable chips with delete option. Loading a saved preset populates `appliedFilters` and switches to custom mode.
 
