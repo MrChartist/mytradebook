@@ -260,6 +260,11 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [showStudyModal, setShowStudyModal] = useState(false);
 
+  const handleNavigate = (path: string) => {
+    onOpenChange(false);
+    navigate(path);
+  };
+
   if (!stock) return null;
 
   const isPositive = (stock.change ?? 0) >= 0;
