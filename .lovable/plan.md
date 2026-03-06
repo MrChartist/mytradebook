@@ -1,49 +1,58 @@
 
 
-# Premium Stock Insight Card — Popup Redesign
+## Improve Instrument Selection UX Across Trades, Alerts & Studies
 
-Single file change: `src/components/trade/StockPopupCard.tsx`
+### Current Pain Points
+1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
+2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
+3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
+4. **Selected state is disconnected** — after selecting, "Change" button resets everything
+5. **No keyboard navigation** — can't arrow through results or press Enter to select
+6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
+7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
 
-## Design Upgrades
+### Proposed Improvements
 
-### Header (Hero Section)
-- Two-row layout: top row has ticker symbol as a large bold heading + a subtle circular close X; bottom row has company name, exchange/sector/industry/cap-class badges in a horizontal strip
-- Price block on the right: large price in `font-mono`, change % in a colored pill with icon, and a small "Delayed" timestamp
-- Add a thin **market summary strip** below the header divider — a horizontal row of key-at-a-glance stats (Market Cap, Volume, P/E, 52W%) separated by subtle vertical dividers, giving an instant snapshot before diving into tabs
+#### 1. Unified Combobox-Style Picker (biggest UX win)
+Replace the current search input + results list with a **combobox pattern**:
+- Single input field that shows results as you type (dropdown below)
+- Recent items shown immediately on focus (before typing)
+- Favorites pinned at the top with a star
+- Arrow keys to navigate, Enter to select, Escape to close
+- Taller results area (max-h-64 instead of max-h-40)
 
-### Tabs
-- Tighter tab triggers with slightly bolder active state styling: `data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:font-semibold`
-- Add subtle bottom padding to tab content area for scroll breathing room
+#### 2. Smarter Defaults & Context
+- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
+- Remember last used exchange filter per segment in localStorage
+- Show lot size inline for F&O instruments in results
 
-### Metric Cards (all tabs)
-- Upgrade to a layered card with hover micro-interaction: `hover:border-primary/20 hover:shadow-sm transition-all duration-150`
-- Label in 10px uppercase tracking-widest muted, value in 15px semibold mono, optional sub-text in 10px muted
-- Add a thin left accent bar (2px) on cards with positive/negative sentiment: green for positive, red for negative
+#### 3. Improved Selected State
+- Show a compact **chip-style** selected instrument instead of the current full-width bar
+- "Change" opens the picker inline (no full reset) — preserves recent search context
+- LTP fetch button more prominent with last-fetched timestamp
 
-### 52-Week Range Block
-- Redesign into a "range insight" panel: show Low/Current/High as three labeled columns above the bar
-- Gradient bar from red to amber to green with a diamond-shaped current-price marker instead of a circle
-- Add percentage labels: "X% from low" and "X% from high" below the bar
-- Wrap in a slightly elevated card with `shadow-sm`
+#### 4. Keyboard Navigation in Search Results
+- Add `onKeyDown` handler to search input
+- ArrowUp/ArrowDown to highlight results
+- Enter to select highlighted item
+- Track `highlightedIndex` state
 
-### Technicals Tab
-- RSI gauge: add a segmented background (red zone >70, green zone <30, neutral middle) behind the progress bar
-- Moving Averages: add "Above"/"Below" signal badges next to each SMA value
-- Performance row: use colored background pills for each timeframe value
+#### 5. Option Chain Quick Access
+- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
+- Make the chain component more compact — remove redundant labels
 
-### Bottom Actions
-- Frosted glass footer with `backdrop-blur-md bg-card/90`
-- Slightly taller buttons (h-10) with rounded-xl, stronger hover states
-- Primary button gets a subtle gradient or stronger shadow on hover
+#### 6. Exchange Filter as Chips (not buttons)
+- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
 
-### Spacing & Polish
-- Consistent `p-5` padding, `gap-3` grids, `space-y-5` between sections
-- `max-h-[88vh]` with smooth scroll via `overflow-y-auto scrollbar-thin`
-- Modal itself: `rounded-2xl shadow-2xl border border-border/50`
+### Files to Modify
+- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
+- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
 
-## Files to Modify
-
-| File | Change |
-|---|---|
-| `src/components/trade/StockPopupCard.tsx` | Full premium polish — header, summary strip, metric cards, range block, tabs, footer |
+### Implementation Order
+1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
+2. Increase results area height and show lot size for F&O
+3. Replace exchange filter buttons with compact chips
+4. Add "remember last exchange" per segment
+5. Improve selected state with chip-style display
+6. Add focus-triggered recent items display
 
