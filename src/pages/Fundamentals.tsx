@@ -203,6 +203,8 @@ export default function Fundamentals() {
                         <span className={cn(s.roe != null && s.roe > 0 ? "text-profit" : "text-loss")}>{formatPercent(s.roe)}</span>
                       </TableCell>
                       <TableCell className="text-right text-xs hidden xl:table-cell">{s.dividend_yield != null ? `${s.dividend_yield.toFixed(2)}%` : "—"}</TableCell>
+                      <TableCell className="text-right text-xs hidden xl:table-cell">{formatCurrency(s.high_52w)}</TableCell>
+                      <TableCell className="text-right text-xs hidden xl:table-cell">{formatCurrency(s.low_52w)}</TableCell>
                     </TableRow>
                   );
                 })}
