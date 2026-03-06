@@ -1056,6 +1056,62 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
+            {/* ── 10b. Stock Screener (Fundamentals) ─────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <SectionHeader
+                id="fundamentals"
+                title="Stock Screener"
+                description="A powerful fundamental scanner for NSE-listed stocks. Screen by market cap, P/E, ROE, dividend yield, and more. Save your custom filter presets for quick reuse."
+                icon={Search}
+              />
+              <div className="grid md:grid-cols-2 gap-5">
+                <FeatureCard icon={Filter} title="Screening Filters">
+                  <p className="text-sm text-muted-foreground mb-3">Build custom screens using a visual filter builder:</p>
+                  <FeatureList items={[
+                    "Market Cap filter — Large, Mid, Small cap ranges",
+                    "P/E Ratio — value vs growth screening",
+                    "ROE (Return on Equity) — quality filter",
+                    "Dividend Yield — income-focused screening",
+                    "Revenue Growth — momentum filter",
+                    "Debt-to-Equity — financial health filter",
+                    "52-week High/Low proximity filter",
+                    "Sector and industry classification filters",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Zap} title="Presets & Custom Saves" badge="New">
+                  <p className="text-sm text-muted-foreground mb-3">Built-in presets and the ability to save your own:</p>
+                  <FeatureList items={[
+                    "Built-in presets: Value Picks, Growth Stars, Dividend Champions, Quality at Value",
+                    "Save any custom filter combination with a name",
+                    "Load saved presets instantly from the preset strip",
+                    "Delete saved presets when no longer needed",
+                    "Presets persist across sessions in the database",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Eye} title="Stock Detail Popup">
+                  <p className="text-sm text-muted-foreground mb-3">Click any stock in the scanner to open a detailed popup card:</p>
+                  <FeatureList items={[
+                    "Overview tab: market cap, P/E, book value, EPS, dividend yield",
+                    "Financials tab: revenue, net profit, ROE, ROCE, debt metrics",
+                    "Technicals tab: RSI gauge, 52W range bar, volume analysis",
+                    "Quick actions: create trade, set alert, add to watchlist, create study",
+                    "External links to charts and company info",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={BarChart3} title="Sortable Results Table">
+                  <FeatureList items={[
+                    "Sort by any column: market cap, P/E, ROE, price, change %",
+                    "Paginated results with configurable page size",
+                    "Compact table view with key metrics at a glance",
+                    "Color-coded change percentages (green/red)",
+                    "Search/filter by company name or symbol",
+                  ]} />
+                </FeatureCard>
+              </div>
+            </motion.section>
+
+            <SectionDivider />
+
             {/* ── 11. Weekly Reports ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
