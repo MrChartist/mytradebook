@@ -37,6 +37,8 @@ export interface FundamentalData {
   sma20: number | null;
   sma50: number | null;
   rsi: number | null;
+  ath: number | null;
+  atl: number | null;
   high_52w: number | null;
   low_52w: number | null;
   perf_w: number | null;
