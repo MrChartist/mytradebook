@@ -74,8 +74,8 @@ export default function Fundamentals() {
 
     // sort
     list = [...list].sort((a, b) => {
-      const aVal = (a as Record<string, unknown>)[sortKey] as number | null;
-      const bVal = (b as Record<string, unknown>)[sortKey] as number | null;
+      const aVal = a[sortKey] as number | null;
+      const bVal = b[sortKey] as number | null;
       if (aVal == null && bVal == null) return 0;
       if (aVal == null) return 1;
       if (bVal == null) return -1;
