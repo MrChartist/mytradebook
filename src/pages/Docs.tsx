@@ -64,10 +64,12 @@ const SECTIONS = [
   { id: "analytics", label: "Analytics", icon: BarChart3 },
   { id: "calendar", label: "Calendar & Journal", icon: Calendar },
   { id: "mistakes", label: "Mistakes Review", icon: AlertTriangle },
+  { id: "fundamentals", label: "Stock Screener", icon: Search },
   { id: "reports", label: "Weekly Reports", icon: PieChart },
   { id: "integrations", label: "Integrations", icon: Layers },
   { id: "ai-integration", label: "AI Insights Setup", icon: Sparkles },
   { id: "shortcuts", label: "Keyboard Shortcuts", icon: Keyboard },
+  { id: "pwa", label: "Mobile & PWA", icon: Smartphone },
   { id: "settings", label: "Settings", icon: Settings },
 ];
 
@@ -195,8 +197,8 @@ export default function Docs() {
   const sidebarGroups = [
     { label: "Getting Started", ids: ["getting-started"] },
     { label: "Core Features", ids: ["dashboard", "trade-management", "alerts", "studies", "watchlists", "journal"] },
-    { label: "Advanced", ids: ["analytics", "calendar", "mistakes", "reports"] },
-    { label: "Settings & Tools", ids: ["integrations", "ai-integration", "shortcuts", "settings"] },
+    { label: "Advanced", ids: ["analytics", "calendar", "mistakes", "fundamentals", "reports"] },
+    { label: "Settings & Tools", ids: ["integrations", "ai-integration", "shortcuts", "pwa", "settings"] },
   ];
 
   return (
