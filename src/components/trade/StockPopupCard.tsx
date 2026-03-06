@@ -72,7 +72,7 @@ function MetricCard({
       )}
       <div className="flex items-center gap-1.5">
         {icon}
-        <p className="text-[10px] text-muted-foreground tracking-wider uppercase font-medium">{label}</p>
+        <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">{label}</p>
       </div>
       <p
         className={cn(
@@ -385,7 +385,7 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
 
             {/* Valuation context */}
             <div className="rounded-xl bg-muted/30 border border-border/60 p-4 space-y-2">
-              <p className="text-[10px] text-muted-foreground tracking-wider uppercase font-medium">Quick Assessment</p>
+              <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">Quick Assessment</p>
               <div className="grid grid-cols-3 gap-3">
                 {[
                   { label: "P/E", val: stock.pe_ratio, good: 20 },
@@ -422,7 +422,7 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
 
             {/* Financial Health Bar */}
             <div className="rounded-xl bg-muted/30 border border-border/60 p-4 space-y-2">
-              <p className="text-[10px] text-muted-foreground tracking-wider uppercase font-medium">Financial Health Snapshot</p>
+              <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">Financial Health Snapshot</p>
               <div className="space-y-2">
                 {[
                   { label: "ROE", val: stock.roe, max: 40 },
@@ -455,7 +455,7 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
             <div className="grid grid-cols-2 gap-2">
               <RSIGauge value={stock.rsi} />
               <div className="rounded-xl bg-muted/40 border border-border/60 p-4 space-y-2">
-                <p className="text-[10px] text-muted-foreground tracking-wider uppercase font-medium">Volatility</p>
+                <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">Volatility</p>
                 <div className="space-y-3">
                   <div>
                     <p className="text-[9px] text-muted-foreground">Beta (1Y)</p>
@@ -471,7 +471,7 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
 
             {/* Moving Averages */}
             <div className="rounded-xl bg-muted/40 border border-border/60 p-4 space-y-3">
-              <p className="text-[10px] text-muted-foreground tracking-wider uppercase font-medium">Moving Averages</p>
+              <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">Moving Averages</p>
               <div className="grid grid-cols-3 gap-2">
                 <SMASignal label="SMA 10" smaVal={stock.sma10} current={stock.close} />
                 <SMASignal label="SMA 20" smaVal={stock.sma20} current={stock.close} />
@@ -481,7 +481,7 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
 
             {/* Performance */}
             <div className="rounded-xl bg-muted/40 border border-border/60 p-4 space-y-3">
-              <p className="text-[10px] text-muted-foreground tracking-wider uppercase font-medium">Performance</p>
+              <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">Performance</p>
               <div className="grid grid-cols-4 gap-2">
                 <PerfPill label="1W" value={stock.perf_w} />
                 <PerfPill label="1M" value={stock.perf_1m} />
