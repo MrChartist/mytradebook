@@ -41,3 +41,6 @@ verify_jwt = false
 
 [functions.eod-report]
 verify_jwt = false
+
+[functions.tradingview-scan]
+verify_jwt = false
