@@ -25,7 +25,8 @@ import { useUserSettings } from "@/hooks/useUserSettings";
 import { cn } from "@/lib/utils";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { TradingRulesChecklist } from "@/components/trade/TradingRulesChecklist";
-
+import { useSmartTemplates } from "@/hooks/useSmartTemplates";
+import { useTradeTemplates } from "@/hooks/useTradeTemplates";
 interface CreateTradeModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -100,9 +101,11 @@ function getSegmentDefaults(segment: string) {
 }
 
 export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) {
-  const { createTrade } = useTrades();
+  const { createTrade, trades: allTrades } = useTrades();
   const { settings } = useUserSettings();
   const startingCapital = (settings as any)?.starting_capital ?? 500000;
+  const smartTemplates = useSmartTemplates(allTrades || []);
+  const { templates: savedTemplates } = useTradeTemplates();
   
   const [selectedInstrument, setSelectedInstrument] = useState<SelectedInstrument | null>(null);
   const [targets, setTargets] = useState<number[]>([]);
