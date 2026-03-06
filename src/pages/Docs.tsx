@@ -64,10 +64,12 @@ const SECTIONS = [
   { id: "analytics", label: "Analytics", icon: BarChart3 },
   { id: "calendar", label: "Calendar & Journal", icon: Calendar },
   { id: "mistakes", label: "Mistakes Review", icon: AlertTriangle },
+  { id: "fundamentals", label: "Stock Screener", icon: Search },
   { id: "reports", label: "Weekly Reports", icon: PieChart },
   { id: "integrations", label: "Integrations", icon: Layers },
   { id: "ai-integration", label: "AI Insights Setup", icon: Sparkles },
   { id: "shortcuts", label: "Keyboard Shortcuts", icon: Keyboard },
+  { id: "pwa", label: "Mobile & PWA", icon: Smartphone },
   { id: "settings", label: "Settings", icon: Settings },
 ];
 
@@ -195,8 +197,8 @@ export default function Docs() {
   const sidebarGroups = [
     { label: "Getting Started", ids: ["getting-started"] },
     { label: "Core Features", ids: ["dashboard", "trade-management", "alerts", "studies", "watchlists", "journal"] },
-    { label: "Advanced", ids: ["analytics", "calendar", "mistakes", "reports"] },
-    { label: "Settings & Tools", ids: ["integrations", "ai-integration", "shortcuts", "settings"] },
+    { label: "Advanced", ids: ["analytics", "calendar", "mistakes", "fundamentals", "reports"] },
+    { label: "Settings & Tools", ids: ["integrations", "ai-integration", "shortcuts", "pwa", "settings"] },
   ];
 
   return (
@@ -344,7 +346,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             className="flex flex-wrap gap-3 mt-6"
           >
             {[
-              { label: "15 Sections", icon: FileText },
+              { label: "17 Sections", icon: FileText },
               { label: "50+ Mockups", icon: Eye },
               { label: "Every Feature", icon: Zap },
               { label: "Free & Pro", icon: Star },
@@ -563,6 +565,32 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><WidgetCustomizerMockup /></div>
               </FeatureCard>
 
+              <FeatureCard icon={Grid3X3} title="Portfolio Heat Map" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">
+                  A treemap-style visualization of your open positions. Each tile represents a position, sized by its value and color-coded by unrealized P&L — deep green for profits, deep red for losses.
+                </p>
+                <FeatureList items={[
+                  "Tile size proportional to position value (quantity × LTP)",
+                  "Color gradient from red (-5%+) through neutral to green (+5%+)",
+                  "Hover to see full details: symbol, qty, entry, LTP, P&L",
+                  "Auto-updates with live price data",
+                  "Falls back to empty state when no open positions",
+                ]} />
+              </FeatureCard>
+
+              <FeatureCard icon={Star} title="Daily Review Wizard" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">
+                  A guided end-of-day review flow accessible from the floating Quick Actions button. Walk through a structured 4-step reflection process after market close.
+                </p>
+                <FeatureList items={[
+                  "Step 1: Set your mood (Great → Terrible) and rate discipline (1-5 stars)",
+                  "Step 2: Review today's closed trades and tag your best/worst trade",
+                  "Step 3: Write reflections — what worked, what to improve, lessons learned",
+                  "Step 4: Review summary and save to your daily journal",
+                  "Auto-saves to your Calendar journal entry for the day",
+                ]} />
+              </FeatureCard>
+
               <FeatureCard icon={Filter} title="Segment & Month Filters">
                 <p className="text-sm text-muted-foreground mb-3">Filter the entire dashboard by market segment and time period:</p>
                 <FeatureList items={[
@@ -662,13 +690,16 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><CsvImportMockup /></div>
               </FeatureCard>
 
-              <FeatureCard icon={Zap} title="Trade Templates">
-                <p className="text-sm text-muted-foreground mb-3">Save frequently-used trade setups as templates for quick entry:</p>
+              <FeatureCard icon={Zap} title="Trade Templates & Smart Suggestions">
+                <p className="text-sm text-muted-foreground mb-3">Save frequently-used trade setups as templates, plus get AI-suggested setups based on your trading history:</p>
                 <FeatureList items={[
                   "Pre-fill segment, trade type, default SL %, tags",
                   "Optional notes template and timeframe",
                   "Enable/disable auto-tracking and Telegram posting per template",
                   "One-click 'Use' button when creating new trades",
+                  "Smart Suggestions — analyzes your closed trades to surface your most common setups",
+                  "Shows top 3 frequent combos (e.g., 'Options BUY 5min — used 23 times')",
+                  "One-click pre-fill from any suggestion",
                 ]} />
                 <div className="mt-4"><TradeTemplateMockup /></div>
               </FeatureCard>
@@ -1025,6 +1056,62 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
+            {/* ── 10b. Stock Screener (Fundamentals) ─────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <SectionHeader
+                id="fundamentals"
+                title="Stock Screener"
+                description="A powerful fundamental scanner for NSE-listed stocks. Screen by market cap, P/E, ROE, dividend yield, and more. Save your custom filter presets for quick reuse."
+                icon={Search}
+              />
+              <div className="grid md:grid-cols-2 gap-5">
+                <FeatureCard icon={Filter} title="Screening Filters">
+                  <p className="text-sm text-muted-foreground mb-3">Build custom screens using a visual filter builder:</p>
+                  <FeatureList items={[
+                    "Market Cap filter — Large, Mid, Small cap ranges",
+                    "P/E Ratio — value vs growth screening",
+                    "ROE (Return on Equity) — quality filter",
+                    "Dividend Yield — income-focused screening",
+                    "Revenue Growth — momentum filter",
+                    "Debt-to-Equity — financial health filter",
+                    "52-week High/Low proximity filter",
+                    "Sector and industry classification filters",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Zap} title="Presets & Custom Saves" badge="New">
+                  <p className="text-sm text-muted-foreground mb-3">Built-in presets and the ability to save your own:</p>
+                  <FeatureList items={[
+                    "Built-in presets: Value Picks, Growth Stars, Dividend Champions, Quality at Value",
+                    "Save any custom filter combination with a name",
+                    "Load saved presets instantly from the preset strip",
+                    "Delete saved presets when no longer needed",
+                    "Presets persist across sessions in the database",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Eye} title="Stock Detail Popup">
+                  <p className="text-sm text-muted-foreground mb-3">Click any stock in the scanner to open a detailed popup card:</p>
+                  <FeatureList items={[
+                    "Overview tab: market cap, P/E, book value, EPS, dividend yield",
+                    "Financials tab: revenue, net profit, ROE, ROCE, debt metrics",
+                    "Technicals tab: RSI gauge, 52W range bar, volume analysis",
+                    "Quick actions: create trade, set alert, add to watchlist, create study",
+                    "External links to charts and company info",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={BarChart3} title="Sortable Results Table">
+                  <FeatureList items={[
+                    "Sort by any column: market cap, P/E, ROE, price, change %",
+                    "Paginated results with configurable page size",
+                    "Compact table view with key metrics at a glance",
+                    "Color-coded change percentages (green/red)",
+                    "Search/filter by company name or symbol",
+                  ]} />
+                </FeatureCard>
+              </div>
+            </motion.section>
+
+            <SectionDivider />
+
             {/* ── 11. Weekly Reports ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
@@ -1193,6 +1280,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Keyboard}
               />
               <ShortcutKeyboardMockup />
+              <FeatureCard icon={Command} title="Command Palette (⌘K)" badge="Enhanced">
+                <p className="text-sm text-muted-foreground mb-3">
+                  A global search that goes beyond navigation. Press <ShortcutKey>⌘K</ShortcutKey> or <ShortcutKey>/</ShortcutKey> to open and search across everything:
+                </p>
+                <FeatureList items={[
+                  "Navigate to any page instantly",
+                  "Quick actions: New Trade, New Alert, New Study",
+                  "Search your trades by symbol — shows P&L badge and status",
+                  "Search alerts by symbol — shows condition type and threshold",
+                  "Search journal entries — matches text in plans, reviews, and lessons",
+                  "Dynamic results appear after typing 2+ characters",
+                ]} />
+              </FeatureCard>
               <FeatureCard icon={Command} title="All Shortcuts">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
@@ -1241,7 +1341,68 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 14. Settings ───────────────────────────── */}
+            {/* ── 14b. Mobile & PWA ──────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <SectionHeader
+                id="pwa"
+                title="Mobile & PWA"
+                description="TradeBook is a fully installable Progressive Web App. Add it to your home screen for a native-like experience with offline capabilities."
+                icon={Smartphone}
+              />
+              <div className="grid md:grid-cols-2 gap-5">
+                <FeatureCard icon={Smartphone} title="Install as App">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    TradeBook works as a PWA — install it on your phone or desktop for instant access without the browser chrome.
+                  </p>
+                  <FeatureList items={[
+                    "Add to Home Screen on iOS and Android",
+                    "Full-screen app experience — no browser UI",
+                    "Maskable icon for clean home screen appearance",
+                    "Auto-updates when new versions are deployed",
+                    "Refresh prompt when a new version is available",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Activity} title="Offline Trade Queue" badge="New">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Log trades even when you're offline. Trades are queued locally and automatically synced when connectivity is restored.
+                  </p>
+                  <FeatureList items={[
+                    "Detects online/offline status automatically",
+                    "Offline banner appears in the app header",
+                    "Trades are saved to local storage when offline",
+                    "Auto-syncs queued trades when back online",
+                    "Toast notifications confirm each synced trade",
+                    "Shows count of queued trades in the offline banner",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={LayoutDashboard} title="Mobile Navigation">
+                  <FeatureList items={[
+                    "Bottom navigation bar with key pages: Dashboard, Trades, Alerts, Journal",
+                    "Touch-optimized with safe-area insets for modern devices",
+                    "Responsive layouts across all pages",
+                    "Floating Quick Actions button for fast trade/alert/review creation",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Play} title="Onboarding Checklist" badge="Enhanced">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    A guided 6-step onboarding flow on the dashboard for new users:
+                  </p>
+                  <FeatureList items={[
+                    "Log your first trade — auto-detected when you have any trades",
+                    "Create a watchlist — detected when you have watchlists",
+                    "Set a price alert — detected when you have alerts",
+                    "Connect your broker — detected via Dhan verification",
+                    "Write a journal entry — detected from daily journal entries",
+                    "Review analytics — detected when you have closed trades",
+                    "Progress bar and auto-dismiss when all steps complete",
+                  ]} />
+                </FeatureCard>
+              </div>
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── 15. Settings ───────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="settings"
