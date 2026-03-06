@@ -21,8 +21,12 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Search, Filter, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, X, BarChart3, Plus, Trash2 } from "lucide-react";
+import { Search, Filter, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, X, BarChart3, Plus, Trash2, Save, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSavedScannerPresets } from "@/hooks/useSavedScannerPresets";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input as DialogInput } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 /* ─── Types ─── */
 type SortKey = "market_cap" | "pe_ratio" | "pb_ratio" | "roe" | "dividend_yield" | "change" | "close" | "volume" | "rsi" | "net_margin" | "debt_to_equity";
@@ -107,7 +111,9 @@ export default function Fundamentals() {
   const [showFilterBuilder, setShowFilterBuilder] = useState(false);
   const [customFilters, setCustomFilters] = useState<CustomFilter[]>([]);
   const [appliedFilters, setAppliedFilters] = useState<ScanFilter[]>([]);
-
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [presetName, setPresetName] = useState("");
+  const { presets: savedPresets, createPreset, deletePreset } = useSavedScannerPresets();
   const isCustomMode = presetId === "custom";
   const preset = SCANNER_PRESETS.find((p) => p.id === presetId) ?? SCANNER_PRESETS[0];
 
