@@ -25,6 +25,10 @@ import {
   Gauge,
   Building2,
   IndianRupee,
+  ShoppingCart,
+  Bell,
+  BookOpen,
+  Bookmark,
 } from "lucide-react";
 
 interface StockPopupCardProps {
@@ -68,7 +72,7 @@ function MetricCard({
       )}
       <div className="flex items-center gap-1.5">
         {icon}
-        <p className="text-[10px] text-muted-foreground tracking-wider uppercase font-medium">{label}</p>
+        <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">{label}</p>
       </div>
       <p
         className={cn(
@@ -118,21 +122,21 @@ function RangeInsight({
 
   return (
     <div className="rounded-xl bg-muted/40 border border-border/60 p-4 space-y-3">
-      <p className="text-[10px] text-muted-foreground tracking-wider uppercase font-medium">{label}</p>
+      <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">{label}</p>
 
       {/* Labels row */}
       <div className="grid grid-cols-3 text-center gap-1">
         <div>
-          <p className="text-[9px] text-muted-foreground uppercase">{lowLabel}</p>
-          <p className="text-xs font-bold font-mono text-loss">{formatCurrency(low)}</p>
+          <p className="text-[10px] text-muted-foreground uppercase">{lowLabel}</p>
+          <p className="text-sm font-bold font-mono text-loss">{formatCurrency(low)}</p>
         </div>
         <div>
-          <p className="text-[9px] text-muted-foreground uppercase">Current</p>
-          <p className="text-xs font-bold font-mono text-foreground">{formatCurrency(current)}</p>
+          <p className="text-[10px] text-muted-foreground uppercase">Current</p>
+          <p className="text-sm font-bold font-mono text-foreground">{formatCurrency(current)}</p>
         </div>
         <div>
-          <p className="text-[9px] text-muted-foreground uppercase">{highLabel}</p>
-          <p className="text-xs font-bold font-mono text-profit">{formatCurrency(high)}</p>
+          <p className="text-[10px] text-muted-foreground uppercase">{highLabel}</p>
+          <p className="text-sm font-bold font-mono text-profit">{formatCurrency(high)}</p>
         </div>
       </div>
 
@@ -152,13 +156,13 @@ function RangeInsight({
       </div>
 
       {/* Distance labels */}
-      <div className="flex justify-between text-[10px] text-muted-foreground font-mono">
-        <span className="flex items-center gap-0.5">
-          <ArrowUp className="w-2.5 h-2.5 text-profit" />
+      <div className="flex justify-between text-[11px] text-muted-foreground font-mono">
+        <span className="flex items-center gap-1">
+          <ArrowUp className="w-3 h-3 text-profit" />
           {fromLow}% from {lowLabel.toLowerCase()}
         </span>
-        <span className="flex items-center gap-0.5">
-          <ArrowDown className="w-2.5 h-2.5 text-loss" />
+        <span className="flex items-center gap-1">
+          <ArrowDown className="w-3 h-3 text-loss" />
           {fromHigh}% from {highLabel.toLowerCase()}
         </span>
       </div>
@@ -178,7 +182,7 @@ function RSIGauge({ value }: { value: number | null }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
           <Gauge className="w-3.5 h-3.5 text-muted-foreground" />
-          <p className="text-[10px] text-muted-foreground tracking-wider uppercase font-medium">RSI (14)</p>
+          <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">RSI (14)</p>
         </div>
         <Badge variant="outline" className={cn("text-[9px] h-5 border-0 font-semibold", bgColor, color)}>
           {label}
@@ -200,7 +204,7 @@ function RSIGauge({ value }: { value: number | null }) {
       </div>
 
       {/* Zone labels */}
-      <div className="flex justify-between text-[9px] text-muted-foreground">
+      <div className="flex justify-between text-[10px] text-muted-foreground font-medium">
         <span>Oversold (0-30)</span>
         <span>Neutral</span>
         <span>Overbought (70-100)</span>
@@ -214,15 +218,15 @@ function SMASignal({ label, smaVal, current }: { label: string; smaVal: number |
   const above = current != null && smaVal != null && current > smaVal;
   const diff = current != null && smaVal != null && smaVal > 0 ? (((current - smaVal) / smaVal) * 100) : null;
   return (
-    <div className="rounded-lg bg-muted/30 border border-border/40 p-2.5 space-y-1 text-center">
-      <p className="text-[10px] text-muted-foreground font-medium">{label}</p>
-      <p className={cn("text-xs font-bold font-mono", above ? "text-profit" : "text-loss")}>
+    <div className="rounded-lg bg-muted/30 border border-border/40 p-3 space-y-1.5 text-center">
+      <p className="text-[11px] text-muted-foreground font-medium">{label}</p>
+      <p className={cn("text-sm font-bold font-mono", above ? "text-profit" : "text-loss")}>
         {formatCurrency(smaVal)}
       </p>
       <Badge
         variant="outline"
         className={cn(
-          "text-[8px] px-1.5 py-0 h-4 border-0 font-semibold",
+          "text-[9px] px-2 py-0.5 h-5 border-0 font-semibold",
           above ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss"
         )}
       >
@@ -237,11 +241,11 @@ function SMASignal({ label, smaVal, current }: { label: string; smaVal: number |
 function PerfPill({ label, value }: { label: string; value: number | null }) {
   const pos = value != null && value >= 0;
   return (
-    <div className="space-y-1 text-center">
-      <p className="text-[10px] text-muted-foreground font-medium">{label}</p>
+    <div className="space-y-1.5 text-center">
+      <p className="text-[11px] text-muted-foreground font-semibold">{label}</p>
       <span
         className={cn(
-          "inline-block text-[11px] font-bold font-mono px-2.5 py-0.5 rounded-full",
+          "inline-block text-xs font-bold font-mono px-3 py-1 rounded-full",
           pos ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss"
         )}
       >
@@ -381,7 +385,7 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
 
             {/* Valuation context */}
             <div className="rounded-xl bg-muted/30 border border-border/60 p-4 space-y-2">
-              <p className="text-[10px] text-muted-foreground tracking-wider uppercase font-medium">Quick Assessment</p>
+              <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">Quick Assessment</p>
               <div className="grid grid-cols-3 gap-3">
                 {[
                   { label: "P/E", val: stock.pe_ratio, good: 20 },
@@ -418,7 +422,7 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
 
             {/* Financial Health Bar */}
             <div className="rounded-xl bg-muted/30 border border-border/60 p-4 space-y-2">
-              <p className="text-[10px] text-muted-foreground tracking-wider uppercase font-medium">Financial Health Snapshot</p>
+              <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">Financial Health Snapshot</p>
               <div className="space-y-2">
                 {[
                   { label: "ROE", val: stock.roe, max: 40 },
@@ -451,7 +455,7 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
             <div className="grid grid-cols-2 gap-2">
               <RSIGauge value={stock.rsi} />
               <div className="rounded-xl bg-muted/40 border border-border/60 p-4 space-y-2">
-                <p className="text-[10px] text-muted-foreground tracking-wider uppercase font-medium">Volatility</p>
+                <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">Volatility</p>
                 <div className="space-y-3">
                   <div>
                     <p className="text-[9px] text-muted-foreground">Beta (1Y)</p>
@@ -467,7 +471,7 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
 
             {/* Moving Averages */}
             <div className="rounded-xl bg-muted/40 border border-border/60 p-4 space-y-3">
-              <p className="text-[10px] text-muted-foreground tracking-wider uppercase font-medium">Moving Averages</p>
+              <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">Moving Averages</p>
               <div className="grid grid-cols-3 gap-2">
                 <SMASignal label="SMA 10" smaVal={stock.sma10} current={stock.close} />
                 <SMASignal label="SMA 20" smaVal={stock.sma20} current={stock.close} />
@@ -477,7 +481,7 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
 
             {/* Performance */}
             <div className="rounded-xl bg-muted/40 border border-border/60 p-4 space-y-3">
-              <p className="text-[10px] text-muted-foreground tracking-wider uppercase font-medium">Performance</p>
+              <p className="text-[11px] text-muted-foreground tracking-wider uppercase font-semibold">Performance</p>
               <div className="grid grid-cols-4 gap-2">
                 <PerfPill label="1W" value={stock.perf_w} />
                 <PerfPill label="1M" value={stock.perf_1m} />
@@ -492,14 +496,28 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
         </Tabs>
 
         {/* ── Bottom Actions ── */}
-        <div className="sticky bottom-0 border-t border-border bg-card/95 backdrop-blur-md p-4 flex gap-3 rounded-b-2xl">
-          <Button variant="outline" className="flex-1 gap-2 text-xs h-10 rounded-xl hover:border-primary/30">
-            <ExternalLink className="w-3.5 h-3.5" />
+        <div className="sticky bottom-0 border-t border-border bg-card/95 backdrop-blur-md p-4 space-y-3 rounded-b-2xl">
+          <div className="grid grid-cols-4 gap-2">
+            <Button variant="outline" className="flex-col gap-1 text-[11px] h-auto py-2.5 rounded-xl hover:border-primary/30 hover:bg-primary/5 transition-colors">
+              <ShoppingCart className="w-4 h-4 text-primary" />
+              Trade
+            </Button>
+            <Button variant="outline" className="flex-col gap-1 text-[11px] h-auto py-2.5 rounded-xl hover:border-primary/30 hover:bg-primary/5 transition-colors">
+              <Bell className="w-4 h-4 text-primary" />
+              Alert
+            </Button>
+            <Button variant="outline" className="flex-col gap-1 text-[11px] h-auto py-2.5 rounded-xl hover:border-primary/30 hover:bg-primary/5 transition-colors">
+              <BookOpen className="w-4 h-4 text-primary" />
+              Study
+            </Button>
+            <Button className="flex-col gap-1 text-[11px] h-auto py-2.5 rounded-xl shadow-sm hover:shadow-md transition-all">
+              <Bookmark className="w-4 h-4" />
+              Watchlist
+            </Button>
+          </div>
+          <Button variant="ghost" size="sm" className="w-full gap-1.5 text-[11px] text-muted-foreground h-8 hover:text-foreground">
+            <ExternalLink className="w-3 h-3" />
             View on TradingView
-          </Button>
-          <Button className="flex-1 gap-2 text-xs h-10 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-            <Plus className="w-3.5 h-3.5" />
-            Add to Watchlist
           </Button>
         </div>
       </DialogContent>
