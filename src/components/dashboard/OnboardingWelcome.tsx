@@ -42,8 +42,6 @@ export function OnboardingWelcome() {
     setDismissed(true);
   };
 
-  if (dismissed) return null;
-
   const hasTradesLogged = trades.length > 0;
   const hasWatchlists = watchlists.length > 0;
   const hasAlerts = alerts.length > 0;
@@ -112,6 +110,8 @@ export function OnboardingWelcome() {
       dismiss();
     }
   }, [completedCount, steps.length, dismissed]);
+
+  if (dismissed) return null;
 
   return (
     <div className="relative rounded-2xl border border-[hsl(var(--tb-accent)/0.3)] bg-card overflow-hidden mb-5">
