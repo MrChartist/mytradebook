@@ -346,7 +346,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             className="flex flex-wrap gap-3 mt-6"
           >
             {[
-              { label: "15 Sections", icon: FileText },
+              { label: "17 Sections", icon: FileText },
               { label: "50+ Mockups", icon: Eye },
               { label: "Every Feature", icon: Zap },
               { label: "Free & Pro", icon: Star },
