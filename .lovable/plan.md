@@ -1,57 +1,58 @@
 
 
-# Fundamentals Page UI/UX Improvements
+## Improve Instrument Selection UX Across Trades, Alerts & Studies
 
-Only `src/pages/Fundamentals.tsx` will be modified. The popup card is already polished.
+### Current Pain Points
+1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
+2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
+3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
+4. **Selected state is disconnected** — after selecting, "Change" button resets everything
+5. **No keyboard navigation** — can't arrow through results or press Enter to select
+6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
+7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
 
-## Current Issues
-- Header area is plain, no visual weight
-- Preset buttons are small and cramped with no grouping or description visible
-- Table rows lack visual density cues (no alternating rows, no mini sparkline for change)
-- Search bar is disconnected from the context
-- Pagination footer is basic
-- No loading indicator during page transitions (only initial skeleton)
-- Empty state is bland
+### Proposed Improvements
 
-## Changes
+#### 1. Unified Combobox-Style Picker (biggest UX win)
+Replace the current search input + results list with a **combobox pattern**:
+- Single input field that shows results as you type (dropdown below)
+- Recent items shown immediately on focus (before typing)
+- Favorites pinned at the top with a star
+- Arrow keys to navigate, Enter to select, Escape to close
+- Taller results area (max-h-64 instead of max-h-40)
 
-### 1. Elevated Header Card
-Wrap the title + search in a `rounded-2xl bg-card border p-5` card with a subtle dot-grid or inner-panel background matching the design system. Show the stock count as a bold number, not inline text.
+#### 2. Smarter Defaults & Context
+- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
+- Remember last used exchange filter per segment in localStorage
+- Show lot size inline for F&O instruments in results
 
-### 2. Grouped Scanner Presets
-Organize presets into collapsible categories using small section labels:
-- **Market Cap**: All, Large, Mid, Small
-- **Fundamental**: Undervalued, Growth, Dividend, Low Debt
-- **Technical**: Momentum, Oversold RSI, Overbought RSI, Volume Spike, Near 52W High
+#### 3. Improved Selected State
+- Show a compact **chip-style** selected instrument instead of the current full-width bar
+- "Change" opens the picker inline (no full reset) — preserves recent search context
+- LTP fetch button more prominent with last-fetched timestamp
 
-Use a horizontal scrollable strip with category dividers (thin `|` separators) instead of a flat wrap. Active preset gets a filled primary badge style with a subtle glow/shadow.
+#### 4. Keyboard Navigation in Search Results
+- Add `onKeyDown` handler to search input
+- ArrowUp/ArrowDown to highlight results
+- Enter to select highlighted item
+- Track `highlightedIndex` state
 
-### 3. Better Table Styling
-- Add alternating row backgrounds: `even:bg-muted/20`
-- Make the symbol column bolder: larger ticker text (text-sm font-bold), description underneath
-- Add a tiny inline colored dot before the change % column for quick visual scanning
-- Tighter cell padding: `py-2.5 px-3` instead of default `p-4`
-- Header row: sticky top with `bg-card` and a bottom shadow for scroll separation
-- Sort indicator: show a small up/down chevron (not the ambiguous ArrowUpDown) when sorted
+#### 5. Option Chain Quick Access
+- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
+- Make the chain component more compact — remove redundant labels
 
-### 4. Inline Change Pill
-Replace the plain `TrendingUp/Down + text` with a compact pill: `bg-profit/10 text-profit rounded-full px-2 py-0.5 text-[11px] font-mono` for a cleaner, scannable look.
+#### 6. Exchange Filter as Chips (not buttons)
+- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
 
-### 5. Improved Pagination
-- Wrap in a `rounded-xl bg-card border p-3` footer card
-- Show page numbers as clickable buttons (up to 5 visible) instead of just "Page X of Y"
-- Cleaner "Showing X-Y of Z" label
+### Files to Modify
+- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
+- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
 
-### 6. Loading & Transition States
-- Add a thin animated progress bar at the top of the table container during `isFetching` (not just opacity change)
-- Better empty state with an icon and suggestion text
-
-### 7. Data Source Footer
-Style the "Data from TradingView" note as a subtle badge in the pagination footer rather than a standalone paragraph.
-
-## File Changes
-
-| File | Change |
-|---|---|
-| `src/pages/Fundamentals.tsx` | Header card, preset grouping, table polish, pagination redesign, loading bar, empty state |
+### Implementation Order
+1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
+2. Increase results area height and show lot size for F&O
+3. Replace exchange filter buttons with compact chips
+4. Add "remember last exchange" per segment
+5. Improve selected state with chip-style display
+6. Add focus-triggered recent items display
 
