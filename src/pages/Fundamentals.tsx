@@ -167,6 +167,8 @@ export default function Fundamentals() {
                   <TableHead className="text-right hidden lg:table-cell"><SortHeader label="P/B" field="pb_ratio" /></TableHead>
                   <TableHead className="text-right hidden xl:table-cell"><SortHeader label="ROE" field="roe" /></TableHead>
                   <TableHead className="text-right hidden xl:table-cell"><SortHeader label="Div%" field="dividend_yield" /></TableHead>
+                  <TableHead className="text-right hidden xl:table-cell">52W High</TableHead>
+                  <TableHead className="text-right hidden xl:table-cell">52W Low</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -201,6 +203,8 @@ export default function Fundamentals() {
                         <span className={cn(s.roe != null && s.roe > 0 ? "text-profit" : "text-loss")}>{formatPercent(s.roe)}</span>
                       </TableCell>
                       <TableCell className="text-right text-xs hidden xl:table-cell">{s.dividend_yield != null ? `${s.dividend_yield.toFixed(2)}%` : "—"}</TableCell>
+                      <TableCell className="text-right text-xs hidden xl:table-cell">{formatCurrency(s.high_52w)}</TableCell>
+                      <TableCell className="text-right text-xs hidden xl:table-cell">{formatCurrency(s.low_52w)}</TableCell>
                     </TableRow>
                   );
                 })}
