@@ -3,36 +3,30 @@ import { supabase } from "@/integrations/supabase/client";
 
 export interface FundamentalData {
   ticker: string;
-  // Identity
   name: string | null;
   description: string | null;
   industry: string | null;
   sector: string | null;
-  // Price
   close: number | null;
   change: number | null;
   volume: number | null;
   relative_volume: number | null;
   avg_volume_10d: number | null;
-  // Valuation
   market_cap: number | null;
   pe_ratio: number | null;
   eps: number | null;
   pb_ratio: number | null;
   ps_ratio: number | null;
   dividend_yield: number | null;
-  // Profitability
   roe: number | null;
   roa: number | null;
   net_margin: number | null;
   operating_margin: number | null;
   gross_margin: number | null;
-  // Financial
   debt_to_equity: number | null;
   current_ratio: number | null;
   total_revenue: number | null;
   net_income: number | null;
-  // Technicals
   sma10: number | null;
   sma20: number | null;
   sma50: number | null;
@@ -49,21 +43,49 @@ export interface FundamentalData {
   atr: number | null;
 }
 
-interface ScanResponse {
+export interface ScanResponse {
   data: FundamentalData[];
   totalCount: number;
 }
 
-export function useFundamentals(symbols?: string[]) {
+export interface ScanFilter {
+  field: string;
+  op: string;
+  value: number;
+}
+
+export interface ScanParams {
+  symbols?: string[];
+  mode?: "symbols" | "top";
+  limit?: number;
+  offset?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  filters?: ScanFilter[];
+}
+
+export function useFundamentals(params: ScanParams = {}) {
+  const { symbols, mode, limit = 500, offset = 0, sortBy, sortOrder, filters } = params;
+
   return useQuery<ScanResponse>({
-    queryKey: ["fundamentals", symbols ?? "top"],
+    queryKey: ["fundamentals", symbols ?? "top", limit, offset, sortBy, sortOrder, filters],
     queryFn: async () => {
-      const payload: Record<string, unknown> = {};
+      const payload: Record<string, unknown> = { limit, offset };
+
       if (symbols?.length) {
         payload.symbols = symbols;
         payload.mode = "symbols";
       } else {
-        payload.mode = "top";
+        payload.mode = mode || "top";
+      }
+
+      if (sortBy) {
+        payload.sortBy = sortBy;
+        payload.sortOrder = sortOrder || "desc";
+      }
+
+      if (filters?.length) {
+        payload.filters = filters;
       }
 
       const { data, error } = await supabase.functions.invoke("tradingview-scan", {
