@@ -30,19 +30,19 @@ import logo from "@/assets/logo.png";
 
 const mainNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-  { icon: TrendingUp, label: "Trades", path: "/trades" },
-  { icon: Bell, label: "Alerts", path: "/alerts" },
-  { icon: BookOpen, label: "Journal", path: "/journal" },
   { icon: Sparkles, label: "Studies", path: "/studies" },
+  { icon: Bell, label: "Alerts", path: "/alerts" },
+  { icon: TrendingUp, label: "Trades", path: "/trades" },
+  { icon: BookOpen, label: "Journal", path: "/journal" },
   { icon: Eye, label: "Watchlist", path: "/watchlist" },
 ];
 
 const analyticsNavItems = [
-  { icon: CalendarDays, label: "Calendar", path: "/calendar" },
   { icon: AlertTriangle, label: "Mistakes", path: "/mistakes" },
   { icon: BarChart3, label: "Analytics", path: "/analytics" },
-  { icon: Building2, label: "Fundamentals", path: "/fundamentals" },
   { icon: FileText, label: "Reports", path: "/reports" },
+  { icon: CalendarDays, label: "Calendar", path: "/calendar" },
+  { icon: Building2, label: "Fundamentals", path: "/fundamentals" },
 ];
 
 export function Sidebar() {
