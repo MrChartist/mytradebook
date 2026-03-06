@@ -181,24 +181,11 @@ export default function Trades() {
           <Button
             variant="outline"
             size="sm"
-            className={cn("border-border", bulkMode && "bg-primary/10 border-primary/30")}
-            onClick={() => { setBulkMode(!bulkMode); setSelectedIds(new Set()); }}
-          >
-            <CheckSquare className="w-4 h-4 mr-1.5" />
-            {bulkMode ? "Exit Bulk" : "Bulk"}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
             onClick={() => { syncPortfolio.mutate(); monitorTrades.mutate(); }}
             disabled={isSyncing}
           >
             {isSyncing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
             Sync
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setStrategyModalOpen(true)}>
-            <Layers className="w-4 h-4 mr-2" />
-            Multi-Leg
           </Button>
           {templates.length > 0 && (
             <DropdownMenu>
