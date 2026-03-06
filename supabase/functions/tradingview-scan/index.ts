@@ -68,9 +68,16 @@ const FIELD_KEY_MAP: Record<string, string> = {
 const cache = new Map<string, { data: unknown; ts: number }>();
 const CACHE_TTL = 5 * 60 * 1000;
 
-function getCacheKey(symbols: string[] | undefined, mode: string): string {
-  if (mode === "top") return "__top50__";
-  return (symbols ?? []).slice().sort().join(",");
+function getCacheKey(body: Record<string, unknown>): string {
+  const mode = body.mode || "top";
+  const symbols = body.symbols as string[] | undefined;
+  if (mode === "symbols" && symbols) return symbols.slice().sort().join(",");
+  const limit = body.limit ?? 500;
+  const offset = body.offset ?? 0;
+  const sortBy = body.sortBy ?? "market_cap";
+  const sortOrder = body.sortOrder ?? "desc";
+  const filters = JSON.stringify(body.filters ?? []);
+  return `${mode}:${limit}:${offset}:${sortBy}:${sortOrder}:${filters}`;
 }
 
 serve(async (req) => {
