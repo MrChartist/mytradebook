@@ -90,7 +90,7 @@ serve(async (req) => {
     const symbols: string[] | undefined = body.symbols;
     const mode: string = body.mode || (symbols ? "symbols" : "top");
 
-    const cacheKey = getCacheKey(symbols, mode);
+    const cacheKey = getCacheKey(body);
     const cached = cache.get(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
       return new Response(JSON.stringify(cached.data), {
