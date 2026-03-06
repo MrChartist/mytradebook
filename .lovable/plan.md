@@ -1,84 +1,58 @@
 
 
-# Plan: Add Stock Fundamentals via TradingView Scanner API
+## Improve Instrument Selection UX Across Trades, Alerts & Studies
 
-## Summary
-Build a complete fundamentals feature — a new edge function that fetches data from TradingView's India scanner, a React hook to consume it, a dedicated Fundamentals/Screener page, and integration into the existing Watchlist and trade detail views.
+### Current Pain Points
+1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
+2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
+3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
+4. **Selected state is disconnected** — after selecting, "Change" button resets everything
+5. **No keyboard navigation** — can't arrow through results or press Enter to select
+6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
+7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
 
-## Architecture
+### Proposed Improvements
 
-```text
-┌──────────────┐        ┌──────────────────────────┐        ┌─────────────────────┐
-│  React App   │──invoke─▶│ Edge Fn: tradingview-scan │──POST──▶│ scanner.tradingview  │
-│  useFundamentals()     │ (5-min in-memory cache)  │◀──JSON──│ .com/india/scan      │
-│              │◀─JSON───│                          │        └─────────────────────┘
-└──────────────┘        └──────────────────────────┘
-```
+#### 1. Unified Combobox-Style Picker (biggest UX win)
+Replace the current search input + results list with a **combobox pattern**:
+- Single input field that shows results as you type (dropdown below)
+- Recent items shown immediately on focus (before typing)
+- Favorites pinned at the top with a star
+- Arrow keys to navigate, Enter to select, Escape to close
+- Taller results area (max-h-64 instead of max-h-40)
 
-## What Gets Built
+#### 2. Smarter Defaults & Context
+- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
+- Remember last used exchange filter per segment in localStorage
+- Show lot size inline for F&O instruments in results
 
-### 1. Edge Function: `tradingview-scan`
-- POST endpoint accepting `{ symbols: string[] }` (NSE tickers)
-- Calls TradingView scanner API with ~30 fields covering valuation, profitability, financial health, and technicals
-- 5-minute in-memory cache keyed by sorted symbol list hash
-- No API key needed — TradingView scanner is public
-- Fields fetched:
+#### 3. Improved Selected State
+- Show a compact **chip-style** selected instrument instead of the current full-width bar
+- "Change" opens the picker inline (no full reset) — preserves recent search context
+- LTP fetch button more prominent with last-fetched timestamp
 
-| Category | Fields |
-|---|---|
-| Identity | name, description, industry, sector |
-| Price | close, change, volume, relative_volume_10d_calc, average_volume_10d_calc |
-| Valuation | market_cap_basic, price_earnings_ttm, earnings_per_share_basic_ttm, price_book_ratio, price_sales_ratio, enterprise_value_to_ebitda_ttm, dividends_yield |
-| Profitability | return_on_equity, return_on_assets, net_margin, operating_margin, gross_margin |
-| Financial | debt_to_equity, current_ratio, total_revenue, net_income |
-| Technicals | SMA10, SMA20, SMA50, RSI, High.All, Low.All, Perf.W, Perf.1M, Perf.3M, Perf.Y, beta_1_year, ATR |
+#### 4. Keyboard Navigation in Search Results
+- Add `onKeyDown` handler to search input
+- ArrowUp/ArrowDown to highlight results
+- Enter to select highlighted item
+- Track `highlightedIndex` state
 
-### 2. React Hook: `useFundamentals`
-- New file `src/hooks/useFundamentals.ts`
-- Accepts array of symbols, calls edge function, returns typed `FundamentalData` records
-- Uses React Query with 5-min stale time
-- Exports `FundamentalData` interface with all fields
+#### 5. Option Chain Quick Access
+- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
+- Make the chain component more compact — remove redundant labels
 
-### 3. New Page: Fundamentals Screener (`src/pages/Fundamentals.tsx`)
-- Full-page searchable, sortable table of NSE stocks
-- Default load: top 50 by market cap
-- Filter presets: "Undervalued" (low P/E + P/B), "High Growth" (high ROE + margins), "Dividend Stocks" (high yield), "Momentum" (positive performance)
-- Columns: Symbol, Sector, LTP, Change%, Market Cap, P/E, P/B, ROE, Div Yield, 52W Range
-- Click row → popup with full fundamental detail (tabbed)
+#### 6. Exchange Filter as Chips (not buttons)
+- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
 
-### 4. Stock Popup Card (`src/components/trade/StockPopupCard.tsx`)
-- Modal triggered from Screener row click, Watchlist, or trade detail
-- 4 tabs:
-  - **Overview** — Price, change, OHLC, key metrics summary
-  - **Valuation** — P/E, P/B, P/S, EV/EBITDA, Dividend Yield with visual gauges
-  - **Financials** — Revenue, Net Income, ROE, ROA, margins with bar indicators
-  - **Technicals** — SMAs, RSI gauge, 52W range bar, performance periods, Beta, ATR
+### Files to Modify
+- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
+- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
 
-### 5. Integrate into Existing Pages
-- **Watchlist** — Add a "Fundamentals" toggle that shows P/E, Market Cap, ROE columns alongside live prices
-- **Trade Detail Modal** — Replace or enhance the existing simple view with a "Fundamentals" tab using the new data
-
-### 6. Navigation
-- Add "Fundamentals" nav item in sidebar under analytics section with a suitable icon
-
-## Files to Create/Modify
-
-| File | Action |
-|---|---|
-| `supabase/functions/tradingview-scan/index.ts` | **Create** — Edge function |
-| `supabase/config.toml` | Auto-updated (JWT config) |
-| `src/hooks/useFundamentals.ts` | **Create** — Hook + types |
-| `src/components/trade/StockPopupCard.tsx` | **Create** — Tabbed detail modal |
-| `src/pages/Fundamentals.tsx` | **Create** — Screener page |
-| `src/App.tsx` | **Modify** — Add route |
-| `src/components/layout/Sidebar.tsx` | **Modify** — Add nav item |
-| `src/components/layout/MobileBottomNav.tsx` | **Modify** — Add nav if needed |
-| `src/pages/Watchlist.tsx` | **Modify** — Add fundamentals toggle columns |
-
-## Implementation Order
-1. Edge function (tradingview-scan)
-2. Hook (useFundamentals)
-3. StockPopupCard component
-4. Fundamentals screener page + route + nav
-5. Watchlist integration
+### Implementation Order
+1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
+2. Increase results area height and show lot size for F&O
+3. Replace exchange filter buttons with compact chips
+4. Add "remember last exchange" per segment
+5. Improve selected state with chip-style display
+6. Add focus-triggered recent items display
 
