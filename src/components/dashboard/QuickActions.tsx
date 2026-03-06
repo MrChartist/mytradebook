@@ -1,19 +1,21 @@
 import { useState } from "react";
-import { Plus, TrendingUp, Bell, BookOpen, X } from "lucide-react";
+import { Plus, TrendingUp, Bell, BookOpen, Moon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CreateTradeModal } from "@/components/modals/CreateTradeModal";
 import { CreateAlertModal } from "@/components/modals/CreateAlertModal";
 import { CreateStudyModal } from "@/components/modals/CreateStudyModal";
+import { DailyReviewWizard } from "@/components/dashboard/DailyReviewWizard";
 
 const actions = [
   { label: "New Trade", icon: TrendingUp, modal: "trade" as const, color: "text-profit" },
   { label: "New Alert", icon: Bell, modal: "alert" as const, color: "text-warning" },
   { label: "New Study", icon: BookOpen, modal: "study" as const, color: "text-primary" },
+  { label: "Daily Review", icon: Moon, modal: "review" as const, color: "text-accent-foreground" },
 ];
 
 export function QuickActions() {
   const [expanded, setExpanded] = useState(false);
-  const [openModal, setOpenModal] = useState<"trade" | "alert" | "study" | null>(null);
+  const [openModal, setOpenModal] = useState<"trade" | "alert" | "study" | "review" | null>(null);
 
   return (
     <>
@@ -61,6 +63,9 @@ export function QuickActions() {
       )}
       {openModal === "study" && (
         <CreateStudyModal open onOpenChange={(o) => !o && setOpenModal(null)} />
+      )}
+      {openModal === "review" && (
+        <DailyReviewWizard open onOpenChange={(o) => !o && setOpenModal(null)} />
       )}
     </>
   );

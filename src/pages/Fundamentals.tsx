@@ -21,8 +21,12 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Search, Filter, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, X, BarChart3, Plus, Trash2 } from "lucide-react";
+import { Search, Filter, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, X, BarChart3, Plus, Trash2, Save, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSavedScannerPresets } from "@/hooks/useSavedScannerPresets";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input as DialogInput } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 /* ─── Types ─── */
 type SortKey = "market_cap" | "pe_ratio" | "pb_ratio" | "roe" | "dividend_yield" | "change" | "close" | "volume" | "rsi" | "net_margin" | "debt_to_equity";
@@ -107,7 +111,9 @@ export default function Fundamentals() {
   const [showFilterBuilder, setShowFilterBuilder] = useState(false);
   const [customFilters, setCustomFilters] = useState<CustomFilter[]>([]);
   const [appliedFilters, setAppliedFilters] = useState<ScanFilter[]>([]);
-
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [presetName, setPresetName] = useState("");
+  const { presets: savedPresets, createPreset, deletePreset } = useSavedScannerPresets();
   const isCustomMode = presetId === "custom";
   const preset = SCANNER_PRESETS.find((p) => p.id === presetId) ?? SCANNER_PRESETS[0];
 
@@ -300,6 +306,42 @@ export default function Fundamentals() {
               ))}
             </div>
           ))}
+          {/* Saved Presets */}
+          {savedPresets.length > 0 && (
+            <>
+              <div className="w-px h-5 bg-border mx-1.5 shrink-0" />
+              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mr-1 shrink-0">My Presets</span>
+              {savedPresets.map((sp) => (
+                <div key={sp.id} className="flex items-center gap-0.5 shrink-0">
+                  <Button
+                    variant={presetId === `saved_${sp.id}` ? "default" : "ghost"}
+                    size="sm"
+                    className={cn(
+                      "h-7 text-[11px] rounded-full px-3 transition-all",
+                      presetId === `saved_${sp.id}` && "shadow-[0_0_12px_hsl(var(--primary)/0.3)]"
+                    )}
+                    onClick={() => {
+                      setAppliedFilters(sp.filters);
+                      setPresetId(`saved_${sp.id}`);
+                      setCustomFilters(sp.filters.map((f) => ({ field: f.field, op: f.op, value: String(f.value) })));
+                      if (sp.sort_by) setSortKey(sp.sort_by as SortKey);
+                      if (sp.sort_order) setSortAsc(sp.sort_order === "asc");
+                      setPage(0);
+                    }}
+                  >
+                    <Bookmark className="w-3 h-3 mr-1" />
+                    {sp.name}
+                  </Button>
+                  <button
+                    onClick={() => deletePreset.mutate(sp.id)}
+                    className="p-0.5 text-muted-foreground hover:text-destructive transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+            </>
+          )}
           {/* Custom Filter Toggle */}
           <div className="w-px h-5 bg-border mx-1.5 shrink-0" />
           <Button
@@ -386,6 +428,20 @@ export default function Fundamentals() {
                   Add condition
                 </Button>
                 <div className="flex-1" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7 text-xs px-3 gap-1"
+                  onClick={() => {
+                    const valid = customFilters.filter((f) => f.value !== "" && !isNaN(Number(f.value)));
+                    if (valid.length === 0) return;
+                    setShowSaveDialog(true);
+                  }}
+                  disabled={customFilters.every((f) => f.value === "")}
+                >
+                  <Save className="w-3 h-3" />
+                  Save
+                </Button>
                 <Button
                   size="sm"
                   className="h-7 text-xs px-4"
@@ -568,6 +624,46 @@ export default function Fundamentals() {
       </div>
 
       <StockPopupCard open={!!selectedStock} onOpenChange={(o) => !o && setSelectedStock(null)} stock={selectedStock} />
+
+      {/* Save Preset Dialog */}
+      <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-base">Save Scanner Preset</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label className="text-xs">Preset Name</Label>
+              <DialogInput
+                value={presetName}
+                onChange={(e) => setPresetName(e.target.value)}
+                placeholder="e.g. My Value Picks"
+                className="mt-1"
+                autoFocus
+              />
+            </div>
+            <Button
+              className="w-full"
+              size="sm"
+              disabled={!presetName.trim() || createPreset.isPending}
+              onClick={() => {
+                const valid = customFilters.filter((f) => f.value !== "" && !isNaN(Number(f.value)));
+                createPreset.mutate({
+                  name: presetName.trim(),
+                  filters: valid.map((f) => ({ field: f.field, op: f.op, value: Number(f.value) })),
+                  sort_by: sortKey,
+                  sort_order: sortAsc ? "asc" : "desc",
+                });
+                setShowSaveDialog(false);
+                setPresetName("");
+              }}
+            >
+              <Save className="w-3.5 h-3.5 mr-1.5" />
+              Save Preset
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

@@ -399,6 +399,36 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_scanner_presets: {
+        Row: {
+          created_at: string | null
+          filters: Json
+          id: string
+          name: string
+          sort_by: string | null
+          sort_order: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          filters?: Json
+          id?: string
+          name: string
+          sort_by?: string | null
+          sort_order?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          filters?: Json
+          id?: string
+          name?: string
+          sort_by?: string | null
+          sort_order?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       scanner_definitions: {
         Row: {
           active: boolean | null

@@ -13,6 +13,7 @@ import { StreakDiscipline } from "@/components/dashboard/StreakDiscipline";
 import { JournalCalendarView } from "@/components/journal/JournalCalendarView";
 import { RiskGoalWidget } from "@/components/dashboard/RiskGoalWidget";
 import { AITradeInsights } from "@/components/analytics/AITradeInsights";
+import { PortfolioHeatMap } from "@/components/dashboard/PortfolioHeatMap";
 import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useLivePrices } from "@/hooks/useLivePrices";
@@ -136,6 +137,8 @@ export default function Dashboard() {
         return <DashboardKPICards key={w.id} alerts={alerts} />;
       case "riskGoal":
         return <RiskGoalWidget key={w.id} />;
+      case "heatMap":
+        return <PortfolioHeatMap key={w.id} />;
       case "chart":
         return (
           <div key={w.id} className={cn("grid grid-cols-1 gap-5", alertsVisible ? "lg:grid-cols-3" : "")}>
