@@ -624,6 +624,46 @@ export default function Fundamentals() {
       </div>
 
       <StockPopupCard open={!!selectedStock} onOpenChange={(o) => !o && setSelectedStock(null)} stock={selectedStock} />
+
+      {/* Save Preset Dialog */}
+      <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-base">Save Scanner Preset</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label className="text-xs">Preset Name</Label>
+              <DialogInput
+                value={presetName}
+                onChange={(e) => setPresetName(e.target.value)}
+                placeholder="e.g. My Value Picks"
+                className="mt-1"
+                autoFocus
+              />
+            </div>
+            <Button
+              className="w-full"
+              size="sm"
+              disabled={!presetName.trim() || createPreset.isPending}
+              onClick={() => {
+                const valid = customFilters.filter((f) => f.value !== "" && !isNaN(Number(f.value)));
+                createPreset.mutate({
+                  name: presetName.trim(),
+                  filters: valid.map((f) => ({ field: f.field, op: f.op, value: Number(f.value) })),
+                  sort_by: sortKey,
+                  sort_order: sortAsc ? "asc" : "desc",
+                });
+                setShowSaveDialog(false);
+                setPresetName("");
+              }}
+            >
+              <Save className="w-3.5 h-3.5 mr-1.5" />
+              Save Preset
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
