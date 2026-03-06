@@ -81,15 +81,21 @@ function SummaryStat({ label, value }: { label: string; value: string }) {
   );
 }
 
-/* ─── 52W Range Insight ─── */
+/* ─── Range Insight (reusable for 52W and ATH/ATL) ─── */
 function RangeInsight({
+  label,
   low,
   high,
   current,
+  lowLabel = "Low",
+  highLabel = "High",
 }: {
+  label: string;
   low: number | null;
   high: number | null;
   current: number | null;
+  lowLabel?: string;
+  highLabel?: string;
 }) {
   if (low == null || high == null || current == null) return null;
   const range = high - low;
@@ -99,12 +105,12 @@ function RangeInsight({
 
   return (
     <div className="rounded-[14px] bg-card border border-border p-4 space-y-3 shadow-sm">
-      <p className="text-[10px] text-muted-foreground tracking-widest uppercase">52-Week Range</p>
+      <p className="text-[10px] text-muted-foreground tracking-widest uppercase">{label}</p>
 
       {/* Labels row */}
       <div className="grid grid-cols-3 text-center gap-1">
         <div>
-          <p className="text-[9px] text-muted-foreground uppercase">Low</p>
+          <p className="text-[9px] text-muted-foreground uppercase">{lowLabel}</p>
           <p className="text-xs font-semibold font-mono text-loss">{formatCurrency(low)}</p>
         </div>
         <div>
@@ -112,7 +118,7 @@ function RangeInsight({
           <p className="text-xs font-semibold font-mono text-foreground">{formatCurrency(current)}</p>
         </div>
         <div>
-          <p className="text-[9px] text-muted-foreground uppercase">High</p>
+          <p className="text-[9px] text-muted-foreground uppercase">{highLabel}</p>
           <p className="text-xs font-semibold font-mono text-profit">{formatCurrency(high)}</p>
         </div>
       </div>
@@ -120,7 +126,6 @@ function RangeInsight({
       {/* Bar */}
       <div className="relative h-2 rounded-full overflow-hidden bg-muted">
         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-loss/50 via-warning/50 to-profit/50" />
-        {/* Diamond marker */}
         <div
           className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 rounded-[2px] bg-primary border-2 border-card shadow-md"
           style={{ left: `calc(${pct}% - 6px)` }}
@@ -129,8 +134,8 @@ function RangeInsight({
 
       {/* Distance labels */}
       <div className="flex justify-between text-[10px] text-muted-foreground font-mono">
-        <span>{fromLow}% from low</span>
-        <span>{fromHigh}% from high</span>
+        <span>{fromLow}% from {lowLabel.toLowerCase()}</span>
+        <span>{fromHigh}% from {highLabel.toLowerCase()}</span>
       </div>
     </div>
   );
@@ -294,7 +299,8 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
               <MetricCard label="Rel. Volume" value={formatRatio(stock.relative_volume)} />
               <MetricCard label="Avg Vol 10D" value={formatVolume(stock.avg_volume_10d)} />
             </div>
-            <RangeInsight low={stock.low_52w} high={stock.high_52w} current={stock.close} />
+            <RangeInsight label="52-Week Range" low={stock.low_52w} high={stock.high_52w} current={stock.close} lowLabel="52W Low" highLabel="52W High" />
+            <RangeInsight label="All-Time Range" low={stock.atl} high={stock.ath} current={stock.close} lowLabel="ATL" highLabel="ATH" />
           </TabsContent>
 
           {/* Valuation */}
@@ -362,7 +368,8 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
               </div>
             </div>
 
-            <RangeInsight low={stock.low_52w} high={stock.high_52w} current={stock.close} />
+            <RangeInsight label="52-Week Range" low={stock.low_52w} high={stock.high_52w} current={stock.close} lowLabel="52W Low" highLabel="52W High" />
+            <RangeInsight label="All-Time Range" low={stock.atl} high={stock.ath} current={stock.close} lowLabel="ATL" highLabel="ATH" />
           </TabsContent>
         </Tabs>
 
