@@ -19,6 +19,7 @@ import {
   Eye,
   Sparkles,
   HelpCircle,
+  Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileDrawer } from "./MobileDrawer";
@@ -40,6 +41,7 @@ const analyticsNavItems = [
   { icon: CalendarDays, label: "Calendar", path: "/calendar" },
   { icon: AlertTriangle, label: "Mistakes", path: "/mistakes" },
   { icon: BarChart3, label: "Analytics", path: "/analytics" },
+  { icon: Building2, label: "Fundamentals", path: "/fundamentals" },
   { icon: FileText, label: "Reports", path: "/reports" },
 ];
 

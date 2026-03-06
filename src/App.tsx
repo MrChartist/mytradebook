@@ -31,6 +31,7 @@ const Mistakes = lazy(() => import("./pages/Mistakes"));
 const Analytics = lazy(() => import("./pages/Analytics"));
 const DhanCallback = lazy(() => import("./pages/DhanCallback"));
 const Watchlist = lazy(() => import("./pages/Watchlist"));
+const Fundamentals = lazy(() => import("./pages/Fundamentals"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
@@ -100,6 +101,7 @@ const App = () => (
                     { path: "/mistakes", element: <Mistakes /> },
                     { path: "/analytics", element: <Analytics /> },
                     { path: "/watchlist", element: <Watchlist /> },
+                    { path: "/fundamentals", element: <Fundamentals /> },
                   ].map(({ path, element }) => (
                     <Route
                       key={path}
