@@ -128,7 +128,7 @@ export function StockPopupCard({ open, onOpenChange, stock }: StockPopupCardProp
               <MetricCard label="P/E (TTM)" value={formatRatio(stock.pe_ratio)} />
               <MetricCard label="P/B Ratio" value={formatRatio(stock.pb_ratio)} />
               <MetricCard label="P/S Ratio" value={formatRatio(stock.ps_ratio)} />
-              <MetricCard label="EV/EBITDA" value={formatRatio(stock.ev_ebitda)} />
+              <MetricCard label="Dividend Yield" value={stock.dividend_yield != null ? `${stock.dividend_yield.toFixed(2)}%` : "—"} positive={stock.dividend_yield != null && stock.dividend_yield > 0 ? true : null} />
               <MetricCard label="Dividend Yield" value={stock.dividend_yield != null ? `${stock.dividend_yield.toFixed(2)}%` : "—"} positive={stock.dividend_yield != null && stock.dividend_yield > 0 ? true : null} />
               <MetricCard label="EPS (TTM)" value={formatCurrency(stock.eps)} />
             </div>
