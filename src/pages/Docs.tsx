@@ -565,6 +565,32 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><WidgetCustomizerMockup /></div>
               </FeatureCard>
 
+              <FeatureCard icon={Grid3X3} title="Portfolio Heat Map" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">
+                  A treemap-style visualization of your open positions. Each tile represents a position, sized by its value and color-coded by unrealized P&L — deep green for profits, deep red for losses.
+                </p>
+                <FeatureList items={[
+                  "Tile size proportional to position value (quantity × LTP)",
+                  "Color gradient from red (-5%+) through neutral to green (+5%+)",
+                  "Hover to see full details: symbol, qty, entry, LTP, P&L",
+                  "Auto-updates with live price data",
+                  "Falls back to empty state when no open positions",
+                ]} />
+              </FeatureCard>
+
+              <FeatureCard icon={Star} title="Daily Review Wizard" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">
+                  A guided end-of-day review flow accessible from the floating Quick Actions button. Walk through a structured 4-step reflection process after market close.
+                </p>
+                <FeatureList items={[
+                  "Step 1: Set your mood (Great → Terrible) and rate discipline (1-5 stars)",
+                  "Step 2: Review today's closed trades and tag your best/worst trade",
+                  "Step 3: Write reflections — what worked, what to improve, lessons learned",
+                  "Step 4: Review summary and save to your daily journal",
+                  "Auto-saves to your Calendar journal entry for the day",
+                ]} />
+              </FeatureCard>
+
               <FeatureCard icon={Filter} title="Segment & Month Filters">
                 <p className="text-sm text-muted-foreground mb-3">Filter the entire dashboard by market segment and time period:</p>
                 <FeatureList items={[
