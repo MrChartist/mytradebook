@@ -4,11 +4,12 @@ import { MobileBottomNav } from "./MobileBottomNav";
 import { SidebarProvider, useSidebarContext } from "@/contexts/SidebarContext";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useUserSettings } from "@/hooks/useUserSettings";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, WifiOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { TrialBanner } from "@/components/TrialBanner";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useOfflineTradeQueue } from "@/hooks/useOfflineTradeQueue";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -19,6 +20,7 @@ function MainLayoutInner({ children }: MainLayoutProps) {
   const { settings } = useUserSettings();
   const navigate = useNavigate();
   const { collapsed } = useSidebarContext();
+  const { isOnline, queuedCount } = useOfflineTradeQueue();
 
   // Listen for service worker updates and show refresh toast
   useEffect(() => {
@@ -53,6 +55,14 @@ function MainLayoutInner({ children }: MainLayoutProps) {
         collapsed ? "lg:ml-[68px]" : "lg:ml-[230px]"
       )}>
         <TrialBanner />
+        {!isOnline && (
+          <div className="bg-warning/10 border-b border-warning/20 px-4 py-2 flex items-center justify-center gap-2">
+            <WifiOff className="w-4 h-4 text-warning shrink-0" />
+            <span className="text-sm text-warning font-medium">
+              You're offline{queuedCount > 0 ? ` — ${queuedCount} trade${queuedCount > 1 ? "s" : ""} queued` : ""}
+            </span>
+          </div>
+        )}
         {isTokenExpired && (
           <div
             className="bg-loss/10 border-b border-loss/20 px-4 py-2 flex items-center justify-center gap-2 cursor-pointer hover:bg-loss/15 transition-colors"

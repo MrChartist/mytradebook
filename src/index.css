@@ -398,6 +398,20 @@
   outline-offset: 2px;
 }
 
+/* Selection colors */
+::selection {
+  background: hsl(var(--primary) / 0.25);
+  color: hsl(var(--foreground));
+}
+
+/* Dark-mode scrollbar */
+.dark ::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.2);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.35);
+}
+
 /* ── Docs B&W Brainstorm Mode ────────────────── */
 .docs-bw-filter {
   filter: grayscale(100%);
