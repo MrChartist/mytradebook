@@ -20,7 +20,6 @@ export interface FundamentalData {
   eps: number | null;
   pb_ratio: number | null;
   ps_ratio: number | null;
-  ev_ebitda: number | null;
   dividend_yield: number | null;
   // Profitability
   roe: number | null;
