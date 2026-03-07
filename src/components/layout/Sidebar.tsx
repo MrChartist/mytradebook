@@ -68,7 +68,7 @@ export function Sidebar() {
         className={cn(
           "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 group",
           isActive
-            ? "nav-active-bar bg-primary/8 text-primary font-medium"
+            ? "nav-active-bar liquid-glass-sm !bg-primary/8 text-primary font-medium"
             : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
         )}
       >
@@ -101,7 +101,7 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-card border-b border-border flex items-center justify-between px-4">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-card/90 backdrop-blur-lg border-b border-border/40 flex items-center justify-between px-4" style={{ boxShadow: "inset 0 -1px 0 0 hsl(0 0% 100% / 0.04)" }}>
         <img src={logo} alt="TradeBook" className="h-8 object-contain" />
         <div className="flex items-center gap-2">
           <ThemeToggle />
@@ -164,7 +164,7 @@ export function Sidebar() {
           )}
           {/* Profile */}
           {!collapsed && profile && (
-            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/50 rounded-xl">
+            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/40 rounded-xl" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
               <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
                 <span className="text-primary-foreground font-semibold text-xs">
                   {profile.name?.charAt(0).toUpperCase() || "U"}

@@ -33,7 +33,7 @@ export function HeroSection() {
         {/* Badge */}
         <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0} className="flex justify-center mb-10">
           <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/40 bg-card/50 backdrop-blur-sm text-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full liquid-glass-sm !rounded-full text-sm"
             whileHover={{ scale: 1.03 }}
           >
             <motion.span
@@ -81,12 +81,13 @@ export function HeroSection() {
             value={heroEmail}
             onChange={(e) => setHeroEmail(e.target.value)}
             aria-label="Email address for signup"
-            className="h-12 sm:h-14 rounded-full px-6 text-base border-border/40 bg-card/80 backdrop-blur-sm shadow-sm flex-1 w-full focus-visible:ring-[hsl(var(--tb-accent)/0.3)]"
+            className="h-12 sm:h-14 rounded-full px-6 text-base border-border/40 bg-card/70 backdrop-blur-md shadow-sm flex-1 w-full focus-visible:ring-[hsl(var(--tb-accent)/0.3)]"
+            style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.1), var(--shadow-sm)" }}
           />
           <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
             <Button
               size="lg"
-              className="h-12 sm:h-14 px-8 text-base gap-2 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_6px_24px_hsl(var(--tb-accent)/0.3)] font-semibold whitespace-nowrap w-full sm:w-auto"
+              className="h-12 sm:h-14 px-8 text-base gap-2 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_6px_24px_hsl(var(--tb-accent)/0.3)] font-semibold whitespace-nowrap w-full sm:w-auto shimmer-cta"
               onClick={() => navigate(`/login?mode=signup${heroEmail ? `&email=${encodeURIComponent(heroEmail)}` : ""}`)}
             >
               Start Free

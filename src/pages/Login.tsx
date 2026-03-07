@@ -255,7 +255,9 @@ export default function Login() {
         </div>
 
         {/* Right Panel - Auth Form */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 lg:p-12 bg-background">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 lg:p-12 bg-background relative overflow-hidden">
+          {/* Subtle gradient orb behind form */}
+          <div className="absolute top-1/3 right-1/3 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -267,7 +269,7 @@ export default function Login() {
               <img src={logo} alt="TradeBook" className="h-10 object-contain" />
             </div>
 
-            <div className="surface-card p-6 sm:p-8">
+            <div className="liquid-glass p-6 sm:p-8">
               {/* Forgot Password View */}
               {authMode === "forgot" ? (
                 <>
