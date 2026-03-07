@@ -159,16 +159,16 @@ function LTPDisplay({ value, change }: { value: number | null; change?: number |
 
   return (
     <span className="inline-flex items-baseline gap-[1px] font-mono tabular-nums group/ltp">
-      <span className="text-[10px] text-muted-foreground/70 font-normal mr-[1px]">₹</span>
+      <span className="text-[11px] text-muted-foreground/70 font-normal mr-[1px]">₹</span>
       <span className={cn(
-        "font-semibold text-[13.5px] tracking-tight transition-colors",
+        "font-semibold text-[14px] sm:text-[13.5px] tracking-tight transition-colors",
         isUp && "text-profit",
         isDown && "text-loss",
         !isUp && !isDown && "text-foreground"
       )}>
         {intPart}
       </span>
-      <span className="text-[10.5px] text-muted-foreground/60 font-medium">{decPart}</span>
+      <span className="text-[11px] text-muted-foreground/60 font-medium">{decPart}</span>
     </span>
   );
 }
@@ -332,12 +332,12 @@ export default function Fundamentals() {
 
       <div className="space-y-4">
         {/* ── Header Card ── */}
-        <div className="rounded-2xl bg-card border border-border p-4 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(hsl(var(--foreground)) 1px, transparent 1px)", backgroundSize: "16px 16px" }} />
+        <div className="rounded-2xl bg-card border border-border p-3 sm:p-4 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: "radial-gradient(hsl(var(--foreground)) 1px, transparent 1px)", backgroundSize: "16px 16px" }} />
           <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h1 className="text-lg font-bold text-foreground">Fundamentals</h1>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <h1 className="text-xl font-bold text-foreground">Fundamentals</h1>
+              <p className="text-[13px] text-muted-foreground mt-0.5 leading-relaxed">
                 Top NSE stocks by market cap with key metrics
                 <span className="text-muted-foreground/40 mx-1.5">·</span>
                 <span className="font-mono font-bold text-foreground">{totalCount.toLocaleString()}</span> stocks
@@ -355,7 +355,7 @@ export default function Fundamentals() {
                 placeholder="Search symbol, sector..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-8 h-8 text-xs bg-background"
+                className="pl-8 h-9 text-sm bg-background"
               />
               {search && (
                 <button onClick={() => setSearch("")} className="absolute right-2 top-1/2 -translate-y-1/2">
@@ -366,8 +366,44 @@ export default function Fundamentals() {
           </div>
         </div>
 
-        {/* ── Grouped Scanner Presets ── */}
-        <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
+        {/* ── Mobile Quick Presets ── */}
+        <div className="flex sm:hidden items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          {[
+            SCANNER_PRESETS.find(p => p.id === "top_gainers")!,
+            SCANNER_PRESETS.find(p => p.id === "top_losers")!,
+            SCANNER_PRESETS.find(p => p.id === "52w_high")!,
+            SCANNER_PRESETS.find(p => p.id === "52w_low")!,
+            SCANNER_PRESETS.find(p => p.id === "all")!,
+          ].map((p) => (
+            <button
+              key={p.id}
+              className={cn(
+                "shrink-0 text-[13px] font-medium px-4 py-2 rounded-full transition-all",
+                presetId === p.id
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-muted text-muted-foreground hover:text-foreground"
+              )}
+              onClick={() => handlePresetChange(p.id)}
+            >
+              {p.label}
+            </button>
+          ))}
+          <button
+            className={cn(
+              "shrink-0 text-[13px] font-medium px-4 py-2 rounded-full transition-all flex items-center gap-1.5",
+              isCustomMode
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "bg-muted text-muted-foreground hover:text-foreground"
+            )}
+            onClick={toggleFilterBuilder}
+          >
+            <SlidersHorizontal className="w-3 h-3" />
+            Custom
+          </button>
+        </div>
+
+        {/* ── Desktop Grouped Scanner Presets ── */}
+        <div className="hidden sm:flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
           {PRESET_GROUPS.map((group, gi) => (
             <div key={group.key} className="flex items-center gap-0.5 shrink-0">
               {gi > 0 && <div className="w-px h-4 bg-border mx-2 shrink-0" />}
@@ -577,7 +613,7 @@ export default function Fundamentals() {
             </p>
           </div>
         ) : (
-          <div className="rounded-xl border border-border overflow-hidden bg-card relative">
+          <div className="rounded-[1.25rem] border border-border overflow-hidden bg-card relative">
             {isFetching && (
               <div className="absolute top-0 left-0 right-0 z-20">
                 <div className="h-0.5 bg-primary/20 overflow-hidden">
@@ -620,15 +656,15 @@ export default function Fundamentals() {
                       <TableRow
                         key={s.ticker}
                         className={cn(
-                          "cursor-pointer transition-colors border-b border-border/50 border-l-2 border-l-transparent hover:border-l-primary hover:bg-muted/50",
+                          "cursor-pointer transition-colors border-b border-border/30 border-l-2 border-l-transparent hover:border-l-primary hover:bg-primary/[0.03]",
                           idx % 2 === 1 && "bg-muted/30"
                         )}
                         onClick={() => setSelectedStock(s)}
                       >
-                        <TableCell className="sticky left-0 z-10 py-2 px-3" style={{ backgroundColor: idx % 2 === 1 ? "hsl(var(--muted) / 0.3)" : "hsl(var(--card))", boxShadow: "2px 0 4px -2px rgba(0,0,0,0.06)" }}>
+                        <TableCell className="sticky left-0 z-10 py-2.5 sm:py-2 px-3" style={{ backgroundColor: idx % 2 === 1 ? "hsl(var(--muted) / 0.3)" : "hsl(var(--card))", boxShadow: "2px 0 4px -2px rgba(0,0,0,0.06)" }}>
                           <div>
-                            <p className="font-bold text-[13px] text-foreground leading-tight">{s.ticker?.replace("NSE:", "")}</p>
-                            <p className="text-[9px] text-muted-foreground truncate max-w-[130px] leading-tight">{s.description}</p>
+                            <p className="font-bold text-[14px] sm:text-[13px] text-foreground leading-tight">{s.ticker?.replace("NSE:", "")}</p>
+                            <p className="text-[10px] sm:text-[9px] text-muted-foreground truncate max-w-[130px] leading-tight">{s.description}</p>
                           </div>
                         </TableCell>
                         <TableCell className="hidden md:table-cell py-2 px-3">
@@ -646,9 +682,9 @@ export default function Fundamentals() {
                             <Sparkline data={sparkData} width={80} height={28} fill />
                           </div>
                         </TableCell>
-                        <TableCell className="text-right py-2 px-3">
+                        <TableCell className="text-right py-2.5 sm:py-2 px-3">
                           <span className={cn(
-                            "inline-flex items-center gap-1 text-[11px] font-mono font-medium",
+                            "inline-flex items-center gap-1 text-[12px] sm:text-[11px] font-mono font-semibold",
                             isPos ? "text-profit" : "text-loss"
                           )}>
                             <span className={cn("w-1 h-1 rounded-full shrink-0", isPos ? "bg-profit" : "bg-loss")} />
@@ -684,10 +720,10 @@ export default function Fundamentals() {
         )}
 
         {/* ── Pagination Footer ── */}
-        <div className="rounded-xl bg-card border border-border px-3 py-2 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="rounded-xl bg-card border border-border px-3 py-2.5 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
             <Select value={String(pageSize)} onValueChange={(v) => { setPageSize(Number(v)); setPage(0); }}>
-              <SelectTrigger className="h-6 w-14 text-[11px] border-0 bg-muted/40 px-2">
+              <SelectTrigger className="h-7 w-14 text-[11px] border-0 bg-muted/40 px-2">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -703,22 +739,22 @@ export default function Fundamentals() {
             <span className="text-[9px] text-muted-foreground/60 hidden sm:inline">TradingView · 5 min cache</span>
           </div>
           <div className="flex items-center gap-0.5">
-            <Button variant="ghost" size="icon" className="h-6 w-6" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
-              <ChevronLeft className="w-3.5 h-3.5" />
+            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-6 sm:w-6" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
+              <ChevronLeft className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
             </Button>
             {pageNumbers.map((p) => (
               <Button
                 key={p}
                 variant={p === page ? "default" : "ghost"}
                 size="icon"
-                className={cn("h-6 w-6 text-[11px]", p === page && "shadow-sm")}
+                className={cn("h-8 w-8 sm:h-6 sm:w-6 text-[12px] sm:text-[11px]", p === page && "shadow-sm")}
                 onClick={() => setPage(p)}
               >
                 {p + 1}
               </Button>
             ))}
-            <Button variant="ghost" size="icon" className="h-6 w-6" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>
-              <ChevronRight className="w-3.5 h-3.5" />
+            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-6 sm:w-6" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>
+              <ChevronRight className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
             </Button>
           </div>
         </div>

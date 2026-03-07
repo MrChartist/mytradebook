@@ -1,50 +1,58 @@
 
 
-# Fundamentals Page Polish
+## Improve Instrument Selection UX Across Trades, Alerts & Studies
 
-Looking at the screenshot vs the current code, the mobile view needs refinement for a cleaner, more readable stock screener experience.
+### Current Pain Points
+1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
+2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
+3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
+4. **Selected state is disconnected** — after selecting, "Change" button resets everything
+5. **No keyboard navigation** — can't arrow through results or press Enter to select
+6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
+7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
 
-## Key Issues Identified
-- Header card too heavy for mobile — needs lighter treatment
-- Preset tabs overflow poorly on mobile — only 4 quick tabs visible in screenshot (Top Gainers, Top Losers, 52W High, 52W Low) suggesting a simpler mobile tab strip
-- Table rows need more breathing room and clearer visual hierarchy on mobile
-- Symbol name truncation and spacing could be improved
-- LTP and Change% columns need better mobile sizing
-- Pagination footer could be cleaner
+### Proposed Improvements
 
-## Changes
+#### 1. Unified Combobox-Style Picker (biggest UX win)
+Replace the current search input + results list with a **combobox pattern**:
+- Single input field that shows results as you type (dropdown below)
+- Recent items shown immediately on focus (before typing)
+- Favorites pinned at the top with a star
+- Arrow keys to navigate, Enter to select, Escape to close
+- Taller results area (max-h-64 instead of max-h-40)
 
-### 1. Header Card (`Fundamentals.tsx` — lines 335-367)
-- Reduce padding on mobile: `p-3 sm:p-4`
-- Increase title to `text-xl font-bold` for better hierarchy
-- Subtitle: bump to `text-[13px]` with `leading-relaxed`
-- Search input: increase height to `h-9` on mobile, `text-sm` placeholder
+#### 2. Smarter Defaults & Context
+- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
+- Remember last used exchange filter per segment in localStorage
+- Show lot size inline for F&O instruments in results
 
-### 2. Preset Tabs (lines 370-453)
-- Add a mobile-specific quick-access row: show only the 4 most popular presets (Top Gainers, Top Losers, 52W High, 52W Low) as pill buttons on mobile
-- Keep the full grouped preset bar for desktop (hidden on mobile)
-- Mobile pills: `text-[13px] font-medium px-4 py-2 rounded-full` with active state using `bg-muted text-foreground`
+#### 3. Improved Selected State
+- Show a compact **chip-style** selected instrument instead of the current full-width bar
+- "Change" opens the picker inline (no full reset) — preserves recent search context
+- LTP fetch button more prominent with last-fetched timestamp
 
-### 3. Table Rows (lines 614-679)
-- Increase row padding: `py-2.5 sm:py-2` for more breathing room on mobile
-- Symbol cell: bump ticker font to `text-[14px]`, description to `text-[10px]`
-- LTP display: increase integer part to `text-[14px]` for mobile readability
-- Change% cell: bump to `text-[12px]` with bolder weight
-- Add subtle `divide-y divide-border/30` for cleaner row separation instead of border-b
+#### 4. Keyboard Navigation in Search Results
+- Add `onKeyDown` handler to search input
+- ArrowUp/ArrowDown to highlight results
+- Enter to select highlighted item
+- Track `highlightedIndex` state
 
-### 4. Pagination Footer (lines 687-724)
-- Increase touch targets on mobile: `h-8 w-8` for page buttons
-- Better mobile layout with centered page numbers
+#### 5. Option Chain Quick Access
+- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
+- Make the chain component more compact — remove redundant labels
 
-### 5. LTPDisplay Component (lines 150-174)
-- Bump integer part size: `text-[14px] sm:text-[13.5px]`
-- Increase rupee symbol: `text-[11px]`
-- Decimal part: `text-[11px]`
+#### 6. Exchange Filter as Chips (not buttons)
+- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
 
-### 6. Overall Table Container (line 580)
-- Add `rounded-[1.25rem]` for consistency with card system
-- Smoother row hover: `hover:bg-primary/[0.03]`
+### Files to Modify
+- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
+- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
 
-## Files to Edit
-1. `src/pages/Fundamentals.tsx` — all changes above
+### Implementation Order
+1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
+2. Increase results area height and show lot size for F&O
+3. Replace exchange filter buttons with compact chips
+4. Add "remember last exchange" per segment
+5. Improve selected state with chip-style display
+6. Add focus-triggered recent items display
 
