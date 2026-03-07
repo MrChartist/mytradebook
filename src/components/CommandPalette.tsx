@@ -5,13 +5,36 @@ import {
 } from "@/components/ui/command";
 import {
   LayoutDashboard, TrendingUp, Bell, BookOpen, CalendarDays, AlertTriangle,
-  BarChart3, FileText, Settings, Eye, Sparkles, Plus, Search,
+  BarChart3, FileText, Settings, Eye, Sparkles, Plus, Clock,
 } from "lucide-react";
 import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useDailyJournal } from "@/hooks/useDailyJournal";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+
+const RECENT_ITEMS_KEY = "tradebook-recent-items";
+const MAX_RECENT = 5;
+
+interface RecentItem {
+  type: "trade" | "page";
+  label: string;
+  path: string;
+  timestamp: number;
+  meta?: string;
+}
+
+function getRecentItems(): RecentItem[] {
+  try {
+    return JSON.parse(localStorage.getItem(RECENT_ITEMS_KEY) || "[]");
+  } catch { return []; }
+}
+
+export function addRecentItem(item: Omit<RecentItem, "timestamp">) {
+  const items = getRecentItems().filter((i) => i.path !== item.path);
+  items.unshift({ ...item, timestamp: Date.now() });
+  localStorage.setItem(RECENT_ITEMS_KEY, JSON.stringify(items.slice(0, MAX_RECENT)));
+}
 
 const NAV_ITEMS = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard, group: "Navigate" },
@@ -46,6 +69,8 @@ export function CommandPalette({ onAction }: CommandPaletteProps) {
   const { alerts } = useAlerts();
   const { entries: journalEntries } = useDailyJournal();
 
+  const recentItems = useMemo(() => open ? getRecentItems() : [], [open]);
+
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if ((e.key === "k" && (e.metaKey || e.ctrlKey)) || (e.key === "/" && !["INPUT", "TEXTAREA"].includes((e.target as HTMLElement).tagName))) {
@@ -57,36 +82,26 @@ export function CommandPalette({ onAction }: CommandPaletteProps) {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  // Reset query when dialog closes
-  useEffect(() => {
-    if (!open) setQuery("");
-  }, [open]);
+  useEffect(() => { if (!open) setQuery(""); }, [open]);
 
   const q = query.toLowerCase().trim();
   const showDynamic = q.length >= 2;
 
   const filteredTrades = useMemo(() => {
     if (!showDynamic) return [];
-    return trades
-      .filter((t) => t.symbol.toLowerCase().includes(q))
-      .slice(0, 5);
+    return trades.filter((t) => t.symbol.toLowerCase().includes(q)).slice(0, 5);
   }, [trades, q, showDynamic]);
 
   const filteredAlerts = useMemo(() => {
     if (!showDynamic) return [];
-    return alerts
-      .filter((a) => a.symbol.toLowerCase().includes(q))
-      .slice(0, 5);
+    return alerts.filter((a) => a.symbol.toLowerCase().includes(q)).slice(0, 5);
   }, [alerts, q, showDynamic]);
 
   const filteredJournal = useMemo(() => {
     if (!showDynamic) return [];
     return journalEntries
       .filter((j) => {
-        const searchable = [j.pre_market_plan, j.post_market_review, j.lessons_learned, j.market_outlook]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
+        const searchable = [j.pre_market_plan, j.post_market_review, j.lessons_learned, j.market_outlook].filter(Boolean).join(" ").toLowerCase();
         return searchable.includes(q);
       })
       .slice(0, 3);
@@ -95,23 +110,25 @@ export function CommandPalette({ onAction }: CommandPaletteProps) {
   const handleSelect = useCallback((value: string) => {
     setOpen(false);
     const navItem = NAV_ITEMS.find((n) => n.label.toLowerCase() === value);
-    if (navItem) { navigate(navItem.path); return; }
+    if (navItem) {
+      addRecentItem({ type: "page", label: navItem.label, path: navItem.path });
+      navigate(navItem.path);
+      return;
+    }
     const actionItem = ACTIONS.find((a) => a.label.toLowerCase() === value);
     if (actionItem) { onAction?.(actionItem.action); return; }
 
-    // Trade by id
     if (value.startsWith("trade:")) {
-      navigate(`/trades?search=${encodeURIComponent(value.replace("trade:", ""))}`);
+      const symbol = value.replace("trade:", "");
+      addRecentItem({ type: "trade", label: symbol, path: `/trades?search=${encodeURIComponent(symbol)}`, meta: "Trade" });
+      navigate(`/trades?search=${encodeURIComponent(symbol)}`);
       return;
     }
-    // Alert
-    if (value.startsWith("alert:")) {
-      navigate("/alerts");
-      return;
-    }
-    // Journal
-    if (value.startsWith("journal:")) {
-      navigate("/journal");
+    if (value.startsWith("alert:")) { navigate("/alerts"); return; }
+    if (value.startsWith("journal:")) { navigate("/journal"); return; }
+    if (value.startsWith("recent:")) {
+      const path = value.replace("recent:", "");
+      navigate(path);
       return;
     }
 
@@ -120,13 +137,25 @@ export function CommandPalette({ onAction }: CommandPaletteProps) {
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandInput
-        placeholder="Search pages, trades, alerts… (⌘K)"
-        value={query}
-        onValueChange={setQuery}
-      />
+      <CommandInput placeholder="Search pages, trades, alerts… (⌘K)" value={query} onValueChange={setQuery} />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
+
+        {/* Recent Items */}
+        {!showDynamic && recentItems.length > 0 && (
+          <>
+            <CommandGroup heading="Recent">
+              {recentItems.map((item) => (
+                <CommandItem key={item.path} value={`recent:${item.path}`} onSelect={handleSelect}>
+                  <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
+                  <span className="flex-1">{item.label}</span>
+                  {item.meta && <span className="text-xs text-muted-foreground ml-2">{item.meta}</span>}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+            <CommandSeparator />
+          </>
+        )}
 
         <CommandGroup heading="Navigate">
           {NAV_ITEMS.map((item) => (
@@ -153,20 +182,10 @@ export function CommandPalette({ onAction }: CommandPaletteProps) {
             <CommandSeparator />
             <CommandGroup heading="Trades">
               {filteredTrades.map((t) => (
-                <CommandItem
-                  key={t.id}
-                  value={`trade:${t.symbol}`}
-                  onSelect={handleSelect}
-                >
+                <CommandItem key={t.id} value={`trade:${t.symbol}`} onSelect={handleSelect}>
                   <TrendingUp className="w-4 h-4 mr-2 text-muted-foreground" />
                   <span className="flex-1">{t.symbol}</span>
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      "ml-2 text-xs",
-                      t.pnl && t.pnl > 0 ? "text-profit border-profit/30" : t.pnl && t.pnl < 0 ? "text-loss border-loss/30" : ""
-                    )}
-                  >
+                  <Badge variant="outline" className={cn("ml-2 text-xs", t.pnl && t.pnl > 0 ? "text-profit border-profit/30" : t.pnl && t.pnl < 0 ? "text-loss border-loss/30" : "")}>
                     {t.status} {t.pnl != null ? `₹${t.pnl.toFixed(0)}` : ""}
                   </Badge>
                 </CommandItem>
@@ -180,16 +199,10 @@ export function CommandPalette({ onAction }: CommandPaletteProps) {
             <CommandSeparator />
             <CommandGroup heading="Alerts">
               {filteredAlerts.map((a) => (
-                <CommandItem
-                  key={a.id}
-                  value={`alert:${a.symbol}`}
-                  onSelect={handleSelect}
-                >
+                <CommandItem key={a.id} value={`alert:${a.symbol}`} onSelect={handleSelect}>
                   <Bell className="w-4 h-4 mr-2 text-warning" />
                   <span className="flex-1">{a.symbol}</span>
-                  <span className="text-xs text-muted-foreground ml-2">
-                    {a.condition_type.replace(/_/g, " ")} {a.threshold}
-                  </span>
+                  <span className="text-xs text-muted-foreground ml-2">{a.condition_type.replace(/_/g, " ")} {a.threshold}</span>
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -201,16 +214,10 @@ export function CommandPalette({ onAction }: CommandPaletteProps) {
             <CommandSeparator />
             <CommandGroup heading="Journal">
               {filteredJournal.map((j) => (
-                <CommandItem
-                  key={j.id}
-                  value={`journal:${j.entry_date}`}
-                  onSelect={handleSelect}
-                >
+                <CommandItem key={j.id} value={`journal:${j.entry_date}`} onSelect={handleSelect}>
                   <BookOpen className="w-4 h-4 mr-2 text-primary" />
                   <span className="flex-1">{j.entry_date}</span>
-                  {j.mood && (
-                    <span className="text-xs text-muted-foreground ml-2 capitalize">{j.mood}</span>
-                  )}
+                  {j.mood && <span className="text-xs text-muted-foreground ml-2 capitalize">{j.mood}</span>}
                 </CommandItem>
               ))}
             </CommandGroup>

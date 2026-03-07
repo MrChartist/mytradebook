@@ -17,6 +17,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { Database } from "@/integrations/supabase/types";
 
 type WeeklyReport = Database["public"]["Tables"]["weekly_reports"]["Row"];
@@ -49,13 +51,11 @@ export default function Reports() {
     queryKey: ["weekly-reports", user?.id],
     queryFn: async () => {
       if (!user) return [];
-
       const { data, error } = await supabase
         .from("weekly_reports")
         .select("*")
         .eq("user_id", user.id)
         .order("week_start", { ascending: false });
-
       if (error) throw error;
       return data as WeeklyReport[];
     },
@@ -66,30 +66,18 @@ export default function Reports() {
   const groupedReports: GroupedReport[] = [];
   if (reports) {
     const weekMap = new Map<string, WeeklyReport[]>();
-    
     for (const report of reports) {
       const key = `${report.week_start}_${report.week_end}`;
-      if (!weekMap.has(key)) {
-        weekMap.set(key, []);
-      }
+      if (!weekMap.has(key)) weekMap.set(key, []);
       weekMap.get(key)!.push(report);
     }
-
     for (const [key, segments] of weekMap) {
       const [weekStart, weekEnd] = key.split("_");
       const totalPnl = segments.reduce((sum, s) => sum + (s.total_pnl || 0), 0);
       const totalTrades = segments.reduce((sum, s) => sum + (s.total_trades || 0), 0);
       const totalWinning = segments.reduce((sum, s) => sum + (s.winning_trades || 0), 0);
       const overallWinRate = totalTrades > 0 ? (totalWinning / totalTrades) * 100 : 0;
-
-      groupedReports.push({
-        weekStart,
-        weekEnd,
-        segments,
-        totalPnl,
-        totalTrades,
-        overallWinRate,
-      });
+      groupedReports.push({ weekStart, weekEnd, segments, totalPnl, totalTrades, overallWinRate });
     }
   }
 
@@ -97,13 +85,11 @@ export default function Reports() {
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke("generate-weekly-report");
-      
       if (error) throw error;
-
       if (data?.success) {
         toast({
           title: "Report Generated",
-          description: data.reportsCreated?.length > 0 
+          description: data.reportsCreated?.length > 0
             ? `Created reports for: ${data.reportsCreated.join(", ")}`
             : "No trades found for this week",
         });
@@ -111,11 +97,7 @@ export default function Reports() {
       }
     } catch (error) {
       console.error("Generate report error:", error);
-      toast({
-        title: "Failed to generate report",
-        description: error instanceof Error ? error.message : "Unknown error",
-        variant: "destructive",
-      });
+      toast({ title: "Failed to generate report", description: error instanceof Error ? error.message : "Unknown error", variant: "destructive" });
     } finally {
       setIsGenerating(false);
     }
@@ -125,7 +107,6 @@ export default function Reports() {
     const key = `${report.weekStart}_${report.weekEnd}`;
     setIsSendingTelegram(key);
     try {
-      // Build message
       const segmentBreakdown = report.segments
         .map((seg) => {
           const emoji = (seg.total_pnl || 0) >= 0 ? "📈" : "📉";
@@ -143,30 +124,18 @@ export default function Reports() {
         `📈 Total Trades: ${report.totalTrades}\n\n` +
         `*Segment Breakdown*\n${segmentBreakdown}`;
 
-      const { error } = await supabase.functions.invoke("telegram-notify", {
-        body: { message, parseMode: "Markdown" },
-      });
-
+      const { error } = await supabase.functions.invoke("telegram-notify", { body: { message, parseMode: "Markdown" } });
       if (error) throw error;
-
-      toast({
-        title: "Report Sent",
-        description: "Weekly report has been sent to Telegram.",
-      });
+      toast({ title: "Report Sent", description: "Weekly report has been sent to Telegram." });
     } catch (error) {
       console.error("Send to Telegram error:", error);
-      toast({
-        title: "Failed to send",
-        description: error instanceof Error ? error.message : "Unknown error",
-        variant: "destructive",
-      });
+      toast({ title: "Failed to send", description: error instanceof Error ? error.message : "Unknown error", variant: "destructive" });
     } finally {
       setIsSendingTelegram(null);
     }
   };
 
   const handleDownloadPdf = (report: GroupedReport) => {
-    // Build HTML for PDF generation
     const segmentRows = report.segments
       .map((seg) => {
         const name = segmentDisplayNames[seg.segment] || seg.segment;
@@ -224,7 +193,6 @@ export default function Reports() {
   </div>
 </body></html>`;
 
-    // Use print-to-PDF via a hidden iframe
     const iframe = document.createElement("iframe");
     iframe.style.position = "fixed";
     iframe.style.right = "0";
@@ -249,22 +217,15 @@ export default function Reports() {
   };
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "short",
-    });
+    return new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
   };
 
   if (isLoading) {
     return (
       <div className="space-y-6 animate-fade-in">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold">Weekly Reports</h1>
-            <p className="text-muted-foreground">Auto-generated performance summaries</p>
-          </div>
+        <PageHeader title="Weekly Reports" subtitle="Auto-generated performance summaries">
           <Skeleton className="h-10 w-40" />
-        </div>
+        </PageHeader>
         <div className="space-y-6">
           {[1, 2].map((i) => (
             <Skeleton key={i} className="h-64" />
@@ -277,57 +238,41 @@ export default function Reports() {
   return (
     <PlanGate plan="pro" feature="weeklyReports" message="Upgrade to Pro to access weekly performance reports.">
     <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold">Weekly Reports</h1>
-          <p className="text-muted-foreground">
-            Auto-generated performance summaries
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="border-border">
-            <Calendar className="w-4 h-4 mr-2" />
-            View Calendar
-          </Button>
-          <Button
-            className="bg-gradient-primary hover:opacity-90 transition-opacity"
-            onClick={handleGenerateReport}
-            disabled={isGenerating}
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <BarChart3 className="w-4 h-4 mr-2" />
-                Generate Report
-              </>
-            )}
-          </Button>
-        </div>
-      </div>
+      <PageHeader title="Weekly Reports" subtitle="Auto-generated performance summaries">
+        <Button variant="outline" className="border-border">
+          <Calendar className="w-4 h-4 mr-2" />
+          View Calendar
+        </Button>
+        <Button
+          className="bg-gradient-primary hover:opacity-90 transition-opacity"
+          onClick={handleGenerateReport}
+          disabled={isGenerating}
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <BarChart3 className="w-4 h-4 mr-2" />
+              Generate Report
+            </>
+          )}
+        </Button>
+      </PageHeader>
 
       {/* Reports List */}
       {groupedReports.length === 0 ? (
-        <div className="glass-card p-12 text-center">
-          <BarChart3 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="font-semibold text-lg mb-2">No reports yet</h3>
-          <p className="text-muted-foreground mb-4">
-            Weekly reports are generated automatically every Monday at 6 AM IST.
-            You can also generate one manually.
-          </p>
-          <Button
-            className="bg-gradient-primary"
-            onClick={handleGenerateReport}
-            disabled={isGenerating}
-          >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Generate Now
-          </Button>
-        </div>
+        <EmptyState
+          icon={BarChart3}
+          title="No reports yet"
+          description="Weekly reports are generated automatically every Monday at 6 AM IST. You can also generate one manually."
+          createLabel="Generate Now"
+          onCreate={handleGenerateReport}
+          steps={["Trade during the week", "Generate or wait for Monday", "Review & share"]}
+          hint="Reports break down performance by segment with top setups and common mistakes"
+        />
       ) : (
         <div className="space-y-6">
           {groupedReports.map((report) => {
@@ -338,34 +283,20 @@ export default function Reports() {
                 <div className="p-5 border-b border-border flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   <div>
                     <h3 className="text-lg font-semibold">
-                      Week: {formatDate(report.weekStart)} -{" "}
-                      {formatDate(report.weekEnd)}
+                      Week: {formatDate(report.weekStart)} - {formatDate(report.weekEnd)}
                     </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {report.totalTrades} trades executed
-                    </p>
+                    <p className="text-sm text-muted-foreground">{report.totalTrades} trades executed</p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground">Net P&L</p>
-                      <p
-                        className={cn(
-                          "text-xl font-bold",
-                          report.totalPnl >= 0 ? "text-profit" : "text-loss"
-                        )}
-                      >
-                        {report.totalPnl >= 0 ? "+" : ""}₹
-                        {report.totalPnl.toLocaleString()}
+                      <p className={cn("text-xl font-bold", report.totalPnl >= 0 ? "text-profit" : "text-loss")}>
+                        {report.totalPnl >= 0 ? "+" : ""}₹{report.totalPnl.toLocaleString()}
                       </p>
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground">Win Rate</p>
-                      <p
-                        className={cn(
-                          "text-xl font-bold",
-                          report.overallWinRate >= 50 ? "text-profit" : "text-loss"
-                        )}
-                      >
+                      <p className={cn("text-xl font-bold", report.overallWinRate >= 50 ? "text-profit" : "text-loss")}>
                         {report.overallWinRate.toFixed(1)}%
                       </p>
                     </div>
@@ -377,7 +308,6 @@ export default function Reports() {
                   {report.segments.map((segment) => {
                     const topSetups = (segment.top_setups as { name: string; count: number }[] | null) || [];
                     const commonMistakes = (segment.common_mistakes as { name: string; count: number }[] | null) || [];
-                    
                     return (
                       <div key={segment.segment} className="p-5">
                         <h4 className="font-medium text-sm text-muted-foreground mb-3">
@@ -386,24 +316,13 @@ export default function Reports() {
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
                             <span className="text-sm">P&L</span>
-                            <span
-                              className={cn(
-                                "font-semibold",
-                                (segment.total_pnl || 0) >= 0 ? "text-profit" : "text-loss"
-                              )}
-                            >
-                              {(segment.total_pnl || 0) >= 0 ? "+" : ""}₹
-                              {(segment.total_pnl || 0).toLocaleString()}
+                            <span className={cn("font-semibold", (segment.total_pnl || 0) >= 0 ? "text-profit" : "text-loss")}>
+                              {(segment.total_pnl || 0) >= 0 ? "+" : ""}₹{(segment.total_pnl || 0).toLocaleString()}
                             </span>
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-sm">Win Rate</span>
-                            <span
-                              className={cn(
-                                "font-semibold",
-                                (segment.win_rate || 0) >= 50 ? "text-profit" : "text-loss"
-                              )}
-                            >
+                            <span className={cn("font-semibold", (segment.win_rate || 0) >= 50 ? "text-profit" : "text-loss")}>
                               {(segment.win_rate || 0).toFixed(1)}%
                             </span>
                           </div>
@@ -423,9 +342,7 @@ export default function Reports() {
                               <div className="flex items-center gap-1 text-xs mt-1">
                                 <AlertTriangle className="w-3 h-3 text-loss" />
                                 <span className="text-muted-foreground">Mistake:</span>
-                                <span className="font-medium text-loss">
-                                  {commonMistakes[0]?.name || "None"}
-                                </span>
+                                <span className="font-medium text-loss">{commonMistakes[0]?.name || "None"}</span>
                               </div>
                             )}
                           </div>
@@ -437,12 +354,7 @@ export default function Reports() {
 
                 {/* Report Actions */}
                 <div className="p-4 bg-accent/30 flex justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-border"
-                    onClick={() => handleDownloadPdf(report)}
-                  >
+                  <Button variant="outline" size="sm" className="border-border" onClick={() => handleDownloadPdf(report)}>
                     <Download className="w-4 h-4 mr-2" />
                     Download PDF
                   </Button>
