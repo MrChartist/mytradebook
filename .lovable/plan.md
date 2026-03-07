@@ -1,58 +1,56 @@
 
 
-## Improve Instrument Selection UX Across Trades, Alerts & Studies
+## DashboardPreview — Responsive & Visual Polish Plan
 
-### Current Pain Points
-1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
-2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
-3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
-4. **Selected state is disconnected** — after selecting, "Change" button resets everything
-5. **No keyboard navigation** — can't arrow through results or press Enter to select
-6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
-7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
+Comparing the current mockup against the reference screenshots, here are the improvements:
 
-### Proposed Improvements
+### 1. Better Mobile Responsiveness
 
-#### 1. Unified Combobox-Style Picker (biggest UX win)
-Replace the current search input + results list with a **combobox pattern**:
-- Single input field that shows results as you type (dropdown below)
-- Recent items shown immediately on focus (before typing)
-- Favorites pinned at the top with a star
-- Arrow keys to navigate, Enter to select, Escape to close
-- Taller results area (max-h-64 instead of max-h-40)
+**Current**: Sidebar hidden on mobile, content cramped, chart/alerts stack awkwardly.
+**Fix**:
+- On mobile (`< sm`): Hide ticker bar, simplify greeting to single line, stack KPI cards as 2×2 grid with smaller padding
+- On mobile: P&L hero card gets compact layout (realized/unrealized side by side with smaller text)
+- Chart + Alerts section: Already stacks on mobile, but reduce padding and font sizes for tighter fit
+- Add `overflow-hidden` and `min-h-0` to prevent content overflow on small screens
 
-#### 2. Smarter Defaults & Context
-- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
-- Remember last used exchange filter per segment in localStorage
-- Show lot size inline for F&O instruments in results
+### 2. Sidebar — Match Reference (image-84)
 
-#### 3. Improved Selected State
-- Show a compact **chip-style** selected instrument instead of the current full-width bar
-- "Change" opens the picker inline (no full reset) — preserves recent search context
-- LTP fetch button more prominent with last-fetched timestamp
+**Current**: Icons only, no labels, no section dividers.
+**Fix**:
+- Add section labels "MAIN" and "ANALYTICS" as tiny `text-[6px]` uppercase dividers (visible in wider preview)
+- Add `FileText` (Reports) and `AlertTriangle` (Mistakes) icons to match the full sidebar from the reference
+- Increase sidebar width slightly to `w-16` for better icon breathing room
+- Add the settings icon at bottom with a thin `border-t` separator
 
-#### 4. Keyboard Navigation in Search Results
-- Add `onKeyDown` handler to search input
-- ArrowUp/ArrowDown to highlight results
-- Enter to select highlighted item
-- Track `highlightedIndex` state
+### 3. Segment Pills — Better Active State
 
-#### 5. Option Chain Quick Access
-- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
-- Make the chain component more compact — remove redundant labels
+**Current**: Active pill uses solid primary fill.
+**Fix**: Match reference — active pill gets a slightly more rounded, glowing look with `shadow-[0_0_8px_hsl(var(--tb-accent)/0.3)]` for a subtle glow effect
 
-#### 6. Exchange Filter as Chips (not buttons)
-- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
+### 4. KPI Cards — Inner Glass Depth
 
-### Files to Modify
-- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
-- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
+**Current**: Basic border cards with flat background.
+**Fix**:
+- Add `liquid-glass-sm` inner highlight to each KPI card
+- Make the icon containers slightly larger (`w-7 h-7`) with softer rounded corners
+- Add subtle hover effect `hover:border-border/40` for interactivity feel
 
-### Implementation Order
-1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
-2. Increase results area height and show lot size for F&O
-3. Replace exchange filter buttons with compact chips
-4. Add "remember last exchange" per segment
-5. Improve selected state with chip-style display
-6. Add focus-triggered recent items display
+### 5. Chart Bars — Smoother & More Realistic
+
+**Current**: Bars are evenly spaced with fixed widths.
+**Fix**:
+- Add rounded tops (`rx="4"`) for softer look
+- Reduce opacity variation — green bars at 0.8, red at 0.65 for better contrast
+- Add a subtle grid line (horizontal dashed line at y=35) for chart realism
+
+### 6. Overall Container — Responsive Breakpoints
+
+**Current**: `perspective(1200px) rotateX(2deg)` on all screens.
+**Fix**:
+- Remove perspective transform on mobile (flat view looks better on small screens)
+- Add responsive padding: `p-3` on mobile → `p-5` on desktop
+- Ensure the entire preview fits within viewport width with `max-w-full overflow-hidden`
+
+### Files to Edit
+- `src/components/landing/DashboardPreview.tsx` — all changes in this single file
 
