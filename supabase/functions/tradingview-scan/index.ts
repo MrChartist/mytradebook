@@ -77,7 +77,8 @@ function getCacheKey(body: Record<string, unknown>): string {
   const sortBy = body.sortBy ?? "market_cap";
   const sortOrder = body.sortOrder ?? "desc";
   const filters = JSON.stringify(body.filters ?? []);
-  return `${mode}:${limit}:${offset}:${sortBy}:${sortOrder}:${filters}`;
+  const rawFilters = JSON.stringify(body.rawFilters ?? []);
+  return `${mode}:${limit}:${offset}:${sortBy}:${sortOrder}:${filters}:${rawFilters}`;
 }
 
 serve(async (req) => {
@@ -122,6 +123,12 @@ serve(async (req) => {
       const filters: { field: string; op: string; value: number }[] = body.filters ?? [];
       for (const f of filters) {
         filter.push({ left: f.field, operation: f.op, right: f.value });
+      }
+
+      // rawFilters: pass TradingView-native filter objects directly (for cross-field comparisons)
+      const rawFilters: unknown[] = body.rawFilters ?? [];
+      for (const rf of rawFilters) {
+        filter.push(rf);
       }
 
       if (body.sortBy) {

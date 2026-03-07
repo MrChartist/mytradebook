@@ -62,13 +62,14 @@ export interface ScanParams {
   sortBy?: string;
   sortOrder?: "asc" | "desc";
   filters?: ScanFilter[];
+  rawFilters?: unknown[];
 }
 
 export function useFundamentals(params: ScanParams = {}) {
-  const { symbols, mode, limit = 500, offset = 0, sortBy, sortOrder, filters } = params;
+  const { symbols, mode, limit = 500, offset = 0, sortBy, sortOrder, filters, rawFilters } = params;
 
   return useQuery<ScanResponse>({
-    queryKey: ["fundamentals", symbols ?? "top", limit, offset, sortBy, sortOrder, filters],
+    queryKey: ["fundamentals", symbols ?? "top", limit, offset, sortBy, sortOrder, filters, rawFilters],
     queryFn: async () => {
       const payload: Record<string, unknown> = { limit, offset };
 
@@ -86,6 +87,10 @@ export function useFundamentals(params: ScanParams = {}) {
 
       if (filters?.length) {
         payload.filters = filters;
+      }
+
+      if (rawFilters?.length) {
+        payload.rawFilters = rawFilters;
       }
 
       const { data, error } = await supabase.functions.invoke("tradingview-scan", {
