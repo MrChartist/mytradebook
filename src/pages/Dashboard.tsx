@@ -38,8 +38,8 @@ const SEGMENT_OPTIONS: { label: string; value: Segment }[] = [
 ];
 
 export interface DashboardContextValue {
-  selectedMonth: Date;
-  setSelectedMonth: (d: Date) => void;
+  selectedMonth: Date | null;
+  setSelectedMonth: (d: Date | null) => void;
   segment: Segment;
   trades: ReturnType<typeof useTrades>["trades"];
   monthTrades: ReturnType<typeof useTrades>["trades"];
@@ -51,7 +51,7 @@ export interface DashboardContextValue {
 
 export const DashboardContext = createContext<DashboardContextValue | null>(null);
 const DASHBOARD_DEFAULTS: DashboardContextValue = {
-  selectedMonth: new Date(),
+  selectedMonth: null,
   setSelectedMonth: () => {},
   segment: "All",
   trades: [],
