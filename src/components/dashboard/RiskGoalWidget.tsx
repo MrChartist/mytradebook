@@ -2,7 +2,7 @@ import { useDashboard } from "@/pages/Dashboard";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/lib/formatting";
-import { Shield, Target } from "lucide-react";
+import { Shield, Target, CheckCircle2 } from "lucide-react";
 import { useMemo } from "react";
 import { TradeStatus } from "@/lib/constants";
 
@@ -42,11 +42,12 @@ export function RiskGoalWidget() {
 
   const maxRiskPercent = 2;
   const riskLevel = riskPercent > maxRiskPercent ? "danger" : riskPercent > maxRiskPercent * 0.6 ? "warn" : "safe";
+  const riskBarWidth = Math.min(riskPercent / maxRiskPercent * 100, 100);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {/* Risk Gauge */}
-      <div className="dashboard-card-hover">
+      <div className={cn("premium-card-hover", riskLevel === "danger" ? "card-glow-loss" : riskLevel === "warn" ? "card-glow-primary" : "card-glow-profit")}>
         <div className="flex items-center gap-3 mb-4">
           <div className={cn(
             "icon-badge",
@@ -58,7 +59,7 @@ export function RiskGoalWidget() {
         </div>
 
         <div className="flex items-baseline gap-2 mb-3">
-          <p className={cn("text-2xl font-bold font-mono", riskLevel === "danger" ? "text-loss" : riskLevel === "warn" ? "text-warning" : "text-profit")}>
+          <p className={cn("text-[28px] font-bold font-mono leading-none", riskLevel === "danger" ? "text-loss" : riskLevel === "warn" ? "text-warning" : "text-profit")}>
             {riskPercent.toFixed(1)}%
           </p>
           <span className="text-xs text-muted-foreground">of {formatCurrency(startingCapital, 0)}</span>
@@ -67,21 +68,28 @@ export function RiskGoalWidget() {
         <div className="relative h-3 bg-muted rounded-full overflow-hidden">
           <div
             className={cn(
-              "h-full rounded-full transition-all duration-500",
-              riskLevel === "danger" ? "bg-loss" : riskLevel === "warn" ? "bg-warning" : "bg-profit"
+              "h-full rounded-full transition-all duration-500 relative bar-shine",
+              riskLevel === "danger"
+                ? "bg-gradient-to-r from-loss to-loss/80"
+                : riskLevel === "warn"
+                ? "bg-gradient-to-r from-warning to-warning/80"
+                : "bg-gradient-to-r from-profit to-profit/80"
             )}
-            style={{ width: `${Math.min(riskPercent / maxRiskPercent * 100, 100)}%` }}
+            style={{ width: `${riskBarWidth}%` }}
           />
-          <div className="absolute top-0 bottom-0 w-0.5 bg-foreground/30" style={{ left: "100%" }} />
+          {/* Danger zone marker */}
+          <div className="absolute top-0 bottom-0 flex flex-col items-center" style={{ left: "100%" }}>
+            <div className="w-px h-full border-l border-dashed border-loss/50" />
+          </div>
         </div>
         <div className="flex justify-between mt-1.5">
           <span className="text-[10px] text-muted-foreground">{formatCurrency(riskAtSL, 0)} at SL</span>
-          <span className="text-[10px] text-muted-foreground">Max: {maxRiskPercent}%</span>
+          <span className="text-[10px] text-loss/70 font-medium">Max: {maxRiskPercent}%</span>
         </div>
       </div>
 
       {/* Goal Tracker */}
-      <div className="dashboard-card-hover">
+      <div className="premium-card-hover card-glow-primary">
         <div className="flex items-center gap-3 mb-4">
           <div className="icon-badge bg-primary/10">
             <Target className="w-4.5 h-4.5 text-primary" />
@@ -92,14 +100,17 @@ export function RiskGoalWidget() {
         {/* Daily goal */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs text-muted-foreground">Daily (1%)</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-muted-foreground">Daily (1%)</span>
+              {dailyProgress >= 100 && <CheckCircle2 className="w-3.5 h-3.5 text-profit" />}
+            </div>
             <span className={cn("text-xs font-bold font-mono", todayPnl >= 0 ? "text-profit" : "text-loss")}>
               {formatCurrency(todayPnl, 0)} / {formatCurrency(dailyGoal, 0)}
             </span>
           </div>
-          <div className="h-3 bg-muted rounded-full overflow-hidden">
+          <div className="h-3 bg-muted rounded-full overflow-hidden relative">
             <div
-              className={cn("h-full rounded-full transition-all duration-500", todayPnl >= 0 ? "bg-profit" : "bg-loss")}
+              className={cn("h-full rounded-full transition-all duration-500 relative bar-shine", todayPnl >= 0 ? "bg-gradient-to-r from-profit to-profit/80" : "bg-gradient-to-r from-loss to-loss/80")}
               style={{ width: `${Math.max(dailyProgress, 0)}%` }}
             />
           </div>
@@ -108,14 +119,17 @@ export function RiskGoalWidget() {
         {/* Monthly goal */}
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs text-muted-foreground">Monthly (5%)</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-muted-foreground">Monthly (5%)</span>
+              {monthlyProgress >= 100 && <CheckCircle2 className="w-3.5 h-3.5 text-profit" />}
+            </div>
             <span className={cn("text-xs font-bold font-mono", mtdPnl >= 0 ? "text-profit" : "text-loss")}>
               {formatCurrency(mtdPnl, 0)} / {formatCurrency(monthlyGoal, 0)}
             </span>
           </div>
-          <div className="h-3 bg-muted rounded-full overflow-hidden">
+          <div className="h-3 bg-muted rounded-full overflow-hidden relative">
             <div
-              className={cn("h-full rounded-full transition-all duration-500", mtdPnl >= 0 ? "bg-profit" : "bg-loss")}
+              className={cn("h-full rounded-full transition-all duration-500 relative bar-shine", mtdPnl >= 0 ? "bg-gradient-to-r from-profit to-profit/80" : "bg-gradient-to-r from-loss to-loss/80")}
               style={{ width: `${Math.max(monthlyProgress, 0)}%` }}
             />
           </div>

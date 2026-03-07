@@ -1,5 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useMemo } from "react";
+import { format } from "date-fns";
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -32,6 +33,7 @@ export function DashboardGreeting() {
 
   const greeting = useMemo(() => getGreeting(), []);
   const market = useMemo(() => getMarketStatus(), []);
+  const dateStr = useMemo(() => format(new Date(), "EEEE, d MMMM yyyy"), []);
 
   const displayName = useMemo(() => {
     const email = user?.email || "";
@@ -39,14 +41,17 @@ export function DashboardGreeting() {
   }, [user]);
 
   return (
-    <div className="flex items-center gap-3">
-      <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
+    <div className="flex flex-col gap-1">
+      <h1 className="text-2xl font-bold tracking-tight">
         {greeting}, <span className="text-primary">{displayName}</span>
       </h1>
-      <span className="text-muted-foreground/40">•</span>
-      <div className="flex items-center gap-1.5">
-        <span className={`w-2 h-2 rounded-full ${market.isOpen ? "bg-profit animate-pulse" : "bg-muted-foreground"}`} />
-        <span className="text-sm text-muted-foreground">{market.label}</span>
+      <div className="flex items-center gap-3">
+        <span className="text-xs text-muted-foreground">{dateStr}</span>
+        <span className="text-muted-foreground/30">•</span>
+        <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-2.5 py-1">
+          <span className={`w-1.5 h-1.5 rounded-full ${market.isOpen ? "bg-profit pulse-dot" : "bg-muted-foreground"}`} />
+          <span className="text-[11px] text-muted-foreground font-medium">{market.label}</span>
+        </div>
       </div>
     </div>
   );

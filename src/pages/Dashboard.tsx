@@ -185,7 +185,7 @@ export default function Dashboard() {
 
   return (
     <DashboardContext.Provider value={ctx}>
-      <div className="space-y-6 animate-fade-in">
+      <div className="space-y-5 animate-fade-in">
         <OnboardingWelcome />
 
         {/* Row 1: Greeting + Live status + Settings */}
@@ -193,17 +193,17 @@ export default function Dashboard() {
           <DashboardGreeting />
           <div className="flex items-center gap-3">
             {/* Live status indicator */}
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 text-xs bg-muted/50 rounded-full px-3 py-1.5">
               {isPolling && openInstruments.length > 0 ? (
                 <>
                   <Radio className="w-3 h-3 text-profit animate-pulse" />
                   <span className="text-profit font-medium">Live</span>
-                  {lastUpdated && <span>• {format(lastUpdated, "h:mm a")}</span>}
+                  {lastUpdated && <span className="text-muted-foreground">• {format(lastUpdated, "h:mm a")}</span>}
                 </>
               ) : (
                 <>
                   <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
-                  <span>Offline</span>
+                  <span className="text-muted-foreground">Offline</span>
                 </>
               )}
             </div>
@@ -248,10 +248,13 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Separator */}
+        <div className="h-px bg-border/40" />
+
         {/* Row 2: Month selector + Segment filter combined */}
         <div className="flex items-center gap-3 flex-wrap">
           {/* Month selector */}
-          <div className="flex gap-1 bg-muted rounded-full p-0.5">
+          <div className="flex gap-1 bg-muted/60 rounded-full p-0.5 border border-border/30">
             {[
               { label: "All", value: "all" },
               ...([subMonths(new Date(), 2), subMonths(new Date(), 1), new Date()].map((m) => ({
@@ -269,12 +272,13 @@ export default function Dashboard() {
                     setSelectedMonth((m as any).date);
                   }
                 }}
-                className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all ${
+                className={cn(
+                  "px-3.5 py-1.5 text-xs font-medium rounded-full transition-all duration-200",
                   (m.value === "all" && selectedMonth === null)
                     || (selectedMonth && m.value === format(selectedMonth, "MMM yy"))
-                    ? "bg-background shadow-sm text-foreground"
+                    ? "bg-card shadow-sm text-foreground scale-[1.02]"
                     : "text-muted-foreground hover:text-foreground"
-                }`}
+                )}
               >
                 {m.label}
               </button>
@@ -288,11 +292,12 @@ export default function Dashboard() {
             <button
               key={opt.value}
               onClick={() => setSegment(opt.value)}
-              className={`px-4 py-1.5 text-xs font-medium rounded-full border transition-all ${
+              className={cn(
+                "px-4 py-1.5 text-xs font-medium rounded-full border transition-all duration-200",
                 segment === opt.value
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/20"
-              }`}
+                  ? "inner-panel border-primary/15 bg-primary/6 text-primary shadow-sm"
+                  : "border-border/50 text-muted-foreground hover:text-foreground hover:border-foreground/20"
+              )}
             >
               {opt.label}
             </button>
@@ -301,22 +306,22 @@ export default function Dashboard() {
 
         {/* Dynamic Widgets */}
         {tradesLoading ? (
-          <div className="space-y-6">
+          <div className="space-y-5">
             {/* KPI skeleton */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} className="h-[140px] rounded-2xl" />
+                <Skeleton key={i} className="h-[140px] rounded-[1.25rem] shimmer-skeleton" />
               ))}
             </div>
             {/* Chart + Alerts skeleton */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-              <Skeleton className="h-[300px] rounded-2xl lg:col-span-2" />
-              <Skeleton className="h-[300px] rounded-2xl" />
+              <Skeleton className="h-[300px] rounded-[1.25rem] lg:col-span-2 shimmer-skeleton" />
+              <Skeleton className="h-[300px] rounded-[1.25rem] shimmer-skeleton" />
             </div>
             {/* Equity curve skeleton */}
-            <Skeleton className="h-[250px] rounded-2xl" />
+            <Skeleton className="h-[250px] rounded-[1.25rem] shimmer-skeleton" />
             {/* Positions skeleton */}
-            <Skeleton className="h-[200px] rounded-2xl" />
+            <Skeleton className="h-[200px] rounded-[1.25rem] shimmer-skeleton" />
           </div>
         ) : (
           widgets.map((w) => renderWidget(w))

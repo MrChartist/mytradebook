@@ -444,6 +444,61 @@
     0% { transform: translateX(-100%) rotate(15deg); }
     100% { transform: translateX(200%) rotate(15deg); }
   }
+  /* Shimmer skeleton animation */
+  @keyframes shimmer-skeleton {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .shimmer-skeleton {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--muted-foreground) / 0.06) 50%,
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer-skeleton 1.8s ease-in-out infinite;
+  }
+
+  /* Progress bar gradient shine */
+  @keyframes bar-shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+  }
+
+  .bar-shine::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.25), transparent);
+    animation: bar-shine 2.5s ease-in-out infinite;
+  }
+
+  /* Pulsing dot */
+  .pulse-dot {
+    @apply w-1.5 h-1.5 rounded-full;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  /* Inner panel gradient variants */
+  .inner-panel-profit {
+    background: hsl(var(--profit) / 0.04);
+    @apply rounded-xl border border-profit/10 p-3;
+  }
+
+  .inner-panel-loss {
+    background: hsl(var(--loss) / 0.04);
+    @apply rounded-xl border border-loss/10 p-3;
+  }
 }
 
 /* Shimmer CTA effect */

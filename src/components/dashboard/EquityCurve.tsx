@@ -89,30 +89,36 @@ export function EquityCurve() {
           <AreaChart data={data} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="hsl(152, 60%, 42%)" stopOpacity={0.15} />
+                <stop offset="0%" stopColor="hsl(152, 60%, 42%)" stopOpacity={0.25} />
                 <stop offset="100%" stopColor="hsl(152, 60%, 42%)" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="lossGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="hsl(0, 72%, 55%)" stopOpacity={0.15} />
+                <stop offset="0%" stopColor="hsl(0, 72%, 55%)" stopOpacity={0.25} />
                 <stop offset="100%" stopColor="hsl(0, 72%, 55%)" stopOpacity={0} />
               </linearGradient>
             </defs>
             <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: "hsl(220, 9%, 46%)", fontSize: 11 }} dy={8} />
             <YAxis axisLine={false} tickLine={false} tick={{ fill: "hsl(220, 9%, 46%)", fontSize: 11 }} tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}k`} dx={-5} />
             <Tooltip
-              contentStyle={{
-                backgroundColor: "hsl(0 0% 100%)",
-                border: "1px solid hsl(225, 15%, 92%)",
-                borderRadius: "12px",
-                boxShadow: "0 4px 12px rgb(0 0 0 / 0.08)",
-                fontSize: "13px",
-              }}
-              labelStyle={{ color: "hsl(222, 47%, 11%)", fontWeight: 600 }}
-              formatter={(value: number) => [`₹${value.toLocaleString("en-IN")}`, "Value"]}
-              labelFormatter={(label, payload) => {
-                const item = payload?.[0]?.payload;
-                if (item?.capitalEvent) return `${label} (${item.capitalEvent === "DEPOSIT" ? "💰 Deposit" : "💸 Withdrawal"})`;
-                return label;
+              content={({ active, payload, label }) => {
+                if (!active || !payload?.length) return null;
+                const item = payload[0]?.payload;
+                const value = payload[0]?.value as number;
+                return (
+                  <div className="premium-card !p-3 backdrop-blur-lg text-xs">
+                    <p className="font-semibold mb-1">
+                      {label}
+                      {item?.capitalEvent && (
+                        <span className="ml-1 text-muted-foreground">
+                          ({item.capitalEvent === "DEPOSIT" ? "💰 Deposit" : "💸 Withdrawal"})
+                        </span>
+                      )}
+                    </p>
+                    <p className={cn("font-mono font-bold", value >= startingCapital ? "text-profit" : "text-loss")}>
+                      ₹{value?.toLocaleString("en-IN")}
+                    </p>
+                  </div>
+                );
               }}
             />
             <Area type="monotone" dataKey="value" stroke={strokeColor} strokeWidth={2} fill={fillId} />
@@ -137,3 +143,6 @@ export function EquityCurve() {
     </div>
   );
 }
+
+// Need cn for tooltip
+import { cn } from "@/lib/utils";
