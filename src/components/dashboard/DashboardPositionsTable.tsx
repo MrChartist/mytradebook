@@ -49,21 +49,21 @@ export function DashboardPositionsTable() {
 
       {positions.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-          <div className="bg-muted/50 rounded-xl p-3">
+          <div className="inner-panel">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Exposure</p>
-            <p className="text-sm font-semibold mt-1">₹{totalExposure.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</p>
+            <p className="text-sm font-semibold font-mono mt-1">₹{totalExposure.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</p>
           </div>
-          <div className="bg-muted/50 rounded-xl p-3">
+          <div className="inner-panel">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Risk (to SL)</p>
-            <p className="text-sm font-semibold text-loss mt-1">₹{totalRisk.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</p>
+            <p className="text-sm font-semibold text-loss font-mono mt-1">₹{totalRisk.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</p>
           </div>
-          <div className="bg-muted/50 rounded-xl p-3">
+          <div className="inner-panel">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Unrealized P&L</p>
-            <p className={cn("text-sm font-semibold mt-1", totalUnrealized >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(totalUnrealized)}</p>
+            <p className={cn("text-sm font-semibold font-mono mt-1", totalUnrealized >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(totalUnrealized)}</p>
           </div>
-          <div className="bg-muted/50 rounded-xl p-3">
+          <div className="inner-panel">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Positions</p>
-            <p className="text-sm font-semibold mt-1">{positions.length}</p>
+            <p className="text-sm font-semibold font-mono mt-1">{positions.length}</p>
           </div>
         </div>
       )}
@@ -87,7 +87,7 @@ export function DashboardPositionsTable() {
         <div className="overflow-x-auto -mx-6 px-6">
           <table className="w-full text-xs">
             <thead>
-              <tr className="text-[11px] text-muted-foreground uppercase tracking-wider">
+              <tr className="text-[11px] text-muted-foreground uppercase tracking-wider border-b border-gradient-to-r from-transparent via-border to-transparent">
                 <th className="text-left pb-3 font-medium">Symbol</th>
                 <th className="text-left pb-3 font-medium hidden md:table-cell">Segment</th>
                 <th className="text-center pb-3 font-medium">Side</th>
@@ -100,18 +100,23 @@ export function DashboardPositionsTable() {
                 <th className="text-right pb-3 font-medium w-8"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/30">
+            <tbody className="divide-y divide-border/20">
               {positions.map((p) => (
                 <tr
                   key={p.id}
                   role="button"
                   tabIndex={0}
                   aria-label={`${p.symbol} position - click for details`}
-                  className="hover:bg-primary/5 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  className="hover:bg-primary/[0.03] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring group"
                   onClick={() => setSelectedTrade(p)}
                   onKeyDown={(e) => { if (e.key === "Enter") setSelectedTrade(p); }}
                 >
-                  <td className="py-2.5 font-medium">{p.symbol}</td>
+                  <td className="py-2.5 font-medium">
+                    <div className="flex items-center gap-1.5">
+                      <span className={cn("w-1 h-1 rounded-full", p.pnl >= 0 ? "bg-profit" : "bg-loss")} />
+                      {p.symbol}
+                    </div>
+                  </td>
                   <td className="py-2.5 hidden md:table-cell">
                     <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
                       {p.segment.replace("_", " ")}

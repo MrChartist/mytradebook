@@ -87,18 +87,18 @@ export function DashboardMonthlyMetrics() {
           <div
             key={m.label}
             className={cn(
-              "p-3.5 rounded-2xl transition-all",
-              m.highlight ? "bg-primary/5 border border-primary/10" : "bg-muted/50"
+              "relative overflow-hidden transition-all",
+              m.highlight ? "premium-card !p-3.5 card-glow-primary" : "inner-panel"
             )}
           >
             <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">{m.label}</p>
-            <p className={cn("text-lg font-bold mt-1.5", m.highlight && "text-primary")}>
+            <p className={cn("text-lg font-bold font-mono mt-1.5", m.highlight && "text-primary")}>
               {m.value}
             </p>
             {m.delta !== undefined && m.delta !== 0 && (
               <div className={cn(
-                "flex items-center gap-0.5 mt-1.5 text-[10px] font-medium",
-                m.delta > 0 ? "text-profit" : "text-loss"
+                "inline-flex items-center gap-0.5 mt-1.5 text-[10px] font-medium px-1.5 py-0.5 rounded-full",
+                m.delta > 0 ? "text-profit bg-profit/10" : "text-loss bg-loss/10"
               )}>
                 {m.delta > 0 ? <ArrowUp className="w-2.5 h-2.5" /> : <ArrowDown className="w-2.5 h-2.5" />}
                 {Math.abs(m.delta).toFixed(1)}% vs prev

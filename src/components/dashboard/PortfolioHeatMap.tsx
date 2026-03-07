@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useDashboard } from "@/pages/Dashboard";
 import { cn } from "@/lib/utils";
 import { BarChart3 } from "lucide-react";
@@ -40,71 +39,89 @@ export function PortfolioHeatMap() {
 
   if (!tiles.length) {
     return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-primary" /> Portfolio Heat Map
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center h-32 text-sm text-muted-foreground">
-            No open positions to display
+      <div className="dashboard-card">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="icon-badge-sm bg-primary/10">
+            <BarChart3 className="w-4 h-4 text-primary" />
           </div>
-        </CardContent>
-      </Card>
+          <h3 className="font-semibold">Portfolio Heat Map</h3>
+        </div>
+        <div className="flex items-center justify-center h-32 text-sm text-muted-foreground">
+          No open positions to display
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
-          <BarChart3 className="w-4 h-4 text-primary" /> Portfolio Heat Map
-          <span className="ml-auto text-xs font-normal text-muted-foreground">{tiles.length} positions</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <TooltipProvider delayDuration={100}>
-          <div className="flex flex-wrap gap-1.5">
-            {tiles.map((tile) => {
-              const weight = totalValue > 0 ? Math.max(tile.positionValue / totalValue, 0.08) : 1 / tiles.length;
-              const minW = tiles.length <= 4 ? 120 : 80;
-              return (
-                <Tooltip key={tile.symbol}>
-                  <TooltipTrigger asChild>
-                    <div
-                      className="rounded-lg p-2.5 flex flex-col justify-between cursor-default transition-transform hover:scale-[1.03] min-h-[70px]"
-                      style={{
-                        backgroundColor: pnlColor(tile.pnlPct),
-                        flexGrow: weight * 100,
-                        flexBasis: `${minW}px`,
-                      }}
-                    >
-                      <span className="text-xs font-bold text-white truncate">{tile.symbol}</span>
-                      <div className="flex items-end justify-between gap-1">
-                        <span className="text-[10px] text-white/80 font-medium">
-                          {tile.pnlPct >= 0 ? "+" : ""}{tile.pnlPct.toFixed(1)}%
-                        </span>
-                        <span className="text-[9px] text-white/60 font-mono">
-                          ₹{tile.ltp.toLocaleString("en-IN", { maximumFractionDigits: 1 })}
-                        </span>
-                      </div>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="text-xs space-y-0.5">
-                    <p className="font-semibold">{tile.symbol}</p>
-                    <p>Qty: {tile.qty} · Entry: ₹{tile.entryPrice.toLocaleString("en-IN")}</p>
-                    <p>LTP: ₹{tile.ltp.toLocaleString("en-IN")} · Value: ₹{tile.positionValue.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</p>
-                    <p className={tile.pnl >= 0 ? "text-profit" : "text-loss"}>
-                      P&L: {tile.pnl >= 0 ? "+" : ""}₹{tile.pnl.toLocaleString("en-IN", { maximumFractionDigits: 0 })} ({tile.pnlPct >= 0 ? "+" : ""}{tile.pnlPct.toFixed(2)}%)
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              );
-            })}
+    <div className="dashboard-card">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="icon-badge-sm bg-primary/10">
+            <BarChart3 className="w-4 h-4 text-primary" />
           </div>
-        </TooltipProvider>
-      </CardContent>
-    </Card>
+          <div>
+            <h3 className="font-semibold">Portfolio Heat Map</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">{tiles.length} positions</p>
+          </div>
+        </div>
+      </div>
+
+      <TooltipProvider delayDuration={100}>
+        <div className="flex flex-wrap gap-1.5">
+          {tiles.map((tile) => {
+            const weight = totalValue > 0 ? Math.max(tile.positionValue / totalValue, 0.08) : 1 / tiles.length;
+            const minW = tiles.length <= 4 ? 120 : 80;
+            return (
+              <Tooltip key={tile.symbol}>
+                <TooltipTrigger asChild>
+                  <div
+                    className="rounded-xl p-2.5 flex flex-col justify-between cursor-default transition-all duration-300 hover:scale-[1.03] min-h-[70px] backdrop-blur-sm"
+                    style={{
+                      backgroundColor: pnlColor(tile.pnlPct),
+                      flexGrow: weight * 100,
+                      flexBasis: `${minW}px`,
+                      boxShadow: "inset 0 1px 0 0 rgba(255,255,255,0.1)",
+                    }}
+                  >
+                    <span className="text-xs font-bold text-white truncate">{tile.symbol}</span>
+                    <div className="flex items-end justify-between gap-1">
+                      <span className="text-[10px] text-white/80 font-medium">
+                        {tile.pnlPct >= 0 ? "+" : ""}{tile.pnlPct.toFixed(1)}%
+                      </span>
+                      <span className="text-[9px] text-white/60 font-mono">
+                        ₹{tile.ltp.toLocaleString("en-IN", { maximumFractionDigits: 1 })}
+                      </span>
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="text-xs space-y-0.5 rounded-xl">
+                  <p className="font-semibold">{tile.symbol}</p>
+                  <p>Qty: {tile.qty} · Entry: ₹{tile.entryPrice.toLocaleString("en-IN")}</p>
+                  <p>LTP: ₹{tile.ltp.toLocaleString("en-IN")} · Value: ₹{tile.positionValue.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</p>
+                  <p className={tile.pnl >= 0 ? "text-profit" : "text-loss"}>
+                    P&L: {tile.pnl >= 0 ? "+" : ""}₹{tile.pnl.toLocaleString("en-IN", { maximumFractionDigits: 0 })} ({tile.pnlPct >= 0 ? "+" : ""}{tile.pnlPct.toFixed(2)}%)
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            );
+          })}
+        </div>
+      </TooltipProvider>
+
+      {/* Color legend */}
+      <div className="flex items-center justify-center gap-1.5 mt-4">
+        <span className="text-[9px] text-muted-foreground">-5%</span>
+        <div className="flex h-2 rounded-full overflow-hidden w-32">
+          <div className="flex-1" style={{ background: "hsl(0 75% 35%)" }} />
+          <div className="flex-1" style={{ background: "hsl(0 50% 48%)" }} />
+          <div className="flex-1" style={{ background: "hsl(0 30% 55%)" }} />
+          <div className="flex-1" style={{ background: "hsl(142 30% 55%)" }} />
+          <div className="flex-1" style={{ background: "hsl(142 45% 48%)" }} />
+          <div className="flex-1" style={{ background: "hsl(142 71% 35%)" }} />
+        </div>
+        <span className="text-[9px] text-muted-foreground">+5%</span>
+      </div>
+    </div>
   );
 }

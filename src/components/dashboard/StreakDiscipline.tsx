@@ -1,6 +1,6 @@
 import { useTrades } from "@/hooks/useTrades";
 import { cn } from "@/lib/utils";
-import { Trophy, TrendingDown, Zap } from "lucide-react";
+import { Trophy, TrendingDown, Zap, Flame } from "lucide-react";
 import { useMemo } from "react";
 
 export function StreakDiscipline() {
@@ -42,7 +42,7 @@ export function StreakDiscipline() {
   }, [trades]);
 
   return (
-    <div className="dashboard-card">
+    <div className={cn("dashboard-card h-full", stats.streakType === "win" ? "card-glow-profit" : "card-glow-loss")}>
       <div className="flex items-center gap-3 mb-4">
         <div className="icon-badge-sm bg-primary/10">
           <Trophy className="w-4 h-4 text-primary" />
@@ -56,32 +56,35 @@ export function StreakDiscipline() {
       <div className="grid grid-cols-2 gap-3">
         {/* Current Streak */}
         <div className={cn(
-          "p-3.5 rounded-xl",
-          stats.streakType === "win" ? "bg-profit/10 border border-profit/20" : "bg-loss/10 border border-loss/20"
+          "inner-panel",
+          stats.streakType === "win" ? "!bg-profit/[0.06] !border-profit/20" : "!bg-loss/[0.06] !border-loss/20"
         )}>
           <div className="flex items-center gap-1.5 mb-1">
             {stats.streakType === "win" ? (
-              <Zap className="w-3.5 h-3.5 text-profit" />
+              <div className="flex items-center gap-1">
+                <Zap className="w-3.5 h-3.5 text-profit" />
+                {stats.currentStreak > 3 && <Flame className="w-3 h-3 text-warning" />}
+              </div>
             ) : (
               <TrendingDown className="w-3.5 h-3.5 text-loss" />
             )}
             <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Streak</p>
           </div>
-          <p className={cn("text-xl font-bold", stats.streakType === "win" ? "text-profit" : "text-loss")}>
+          <p className={cn("text-xl font-bold font-mono", stats.streakType === "win" ? "text-profit" : "text-loss")}>
             {stats.currentStreak} {stats.streakType === "win" ? "W" : "L"}
           </p>
         </div>
 
         {/* Avg RR */}
-        <div className="p-3.5 rounded-xl bg-muted/50">
+        <div className="inner-panel">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Avg R:R</p>
-          <p className={cn("text-xl font-bold mt-1", stats.avgRR >= 1.5 ? "text-profit" : stats.avgRR >= 1 ? "text-foreground" : "text-loss")}>
+          <p className={cn("text-xl font-bold font-mono mt-1", stats.avgRR >= 1.5 ? "text-profit" : stats.avgRR >= 1 ? "text-foreground" : "text-loss")}>
             1:{stats.avgRR.toFixed(1)}
           </p>
         </div>
 
         {/* Best Trade */}
-        <div className="p-3.5 rounded-xl bg-muted/50">
+        <div className="inner-panel">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Best Trade</p>
           <p className="text-lg font-bold mt-1 text-profit font-mono">
             +₹{stats.bestTrade.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
@@ -89,7 +92,7 @@ export function StreakDiscipline() {
         </div>
 
         {/* Worst Trade */}
-        <div className="p-3.5 rounded-xl bg-muted/50">
+        <div className="inner-panel">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Worst Trade</p>
           <p className="text-lg font-bold mt-1 text-loss font-mono">
             -₹{Math.abs(stats.worstTrade).toLocaleString("en-IN", { maximumFractionDigits: 0 })}
@@ -98,19 +101,29 @@ export function StreakDiscipline() {
       </div>
 
       {/* Discipline bar */}
-      <div className="mt-3 p-3.5 rounded-xl bg-muted/50">
+      <div className="mt-3 inner-panel">
         <div className="flex items-center justify-between mb-2">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">SL Discipline</p>
-          <p className="text-xs font-semibold">{stats.disciplineScore}%</p>
+          <p className="text-xs font-semibold font-mono">{stats.disciplineScore}%</p>
         </div>
-        <div className="h-2 bg-muted rounded-full overflow-hidden">
+        <div className="h-2.5 bg-muted rounded-full overflow-hidden relative">
           <div
             className={cn(
-              "h-full rounded-full transition-all",
-              stats.disciplineScore >= 80 ? "bg-profit" : stats.disciplineScore >= 50 ? "bg-warning" : "bg-loss"
+              "h-full rounded-full transition-all relative bar-shine",
+              stats.disciplineScore >= 80
+                ? "bg-gradient-to-r from-profit to-profit/80"
+                : stats.disciplineScore >= 50
+                ? "bg-gradient-to-r from-warning to-warning/80"
+                : "bg-gradient-to-r from-loss to-loss/80"
             )}
             style={{ width: `${stats.disciplineScore}%` }}
-          />
+          >
+            {stats.disciplineScore > 30 && (
+              <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-white/90">
+                {stats.disciplineScore}%
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>

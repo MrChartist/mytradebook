@@ -11,7 +11,8 @@ import {
   ComposedChart,
 } from "recharts";
 import { format, eachDayOfInterval, startOfMonth, endOfMonth, isWeekend, isSameDay } from "date-fns";
-import { BarChart3 } from "lucide-react";
+import { BarChart3, Plus } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const SEGMENT_COLORS: Record<string, string> = {
   Equity_Intraday: "hsl(240, 60%, 60%)",
@@ -90,13 +91,13 @@ export function DailySectorChart() {
     const total = data.trades;
 
     return (
-      <div className="bg-card border border-border rounded-xl p-3 shadow-lg text-xs">
+      <div className="premium-card !p-3 backdrop-blur-lg text-xs">
         <p className="font-semibold mb-1.5">{data.fullDate}</p>
         <p className={data.totalPnl >= 0 ? "text-profit font-semibold" : "text-loss font-semibold"}>
           Total: ₹{data.totalPnl.toLocaleString("en-IN")}
         </p>
         <p className="text-muted-foreground">{total} trades | {wins}W-{total - wins}L</p>
-        <div className="mt-1.5 pt-1.5 border-t border-border space-y-0.5">
+        <div className="mt-1.5 pt-1.5 border-t border-border/40 space-y-0.5">
           {segments.map((seg) => {
             const val = data[seg];
             if (!val) return null;
@@ -124,13 +125,13 @@ export function DailySectorChart() {
             <p className="text-xs text-muted-foreground mt-0.5">Stacked by market segment</p>
           </div>
         </div>
-        <div className="flex gap-1 bg-muted rounded-full p-0.5">
+        <div className="flex gap-1 bg-muted/60 rounded-full p-0.5 border border-border/30">
           {["1W", "1M", "3M"].map((r) => (
             <button
               key={r}
               onClick={() => setRange(r)}
-              className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${
-                range === r ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+              className={`px-3 py-1 text-xs font-mono font-medium rounded-full transition-all ${
+                range === r ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {r}
@@ -139,10 +140,14 @@ export function DailySectorChart() {
         </div>
       </div>
 
-      <div className="h-[260px]">
+      <div className="h-[260px] relative">
         {chartData.length === 0 || closedTrades.length === 0 ? (
-          <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
-            No closed trades this month
+          <div className="h-full flex flex-col items-center justify-center border-2 border-dashed border-border/40 rounded-2xl">
+            <BarChart3 className="w-8 h-8 text-muted-foreground/30 mb-2" />
+            <p className="text-sm text-muted-foreground mb-1">No closed trades this month</p>
+            <Link to="/trades" className="inline-flex items-center gap-1 text-xs text-primary font-medium">
+              <Plus className="w-3 h-3" /> Log a trade
+            </Link>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
@@ -164,7 +169,7 @@ export function DailySectorChart() {
           {topSectors.map(([seg, pnl]) => (
             <span
               key={seg}
-              className={`text-[10px] font-medium px-2 py-1 rounded-full border ${
+              className={`text-[10px] font-medium font-mono px-2 py-1 rounded-full border ${
                 pnl >= 0 ? "border-profit/20 bg-profit/5 text-profit" : "border-loss/20 bg-loss/5 text-loss"
               }`}
             >

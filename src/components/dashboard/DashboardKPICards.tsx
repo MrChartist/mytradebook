@@ -15,7 +15,6 @@ export function DashboardKPICards({ alerts }: Props) {
   const { monthTrades, openTrades, prices, trades: allTrades } = useDashboard();
   const navigate = useNavigate();
 
-  // --- Today's P&L logic using context data (no duplicate fetch) ---
   const today = new Date().toDateString();
   const closedToday = useMemo(() => allTrades.filter(
     (t) => t.status === TradeStatus.CLOSED && t.closed_at && new Date(t.closed_at).toDateString() === today
@@ -31,7 +30,6 @@ export function DashboardKPICards({ alerts }: Props) {
   }, 0);
   const totalTodayPnl = realizedToday + unrealizedToday;
 
-  // --- MTD logic ---
   const closedMonth = useMemo(() => monthTrades.filter((t) => t.status === TradeStatus.CLOSED), [monthTrades]);
   const wins = closedMonth.filter((t) => (t.pnl || 0) > 0);
   const losses = closedMonth.filter((t) => (t.pnl || 0) < 0);
@@ -62,7 +60,7 @@ export function DashboardKPICards({ alerts }: Props) {
   const priceAlerts = alerts.filter((a) => ["PRICE_GT", "PRICE_LT"].includes(a.condition_type)).length;
   const techAlerts = alerts.length - priceAlerts;
 
-  const cardBase = "dashboard-card-hover block cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98] transition-transform";
+  const cardBase = "premium-card-hover block cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98] transition-transform";
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -71,18 +69,18 @@ export function DashboardKPICards({ alerts }: Props) {
         role="button"
         tabIndex={0}
         aria-label={`Today's P&L: ${formatCurrency(totalTodayPnl)}`}
-        className={cn(cardBase, "relative overflow-hidden sm:col-span-2 lg:col-span-1")}
+        className={cn(cardBase, "relative overflow-hidden sm:col-span-2 lg:col-span-1", totalTodayPnl >= 0 ? "card-glow-profit" : "card-glow-loss")}
         onClick={() => navigate("/reports")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/reports"); }}
       >
         {/* Accent top bar */}
         <div className={cn(
-          "absolute top-0 left-0 right-0 h-[3px] rounded-t-2xl",
+          "absolute top-0 left-0 right-0 h-[3px] rounded-t-[1.25rem]",
           totalTodayPnl >= 0 ? "bg-profit" : "bg-loss"
         )} />
-        {/* Subtle gradient overlay */}
+        {/* Gradient overlay */}
         <div className={cn(
-          "absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-[0.04] pointer-events-none",
+          "absolute top-0 right-0 w-40 h-40 rounded-bl-full opacity-[0.04] pointer-events-none",
           totalTodayPnl >= 0 ? "bg-profit" : "bg-loss"
         )} />
         <div className="flex items-center justify-between mb-3">
@@ -91,17 +89,17 @@ export function DashboardKPICards({ alerts }: Props) {
             <Flame className={cn("w-4.5 h-4.5", totalTodayPnl >= 0 ? "text-profit" : "text-loss")} />
           </div>
         </div>
-        <p className={cn("text-2xl font-bold font-mono", totalTodayPnl >= 0 ? "text-profit" : "text-loss")}>
+        <p className={cn("text-[28px] font-bold font-mono leading-none", totalTodayPnl >= 0 ? "text-profit" : "text-loss")}>
           {formatCurrency(totalTodayPnl)}
         </p>
         <div className="flex gap-3 mt-3">
-          <div>
+          <div className="inner-panel flex-1">
             <p className="text-[10px] text-muted-foreground">Realized</p>
-            <p className={cn("text-xs font-bold font-mono", realizedToday >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(realizedToday)}</p>
+            <p className={cn("text-xs font-bold font-mono mt-0.5", realizedToday >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(realizedToday)}</p>
           </div>
-          <div>
+          <div className="inner-panel flex-1">
             <p className="text-[10px] text-muted-foreground">Unrealized</p>
-            <p className={cn("text-xs font-bold font-mono", unrealizedToday >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(unrealizedToday)}</p>
+            <p className={cn("text-xs font-bold font-mono mt-0.5", unrealizedToday >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(unrealizedToday)}</p>
           </div>
         </div>
         <p className="text-[10px] text-muted-foreground mt-2">
@@ -114,7 +112,7 @@ export function DashboardKPICards({ alerts }: Props) {
         role="button"
         tabIndex={0}
         aria-label={`MTD P&L: ${formatCurrency(realizedPnl + unrealizedPnl)}`}
-        className={cardBase}
+        className={cn(cardBase, realizedPnl + unrealizedPnl >= 0 ? "card-glow-profit" : "card-glow-loss")}
         onClick={() => navigate("/reports")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/reports"); }}
       >
@@ -124,17 +122,17 @@ export function DashboardKPICards({ alerts }: Props) {
             <Wallet className={cn("w-4.5 h-4.5", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")} />
           </div>
         </div>
-        <p className={cn("text-2xl font-bold font-mono", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>
+        <p className={cn("text-[28px] font-bold font-mono leading-none", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>
           {formatCurrency(realizedPnl + unrealizedPnl)}
         </p>
-        <div className="flex gap-4 mt-3">
-          <div>
+        <div className="flex gap-3 mt-3">
+          <div className="inner-panel flex-1">
             <p className="text-[10px] text-muted-foreground">Realized</p>
-            <p className={cn("text-xs font-bold font-mono", realizedPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(realizedPnl)}</p>
+            <p className={cn("text-xs font-bold font-mono mt-0.5", realizedPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(realizedPnl)}</p>
           </div>
-          <div>
+          <div className="inner-panel flex-1">
             <p className="text-[10px] text-muted-foreground">Unrealized</p>
-            <p className={cn("text-xs font-bold font-mono", unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(unrealizedPnl)}</p>
+            <p className={cn("text-xs font-bold font-mono mt-0.5", unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(unrealizedPnl)}</p>
           </div>
         </div>
       </div>
@@ -144,7 +142,7 @@ export function DashboardKPICards({ alerts }: Props) {
         role="button"
         tabIndex={0}
         aria-label={`Open Positions: ${openTrades.length}`}
-        className={cardBase}
+        className={cn(cardBase, "card-glow-primary")}
         onClick={() => navigate("/trades?status=OPEN")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/trades?status=OPEN"); }}
       >
@@ -154,10 +152,11 @@ export function DashboardKPICards({ alerts }: Props) {
             <Target className="w-4.5 h-4.5 text-primary" />
           </div>
         </div>
-        <p className="text-2xl font-bold font-mono">{openTrades.length}</p>
-        <p className="text-xs text-muted-foreground mt-2">
-          ₹{riskAtSL.toLocaleString("en-IN", { maximumFractionDigits: 0 })} at risk (to SL)
-        </p>
+        <p className="text-[28px] font-bold font-mono leading-none">{openTrades.length}</p>
+        <div className="inner-panel mt-3">
+          <p className="text-[10px] text-muted-foreground">Risk to SL</p>
+          <p className="text-xs font-semibold font-mono text-loss mt-0.5">₹{riskAtSL.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</p>
+        </div>
         <p className="text-[10px] text-muted-foreground mt-2">{monthTrades.length} total trades this month</p>
       </div>
 
@@ -166,7 +165,7 @@ export function DashboardKPICards({ alerts }: Props) {
         role="button"
         tabIndex={0}
         aria-label={`Win Rate: ${winRate.toFixed(1)}%`}
-        className={cardBase}
+        className={cn(cardBase, winRate >= 50 ? "card-glow-profit" : "card-glow-loss")}
         onClick={() => navigate("/analytics")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/analytics"); }}
       >
@@ -177,7 +176,20 @@ export function DashboardKPICards({ alerts }: Props) {
           </div>
         </div>
         <div className="flex items-baseline gap-2">
-          <p className={cn("text-2xl font-bold font-mono", winRate >= 50 ? "text-profit" : "text-loss")}>{winRate.toFixed(1)}%</p>
+          <p className={cn("text-[28px] font-bold font-mono leading-none", winRate >= 50 ? "text-profit" : "text-loss")}>{winRate.toFixed(1)}%</p>
+        </div>
+        {/* Mini circular progress */}
+        <div className="flex items-center gap-2 mt-3">
+          <svg width="24" height="24" viewBox="0 0 24 24" className="shrink-0">
+            <circle cx="12" cy="12" r="10" fill="none" strokeWidth="2.5" stroke="hsl(var(--muted))" />
+            <circle
+              cx="12" cy="12" r="10" fill="none" strokeWidth="2.5"
+              stroke={winRate >= 50 ? "hsl(var(--profit))" : "hsl(var(--loss))"}
+              strokeDasharray={`${(winRate / 100) * 62.83} 62.83`}
+              strokeLinecap="round"
+              transform="rotate(-90 12 12)"
+            />
+          </svg>
           <span className={cn(
             "text-[10px] font-medium px-1.5 py-0.5 rounded-full",
             expectancy >= 0 ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss"
@@ -185,7 +197,7 @@ export function DashboardKPICards({ alerts }: Props) {
             Exp: {formatCurrency(expectancy)}/trade
           </span>
         </div>
-        <p className="text-[10px] text-muted-foreground mt-3">
+        <p className="text-[10px] text-muted-foreground mt-2">
           Closed: {closedMonth.length} | W: {wins.length} | L: {losses.length}
         </p>
       </div>
@@ -195,7 +207,7 @@ export function DashboardKPICards({ alerts }: Props) {
         role="button"
         tabIndex={0}
         aria-label={`Active Alerts: ${alerts.length}`}
-        className={cardBase}
+        className={cn(cardBase, "card-glow-primary")}
         onClick={() => navigate("/alerts")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/alerts"); }}
       >
@@ -206,17 +218,22 @@ export function DashboardKPICards({ alerts }: Props) {
           </div>
         </div>
         <div className="flex items-baseline gap-2">
-          <p className="text-2xl font-bold font-mono">{alerts.length}</p>
+          <p className="text-[28px] font-bold font-mono leading-none">{alerts.length}</p>
           {triggeredToday > 0 && (
-            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-warning/10 text-warning">
-              {triggeredToday} triggered today
-            </span>
+            <div className="flex items-center gap-1">
+              <span className="pulse-dot bg-warning" />
+              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-warning/10 text-warning">
+                {triggeredToday} triggered
+              </span>
+            </div>
           )}
         </div>
-        <p className="text-[10px] text-muted-foreground mt-3">
-          Price: {priceAlerts} | Technical: {techAlerts}
-        </p>
-        <span className="mt-3 inline-flex items-center gap-1 text-[10px] text-primary font-medium">
+        <div className="inner-panel mt-3">
+          <p className="text-[10px] text-muted-foreground">
+            Price: {priceAlerts} | Technical: {techAlerts}
+          </p>
+        </div>
+        <span className="mt-2 inline-flex items-center gap-1 text-[10px] text-primary font-medium">
           <Plus className="w-3 h-3" /> Create alert
         </span>
       </div>

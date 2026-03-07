@@ -43,8 +43,11 @@ export function DashboardAlertsPanel({ alerts }: Props) {
     return <AlertTriangle className="w-3.5 h-3.5 text-warning" />;
   };
 
+  const triggeredToday = (alert: Alert) =>
+    alert.last_triggered && new Date(alert.last_triggered).toDateString() === new Date().toDateString();
+
   return (
-    <div className="dashboard-card flex flex-col">
+    <div className="premium-card flex flex-col">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2.5">
           <div className="icon-badge-sm bg-warning/10">
@@ -68,7 +71,7 @@ export function DashboardAlertsPanel({ alerts }: Props) {
           Active only
         </button>
         <Link to="/alerts">
-          <Button variant="ghost" size="sm" className="h-7 text-xs gap-1">
+          <Button size="sm" className="h-7 text-xs gap-1 rounded-full bg-gradient-primary text-primary-foreground">
             <Plus className="w-3 h-3" /> New
           </Button>
         </Link>
@@ -76,10 +79,10 @@ export function DashboardAlertsPanel({ alerts }: Props) {
 
       <div className="flex-1 space-y-1.5 overflow-y-auto max-h-[320px]">
         {displayed.length === 0 ? (
-          <Link to="/alerts" className="block text-center py-8 cursor-pointer hover:bg-primary/5 rounded-xl transition-colors">
-            <Bell className="w-8 h-8 mx-auto text-muted-foreground/30 mb-2" />
+          <Link to="/alerts" className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-border/40 rounded-2xl hover:border-primary/20 transition-colors">
+            <Bell className="w-8 h-8 text-muted-foreground/30 mb-2" />
             <p className="text-xs text-muted-foreground">No alerts</p>
-            <span className="text-xs text-primary font-medium">Create one →</span>
+            <span className="text-xs text-primary font-medium mt-1">Create one →</span>
           </Link>
         ) : (
           displayed.map((alert) => (
@@ -89,10 +92,8 @@ export function DashboardAlertsPanel({ alerts }: Props) {
               tabIndex={0}
               aria-label={`${alert.symbol} alert - click to edit`}
               className={cn(
-                "p-3 rounded-xl border transition-all cursor-pointer hover:border-primary/20 hover:shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring active:scale-[0.99]",
-                alert.last_triggered && new Date(alert.last_triggered).toDateString() === new Date().toDateString()
-                  ? "border-warning/20 bg-warning/5"
-                  : "border-border/50 hover:border-border"
+                "inner-panel transition-all cursor-pointer hover:border-primary/20 hover:shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring active:scale-[0.99]",
+                triggeredToday(alert) && "border-l-2 border-l-warning animate-pulse-slow"
               )}
               onClick={() => setSelectedAlert(alert)}
               onKeyDown={(e) => { if (e.key === "Enter") setSelectedAlert(alert); }}
@@ -110,7 +111,7 @@ export function DashboardAlertsPanel({ alerts }: Props) {
                 </span>
               </div>
               <div className="flex items-center justify-between mt-1.5">
-                <span className="text-[10px] text-muted-foreground">
+                <span className="text-[10px] text-muted-foreground font-mono">
                   {conditionLabel(alert.condition_type)} ₹{alert.threshold?.toLocaleString() || "—"}
                 </span>
                 {alert.trigger_count && alert.trigger_count > 0 && (
