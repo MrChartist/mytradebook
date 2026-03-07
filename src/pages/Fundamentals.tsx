@@ -600,7 +600,7 @@ export default function Fundamentals() {
                           )}
                         </TableCell>
                         <TableCell className="text-right py-2 px-3">
-                          <LTPDisplay value={s.close} />
+                          <LTPDisplay value={s.close} change={s.change} />
                         </TableCell>
                         <TableCell className="py-2 px-2 hidden sm:table-cell">
                           <div className="flex justify-center">
