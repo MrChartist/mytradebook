@@ -271,35 +271,36 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         className="fixed top-4 left-0 right-0 z-50 mx-auto max-w-3xl px-4"
         aria-label="Documentation navigation"
       >
-        <div className="flex items-center justify-between rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg px-4 sm:px-6 h-14">
+        <div className="flex items-center justify-between rounded-full border border-border/40 bg-card/80 backdrop-blur-xl px-4 sm:px-6 h-14" style={{ boxShadow: "0 4px 20px -6px rgba(0,0,0,0.06), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
           {/* Logo */}
           <button onClick={() => navigate("/")} className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0">
             <img src={docsLogo} alt="TradeBook" className="h-8 object-contain" />
           </button>
 
           {/* Center links */}
-          <div className="hidden sm:flex items-center gap-1">
-            <Button variant="ghost" size="sm" className="text-muted-foreground rounded-full text-sm" onClick={() => navigate("/#features")}>Features</Button>
-            <Button variant="ghost" size="sm" className="text-muted-foreground rounded-full text-sm" onClick={() => navigate("/#pricing")}>Pricing</Button>
-            <Button variant="ghost" size="sm" className="text-foreground font-semibold rounded-full text-sm" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Docs</Button>
+          <div className="hidden sm:flex items-center gap-0.5">
+            {[{ label: "Features", href: "/#features" }, { label: "Pricing", href: "/#pricing" }, { label: "FAQ", href: "/#faq" }].map((item) => (
+              <Button key={item.label} variant="ghost" size="sm" className="text-muted-foreground rounded-full text-[13px] font-medium relative after:absolute after:bottom-0.5 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-[hsl(var(--tb-accent))] after:opacity-0 hover:after:opacity-100 after:transition-opacity" onClick={() => navigate(item.href)}>{item.label}</Button>
+            ))}
+            <Button variant="ghost" size="sm" className="text-foreground font-semibold rounded-full text-[13px] relative after:absolute after:bottom-0.5 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-[hsl(var(--tb-accent))] after:opacity-100" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Docs</Button>
           </div>
 
           {/* Right side */}
           <div className="flex items-center gap-2">
             <ThemeToggle />
             {isInsideApp ? (
-              <Button size="sm" onClick={() => navigate("/dashboard")} className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 text-sm h-9">
+              <Button size="sm" onClick={() => navigate("/dashboard")} className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 text-[13px] h-9 shadow-[0_6px_16px_hsl(var(--tb-accent)/0.35)]">
                 Dashboard
               </Button>
             ) : (
               <>
-                <Button variant="ghost" size="sm" onClick={() => navigate("/login")} className="text-muted-foreground rounded-full text-sm hidden sm:inline-flex">
+                <Button variant="ghost" size="sm" onClick={() => navigate("/login")} className="text-muted-foreground rounded-full text-[13px] hidden sm:inline-flex">
                   Sign In
                 </Button>
                 <Button
                   size="sm"
                   onClick={() => navigate("/login?mode=signup")}
-                  className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 text-sm h-9"
+                  className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 text-[13px] h-9 shadow-[0_6px_16px_hsl(var(--tb-accent)/0.35)]"
                 >
                   Get Started
                 </Button>
