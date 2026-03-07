@@ -1,89 +1,58 @@
 
 
-## Fundamentals Page — Visual & UX Improvement Plan
+## Improve Instrument Selection UX Across Trades, Alerts & Studies
 
-Comparing the current implementation against the two reference screenshots, here are the targeted improvements:
+### Current Pain Points
+1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
+2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
+3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
+4. **Selected state is disconnected** — after selecting, "Change" button resets everything
+5. **No keyboard navigation** — can't arrow through results or press Enter to select
+6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
+7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
 
----
+### Proposed Improvements
 
-### 1. Add Sparkline Column to Table
+#### 1. Unified Combobox-Style Picker (biggest UX win)
+Replace the current search input + results list with a **combobox pattern**:
+- Single input field that shows results as you type (dropdown below)
+- Recent items shown immediately on focus (before typing)
+- Favorites pinned at the top with a star
+- Arrow keys to navigate, Enter to select, Escape to close
+- Taller results area (max-h-64 instead of max-h-40)
 
-**Current**: No visual price trend indicator in the table rows.
-**Fix**: Add a mini sparkline between the LTP and Chg% columns. Since we don't have historical intraday data per stock from the TradingView scan, we'll create a synthetic sparkline using available data points (ATL, low_52w, sma50, sma20, sma10, close) to show a relative price position curve. This gives a visual "trend shape" without extra API calls.
+#### 2. Smarter Defaults & Context
+- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
+- Remember last used exchange filter per segment in localStorage
+- Show lot size inline for F&O instruments in results
 
-- Add `<Sparkline>` import from `src/components/ui/sparkline.tsx`
-- New column header "Trend" between LTP and Chg%
-- Width: 80px, height: 28px, with fill enabled
-- Color auto-determined by up/down trend (profit/loss)
+#### 3. Improved Selected State
+- Show a compact **chip-style** selected instrument instead of the current full-width bar
+- "Change" opens the picker inline (no full reset) — preserves recent search context
+- LTP fetch button more prominent with last-fetched timestamp
 
----
+#### 4. Keyboard Navigation in Search Results
+- Add `onKeyDown` handler to search input
+- ArrowUp/ArrowDown to highlight results
+- Enter to select highlighted item
+- Track `highlightedIndex` state
 
-### 2. Improve LTP Display
+#### 5. Option Chain Quick Access
+- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
+- Make the chain component more compact — remove redundant labels
 
-**Current**: Plain `₹1,404.80` in mono font, no visual weight distinction.
-**Fix**:
-- Split the integer and decimal parts: bold integer `₹1,404` + lighter `.80`
-- Slightly larger font for the integer part (`text-[14px]`) and muted smaller decimals (`text-[11px] text-muted-foreground`)
-- This matches professional terminal aesthetics where the integer price is the focus
+#### 6. Exchange Filter as Chips (not buttons)
+- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
 
----
+### Files to Modify
+- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
+- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
 
-### 3. Cleaner Preset Bar (matching reference image-80)
-
-**Current**: Colored dots before groups, tiny `10px` text, crowded dividers.
-**Fix** (matching the reference):
-- Increase preset button text to `text-[11px]` for better readability
-- Keep colored dot separators between groups but make them slightly larger (`w-2 h-2`)
-- Add more horizontal spacing between groups (`mx-2` instead of `mx-1`)
-- Make active preset have a subtle bottom-border style instead of full filled button — use `variant="ghost"` with `border-b-2 border-primary rounded-none` for the active state (cleaner, like the reference)
-
----
-
-### 4. Table Header Improvements
-
-**Current**: Sort headers are functional but visually flat.
-**Fix**:
-- Add a subtle bottom border highlight on the sorted column header (`border-b-2 border-primary` on active sort)
-- Make sort arrows slightly more visible — increase opacity from `0.30` to `0.40` for inactive arrows
-- Add `↕` unicode symbol in headers for sortable columns (matching reference's `↕` indicators)
-
----
-
-### 5. Sector Column — Pill Style (matching reference)
-
-**Current**: Plain muted text for sector.
-**Fix**: Use a subtle filled pill/badge style matching the reference — small rounded chip with `bg-muted/60 px-2 py-0.5 rounded text-[10px] font-medium` — compact but with enough contrast to distinguish sectors visually.
-
----
-
-### 6. Row Hover & Selection Polish
-
-**Current**: Basic `hover:bg-muted/40`.
-**Fix**:
-- Add a left border accent on hover: `hover:border-l-2 hover:border-primary` for a professional touch
-- Slightly increase hover bg to `hover:bg-muted/50`
-
----
-
-### 7. Header Card — Match Reference Layout
-
-**Current**: Icon + "Stock Scanner" title.
-**Fix** (matching reference image-79):
-- Change title to "Fundamentals" with subtitle "Top NSE stocks by market cap with key metrics"
-- Remove the icon box — just use clean text like the reference
-- Keep stock count and search on the right
-
----
-
-### Files to Edit
-- `src/pages/Fundamentals.tsx` — all changes in this single file
-
-### Summary of Visual Changes
-- Sparkline trend column added to table
-- LTP split into bold integer + light decimals  
-- Preset bar cleaned up with better spacing and active-border style
-- Sector shown as subtle pill chips
-- Row hover gets left-border accent
-- Header simplified to match reference
-- Sort indicators improved
+### Implementation Order
+1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
+2. Increase results area height and show lot size for F&O
+3. Replace exchange filter buttons with compact chips
+4. Add "remember last exchange" per segment
+5. Improve selected state with chip-style display
+6. Add focus-triggered recent items display
 
