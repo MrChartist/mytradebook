@@ -221,10 +221,16 @@ export default function Fundamentals() {
     return sortAsc ? <ChevronUp className="w-3 h-3 text-primary" /> : <ChevronDown className="w-3 h-3 text-primary" />;
   };
 
+  const PRESET_GROUP_COLORS: Record<string, string> = {
+    cap: "bg-primary",
+    fundamental: "bg-profit",
+    technical: "bg-[hsl(210_80%_55%)]",
+  };
+
   const SortHeader = ({ label, field }: { label: string; field: SortKey }) => (
     <button
       onClick={() => handleSort(field)}
-      className="flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
+      className="flex items-center gap-1 text-[11px] font-semibold text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
     >
       {label}
       <SortIcon field={field} />
