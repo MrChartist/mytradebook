@@ -1,70 +1,58 @@
 
 
-## Fundamentals Page — UI/UX Improvement Plan
+## Improve Instrument Selection UX Across Trades, Alerts & Studies
 
-Comparing the current implementation against the reference screenshot, here are the key issues and proposed fixes:
+### Current Pain Points
+1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
+2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
+3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
+4. **Selected state is disconnected** — after selecting, "Change" button resets everything
+5. **No keyboard navigation** — can't arrow through results or press Enter to select
+6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
+7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
 
-### Problems Identified
+### Proposed Improvements
 
-1. **Preset bar is too busy** — Group labels, filter icons on every button, and dividers create visual noise. The reference shows clean pill-style chips with colored dots, no icons on every chip.
+#### 1. Unified Combobox-Style Picker (biggest UX win)
+Replace the current search input + results list with a **combobox pattern**:
+- Single input field that shows results as you type (dropdown below)
+- Recent items shown immediately on focus (before typing)
+- Favorites pinned at the top with a star
+- Arrow keys to navigate, Enter to select, Escape to close
+- Taller results area (max-h-64 instead of max-h-40)
 
-2. **Table row density is off** — Current rows have generous padding (`py-2.5 px-3`) making the table feel sparse. The reference shows a tighter, data-dense layout better suited for a screener with 15+ columns.
+#### 2. Smarter Defaults & Context
+- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
+- Remember last used exchange filter per segment in localStorage
+- Show lot size inline for F&O instruments in results
 
-3. **Sector badges are bulky** — Using `<Badge>` with background fills takes up space. The reference shows plain colored text labels for sectors, much more compact.
+#### 3. Improved Selected State
+- Show a compact **chip-style** selected instrument instead of the current full-width bar
+- "Change" opens the picker inline (no full reset) — preserves recent search context
+- LTP fetch button more prominent with last-fetched timestamp
 
-4. **Change% indicator is over-styled** — Current uses a pill with a dot + background + rounded-full. The reference uses a simple dot + colored text, saving horizontal space.
+#### 4. Keyboard Navigation in Search Results
+- Add `onKeyDown` handler to search input
+- ArrowUp/ArrowDown to highlight results
+- Enter to select highlighted item
+- Track `highlightedIndex` state
 
-5. **Header card wastes vertical space** — The header takes significant vertical real estate. Could be more compact.
+#### 5. Option Chain Quick Access
+- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
+- Make the chain component more compact — remove redundant labels
 
-6. **Sticky column lacks visual separation** — The frozen Symbol column needs a subtle right-border/shadow so it doesn't blend into scrolled content.
+#### 6. Exchange Filter as Chips (not buttons)
+- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
 
-7. **No zebra striping polish** — Current alternating rows use `bg-muted/20` which is barely visible. Needs slightly stronger contrast.
+### Files to Modify
+- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
+- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
 
-8. **Pagination footer could be slimmer** — Takes too much vertical space for its function.
-
----
-
-### Implementation Plan
-
-#### 1. Compact the Header
-- Reduce padding from `p-5` to `p-4`
-- Make title and stock count inline on one line
-- Shrink search input height
-
-#### 2. Redesign Preset Chips Bar
-- Remove `<Filter>` icon from every preset button — only show on the active one
-- Use smaller, tighter pills with colored left-dot indicators per group (orange for cap, green for fundamental, blue for technical)
-- Replace group label text with a compact colored dot separator
-
-#### 3. Tighten Table Density
-- Reduce cell padding from `py-2.5 px-3` to `py-2 px-3`
-- Reduce header row height
-- Make Symbol column font slightly smaller (`text-[13px]`) and description `text-[9px]`
-- Replace Sector `<Badge>` with plain colored text (`text-[11px]`)
-
-#### 4. Simplify Change% Display
-- Replace the pill-style indicator with a simple dot + colored text (no background pill)
-- More compact: `● +1.11%` instead of a full rounded-full badge
-
-#### 5. Add Sticky Column Shadow
-- Add a right box-shadow/border to the sticky Symbol column: `shadow-[2px_0_4px_-2px_rgba(0,0,0,0.06)]`
-
-#### 6. Improve Zebra Striping
-- Increase alternating row contrast from `bg-muted/20` to `bg-muted/30`
-
-#### 7. Slim Down Pagination
-- Reduce padding from `p-3` to `p-2.5`
-- Make row count text more compact
-
-#### 8. ROE/Net Margin Color Logic
-- Show dash (`—`) in muted color instead of red for null/zero values — currently nulls show as red which is misleading
-
-### Files to Edit
-- `src/pages/Fundamentals.tsx` — All changes are in this single file (header, presets, table, pagination)
-
-### Expected Impact
-- ~15-20% vertical space savings in the header/preset area
-- Denser, more professional data table matching financial terminal aesthetics
-- Better readability of the sticky column during horizontal scroll
-- Cleaner preset bar with less visual clutter
+### Implementation Order
+1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
+2. Increase results area height and show lot size for F&O
+3. Replace exchange filter buttons with compact chips
+4. Add "remember last exchange" per segment
+5. Improve selected state with chip-style display
+6. Add focus-triggered recent items display
 
