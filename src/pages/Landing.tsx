@@ -67,7 +67,7 @@ export default function Landing() {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="fixed top-4 left-0 right-0 z-50 mx-auto max-w-3xl px-4"
       >
-        <div className="flex items-center justify-between px-3 pl-4 py-2 rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg shadow-foreground/[0.03]">
+        <div className="flex items-center justify-between px-3 pl-4 py-2 rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg shadow-foreground/[0.03]" style={{ boxShadow: "0 4px 20px -6px rgba(0,0,0,0.06), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
           <motion.div className="flex items-center gap-2" whileHover={{ scale: 1.03 }}>
             <img src={landingLogo} alt="TradeBook" className="h-8 object-contain" />
           </motion.div>
