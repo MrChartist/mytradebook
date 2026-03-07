@@ -216,8 +216,8 @@ export default function Login() {
             />
           </div>
 
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-profit/10 rounded-full blur-[100px]" />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px] animate-pulse-slow" />
+          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-profit/10 rounded-full blur-[100px] animate-pulse-slow" />
 
           <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20">
             <h2 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
