@@ -13,7 +13,6 @@ import {
   LogOut,
   Eye,
   HelpCircle,
-  BarChart3,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
