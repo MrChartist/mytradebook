@@ -9,6 +9,7 @@ import {
   AlertTriangle,
   Loader2,
   RefreshCw,
+  Share2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PnlShareModal } from "@/components/sharing/PnlShareModal";
 import type { Database } from "@/integrations/supabase/types";
 
 type WeeklyReport = Database["public"]["Tables"]["weekly_reports"]["Row"];
@@ -239,6 +241,15 @@ export default function Reports() {
     <PlanGate plan="pro" feature="weeklyReports" message="Upgrade to Pro to access weekly performance reports.">
     <div className="space-y-6 animate-fade-in">
       <PageHeader title="Weekly Reports" subtitle="Auto-generated performance summaries">
+        <PnlShareModal
+          defaultPeriod="this_week"
+          trigger={
+            <Button variant="outline" className="border-border">
+              <Share2 className="w-4 h-4 mr-2" />
+              Share Card
+            </Button>
+          }
+        />
         <Button variant="outline" className="border-border">
           <Calendar className="w-4 h-4 mr-2" />
           View Calendar
