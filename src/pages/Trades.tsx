@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useSearchParams } from "react-router-dom";
 import {
   TrendingUp,
