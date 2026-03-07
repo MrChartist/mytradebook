@@ -49,6 +49,8 @@ import { SortSelect, type SortOption } from "@/components/ui/sort-select";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CsvImportModal } from "@/components/trade/CsvImportModal";
 import { tradesToCSV, downloadCSV } from "@/lib/csv-export";
+import { Sparkline } from "@/components/ui/sparkline";
+import { subDays, startOfDay, format } from "date-fns";
 
 const segmentLabels: Record<string, string> = {
   Equity_Intraday: "Intraday",
@@ -119,6 +121,32 @@ export default function Trades() {
     CLOSED: allTrades.filter(t => t.status === "CLOSED").length,
     CANCELLED: allTrades.filter(t => t.status === "CANCELLED").length,
   }), [allTrades]);
+
+  // Compute last 7 days sparkline data for P&L and Win Rate
+  const { pnlSparkline, winRateSparkline } = useMemo(() => {
+    const closedAll = allTrades.filter(t => t.status === "CLOSED");
+    const days = 7;
+    const pnlData: number[] = [];
+    const wrData: number[] = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const dayStart = startOfDay(subDays(new Date(), i));
+      const dayEnd = new Date(dayStart);
+      dayEnd.setHours(23, 59, 59, 999);
+      const dayTrades = closedAll.filter(t => {
+        const d = new Date(t.closed_at || t.entry_time);
+        return d >= dayStart && d <= dayEnd;
+      });
+      pnlData.push(dayTrades.reduce((sum, t) => sum + (t.pnl || 0), 0));
+      const wins = dayTrades.filter(t => (t.pnl || 0) > 0).length;
+      wrData.push(dayTrades.length > 0 ? (wins / dayTrades.length) * 100 : 0);
+    }
+    // Make P&L cumulative for a more meaningful sparkline
+    const cumPnl = pnlData.reduce<number[]>((acc, v) => {
+      acc.push((acc.length ? acc[acc.length - 1] : 0) + v);
+      return acc;
+    }, []);
+    return { pnlSparkline: cumPnl, winRateSparkline: wrData };
+  }, [allTrades]);
 
   const sortedTrades = useMemo(() => {
     let list = [...trades];
@@ -305,12 +333,17 @@ export default function Trades() {
               aria-label="Sort by Total P&L"
             >
               <div className="absolute -top-3 -right-3 w-14 h-14 dot-pattern opacity-30 rounded-bl-2xl" />
-              <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Total P&L</p>
-              {isLoading ? <Skeleton className="h-8 w-24 mt-1" /> : (
-                <p className={cn("text-2xl font-bold font-mono mt-1", summary.totalPnl >= 0 ? "text-profit" : "text-loss")}>
-                  {summary.totalPnl >= 0 ? "+" : ""}₹{summary.totalPnl.toLocaleString()}
-                </p>
-              )}
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Total P&L</p>
+                  {isLoading ? <Skeleton className="h-8 w-24 mt-1" /> : (
+                    <p className={cn("text-2xl font-bold font-mono mt-1", summary.totalPnl >= 0 ? "text-profit" : "text-loss")}>
+                      {summary.totalPnl >= 0 ? "+" : ""}₹{summary.totalPnl.toLocaleString()}
+                    </p>
+                  )}
+                </div>
+                {!isLoading && <Sparkline data={pnlSparkline} width={64} height={28} fill />}
+              </div>
             </div>
             <div
               role="button"
@@ -368,14 +401,17 @@ export default function Trades() {
                 )}
               </div>
               {isLoading ? <Skeleton className="h-8 w-20 mt-1" /> : (
-                <>
-                  <p className="text-2xl font-bold font-mono text-warning mt-1">{summary.winRate.toFixed(1)}%</p>
-                  {lastUpdated && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {lastUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
-                    </p>
-                  )}
-                </>
+                <div className="flex items-end justify-between">
+                  <div>
+                    <p className="text-2xl font-bold font-mono text-warning mt-1">{summary.winRate.toFixed(1)}%</p>
+                    {lastUpdated && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {lastUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                      </p>
+                    )}
+                  </div>
+                  <Sparkline data={winRateSparkline} width={64} height={28} color="hsl(var(--warning))" fill />
+                </div>
               )}
             </div>
           </div>
