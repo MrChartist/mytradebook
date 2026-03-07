@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -97,7 +97,9 @@ export default function Trades() {
   const [tradeToDelete, setTradeToDelete] = useState<Trade | null>(null);
   const [csvImportOpen, setCsvImportOpen] = useState(false);
   const [showStats, setShowStats] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
   const isMobile = useIsMobile();
+  const TRADES_PER_PAGE = 25;
 
   const filters: TradeFilters = {
     ...(statusFilter !== "ALL" && { status: statusFilter }),
@@ -128,6 +130,15 @@ export default function Trades() {
     }
     return list;
   }, [trades, sortBy]);
+
+  const totalPages = Math.max(1, Math.ceil(sortedTrades.length / TRADES_PER_PAGE));
+  const paginatedTrades = useMemo(() => {
+    const start = (currentPage - 1) * TRADES_PER_PAGE;
+    return sortedTrades.slice(start, start + TRADES_PER_PAGE);
+  }, [sortedTrades, currentPage, TRADES_PER_PAGE]);
+
+  // Reset page when filters change
+  useEffect(() => { setCurrentPage(1); }, [statusFilter, segmentFilter, searchQuery, sortBy]);
 
   const openTradeInstruments = useMemo(() => trades.filter(t => t.status === TradeStatus.OPEN).map(t => ({
     symbol: t.symbol,
@@ -448,10 +459,11 @@ export default function Trades() {
           {[...Array(6)].map((_, i) => <Skeleton key={i} className={viewMode === "grid" ? "h-52" : "h-16"} />)}
         </div>
       ) : sortedTrades.length > 0 ? (
+        <>
         <div className={cn(
           viewMode === "grid" ? "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4" : "space-y-2"
         )}>
-          {sortedTrades.map((trade) => {
+          {paginatedTrades.map((trade) => {
             const targets = (trade.targets as number[]) || [];
             const sc = statusConfig[trade.status || "PENDING"];
             const livePrice = prices[trade.symbol];
@@ -511,6 +523,25 @@ export default function Trades() {
             );
           })}
         </div>
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between pt-4">
+            <p className="text-xs text-muted-foreground">
+              Showing {(currentPage - 1) * TRADES_PER_PAGE + 1}–{Math.min(currentPage * TRADES_PER_PAGE, sortedTrades.length)} of {sortedTrades.length} trades
+            </p>
+            <div className="flex gap-1">
+              <Button variant="outline" size="sm" className="h-7 text-xs" disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>Previous</Button>
+              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                const page = totalPages <= 5 ? i + 1 : currentPage <= 3 ? i + 1 : currentPage >= totalPages - 2 ? totalPages - 4 + i : currentPage - 2 + i;
+                return (
+                  <Button key={page} variant={page === currentPage ? "default" : "outline"} size="sm" className="h-7 w-7 text-xs p-0" onClick={() => setCurrentPage(page)}>{page}</Button>
+                );
+              })}
+              <Button variant="outline" size="sm" className="h-7 text-xs" disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}>Next</Button>
+            </div>
+          </div>
+        )}
+        </>
       ) : (
         <EmptyState
           icon={TrendingUp}

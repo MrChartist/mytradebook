@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useUserSettings } from "@/hooks/useUserSettings";
+import { toast } from "sonner";
 
 export default function PreferencesSettings() {
   const { settings, isLoading, updateSettings } = useUserSettings();
@@ -143,6 +144,26 @@ export default function PreferencesSettings() {
             <option value="Europe/London">Europe/London (GMT)</option>
             <option value="Asia/Singapore">Asia/Singapore (SGT)</option>
           </select>
+        </div>
+
+        {/* Re-show Onboarding Checklist */}
+        <div className="flex items-center justify-between p-4 rounded-lg bg-accent/50">
+          <div>
+            <p className="font-medium">Onboarding Checklist</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Re-show the setup checklist on your dashboard
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              localStorage.removeItem("tradebook_onboarding_dismissed");
+              toast.success("Onboarding checklist will appear on your dashboard");
+            }}
+          >
+            Show Again
+          </Button>
         </div>
 
         <Button
