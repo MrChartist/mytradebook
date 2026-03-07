@@ -259,7 +259,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
   sidebarGroups: { label: string; ids: string[] }[];
 }) {
   const { mode, toggle } = useDocsColorMode();
-
+  const [sidebarSearch, setSidebarSearch] = useState("");
+  const [showBackToTop, setShowBackToTop] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     return localStorage.getItem("docs-sidebar-collapsed") === "true";
   });
