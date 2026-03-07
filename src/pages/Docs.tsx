@@ -19,7 +19,7 @@ import {
   List, Search, Tag, AlertTriangle, CheckCircle2, TrendingDown,
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
   Wallet, Share2, MessageSquare, Command, Hash, Palette,
-  PanelLeftClose, PanelLeftOpen
+  PanelLeftClose, PanelLeftOpen, SlidersHorizontal
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import docsLogo from "@/assets/logo.png";
