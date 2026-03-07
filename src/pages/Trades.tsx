@@ -122,6 +122,32 @@ export default function Trades() {
     CANCELLED: allTrades.filter(t => t.status === "CANCELLED").length,
   }), [allTrades]);
 
+  // Compute last 7 days sparkline data for P&L and Win Rate
+  const { pnlSparkline, winRateSparkline } = useMemo(() => {
+    const closedAll = allTrades.filter(t => t.status === "CLOSED");
+    const days = 7;
+    const pnlData: number[] = [];
+    const wrData: number[] = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const dayStart = startOfDay(subDays(new Date(), i));
+      const dayEnd = new Date(dayStart);
+      dayEnd.setHours(23, 59, 59, 999);
+      const dayTrades = closedAll.filter(t => {
+        const d = new Date(t.closed_at || t.entry_time);
+        return d >= dayStart && d <= dayEnd;
+      });
+      pnlData.push(dayTrades.reduce((sum, t) => sum + (t.pnl || 0), 0));
+      const wins = dayTrades.filter(t => (t.pnl || 0) > 0).length;
+      wrData.push(dayTrades.length > 0 ? (wins / dayTrades.length) * 100 : 0);
+    }
+    // Make P&L cumulative for a more meaningful sparkline
+    const cumPnl = pnlData.reduce<number[]>((acc, v) => {
+      acc.push((acc.length ? acc[acc.length - 1] : 0) + v);
+      return acc;
+    }, []);
+    return { pnlSparkline: cumPnl, winRateSparkline: wrData };
+  }, [allTrades]);
+
   const sortedTrades = useMemo(() => {
     let list = [...trades];
     switch (sortBy) {
