@@ -6,8 +6,8 @@ import { MobileDrawer } from "./MobileDrawer";
 
 const tabs = [
   { icon: LayoutDashboard, label: "Home", path: "/dashboard" },
-  { icon: TrendingUp, label: "Trades", path: "/trades" },
   { icon: Bell, label: "Alerts", path: "/alerts" },
+  { icon: TrendingUp, label: "Trades", path: "/trades" },
   { icon: BookOpen, label: "Journal", path: "/journal" },
 ];
 
