@@ -1,58 +1,35 @@
 
 
-## Improve Instrument Selection UX Across Trades, Alerts & Studies
+# Polish the Landing Page Footer
 
-### Current Pain Points
-1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
-2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
-3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
-4. **Selected state is disconnected** — after selecting, "Change" button resets everything
-5. **No keyboard navigation** — can't arrow through results or press Enter to select
-6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
-7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
+## Current State
+The footer is functional but basic — a 4-column grid with text links, a gradient divider, and a copyright line. It lacks the premium glass depth, social proof, and visual polish present in the rest of the landing page.
 
-### Proposed Improvements
+## Changes to `src/components/landing/BelowFoldSections.tsx` (FooterSection)
 
-#### 1. Unified Combobox-Style Picker (biggest UX win)
-Replace the current search input + results list with a **combobox pattern**:
-- Single input field that shows results as you type (dropdown below)
-- Recent items shown immediately on focus (before typing)
-- Favorites pinned at the top with a star
-- Arrow keys to navigate, Enter to select, Escape to close
-- Taller results area (max-h-64 instead of max-h-40)
+### 1. Glass container treatment
+- Add inner-highlight shadow and `backdrop-blur-sm` to the footer wrapper for consistency with the rest of the page
 
-#### 2. Smarter Defaults & Context
-- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
-- Remember last used exchange filter per segment in localStorage
-- Show lot size inline for F&O instruments in results
+### 2. Brand column upgrade
+- Add the app tagline in a bolder style below the logo
+- Add social links row (Twitter/X, Telegram, Email) using Lucide icons in subtle pill buttons
+- "Get Started" CTA: add `shadow-[0_6px_16px_hsl(var(--tb-accent)/0.35)]` and hover lift
 
-#### 3. Improved Selected State
-- Show a compact **chip-style** selected instrument instead of the current full-width bar
-- "Change" opens the picker inline (no full reset) — preserves recent search context
-- LTP fetch button more prominent with last-fetched timestamp
+### 3. Add a 4th link column — "Resources"
+- Move "Changelog" and "FAQ" here, add "Blog" placeholder
+- Rename existing columns for clarity: Product, Resources, Support, Legal
 
-#### 4. Keyboard Navigation in Search Results
-- Add `onKeyDown` handler to search input
-- ArrowUp/ArrowDown to highlight results
-- Enter to select highlighted item
-- Track `highlightedIndex` state
+### 4. Bottom bar upgrade
+- Wrap copyright + SEBI disclaimer in a glass pill bar with `bg-muted/20 rounded-2xl px-6 py-4`
+- Add a "Back to top" button on the right side with smooth scroll
+- Tricolor India dots: increase size slightly to `w-2 h-2`
 
-#### 5. Option Chain Quick Access
-- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
-- Make the chain component more compact — remove redundant labels
+### 5. Visual refinements
+- Column headers: add accent-colored left bar (`border-l-2 border-[hsl(var(--tb-accent))] pl-2`) for visual rhythm
+- Links: add subtle left-slide transition on hover via `hover:translate-x-0.5`
+- Add a subtle radial glow behind the logo in the brand column
+- Increase overall vertical padding from `py-16` to `py-20`
 
-#### 6. Exchange Filter as Chips (not buttons)
-- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
-
-### Files to Modify
-- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
-- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
-
-### Implementation Order
-1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
-2. Increase results area height and show lot size for F&O
-3. Replace exchange filter buttons with compact chips
-4. Add "remember last exchange" per segment
-5. Improve selected state with chip-style display
-6. Add focus-triggered recent items display
+## File to Edit
+- `src/components/landing/BelowFoldSections.tsx` (lines 446-492)
 
