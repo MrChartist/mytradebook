@@ -19,7 +19,7 @@ import {
   List, Search, Tag, AlertTriangle, CheckCircle2, TrendingDown,
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
   Wallet, Share2, MessageSquare, Command, Hash, Palette,
-  PanelLeftClose, PanelLeftOpen
+  PanelLeftClose, PanelLeftOpen, SlidersHorizontal
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import docsLogo from "@/assets/logo.png";
@@ -50,6 +50,7 @@ import {
   SettingsProfileBillingMockup, SettingsPreferencesMockup, SettingsTagManagementMockup,
   SettingsSecurityMockup, SettingsIntegrationsMockup, CapitalManagementMockup,
   AIApiSetupMockup, AIProviderComparisonMockup, AISettingsPreviewMockup, AIInsightSampleMockup,
+  ScreenerPresetsMockup, ScreenerTableMockup, StockPopupMockup, CustomFilterBuilderMockup, ScreenerSparklineMockup,
   DocsColorModeProvider, useDocsColorMode
 } from "@/components/docs/DocsMockups";
 
@@ -1061,53 +1062,94 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <SectionHeader
                 id="fundamentals"
                 title="Stock Screener"
-                description="A powerful fundamental scanner for NSE-listed stocks. Screen by market cap, P/E, ROE, dividend yield, and more. Save your custom filter presets for quick reuse."
+                description="A professional-grade NSE stock scanner with 47 built-in presets across 5 categories — Market Cap, Price Action, Volume, Fundamental, and Technical. Includes custom filter builder, saved presets, and deep-dive stock insight cards."
                 icon={Search}
               />
-              <div className="grid md:grid-cols-2 gap-5">
-                <FeatureCard icon={Filter} title="Screening Filters">
-                  <p className="text-sm text-muted-foreground mb-3">Build custom screens using a visual filter builder:</p>
+
+              {/* Scanner presets visual */}
+              <ScreenerPresetsMockup />
+
+              <div className="grid md:grid-cols-2 gap-5 mt-6">
+                <FeatureCard icon={Filter} title="47 Built-in Scanner Presets" badge="Expanded">
+                  <p className="text-sm text-muted-foreground mb-3">Five category groups with comprehensive coverage:</p>
                   <FeatureList items={[
-                    "Market Cap filter — Large, Mid, Small cap ranges",
-                    "P/E Ratio — value vs growth screening",
-                    "ROE (Return on Equity) — quality filter",
-                    "Dividend Yield — income-focused screening",
-                    "Revenue Growth — momentum filter",
-                    "Debt-to-Equity — financial health filter",
-                    "52-week High/Low proximity filter",
-                    "Sector and industry classification filters",
+                    "Market Cap — All, Large, Mid, Small, Micro Cap filters",
+                    "Price Action — Top Gainers/Losers, 52W High/Low, ATH/ATL zone, Near Day High/Low, Penny Stocks, Blue Chip",
+                    "Volume — Volume Gainers, Volume Spike (3×), Breakout, Sell Pressure, Low Volume, High Avg Volume",
+                    "Fundamental — Undervalued, High Growth, Dividend Stars, Low Debt, Quality, High Margin, Cash Rich, Value Picks, High EPS",
+                    "Technical — Momentum, Strong Rally, Oversold/Overbought RSI, Above SMA 50, Low/High Beta, High Volatility",
                   ]} />
                 </FeatureCard>
-                <FeatureCard icon={Zap} title="Presets & Custom Saves" badge="New">
-                  <p className="text-sm text-muted-foreground mb-3">Built-in presets and the ability to save your own:</p>
+                <FeatureCard icon={Target} title="Cross-Field Comparisons" badge="Smart">
+                  <p className="text-sm text-muted-foreground mb-3">Advanced presets use real price-vs-reference comparisons, not proxies:</p>
                   <FeatureList items={[
-                    "Built-in presets: Value Picks, Growth Stars, Dividend Champions, Quality at Value",
-                    "Save any custom filter combination with a name",
-                    "Load saved presets instantly from the preset strip",
-                    "Delete saved presets when no longer needed",
-                    "Presets persist across sessions in the database",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Eye} title="Stock Detail Popup">
-                  <p className="text-sm text-muted-foreground mb-3">Click any stock in the scanner to open a detailed popup card:</p>
-                  <FeatureList items={[
-                    "Overview tab: market cap, P/E, book value, EPS, dividend yield",
-                    "Financials tab: revenue, net profit, ROE, ROCE, debt metrics",
-                    "Technicals tab: RSI gauge, 52W range bar, volume analysis",
-                    "Quick actions: create trade, set alert, add to watchlist, create study",
-                    "External links to charts and company info",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={BarChart3} title="Sortable Results Table">
-                  <FeatureList items={[
-                    "Sort by any column: market cap, P/E, ROE, price, change %",
-                    "Paginated results with configurable page size",
-                    "Compact table view with key metrics at a glance",
-                    "Color-coded change percentages (green/red)",
-                    "Search/filter by company name or symbol",
+                    "52W High — stocks within 3% of their 52-week high price",
+                    "52W Low — stocks within 3% of their 52-week low price",
+                    "ATH Zone — within 5% of all-time high",
+                    "ATL Zone — within 10% of all-time low",
+                    "Near Day High/Low — within 1% of intraday extremes",
+                    "Above SMA 50 — direct price > 50-day moving average",
                   ]} />
                 </FeatureCard>
               </div>
+
+              {/* Screener table visual */}
+              <ScreenerTableMockup />
+
+              <div className="grid md:grid-cols-2 gap-5 mt-6">
+                <FeatureCard icon={SlidersHorizontal} title="Custom Filter Builder">
+                  <p className="text-sm text-muted-foreground mb-3">Build and save your own multi-condition screens:</p>
+                  <FeatureList items={[
+                    "14 screening metrics: P/E, P/B, ROE, Net Margin, Dividend Yield, D/E, Current Ratio, Market Cap, RSI, Change%, Volume, Rel. Volume, EPS, Beta",
+                    "AND logic — combine up to 8 conditions",
+                    "Save named presets to database for instant reuse",
+                    "Load/delete saved presets from My Presets section",
+                    "Presets persist across sessions and devices",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Eye} title="Stock Insight Card">
+                  <p className="text-sm text-muted-foreground mb-3">Click any stock to open a rich detail popup:</p>
+                  <FeatureList items={[
+                    "Hero header with ticker, sector, LTP and day change",
+                    "Summary strip — P/E, Volume, Dividend Yield at a glance",
+                    "4 deep-dive tabs: Overview, Valuation (attractiveness badges), Financials (benchmarked bars), Technicals (RSI gauge + SMA signals)",
+                    "Quick action footer — Trade, Alert, Watchlist, Study",
+                    "Fully responsive with mobile-optimized layout",
+                  ]} />
+                </FeatureCard>
+              </div>
+
+              {/* Stock popup visual */}
+              <div className="grid md:grid-cols-2 gap-5 mt-2">
+                <StockPopupMockup />
+                <CustomFilterBuilderMockup />
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-5 mt-6">
+                <FeatureCard icon={BarChart3} title="Data-Rich Results Table">
+                  <FeatureList items={[
+                    "Sort by any column — market cap, P/E, ROE, price, volume, RSI",
+                    "Paginated results — 25, 50, 100, or 200 per page",
+                    "Synthetic trend sparklines from price anchors (ATL → SMAs → LTP)",
+                    "Split LTP display — bold integer + muted decimals",
+                    "Color-coded RSI badges and change percentages",
+                    "Inline search to filter by symbol or company name",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Zap} title="Performance & Architecture">
+                  <FeatureList items={[
+                    "Server-side filtering via TradingView India scanner API",
+                    "5-minute edge-cached responses for speed",
+                    "500-stock scan limit per request with pagination",
+                    "rawFilters engine for native cross-field comparisons",
+                    "Mobile-responsive: shortened labels and horizontal scroll",
+                    "Real-time data from NSE via TradingView data feed",
+                  ]} />
+                </FeatureCard>
+              </div>
+
+              {/* Sparkline visual */}
+              <ScreenerSparklineMockup />
             </motion.section>
 
             <SectionDivider />

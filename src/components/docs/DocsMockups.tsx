@@ -4044,3 +4044,253 @@ export function AIInsightSampleMockup() {
     </MockupFrame>
   );
 }
+
+/* ──────────────────────────────────────────────
+   Stock Screener Mockups
+   ────────────────────────────────────────────── */
+
+export function ScreenerPresetsMockup() {
+  const groups = [
+    {
+      label: "Market Cap", presets: [
+        { id: "all", name: "All Stocks" }, { id: "large", name: "Large Cap" },
+        { id: "mid", name: "Mid Cap" }, { id: "small", name: "Small Cap" }, { id: "micro", name: "Micro Cap" },
+      ]
+    },
+    {
+      label: "Price Action", presets: [
+        { id: "gain", name: "Top Gainers" }, { id: "lose", name: "Top Losers" },
+        { id: "52h", name: "52W High" }, { id: "52l", name: "52W Low" },
+        { id: "ath", name: "ATH Zone" }, { id: "atl", name: "ATL Zone" },
+        { id: "dh", name: "Near Day High" }, { id: "dl", name: "Near Day Low" },
+      ]
+    },
+    {
+      label: "Volume", presets: [
+        { id: "vg", name: "Vol Gainers" }, { id: "vs", name: "Vol Spike" },
+        { id: "vb", name: "Vol Breakout" }, { id: "sp", name: "Sell Pressure" },
+      ]
+    },
+    {
+      label: "Fundamental", presets: [
+        { id: "uv", name: "Undervalued" }, { id: "gr", name: "High Growth" },
+        { id: "dv", name: "Dividend Stars" }, { id: "qu", name: "Quality" },
+        { id: "cr", name: "Cash Rich" }, { id: "vp", name: "Value Picks" },
+      ]
+    },
+    {
+      label: "Technical", presets: [
+        { id: "mo", name: "Momentum" }, { id: "os", name: "Oversold RSI" },
+        { id: "ob", name: "Overbought RSI" }, { id: "sma", name: "Above SMA 50" },
+        { id: "lb", name: "Low Beta" }, { id: "hb", name: "High Beta" },
+      ]
+    },
+  ];
+  return (
+    <MockupFrame className="my-6" label="Scanner Presets — 47 Built-in">
+      <div className="space-y-3 max-w-xl mx-auto">
+        {groups.map((g) => (
+          <div key={g.label}>
+            <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">{g.label}</p>
+            <div className="flex flex-wrap gap-1.5">
+              {g.presets.map((p, i) => (
+                <span key={p.id} className={cn(
+                  "px-2.5 py-1 rounded-full text-[10px] font-semibold border transition-colors cursor-pointer",
+                  i === 0 && g.label === "Price Action"
+                    ? "bg-[hsl(var(--tb-accent)/0.12)] text-[hsl(var(--tb-accent))] border-[hsl(var(--tb-accent)/0.3)]"
+                    : "bg-card border-border/40 text-muted-foreground hover:border-primary/30"
+                )}>
+                  {p.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </MockupFrame>
+  );
+}
+
+export function ScreenerTableMockup() {
+  const rows = [
+    { sym: "RELIANCE", price: "2,867", chg: "+1.23", pe: "28.4", roe: "12.6", mcap: "₹19.4T", rsi: 58, vol: "12.4Cr" },
+    { sym: "TCS", price: "3,542", chg: "-0.45", pe: "32.1", roe: "45.2", mcap: "₹12.8T", rsi: 62, vol: "5.2Cr" },
+    { sym: "HDFCBANK", price: "1,678", chg: "+2.10", pe: "19.7", roe: "16.8", mcap: "₹12.7T", rsi: 71, vol: "8.7Cr" },
+    { sym: "INFY", price: "1,456", chg: "+0.89", pe: "25.3", roe: "31.4", mcap: "₹6.0T", rsi: 55, vol: "6.1Cr" },
+    { sym: "TATAMOTORS", price: "742", chg: "+3.56", pe: "8.2", roe: "22.1", mcap: "₹2.7T", rsi: 74, vol: "18.3Cr" },
+  ];
+  return (
+    <MockupFrame className="my-6" label="Screener Results Table">
+      <div className="overflow-x-auto">
+        <table className="w-full text-[10px]">
+          <thead>
+            <tr className="border-b border-border/40">
+              {["Symbol", "LTP", "Chg%", "P/E", "ROE", "Mkt Cap", "RSI", "Volume"].map((h) => (
+                <th key={h} className="text-left py-2 px-2 text-muted-foreground font-semibold">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.sym} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
+                <td className="py-2 px-2 font-bold text-foreground">{r.sym}</td>
+                <td className="py-2 px-2 font-mono">₹{r.price}</td>
+                <td className={cn("py-2 px-2 font-mono font-semibold", r.chg.startsWith("+") ? "text-profit" : "text-loss")}>{r.chg}%</td>
+                <td className="py-2 px-2 font-mono">{r.pe}</td>
+                <td className="py-2 px-2 font-mono">{r.roe}%</td>
+                <td className="py-2 px-2">{r.mcap}</td>
+                <td className="py-2 px-2">
+                  <span className={cn(
+                    "px-1.5 py-0.5 rounded text-[9px] font-bold",
+                    r.rsi > 70 ? "bg-loss/10 text-loss" : r.rsi < 30 ? "bg-profit/10 text-profit" : "bg-muted text-muted-foreground"
+                  )}>{r.rsi}</span>
+                </td>
+                <td className="py-2 px-2 text-muted-foreground">{r.vol}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="flex items-center justify-between mt-3 text-[10px] text-muted-foreground">
+        <span>Showing 1–25 of 2,147 stocks</span>
+        <div className="flex gap-1">
+          {["← Prev", "1", "2", "3", "...", "86", "Next →"].map((p) => (
+            <span key={p} className={cn(
+              "px-2 py-1 rounded border border-border/30",
+              p === "1" ? "bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))] font-bold" : ""
+            )}>{p}</span>
+          ))}
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+export function StockPopupMockup() {
+  const tabs = ["Overview", "Valuation", "Financials", "Technicals"];
+  return (
+    <MockupFrame className="my-6" label="Stock Insight Card">
+      <div className="max-w-md mx-auto rounded-xl border border-border/40 bg-card overflow-hidden">
+        {/* Hero header */}
+        <div className="bg-gradient-to-r from-[hsl(var(--tb-accent)/0.08)] to-transparent p-4 border-b border-border/20">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[hsl(var(--tb-accent)/0.15)] flex items-center justify-center">
+              <span className="text-sm font-bold text-[hsl(var(--tb-accent))]">R</span>
+            </div>
+            <div>
+              <p className="text-sm font-bold">RELIANCE</p>
+              <p className="text-[10px] text-muted-foreground">Reliance Industries · Energy</p>
+            </div>
+            <div className="ml-auto text-right">
+              <p className="text-sm font-mono font-bold">₹2,867<span className="text-muted-foreground text-[10px]">.45</span></p>
+              <p className="text-[10px] text-profit font-semibold">+1.23%</p>
+            </div>
+          </div>
+        </div>
+        {/* Summary strip */}
+        <div className="grid grid-cols-3 text-center border-b border-border/20 py-2">
+          {[{ l: "P/E", v: "28.4" }, { l: "Volume", v: "12.4Cr" }, { l: "Div Yield", v: "0.38%" }].map((s) => (
+            <div key={s.l}>
+              <p className="text-[9px] text-muted-foreground">{s.l}</p>
+              <p className="text-[11px] font-mono font-bold">{s.v}</p>
+            </div>
+          ))}
+        </div>
+        {/* Tab bar */}
+        <div className="flex border-b border-border/20">
+          {tabs.map((t, i) => (
+            <button key={t} className={cn(
+              "flex-1 py-2 text-[10px] font-semibold transition-colors",
+              i === 0 ? "text-[hsl(var(--tb-accent))] border-b-2 border-[hsl(var(--tb-accent))]" : "text-muted-foreground"
+            )}>{t}</button>
+          ))}
+        </div>
+        {/* Content area */}
+        <div className="p-4 space-y-2">
+          {[
+            { l: "Market Cap", v: "₹19.4T", badge: "Mega Cap" },
+            { l: "ROE", v: "12.6%", badge: null },
+            { l: "Debt/Equity", v: "0.42", badge: "Healthy" },
+            { l: "Net Margin", v: "8.7%", badge: null },
+          ].map((item) => (
+            <div key={item.l} className="flex items-center justify-between text-[11px]">
+              <span className="text-muted-foreground">{item.l}</span>
+              <div className="flex items-center gap-2">
+                <span className="font-mono font-bold">{item.v}</span>
+                {item.badge && (
+                  <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-profit/10 text-profit">{item.badge}</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Action footer */}
+        <div className="flex gap-2 p-3 border-t border-border/20">
+          {["Trade", "Alert", "Watchlist", "Study"].map((a) => (
+            <button key={a} className="flex-1 py-1.5 rounded-lg text-[10px] font-semibold bg-muted/50 text-muted-foreground hover:bg-muted transition-colors">{a}</button>
+          ))}
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+export function CustomFilterBuilderMockup() {
+  const filters = [
+    { field: "P/E Ratio", op: "<", value: "20" },
+    { field: "ROE (%)", op: ">", value: "15" },
+    { field: "Debt/Equity", op: "<", value: "1" },
+  ];
+  return (
+    <MockupFrame className="my-6" label="Custom Filter Builder">
+      <div className="max-w-md mx-auto space-y-3">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground text-center mb-2">Build Your Own Screen</p>
+        {filters.map((f, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <div className="flex-1 rounded-lg border border-border/40 bg-card px-3 py-2 text-[11px] font-semibold">{f.field}</div>
+            <div className="w-10 rounded-lg border border-border/40 bg-card px-2 py-2 text-center text-[11px] font-mono font-bold text-[hsl(var(--tb-accent))]">{f.op}</div>
+            <div className="w-16 rounded-lg border border-border/40 bg-card px-3 py-2 text-[11px] font-mono font-bold text-right">{f.value}</div>
+            <div className="w-6 h-6 rounded-full bg-loss/10 text-loss flex items-center justify-center text-[10px] cursor-pointer">✕</div>
+          </div>
+        ))}
+        <div className="flex items-center gap-2 justify-center pt-1">
+          <button className="px-3 py-1.5 rounded-full text-[10px] font-semibold border border-dashed border-border/60 text-muted-foreground hover:border-primary/40">+ Add Filter</button>
+          <button className="px-4 py-1.5 rounded-full text-[10px] font-semibold bg-[hsl(var(--tb-accent))] text-white">Apply</button>
+        </div>
+        {/* Save preset row */}
+        <div className="flex items-center gap-2 pt-2 border-t border-border/20">
+          <div className="flex-1 rounded-lg border border-border/40 bg-muted/30 px-3 py-1.5 text-[10px] text-muted-foreground">My Value Screen</div>
+          <button className="px-3 py-1.5 rounded-full text-[10px] font-semibold bg-profit/10 text-profit border border-profit/20">💾 Save Preset</button>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+export function ScreenerSparklineMockup() {
+  return (
+    <MockupFrame className="my-6" label="Trend Sparklines & LTP Display">
+      <div className="max-w-sm mx-auto space-y-3">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground text-center mb-2">Visual Price Anchors</p>
+        {[
+          { sym: "RELIANCE", pts: [180, 210, 240, 260, 285, 287], chg: "+1.23" },
+          { sym: "TATAMOTORS", pts: [450, 520, 610, 680, 720, 742], chg: "+3.56" },
+          { sym: "WIPRO", pts: [480, 470, 440, 430, 420, 415], chg: "-0.82" },
+        ].map((s) => (
+          <div key={s.sym} className="flex items-center gap-3 rounded-lg border border-border/30 bg-card px-3 py-2">
+            <span className="text-[11px] font-bold w-24">{s.sym}</span>
+            <svg viewBox="0 0 80 24" className="w-20 h-6">
+              <polyline
+                fill="none"
+                stroke={s.chg.startsWith("+") ? "hsl(var(--profit))" : "hsl(var(--loss))"}
+                strokeWidth="1.5"
+                points={s.pts.map((p, i) => `${(i / (s.pts.length - 1)) * 80},${24 - ((p - Math.min(...s.pts)) / (Math.max(...s.pts) - Math.min(...s.pts))) * 20}`).join(" ")}
+              />
+            </svg>
+            <span className={cn("text-[11px] font-mono font-bold ml-auto", s.chg.startsWith("+") ? "text-profit" : "text-loss")}>{s.chg}%</span>
+          </div>
+        ))}
+      </div>
+    </MockupFrame>
+  );
+}
