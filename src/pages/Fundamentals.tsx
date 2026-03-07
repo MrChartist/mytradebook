@@ -39,7 +39,7 @@ type ScannerPreset = {
   filters: ScanFilter[];
   sortBy?: string;
   sortOrder?: "asc" | "desc";
-  group: "cap" | "fundamental" | "technical";
+  group: "cap" | "fundamental" | "technical" | "price" | "volume";
 };
 
 const SCANNER_PRESETS: ScannerPreset[] = [
