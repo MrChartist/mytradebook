@@ -370,12 +370,14 @@ export default function Alerts() {
         ) : (
           <EmptyState
             icon={Bell}
-            title={activeTab !== "all" ? `No ${activeTab} alerts` : "No alerts found"}
+            title={activeTab !== "all" ? `No ${activeTab} alerts` : "No alerts yet"}
             description={searchQuery
               ? "Try adjusting your search to find what you're looking for."
-              : "Create alerts to get notified when price or volume conditions are met."}
-            createLabel="Create Alert"
+              : "Set up price and volume alerts to stay on top of market conditions."}
+            createLabel="Create Your First Alert"
             onCreate={() => setCreateModalOpen(true)}
+            steps={["Pick a symbol", "Set condition & threshold", "Get notified instantly"]}
+            hint="Alerts support Telegram, in-app notifications, and webhooks"
           />
         )}
 

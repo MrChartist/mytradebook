@@ -420,12 +420,14 @@ export default function Studies() {
       ) : (
         <EmptyState
           icon={BookOpen}
-          title="No studies found"
+          title="No studies yet"
           description={searchQuery || selectedTags.length > 0
             ? "Try adjusting your search or filters to find what you're looking for."
-            : "Studies help you track setups, patterns, and analysis before taking a trade."}
-          createLabel="Create Study"
+            : "Studies help you track setups, patterns, and analysis before placing a trade."}
+          createLabel="Create Your First Study"
           onCreate={() => setCreateModalOpen(true)}
+          steps={["Identify a setup", "Document your thesis", "Link to a trade later"]}
+          hint="Tag studies with patterns to track what setups work best"
         />
       )}
 

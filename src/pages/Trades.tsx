@@ -480,10 +480,12 @@ export default function Trades() {
       ) : (
         <EmptyState
           icon={TrendingUp}
-          title="No trades found"
-          description="Start tracking your trades to build your journal and improve your edge."
-          createLabel="Add Trade"
+          title="No trades yet"
+          description="Start logging your trades to build a journal and uncover your trading edge."
+          createLabel="Log Your First Trade"
           onCreate={() => setCreateModalOpen(true)}
+          steps={["Add entry details", "Set SL & targets", "Review after close"]}
+          hint="You can also import trades via CSV or auto-sync from Dhan"
         />
       )}
 
