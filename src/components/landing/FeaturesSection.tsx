@@ -1,25 +1,25 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-  BookOpen, BarChart3, Bell, Target, LineChart, Brain, List, Shield,
-  MessageSquare, Calculator, FileSpreadsheet, CheckCircle2, TrendingUp,
-  Lightbulb, ArrowUp, ArrowDown, Send, FileUp,
+  BookOpen, BarChart3, Bell, LineChart, Brain, List, Shield,
+  MessageSquare, Calculator, CheckCircle2, TrendingUp,
+  Lightbulb, ArrowUp, ArrowDown, Send, Filter, Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fadeUp, staggerContainer, MotionSection, SectionBadge } from "./LandingShared";
 
 const features = [
   { icon: BookOpen, title: "Smart Journal", description: "Multi-segment trade logging with charts, tags, notes, and pattern recognition. Track every trade across Equity, F&O, and Commodities.", color: "hsl(24 90% 55%)", large: true, previewKey: "journal" },
+  { icon: TrendingUp, title: "Stock Screener", description: "Screen 500+ NSE stocks with live fundamentals — P/E, ROE, market cap, technicals, and more. One-tap deep dives into any stock.", color: "hsl(152 60% 42%)", large: true, previewKey: "screener" },
   { icon: BarChart3, title: "Deep Analytics", description: "Equity curves, drawdown analysis, win-rate heatmaps, and segment breakdowns.", color: "hsl(152 60% 42%)", large: false, previewKey: "analytics" },
   { icon: Bell, title: "Real-Time Alerts", description: "Price alerts, scanner triggers, and instant Telegram notifications.", color: "hsl(210 80% 55%)", large: false, previewKey: "alerts" },
-  { icon: Target, title: "Trailing Stop Loss", description: "Segment-based TSL with configurable activation, step, gap, and cooldown.", color: "hsl(340 75% 55%)", large: false, previewKey: "" },
-  { icon: LineChart, title: "Broker Integration", description: "Connect Dhan for live prices, portfolio auto-sync, and one-click execution.", color: "hsl(45 90% 50%)", large: false, previewKey: "" },
+  { icon: Filter, title: "Smart Scanner", description: "Pre-built scans for Top Gainers, Losers, 52W Highs, undervalued gems, and momentum plays. Save custom filter combos.", color: "hsl(340 75% 55%)", large: false, previewKey: "scanner" },
   { icon: Brain, title: "AI Trade Insights", description: "AI-powered analysis of your trading patterns, timing blind-spots, and behavioral suggestions to sharpen your edge.", color: "hsl(270 65% 58%)", large: true, previewKey: "ai" },
-  { icon: List, title: "Watchlist & Scanner", description: "Multi-watchlist monitoring with live prices, change %, and custom scanners.", color: "hsl(190 75% 45%)", large: false, previewKey: "watchlist" },
+  { icon: List, title: "Watchlist", description: "Multi-watchlist monitoring with live prices, change %, and custom groupings.", color: "hsl(190 75% 45%)", large: false, previewKey: "watchlist" },
+  { icon: LineChart, title: "Broker Integration", description: "Connect Dhan for live prices, portfolio auto-sync, and one-click execution.", color: "hsl(45 90% 50%)", large: false, previewKey: "" },
   { icon: Shield, title: "Rules Engine", description: "Pre-trade checklists, mistake tagging, and discipline enforcement.", color: "hsl(270 60% 55%)", large: false, previewKey: "rules" },
   { icon: MessageSquare, title: "Telegram Bot", description: "Automated trade notifications, EOD reports, and morning briefings.", color: "hsl(200 85% 50%)", large: false, previewKey: "telegram" },
   { icon: Calculator, title: "Position Sizing", description: "Risk-based lot calculator with capital management and leverage warnings.", color: "hsl(160 60% 45%)", large: false, previewKey: "sizing" },
-  { icon: FileSpreadsheet, title: "CSV Import/Export", description: "Bulk import trades from broker CSVs and export reports for offline review.", color: "hsl(30 70% 50%)", large: false, previewKey: "csv" },
 ];
 
 /* Mini Preview Components */
@@ -136,11 +136,58 @@ function PositionSizingMiniPreview() {
   );
 }
 
-function CSVImportMiniPreview() {
+function ScreenerMiniPreview() {
+  const stocks = [
+    { symbol: "RELIANCE", ltp: "₹2,945.30", change: "+1.24%", pe: "28.4", up: true },
+    { symbol: "TCS", ltp: "₹4,128.50", change: "+0.67%", pe: "32.1", up: true },
+    { symbol: "INFY", ltp: "₹1,856.10", change: "-0.38%", pe: "26.8", up: false },
+  ];
   return (
-    <div className="mt-5 rounded-lg border border-border/20 bg-muted/15 p-3">
-      <div className="flex items-center gap-2.5"><div className="w-8 h-8 rounded-lg bg-[hsl(30_70%_50%/0.08)] flex items-center justify-center"><FileUp className="w-4 h-4 text-[hsl(30_70%_50%)]" /></div><div><p className="text-[10px] font-semibold text-foreground">trades_feb2026.csv</p><p className="text-[8px] text-muted-foreground">Zerodha format • 4 columns mapped</p></div></div>
-      <div className="mt-2 flex items-center gap-1.5"><div className="flex-1 h-1 rounded-full bg-muted/40"><div className="h-full w-full rounded-full bg-profit" /></div><span className="text-[8px] font-semibold text-profit">234 trades imported ✓</span></div>
+    <div className="mt-6 rounded-xl border border-border/20 bg-muted/15 overflow-hidden">
+      <div className="flex items-center gap-2 px-3.5 py-2 border-b border-border/15">
+        <Search className="w-3 h-3 text-muted-foreground" />
+        <span className="text-[9px] text-muted-foreground">Search 500+ NSE stocks…</span>
+      </div>
+      <div className="divide-y divide-border/15">
+        <div className="grid grid-cols-4 px-3.5 py-1.5">
+          {["Stock", "LTP", "Chg%", "P/E"].map((h) => (
+            <span key={h} className="text-[7px] text-muted-foreground uppercase tracking-wider font-semibold">{h}</span>
+          ))}
+        </div>
+        {stocks.map((s) => (
+          <div key={s.symbol} className="grid grid-cols-4 items-center px-3.5 py-2">
+            <span className="text-[10px] font-semibold text-foreground">{s.symbol}</span>
+            <span className="text-[10px] font-mono text-muted-foreground">{s.ltp}</span>
+            <span className={cn("text-[9px] font-mono font-semibold flex items-center gap-0.5", s.up ? "text-profit" : "text-loss")}>
+              {s.up ? <ArrowUp className="w-2.5 h-2.5" /> : <ArrowDown className="w-2.5 h-2.5" />}{s.change}
+            </span>
+            <span className="text-[9px] font-mono text-muted-foreground">{s.pe}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ScannerMiniPreview() {
+  const presets = ["Top Gainers", "Undervalued", "Momentum"];
+  return (
+    <div className="mt-5 space-y-2.5">
+      <div className="flex items-center gap-1.5 flex-wrap">
+        {presets.map((p, i) => (
+          <span key={p} className={cn("px-2.5 py-1 rounded-full text-[9px] font-semibold transition-colors", i === 0 ? "bg-[hsl(var(--tb-accent)/0.12)] text-[hsl(var(--tb-accent))]" : "bg-muted/40 text-muted-foreground")}>{p}</span>
+        ))}
+      </div>
+      <div className="rounded-lg border border-border/20 bg-muted/15 px-3 py-2 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-profit animate-pulse" />
+          <span className="text-[9px] text-muted-foreground">12 results matched</span>
+        </div>
+        <span className="text-[8px] font-semibold text-[hsl(var(--tb-accent))]">View all →</span>
+      </div>
+      <div className="flex items-center gap-1.5 text-[8px] text-muted-foreground">
+        <Filter className="w-2.5 h-2.5" />Save custom filter combos for quick access
+      </div>
     </div>
   );
 }
@@ -167,7 +214,8 @@ const previewMap: Record<string, React.ReactNode> = {
   rules: <RulesEngineMiniPreview />,
   telegram: <TelegramMiniPreview />,
   sizing: <PositionSizingMiniPreview />,
-  csv: <CSVImportMiniPreview />,
+  screener: <ScreenerMiniPreview />,
+  scanner: <ScannerMiniPreview />,
 };
 
 export function FeaturesSection() {
