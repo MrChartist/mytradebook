@@ -68,7 +68,7 @@ export const useDashboard = () => {
 };
 
 export default function Dashboard() {
-  const [selectedMonth, setSelectedMonth] = useState(new Date());
+  const [selectedMonth, setSelectedMonth] = useState<Date | null>(new Date());
   const [segment, setSegment] = useState<Segment>("All");
   const { widgets, toggleWidget, moveWidget, resetLayout } = useDashboardLayout();
 
@@ -82,9 +82,10 @@ export default function Dashboard() {
   }, [allTrades, segment]);
 
   // Month-filtered trades
-  const monthStart = startOfMonth(selectedMonth);
-  const monthEnd = endOfMonth(selectedMonth);
+  const monthStart = selectedMonth ? startOfMonth(selectedMonth) : null;
+  const monthEnd = selectedMonth ? endOfMonth(selectedMonth) : null;
   const monthTrades = useMemo(() => {
+    if (!monthStart || !monthEnd) return trades; // All time
     return trades.filter((t) => {
       const d = new Date(t.entry_time);
       return d >= monthStart && d <= monthEnd;
@@ -251,17 +252,31 @@ export default function Dashboard() {
         <div className="flex items-center gap-3 flex-wrap">
           {/* Month selector */}
           <div className="flex gap-1 bg-muted rounded-full p-0.5">
-            {[subMonths(new Date(), 2), subMonths(new Date(), 1), new Date()].map((m) => (
+            {[
+              { label: "All", value: "all" },
+              ...([subMonths(new Date(), 2), subMonths(new Date(), 1), new Date()].map((m) => ({
+                label: format(m, "MMM"),
+                value: format(m, "MMM yy"),
+                date: m,
+              }))),
+            ].map((m) => (
               <button
-                key={m.toISOString()}
-                onClick={() => setSelectedMonth(m)}
+                key={m.value}
+                onClick={() => {
+                  if (m.value === "all") {
+                    setSelectedMonth(null as any);
+                  } else {
+                    setSelectedMonth((m as any).date);
+                  }
+                }}
                 className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all ${
-                  format(selectedMonth, "MMM yy") === format(m, "MMM yy")
+                  (m.value === "all" && selectedMonth === null)
+                    || (selectedMonth && m.value === format(selectedMonth, "MMM yy"))
                     ? "bg-background shadow-sm text-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {format(m, "MMM")}
+                {m.label}
               </button>
             ))}
           </div>

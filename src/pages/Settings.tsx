@@ -33,15 +33,15 @@ export default function Settings() {
       </div>
 
       <Tabs defaultValue={defaultTab} className="w-full">
-        <TabsList className="w-full flex flex-wrap justify-start gap-2 h-auto p-1 bg-card border border-border rounded-lg mb-6">
+        <TabsList className="w-full flex overflow-x-auto no-scrollbar justify-start gap-2 h-auto p-1 bg-card border border-border rounded-lg mb-6">
           {settingsTabs.map((tab) => (
             <TabsTrigger
               key={tab.id}
               value={tab.id}
               className="flex items-center gap-2 px-4 py-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary"
             >
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
+              <tab.icon className="w-4 h-4 shrink-0" />
+              <span className="whitespace-nowrap">{tab.label}</span>
             </TabsTrigger>
           ))}
         </TabsList>

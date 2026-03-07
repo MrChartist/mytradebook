@@ -22,6 +22,7 @@ import {
   Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { MobileDrawer } from "./MobileDrawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -60,7 +61,7 @@ export function Sidebar() {
 
   const renderNavItem = (item: typeof mainNavItems[0]) => {
     const isActive = location.pathname === item.path;
-    return (
+    const link = (
       <NavLink
         key={item.path}
         to={item.path}
@@ -82,6 +83,19 @@ export function Sidebar() {
         )}
       </NavLink>
     );
+
+    if (collapsed) {
+      return (
+        <Tooltip key={item.path} delayDuration={0}>
+          <TooltipTrigger asChild>{link}</TooltipTrigger>
+          <TooltipContent side="right" sideOffset={8}>
+            {item.label}
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+
+    return link;
   };
 
   return (
