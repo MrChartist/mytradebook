@@ -146,7 +146,10 @@ export default function Calendar() {
                 </div>
               </div>
             ) : (
-              <p className="text-muted-foreground text-xs text-center py-6">No trades on this date</p>
+              <div className="text-center py-8 space-y-3">
+                <p className="text-muted-foreground text-xs">No trades on this date</p>
+                <p className="text-[11px] text-muted-foreground/60">Use the journal below to note observations</p>
+              </div>
             )}
           </div>
 

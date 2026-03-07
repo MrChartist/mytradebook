@@ -3,35 +3,28 @@ import { useDashboard } from "@/pages/Dashboard";
 import { cn } from "@/lib/utils";
 import { Flame, Wallet, Target, TrendingUp, Bell, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { calculatePnL, calculatePnLPercent } from "@/lib/calculations";
+import { calculatePnL } from "@/lib/calculations";
 import { formatCurrency } from "@/lib/formatting";
 import { TradeStatus } from "@/lib/constants";
-import { useTrades } from "@/hooks/useTrades";
-import { useLivePrices } from "@/hooks/useLivePrices";
 
 interface Props {
   alerts: { id: string; last_triggered: string | null; condition_type: string }[];
 }
 
 export function DashboardKPICards({ alerts }: Props) {
-  const { monthTrades, openTrades, prices } = useDashboard();
+  const { monthTrades, openTrades, prices, trades: allTrades } = useDashboard();
   const navigate = useNavigate();
 
-  // --- Today's P&L logic (merged from TodaysPnl) ---
-  const { trades: allTrades } = useTrades();
+  // --- Today's P&L logic using context data (no duplicate fetch) ---
   const today = new Date().toDateString();
-  const closedToday = allTrades.filter(
+  const closedToday = useMemo(() => allTrades.filter(
     (t) => t.status === TradeStatus.CLOSED && t.closed_at && new Date(t.closed_at).toDateString() === today
-  );
-  const openTradesAll = allTrades.filter((t) => t.status === TradeStatus.OPEN);
-  const openInstruments = useMemo(() => openTradesAll.map((t) => ({
-    symbol: t.symbol, security_id: t.security_id, exchange_segment: t.exchange_segment,
-  })), [openTradesAll]);
-  const { prices: todayPrices } = useLivePrices(openInstruments);
+  ), [allTrades, today]);
+  const openTradesAll = useMemo(() => allTrades.filter((t) => t.status === TradeStatus.OPEN), [allTrades]);
 
   const realizedToday = closedToday.reduce((acc, t) => acc + (t.pnl || 0), 0);
   const unrealizedToday = openTradesAll.reduce((acc, t) => {
-    const ltp = todayPrices[t.symbol]?.ltp || t.current_price || t.entry_price;
+    const ltp = prices[t.symbol]?.ltp || t.current_price || t.entry_price;
     const entry = t.entry_price || 0;
     const tradeType = t.trade_type === "BUY" ? "LONG" : "SHORT";
     return acc + calculatePnL(entry, ltp, t.quantity, tradeType);

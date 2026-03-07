@@ -13,6 +13,7 @@ import {
   LogOut,
   Eye,
   HelpCircle,
+  BarChart3,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,8 +24,10 @@ const mainNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
   { icon: TrendingUp, label: "Trades", path: "/trades" },
   { icon: Bell, label: "Alerts", path: "/alerts" },
+  { icon: BookOpen, label: "Journal", path: "/journal" },
   { icon: BookOpen, label: "Studies", path: "/studies" },
   { icon: Eye, label: "Watchlist", path: "/watchlist" },
+  { icon: BarChart3, label: "Fundamentals", path: "/fundamentals" },
 ];
 
 const analyticsNavItems = [

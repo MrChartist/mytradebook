@@ -1,4 +1,5 @@
-import { BarChart3, TrendingUp, TrendingDown, Target, Activity } from "lucide-react";
+import { useState, useMemo } from "react";
+import { BarChart3, TrendingUp, TrendingDown, Target, Activity, CalendarDays } from "lucide-react";
 import { useTrades } from "@/hooks/useTrades";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { useCapitalTransactions } from "@/hooks/useCapitalTransactions";
@@ -13,12 +14,44 @@ import { SetupTagPerformance } from "@/components/analytics/SetupTagPerformance"
 import { PlanGate } from "@/components/PlanGate";
 import { AITradeInsights } from "@/components/analytics/AITradeInsights";
 import { RiskOfRuinCalculator } from "@/components/analytics/RiskOfRuinCalculator";
+import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format, subDays, subMonths, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
+import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
+
+type DatePreset = "7d" | "30d" | "90d" | "mtd" | "all" | "custom";
 
 export default function Analytics() {
   const { trades, summary } = useTrades();
   const { settings } = useUserSettings();
   const { transactions: capitalTransactions } = useCapitalTransactions();
-  const closed = trades.filter((t) => t.status === "CLOSED");
+
+  const [datePreset, setDatePreset] = useState<DatePreset>("all");
+  const [customRange, setCustomRange] = useState<{ from?: Date; to?: Date }>({});
+
+  const dateRange = useMemo(() => {
+    const now = new Date();
+    switch (datePreset) {
+      case "7d": return { from: subDays(now, 7), to: now };
+      case "30d": return { from: subDays(now, 30), to: now };
+      case "90d": return { from: subDays(now, 90), to: now };
+      case "mtd": return { from: startOfMonth(now), to: endOfMonth(now) };
+      case "custom": return { from: customRange.from, to: customRange.to };
+      default: return { from: undefined, to: undefined };
+    }
+  }, [datePreset, customRange]);
+
+  const closed = useMemo(() => {
+    const all = trades.filter((t) => t.status === "CLOSED");
+    if (!dateRange.from || !dateRange.to) return all;
+    return all.filter((t) => {
+      const d = new Date(t.closed_at || t.entry_time);
+      return isWithinInterval(d, { start: dateRange.from!, end: dateRange.to! });
+    });
+  }, [trades, dateRange]);
 
   const startingCapital = (settings as any)?.starting_capital ?? 500000;
 
@@ -32,12 +65,62 @@ export default function Analytics() {
   const bestTrade = closed.length ? Math.max(...closed.map((t) => t.pnl || 0)) : 0;
   const worstTrade = closed.length ? Math.min(...closed.map((t) => t.pnl || 0)) : 0;
 
+  const presets: { label: string; value: DatePreset }[] = [
+    { label: "7D", value: "7d" },
+    { label: "30D", value: "30d" },
+    { label: "90D", value: "90d" },
+    { label: "MTD", value: "mtd" },
+    { label: "All", value: "all" },
+  ];
+
   return (
     <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-bold">Analytics</h1>
-        <p className="text-muted-foreground text-sm">Deep dive into your trading performance.</p>
-      </div>
+      <PageHeader title="Analytics" subtitle="Deep dive into your trading performance.">
+        <div className="flex items-center gap-1 bg-muted rounded-full p-0.5">
+          {presets.map((p) => (
+            <button
+              key={p.value}
+              onClick={() => setDatePreset(p.value)}
+              className={cn(
+                "px-3 py-1.5 text-xs font-medium rounded-full transition-all",
+                datePreset === p.value
+                  ? "bg-background shadow-sm text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className={cn("gap-2", datePreset === "custom" && "border-primary text-primary")}
+            >
+              <CalendarDays className="w-4 h-4" />
+              {datePreset === "custom" && customRange.from && customRange.to
+                ? `${format(customRange.from, "dd MMM")} – ${format(customRange.to, "dd MMM")}`
+                : "Custom"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="end">
+            <Calendar
+              mode="range"
+              selected={customRange.from && customRange.to ? { from: customRange.from, to: customRange.to } : undefined}
+              onSelect={(range) => {
+                if (range?.from && range?.to) {
+                  setCustomRange({ from: range.from, to: range.to });
+                  setDatePreset("custom");
+                }
+              }}
+              className="p-3 pointer-events-auto"
+              disabled={(date) => date > new Date()}
+            />
+          </PopoverContent>
+        </Popover>
+      </PageHeader>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard title="Win Rate" value={`${summary.winRate.toFixed(1)}%`} change={`${closed.length} trades`} changeType={summary.winRate >= 50 ? "profit" : "loss"} icon={Target} subtitle="Closed" href="/trades?status=CLOSED" />
@@ -90,11 +173,12 @@ export default function Analytics() {
       </PlanGate>
 
       {closed.length === 0 && (
-        <div className="surface-card p-12 text-center">
-          <BarChart3 className="w-12 h-12 mx-auto text-muted-foreground/40 mb-4" />
-          <h3 className="text-lg font-semibold mb-1">No analytics yet</h3>
-          <p className="text-muted-foreground text-sm">Close some trades to see your performance analytics.</p>
-        </div>
+        <EmptyState
+          icon={BarChart3}
+          title="No analytics yet"
+          description="Close some trades to see your performance analytics."
+          steps={["Log a trade", "Close with P&L", "View insights"]}
+        />
       )}
     </div>
   );

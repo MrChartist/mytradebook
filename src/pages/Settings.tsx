@@ -7,6 +7,7 @@ import IntegrationsSettings from "@/components/settings/IntegrationsSettings";
 import TagManagementSettings from "@/components/settings/TagManagementSettings";
 import BillingSettings from "@/components/settings/BillingSettings";
 import { useSearchParams } from "react-router-dom";
+import { PageHeader } from "@/components/ui/page-header";
 
 const settingsTabs = [
   { id: "profile", label: "Profile", icon: User },
@@ -18,21 +19,16 @@ const settingsTabs = [
 ];
 
 export default function Settings() {
-  const [searchParams] = useSearchParams();
-  const defaultTab = settingsTabs.some(t => t.id === searchParams.get("tab"))
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = settingsTabs.some(t => t.id === searchParams.get("tab"))
     ? searchParams.get("tab")!
     : "profile";
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-2xl lg:text-3xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">
-          Manage your account and preferences
-        </p>
-      </div>
+      <PageHeader title="Settings" subtitle="Manage your account and preferences" />
 
-      <Tabs defaultValue={defaultTab} className="w-full">
+      <Tabs value={activeTab} onValueChange={(val) => setSearchParams({ tab: val })} className="w-full">
         <TabsList className="w-full flex overflow-x-auto no-scrollbar justify-start gap-2 h-auto p-1 bg-card border border-border rounded-lg mb-6">
           {settingsTabs.map((tab) => (
             <TabsTrigger
