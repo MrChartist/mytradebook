@@ -148,38 +148,94 @@
 @layer components {
   /* ── Surface Cards ─────────────────────────────────── */
   .surface-card {
-    @apply bg-card rounded-2xl border border-border;
-    box-shadow: var(--shadow-sm), inset 0 1px 0 0 hsl(0 0% 100% / 0.06);
+    @apply bg-card rounded-[1.25rem] border border-border;
+    box-shadow: var(--shadow-sm), inset 0 1px 0 0 hsl(0 0% 100% / 0.08);
   }
 
   .surface-card-hover {
-    @apply surface-card transition-all duration-200;
+    @apply surface-card transition-all duration-300 ease-out;
   }
 
   .surface-card-hover:hover {
-    box-shadow: var(--shadow-md);
-    border-color: hsl(var(--primary) / 0.15);
+    box-shadow: var(--shadow-md), inset 0 1px 0 0 hsl(0 0% 100% / 0.1);
+    border-color: hsl(var(--primary) / 0.18);
   }
 
   /* ── Premium Card (rich, layered) ──────────────────── */
   .premium-card {
-    @apply bg-card rounded-[20px] border border-border p-6 relative overflow-hidden;
-    box-shadow: var(--shadow-sm), 0 0 0 1px hsl(var(--border) / 0.5);
+    @apply bg-card rounded-[1.25rem] border border-border p-6 relative overflow-hidden;
+    box-shadow:
+      var(--shadow-sm),
+      0 0 0 1px hsl(var(--border) / 0.4),
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.08);
+  }
+
+  .premium-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.12) 30%, hsl(0 0% 100% / 0.12) 70%, transparent 100%);
+    pointer-events: none;
   }
 
   .premium-card-hover {
-    @apply premium-card transition-all duration-300;
+    @apply premium-card transition-all duration-300 ease-out;
   }
 
   .premium-card-hover:hover {
-    box-shadow: var(--shadow-lg), 0 0 0 1px hsl(var(--primary) / 0.12), inset 0 1px 0 0 hsl(0 0% 100% / 0.1);
-    transform: translateY(-2px);
+    box-shadow:
+      var(--shadow-lg),
+      0 0 0 1px hsl(var(--primary) / 0.15),
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.12);
+    transform: translateY(-3px);
+    border-color: hsl(var(--primary) / 0.2);
   }
 
   /* ── Inner Panel (nested depth) ────────────────────── */
   .inner-panel {
     background: hsl(var(--card-inner));
-    @apply rounded-xl border border-border/50 p-3;
+    @apply rounded-xl border border-border/40 p-3;
+    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.04);
+  }
+
+  /* ── Card Corner Glows ────────────────────────────── */
+  .card-glow-profit::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, hsl(var(--profit) / 0.15) 0%, transparent 70%);
+    pointer-events: none;
+    border-radius: 50%;
+  }
+
+  .card-glow-loss::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, hsl(var(--loss) / 0.15) 0%, transparent 70%);
+    pointer-events: none;
+    border-radius: 50%;
+  }
+
+  .card-glow-primary::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, hsl(var(--primary) / 0.12) 0%, transparent 70%);
+    pointer-events: none;
+    border-radius: 50%;
   }
 
   /* ── Dot Pattern (decorative) ──────────────────────── */
