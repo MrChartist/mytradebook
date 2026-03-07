@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Sparkline } from "@/components/ui/sparkline";
 import { StockPopupCard } from "@/components/trade/StockPopupCard";
 import {
   useFundamentals,
@@ -96,6 +97,31 @@ function getFieldLabel(field: string) {
 
 function getOpLabel(op: string) {
   return FILTER_OPS.find((o) => o.value === op)?.label ?? op;
+}
+
+/* ─── Helpers ─── */
+
+/** Build a synthetic sparkline from available price anchors */
+function buildSparklineData(s: FundamentalData): number[] {
+  const points = [s.atl, s.low_52w, s.sma50, s.sma20, s.sma10, s.close].filter(
+    (v): v is number => v != null && v > 0
+  );
+  return points.length >= 2 ? points : [];
+}
+
+/** Split price into integer + decimal parts */
+function LTPDisplay({ value }: { value: number | null }) {
+  if (value == null) return <span className="text-muted-foreground">—</span>;
+  const formatted = value.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const dotIdx = formatted.lastIndexOf(".");
+  const intPart = formatted.slice(0, dotIdx);
+  const decPart = formatted.slice(dotIdx);
+  return (
+    <span className="font-mono">
+      <span className="font-bold text-[14px] text-foreground">₹{intPart}</span>
+      <span className="text-[11px] text-muted-foreground font-medium">{decPart}</span>
+    </span>
+  );
 }
 
 export default function Fundamentals() {
@@ -217,7 +243,7 @@ export default function Fundamentals() {
   }, [customFilters.length]);
 
   const SortIcon = ({ field }: { field: SortKey }) => {
-    if (sortKey !== field) return <ChevronDown className="w-3 h-3 opacity-30" />;
+    if (sortKey !== field) return <span className="text-[9px] opacity-40 ml-0.5">↕</span>;
     return sortAsc ? <ChevronUp className="w-3 h-3 text-primary" /> : <ChevronDown className="w-3 h-3 text-primary" />;
   };
 
@@ -230,7 +256,10 @@ export default function Fundamentals() {
   const SortHeader = ({ label, field }: { label: string; field: SortKey }) => (
     <button
       onClick={() => handleSort(field)}
-      className="flex items-center gap-1 text-[11px] font-semibold text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+      className={cn(
+        "flex items-center gap-0.5 text-[11px] font-semibold text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap",
+        sortKey === field && "text-foreground"
+      )}
     >
       {label}
       <SortIcon field={field} />
@@ -248,27 +277,26 @@ export default function Fundamentals() {
 
   return (
     <>
-      <SEOHead title="Stock Scanner — TradeBook" description="Scan & screen NSE stocks by fundamentals, valuation, and technicals." />
+      <SEOHead title="Fundamentals — TradeBook" description="Scan & screen NSE stocks by fundamentals, valuation, and technicals." />
 
       <div className="space-y-4">
         {/* ── Header Card ── */}
         <div className="rounded-2xl bg-card border border-border p-4 relative overflow-hidden">
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(hsl(var(--foreground)) 1px, transparent 1px)", backgroundSize: "16px 16px" }} />
           <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                <SlidersHorizontal className="w-4.5 h-4.5 text-primary" />
-              </div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-base font-bold text-foreground">Stock Scanner</h1>
-                <span className="text-xs text-muted-foreground">
-                  <span className="font-mono font-bold text-foreground">{totalCount.toLocaleString()}</span> stocks
-                </span>
-                <span className="text-muted-foreground/40">·</span>
-                <span className="text-[10px] text-muted-foreground font-medium">
-                  {isCustomMode ? `Custom (${appliedFilters.length})` : preset.label}
-                </span>
-              </div>
+            <div>
+              <h1 className="text-lg font-bold text-foreground">Fundamentals</h1>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Top NSE stocks by market cap with key metrics
+                <span className="text-muted-foreground/40 mx-1.5">·</span>
+                <span className="font-mono font-bold text-foreground">{totalCount.toLocaleString()}</span> stocks
+                {isCustomMode && appliedFilters.length > 0 && (
+                  <>
+                    <span className="text-muted-foreground/40 mx-1.5">·</span>
+                    <span className="font-medium text-primary">{appliedFilters.length} filters</span>
+                  </>
+                )}
+              </p>
             </div>
             <div className="relative w-full sm:w-64">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
@@ -288,20 +316,21 @@ export default function Fundamentals() {
         </div>
 
         {/* ── Grouped Scanner Presets ── */}
-        <div className="flex items-center gap-0.5 overflow-x-auto pb-1 scrollbar-none">
+        <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
           {PRESET_GROUPS.map((group, gi) => (
             <div key={group.key} className="flex items-center gap-0.5 shrink-0">
-              {gi > 0 && <div className="w-px h-4 bg-border mx-1 shrink-0" />}
-              <span className={cn("w-1.5 h-1.5 rounded-full shrink-0 mr-0.5", PRESET_GROUP_COLORS[group.key])} />
+              {gi > 0 && <div className="w-px h-4 bg-border mx-2 shrink-0" />}
+              <span className={cn("w-2 h-2 rounded-full shrink-0 mr-1", PRESET_GROUP_COLORS[group.key])} />
               {SCANNER_PRESETS.filter((p) => p.group === group.key).map((p) => (
                 <Button
                   key={p.id}
-                  variant={presetId === p.id ? "default" : "ghost"}
+                  variant="ghost"
                   size="sm"
                   className={cn(
-                    "h-6 text-[10px] rounded-full px-2.5 shrink-0 transition-all font-medium",
-                    presetId === p.id && "shadow-[0_0_10px_hsl(var(--primary)/0.25)]",
-                    presetId !== p.id && "text-muted-foreground"
+                    "h-7 text-[11px] rounded-none px-3 shrink-0 transition-all font-medium border-b-2",
+                    presetId === p.id
+                      ? "border-primary text-foreground bg-muted/40"
+                      : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
                   )}
                   onClick={() => handlePresetChange(p.id)}
                   title={p.description}
@@ -314,17 +343,18 @@ export default function Fundamentals() {
           {/* Saved Presets */}
           {savedPresets.length > 0 && (
             <>
-              <div className="w-px h-4 bg-border mx-1 shrink-0" />
-              <span className="w-1.5 h-1.5 rounded-full shrink-0 mr-0.5 bg-accent" />
+              <div className="w-px h-4 bg-border mx-2 shrink-0" />
+              <span className="w-2 h-2 rounded-full shrink-0 mr-1 bg-accent" />
               {savedPresets.map((sp) => (
                 <div key={sp.id} className="flex items-center gap-0 shrink-0">
                   <Button
-                    variant={presetId === `saved_${sp.id}` ? "default" : "ghost"}
+                    variant="ghost"
                     size="sm"
                     className={cn(
-                      "h-6 text-[10px] rounded-full px-2.5 transition-all font-medium",
-                      presetId === `saved_${sp.id}` && "shadow-[0_0_10px_hsl(var(--primary)/0.25)]",
-                      presetId !== `saved_${sp.id}` && "text-muted-foreground"
+                      "h-7 text-[11px] rounded-none px-3 transition-all font-medium border-b-2",
+                      presetId === `saved_${sp.id}`
+                        ? "border-primary text-foreground bg-muted/40"
+                        : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
                     )}
                     onClick={() => {
                       setAppliedFilters(sp.filters);
@@ -349,20 +379,22 @@ export default function Fundamentals() {
             </>
           )}
           {/* Custom Filter Toggle */}
-          <div className="w-px h-4 bg-border mx-1 shrink-0" />
+          <div className="w-px h-4 bg-border mx-2 shrink-0" />
           <Button
-            variant={isCustomMode ? "default" : "outline"}
+            variant="ghost"
             size="sm"
             className={cn(
-              "h-6 text-[10px] rounded-full px-2.5 shrink-0 transition-all gap-1 font-medium",
-              isCustomMode && "shadow-[0_0_10px_hsl(var(--primary)/0.25)]"
+              "h-7 text-[11px] rounded-none px-3 shrink-0 transition-all gap-1 font-medium border-b-2",
+              isCustomMode
+                ? "border-primary text-foreground bg-muted/40"
+                : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
             )}
             onClick={toggleFilterBuilder}
           >
             <SlidersHorizontal className="w-2.5 h-2.5" />
             Custom
             {isCustomMode && appliedFilters.length > 0 && (
-              <span className="ml-0.5 inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-primary-foreground text-primary text-[8px] font-bold">
+              <span className="ml-0.5 inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary text-primary-foreground text-[8px] font-bold">
                 {appliedFilters.length}
               </span>
             )}
@@ -510,17 +542,20 @@ export default function Fundamentals() {
                   <TableRow className="bg-card border-b-2 border-border sticky top-0 z-10">
                     <TableHead className="w-[170px] sticky left-0 bg-card z-20 py-2 px-3" style={{ boxShadow: "2px 0 4px -2px rgba(0,0,0,0.06)" }}>Symbol</TableHead>
                     <TableHead className="hidden md:table-cell py-2 px-3">Sector</TableHead>
-                    <TableHead className="text-right py-2 px-3"><SortHeader label="LTP" field="close" /></TableHead>
-                    <TableHead className="text-right py-2 px-3"><SortHeader label="Chg%" field="change" /></TableHead>
-                    <TableHead className="text-right hidden sm:table-cell py-2 px-3"><SortHeader label="Vol" field="volume" /></TableHead>
-                    <TableHead className="text-right hidden sm:table-cell py-2 px-3"><SortHeader label="Mkt Cap" field="market_cap" /></TableHead>
-                    <TableHead className="text-right hidden lg:table-cell py-2 px-3"><SortHeader label="P/E" field="pe_ratio" /></TableHead>
-                    <TableHead className="text-right hidden lg:table-cell py-2 px-3"><SortHeader label="P/B" field="pb_ratio" /></TableHead>
-                    <TableHead className="text-right hidden xl:table-cell py-2 px-3"><SortHeader label="ROE" field="roe" /></TableHead>
-                    <TableHead className="text-right hidden xl:table-cell py-2 px-3"><SortHeader label="Net Mgn" field="net_margin" /></TableHead>
-                    <TableHead className="text-right hidden xl:table-cell py-2 px-3"><SortHeader label="D/E" field="debt_to_equity" /></TableHead>
-                    <TableHead className="text-right hidden xl:table-cell py-2 px-3"><SortHeader label="Div%" field="dividend_yield" /></TableHead>
-                    <TableHead className="text-right hidden xl:table-cell py-2 px-3"><SortHeader label="RSI" field="rsi" /></TableHead>
+                    <TableHead className={cn("text-right py-2 px-3", sortKey === "close" && "border-b-2 border-primary")}><SortHeader label="LTP" field="close" /></TableHead>
+                    <TableHead className="py-2 px-2 w-[80px] hidden sm:table-cell text-center">
+                      <span className="text-[11px] font-semibold text-muted-foreground">Trend</span>
+                    </TableHead>
+                    <TableHead className={cn("text-right py-2 px-3", sortKey === "change" && "border-b-2 border-primary")}><SortHeader label="Chg%" field="change" /></TableHead>
+                    <TableHead className={cn("text-right hidden sm:table-cell py-2 px-3", sortKey === "volume" && "border-b-2 border-primary")}><SortHeader label="Vol" field="volume" /></TableHead>
+                    <TableHead className={cn("text-right hidden sm:table-cell py-2 px-3", sortKey === "market_cap" && "border-b-2 border-primary")}><SortHeader label="Mkt Cap" field="market_cap" /></TableHead>
+                    <TableHead className={cn("text-right hidden lg:table-cell py-2 px-3", sortKey === "pe_ratio" && "border-b-2 border-primary")}><SortHeader label="P/E" field="pe_ratio" /></TableHead>
+                    <TableHead className={cn("text-right hidden lg:table-cell py-2 px-3", sortKey === "pb_ratio" && "border-b-2 border-primary")}><SortHeader label="P/B" field="pb_ratio" /></TableHead>
+                    <TableHead className={cn("text-right hidden xl:table-cell py-2 px-3", sortKey === "roe" && "border-b-2 border-primary")}><SortHeader label="ROE" field="roe" /></TableHead>
+                    <TableHead className={cn("text-right hidden xl:table-cell py-2 px-3", sortKey === "net_margin" && "border-b-2 border-primary")}><SortHeader label="Net Mgn" field="net_margin" /></TableHead>
+                    <TableHead className={cn("text-right hidden xl:table-cell py-2 px-3", sortKey === "debt_to_equity" && "border-b-2 border-primary")}><SortHeader label="D/E" field="debt_to_equity" /></TableHead>
+                    <TableHead className={cn("text-right hidden xl:table-cell py-2 px-3", sortKey === "dividend_yield" && "border-b-2 border-primary")}><SortHeader label="Div%" field="dividend_yield" /></TableHead>
+                    <TableHead className={cn("text-right hidden xl:table-cell py-2 px-3", sortKey === "rsi" && "border-b-2 border-primary")}><SortHeader label="RSI" field="rsi" /></TableHead>
                     <TableHead className="text-right hidden 2xl:table-cell py-2 px-3">52W High</TableHead>
                     <TableHead className="text-right hidden 2xl:table-cell py-2 px-3">52W Low</TableHead>
                   </TableRow>
@@ -529,11 +564,12 @@ export default function Fundamentals() {
                   {stocks.map((s, idx) => {
                     const isPos = (s.change ?? 0) >= 0;
                     const rsiColor = s.rsi != null ? (s.rsi > 70 ? "text-loss" : s.rsi < 30 ? "text-profit" : "") : "";
+                    const sparkData = buildSparklineData(s);
                     return (
                       <TableRow
                         key={s.ticker}
                         className={cn(
-                          "cursor-pointer hover:bg-muted/40 transition-colors border-b border-border/50",
+                          "cursor-pointer transition-colors border-b border-border/50 border-l-2 border-l-transparent hover:border-l-primary hover:bg-muted/50",
                           idx % 2 === 1 && "bg-muted/30"
                         )}
                         onClick={() => setSelectedStock(s)}
@@ -545,9 +581,20 @@ export default function Fundamentals() {
                           </div>
                         </TableCell>
                         <TableCell className="hidden md:table-cell py-2 px-3">
-                          {s.sector && <span className="text-[11px] text-muted-foreground">{s.sector}</span>}
+                          {s.sector && (
+                            <span className="inline-block bg-muted/60 text-muted-foreground px-2 py-0.5 rounded text-[10px] font-medium truncate max-w-[120px]">
+                              {s.sector}
+                            </span>
+                          )}
                         </TableCell>
-                        <TableCell className="text-right font-mono font-semibold text-[13px] py-2 px-3">{formatCurrency(s.close)}</TableCell>
+                        <TableCell className="text-right py-2 px-3">
+                          <LTPDisplay value={s.close} />
+                        </TableCell>
+                        <TableCell className="py-2 px-2 hidden sm:table-cell">
+                          <div className="flex justify-center">
+                            <Sparkline data={sparkData} width={80} height={28} fill />
+                          </div>
+                        </TableCell>
                         <TableCell className="text-right py-2 px-3">
                           <span className={cn(
                             "inline-flex items-center gap-1 text-[11px] font-mono font-medium",
