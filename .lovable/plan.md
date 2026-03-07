@@ -1,58 +1,60 @@
 
 
-## Improve Instrument Selection UX Across Trades, Alerts & Studies
+# Trade Card Sharing — Individual Trade Cards
 
-### Current Pain Points
-1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
-2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
-3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
-4. **Selected state is disconnected** — after selecting, "Change" button resets everything
-5. **No keyboard navigation** — can't arrow through results or press Enter to select
-6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
-7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
+## What
+Let users share a single trade as a beautiful branded card image — showing entry/exit, P&L, R:R, tags, segment, and outcome. This complements the existing P&L summary cards (which show aggregated performance) by enabling sharing of specific winning/losing trades.
 
-### Proposed Improvements
+## Card Content
+Each trade card will display:
+- **Symbol & Segment** (e.g., RELIANCE · Equity Intraday)
+- **Direction badge** (LONG/SHORT)
+- **Entry → Exit price** with date range
+- **P&L** (absolute + percentage) in profit/loss colors
+- **Risk-Reward ratio** (if SL/targets set)
+- **Quantity, Timeframe, Setup tags**
+- **Trade outcome** (WIN/LOSS badge)
+- **"Made with TradeBook" watermark**
 
-#### 1. Unified Combobox-Style Picker (biggest UX win)
-Replace the current search input + results list with a **combobox pattern**:
-- Single input field that shows results as you type (dropdown below)
-- Recent items shown immediately on focus (before typing)
-- Favorites pinned at the top with a star
-- Arrow keys to navigate, Enter to select, Escape to close
-- Taller results area (max-h-64 instead of max-h-40)
+## Architecture
 
-#### 2. Smarter Defaults & Context
-- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
-- Remember last used exchange filter per segment in localStorage
-- Show lot size inline for F&O instruments in results
+Reuses the existing sharing infrastructure — same 3 templates (Dark Premium, Light Clean, Gradient), same `html-to-image` export pipeline, same modal UX pattern.
 
-#### 3. Improved Selected State
-- Show a compact **chip-style** selected instrument instead of the current full-width bar
-- "Change" opens the picker inline (no full reset) — preserves recent search context
-- LTP fetch button more prominent with last-fetched timestamp
+```text
+┌─────────────────────────────────────┐
+│  TradeShareModal                    │
+│  ┌───────────────────────────────┐  │
+│  │  TradeShareCard (1080×1080)   │  │
+│  │  - Symbol, direction, segment │  │
+│  │  - Entry → Exit              │  │
+│  │  - P&L hero number           │  │
+│  │  - Stats grid (R:R, qty...)  │  │
+│  │  - Tags row                  │  │
+│  │  - Watermark                 │  │
+│  └───────────────────────────────┘  │
+│  [ Template selector ]              │
+│  [ Download PNG ] [ Copy ]          │
+└─────────────────────────────────────┘
+```
 
-#### 4. Keyboard Navigation in Search Results
-- Add `onKeyDown` handler to search input
-- ArrowUp/ArrowDown to highlight results
-- Enter to select highlighted item
-- Track `highlightedIndex` state
+## New / Modified Files
 
-#### 5. Option Chain Quick Access
-- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
-- Make the chain component more compact — remove redundant labels
+| File | Action |
+|------|--------|
+| `src/components/sharing/TradeShareModal.tsx` | **Create** — Modal with template selector, preview, download/copy actions. Accepts a `Trade` prop. |
+| `src/components/sharing/TradeShareCardTemplates.tsx` | **Create** — 3 card templates (Dark, Light, Gradient) rendering individual trade data with inline styles. |
+| `src/components/modals/TradeDetailActions.tsx` | **Edit** — Add a "Share" icon button alongside existing actions. |
+| `src/components/sharing/ShareCardTemplates.tsx` | Minor refactor — extract shared helpers (`fmt`, `watermark`, `statBox`) into a shared utils to reuse across both P&L and Trade cards. |
 
-#### 6. Exchange Filter as Chips (not buttons)
-- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
+## Integration Point
+The share button goes inside `TradeDetailActions.tsx` (visible in the trade detail modal). When clicked, it opens `TradeShareModal` with the current trade data. Only shown for CLOSED trades (since open trades don't have final P&L).
 
-### Files to Modify
-- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
-- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
-
-### Implementation Order
-1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
-2. Increase results area height and show lot size for F&O
-3. Replace exchange filter buttons with compact chips
-4. Add "remember last exchange" per segment
-5. Improve selected state with chip-style display
-6. Add focus-triggered recent items display
+## Data Mapping (Trade → Card)
+All data comes directly from the `Trade` type — no new hook needed:
+- `trade.symbol`, `trade.segment`, `trade.trade_type`
+- `trade.entry_price`, `trade.exit_price`, `trade.quantity`
+- `trade.pnl`, `trade.pnl_percent`
+- `trade.stop_loss`, `trade.targets` (for R:R calculation)
+- `trade.created_at`, `trade.closed_at` (date range)
+- Tags from `useTradeTags(trade.id)`
 
