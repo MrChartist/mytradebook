@@ -193,6 +193,7 @@ export default function Fundamentals() {
   const preset = SCANNER_PRESETS.find((p) => p.id === presetId) ?? SCANNER_PRESETS[0];
 
   const activeFilters = isCustomMode ? appliedFilters : preset.filters;
+  const activeRawFilters = isCustomMode ? undefined : preset.rawFilters;
 
   const { data: result, isLoading, isFetching } = useFundamentals({
     limit: pageSize,
@@ -200,6 +201,7 @@ export default function Fundamentals() {
     sortBy: isCustomMode ? sortKey : (preset.sortBy || sortKey),
     sortOrder: isCustomMode ? (sortAsc ? "asc" : "desc") : (preset.sortOrder || (sortAsc ? "asc" : "desc")),
     filters: activeFilters,
+    rawFilters: activeRawFilters,
   });
 
   const stocks = useMemo(() => {
