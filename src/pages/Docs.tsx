@@ -417,20 +417,38 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     {sidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
                   </button>
                 </div>
-                <ScrollArea className="h-[calc(100vh-9rem)]">
+                {/* Search filter */}
+                {!sidebarCollapsed && (
+                  <div className="px-3 mb-3">
+                    <div className="relative">
+                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/50" />
+                      <input
+                        type="text"
+                        value={sidebarSearch}
+                        onChange={(e) => setSidebarSearch(e.target.value)}
+                        placeholder="Filter sections…"
+                        className="w-full h-8 pl-8 pr-3 rounded-lg bg-muted/40 border border-border/30 text-xs text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+                      />
+                    </div>
+                  </div>
+                )}
+                <ScrollArea className="h-[calc(100vh-12rem)]">
                   <nav className={cn(!sidebarCollapsed && "pr-4")}>
-                    {sidebarGroups.map((group, gi) => (
+                    {sidebarGroups.map((group, gi) => {
+                      const groupSections = filteredSections.filter((s) => group.ids.includes(s.id));
+                      if (groupSections.length === 0) return null;
+                      return (
                       <div key={group.label}>
                         {gi > 0 && !sidebarCollapsed && <Separator className="my-2 mx-3" />}
                         {gi > 0 && sidebarCollapsed && <Separator className="my-2" />}
                         {!sidebarCollapsed && (
                           <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground/50 px-3 py-1.5">{group.label}</p>
                         )}
-                        {SECTIONS.filter((s) => group.ids.includes(s.id)).map((s) => {
+                        {groupSections.map((s) => {
                           const btn = (
                             <button
                               key={s.id}
-                              onClick={() => scrollTo(s.id)}
+                              onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
                               className={cn(
                                 "w-full flex items-center rounded-lg text-sm transition-all duration-200 text-left relative hover:translate-x-0.5",
                                 sidebarCollapsed ? "justify-center p-2.5" : "gap-2.5 px-3 py-2.5",
@@ -462,7 +480,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                           return btn;
                         })}
                       </div>
-                    ))}
+                      );
+                    })}
                   </nav>
                 </ScrollArea>
               </div>
