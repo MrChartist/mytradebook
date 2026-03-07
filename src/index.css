@@ -426,3 +426,7 @@
 .docs-bw .docs-accent-bar {
   background: hsl(var(--foreground));
 }
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

@@ -17,6 +17,8 @@ import {
 import { Calendar as CalendarUI } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format, subDays } from "date-fns";
+import { toast } from "sonner";
+import { tradesToCSV, downloadCSV } from "@/lib/csv-export";
 
 import { useJournalAnalytics, useTradesWithMistakes, type JournalFilters } from "@/hooks/useJournalAnalytics";
 import { JournalSummaryCards } from "@/components/journal/JournalSummaryCards";
@@ -159,7 +161,19 @@ export default function Journal() {
           )}
 
           {/* Export */}
-          <Button variant="outline" className="border-border">
+          <Button
+            variant="outline"
+            className="border-border"
+            onClick={() => {
+              if (!analytics.trades?.length) {
+                toast.error("No trades to export");
+                return;
+              }
+              const csv = tradesToCSV(analytics.trades as any);
+              downloadCSV(csv, `journal-export-${format(new Date(), "yyyy-MM-dd")}.csv`);
+              toast.success("Journal exported successfully");
+            }}
+          >
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>

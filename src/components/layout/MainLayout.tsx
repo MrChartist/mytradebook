@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Sidebar } from "./Sidebar";
 import { MobileBottomNav } from "./MobileBottomNav";
+import { PageBreadcrumbs } from "./PageBreadcrumbs";
 import { SidebarProvider, useSidebarContext } from "@/contexts/SidebarContext";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useUserSettings } from "@/hooks/useUserSettings";
@@ -74,7 +75,10 @@ function MainLayoutInner({ children }: MainLayoutProps) {
             </span>
           </div>
         )}
-        <div className="p-4 lg:p-6 pb-20 lg:pb-6">{children}</div>
+        <div className="p-4 lg:p-6 pb-20 lg:pb-6">
+          <PageBreadcrumbs />
+          {children}
+        </div>
       </main>
       <MobileBottomNav />
     </div>

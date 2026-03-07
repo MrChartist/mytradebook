@@ -17,10 +17,10 @@ interface MetricItem {
 export function DashboardMonthlyMetrics() {
   const { trades, selectedMonth } = useDashboard();
 
-  const monthStart = startOfMonth(selectedMonth);
-  const monthEnd = endOfMonth(selectedMonth);
-  const prevMonthStart = startOfMonth(subMonths(selectedMonth, 1));
-  const prevMonthEnd = endOfMonth(subMonths(selectedMonth, 1));
+  const monthStart = selectedMonth ? startOfMonth(selectedMonth) : null;
+  const monthEnd = selectedMonth ? endOfMonth(selectedMonth) : null;
+  const prevMonthStart = selectedMonth ? startOfMonth(subMonths(selectedMonth, 1)) : null;
+  const prevMonthEnd = selectedMonth ? endOfMonth(subMonths(selectedMonth, 1)) : null;
 
   const getMonthClosed = (start: Date, end: Date) =>
     trades.filter((t) => {
@@ -29,8 +29,8 @@ export function DashboardMonthlyMetrics() {
       return d >= start && d <= end;
     });
 
-  const current = useMemo(() => getMonthClosed(monthStart, monthEnd), [trades, monthStart, monthEnd]);
-  const prev = useMemo(() => getMonthClosed(prevMonthStart, prevMonthEnd), [trades, prevMonthStart, prevMonthEnd]);
+  const current = useMemo(() => monthStart && monthEnd ? getMonthClosed(monthStart, monthEnd) : trades.filter(t => t.status === "CLOSED"), [trades, monthStart, monthEnd]);
+  const prev = useMemo(() => prevMonthStart && prevMonthEnd ? getMonthClosed(prevMonthStart, prevMonthEnd) : [], [trades, prevMonthStart, prevMonthEnd]);
 
   const calcMetrics = (closed: typeof current) => {
     const wins = closed.filter((t) => (t.pnl || 0) > 0);
@@ -76,7 +76,7 @@ export function DashboardMonthlyMetrics() {
           <div>
             <h3 className="font-semibold">Monthly Performance</h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              {format(monthStart, "dd MMM")} – {format(monthEnd, "dd MMM yyyy")}
+              {monthStart && monthEnd ? `${format(monthStart, "dd MMM")} – ${format(monthEnd, "dd MMM yyyy")}` : "All time"}
             </p>
           </div>
         </div>
