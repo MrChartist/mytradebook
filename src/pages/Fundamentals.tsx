@@ -109,17 +109,29 @@ function buildSparklineData(s: FundamentalData): number[] {
   return points.length >= 2 ? points : [];
 }
 
-/** Split price into integer + decimal parts */
-function LTPDisplay({ value }: { value: number | null }) {
+/** Split price into integer + decimal parts with visual hierarchy */
+function LTPDisplay({ value, change }: { value: number | null; change?: number | null }) {
   if (value == null) return <span className="text-muted-foreground">—</span>;
   const formatted = value.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const dotIdx = formatted.lastIndexOf(".");
   const intPart = formatted.slice(0, dotIdx);
   const decPart = formatted.slice(dotIdx);
+
+  const isUp = change != null && change > 0;
+  const isDown = change != null && change < 0;
+
   return (
-    <span className="font-mono">
-      <span className="font-bold text-[14px] text-foreground">₹{intPart}</span>
-      <span className="text-[11px] text-muted-foreground font-medium">{decPart}</span>
+    <span className="inline-flex items-baseline gap-[1px] font-mono tabular-nums group/ltp">
+      <span className="text-[10px] text-muted-foreground/70 font-normal mr-[1px]">₹</span>
+      <span className={cn(
+        "font-semibold text-[13.5px] tracking-tight transition-colors",
+        isUp && "text-profit",
+        isDown && "text-loss",
+        !isUp && !isDown && "text-foreground"
+      )}>
+        {intPart}
+      </span>
+      <span className="text-[10.5px] text-muted-foreground/60 font-medium">{decPart}</span>
     </span>
   );
 }
@@ -588,7 +600,7 @@ export default function Fundamentals() {
                           )}
                         </TableCell>
                         <TableCell className="text-right py-2 px-3">
-                          <LTPDisplay value={s.close} />
+                          <LTPDisplay value={s.close} change={s.change} />
                         </TableCell>
                         <TableCell className="py-2 px-2 hidden sm:table-cell">
                           <div className="flex justify-center">
