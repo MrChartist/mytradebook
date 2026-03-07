@@ -37,6 +37,7 @@ type ScannerPreset = {
   label: string;
   description: string;
   filters: ScanFilter[];
+  rawFilters?: unknown[];
   sortBy?: string;
   sortOrder?: "asc" | "desc";
   group: "cap" | "fundamental" | "technical" | "price" | "volume";
@@ -64,12 +65,12 @@ const SCANNER_PRESETS: ScannerPreset[] = [
   // ── Price Action ──
   { id: "top_gainers", label: "Top Gainers", description: "Biggest % gainers today", filters: [{ field: "change", op: "greater", value: 2 }], sortBy: "change", sortOrder: "desc", group: "price" },
   { id: "top_losers", label: "Top Losers", description: "Biggest % losers today", filters: [{ field: "change", op: "less", value: -2 }], sortBy: "change", sortOrder: "asc", group: "price" },
-  { id: "52w_high", label: "52W High", description: "At or near 52-week high", filters: [{ field: "Perf.W", op: "greater", value: 0 }], sortBy: "change", sortOrder: "desc", group: "price" },
-  { id: "52w_low", label: "52W Low", description: "At or near 52-week low", filters: [{ field: "Perf.Y", op: "less", value: -40 }], sortBy: "change", sortOrder: "asc", group: "price" },
-  { id: "ath_zone", label: "All-Time High", description: "Near ATH — lifetime highs", filters: [{ field: "Perf.1M", op: "greater", value: 5 }, { field: "Perf.3M", op: "greater", value: 10 }, { field: "Perf.Y", op: "greater", value: 20 }], sortBy: "change", sortOrder: "desc", group: "price" },
-  { id: "atl_zone", label: "All-Time Low", description: "Near ATL — lifetime lows", filters: [{ field: "Perf.Y", op: "less", value: -60 }], sortBy: "change", sortOrder: "asc", group: "price" },
-  { id: "near_day_high", label: "Near Day High", description: "Strong intraday — change > 3%", filters: [{ field: "change", op: "greater", value: 3 }], sortBy: "change", sortOrder: "desc", group: "price" },
-  { id: "near_day_low", label: "Near Day Low", description: "Weak intraday — change < -3%", filters: [{ field: "change", op: "less", value: -3 }], sortBy: "change", sortOrder: "asc", group: "price" },
+  { id: "52w_high", label: "52W High", description: "Within 3% of 52-week high", filters: [], rawFilters: [{ left: "close", operation: "egreater", right: "price_52_week_high*0.97" }], sortBy: "change", sortOrder: "desc", group: "price" },
+  { id: "52w_low", label: "52W Low", description: "Within 3% of 52-week low", filters: [], rawFilters: [{ left: "close", operation: "eless", right: "price_52_week_low*1.03" }], sortBy: "change", sortOrder: "asc", group: "price" },
+  { id: "ath_zone", label: "All-Time High", description: "Within 5% of all-time high", filters: [], rawFilters: [{ left: "close", operation: "egreater", right: "High.All*0.95" }], sortBy: "change", sortOrder: "desc", group: "price" },
+  { id: "atl_zone", label: "All-Time Low", description: "Within 10% of all-time low", filters: [], rawFilters: [{ left: "close", operation: "eless", right: "Low.All*1.10" }], sortBy: "change", sortOrder: "asc", group: "price" },
+  { id: "near_day_high", label: "Near Day High", description: "Within 1% of day high", filters: [], rawFilters: [{ left: "close", operation: "egreater", right: "High.D*0.99" }], sortBy: "change", sortOrder: "desc", group: "price" },
+  { id: "near_day_low", label: "Near Day Low", description: "Within 1% of day low", filters: [], rawFilters: [{ left: "close", operation: "eless", right: "Low.D*1.01" }], sortBy: "change", sortOrder: "asc", group: "price" },
   { id: "penny_stocks", label: "Penny Stocks", description: "Price < ₹50", filters: [{ field: "close", op: "less", value: 50 }, { field: "close", op: "greater", value: 1 }], sortBy: "change", sortOrder: "desc", group: "price" },
   { id: "blue_chip", label: "Blue Chip", description: "Price > ₹1,000, Large cap", filters: [{ field: "close", op: "greater", value: 1000 }, { field: "market_cap_basic", op: "greater", value: 2e11 }], sortBy: "change", sortOrder: "desc", group: "price" },
 
@@ -86,7 +87,7 @@ const SCANNER_PRESETS: ScannerPreset[] = [
   { id: "strong_momentum", label: "Strong Rally", description: "+5% weekly, +15% monthly", filters: [{ field: "Perf.W", op: "greater", value: 5 }, { field: "Perf.1M", op: "greater", value: 15 }], sortBy: "change", sortOrder: "desc", group: "technical" },
   { id: "oversold", label: "Oversold RSI", description: "RSI < 30", filters: [{ field: "RSI", op: "less", value: 30 }, { field: "RSI", op: "greater", value: 0 }], sortBy: "rsi", sortOrder: "asc", group: "technical" },
   { id: "overbought", label: "Overbought RSI", description: "RSI > 70", filters: [{ field: "RSI", op: "greater", value: 70 }], sortBy: "rsi", sortOrder: "desc", group: "technical" },
-  { id: "above_sma50", label: "Above SMA 50", description: "Price > 50-day SMA", filters: [{ field: "Perf.1M", op: "greater", value: 0 }, { field: "RSI", op: "greater", value: 50 }], sortBy: "change", sortOrder: "desc", group: "technical" },
+  { id: "above_sma50", label: "Above SMA 50", description: "Price > 50-day SMA", filters: [], rawFilters: [{ left: "close", operation: "egreater", right: "SMA50" }], sortBy: "change", sortOrder: "desc", group: "technical" },
   { id: "low_beta", label: "Low Beta", description: "Beta < 0.8 (defensive)", filters: [{ field: "beta_1_year", op: "less", value: 0.8 }, { field: "beta_1_year", op: "greater", value: 0 }], sortBy: "change", sortOrder: "desc", group: "technical" },
   { id: "high_beta", label: "High Beta", description: "Beta > 1.5 (aggressive)", filters: [{ field: "beta_1_year", op: "greater", value: 1.5 }], sortBy: "change", sortOrder: "desc", group: "technical" },
   { id: "high_atr", label: "High Volatility", description: "ATR-based volatile movers", filters: [{ field: "ATR", op: "greater", value: 5 }, { field: "change", op: "greater", value: 1 }], sortBy: "change", sortOrder: "desc", group: "technical" },
@@ -192,6 +193,7 @@ export default function Fundamentals() {
   const preset = SCANNER_PRESETS.find((p) => p.id === presetId) ?? SCANNER_PRESETS[0];
 
   const activeFilters = isCustomMode ? appliedFilters : preset.filters;
+  const activeRawFilters = isCustomMode ? undefined : preset.rawFilters;
 
   const { data: result, isLoading, isFetching } = useFundamentals({
     limit: pageSize,
@@ -199,6 +201,7 @@ export default function Fundamentals() {
     sortBy: isCustomMode ? sortKey : (preset.sortBy || sortKey),
     sortOrder: isCustomMode ? (sortAsc ? "asc" : "desc") : (preset.sortOrder || (sortAsc ? "asc" : "desc")),
     filters: activeFilters,
+    rawFilters: activeRawFilters,
   });
 
   const stocks = useMemo(() => {
