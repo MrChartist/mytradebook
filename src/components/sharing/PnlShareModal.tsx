@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { toPng } from "html-to-image";
 import { Download, Copy, Share2, Check } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -25,8 +25,21 @@ export function PnlShareModal({ trigger, defaultPeriod = "today" }: PnlShareModa
   const [template, setTemplate] = useState<TemplateId>("dark");
   const [isExporting, setIsExporting] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [scale, setScale] = useState(0.5);
   const cardRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const data = useShareCardData(period);
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const obs = new ResizeObserver((entries) => {
+      const w = entries[0]?.contentRect.width || 500;
+      setScale(w / 1080);
+    });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   const generateImage = useCallback(async () => {
     if (!cardRef.current) return null;
@@ -117,25 +130,21 @@ export function PnlShareModal({ trigger, defaultPeriod = "today" }: PnlShareModa
           </div>
 
           {/* Preview — scaled down to fit */}
-          <div className="rounded-xl border bg-muted/30 p-3 overflow-hidden">
-            <div style={{ width: "100%", aspectRatio: "1/1", position: "relative" }}>
+          <div ref={wrapperRef} className="rounded-xl border bg-muted/30 p-3 overflow-hidden">
+            <div style={{ width: "100%", aspectRatio: "1/1", position: "relative", overflow: "hidden" }}>
               <div
                 ref={cardRef}
                 style={{
                   width: 1080,
                   height: 1080,
-                  transform: "scale(var(--preview-scale))",
+                  transform: `scale(${scale})`,
                   transformOrigin: "top left",
                   position: "absolute",
                   top: 0,
                   left: 0,
-                  // --preview-scale set via parent width
                 }}
-                className="[--preview-scale:calc(100cqw/1080)]"
               >
-                <div style={{ containerType: "inline-size", width: "100%", height: "100%" }}>
-                  <ShareCard template={template} data={data} />
-                </div>
+                <ShareCard template={template} data={data} />
               </div>
             </div>
           </div>
