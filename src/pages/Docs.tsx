@@ -58,6 +58,8 @@ const SECTIONS = [
   { id: "getting-started", label: "Getting Started", icon: Play },
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "trade-management", label: "Trade Management", icon: CandlestickChart },
+  { id: "csv-import", label: "CSV Import", icon: Upload },
+  { id: "trade-templates", label: "Trade Templates", icon: FileText },
   { id: "alerts", label: "Alerts System", icon: Bell },
   { id: "studies", label: "Studies & Research", icon: BookOpen },
   { id: "watchlists", label: "Watchlists", icon: Eye },
@@ -72,6 +74,8 @@ const SECTIONS = [
   { id: "shortcuts", label: "Keyboard Shortcuts", icon: Keyboard },
   { id: "pwa", label: "Mobile & PWA", icon: Smartphone },
   { id: "settings", label: "Settings", icon: Settings },
+  { id: "faq", label: "FAQ & Troubleshooting", icon: MessageSquare },
+  { id: "changelog", label: "Changelog & Roadmap", icon: RefreshCw },
 ];
 
 function FeatureList({ items }: { items: string[] }) {
@@ -113,6 +117,23 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
       </div>
       <div className="p-7 pt-0">
         <div className="[&>p]:text-[14px] [&>p]:leading-relaxed [&>p]:max-w-prose">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+function VideoPlaceholder({ title, duration }: { title: string; duration: string }) {
+  return (
+    <div className="my-6 rounded-2xl border border-border/40 bg-card overflow-hidden group cursor-pointer hover:border-primary/40 transition-all">
+      <div className="relative bg-gradient-to-br from-muted/50 to-muted/20 flex items-center justify-center py-16">
+        <div className="absolute inset-0 dot-pattern opacity-20" />
+        <div className="relative flex flex-col items-center gap-3">
+          <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <Play className="w-7 h-7 text-primary ml-1" />
+          </div>
+          <p className="text-sm font-semibold text-foreground">{title}</p>
+          <span className="text-[10px] text-muted-foreground bg-muted/50 rounded-full px-3 py-1">{duration} · Coming Soon</span>
+        </div>
       </div>
     </div>
   );
@@ -197,9 +218,10 @@ export default function Docs() {
   // Sidebar group separators
   const sidebarGroups = [
     { label: "Getting Started", ids: ["getting-started"] },
-    { label: "Core Features", ids: ["dashboard", "trade-management", "alerts", "studies", "watchlists", "journal"] },
+    { label: "Core Features", ids: ["dashboard", "trade-management", "csv-import", "trade-templates", "alerts", "studies", "watchlists", "journal"] },
     { label: "Advanced", ids: ["analytics", "calendar", "mistakes", "fundamentals", "reports"] },
     { label: "Settings & Tools", ids: ["integrations", "ai-integration", "shortcuts", "pwa", "settings"] },
+    { label: "Help", ids: ["faq", "changelog"] },
   ];
 
   return (
