@@ -1,58 +1,40 @@
 
 
-## Improve Instrument Selection UX Across Trades, Alerts & Studies
+# Update Landing Page Features Section
 
-### Current Pain Points
-1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
-2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
-3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
-4. **Selected state is disconnected** — after selecting, "Change" button resets everything
-5. **No keyboard navigation** — can't arrow through results or press Enter to select
-6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
-7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
+## What's Changing
+Replace the "Trailing Stop Loss" and "CSV Import/Export" feature cards with two new cards reflecting the app's actual standout features: **Stock Screener** (Fundamentals page) and **Smart Scanner Presets**. These are real, built features that deserve landing page spotlight.
 
-### Proposed Improvements
+## Changes in `src/components/landing/FeaturesSection.tsx`
 
-#### 1. Unified Combobox-Style Picker (biggest UX win)
-Replace the current search input + results list with a **combobox pattern**:
-- Single input field that shows results as you type (dropdown below)
-- Recent items shown immediately on focus (before typing)
-- Favorites pinned at the top with a star
-- Arrow keys to navigate, Enter to select, Escape to close
-- Taller results area (max-h-64 instead of max-h-40)
+### 1. Replace feature entries
+- **Remove**: "Trailing Stop Loss" (no `previewKey`, generic) and "CSV Import/Export" (low-impact)
+- **Add**: 
+  - **Stock Screener** — `icon: TrendingUp`, large card (`md:col-span-4`), description: "Screen 500+ NSE stocks with live fundamentals — P/E, ROE, market cap, technicals, and more. One-tap deep dives into any stock.", `previewKey: "screener"`
+  - **Smart Scanner** — `icon: Filter`, small card, description: "Pre-built scans for Top Gainers, Losers, 52W Highs, undervalued gems, and momentum plays. Save custom filter combos.", `previewKey: "scanner"`
 
-#### 2. Smarter Defaults & Context
-- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
-- Remember last used exchange filter per segment in localStorage
-- Show lot size inline for F&O instruments in results
+### 2. Reorder features for better flow
+1. Smart Journal (large) — kept
+2. Stock Screener (large, NEW) — moved up for impact  
+3. Deep Analytics — kept
+4. Real-Time Alerts — kept
+5. Smart Scanner (NEW)
+6. AI Trade Insights (large) — kept
+7. Watchlist & Scanner → rename to just "Watchlist" since scanner is now separate
+8. Broker Integration — kept
+9. Rules Engine — kept
+10. Telegram Bot — kept
+11. Position Sizing — kept
 
-#### 3. Improved Selected State
-- Show a compact **chip-style** selected instrument instead of the current full-width bar
-- "Change" opens the picker inline (no full reset) — preserves recent search context
-- LTP fetch button more prominent with last-fetched timestamp
+### 3. Add two new mini-preview components
 
-#### 4. Keyboard Navigation in Search Results
-- Add `onKeyDown` handler to search input
-- ArrowUp/ArrowDown to highlight results
-- Enter to select highlighted item
-- Track `highlightedIndex` state
+**ScreenerMiniPreview**: A compact stock table showing 3 rows (RELIANCE, TCS, INFY) with columns for LTP, Change%, and P/E — mimicking the actual Fundamentals page layout.
 
-#### 5. Option Chain Quick Access
-- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
-- Make the chain component more compact — remove redundant labels
+**ScannerMiniPreview**: Show 3 preset pills (Top Gainers, Undervalued, Momentum) with a "12 custom presets saved" note below.
 
-#### 6. Exchange Filter as Chips (not buttons)
-- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
+### 4. Update previewMap
+Add `screener` and `scanner` entries.
 
-### Files to Modify
-- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
-- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
-
-### Implementation Order
-1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
-2. Increase results area height and show lot size for F&O
-3. Replace exchange filter buttons with compact chips
-4. Add "remember last exchange" per segment
-5. Improve selected state with chip-style display
-6. Add focus-triggered recent items display
+## File to Edit
+- `src/components/landing/FeaturesSection.tsx`
 
