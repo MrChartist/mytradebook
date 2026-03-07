@@ -103,7 +103,7 @@ export default function Landing() {
       <HeroSection />
 
       {/* ── Trust Strip + Stats ───────────────────────────── */}
-      <section className="py-20 bg-muted/10 dot-pattern" aria-label="Trust and statistics">
+      <section className="py-16 bg-muted/10 dot-pattern" aria-label="Trust and statistics">
         <div className="max-w-5xl mx-auto px-6">
           <p className="text-center text-xs text-muted-foreground uppercase tracking-[0.18em] font-semibold mb-8">Trusted by 1,200+ traders across Indian markets</p>
           <div className="flex items-center justify-center gap-12 sm:gap-20 flex-wrap">
@@ -116,9 +116,9 @@ export default function Landing() {
           <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.2)] to-transparent my-10" />
           <div className="flex items-center justify-center gap-10 sm:gap-20 flex-wrap">
             {[{ ref: s3.ref, value: s3.count, suffix: "", label: "Market Segments" }, { ref: s4.ref, value: s4.count, suffix: "+", label: "Analytics Metrics" }, { ref: s5.ref, value: s5.count, suffix: "+", label: "Trades Tracked" }].map((stat) => (
-              <div key={stat.label} className="text-center"><div className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[hsl(var(--tb-accent))]" ref={stat.ref}>{stat.value}{stat.suffix}</div><div className="text-[10px] text-muted-foreground uppercase tracking-[0.14em] mt-1.5 font-medium">{stat.label}</div></div>
+              <div key={stat.label} className="text-center"><div className="text-3xl sm:text-4xl font-extrabold font-mono tracking-tight text-[hsl(var(--tb-accent))]" ref={stat.ref}>{stat.value}{stat.suffix}</div><div className="text-[11px] text-muted-foreground uppercase tracking-[0.14em] mt-1.5 font-medium">{stat.label}</div></div>
             ))}
-            <div className="text-center"><div className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[hsl(var(--tb-accent))]">24/7</div><div className="text-[10px] text-muted-foreground uppercase tracking-[0.14em] mt-1.5 font-medium">Cloud Access</div></div>
+            <div className="text-center"><div className="text-3xl sm:text-4xl font-extrabold font-mono tracking-tight text-[hsl(var(--tb-accent))]">24/7</div><div className="text-[11px] text-muted-foreground uppercase tracking-[0.14em] mt-1.5 font-medium">Cloud Access</div></div>
           </div>
         </div>
       </section>
