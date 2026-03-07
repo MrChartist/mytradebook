@@ -35,7 +35,7 @@ function holdingDuration(entry: string, exit: string | null): string | null {
 function getTargetsHit(trade: Trade): number {
   if (!trade.targets) return 0;
   try {
-    const targets = trade.targets as TradeTarget[];
+    const targets = trade.targets as unknown as TradeTarget[];
     return targets.filter((t) => t.hit).length;
   } catch { return 0; }
 }
@@ -43,7 +43,7 @@ function getTargetsHit(trade: Trade): number {
 function getTargetsTotal(trade: Trade): number {
   if (!trade.targets) return 0;
   try {
-    return (trade.targets as TradeTarget[]).length;
+    return (trade.targets as unknown as TradeTarget[]).length;
   } catch { return 0; }
 }
 
