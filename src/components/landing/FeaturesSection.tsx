@@ -25,7 +25,7 @@ const features = [
 /* Mini Preview Components */
 function JournalMiniPreview() {
   return (
-    <div className="mt-6 rounded-xl border border-border/20 bg-muted/15 p-4 space-y-3">
+    <div className="mt-6 rounded-xl border border-border/15 bg-muted/10 p-4 space-y-3">
       <div className="flex items-center gap-2 flex-wrap">
         {["Breakout", "High Vol", "Swing"].map((tag) => (
           <span key={tag} className="px-2.5 py-1 rounded-full bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] text-[10px] font-semibold">{tag}</span>
@@ -33,7 +33,7 @@ function JournalMiniPreview() {
       </div>
       <div className="grid grid-cols-3 gap-2">
         {[{ label: "Win Rate", value: "68%" }, { label: "Avg Win", value: "₹12,450" }, { label: "P. Factor", value: "2.14" }].map((m) => (
-          <div key={m.label} className="rounded-lg bg-card/80 border border-border/20 p-2 text-center">
+          <div key={m.label} className="rounded-lg bg-card/80 border border-border/15 p-2 text-center">
             <p className="text-[8px] text-muted-foreground uppercase tracking-wider">{m.label}</p>
             <p className="text-xs font-bold font-mono text-foreground">{m.value}</p>
           </div>
@@ -55,7 +55,7 @@ function AlertMiniPreview() {
   return (
     <div className="mt-5 space-y-2">
       {[{ symbol: "NIFTY", condition: "Price > 24,300", status: "Active", active: true }, { symbol: "RELIANCE", condition: "% Change > 3%", status: "Triggered", active: false }].map((alert) => (
-        <div key={alert.symbol} className="flex items-center gap-2.5 rounded-lg border border-border/20 bg-muted/15 px-3 py-2">
+        <div key={alert.symbol} className="flex items-center gap-2.5 rounded-lg border border-border/15 bg-muted/10 px-3 py-2">
           <div className={cn("w-1.5 h-1.5 rounded-full", alert.active ? "bg-profit animate-pulse" : "bg-[hsl(var(--tb-accent))]")} />
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-semibold">{alert.symbol}</p>
@@ -70,7 +70,7 @@ function AlertMiniPreview() {
 
 function AnalyticsMiniPreview() {
   return (
-    <div className="mt-5 rounded-lg border border-border/20 bg-muted/15 p-3">
+    <div className="mt-5 rounded-lg border border-border/15 bg-muted/10 p-3">
       <div className="flex items-center justify-between mb-2">
         <span className="text-[9px] text-muted-foreground uppercase">This Week</span>
         <span className="text-[10px] font-bold text-profit font-mono">+12.4%</span>
@@ -102,7 +102,7 @@ function WatchlistMiniPreview() {
   return (
     <div className="mt-5 space-y-1.5">
       {[{ symbol: "RELIANCE", price: "₹2,945.30", change: "+1.24%", up: true }, { symbol: "NIFTY 50", price: "₹24,285", change: "+0.82%", up: true }, { symbol: "HDFCBANK", price: "₹1,612.50", change: "-0.45%", up: false }].map((t) => (
-        <div key={t.symbol} className="flex items-center justify-between rounded-lg border border-border/20 bg-muted/15 px-3 py-2">
+        <div key={t.symbol} className="flex items-center justify-between rounded-lg border border-border/15 bg-muted/10 px-3 py-2">
           <div className="flex items-center gap-2"><div className={cn("w-1 h-4 rounded-full", t.up ? "bg-profit" : "bg-loss")} /><span className="text-[10px] font-semibold">{t.symbol}</span></div>
           <div className="flex items-center gap-3"><span className="text-[10px] font-mono text-muted-foreground">{t.price}</span><span className={cn("text-[9px] font-mono font-semibold flex items-center gap-0.5", t.up ? "text-profit" : "text-loss")}>{t.up ? <ArrowUp className="w-2.5 h-2.5" /> : <ArrowDown className="w-2.5 h-2.5" />}{t.change}</span></div>
         </div>
@@ -114,7 +114,7 @@ function WatchlistMiniPreview() {
 function TelegramMiniPreview() {
   return (
     <div className="mt-5 space-y-2">
-      <div className="rounded-lg border border-border/20 bg-muted/15 p-3 relative">
+      <div className="rounded-lg border border-border/15 bg-muted/10 p-3 relative">
         <div className="flex items-center gap-2 mb-1.5"><div className="w-5 h-5 rounded-full bg-[hsl(200_85%_50%/0.12)] flex items-center justify-center"><Send className="w-2.5 h-2.5 text-[hsl(200_85%_50%)]" /></div><span className="text-[9px] font-semibold text-muted-foreground">TradeBook Bot</span></div>
         <p className="text-[10px] font-mono leading-relaxed text-foreground">📊 EOD Report: <span className="text-profit font-bold">+₹12,450</span> | 5W-2L | Win Rate 71%</p>
       </div>
@@ -125,10 +125,10 @@ function TelegramMiniPreview() {
 
 function PositionSizingMiniPreview() {
   return (
-    <div className="mt-5 rounded-lg border border-border/20 bg-muted/15 p-3 space-y-2">
+    <div className="mt-5 rounded-lg border border-border/15 bg-muted/10 p-3 space-y-2">
       <div className="grid grid-cols-3 gap-2 text-center">
         {[{ label: "Capital", value: "₹5L" }, { label: "Risk", value: "2%" }, { label: "Lot Size", value: "3 lots" }].map((m) => (
-          <div key={m.label} className="rounded-md bg-card/80 border border-border/20 py-1.5 px-1"><p className="text-[7px] text-muted-foreground uppercase tracking-wider">{m.label}</p><p className="text-[11px] font-bold font-mono text-foreground">{m.value}</p></div>
+          <div key={m.label} className="rounded-md bg-card/80 border border-border/15 py-1.5 px-1"><p className="text-[7px] text-muted-foreground uppercase tracking-wider">{m.label}</p><p className="text-[11px] font-bold font-mono text-foreground">{m.value}</p></div>
         ))}
       </div>
       <div className="flex items-center gap-1.5 text-[8px] text-muted-foreground"><Shield className="w-2.5 h-2.5" />Max risk: ₹10,000 per trade</div>
@@ -143,12 +143,12 @@ function ScreenerMiniPreview() {
     { symbol: "INFY", ltp: "₹1,856.10", change: "-0.38%", pe: "26.8", up: false },
   ];
   return (
-    <div className="mt-6 rounded-xl border border-border/20 bg-muted/15 overflow-hidden">
-      <div className="flex items-center gap-2 px-3.5 py-2 border-b border-border/15">
+    <div className="mt-6 rounded-xl border border-border/15 bg-muted/10 overflow-hidden">
+      <div className="flex items-center gap-2 px-3.5 py-2 border-b border-border/10">
         <Search className="w-3 h-3 text-muted-foreground" />
         <span className="text-[9px] text-muted-foreground">Search 500+ NSE stocks…</span>
       </div>
-      <div className="divide-y divide-border/15">
+      <div className="divide-y divide-border/10">
         <div className="grid grid-cols-4 px-3.5 py-1.5">
           {["Stock", "LTP", "Chg%", "P/E"].map((h) => (
             <span key={h} className="text-[7px] text-muted-foreground uppercase tracking-wider font-semibold">{h}</span>
@@ -178,7 +178,7 @@ function ScannerMiniPreview() {
           <span key={p} className={cn("px-2.5 py-1 rounded-full text-[9px] font-semibold transition-colors", i === 0 ? "bg-[hsl(var(--tb-accent)/0.12)] text-[hsl(var(--tb-accent))]" : "bg-muted/40 text-muted-foreground")}>{p}</span>
         ))}
       </div>
-      <div className="rounded-lg border border-border/20 bg-muted/15 px-3 py-2 flex items-center justify-between">
+      <div className="rounded-lg border border-border/15 bg-muted/10 px-3 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-profit animate-pulse" />
           <span className="text-[9px] text-muted-foreground">12 results matched</span>
@@ -196,7 +196,7 @@ function RulesEngineMiniPreview() {
   return (
     <div className="mt-5 space-y-2">
       {[{ rule: "Check market trend", checked: true }, { rule: "Set stop loss ≤ 2%", checked: true }, { rule: "Max 3 trades/day", checked: false }].map((r) => (
-        <div key={r.rule} className="flex items-center gap-2 rounded-lg border border-border/20 bg-muted/15 px-3 py-2">
+        <div key={r.rule} className="flex items-center gap-2 rounded-lg border border-border/15 bg-muted/10 px-3 py-2">
           <div className={cn("w-3.5 h-3.5 rounded border flex items-center justify-center text-[8px]", r.checked ? "bg-profit/15 border-profit/30 text-profit" : "border-border/40")}>{r.checked && <CheckCircle2 className="w-2.5 h-2.5" />}</div>
           <span className="text-[10px] text-muted-foreground">{r.rule}</span>
         </div>
@@ -228,13 +228,22 @@ export function FeaturesSection() {
           <p className="text-muted-foreground max-w-lg mx-auto text-lg leading-relaxed">From journaling to automation — tools designed by traders, for traders.</p>
         </motion.div>
 
-        <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-6 gap-4 sm:gap-5">
+        <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-6 gap-5 sm:gap-6">
           {features.map((f, i) => (
             <motion.div key={f.title} variants={fadeUp} custom={i * 0.04} className={cn(f.large ? "md:col-span-4" : "md:col-span-2")}>
-              <motion.div className="group rounded-2xl border border-border/40 bg-card/80 p-7 sm:p-8 h-full relative overflow-hidden" whileHover={{ y: -4, borderColor: "hsl(var(--tb-accent) / 0.3)" }} transition={{ duration: 0.3, ease: "easeOut" }}>
-                <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--tb-accent)/0.02)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <motion.div
+                className="group rounded-2xl border border-border/40 bg-card/80 backdrop-blur-sm p-7 sm:p-8 h-full relative overflow-hidden"
+                style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}
+                whileHover={{ y: -4, borderColor: "hsl(var(--tb-accent) / 0.3)" }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--tb-accent)/0.03)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative">
-                  <motion.div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: `${f.color.replace(")", " / 0.08)")}` }} whileHover={{ scale: 1.08, rotate: 3 }}>
+                  <motion.div
+                    className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 shadow-sm"
+                    style={{ backgroundColor: `${f.color.replace(")", " / 0.08)")}` }}
+                    whileHover={{ scale: 1.08, rotate: 3 }}
+                  >
                     <f.icon className="w-5 h-5" style={{ color: f.color }} />
                   </motion.div>
                   <h3 className="text-xl font-bold mb-1.5">{f.title}</h3>
