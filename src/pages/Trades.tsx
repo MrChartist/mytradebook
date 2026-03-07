@@ -49,6 +49,8 @@ import { SortSelect, type SortOption } from "@/components/ui/sort-select";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CsvImportModal } from "@/components/trade/CsvImportModal";
 import { tradesToCSV, downloadCSV } from "@/lib/csv-export";
+import { Sparkline } from "@/components/ui/sparkline";
+import { subDays, startOfDay, format } from "date-fns";
 
 const segmentLabels: Record<string, string> = {
   Equity_Intraday: "Intraday",
