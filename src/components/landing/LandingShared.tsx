@@ -70,7 +70,7 @@ export function MotionSection({ children, className }: { children: React.ReactNo
 /* ─── Section Label Badge ───────────────────────────────── */
 export function SectionBadge({ children }: { children: React.ReactNode }) {
   return (
-    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border/60 bg-muted/30 text-xs font-bold uppercase tracking-[0.15em] text-muted-foreground mb-5">
+    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border/60 bg-muted/30 text-[13px] font-bold uppercase tracking-[0.12em] text-muted-foreground mb-6">
       {children}
     </div>
   );

@@ -1,74 +1,58 @@
 
 
-# Landing Page Readability & Polish Refinements
+## Improve Instrument Selection UX Across Trades, Alerts & Studies
 
-Light touch-ups inspired by the reference images — cleaner spacing, better typography hierarchy, softer card treatments, and improved scanability. No structural changes.
+### Current Pain Points
+1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
+2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
+3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
+4. **Selected state is disconnected** — after selecting, "Change" button resets everything
+5. **No keyboard navigation** — can't arrow through results or press Enter to select
+6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
+7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
 
-## Changes
+### Proposed Improvements
 
-### 1. Hero Section (`src/components/landing/HeroSection.tsx`)
-- Reduce heading from `text-8xl` max to `text-7xl` for better readability on large screens
-- Increase subtitle line-height from `leading-relaxed` to `leading-[1.7]` and bump to `text-lg` minimum
-- Add more breathing room: `mb-14` on subtitle (from `mb-12`), `mb-10` on email CTA (from `mb-7`)
-- Soften the pastel gradient blobs — reduce opacity from `0.25/0.2/0.15` to `0.15/0.12/0.08`
-- Trust badges below CTA: increase gap from `gap-4` to `gap-5`, bump font to `text-[13px]`
+#### 1. Unified Combobox-Style Picker (biggest UX win)
+Replace the current search input + results list with a **combobox pattern**:
+- Single input field that shows results as you type (dropdown below)
+- Recent items shown immediately on focus (before typing)
+- Favorites pinned at the top with a star
+- Arrow keys to navigate, Enter to select, Escape to close
+- Taller results area (max-h-64 instead of max-h-40)
 
-### 2. Trust Strip (`src/pages/Landing.tsx`)
-- Reduce vertical padding from `py-20` to `py-16` — less dead space
-- Increase stat label size from `text-[10px]` to `text-[11px]` for readability
-- Add `font-mono` to stat numbers for consistency
-- Soften `dot-pattern` with lower opacity
+#### 2. Smarter Defaults & Context
+- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
+- Remember last used exchange filter per segment in localStorage
+- Show lot size inline for F&O instruments in results
 
-### 3. Features Section (`src/components/landing/FeaturesSection.tsx`)
-- Feature card descriptions: bump from `text-sm` to `text-[15px]` with `leading-relaxed`
-- Feature card titles: increase from `text-lg` to `text-xl`
-- Add `text-foreground/90` to descriptions instead of plain `text-muted-foreground` for better contrast
-- Increase card padding from `p-6 sm:p-7` to `p-7 sm:p-8`
-- Section subtitle: increase from `text-base` to `text-lg`
+#### 3. Improved Selected State
+- Show a compact **chip-style** selected instrument instead of the current full-width bar
+- "Change" opens the picker inline (no full reset) — preserves recent search context
+- LTP fetch button more prominent with last-fetched timestamp
 
-### 4. How It Works (`BelowFoldSections.tsx` — `HowItWorksSection`)
-- Step descriptions: bump to `text-[15px]` with `leading-relaxed`
-- Step titles: keep `text-xl` but add `tracking-tight`
-- Step number badge: increase slightly, add softer bg treatment
-- Card padding increase: `p-8` → `p-9`
+#### 4. Keyboard Navigation in Search Results
+- Add `onKeyDown` handler to search input
+- ArrowUp/ArrowDown to highlight results
+- Enter to select highlighted item
+- Track `highlightedIndex` state
 
-### 5. Comparison Table (`BelowFoldSections.tsx` — `ComparisonSection`)
-- Feature text: increase from `text-base` to `text-[15px]`
-- Add more vertical padding per row: `py-4` → `py-5`
-- Header: bump font size slightly for "Feature" label
+#### 5. Option Chain Quick Access
+- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
+- Make the chain component more compact — remove redundant labels
 
-### 6. Pricing Cards (`BelowFoldSections.tsx` — `PricingSection`)
-- Feature list items: bump from `text-sm` to `text-[15px]` with `leading-relaxed`
-- Description: increase to `text-[15px]`
-- Add more spacing between price and features: `mb-7` → `mb-8`
+#### 6. Exchange Filter as Chips (not buttons)
+- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
 
-### 7. Testimonials (`BelowFoldSections.tsx` — `TestimonialsSection`)
-- Featured quote: increase from `text-lg` to `text-xl` with `leading-[1.7]`
-- Smaller quotes: bump from `text-sm` to `text-[15px]`
-- Add more padding in cards: `p-7` → `p-8`, `p-9` → `p-10`
+### Files to Modify
+- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
+- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
 
-### 8. FAQ Section (`BelowFoldSections.tsx` — `FAQSection`)
-- Question text: increase from `text-sm` to `text-[15px]`
-- Answer text: increase to `text-[15px]` with `leading-[1.7]`
-- Accordion item padding: `px-5` → `px-6`
-
-### 9. Indian Markets & Final CTA
-- Body text: bump to `text-[15px] leading-[1.7]`
-- List items: bump to `text-[15px]`
-- Final CTA subtitle: `text-lg` → `text-xl`
-
-### 10. Section Badge (`LandingShared.tsx`)
-- Increase from `text-xs` to `text-[13px]` and soften tracking to `tracking-[0.12em]`
-- Add slightly more bottom margin: `mb-5` → `mb-6`
-
-### 11. Global Section Headings
-- All `text-4xl lg:text-6xl` headings: add `leading-[1.1]` for tighter but readable line height on multi-line headings
-- Increase subtitle bottom margin from `mb-5` to `mb-6`
-
-## Files to Edit
-1. `src/components/landing/HeroSection.tsx` — hero typography + spacing
-2. `src/pages/Landing.tsx` — trust strip refinements
-3. `src/components/landing/FeaturesSection.tsx` — card readability
-4. `src/components/landing/BelowFoldSections.tsx` — all below-fold sections
-5. `src/components/landing/LandingShared.tsx` — SectionBadge sizing
+### Implementation Order
+1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
+2. Increase results area height and show lot size for F&O
+3. Replace exchange filter buttons with compact chips
+4. Add "remember last exchange" per segment
+5. Improve selected state with chip-style display
+6. Add focus-triggered recent items display
 

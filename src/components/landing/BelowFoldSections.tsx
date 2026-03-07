@@ -84,21 +84,21 @@ export function HowItWorksSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>How It Works</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-tight">Three steps to{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>mastery</span></h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-base">From first trade to edge mastery — in minutes.</p>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Three steps to{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>mastery</span></h2>
+          <p className="text-muted-foreground max-w-md mx-auto text-lg">From first trade to edge mastery — in minutes.</p>
         </motion.div>
         <div className="grid md:grid-cols-3 gap-8 relative">
           {steps.map((item, i) => (
             <motion.div key={item.step} variants={fadeUp} custom={i * 0.1} className="relative">
               {i < steps.length - 1 && (<div className="hidden md:flex absolute top-16 -right-5 z-10 w-10 items-center justify-center"><ChevronRight className="w-5 h-5 text-[hsl(var(--tb-accent))] opacity-40" /></div>)}
-              <motion.div className="relative rounded-2xl border border-border/40 bg-card p-8 h-full text-center overflow-hidden" whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}>
+              <motion.div className="relative rounded-2xl border border-border/40 bg-card p-9 h-full text-center overflow-hidden" whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}>
                 <div className="absolute top-2 right-4 text-7xl font-black text-[hsl(var(--tb-accent))] opacity-[0.07] select-none">{item.step}</div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[hsl(var(--tb-accent))] mb-3">Step {item.step}</p>
                 <motion.div className="w-14 h-14 rounded-2xl bg-[hsl(var(--tb-accent)/0.06)] ring-4 ring-[hsl(var(--tb-accent)/0.04)] flex items-center justify-center mx-auto mb-6" whileHover={{ scale: 1.08, rotate: -3 }}>
                   <item.icon className="w-6 h-6 text-[hsl(var(--tb-accent))]" />
                 </motion.div>
-                <h3 className="text-xl font-bold mb-3">{item.title}</h3>
-                <p className="text-base text-muted-foreground leading-relaxed">{item.desc}</p>
+                <h3 className="text-xl font-bold mb-3 tracking-tight">{item.title}</h3>
+                <p className="text-[15px] text-foreground/80 leading-relaxed">{item.desc}</p>
               </motion.div>
             </motion.div>
           ))}
@@ -121,8 +121,8 @@ export function ComparisonSection() {
       <MotionSection className="max-w-3xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>Comparison</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-tight">Why{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>TradeBook</span>?</h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-base">See how we compare to generic trading journals.</p>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Why{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>TradeBook</span>?</h2>
+          <p className="text-muted-foreground max-w-md mx-auto text-lg">See how we compare to generic trading journals.</p>
         </motion.div>
         <motion.div variants={fadeUp} className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm">
           <div className="grid grid-cols-3 gap-0 border-b border-border/40 px-6 py-5 bg-muted/30">
@@ -131,8 +131,8 @@ export function ComparisonSection() {
             <span className="text-sm font-medium text-center text-muted-foreground/70">Others</span>
           </div>
           {comparisonFeatures.map((row, i) => (
-            <motion.div key={row.feature} variants={fadeUp} custom={i * 0.05} className={cn("grid grid-cols-3 gap-0 border-b border-border/20 last:border-0 px-6 py-4 transition-colors duration-200 hover:bg-[hsl(var(--tb-accent)/0.04)]", i % 2 === 0 ? "bg-muted/10" : "")}>
-              <span className="text-base text-foreground/90">{row.feature}</span>
+             <motion.div key={row.feature} variants={fadeUp} custom={i * 0.05} className={cn("grid grid-cols-3 gap-0 border-b border-border/20 last:border-0 px-6 py-5 transition-colors duration-200 hover:bg-[hsl(var(--tb-accent)/0.04)]", i % 2 === 0 ? "bg-muted/10" : "")}>
+              <span className="text-[15px] text-foreground/90">{row.feature}</span>
               <div className="flex justify-center">{row.tradebook === true ? <CheckCircle2 className="w-5 h-5 text-profit drop-shadow-[0_0_4px_rgba(34,197,94,0.3)]" /> : <span className="text-sm text-muted-foreground">{String(row.tradebook)}</span>}</div>
               <div className="flex justify-center">{row.others === true ? <CheckCircle2 className="w-5 h-5 text-muted-foreground/40" /> : row.others === false ? <Minus className="w-5 h-5 text-muted-foreground/30" /> : <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-destructive/10 text-destructive border border-destructive/20">{String(row.others)}</span>}</div>
             </motion.div>
@@ -154,8 +154,8 @@ export function PricingSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>Pricing</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-tight">Simple,{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>transparent</span>{" "}pricing</h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-base">One plan. All features. Pick your billing cycle.</p>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Simple,{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>transparent</span>{" "}pricing</h2>
+          <p className="text-muted-foreground max-w-md mx-auto text-lg">One plan. All features. Pick your billing cycle.</p>
         </motion.div>
         <motion.div variants={fadeUp} className="flex justify-center mb-12">
           <div className="inline-flex items-center bg-muted/50 rounded-full p-1 gap-0.5">
@@ -177,9 +177,9 @@ export function PricingSection() {
                   <span className="text-muted-foreground/70 text-sm">{plan.period}</span>
                   {plan.saveBadge && <span className="ml-2 px-2 py-0.5 rounded-full bg-profit/10 text-profit text-[10px] font-bold">{plan.saveBadge}</span>}
                 </div>
-                <p className="text-sm text-muted-foreground mb-7">{plan.description}</p>
+                <p className="text-[15px] text-muted-foreground mb-8">{plan.description}</p>
                 <ul className="space-y-3.5 flex-1 mb-4">
-                  {plan.features.map((f) => (<li key={f} className="flex items-start gap-2.5 text-sm"><CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0 mt-0.5" /><span>{f}</span></li>))}
+                  {plan.features.map((f) => (<li key={f} className="flex items-start gap-2.5 text-[15px] leading-relaxed"><CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0 mt-0.5" /><span>{f}</span></li>))}
                 </ul>
                 {plan.showAllNote && <p className="text-xs text-muted-foreground mb-6 flex items-center gap-1.5"><Sparkles className="w-3 h-3 text-[hsl(var(--tb-accent))]" /> All features included</p>}
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className={!plan.showAllNote ? "mt-5" : ""}>
@@ -205,14 +205,14 @@ export function TestimonialsSection() {
       <MotionSection className="max-w-6xl mx-auto px-6 lg:px-10">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>Testimonials</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-tight">Trusted by{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>real traders</span></h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-base">Here's what traders across India are saying.</p>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Trusted by{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>real traders</span></h2>
+          <p className="text-muted-foreground max-w-md mx-auto text-lg">Here's what traders across India are saying.</p>
         </motion.div>
         <div className="grid md:grid-cols-3 gap-7">
           <motion.div variants={fadeUp} className="md:col-span-2">
-            <motion.div className="rounded-2xl border border-foreground/10 bg-foreground text-background p-9 h-full flex flex-col dot-pattern relative overflow-hidden" whileHover={{ y: -3 }}>
+            <motion.div className="rounded-2xl border border-foreground/10 bg-foreground text-background p-10 h-full flex flex-col dot-pattern relative overflow-hidden" whileHover={{ y: -3 }}>
               <Quote className="w-10 h-10 text-background/15 mb-7" />
-              <p className="text-lg leading-relaxed flex-1 mb-7 font-medium">"<HighlightedQuote testimonial={testimonials[0]} />"</p>
+              <p className="text-xl leading-[1.7] flex-1 mb-7 font-medium">"<HighlightedQuote testimonial={testimonials[0]} />"</p>
               <div className="flex items-center gap-1.5 mb-5">{[...Array(testimonials[0].stars)].map((_, j) => (<Star key={j} className="w-4 h-4 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />))}</div>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[hsl(var(--tb-accent)/0.2)] flex items-center justify-center text-sm font-bold text-[hsl(var(--tb-accent))]">{testimonials[0].avatar}</div>
@@ -223,9 +223,9 @@ export function TestimonialsSection() {
           <div className="space-y-7">
             {[1, 2].map((idx) => (
               <motion.div key={idx} variants={fadeUp} custom={idx * 0.1}>
-                <motion.div className="rounded-2xl border border-border/40 bg-card p-7 h-full flex flex-col" whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}>
+                <motion.div className="rounded-2xl border border-border/40 bg-card p-8 h-full flex flex-col" whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}>
                   <Quote className="w-6 h-6 text-[hsl(var(--tb-accent)/0.15)] mb-4" />
-                  <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-5">"<HighlightedQuote testimonial={testimonials[idx]} />"</p>
+                  <p className="text-[15px] text-muted-foreground leading-relaxed flex-1 mb-5">"<HighlightedQuote testimonial={testimonials[idx]} />"</p>
                   <div className="flex items-center gap-1 mb-3">{[...Array(testimonials[idx].stars)].map((_, j) => (<Star key={j} className="w-3 h-3 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />))}</div>
                   <div className="flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-full bg-[hsl(var(--tb-accent)/0.08)] flex items-center justify-center text-xs font-bold text-[hsl(var(--tb-accent))]">{testimonials[idx].avatar}</div>
@@ -238,9 +238,9 @@ export function TestimonialsSection() {
         </div>
         <div className="grid md:grid-cols-3 gap-7 mt-7">
           <motion.div variants={fadeUp} custom={0.2}>
-            <motion.div className="rounded-2xl border border-border/40 bg-card p-7 h-full flex flex-col" whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}>
+            <motion.div className="rounded-2xl border border-border/40 bg-card p-8 h-full flex flex-col" whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}>
               <Quote className="w-6 h-6 text-[hsl(var(--tb-accent)/0.15)] mb-4" />
-              <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-5">"<HighlightedQuote testimonial={testimonials[3]} />"</p>
+              <p className="text-[15px] text-muted-foreground leading-relaxed flex-1 mb-5">"<HighlightedQuote testimonial={testimonials[3]} />"</p>
               <div className="flex items-center gap-1 mb-3">{[...Array(testimonials[3].stars)].map((_, j) => (<Star key={j} className="w-3 h-3 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />))}</div>
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-full bg-[hsl(var(--tb-accent)/0.08)] flex items-center justify-center text-xs font-bold text-[hsl(var(--tb-accent))]">{testimonials[3].avatar}</div>
@@ -249,9 +249,9 @@ export function TestimonialsSection() {
             </motion.div>
           </motion.div>
           <motion.div variants={fadeUp} custom={0.3} className="md:col-span-2">
-            <motion.div className="rounded-2xl border border-foreground/10 bg-foreground text-background p-9 h-full flex flex-col dot-pattern relative overflow-hidden" whileHover={{ y: -3 }}>
+            <motion.div className="rounded-2xl border border-foreground/10 bg-foreground text-background p-10 h-full flex flex-col dot-pattern relative overflow-hidden" whileHover={{ y: -3 }}>
               <Quote className="w-10 h-10 text-background/15 mb-7" />
-              <p className="text-lg leading-relaxed flex-1 mb-7 font-medium">"<HighlightedQuote testimonial={testimonials[3]} />"</p>
+              <p className="text-xl leading-[1.7] flex-1 mb-7 font-medium">"<HighlightedQuote testimonial={testimonials[3]} />"</p>
               <div className="flex items-center gap-1.5 mb-5">{[...Array(testimonials[3].stars)].map((_, j) => (<Star key={j} className="w-4 h-4 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />))}</div>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[hsl(var(--tb-accent)/0.2)] flex items-center justify-center text-sm font-bold text-[hsl(var(--tb-accent))]">{testimonials[3].avatar}</div>
@@ -263,7 +263,7 @@ export function TestimonialsSection() {
         <motion.div variants={fadeUp} custom={0.4} className="mt-7">
           <motion.div className="rounded-2xl border border-[hsl(var(--tb-accent)/0.2)] bg-[hsl(var(--tb-accent)/0.04)] p-7 flex flex-col md:flex-row md:items-center gap-6" whileHover={{ y: -2, borderColor: "hsl(var(--tb-accent) / 0.4)" }}>
             <Quote className="w-7 h-7 text-[hsl(var(--tb-accent)/0.2)] shrink-0" />
-            <p className="text-sm text-muted-foreground leading-relaxed flex-1">"<HighlightedQuote testimonial={testimonials[4]} />"</p>
+            <p className="text-[15px] text-muted-foreground leading-relaxed flex-1">"<HighlightedQuote testimonial={testimonials[4]} />"</p>
             <div className="flex items-center gap-3 shrink-0">
               <div className="flex items-center gap-1 mr-2">{[...Array(testimonials[4].stars)].map((_, j) => (<Star key={j} className="w-3.5 h-3.5 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />))}</div>
               <div className="w-8 h-8 rounded-full bg-[hsl(var(--tb-accent)/0.08)] flex items-center justify-center text-xs font-bold text-[hsl(var(--tb-accent))]">{testimonials[4].avatar}</div>
@@ -291,11 +291,11 @@ export function IndianMarketsSection() {
         <div className="grid md:grid-cols-2 gap-14 items-center">
           <motion.div variants={fadeUp}>
             <SectionBadge>Made in India</SectionBadge>
-            <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-tight">Built for{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>Indian</span>{" "}markets</h2>
-            <p className="text-muted-foreground text-base leading-relaxed mb-6">Unlike generic journals, TradeBook understands Indian market structure — segments, lot sizes, INR formatting, and market hours (9:15 AM – 3:30 PM).</p>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Built for{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>Indian</span>{" "}markets</h2>
+            <p className="text-foreground/80 text-[15px] leading-[1.7] mb-6">Unlike generic journals, TradeBook understands Indian market structure — segments, lot sizes, INR formatting, and market hours (9:15 AM – 3:30 PM).</p>
             <ul className="space-y-2.5 mb-8">
               {["NSE, BSE & MCX exchange support", "INR currency with Indian numbering (Lakhs, Crores)", "Dhan broker integration for auto-sync", "Indian market hours & holiday awareness"].map((item) => (
-                <li key={item} className="flex items-center gap-2.5 text-sm rounded-lg bg-muted/5 px-3 py-2.5 group hover:bg-muted/15 transition-colors cursor-default">
+                <li key={item} className="flex items-center gap-2.5 text-[15px] rounded-lg bg-muted/5 px-3 py-2.5 group hover:bg-muted/15 transition-colors cursor-default">
                   <CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0" /><span className="flex-1">{item}</span><ChevronRight className="w-3.5 h-3.5 text-muted-foreground/0 group-hover:text-muted-foreground/40 transition-colors" />
                 </li>
               ))}
@@ -336,24 +336,24 @@ export function FAQSection() {
       <MotionSection className="max-w-4xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>FAQ</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-4 leading-tight">Got{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>questions</span>?</h2>
-          <p className="text-muted-foreground text-base">Everything you need to know about TradeBook</p>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-[1.1]">Got{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>questions</span>?</h2>
+          <p className="text-muted-foreground text-lg">Everything you need to know about TradeBook</p>
         </motion.div>
         <motion.div variants={fadeUp}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-0">
             <Accordion type="single" collapsible className="space-y-3">
               {left.map((faq, i) => (
-                <AccordionItem key={i} value={`faq-l-${i}`} className="rounded-xl border border-border/40 bg-card/80 px-5 data-[state=open]:border-l-2 data-[state=open]:border-l-[hsl(var(--tb-accent))] data-[state=open]:border-[hsl(var(--tb-accent)/0.25)]">
-                  <AccordionTrigger className="text-left text-sm font-semibold hover:no-underline py-4"><span className="flex items-center gap-3"><span className="text-[10px] font-mono text-muted-foreground/60">{String(i + 1).padStart(2, "0")}</span>{faq.q}</span></AccordionTrigger>
-                  <AccordionContent className="text-sm text-muted-foreground leading-relaxed pl-8">{faq.a}</AccordionContent>
+                <AccordionItem key={i} value={`faq-l-${i}`} className="rounded-xl border border-border/40 bg-card/80 px-6 data-[state=open]:border-l-2 data-[state=open]:border-l-[hsl(var(--tb-accent))] data-[state=open]:border-[hsl(var(--tb-accent)/0.25)]">
+                  <AccordionTrigger className="text-left text-[15px] font-semibold hover:no-underline py-4"><span className="flex items-center gap-3"><span className="text-[10px] font-mono text-muted-foreground/60">{String(i + 1).padStart(2, "0")}</span>{faq.q}</span></AccordionTrigger>
+                  <AccordionContent className="text-[15px] text-muted-foreground leading-[1.7] pl-8">{faq.a}</AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
             <Accordion type="single" collapsible className="space-y-3">
               {right.map((faq, i) => (
-                <AccordionItem key={i} value={`faq-r-${i}`} className="rounded-xl border border-border/40 bg-card/80 px-5 data-[state=open]:border-l-2 data-[state=open]:border-l-[hsl(var(--tb-accent))] data-[state=open]:border-[hsl(var(--tb-accent)/0.25)]">
-                  <AccordionTrigger className="text-left text-sm font-semibold hover:no-underline py-4"><span className="flex items-center gap-3"><span className="text-[10px] font-mono text-muted-foreground/60">{String(i + 6).padStart(2, "0")}</span>{faq.q}</span></AccordionTrigger>
-                  <AccordionContent className="text-sm text-muted-foreground leading-relaxed pl-8">{faq.a}</AccordionContent>
+                <AccordionItem key={i} value={`faq-r-${i}`} className="rounded-xl border border-border/40 bg-card/80 px-6 data-[state=open]:border-l-2 data-[state=open]:border-l-[hsl(var(--tb-accent))] data-[state=open]:border-[hsl(var(--tb-accent)/0.25)]">
+                  <AccordionTrigger className="text-left text-[15px] font-semibold hover:no-underline py-4"><span className="flex items-center gap-3"><span className="text-[10px] font-mono text-muted-foreground/60">{String(i + 6).padStart(2, "0")}</span>{faq.q}</span></AccordionTrigger>
+                  <AccordionContent className="text-[15px] text-muted-foreground leading-[1.7] pl-8">{faq.a}</AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
@@ -400,11 +400,11 @@ export function FinalCTASection() {
           </div>
           <div className="flex items-center gap-1.5 text-sm font-semibold"><BarChart3 className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" />42,000+ trades logged</div>
         </motion.div>
-        <motion.div variants={{ visible: { transition: { staggerChildren: 0.12 } } }} className="mb-7">
-          <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-tight">Stop losing money to</motion.h2>
-          <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-tight"><span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>undisciplined</span>{" "}trading</motion.h2>
+        <motion.div variants={{ visible: { transition: { staggerChildren: 0.12 } } }} className="mb-8">
+          <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-[1.1]">Stop losing money to</motion.h2>
+          <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-[1.1]"><span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>undisciplined</span>{" "}trading</motion.h2>
         </motion.div>
-        <motion.p variants={fadeUp} className="text-lg text-muted-foreground mb-12 max-w-xl mx-auto leading-relaxed">Join 1,200+ traders who journal, analyze, and compound their edge — every single day.</motion.p>
+        <motion.p variants={fadeUp} className="text-xl text-muted-foreground mb-12 max-w-xl mx-auto leading-[1.7]">Join 1,200+ traders who journal, analyze, and compound their edge — every single day.</motion.p>
         <motion.div variants={fadeUp} whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}>
           <Button size="lg" className="shimmer-cta h-14 px-12 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_6px_24px_hsl(var(--tb-accent)/0.3)] font-semibold" onClick={() => navigate("/login?mode=signup")}>Get Started — It's Free <ArrowRight className="w-4 h-4" aria-hidden="true" /></Button>
         </motion.div>

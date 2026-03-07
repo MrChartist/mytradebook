@@ -176,21 +176,21 @@ export function FeaturesSection() {
       <MotionSection className="max-w-7xl mx-auto px-6 lg:px-10">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>Features</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-tight">Get your{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>money's</span>{" "}worth</h2>
-          <p className="text-muted-foreground max-w-lg mx-auto text-base leading-relaxed">From journaling to automation — tools designed by traders, for traders.</p>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Get your{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>money's</span>{" "}worth</h2>
+          <p className="text-muted-foreground max-w-lg mx-auto text-lg leading-relaxed">From journaling to automation — tools designed by traders, for traders.</p>
         </motion.div>
 
         <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-6 gap-4 sm:gap-5">
           {features.map((f, i) => (
             <motion.div key={f.title} variants={fadeUp} custom={i * 0.04} className={cn(f.large ? "md:col-span-4" : "md:col-span-2")}>
-              <motion.div className="group rounded-2xl border border-border/40 bg-card/80 p-6 sm:p-7 h-full relative overflow-hidden" whileHover={{ y: -4, borderColor: "hsl(var(--tb-accent) / 0.3)" }} transition={{ duration: 0.3, ease: "easeOut" }}>
+              <motion.div className="group rounded-2xl border border-border/40 bg-card/80 p-7 sm:p-8 h-full relative overflow-hidden" whileHover={{ y: -4, borderColor: "hsl(var(--tb-accent) / 0.3)" }} transition={{ duration: 0.3, ease: "easeOut" }}>
                 <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--tb-accent)/0.02)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative">
                   <motion.div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: `${f.color.replace(")", " / 0.08)")}` }} whileHover={{ scale: 1.08, rotate: 3 }}>
                     <f.icon className="w-5 h-5" style={{ color: f.color }} />
                   </motion.div>
-                  <h3 className="text-lg font-bold mb-1.5">{f.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{f.description}</p>
+                  <h3 className="text-xl font-bold mb-1.5">{f.title}</h3>
+                  <p className="text-[15px] text-foreground/80 leading-relaxed">{f.description}</p>
                   {f.previewKey && previewMap[f.previewKey]}
                 </div>
               </motion.div>
