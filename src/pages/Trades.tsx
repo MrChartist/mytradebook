@@ -401,14 +401,17 @@ export default function Trades() {
                 )}
               </div>
               {isLoading ? <Skeleton className="h-8 w-20 mt-1" /> : (
-                <>
-                  <p className="text-2xl font-bold font-mono text-warning mt-1">{summary.winRate.toFixed(1)}%</p>
-                  {lastUpdated && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {lastUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
-                    </p>
-                  )}
-                </>
+                <div className="flex items-end justify-between">
+                  <div>
+                    <p className="text-2xl font-bold font-mono text-warning mt-1">{summary.winRate.toFixed(1)}%</p>
+                    {lastUpdated && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {lastUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                      </p>
+                    )}
+                  </div>
+                  <Sparkline data={winRateSparkline} width={64} height={28} color="hsl(var(--warning))" fill />
+                </div>
               )}
             </div>
           </div>
