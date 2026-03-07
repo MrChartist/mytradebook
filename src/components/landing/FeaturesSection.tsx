@@ -192,6 +192,19 @@ function ScannerMiniPreview() {
   );
 }
 
+function RulesEngineMiniPreview() {
+  return (
+    <div className="mt-5 space-y-2">
+      {[{ rule: "Check market trend", checked: true }, { rule: "Set stop loss ≤ 2%", checked: true }, { rule: "Max 3 trades/day", checked: false }].map((r) => (
+        <div key={r.rule} className="flex items-center gap-2 rounded-lg border border-border/20 bg-muted/15 px-3 py-2">
+          <div className={cn("w-3.5 h-3.5 rounded border flex items-center justify-center text-[8px]", r.checked ? "bg-profit/15 border-profit/30 text-profit" : "border-border/40")}>{r.checked && <CheckCircle2 className="w-2.5 h-2.5" />}</div>
+          <span className="text-[10px] text-muted-foreground">{r.rule}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const previewMap: Record<string, React.ReactNode> = {
   journal: <JournalMiniPreview />,
   analytics: <AnalyticsMiniPreview />,
