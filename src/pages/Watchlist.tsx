@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useSubscription } from "@/hooks/useSubscription";
 import { toast } from "sonner";
 import {
@@ -118,16 +119,15 @@ export default function WatchlistPage() {
           <Skeleton className="h-[400px] lg:col-span-2" />
         </div>
       ) : watchlists.length === 0 ? (
-        <div className="surface-card p-12 text-center">
-          <Eye className="w-12 h-12 mx-auto text-muted-foreground/40 mb-4" />
-          <h3 className="text-lg font-semibold mb-1">No watchlists yet</h3>
-          <p className="text-muted-foreground text-sm mb-4">
-            Create a watchlist to start tracking your favorite instruments.
-          </p>
-          <Button onClick={() => setCreateOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" /> Create Watchlist
-          </Button>
-        </div>
+        <EmptyState
+          icon={Eye}
+          title="No watchlists yet"
+          description="Create a watchlist to start tracking your favorite instruments with live prices."
+          createLabel="Create Watchlist"
+          onCreate={() => setCreateOpen(true)}
+          steps={["Create a list", "Add instruments", "Track live prices"]}
+          hint="Use ⌘K to quickly search and add instruments"
+        />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Watchlists sidebar */}

@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, createContext, useContext } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
 import { OnboardingWelcome } from "@/components/dashboard/OnboardingWelcome";
 import { DashboardGreeting } from "@/components/dashboard/DashboardGreeting";
@@ -284,7 +285,27 @@ export default function Dashboard() {
         </div>
 
         {/* Dynamic Widgets */}
-        {widgets.map((w) => renderWidget(w))}
+        {tradesLoading ? (
+          <div className="space-y-6">
+            {/* KPI skeleton */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} className="h-[140px] rounded-2xl" />
+              ))}
+            </div>
+            {/* Chart + Alerts skeleton */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+              <Skeleton className="h-[300px] rounded-2xl lg:col-span-2" />
+              <Skeleton className="h-[300px] rounded-2xl" />
+            </div>
+            {/* Equity curve skeleton */}
+            <Skeleton className="h-[250px] rounded-2xl" />
+            {/* Positions skeleton */}
+            <Skeleton className="h-[200px] rounded-2xl" />
+          </div>
+        ) : (
+          widgets.map((w) => renderWidget(w))
+        )}
       </div>
     </DashboardContext.Provider>
   );
