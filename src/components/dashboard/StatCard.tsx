@@ -68,6 +68,7 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
               changeType === "loss" && "!bg-loss/8 !border-loss/15",
               changeType === "neutral" && "!bg-primary/8 !border-primary/15"
             )}
+            style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08)" }}
           >
             <Icon
               className={cn(

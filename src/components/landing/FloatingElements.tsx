@@ -14,7 +14,7 @@ export function FloatingElements() {
         animate={{ y: [0, -10, 0], rotate: [-2, 0, -2] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
       >
-        <div className="rounded-2xl border border-border/30 bg-card/80 backdrop-blur-md p-3.5 shadow-lg shadow-black/[0.04] w-44">
+        <div className="rounded-2xl border border-border/30 bg-card/70 backdrop-blur-lg p-3.5 shadow-lg shadow-black/[0.04] w-44" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08), 0 10px 15px -3px rgb(0 0 0 / 0.06)" }}>
           <div className="flex items-center gap-2 mb-2">
             <div className="w-1.5 h-5 rounded-full bg-profit" />
             <div>
@@ -31,7 +31,7 @@ export function FloatingElements() {
         animate={{ y: [0, -8, 0], rotate: [1, 3, 1] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
       >
-        <div className="rounded-2xl border border-border/30 bg-card/80 backdrop-blur-md px-3.5 py-2.5 shadow-lg shadow-black/[0.04] flex items-center gap-2.5">
+        <div className="rounded-2xl border border-border/30 bg-card/70 backdrop-blur-lg px-3.5 py-2.5 shadow-lg shadow-black/[0.04] flex items-center gap-2.5" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08), 0 10px 15px -3px rgb(0 0 0 / 0.06)" }}>
           <div className="w-7 h-7 rounded-lg bg-[hsl(var(--tb-accent)/0.08)] flex items-center justify-center">
             <Bell className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" />
           </div>
@@ -47,7 +47,7 @@ export function FloatingElements() {
         animate={{ y: [0, -12, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
       >
-        <div className="rounded-2xl border border-profit/15 bg-card/80 backdrop-blur-md px-4 py-2.5 shadow-lg shadow-black/[0.04]">
+        <div className="rounded-2xl border border-profit/15 bg-card/70 backdrop-blur-lg px-4 py-2.5 shadow-lg" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08), 0 10px 15px -3px rgb(0 0 0 / 0.06)" }}>
           <p className="text-[9px] text-muted-foreground uppercase tracking-wider">MTD P&L</p>
           <p className="text-sm font-bold font-mono text-profit">+₹24,850</p>
         </div>
@@ -58,7 +58,7 @@ export function FloatingElements() {
         animate={{ y: [0, -10, 0], rotate: [1, -1, 1] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
       >
-        <div className="rounded-2xl border border-profit/15 bg-card/80 backdrop-blur-md px-4 py-2.5 shadow-lg">
+        <div className="rounded-2xl border border-profit/15 bg-card/70 backdrop-blur-lg px-4 py-2.5 shadow-lg" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08), 0 10px 15px -3px rgb(0 0 0 / 0.06)" }}>
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-profit/10 flex items-center justify-center">
               <PieChart className="w-3.5 h-3.5 text-profit" />
@@ -76,7 +76,7 @@ export function FloatingElements() {
         animate={{ y: [0, -8, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 3 }}
       >
-        <div className="rounded-2xl border border-[hsl(var(--tb-accent)/0.2)] bg-card/80 backdrop-blur-md px-3.5 py-2 shadow-lg flex items-center gap-2">
+        <div className="rounded-2xl border border-[hsl(var(--tb-accent)/0.2)] bg-card/70 backdrop-blur-lg px-3.5 py-2 shadow-lg flex items-center gap-2" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08), 0 8px 12px -3px rgb(0 0 0 / 0.06)" }}>
           <Trophy className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
           <div>
             <p className="text-[10px] font-semibold">5-Day Streak</p>
@@ -90,7 +90,7 @@ export function FloatingElements() {
         animate={{ y: [0, -9, 0], rotate: [0, 1, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
       >
-        <div className="rounded-2xl border border-[hsl(270_60%_55%/0.15)] bg-card/80 backdrop-blur-md px-3.5 py-2.5 shadow-lg flex items-center gap-2.5 max-w-[200px]">
+        <div className="rounded-2xl border border-[hsl(270_60%_55%/0.15)] bg-card/70 backdrop-blur-lg px-3.5 py-2.5 shadow-lg flex items-center gap-2.5 max-w-[200px]" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08), 0 8px 12px -3px rgb(0 0 0 / 0.06)" }}>
           <div className="w-7 h-7 rounded-lg bg-[hsl(270_60%_55%/0.1)] flex items-center justify-center shrink-0">
             <Brain className="w-3.5 h-3.5 text-[hsl(270_60%_55%)]" />
           </div>
@@ -105,7 +105,7 @@ export function FloatingElements() {
         animate={{ y: [0, -6, 0] }}
         transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2.5 }}
       >
-        <div className="rounded-full border border-border/30 bg-card/70 backdrop-blur-md px-3 py-1.5 shadow-sm flex items-center gap-1.5">
+        <div className="rounded-full border border-border/30 bg-card/60 backdrop-blur-lg px-3 py-1.5 shadow-sm flex items-center gap-1.5" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
           <Activity className="w-3 h-3 text-muted-foreground/50" />
           <span className="text-[9px] font-medium text-muted-foreground">47 trades this week</span>
         </div>
@@ -116,7 +116,7 @@ export function FloatingElements() {
         animate={{ y: [0, -7, 0] }}
         transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut", delay: 1.8 }}
       >
-        <div className="rounded-full border border-border/30 bg-card/70 backdrop-blur-md px-3 py-1.5 shadow-sm flex items-center gap-1.5">
+        <div className="rounded-full border border-border/30 bg-card/60 backdrop-blur-lg px-3 py-1.5 shadow-sm flex items-center gap-1.5" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
           <Target className="w-3 h-3 text-[hsl(var(--tb-accent)/0.6)]" />
           <span className="text-[9px] font-mono font-semibold text-muted-foreground">R:R 1:2.4</span>
         </div>

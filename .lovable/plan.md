@@ -1,117 +1,58 @@
 
 
-## Visual Polish & Liquid Glass Effect — Enhancement Plan
+## Improve Instrument Selection UX Across Trades, Alerts & Studies
 
-After reviewing the full design system, core components, and key pages, here's a targeted plan to add visual richness with subtle liquid glass effects throughout the app.
+### Current Pain Points
+1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
+2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
+3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
+4. **Selected state is disconnected** — after selecting, "Change" button resets everything
+5. **No keyboard navigation** — can't arrow through results or press Enter to select
+6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
+7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
 
----
+### Proposed Improvements
 
-### 1. Liquid Glass Design Tokens (CSS)
+#### 1. Unified Combobox-Style Picker (biggest UX win)
+Replace the current search input + results list with a **combobox pattern**:
+- Single input field that shows results as you type (dropdown below)
+- Recent items shown immediately on focus (before typing)
+- Favorites pinned at the top with a star
+- Arrow keys to navigate, Enter to select, Escape to close
+- Taller results area (max-h-64 instead of max-h-40)
 
-**File**: `src/index.css`
+#### 2. Smarter Defaults & Context
+- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
+- Remember last used exchange filter per segment in localStorage
+- Show lot size inline for F&O instruments in results
 
-Add new liquid glass utility classes to the design system:
+#### 3. Improved Selected State
+- Show a compact **chip-style** selected instrument instead of the current full-width bar
+- "Change" opens the picker inline (no full reset) — preserves recent search context
+- LTP fetch button more prominent with last-fetched timestamp
 
-- `.liquid-glass` — subtle frosted glass with `backdrop-blur-xl`, translucent background (`bg-card/60` light / `bg-card/40` dark), a faint inner highlight border (`inset 0 1px 0 0 white/10`), and soft layered shadow
-- `.liquid-glass-sm` — lighter version for smaller elements (badges, pills, nav items) with `backdrop-blur-md`
-- `.liquid-glass-glow` — adds a subtle animated prismatic shimmer on hover using a pseudo-element gradient sweep
-- Update `.surface-card` to include a thin inner highlight border (`box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.06)`) for depth
-- Update `.premium-card-hover:hover` to add a subtle liquid glass border glow
-- Add a `.liquid-shine` keyframe — a slow diagonal light sweep that can be applied to hero elements
+#### 4. Keyboard Navigation in Search Results
+- Add `onKeyDown` handler to search input
+- ArrowUp/ArrowDown to highlight results
+- Enter to select highlighted item
+- Track `highlightedIndex` state
 
----
+#### 5. Option Chain Quick Access
+- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
+- Make the chain component more compact — remove redundant labels
 
-### 2. Sidebar Polish
+#### 6. Exchange Filter as Chips (not buttons)
+- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
 
-**File**: `src/components/layout/Sidebar.tsx`
+### Files to Modify
+- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
+- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
 
-- Add `liquid-glass-sm` effect to the active nav item background (replacing flat `bg-primary/8`)
-- Add a subtle `backdrop-blur-sm` to the sidebar on scroll for depth layering
-- Polish the profile card at the bottom with a thin inner glow border and slightly translucent background
-
----
-
-### 3. Dashboard Cards Enhancement
-
-**File**: `src/components/dashboard/DashboardKPICards.tsx`
-
-- Add liquid glass inner highlight to each KPI card (`box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.08)`)
-- Add a subtle gradient overlay on the Today's P&L hero card (a faint radial gradient in the top-right corner matching profit/loss color at 5% opacity)
-- Add micro hover lift animation (`transition: transform 200ms; &:hover { transform: translateY(-2px) }`) — already partially there but make consistent
-
-**File**: `src/components/dashboard/StatCard.tsx`
-
-- Add liquid glass inner highlight to the icon badge container
-- Add a very subtle prismatic border on hover (rotating gradient border)
-
----
-
-### 4. Mobile Bottom Nav — Liquid Glass Bar
-
-**File**: `src/components/layout/MobileBottomNav.tsx`
-
-- Change the bottom nav from opaque `bg-card` to liquid glass: `bg-card/70 backdrop-blur-xl` with an inner top highlight
-- This gives the modern iOS-style frosted glass appearance
-
----
-
-### 5. Hero Section — Liquid Glass Badge & CTA
-
-**File**: `src/components/landing/HeroSection.tsx`
-
-- Upgrade the "Built for Indian Markets" badge to use `liquid-glass` class for a richer frosted look
-- Add a liquid shine sweep animation to the CTA button on load (one-time diagonal light sweep after 2s delay)
-- Add a subtle glass reflection highlight to the email input
-
----
-
-### 6. Floating Elements — Glass Depth
-
-**File**: `src/components/landing/FloatingElements.tsx`
-
-- Add the inner highlight border (`inset 0 1px 0 0 white/8`) to all floating cards for liquid glass depth
-- Slightly increase `backdrop-blur-md` to `backdrop-blur-lg` on the larger cards
-
----
-
-### 7. Login Page — Glass Card
-
-**File**: `src/pages/Login.tsx`
-
-- Add liquid glass effect to the main auth card (the `.surface-card` wrapper) with frosted translucent background and inner highlight
-- Add a subtle animated gradient orb behind the auth form (matching the existing left-panel blobs but smaller)
-
----
-
-### 8. Global Polish Touches
-
-**File**: `src/index.css`
-
-- Add a subtle inner highlight to all `.dashboard-card` and `.dashboard-card-hover` cards
-- Improve `.glass-topbar` with slightly stronger `backdrop-blur-lg` and inner highlight for the mobile header
-- Add smooth `transition: box-shadow 200ms, border-color 200ms` to all interactive cards for polished state changes
-- Add a `.liquid-border` utility — a subtle animated gradient border that can be applied to featured/highlighted elements
-
----
-
-### Summary of Visual Changes
-
-All changes are CSS-level polish and class additions — no functional logic changes:
-
-- **Liquid glass frosted backgrounds** on sidebar, bottom nav, floating cards, auth card
-- **Inner highlight borders** (the signature "liquid glass" look) on all cards, badges, nav items
-- **Subtle hover glow transitions** on KPI cards, stat cards, and CTAs
-- **One-time shine sweep** on hero CTA button
-- **Prismatic border hover** on premium cards
-- **Stronger backdrop blur** on overlapping UI (topbar, bottom nav, popover)
-
-### Files to Edit
-- `src/index.css` — new liquid glass tokens & utilities
-- `src/components/layout/Sidebar.tsx` — active nav glass effect
-- `src/components/layout/MobileBottomNav.tsx` — frosted glass bar
-- `src/components/dashboard/DashboardKPICards.tsx` — inner glow + gradient overlay
-- `src/components/dashboard/StatCard.tsx` — glass icon badge
-- `src/components/landing/HeroSection.tsx` — glass badge + CTA shine
-- `src/components/landing/FloatingElements.tsx` — glass depth on cards
-- `src/pages/Login.tsx` — glass auth card
+### Implementation Order
+1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
+2. Increase results area height and show lot size for F&O
+3. Replace exchange filter buttons with compact chips
+4. Add "remember last exchange" per segment
+5. Improve selected state with chip-style display
+6. Add focus-triggered recent items display
 
