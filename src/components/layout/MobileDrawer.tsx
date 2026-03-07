@@ -8,6 +8,7 @@ import {
   CalendarDays,
   AlertTriangle,
   BarChart3,
+  Building2,
   FileText,
   Settings,
   LogOut,
@@ -26,7 +27,7 @@ const mainNavItems = [
   { icon: BookOpen, label: "Journal", path: "/journal" },
   { icon: BookOpen, label: "Studies", path: "/studies" },
   { icon: Eye, label: "Watchlist", path: "/watchlist" },
-  { icon: BarChart3, label: "Fundamentals", path: "/fundamentals" },
+  { icon: Building2, label: "Fundamentals", path: "/fundamentals" },
 ];
 
 const analyticsNavItems = [
@@ -62,8 +63,8 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
         className={cn(
           "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
           isActive
-            ? "glass-nav-active text-primary font-medium"
-            : "text-muted-foreground hover:text-foreground hover:bg-accent"
+            ? "glass-nav-active text-primary font-medium border-l-[3px] border-l-primary"
+            : "text-muted-foreground hover:text-foreground hover:bg-accent border-l-[3px] border-l-transparent"
         )}
       >
         <item.icon className={cn("w-5 h-5", isActive && "text-primary")} />
@@ -74,7 +75,7 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="left" className="w-72 p-0 bg-card border-border">
+      <SheetContent side="left" className="w-72 p-0 bg-card border-border" style={{ boxShadow: "inset -1px 0 0 0 hsl(0 0% 100% / 0.04)" }}>
         <SheetHeader className="p-4 border-b border-border">
           <div className="flex items-center gap-3">
             <img src={logo} alt="TradeBook" className="h-9 object-contain" />
@@ -84,10 +85,10 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
 
         {/* User Info */}
         {profile && (
-          <div className="p-4 border-b border-border">
+          <div className="p-4 border-b border-border/30">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
-                <span className="text-primary font-semibold text-sm">
+              <div className="w-9 h-9 rounded-full bg-gradient-primary flex items-center justify-center ring-2 ring-background">
+                <span className="text-primary-foreground font-semibold text-sm">
                   {profile.name?.charAt(0).toUpperCase() || "U"}
                 </span>
               </div>
@@ -103,10 +104,10 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
         <nav className="flex-1 p-3 space-y-0.5">
           {mainNavItems.map(renderNavItem)}
 
-          <div className="sidebar-section-label mt-4 mb-1">Analytics</div>
+          <div className="sidebar-section-label mt-4 mb-1 font-bold">Analytics</div>
           {analyticsNavItems.map(renderNavItem)}
 
-          <div className="mt-3 pt-3 border-t border-border space-y-0.5">
+          <div className="mt-3 pt-3 border-t border-border/30 space-y-0.5">
             <NavLink
               to="/docs"
               onClick={() => onOpenChange(false)}

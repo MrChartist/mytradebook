@@ -46,16 +46,16 @@ export function PageBreadcrumbs() {
 
   return (
     <Breadcrumb className="mb-4">
-      <BreadcrumbList>
+      <BreadcrumbList className="bg-muted/30 rounded-full px-3 py-1.5 inline-flex">
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link to="/dashboard" className="flex items-center gap-1">
+            <Link to="/dashboard" className="flex items-center gap-1 hover:text-[hsl(var(--tb-accent))] transition-colors">
               <Home className="w-3.5 h-3.5" />
               <span className="sr-only">Home</span>
             </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator />
+        <BreadcrumbSeparator className="opacity-40" />
         
         {group && segment !== group.path.slice(1) && (
           <>

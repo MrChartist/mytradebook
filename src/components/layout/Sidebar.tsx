@@ -101,14 +101,14 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-card/90 backdrop-blur-lg border-b border-border/40 flex items-center justify-between px-4" style={{ boxShadow: "inset 0 -1px 0 0 hsl(0 0% 100% / 0.04)" }}>
-        <img src={logo} alt="TradeBook" className="h-8 object-contain" />
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-gradient-to-b from-card/95 to-card/85 backdrop-blur-xl border-b border-border/40 flex items-center justify-between px-4" style={{ boxShadow: "inset 0 -1px 0 0 hsl(0 0% 100% / 0.04), 0 4px 12px -4px rgba(0,0,0,0.06)" }}>
+        <img src={logo} alt="TradeBook" className="h-8 object-contain drop-shadow-sm" />
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Button variant="ghost" size="icon" className="h-9 w-9">
+          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl">
             <Search className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setMobileOpen(true)}>
+          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl" onClick={() => setMobileOpen(true)}>
             <Menu className="w-5 h-5" />
           </Button>
         </div>
@@ -122,9 +122,10 @@ export function Sidebar() {
           "hidden lg:flex fixed left-0 top-0 z-40 h-screen flex-col bg-card border-r border-border transition-all duration-300",
           collapsed ? "w-[68px]" : "w-[230px]"
         )}
+        style={{ boxShadow: "inset -1px 0 0 0 hsl(0 0% 100% / 0.04)" }}
       >
         {/* Logo */}
-        <div className="flex items-center gap-2.5 px-4 h-[60px] border-b border-border">
+        <div className="flex items-center gap-2.5 px-4 h-[60px] border-b border-border/50" style={{ background: "linear-gradient(to bottom, transparent, hsl(0 0% 0% / 0.02))" }}>
           {collapsed ? (
             <img src={logo} alt="TradeBook" className="h-7 w-7 object-contain flex-shrink-0" />
           ) : (
@@ -142,11 +143,11 @@ export function Sidebar() {
 
         {/* Navigation */}
         <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
-          {!collapsed && <div className="sidebar-section-label">Main</div>}
+          {!collapsed && <div className="sidebar-section-label font-bold">Main</div>}
           {mainNavItems.map(renderNavItem)}
 
           {!collapsed ? (
-            <div className="sidebar-section-label mt-6">Analytics</div>
+            <div className="sidebar-section-label mt-6 font-bold">Analytics</div>
           ) : (
             <div className="my-3 mx-2 border-t border-border" />
           )}
@@ -154,7 +155,7 @@ export function Sidebar() {
         </nav>
 
         {/* Bottom Section */}
-        <div className="px-3 py-3 border-t border-border space-y-0.5">
+        <div className="px-3 py-3 border-t border-border/50 space-y-0.5" style={{ background: "linear-gradient(to top, transparent, hsl(0 0% 0% / 0.02))" }}>
           {/* Theme toggle */}
           {!collapsed && (
             <div className="flex items-center justify-between px-3 py-1.5 mb-1">
@@ -164,8 +165,8 @@ export function Sidebar() {
           )}
           {/* Profile */}
           {!collapsed && profile && (
-            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/40 rounded-xl" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
-              <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
+            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/40 backdrop-blur-sm rounded-xl" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
+              <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0 ring-2 ring-background">
                 <span className="text-primary-foreground font-semibold text-xs">
                   {profile.name?.charAt(0).toUpperCase() || "U"}
                 </span>
@@ -216,7 +217,7 @@ export function Sidebar() {
           {collapsed && (
             <button
               onClick={() => setCollapsed(false)}
-              className="flex items-center justify-center w-full py-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              className="flex items-center justify-center w-full py-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted hover:shadow-sm transition-all"
             >
               <ChevronLeft className="w-[18px] h-[18px] rotate-180" />
             </button>
