@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Star, CheckCircle2, Loader2, Trash2 } from "lucide-react";
+import { Star, CheckCircle2, Loader2, Trash2, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import type { Trade } from "@/hooks/useTrades";
+import { TradeShareModal } from "@/components/sharing/TradeShareModal";
 
 interface Props {
   trade: Trade;
