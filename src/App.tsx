@@ -10,6 +10,7 @@ import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { CommandPalette } from "@/components/CommandPalette";
+import { AnalyticsSkeleton, CalendarSkeleton, WatchlistSkeleton, StudiesSkeleton } from "@/components/skeletons/PageSkeletons";
 
 // Eagerly loaded (critical path)
 import Landing from "./pages/Landing";
@@ -91,24 +92,28 @@ const App = () => (
                     }
                   />
                   {[
-                    { path: "/studies", element: <Studies /> },
+                    { path: "/studies", element: <Studies />, skeleton: <StudiesSkeleton /> },
                     { path: "/alerts", element: <Alerts /> },
                     { path: "/trades", element: <Trades /> },
                     { path: "/journal", element: <Journal /> },
                     { path: "/reports", element: <Reports /> },
                     { path: "/settings", element: <Settings /> },
-                    { path: "/calendar", element: <Calendar /> },
+                    { path: "/calendar", element: <Calendar />, skeleton: <CalendarSkeleton /> },
                     { path: "/mistakes", element: <Mistakes /> },
-                    { path: "/analytics", element: <Analytics /> },
-                    { path: "/watchlist", element: <Watchlist /> },
+                    { path: "/analytics", element: <Analytics />, skeleton: <AnalyticsSkeleton /> },
+                    { path: "/watchlist", element: <Watchlist />, skeleton: <WatchlistSkeleton /> },
                     { path: "/fundamentals", element: <Fundamentals /> },
-                  ].map(({ path, element }) => (
+                  ].map(({ path, element, skeleton }) => (
                     <Route
                       key={path}
                       path={path}
                       element={
                         <ProtectedRoute>
-                          <MainLayout>{element}</MainLayout>
+                          <MainLayout>
+                            <Suspense fallback={skeleton || <PageLoader />}>
+                              {element}
+                            </Suspense>
+                          </MainLayout>
                         </ProtectedRoute>
                       }
                     />
