@@ -39,7 +39,7 @@ type ScannerPreset = {
   filters: ScanFilter[];
   sortBy?: string;
   sortOrder?: "asc" | "desc";
-  group: "cap" | "fundamental" | "technical";
+  group: "cap" | "fundamental" | "technical" | "price" | "volume";
 };
 
 const SCANNER_PRESETS: ScannerPreset[] = [
@@ -61,21 +61,41 @@ const SCANNER_PRESETS: ScannerPreset[] = [
   { id: "value_picks", label: "Value Picks", description: "P/E < 15, ROE > 12%, Yield > 1%", filters: [{ field: "price_earnings_ttm", op: "greater", value: 0 }, { field: "price_earnings_ttm", op: "less", value: 15 }, { field: "return_on_equity", op: "greater", value: 12 }, { field: "dividends_yield", op: "greater", value: 1 }], sortBy: "pe_ratio", sortOrder: "asc", group: "fundamental" },
   { id: "high_eps", label: "High EPS", description: "EPS > ₹50", filters: [{ field: "earnings_per_share_basic_ttm", op: "greater", value: 50 }], sortBy: "change", sortOrder: "desc", group: "fundamental" },
 
+  // ── Price Action ──
+  { id: "top_gainers", label: "Top Gainers", description: "Biggest % gainers today", filters: [{ field: "change", op: "greater", value: 2 }], sortBy: "change", sortOrder: "desc", group: "price" },
+  { id: "top_losers", label: "Top Losers", description: "Biggest % losers today", filters: [{ field: "change", op: "less", value: -2 }], sortBy: "change", sortOrder: "asc", group: "price" },
+  { id: "52w_high", label: "52W High", description: "At or near 52-week high", filters: [{ field: "Perf.W", op: "greater", value: 0 }], sortBy: "change", sortOrder: "desc", group: "price" },
+  { id: "52w_low", label: "52W Low", description: "At or near 52-week low", filters: [{ field: "Perf.Y", op: "less", value: -40 }], sortBy: "change", sortOrder: "asc", group: "price" },
+  { id: "ath_zone", label: "All-Time High", description: "Near ATH — lifetime highs", filters: [{ field: "Perf.1M", op: "greater", value: 5 }, { field: "Perf.3M", op: "greater", value: 10 }, { field: "Perf.Y", op: "greater", value: 20 }], sortBy: "change", sortOrder: "desc", group: "price" },
+  { id: "atl_zone", label: "All-Time Low", description: "Near ATL — lifetime lows", filters: [{ field: "Perf.Y", op: "less", value: -60 }], sortBy: "change", sortOrder: "asc", group: "price" },
+  { id: "near_day_high", label: "Near Day High", description: "Strong intraday — change > 3%", filters: [{ field: "change", op: "greater", value: 3 }], sortBy: "change", sortOrder: "desc", group: "price" },
+  { id: "near_day_low", label: "Near Day Low", description: "Weak intraday — change < -3%", filters: [{ field: "change", op: "less", value: -3 }], sortBy: "change", sortOrder: "asc", group: "price" },
+  { id: "penny_stocks", label: "Penny Stocks", description: "Price < ₹50", filters: [{ field: "close", op: "less", value: 50 }, { field: "close", op: "greater", value: 1 }], sortBy: "change", sortOrder: "desc", group: "price" },
+  { id: "blue_chip", label: "Blue Chip", description: "Price > ₹1,000, Large cap", filters: [{ field: "close", op: "greater", value: 1000 }, { field: "market_cap_basic", op: "greater", value: 2e11 }], sortBy: "change", sortOrder: "desc", group: "price" },
+
+  // ── Volume ──
+  { id: "vol_gainers", label: "Volume Gainers", description: "Rel. vol > 1.5× + price up", filters: [{ field: "relative_volume_10d_calc", op: "greater", value: 1.5 }, { field: "change", op: "greater", value: 0 }], sortBy: "volume", sortOrder: "desc", group: "volume" },
+  { id: "vol_spike", label: "Volume Spike", description: "Rel. vol > 3× — unusual activity", filters: [{ field: "relative_volume_10d_calc", op: "greater", value: 3 }], sortBy: "volume", sortOrder: "desc", group: "volume" },
+  { id: "vol_breakout", label: "Volume Breakout", description: "Vol > 2× + change > 3%", filters: [{ field: "relative_volume_10d_calc", op: "greater", value: 2 }, { field: "change", op: "greater", value: 3 }], sortBy: "volume", sortOrder: "desc", group: "volume" },
+  { id: "vol_dry", label: "Low Volume", description: "Rel. vol < 0.5 — quiet stocks", filters: [{ field: "relative_volume_10d_calc", op: "less", value: 0.5 }, { field: "relative_volume_10d_calc", op: "greater", value: 0 }], sortBy: "volume", sortOrder: "asc", group: "volume" },
+  { id: "vol_sell_pressure", label: "Sell Pressure", description: "Vol > 2× + price down", filters: [{ field: "relative_volume_10d_calc", op: "greater", value: 2 }, { field: "change", op: "less", value: -1 }], sortBy: "volume", sortOrder: "desc", group: "volume" },
+  { id: "high_avg_vol", label: "High Avg Volume", description: "Avg vol > 10L/day", filters: [{ field: "average_volume_10d_calc", op: "greater", value: 1000000 }], sortBy: "volume", sortOrder: "desc", group: "volume" },
+
   // ── Technical ──
   { id: "momentum", label: "Momentum", description: "+1M & +3M returns", filters: [{ field: "Perf.1M", op: "greater", value: 0 }, { field: "Perf.3M", op: "greater", value: 0 }], sortBy: "change", sortOrder: "desc", group: "technical" },
   { id: "strong_momentum", label: "Strong Rally", description: "+5% weekly, +15% monthly", filters: [{ field: "Perf.W", op: "greater", value: 5 }, { field: "Perf.1M", op: "greater", value: 15 }], sortBy: "change", sortOrder: "desc", group: "technical" },
   { id: "oversold", label: "Oversold RSI", description: "RSI < 30", filters: [{ field: "RSI", op: "less", value: 30 }, { field: "RSI", op: "greater", value: 0 }], sortBy: "rsi", sortOrder: "asc", group: "technical" },
   { id: "overbought", label: "Overbought RSI", description: "RSI > 70", filters: [{ field: "RSI", op: "greater", value: 70 }], sortBy: "rsi", sortOrder: "desc", group: "technical" },
-  { id: "high_volume", label: "Volume Spike", description: "Rel. vol > 2×", filters: [{ field: "relative_volume_10d_calc", op: "greater", value: 2 }], sortBy: "volume", sortOrder: "desc", group: "technical" },
-  { id: "near_52w_high", label: "Near 52W High", description: "Within 5% of high", filters: [], sortBy: "change", sortOrder: "desc", group: "technical" },
-  { id: "near_52w_low", label: "Near 52W Low", description: "Beaten down stocks", filters: [{ field: "Perf.Y", op: "less", value: -30 }], sortBy: "change", sortOrder: "asc", group: "technical" },
   { id: "above_sma50", label: "Above SMA 50", description: "Price > 50-day SMA", filters: [{ field: "Perf.1M", op: "greater", value: 0 }, { field: "RSI", op: "greater", value: 50 }], sortBy: "change", sortOrder: "desc", group: "technical" },
   { id: "low_beta", label: "Low Beta", description: "Beta < 0.8 (defensive)", filters: [{ field: "beta_1_year", op: "less", value: 0.8 }, { field: "beta_1_year", op: "greater", value: 0 }], sortBy: "change", sortOrder: "desc", group: "technical" },
   { id: "high_beta", label: "High Beta", description: "Beta > 1.5 (aggressive)", filters: [{ field: "beta_1_year", op: "greater", value: 1.5 }], sortBy: "change", sortOrder: "desc", group: "technical" },
+  { id: "high_atr", label: "High Volatility", description: "ATR-based volatile movers", filters: [{ field: "ATR", op: "greater", value: 5 }, { field: "change", op: "greater", value: 1 }], sortBy: "change", sortOrder: "desc", group: "technical" },
 ];
 
 const PRESET_GROUPS: { key: string; label: string }[] = [
   { key: "cap", label: "Market Cap" },
+  { key: "price", label: "Price Action" },
+  { key: "volume", label: "Volume" },
   { key: "fundamental", label: "Fundamental" },
   { key: "technical", label: "Technical" },
 ];
