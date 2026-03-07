@@ -17,6 +17,9 @@ import {
   XCircle,
   Upload,
   Download,
+  ChevronDown,
+  ChevronUp,
+  BarChart3,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -268,90 +271,104 @@ export default function Trades() {
         </div>
       )}
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <div
-          role="button"
-          tabIndex={0}
-          className="premium-card-hover !p-5 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          onClick={() => { setSortBy("pnl_high"); setStatusFilter("ALL"); setActiveStatFilter("Total P&L"); }}
-          onKeyDown={(e) => { if (e.key === "Enter") { setSortBy("pnl_high"); setStatusFilter("ALL"); setActiveStatFilter("Total P&L"); } }}
-          aria-label="Sort by Total P&L"
-        >
-          <div className="absolute -top-3 -right-3 w-14 h-14 dot-pattern opacity-30 rounded-bl-2xl" />
-          <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Total P&L</p>
-          {isLoading ? <Skeleton className="h-8 w-24 mt-1" /> : (
-            <p className={cn("text-2xl font-bold font-mono mt-1", summary.totalPnl >= 0 ? "text-profit" : "text-loss")}>
-              {summary.totalPnl >= 0 ? "+" : ""}₹{summary.totalPnl.toLocaleString()}
-            </p>
-          )}
-        </div>
-        <div
-          role="button"
-          tabIndex={0}
-          className="premium-card-hover !p-5 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          onClick={() => { setStatusFilter("OPEN"); setActiveStatFilter("Open"); }}
-          onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("OPEN"); setActiveStatFilter("Open"); } }}
-          aria-label="Filter to Open trades"
-        >
-          <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Open</p>
-          {isLoading ? <Skeleton className="h-8 w-16 mt-1" /> : (
-            <p className="text-2xl font-bold font-mono text-profit mt-1">{statusCounts.OPEN}</p>
-          )}
-        </div>
-        <div
-          role="button"
-          tabIndex={0}
-          className="premium-card-hover !p-5 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          onClick={() => { setStatusFilter("PENDING"); setActiveStatFilter("Planned"); }}
-          onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("PENDING"); setActiveStatFilter("Planned"); } }}
-          aria-label="Filter to Planned trades"
-        >
-          <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Planned</p>
-          {isLoading ? <Skeleton className="h-8 w-16 mt-1" /> : (
-            <p className="text-2xl font-bold font-mono text-warning mt-1">{statusCounts.PENDING}</p>
-          )}
-        </div>
-        <div
-          role="button"
-          tabIndex={0}
-          className="premium-card-hover !p-5 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          onClick={() => { setStatusFilter("CLOSED"); setActiveStatFilter("Closed Today"); }}
-          onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("CLOSED"); setActiveStatFilter("Closed Today"); } }}
-          aria-label="Filter to Closed trades"
-        >
-          <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Closed Today</p>
-          {isLoading ? <Skeleton className="h-8 w-16 mt-1" /> : (
-            <p className="text-2xl font-bold font-mono mt-1">{summary.closedToday}</p>
-          )}
-        </div>
-        <div
-          role="button"
-          tabIndex={0}
-          className="premium-card-hover !p-5 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          onClick={() => { setStatusFilter("CLOSED"); setActiveStatFilter("Win Rate"); }}
-          onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("CLOSED"); setActiveStatFilter("Win Rate"); } }}
-          aria-label="Filter to show Win Rate"
-        >
-          <div className="flex items-center justify-between">
-            <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Win Rate</p>
-            {isPolling && openTradeInstruments.length > 0 && (
-              <span className="flex items-center gap-1 text-xs text-profit">
-                <Radio className="w-3 h-3 animate-pulse" /> Live
-              </span>
-            )}
-          </div>
-          {isLoading ? <Skeleton className="h-8 w-20 mt-1" /> : (
-            <>
-              <p className="text-2xl font-bold font-mono text-warning mt-1">{summary.winRate.toFixed(1)}%</p>
-              {lastUpdated && (
-                <p className="text-xs text-muted-foreground mt-1">
-                  {lastUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+      {/* Stats — collapsible on mobile */}
+      <div>
+        {isMobile && (
+          <button
+            onClick={() => setShowStats(!showStats)}
+            className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2 w-full"
+          >
+            <BarChart3 className="w-3.5 h-3.5" />
+            {showStats ? "Hide Stats" : "Show Stats"}
+            {showStats ? <ChevronUp className="w-3 h-3 ml-auto" /> : <ChevronDown className="w-3 h-3 ml-auto" />}
+          </button>
+        )}
+        {(showStats || !isMobile) && (
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+            <div
+              role="button"
+              tabIndex={0}
+              className="premium-card-hover !p-5 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onClick={() => { setSortBy("pnl_high"); setStatusFilter("ALL"); setActiveStatFilter("Total P&L"); }}
+              onKeyDown={(e) => { if (e.key === "Enter") { setSortBy("pnl_high"); setStatusFilter("ALL"); setActiveStatFilter("Total P&L"); } }}
+              aria-label="Sort by Total P&L"
+            >
+              <div className="absolute -top-3 -right-3 w-14 h-14 dot-pattern opacity-30 rounded-bl-2xl" />
+              <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Total P&L</p>
+              {isLoading ? <Skeleton className="h-8 w-24 mt-1" /> : (
+                <p className={cn("text-2xl font-bold font-mono mt-1", summary.totalPnl >= 0 ? "text-profit" : "text-loss")}>
+                  {summary.totalPnl >= 0 ? "+" : ""}₹{summary.totalPnl.toLocaleString()}
                 </p>
               )}
-            </>
-          )}
-        </div>
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
+              className="premium-card-hover !p-5 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onClick={() => { setStatusFilter("OPEN"); setActiveStatFilter("Open"); }}
+              onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("OPEN"); setActiveStatFilter("Open"); } }}
+              aria-label="Filter to Open trades"
+            >
+              <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Open</p>
+              {isLoading ? <Skeleton className="h-8 w-16 mt-1" /> : (
+                <p className="text-2xl font-bold font-mono text-profit mt-1">{statusCounts.OPEN}</p>
+              )}
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
+              className="premium-card-hover !p-5 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onClick={() => { setStatusFilter("PENDING"); setActiveStatFilter("Planned"); }}
+              onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("PENDING"); setActiveStatFilter("Planned"); } }}
+              aria-label="Filter to Planned trades"
+            >
+              <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Planned</p>
+              {isLoading ? <Skeleton className="h-8 w-16 mt-1" /> : (
+                <p className="text-2xl font-bold font-mono text-warning mt-1">{statusCounts.PENDING}</p>
+              )}
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
+              className="premium-card-hover !p-5 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onClick={() => { setStatusFilter("CLOSED"); setActiveStatFilter("Closed Today"); }}
+              onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("CLOSED"); setActiveStatFilter("Closed Today"); } }}
+              aria-label="Filter to Closed trades"
+            >
+              <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Closed Today</p>
+              {isLoading ? <Skeleton className="h-8 w-16 mt-1" /> : (
+                <p className="text-2xl font-bold font-mono mt-1">{summary.closedToday}</p>
+              )}
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
+              className="premium-card-hover !p-5 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onClick={() => { setStatusFilter("CLOSED"); setActiveStatFilter("Win Rate"); }}
+              onKeyDown={(e) => { if (e.key === "Enter") { setStatusFilter("CLOSED"); setActiveStatFilter("Win Rate"); } }}
+              aria-label="Filter to show Win Rate"
+            >
+              <div className="flex items-center justify-between">
+                <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Win Rate</p>
+                {isPolling && openTradeInstruments.length > 0 && (
+                  <span className="flex items-center gap-1 text-xs text-profit">
+                    <Radio className="w-3 h-3 animate-pulse" /> Live
+                  </span>
+                )}
+              </div>
+              {isLoading ? <Skeleton className="h-8 w-20 mt-1" /> : (
+                <>
+                  <p className="text-2xl font-bold font-mono text-warning mt-1">{summary.winRate.toFixed(1)}%</p>
+                  {lastUpdated && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {lastUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Status Tabs + Filters + Sort + View */}
@@ -387,22 +404,36 @@ export default function Trades() {
             />
           </div>
           <div className="flex gap-2 items-center flex-wrap">
-            <div className="flex gap-1">
-              {[{ key: "ALL", label: "All Segments" }, ...Object.entries(segmentLabels).map(([key, label]) => ({ key, label }))].map((seg) => (
-                <Button
-                  key={seg.key}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSegmentFilter(seg.key)}
-                  className={cn(
-                    "border-border text-xs h-7",
-                    segmentFilter === seg.key && "bg-primary/10 border-primary/20 text-primary"
-                  )}
-                >
-                  {seg.label}
-                </Button>
-              ))}
-            </div>
+            {/* Segment filter: Select on mobile, buttons on desktop */}
+            {isMobile ? (
+              <select
+                value={segmentFilter}
+                onChange={(e) => setSegmentFilter(e.target.value)}
+                className="h-7 text-xs rounded-lg border border-border bg-card px-2 text-foreground"
+              >
+                <option value="ALL">All Segments</option>
+                {Object.entries(segmentLabels).map(([key, label]) => (
+                  <option key={key} value={key}>{label}</option>
+                ))}
+              </select>
+            ) : (
+              <div className="flex gap-1">
+                {[{ key: "ALL", label: "All Segments" }, ...Object.entries(segmentLabels).map(([key, label]) => ({ key, label }))].map((seg) => (
+                  <Button
+                    key={seg.key}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSegmentFilter(seg.key)}
+                    className={cn(
+                      "border-border text-xs h-7",
+                      segmentFilter === seg.key && "bg-primary/10 border-primary/20 text-primary"
+                    )}
+                  >
+                    {seg.label}
+                  </Button>
+                ))}
+              </div>
+            )}
             <SortSelect value={sortBy} onValueChange={setSortBy} options={sortOptions} />
             <ViewToggle view={viewMode} onViewChange={setViewMode} />
           </div>
