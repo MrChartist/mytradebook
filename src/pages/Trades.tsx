@@ -93,6 +93,8 @@ export default function Trades() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [tradeToDelete, setTradeToDelete] = useState<Trade | null>(null);
   const [csvImportOpen, setCsvImportOpen] = useState(false);
+  const [showStats, setShowStats] = useState(true);
+  const isMobile = useIsMobile();
 
   const filters: TradeFilters = {
     ...(statusFilter !== "ALL" && { status: statusFilter }),
