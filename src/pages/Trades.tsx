@@ -333,12 +333,17 @@ export default function Trades() {
               aria-label="Sort by Total P&L"
             >
               <div className="absolute -top-3 -right-3 w-14 h-14 dot-pattern opacity-30 rounded-bl-2xl" />
-              <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Total P&L</p>
-              {isLoading ? <Skeleton className="h-8 w-24 mt-1" /> : (
-                <p className={cn("text-2xl font-bold font-mono mt-1", summary.totalPnl >= 0 ? "text-profit" : "text-loss")}>
-                  {summary.totalPnl >= 0 ? "+" : ""}₹{summary.totalPnl.toLocaleString()}
-                </p>
-              )}
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">Total P&L</p>
+                  {isLoading ? <Skeleton className="h-8 w-24 mt-1" /> : (
+                    <p className={cn("text-2xl font-bold font-mono mt-1", summary.totalPnl >= 0 ? "text-profit" : "text-loss")}>
+                      {summary.totalPnl >= 0 ? "+" : ""}₹{summary.totalPnl.toLocaleString()}
+                    </p>
+                  )}
+                </div>
+                {!isLoading && <Sparkline data={pnlSparkline} width={64} height={28} fill />}
+              </div>
             </div>
             <div
               role="button"
