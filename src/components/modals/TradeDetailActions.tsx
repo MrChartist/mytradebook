@@ -19,6 +19,7 @@ interface Props {
 export function TradeDetailActions({ trade, onClose, isClosing, onShowReview, onDeleteClick }: Props) {
   const [closingMode, setClosingMode] = useState(false);
   const [exitPrice, setExitPrice] = useState("");
+  const [shareOpen, setShareOpen] = useState(false);
 
   const handleClose = async () => {
     if (!exitPrice) return;
@@ -96,6 +97,15 @@ export function TradeDetailActions({ trade, onClose, isClosing, onShowReview, on
             </Button>
           )}
         </div>
+      )}
+
+      {trade.status === "CLOSED" && (
+        <>
+          <Button variant="outline" className="w-full" onClick={() => setShareOpen(true)}>
+            <Share2 className="w-4 h-4 mr-2" /> Share Trade Card
+          </Button>
+          <TradeShareModal trade={trade} open={shareOpen} onOpenChange={setShareOpen} />
+        </>
       )}
 
       <Separator />
