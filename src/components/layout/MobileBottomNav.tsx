@@ -2,6 +2,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { LayoutDashboard, TrendingUp, Bell, BookOpen, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { MobileDrawer } from "./MobileDrawer";
 
 const tabs = [
@@ -15,6 +16,8 @@ export function MobileBottomNav() {
   const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const activeTab = tabs.find((t) => location.pathname === t.path);
+
   return (
     <>
       <MobileDrawer open={drawerOpen} onOpenChange={setDrawerOpen} />
@@ -27,12 +30,19 @@ export function MobileBottomNav() {
                 key={tab.path}
                 to={tab.path}
                 className={cn(
-                  "flex flex-col items-center justify-center gap-0.5 flex-1 h-full",
+                  "relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full",
                   isActive ? "text-primary" : "text-muted-foreground"
                 )}
               >
-                <tab.icon className={cn("w-5 h-5", isActive && "text-primary")} />
+                <tab.icon className={cn("w-5 h-5 transition-transform", isActive && "text-primary scale-110")} />
                 <span className="text-[10px] font-medium">{tab.label}</span>
+                {isActive && (
+                  <motion.div
+                    layoutId="mobile-nav-indicator"
+                    className="absolute -bottom-0 w-8 h-[3px] rounded-full bg-primary"
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                )}
               </NavLink>
             );
           })}
