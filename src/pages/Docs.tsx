@@ -756,7 +756,78 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 4. Alerts System ───────────────────────── */}
+            {/* ── 3b. CSV Import ──────────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <SectionHeader
+                id="csv-import"
+                title="CSV Import & Export"
+                description="Bulk import trades from CSV files with intelligent column mapping, or export your entire trade history for backup and external analysis."
+                icon={Upload}
+              />
+              <VideoPlaceholder title="How to Import Trades from CSV" duration="3 min" />
+              <div className="grid md:grid-cols-2 gap-5">
+                <FeatureCard icon={Upload} title="Importing Trades">
+                  <p className="text-sm text-muted-foreground mb-3">Step-by-step CSV import with validation:</p>
+                  <FeatureList items={[
+                    "Upload any CSV file — supports most broker export formats",
+                    "Interactive column mapping — match your CSV headers to TradeBook fields",
+                    "Auto-detect common column names (Symbol, Entry Price, Qty, etc.)",
+                    "Preview mapped data before importing",
+                    "Validation checks: missing required fields, invalid dates, duplicate trades",
+                    "Batch import — process hundreds of trades at once",
+                  ]} />
+                  <div className="mt-4"><CsvImportMockup /></div>
+                </FeatureCard>
+                <FeatureCard icon={Download} title="Exporting Data">
+                  <p className="text-sm text-muted-foreground mb-3">Full data export for backup or external tools:</p>
+                  <FeatureList items={[
+                    "Export all trades to CSV with every field included",
+                    "Includes tags, review data, P&L, and timestamps",
+                    "Filter by date range or segment before exporting",
+                    "Compatible with Excel, Google Sheets, and other tools",
+                    "One-click download from the Trades page header",
+                  ]} />
+                </FeatureCard>
+              </div>
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── 3c. Trade Templates ─────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <SectionHeader
+                id="trade-templates"
+                title="Trade Templates & Smart Suggestions"
+                description="Save your frequently-used trade setups as reusable templates. Plus, get AI-suggested setups based on your trading patterns."
+                icon={FileText}
+              />
+              <VideoPlaceholder title="Setting Up Trade Templates" duration="2 min" />
+              <div className="grid md:grid-cols-2 gap-5">
+                <FeatureCard icon={Zap} title="Creating Templates">
+                  <p className="text-sm text-muted-foreground mb-3">Build templates for your most common trade setups:</p>
+                  <FeatureList items={[
+                    "Pre-fill segment, trade type, default SL %, and tags",
+                    "Optional notes template and preferred timeframe",
+                    "Enable/disable auto-tracking per template",
+                    "Toggle Telegram posting per template",
+                    "One-click 'Use' button when creating new trades",
+                  ]} />
+                  <div className="mt-4"><TradeTemplateMockup /></div>
+                </FeatureCard>
+                <FeatureCard icon={Sparkles} title="Smart Suggestions" badge="AI">
+                  <p className="text-sm text-muted-foreground mb-3">AI analyzes your closed trades to surface patterns:</p>
+                  <FeatureList items={[
+                    "Identifies your most frequent trade setups automatically",
+                    "Shows top 3 combos (e.g., 'Options BUY 5min — used 23 times')",
+                    "One-click pre-fill from any suggestion",
+                    "Updates as you add more trades",
+                    "Helps standardize your approach over time",
+                  ]} />
+                </FeatureCard>
+              </div>
+            </motion.section>
+
+            <SectionDivider />
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="alerts"
@@ -1562,6 +1633,118 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
             </motion.section>
 
+            <SectionDivider />
+
+            {/* ── FAQ & Troubleshooting ──────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <SectionHeader
+                id="faq"
+                title="FAQ & Troubleshooting"
+                description="Answers to frequently asked questions and solutions to common issues."
+                icon={MessageSquare}
+              />
+              <div className="space-y-4">
+                {[
+                  { q: "Is TradeBook free to use?", a: "Yes! The Free plan includes trade logging, watchlists, alerts, and basic analytics. The Pro plan unlocks advanced analytics, AI insights, weekly reports, and more." },
+                  { q: "Do I need a Dhan account to use TradeBook?", a: "No. Dhan integration is optional — it enables live prices, auto-sync, and one-click execution. You can use TradeBook fully without any broker connection." },
+                  { q: "Is my data secure?", a: "Absolutely. All data is encrypted at rest and in transit. Your API keys are stored securely server-side and never exposed to the browser. We use industry-standard authentication." },
+                  { q: "Can I import trades from my existing broker?", a: "Yes. Use the CSV Import feature to bulk import trades from any broker. Column mapping supports most common export formats." },
+                  { q: "Why are my live prices not updating?", a: "Check that your Dhan integration is connected and verified in Settings → Integrations. Prices only stream during market hours (9:15 AM – 3:30 PM IST)." },
+                  { q: "How do I fix Telegram notifications not sending?", a: "Verify your bot token and chat ID in Settings → Integrations → Telegram. Use the 'Send Test' button to confirm delivery. Check the Delivery Log for error details." },
+                  { q: "My dashboard shows no data — what's wrong?", a: "Ensure you have trades logged. Check the segment filter and month selector — they may be filtering out your data. Try selecting 'All Segments' and expanding the date range." },
+                  { q: "Can I use TradeBook on mobile?", a: "Yes! TradeBook is a Progressive Web App (PWA). Add it to your home screen for a native-like experience with offline trade queuing." },
+                ].map((faq) => (
+                  <div key={faq.q} className="premium-card-hover p-5 group">
+                    <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                      <MessageSquare className="w-4 h-4 text-primary shrink-0" />
+                      {faq.q}
+                    </h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed pl-6">{faq.a}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Changelog & Roadmap ────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <SectionHeader
+                id="changelog"
+                title="Changelog & Roadmap"
+                description="Recent updates and upcoming features. We ship improvements every week."
+                icon={RefreshCw}
+              />
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Recent updates */}
+                <div>
+                  <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-profit" /> Recent Updates
+                  </h3>
+                  <div className="space-y-3">
+                    {[
+                      { version: "v2.8", date: "Mar 2026", items: ["Stock Screener with 47 presets", "Custom filter builder", "Stock insight cards"] },
+                      { version: "v2.7", date: "Feb 2026", items: ["Portfolio Heat Map widget", "Daily Review Wizard", "Enhanced onboarding"] },
+                      { version: "v2.6", date: "Jan 2026", items: ["Multi-leg strategy support", "TSL profiles per segment", "AI Trade Insights"] },
+                      { version: "v2.5", date: "Dec 2025", items: ["Trade Templates & Smart Suggestions", "CSV Import improvements", "Offline trade queue"] },
+                    ].map((release) => (
+                      <div key={release.version} className="premium-card-hover p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge variant="secondary" className="bg-primary/10 text-primary border-none text-[10px]">{release.version}</Badge>
+                          <span className="text-[10px] text-muted-foreground">{release.date}</span>
+                        </div>
+                        <ul className="space-y-1">
+                          {release.items.map((item) => (
+                            <li key={item} className="text-xs text-muted-foreground flex items-center gap-1.5">
+                              <CheckCircle2 className="w-3 h-3 text-profit shrink-0" /> {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Roadmap */}
+                <div>
+                  <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[hsl(var(--tb-accent))]" /> Upcoming Roadmap
+                  </h3>
+                  <div className="space-y-3">
+                    {[
+                      { label: "Social Trading", desc: "Share your trade journal publicly with a custom RA-compliant profile", status: "In Progress" },
+                      { label: "Option Chain Analyzer", desc: "Visual option chain with Greeks, IV surface, and strategy payoff diagrams", status: "Planned" },
+                      { label: "Advanced Backtesting", desc: "Test your strategies against historical data with simulated P&L", status: "Planned" },
+                      { label: "Zerodha Integration", desc: "Connect your Zerodha Kite account for live prices and auto-sync", status: "Exploring" },
+                      { label: "P&L Sharing Cards", desc: "Generate beautiful P&L summary cards for social media sharing", status: "Planned" },
+                      { label: "Multi-Currency Support", desc: "Support for USD, EUR and other currencies for NRI traders", status: "Exploring" },
+                    ].map((item) => (
+                      <div key={item.label} className="premium-card-hover p-4 flex items-start gap-3">
+                        <div className="mt-0.5">
+                          <div className={cn(
+                            "w-2 h-2 rounded-full",
+                            item.status === "In Progress" ? "bg-[hsl(var(--tb-accent))] animate-pulse" :
+                            item.status === "Planned" ? "bg-primary/40" : "bg-muted-foreground/30"
+                          )} />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-sm font-semibold text-foreground">{item.label}</span>
+                            <span className={cn(
+                              "text-[9px] px-1.5 py-0.5 rounded-full font-semibold",
+                              item.status === "In Progress" ? "bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))]" :
+                              item.status === "Planned" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                            )}>{item.status}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.section>
+
             {/* CTA at bottom */}
             {!isInsideApp && (
               <motion.section
@@ -1591,16 +1774,65 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         </div>
       </div>
 
+      {/* Back to top button */}
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-card/80 backdrop-blur-xl border border-border/40 shadow-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-card transition-all"
+            aria-label="Back to top"
+            style={{ boxShadow: "0 4px 20px -6px rgba(0,0,0,0.1), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}
+          >
+            <ArrowUpRight className="w-4 h-4 -rotate-45" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
       {/* Footer — only on standalone */}
       {!isInsideApp && (
-        <footer className="border-t border-border/20 bg-card/50 dot-pattern py-10" role="contentinfo">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-muted-foreground/50">© {new Date().getFullYear()} TradeBook. All rights reserved.</p>
-            <nav className="flex items-center gap-4 text-xs text-muted-foreground/50" aria-label="Footer links">
-              <button onClick={() => navigate("/privacy")} className="hover:text-foreground transition-colors">Privacy</button>
-              <button onClick={() => navigate("/terms")} className="hover:text-foreground transition-colors">Terms</button>
-              <button onClick={() => navigate("/")} className="hover:text-foreground transition-colors">Home</button>
-            </nav>
+        <footer className="border-t border-border/30 bg-card/50 backdrop-blur-sm dot-pattern py-16" role="contentinfo" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
+          <div className="max-w-7xl mx-auto px-6 lg:px-10">
+            <div className="grid md:grid-cols-4 gap-10 mb-10">
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <img src="/favicon-32x32.png" alt="TradeBook" className="h-7 object-contain" loading="lazy" />
+                  <span className="text-sm font-bold text-foreground">TradeBook</span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed mb-4">The trading journal built for Indian markets.</p>
+                <Button size="sm" onClick={() => navigate("/login?mode=signup")} className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 text-[12px] h-8 shadow-[0_6px_16px_hsl(var(--tb-accent)/0.35)]">
+                  Get Started <ArrowRight className="w-3 h-3" />
+                </Button>
+              </div>
+              {[
+                { title: "Product", links: [{ label: "Features", href: "/#features" }, { label: "Pricing", href: "/#pricing" }, { label: "Documentation", href: "/docs" }] },
+                { title: "Resources", links: [{ label: "Changelog", href: "#changelog" }, { label: "FAQ", href: "#faq" }, { label: "Blog", href: "#" }] },
+                { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }, { label: "Contact", href: "mailto:founder@mrchartist.com" }] },
+              ].map((col) => (
+                <div key={col.title}>
+                  <h4 className="text-xs uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-4 border-l-2 border-[hsl(var(--tb-accent))] pl-2">{col.title}</h4>
+                  <ul className="space-y-1.5">
+                    {col.links.map((l) => (
+                      <li key={l.label}>
+                        <button onClick={() => l.href.startsWith("mailto") ? window.open(l.href) : l.href.startsWith("#") ? document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: "smooth" }) : navigate(l.href)} className="text-sm text-muted-foreground hover:text-foreground hover:translate-x-0.5 transition-all duration-200 inline-block">
+                          {l.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <div className="h-[1px] bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.25)] to-transparent mb-6" />
+            <div className="bg-muted/20 rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-3">
+              <p className="text-xs text-muted-foreground/80 flex items-center gap-1.5">
+                © {new Date().getFullYear()} TradeBook. All rights reserved.
+                <span className="inline-flex items-center gap-1">Made with ❤️ in <span className="inline-flex gap-[2px]"><span className="w-2 h-2 rounded-full bg-[#FF9933]" /><span className="w-2 h-2 rounded-full bg-white border border-border/40" /><span className="w-2 h-2 rounded-full bg-[#138808]" /></span> India</span>
+              </p>
+              <span className="text-[10px] text-muted-foreground/60 bg-muted/30 border border-border/30 rounded-full px-3 py-1">Not SEBI registered · For educational purposes only</span>
+            </div>
           </div>
         </footer>
       )}
