@@ -90,8 +90,8 @@ export function InsightCard({
       className={cn(
         "group transition-all duration-300 cursor-pointer",
         isGrid
-          ? "premium-card-hover !p-5"
-          : "premium-card-hover !p-3 !rounded-xl flex items-center gap-4",
+          ? "premium-card-hover !p-5 backdrop-blur-sm card-glow-primary"
+          : "premium-card-hover !p-3 !rounded-xl flex items-center gap-4 backdrop-blur-sm",
         className
       )}
       onClick={onView}
@@ -99,8 +99,6 @@ export function InsightCard({
       {isGrid ? (
         /* ── Grid Layout ──────────────────────────── */
         <div className="space-y-3.5 relative">
-          {/* Decorative corner dot pattern */}
-          <div className="absolute -top-5 -right-5 w-20 h-20 dot-pattern opacity-30 rounded-bl-2xl" />
 
           {/* Top Row: Direction + Symbol + LTP | Type + Status */}
           <div className="inner-panel !p-3 relative overflow-hidden">
@@ -251,7 +249,7 @@ export function InsightCard({
               <Eye className="w-3.5 h-3.5 mr-1.5" />
               View
             </Button>
-            <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
               {onCreateAlert && (
                 <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg" onClick={(e) => { e.stopPropagation(); onCreateAlert(); }}>
                   <Bell className="w-3.5 h-3.5" />

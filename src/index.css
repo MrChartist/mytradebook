@@ -266,9 +266,22 @@
 
   /* ── Dashboard Utilities ───────────────────────── */
   .dashboard-card {
-    @apply bg-card rounded-2xl border border-border/60 p-6;
-    box-shadow: var(--shadow-sm), inset 0 1px 0 0 hsl(0 0% 100% / 0.06);
-    transition: box-shadow 200ms ease, border-color 200ms ease, transform 200ms ease;
+    @apply bg-card rounded-[1.25rem] border border-border/60 p-6 relative overflow-hidden;
+    box-shadow:
+      var(--shadow-sm),
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.08);
+    transition: box-shadow 300ms ease-out, border-color 300ms ease-out, transform 300ms ease-out;
+  }
+
+  .dashboard-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.1) 30%, hsl(0 0% 100% / 0.1) 70%, transparent 100%);
+    pointer-events: none;
   }
 
   .dashboard-card-hover {
@@ -276,9 +289,11 @@
   }
 
   .dashboard-card-hover:hover {
-    box-shadow: var(--shadow-md), inset 0 1px 0 0 hsl(0 0% 100% / 0.08);
-    border-color: hsl(var(--primary) / 0.15);
-    transform: translateY(-1px);
+    box-shadow:
+      var(--shadow-md),
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.1);
+    border-color: hsl(var(--primary) / 0.18);
+    transform: translateY(-2px);
   }
 
   .icon-badge {

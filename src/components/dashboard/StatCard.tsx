@@ -34,17 +34,17 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         onClick={isClickable ? handleClick : undefined}
         onKeyDown={isClickable ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleClick(); } } : undefined}
         className={cn(
-          "premium-card-hover p-5 group",
+          "premium-card-hover p-5 group backdrop-blur-sm",
+          changeType === "profit" && "card-glow-profit",
+          changeType === "loss" && "card-glow-loss",
+          changeType === "neutral" && "card-glow-primary",
           isClickable && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-[0.98]"
         )}
       >
-        {/* Decorative dot pattern */}
-        <div className="absolute top-0 right-0 w-24 h-24 dot-pattern opacity-40 rounded-bl-3xl" />
-
         <div className="flex items-start justify-between relative">
           <div className="space-y-2">
             <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">{title}</p>
-            <p className="text-2xl font-bold tracking-tight font-mono">{value}</p>
+            <p className="text-[28px] font-bold tracking-tight font-mono leading-none">{value}</p>
             {change && (
               <p
                 className={cn(
