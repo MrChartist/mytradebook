@@ -89,7 +89,7 @@ export default function Landing() {
         </div>
         <AnimatePresence>
           {mobileMenuOpen && (
-            <motion.div initial={{ opacity: 0, y: -8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.97 }} transition={{ duration: 0.2 }} className="md:hidden mt-2 rounded-2xl border border-border/40 bg-card/95 backdrop-blur-xl shadow-lg p-4 space-y-1">
+            <motion.div initial={{ opacity: 0, y: -8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.97 }} transition={{ duration: 0.2 }} className="md:hidden mt-2 rounded-2xl border border-border/40 bg-card/95 backdrop-blur-xl shadow-xl p-4 space-y-1">
               {[{ label: "Features", href: "#features" }, { label: "Pricing", href: "#pricing" }, { label: "Docs", href: "/docs" }, { label: "FAQ", href: "#faq" }].map((item) => (
                 <a key={item.label} href={item.href} onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted/50 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">{item.label}</a>
               ))}
@@ -108,7 +108,7 @@ export default function Landing() {
           <p className="text-center text-xs text-muted-foreground uppercase tracking-[0.18em] font-semibold mb-8">Trusted by 1,200+ traders across Indian markets</p>
           <div className="flex items-center justify-center gap-12 sm:gap-20 flex-wrap">
             {[{ name: "NSE", icon: Activity }, { name: "BSE", icon: BarChart3 }, { name: "MCX", icon: PieChart }, { name: "Dhan", icon: Zap }, { name: "Telegram", icon: Send }].map((l) => (
-              <motion.div key={l.name} className="flex items-center gap-2.5 text-muted-foreground/70 hover:text-muted-foreground transition-colors duration-300" whileHover={{ scale: 1.06 }}>
+              <motion.div key={l.name} className="flex items-center gap-2.5 text-muted-foreground/70 hover:text-[hsl(var(--tb-accent))] transition-colors duration-300" whileHover={{ scale: 1.06 }}>
                 <l.icon className="w-4.5 h-4.5" /><span className="text-sm font-semibold tracking-wide">{l.name}</span>
               </motion.div>
             ))}
