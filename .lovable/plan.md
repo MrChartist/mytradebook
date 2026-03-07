@@ -1,58 +1,43 @@
 
 
-## Improve Instrument Selection UX Across Trades, Alerts & Studies
+## Card Visual Upgrade — Smooth, Rich, Easy to Read
 
-### Current Pain Points
-1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
-2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
-3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
-4. **Selected state is disconnected** — after selecting, "Change" button resets everything
-5. **No keyboard navigation** — can't arrow through results or press Enter to select
-6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
-7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
+Inspired by the reference images: dark glassmorphic cards with **gradient corner glows**, smoother surfaces, richer depth, and cleaner typography hierarchy.
 
-### Proposed Improvements
+### Changes
 
-#### 1. Unified Combobox-Style Picker (biggest UX win)
-Replace the current search input + results list with a **combobox pattern**:
-- Single input field that shows results as you type (dropdown below)
-- Recent items shown immediately on focus (before typing)
-- Favorites pinned at the top with a star
-- Arrow keys to navigate, Enter to select, Escape to close
-- Taller results area (max-h-64 instead of max-h-40)
+#### 1. CSS Card System Overhaul (`src/index.css`)
 
-#### 2. Smarter Defaults & Context
-- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
-- Remember last used exchange filter per segment in localStorage
-- Show lot size inline for F&O instruments in results
+Upgrade all card utility classes to match the reference aesthetic:
 
-#### 3. Improved Selected State
-- Show a compact **chip-style** selected instrument instead of the current full-width bar
-- "Change" opens the picker inline (no full reset) — preserves recent search context
-- LTP fetch button more prominent with last-fetched timestamp
+- **`surface-card`**: Add subtle inner top-edge highlight (`inset 0 1px 0 0 white/8`), increase border-radius to `1.25rem`, smoother shadow layering
+- **`premium-card`**: Add a `::before` pseudo-element for a **gradient corner glow** effect (subtle colored radial gradient in top-right corner that shifts color based on context). Smoother `transition-all duration-300 ease-out`
+- **`premium-card-hover`**: Richer hover with lift (`translateY(-3px)`), intensified glow, border brightening
+- **`dashboard-card`**: Inherit the new premium surface treatment — inner highlight + softer shadow stack
+- New utility: **`.card-glow-profit`**, **`.card-glow-loss`**, **`.card-glow-primary`** — applies a colored radial gradient glow in the top-right corner (like the green/gold/rose/blue glows in the reference)
+- Add `::after` pseudo for a subtle **top-edge liquid shine** line on all premium cards
 
-#### 4. Keyboard Navigation in Search Results
-- Add `onKeyDown` handler to search input
-- ArrowUp/ArrowDown to highlight results
-- Enter to select highlighted item
-- Track `highlightedIndex` state
+#### 2. Base Card Component (`src/components/ui/card.tsx`)
 
-#### 5. Option Chain Quick Access
-- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
-- Make the chain component more compact — remove redundant labels
+- Upgrade default className: `rounded-2xl` (from `rounded-lg`), add inner highlight via box-shadow, smoother border color
+- Better spacing defaults in `CardHeader` (`p-5` instead of `p-6` for tighter, modern feel)
+- `CardTitle`: Slightly smaller default (`text-xl` from `text-2xl`) for better hierarchy
 
-#### 6. Exchange Filter as Chips (not buttons)
-- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
+#### 3. StatCard Polish (`src/components/dashboard/StatCard.tsx`)
 
-### Files to Modify
-- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
-- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
+- Replace `dot-pattern` decorative element with a **radial gradient glow** in the corner that matches `changeType` color (green for profit, red for loss, orange for neutral) — matching the reference card style
+- Smoother value typography: `text-[28px]` with tighter tracking
+- Add subtle `backdrop-blur-sm` for depth when used on complex backgrounds
 
-### Implementation Order
-1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
-2. Increase results area height and show lot size for F&O
-3. Replace exchange filter buttons with compact chips
-4. Add "remember last exchange" per segment
-5. Improve selected state with chip-style display
-6. Add focus-triggered recent items display
+#### 4. InsightCard Refinement (`src/components/ui/insight-card.tsx`)
+
+- Replace `dot-pattern` with the same corner gradient glow
+- Softer `inner-panel` sections with reduced border opacity
+- Smoother action row transition (fade in from below on hover)
+
+### Files to Edit
+1. `src/index.css` — card CSS classes + new glow utilities
+2. `src/components/ui/card.tsx` — base component defaults
+3. `src/components/dashboard/StatCard.tsx` — gradient glow + typography
+4. `src/components/ui/insight-card.tsx` — gradient glow + smoother panels
 
