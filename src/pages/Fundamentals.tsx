@@ -252,36 +252,35 @@ export default function Fundamentals() {
 
       <div className="space-y-4">
         {/* ── Header Card ── */}
-        <div className="rounded-2xl bg-card border border-border p-5 relative overflow-hidden">
+        <div className="rounded-2xl bg-card border border-border p-4 relative overflow-hidden">
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(hsl(var(--foreground)) 1px, transparent 1px)", backgroundSize: "16px 16px" }} />
-          <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <SlidersHorizontal className="w-5 h-5 text-primary" />
+          <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                <SlidersHorizontal className="w-4.5 h-4.5 text-primary" />
               </div>
-              <div>
-                <h1 className="text-lg font-bold text-foreground">Stock Scanner</h1>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span className="font-mono font-bold text-foreground">{totalCount.toLocaleString()}</span>
-                  <span>NSE stocks</span>
-                  <span className="text-muted-foreground/50">·</span>
-                  <Badge variant="secondary" className="text-[10px] h-5">
-                    {isCustomMode ? `Custom (${appliedFilters.length})` : preset.label}
-                  </Badge>
-                </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-base font-bold text-foreground">Stock Scanner</h1>
+                <span className="text-xs text-muted-foreground">
+                  <span className="font-mono font-bold text-foreground">{totalCount.toLocaleString()}</span> stocks
+                </span>
+                <span className="text-muted-foreground/40">·</span>
+                <span className="text-[10px] text-muted-foreground font-medium">
+                  {isCustomMode ? `Custom (${appliedFilters.length})` : preset.label}
+                </span>
               </div>
             </div>
-            <div className="relative w-full sm:w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
               <Input
-                placeholder="Search symbol, sector, industry..."
+                placeholder="Search symbol, sector..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 h-9 text-sm bg-background"
+                className="pl-8 h-8 text-xs bg-background"
               />
               {search && (
-                <button onClick={() => setSearch("")} className="absolute right-2.5 top-1/2 -translate-y-1/2">
-                  <X className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground" />
+                <button onClick={() => setSearch("")} className="absolute right-2 top-1/2 -translate-y-1/2">
+                  <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
                 </button>
               )}
             </div>
@@ -289,24 +288,24 @@ export default function Fundamentals() {
         </div>
 
         {/* ── Grouped Scanner Presets ── */}
-        <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
+        <div className="flex items-center gap-0.5 overflow-x-auto pb-1 scrollbar-none">
           {PRESET_GROUPS.map((group, gi) => (
-            <div key={group.key} className="flex items-center gap-1 shrink-0">
-              {gi > 0 && <div className="w-px h-5 bg-border mx-1.5 shrink-0" />}
-              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mr-1 shrink-0">{group.label}</span>
+            <div key={group.key} className="flex items-center gap-0.5 shrink-0">
+              {gi > 0 && <div className="w-px h-4 bg-border mx-1 shrink-0" />}
+              <span className={cn("w-1.5 h-1.5 rounded-full shrink-0 mr-0.5", PRESET_GROUP_COLORS[group.key])} />
               {SCANNER_PRESETS.filter((p) => p.group === group.key).map((p) => (
                 <Button
                   key={p.id}
                   variant={presetId === p.id ? "default" : "ghost"}
                   size="sm"
                   className={cn(
-                    "h-7 text-[11px] rounded-full px-3 shrink-0 transition-all",
-                    presetId === p.id && "shadow-[0_0_12px_hsl(var(--primary)/0.3)]"
+                    "h-6 text-[10px] rounded-full px-2.5 shrink-0 transition-all font-medium",
+                    presetId === p.id && "shadow-[0_0_10px_hsl(var(--primary)/0.25)]",
+                    presetId !== p.id && "text-muted-foreground"
                   )}
                   onClick={() => handlePresetChange(p.id)}
                   title={p.description}
                 >
-                  {p.id !== "all" && <Filter className="w-3 h-3 mr-1" />}
                   {p.label}
                 </Button>
               ))}
@@ -315,16 +314,17 @@ export default function Fundamentals() {
           {/* Saved Presets */}
           {savedPresets.length > 0 && (
             <>
-              <div className="w-px h-5 bg-border mx-1.5 shrink-0" />
-              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mr-1 shrink-0">My Presets</span>
+              <div className="w-px h-4 bg-border mx-1 shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full shrink-0 mr-0.5 bg-accent" />
               {savedPresets.map((sp) => (
-                <div key={sp.id} className="flex items-center gap-0.5 shrink-0">
+                <div key={sp.id} className="flex items-center gap-0 shrink-0">
                   <Button
                     variant={presetId === `saved_${sp.id}` ? "default" : "ghost"}
                     size="sm"
                     className={cn(
-                      "h-7 text-[11px] rounded-full px-3 transition-all",
-                      presetId === `saved_${sp.id}` && "shadow-[0_0_12px_hsl(var(--primary)/0.3)]"
+                      "h-6 text-[10px] rounded-full px-2.5 transition-all font-medium",
+                      presetId === `saved_${sp.id}` && "shadow-[0_0_10px_hsl(var(--primary)/0.25)]",
+                      presetId !== `saved_${sp.id}` && "text-muted-foreground"
                     )}
                     onClick={() => {
                       setAppliedFilters(sp.filters);
@@ -335,34 +335,34 @@ export default function Fundamentals() {
                       setPage(0);
                     }}
                   >
-                    <Bookmark className="w-3 h-3 mr-1" />
+                    <Bookmark className="w-2.5 h-2.5 mr-1" />
                     {sp.name}
                   </Button>
                   <button
                     onClick={() => deletePreset.mutate(sp.id)}
                     className="p-0.5 text-muted-foreground hover:text-destructive transition-colors"
                   >
-                    <X className="w-3 h-3" />
+                    <X className="w-2.5 h-2.5" />
                   </button>
                 </div>
               ))}
             </>
           )}
           {/* Custom Filter Toggle */}
-          <div className="w-px h-5 bg-border mx-1.5 shrink-0" />
+          <div className="w-px h-4 bg-border mx-1 shrink-0" />
           <Button
             variant={isCustomMode ? "default" : "outline"}
             size="sm"
             className={cn(
-              "h-7 text-[11px] rounded-full px-3 shrink-0 transition-all gap-1.5",
-              isCustomMode && "shadow-[0_0_12px_hsl(var(--primary)/0.3)]"
+              "h-6 text-[10px] rounded-full px-2.5 shrink-0 transition-all gap-1 font-medium",
+              isCustomMode && "shadow-[0_0_10px_hsl(var(--primary)/0.25)]"
             )}
             onClick={toggleFilterBuilder}
           >
-            <SlidersHorizontal className="w-3 h-3" />
+            <SlidersHorizontal className="w-2.5 h-2.5" />
             Custom
             {isCustomMode && appliedFilters.length > 0 && (
-              <span className="ml-0.5 inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary-foreground text-primary text-[9px] font-bold">
+              <span className="ml-0.5 inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-primary-foreground text-primary text-[8px] font-bold">
                 {appliedFilters.length}
               </span>
             )}
@@ -508,21 +508,21 @@ export default function Fundamentals() {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-card border-b-2 border-border sticky top-0 z-10">
-                    <TableHead className="w-[180px] sticky left-0 bg-card z-20 py-2.5 px-3">Symbol</TableHead>
-                    <TableHead className="hidden md:table-cell py-2.5 px-3">Sector</TableHead>
-                    <TableHead className="text-right py-2.5 px-3"><SortHeader label="LTP" field="close" /></TableHead>
-                    <TableHead className="text-right py-2.5 px-3"><SortHeader label="Chg%" field="change" /></TableHead>
-                    <TableHead className="text-right hidden sm:table-cell py-2.5 px-3"><SortHeader label="Vol" field="volume" /></TableHead>
-                    <TableHead className="text-right hidden sm:table-cell py-2.5 px-3"><SortHeader label="Mkt Cap" field="market_cap" /></TableHead>
-                    <TableHead className="text-right hidden lg:table-cell py-2.5 px-3"><SortHeader label="P/E" field="pe_ratio" /></TableHead>
-                    <TableHead className="text-right hidden lg:table-cell py-2.5 px-3"><SortHeader label="P/B" field="pb_ratio" /></TableHead>
-                    <TableHead className="text-right hidden xl:table-cell py-2.5 px-3"><SortHeader label="ROE" field="roe" /></TableHead>
-                    <TableHead className="text-right hidden xl:table-cell py-2.5 px-3"><SortHeader label="Net Mgn" field="net_margin" /></TableHead>
-                    <TableHead className="text-right hidden xl:table-cell py-2.5 px-3"><SortHeader label="D/E" field="debt_to_equity" /></TableHead>
-                    <TableHead className="text-right hidden xl:table-cell py-2.5 px-3"><SortHeader label="Div%" field="dividend_yield" /></TableHead>
-                    <TableHead className="text-right hidden xl:table-cell py-2.5 px-3"><SortHeader label="RSI" field="rsi" /></TableHead>
-                    <TableHead className="text-right hidden 2xl:table-cell py-2.5 px-3">52W High</TableHead>
-                    <TableHead className="text-right hidden 2xl:table-cell py-2.5 px-3">52W Low</TableHead>
+                    <TableHead className="w-[170px] sticky left-0 bg-card z-20 py-2 px-3" style={{ boxShadow: "2px 0 4px -2px rgba(0,0,0,0.06)" }}>Symbol</TableHead>
+                    <TableHead className="hidden md:table-cell py-2 px-3">Sector</TableHead>
+                    <TableHead className="text-right py-2 px-3"><SortHeader label="LTP" field="close" /></TableHead>
+                    <TableHead className="text-right py-2 px-3"><SortHeader label="Chg%" field="change" /></TableHead>
+                    <TableHead className="text-right hidden sm:table-cell py-2 px-3"><SortHeader label="Vol" field="volume" /></TableHead>
+                    <TableHead className="text-right hidden sm:table-cell py-2 px-3"><SortHeader label="Mkt Cap" field="market_cap" /></TableHead>
+                    <TableHead className="text-right hidden lg:table-cell py-2 px-3"><SortHeader label="P/E" field="pe_ratio" /></TableHead>
+                    <TableHead className="text-right hidden lg:table-cell py-2 px-3"><SortHeader label="P/B" field="pb_ratio" /></TableHead>
+                    <TableHead className="text-right hidden xl:table-cell py-2 px-3"><SortHeader label="ROE" field="roe" /></TableHead>
+                    <TableHead className="text-right hidden xl:table-cell py-2 px-3"><SortHeader label="Net Mgn" field="net_margin" /></TableHead>
+                    <TableHead className="text-right hidden xl:table-cell py-2 px-3"><SortHeader label="D/E" field="debt_to_equity" /></TableHead>
+                    <TableHead className="text-right hidden xl:table-cell py-2 px-3"><SortHeader label="Div%" field="dividend_yield" /></TableHead>
+                    <TableHead className="text-right hidden xl:table-cell py-2 px-3"><SortHeader label="RSI" field="rsi" /></TableHead>
+                    <TableHead className="text-right hidden 2xl:table-cell py-2 px-3">52W High</TableHead>
+                    <TableHead className="text-right hidden 2xl:table-cell py-2 px-3">52W Low</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -534,48 +534,48 @@ export default function Fundamentals() {
                         key={s.ticker}
                         className={cn(
                           "cursor-pointer hover:bg-muted/40 transition-colors border-b border-border/50",
-                          idx % 2 === 1 && "bg-muted/20"
+                          idx % 2 === 1 && "bg-muted/30"
                         )}
                         onClick={() => setSelectedStock(s)}
                       >
-                        <TableCell className="sticky left-0 z-10 py-2.5 px-3" style={{ backgroundColor: idx % 2 === 1 ? "hsl(var(--muted) / 0.2)" : "hsl(var(--card))" }}>
+                        <TableCell className="sticky left-0 z-10 py-2 px-3" style={{ backgroundColor: idx % 2 === 1 ? "hsl(var(--muted) / 0.3)" : "hsl(var(--card))", boxShadow: "2px 0 4px -2px rgba(0,0,0,0.06)" }}>
                           <div>
-                            <p className="font-bold text-sm text-foreground">{s.ticker?.replace("NSE:", "")}</p>
-                            <p className="text-[10px] text-muted-foreground truncate max-w-[140px]">{s.description}</p>
+                            <p className="font-bold text-[13px] text-foreground leading-tight">{s.ticker?.replace("NSE:", "")}</p>
+                            <p className="text-[9px] text-muted-foreground truncate max-w-[130px] leading-tight">{s.description}</p>
                           </div>
                         </TableCell>
-                        <TableCell className="hidden md:table-cell py-2.5 px-3">
-                          {s.sector && <Badge variant="secondary" className="text-[10px] font-normal">{s.sector}</Badge>}
+                        <TableCell className="hidden md:table-cell py-2 px-3">
+                          {s.sector && <span className="text-[11px] text-muted-foreground">{s.sector}</span>}
                         </TableCell>
-                        <TableCell className="text-right font-mono font-semibold text-sm py-2.5 px-3">{formatCurrency(s.close)}</TableCell>
-                        <TableCell className="text-right py-2.5 px-3">
+                        <TableCell className="text-right font-mono font-semibold text-[13px] py-2 px-3">{formatCurrency(s.close)}</TableCell>
+                        <TableCell className="text-right py-2 px-3">
                           <span className={cn(
-                            "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-mono font-medium",
-                            isPos ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss"
+                            "inline-flex items-center gap-1 text-[11px] font-mono font-medium",
+                            isPos ? "text-profit" : "text-loss"
                           )}>
-                            <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", isPos ? "bg-profit" : "bg-loss")} />
+                            <span className={cn("w-1 h-1 rounded-full shrink-0", isPos ? "bg-profit" : "bg-loss")} />
                             {formatPercent(s.change)}
                           </span>
                         </TableCell>
-                        <TableCell className="text-right text-xs text-muted-foreground hidden sm:table-cell py-2.5 px-3 font-mono">
+                        <TableCell className="text-right text-[11px] text-muted-foreground hidden sm:table-cell py-2 px-3 font-mono">
                           {s.volume != null ? (s.volume >= 1e7 ? `${(s.volume / 1e7).toFixed(1)}Cr` : s.volume >= 1e5 ? `${(s.volume / 1e5).toFixed(1)}L` : s.volume >= 1e3 ? `${(s.volume / 1e3).toFixed(0)}K` : s.volume) : "—"}
                         </TableCell>
-                        <TableCell className="text-right text-xs text-muted-foreground hidden sm:table-cell py-2.5 px-3 font-mono">{formatMarketCap(s.market_cap)}</TableCell>
-                        <TableCell className="text-right text-xs hidden lg:table-cell py-2.5 px-3 font-mono">{formatRatio(s.pe_ratio)}</TableCell>
-                        <TableCell className="text-right text-xs hidden lg:table-cell py-2.5 px-3 font-mono">{formatRatio(s.pb_ratio)}</TableCell>
-                        <TableCell className="text-right text-xs hidden xl:table-cell py-2.5 px-3 font-mono">
-                          <span className={cn(s.roe != null && s.roe > 0 ? "text-profit" : "text-loss")}>{formatPercent(s.roe)}</span>
+                        <TableCell className="text-right text-[11px] text-muted-foreground hidden sm:table-cell py-2 px-3 font-mono">{formatMarketCap(s.market_cap)}</TableCell>
+                        <TableCell className="text-right text-[11px] hidden lg:table-cell py-2 px-3 font-mono">{formatRatio(s.pe_ratio)}</TableCell>
+                        <TableCell className="text-right text-[11px] hidden lg:table-cell py-2 px-3 font-mono">{formatRatio(s.pb_ratio)}</TableCell>
+                        <TableCell className="text-right text-[11px] hidden xl:table-cell py-2 px-3 font-mono">
+                          <span className={cn(s.roe != null && s.roe > 0 ? "text-profit" : s.roe == null ? "text-muted-foreground" : "text-loss")}>{s.roe != null ? formatPercent(s.roe) : "—"}</span>
                         </TableCell>
-                        <TableCell className="text-right text-xs hidden xl:table-cell py-2.5 px-3 font-mono">
-                          <span className={cn(s.net_margin != null && s.net_margin > 0 ? "text-profit" : "text-loss")}>{formatPercent(s.net_margin)}</span>
+                        <TableCell className="text-right text-[11px] hidden xl:table-cell py-2 px-3 font-mono">
+                          <span className={cn(s.net_margin != null && s.net_margin > 0 ? "text-profit" : s.net_margin == null ? "text-muted-foreground" : "text-loss")}>{s.net_margin != null ? formatPercent(s.net_margin) : "—"}</span>
                         </TableCell>
-                        <TableCell className="text-right text-xs hidden xl:table-cell py-2.5 px-3 font-mono">{formatRatio(s.debt_to_equity)}</TableCell>
-                        <TableCell className="text-right text-xs hidden xl:table-cell py-2.5 px-3 font-mono">{s.dividend_yield != null ? `${s.dividend_yield.toFixed(2)}%` : "—"}</TableCell>
-                        <TableCell className={cn("text-right text-xs hidden xl:table-cell py-2.5 px-3 font-mono", rsiColor)}>
+                        <TableCell className="text-right text-[11px] hidden xl:table-cell py-2 px-3 font-mono">{formatRatio(s.debt_to_equity)}</TableCell>
+                        <TableCell className="text-right text-[11px] hidden xl:table-cell py-2 px-3 font-mono">{s.dividend_yield != null ? `${s.dividend_yield.toFixed(2)}%` : "—"}</TableCell>
+                        <TableCell className={cn("text-right text-[11px] hidden xl:table-cell py-2 px-3 font-mono", rsiColor)}>
                           {s.rsi != null ? s.rsi.toFixed(1) : "—"}
                         </TableCell>
-                        <TableCell className="text-right text-xs hidden 2xl:table-cell py-2.5 px-3 font-mono">{formatCurrency(s.high_52w)}</TableCell>
-                        <TableCell className="text-right text-xs hidden 2xl:table-cell py-2.5 px-3 font-mono">{formatCurrency(s.low_52w)}</TableCell>
+                        <TableCell className="text-right text-[11px] hidden 2xl:table-cell py-2 px-3 font-mono">{formatCurrency(s.high_52w)}</TableCell>
+                        <TableCell className="text-right text-[11px] hidden 2xl:table-cell py-2 px-3 font-mono">{formatCurrency(s.low_52w)}</TableCell>
                       </TableRow>
                     );
                   })}
@@ -586,11 +586,10 @@ export default function Fundamentals() {
         )}
 
         {/* ── Pagination Footer ── */}
-        <div className="rounded-xl bg-card border border-border p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span>Rows:</span>
+        <div className="rounded-xl bg-card border border-border px-3 py-2 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
             <Select value={String(pageSize)} onValueChange={(v) => { setPageSize(Number(v)); setPage(0); }}>
-              <SelectTrigger className="h-7 w-16 text-xs">
+              <SelectTrigger className="h-6 w-14 text-[11px] border-0 bg-muted/40 px-2">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -599,31 +598,29 @@ export default function Fundamentals() {
                 ))}
               </SelectContent>
             </Select>
-            <span className="hidden sm:inline text-muted-foreground">
-              Showing <span className="font-medium text-foreground">{page * pageSize + 1}–{Math.min((page + 1) * pageSize, totalCount)}</span> of <span className="font-medium text-foreground">{totalCount.toLocaleString()}</span>
+            <span className="hidden sm:inline">
+              <span className="font-medium text-foreground">{page * pageSize + 1}–{Math.min((page + 1) * pageSize, totalCount)}</span> of <span className="font-medium text-foreground">{totalCount.toLocaleString()}</span>
             </span>
-            <span className="text-muted-foreground/50 hidden sm:inline">·</span>
-            <Badge variant="outline" className="text-[9px] h-4 hidden sm:inline-flex text-muted-foreground font-normal">
-              TradingView · 5 min cache
-            </Badge>
+            <span className="text-muted-foreground/40 hidden sm:inline">·</span>
+            <span className="text-[9px] text-muted-foreground/60 hidden sm:inline">TradingView · 5 min cache</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Button variant="outline" size="icon" className="h-7 w-7" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
-              <ChevronLeft className="w-4 h-4" />
+          <div className="flex items-center gap-0.5">
+            <Button variant="ghost" size="icon" className="h-6 w-6" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
+              <ChevronLeft className="w-3.5 h-3.5" />
             </Button>
             {pageNumbers.map((p) => (
               <Button
                 key={p}
                 variant={p === page ? "default" : "ghost"}
                 size="icon"
-                className={cn("h-7 w-7 text-xs", p === page && "shadow-sm")}
+                className={cn("h-6 w-6 text-[11px]", p === page && "shadow-sm")}
                 onClick={() => setPage(p)}
               >
                 {p + 1}
               </Button>
             ))}
-            <Button variant="outline" size="icon" className="h-7 w-7" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>
-              <ChevronRight className="w-4 h-4" />
+            <Button variant="ghost" size="icon" className="h-6 w-6" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>
+              <ChevronRight className="w-3.5 h-3.5" />
             </Button>
           </div>
         </div>
