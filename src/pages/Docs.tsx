@@ -519,6 +519,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="TradeBook is a professional trading journal built specifically for Indian markets — NSE, BSE, and MCX. Whether you trade equities, futures, options, or commodities, it gives you the tools to log, analyze, and improve your trading."
                 icon={Play}
               />
+              <VideoPlaceholder title="Getting Started with TradeBook — Full Walkthrough" duration="5 min" />
               <OnboardingFlowMockup />
               <MobileAppMockup />
               <div className="grid md:grid-cols-2 gap-5">
