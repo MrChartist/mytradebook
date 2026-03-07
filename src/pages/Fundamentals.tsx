@@ -43,19 +43,35 @@ type ScannerPreset = {
 };
 
 const SCANNER_PRESETS: ScannerPreset[] = [
+  // ── Market Cap ──
   { id: "all", label: "All Stocks", description: "All NSE stocks by market cap", filters: [], group: "cap" },
   { id: "large_cap", label: "Large Cap", description: "Mkt cap > ₹20,000 Cr", filters: [{ field: "market_cap_basic", op: "greater", value: 2e11 }], group: "cap" },
   { id: "mid_cap", label: "Mid Cap", description: "₹5,000 – ₹20,000 Cr", filters: [{ field: "market_cap_basic", op: "greater", value: 5e10 }, { field: "market_cap_basic", op: "less", value: 2e11 }], group: "cap" },
   { id: "small_cap", label: "Small Cap", description: "Mkt cap < ₹5,000 Cr", filters: [{ field: "market_cap_basic", op: "greater", value: 1e9 }, { field: "market_cap_basic", op: "less", value: 5e10 }], group: "cap" },
+  { id: "micro_cap", label: "Micro Cap", description: "Mkt cap < ₹500 Cr", filters: [{ field: "market_cap_basic", op: "greater", value: 1e8 }, { field: "market_cap_basic", op: "less", value: 5e9 }], group: "cap" },
+
+  // ── Fundamental ──
   { id: "undervalued", label: "Undervalued", description: "Low P/E + Low P/B", filters: [{ field: "price_earnings_ttm", op: "greater", value: 0 }, { field: "price_earnings_ttm", op: "less", value: 20 }, { field: "price_book_ratio", op: "less", value: 3 }], sortBy: "pe_ratio", sortOrder: "asc", group: "fundamental" },
   { id: "growth", label: "High Growth", description: "ROE > 15%, Margin > 10%", filters: [{ field: "return_on_equity", op: "greater", value: 15 }, { field: "net_margin", op: "greater", value: 10 }], sortBy: "roe", sortOrder: "desc", group: "fundamental" },
-  { id: "dividend", label: "Dividend", description: "Yield > 1%", filters: [{ field: "dividends_yield", op: "greater", value: 1 }], sortBy: "dividend_yield", sortOrder: "desc", group: "fundamental" },
+  { id: "dividend", label: "Dividend Stars", description: "Yield > 2%", filters: [{ field: "dividends_yield", op: "greater", value: 2 }], sortBy: "dividend_yield", sortOrder: "desc", group: "fundamental" },
   { id: "low_debt", label: "Low Debt", description: "D/E < 0.5, CR > 1.5", filters: [{ field: "debt_to_equity", op: "less", value: 0.5 }, { field: "debt_to_equity", op: "greater", value: 0 }, { field: "current_ratio", op: "greater", value: 1.5 }], sortBy: "debt_to_equity", sortOrder: "asc", group: "fundamental" },
+  { id: "quality", label: "Quality", description: "ROE > 20%, D/E < 1, Margin > 15%", filters: [{ field: "return_on_equity", op: "greater", value: 20 }, { field: "debt_to_equity", op: "less", value: 1 }, { field: "net_margin", op: "greater", value: 15 }], sortBy: "roe", sortOrder: "desc", group: "fundamental" },
+  { id: "high_margin", label: "High Margin", description: "Net margin > 20%", filters: [{ field: "net_margin", op: "greater", value: 20 }], sortBy: "net_margin", sortOrder: "desc", group: "fundamental" },
+  { id: "cash_rich", label: "Cash Rich", description: "CR > 2, D/E < 0.3", filters: [{ field: "current_ratio", op: "greater", value: 2 }, { field: "debt_to_equity", op: "less", value: 0.3 }, { field: "debt_to_equity", op: "greater", value: 0 }], sortBy: "current_ratio", sortOrder: "desc", group: "fundamental" },
+  { id: "value_picks", label: "Value Picks", description: "P/E < 15, ROE > 12%, Yield > 1%", filters: [{ field: "price_earnings_ttm", op: "greater", value: 0 }, { field: "price_earnings_ttm", op: "less", value: 15 }, { field: "return_on_equity", op: "greater", value: 12 }, { field: "dividends_yield", op: "greater", value: 1 }], sortBy: "pe_ratio", sortOrder: "asc", group: "fundamental" },
+  { id: "high_eps", label: "High EPS", description: "EPS > ₹50", filters: [{ field: "earnings_per_share_basic_ttm", op: "greater", value: 50 }], sortBy: "change", sortOrder: "desc", group: "fundamental" },
+
+  // ── Technical ──
   { id: "momentum", label: "Momentum", description: "+1M & +3M returns", filters: [{ field: "Perf.1M", op: "greater", value: 0 }, { field: "Perf.3M", op: "greater", value: 0 }], sortBy: "change", sortOrder: "desc", group: "technical" },
+  { id: "strong_momentum", label: "Strong Rally", description: "+5% weekly, +15% monthly", filters: [{ field: "Perf.W", op: "greater", value: 5 }, { field: "Perf.1M", op: "greater", value: 15 }], sortBy: "change", sortOrder: "desc", group: "technical" },
   { id: "oversold", label: "Oversold RSI", description: "RSI < 30", filters: [{ field: "RSI", op: "less", value: 30 }, { field: "RSI", op: "greater", value: 0 }], sortBy: "rsi", sortOrder: "asc", group: "technical" },
   { id: "overbought", label: "Overbought RSI", description: "RSI > 70", filters: [{ field: "RSI", op: "greater", value: 70 }], sortBy: "rsi", sortOrder: "desc", group: "technical" },
   { id: "high_volume", label: "Volume Spike", description: "Rel. vol > 2×", filters: [{ field: "relative_volume_10d_calc", op: "greater", value: 2 }], sortBy: "volume", sortOrder: "desc", group: "technical" },
   { id: "near_52w_high", label: "Near 52W High", description: "Within 5% of high", filters: [], sortBy: "change", sortOrder: "desc", group: "technical" },
+  { id: "near_52w_low", label: "Near 52W Low", description: "Beaten down stocks", filters: [{ field: "Perf.Y", op: "less", value: -30 }], sortBy: "change", sortOrder: "asc", group: "technical" },
+  { id: "above_sma50", label: "Above SMA 50", description: "Price > 50-day SMA", filters: [{ field: "Perf.1M", op: "greater", value: 0 }, { field: "RSI", op: "greater", value: 50 }], sortBy: "change", sortOrder: "desc", group: "technical" },
+  { id: "low_beta", label: "Low Beta", description: "Beta < 0.8 (defensive)", filters: [{ field: "beta_1_year", op: "less", value: 0.8 }, { field: "beta_1_year", op: "greater", value: 0 }], sortBy: "change", sortOrder: "desc", group: "technical" },
+  { id: "high_beta", label: "High Beta", description: "Beta > 1.5 (aggressive)", filters: [{ field: "beta_1_year", op: "greater", value: 1.5 }], sortBy: "change", sortOrder: "desc", group: "technical" },
 ];
 
 const PRESET_GROUPS: { key: string; label: string }[] = [
