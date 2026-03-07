@@ -1,86 +1,58 @@
 
 
-# P&L Sharing Cards
+## Improve Instrument Selection UX Across Trades, Alerts & Studies
 
-## Overview
-Build a feature that lets users generate beautiful, branded P&L summary cards and download them as images for sharing on Twitter, Instagram, Telegram, etc. We'll render the cards using HTML/CSS within a hidden container, then use the `html-to-image` library to convert them to PNG for download. Konva is installed but unused — `html-to-image` is lighter and lets us reuse our existing Tailwind design system directly.
+### Current Pain Points
+1. **Search results list is tiny** (max-h-40 = ~160px) — hard to scan through results
+2. **No typeahead/autocomplete** — must wait for debounced search, then click from list
+3. **Mode toggle is subtle** — easy to miss Search/Chain/Manual tabs
+4. **Selected state is disconnected** — after selecting, "Change" button resets everything
+5. **No keyboard navigation** — can't arrow through results or press Enter to select
+6. **Recent/Favorites tabs hidden** — useful features buried behind tiny tab buttons
+7. **Option Chain nested inside search** — the chain component duplicates underlying selection UI that could be simplified
 
-## Architecture
+### Proposed Improvements
 
-```text
-┌─────────────────────────────────┐
-│  PnlShareModal (dialog)        │
-│  ┌───────────────────────────┐  │
-│  │ Card Preview (live)       │  │  ← Rendered in a fixed-size container
-│  │ - Template selector       │  │
-│  │ - Period selector         │  │
-│  └───────────────────────────┘  │
-│  [ Download PNG ] [ Copy ]      │
-└─────────────────────────────────┘
-```
+#### 1. Unified Combobox-Style Picker (biggest UX win)
+Replace the current search input + results list with a **combobox pattern**:
+- Single input field that shows results as you type (dropdown below)
+- Recent items shown immediately on focus (before typing)
+- Favorites pinned at the top with a star
+- Arrow keys to navigate, Enter to select, Escape to close
+- Taller results area (max-h-64 instead of max-h-40)
 
-## New Files
+#### 2. Smarter Defaults & Context
+- When segment is Options/Futures, **auto-set exchange to NFO** and show a compact inline message: "Tip: Use Option Chain for faster F&O selection"
+- Remember last used exchange filter per segment in localStorage
+- Show lot size inline for F&O instruments in results
 
-### 1. `src/components/sharing/PnlShareModal.tsx`
-- Dialog/sheet modal triggered from Dashboard, Journal, or Reports pages
-- **Period selector**: Today / This Week / This Month / Custom range
-- **Template selector**: 3 card styles (Dark Premium, Light Clean, Gradient)
-- Computes metrics from trades data for selected period: Total P&L, Win Rate, Total Trades, Best Trade, Worst Trade, Streak
-- Renders the selected card template inside a fixed 1080x1080 container (Instagram-friendly)
-- "Download as PNG" button using `html-to-image` → `toPng()` → triggers download
-- "Copy to clipboard" using `ClipboardItem` API
-- Watermark: TradeBook logo + "tradebook.app" at bottom of every card
+#### 3. Improved Selected State
+- Show a compact **chip-style** selected instrument instead of the current full-width bar
+- "Change" opens the picker inline (no full reset) — preserves recent search context
+- LTP fetch button more prominent with last-fetched timestamp
 
-### 2. `src/components/sharing/ShareCardTemplates.tsx`
-Three card template components, all receiving the same props:
+#### 4. Keyboard Navigation in Search Results
+- Add `onKeyDown` handler to search input
+- ArrowUp/ArrowDown to highlight results
+- Enter to select highlighted item
+- Track `highlightedIndex` state
 
-**Props interface:**
-```ts
-interface ShareCardData {
-  period: string;           // "Today" | "This Week" | "Mar 2026"
-  totalPnl: number;
-  pnlPercent: number;
-  winRate: number;
-  totalTrades: number;
-  winners: number;
-  losers: number;
-  bestTrade: { symbol: string; pnl: number } | null;
-  worstTrade: { symbol: string; pnl: number } | null;
-  streak: number;
-  userName?: string;
-}
-```
+#### 5. Option Chain Quick Access
+- When segment = Options, show **Option Chain as the default** (already done) but also add a small "Switch to Search" link instead of equal-weight tabs
+- Make the chain component more compact — remove redundant labels
 
-**Template A — "Dark Premium"**: Dark bg with gradient accent stripe, large P&L in profit/loss color, grid of stats, subtle dot-grid pattern background, TradeBook watermark.
+#### 6. Exchange Filter as Chips (not buttons)
+- Replace the 4 full buttons (ALL/NSE/NFO/MCX) with smaller badge-style chips to save vertical space
 
-**Template B — "Light Clean"**: White bg, minimal layout, colored P&L badge, clean stat rows.
+### Files to Modify
+- `src/components/trade/InstrumentPicker.tsx` — main refactor: combobox pattern, keyboard nav, improved layout
+- `src/components/trade/OptionChainSelector.tsx` — minor: tighten spacing, remove redundant header when embedded
 
-**Template C — "Gradient"**: Full gradient background (green→teal for profit, red→orange for loss), white text, bold typography.
-
-All templates: 1080x1080px, use inline styles (not Tailwind classes) for reliable `html-to-image` rendering. Include the TradeBook logo and "Made with TradeBook" footer.
-
-### 3. `src/hooks/useShareCardData.ts`
-- Takes `period` filter (today/week/month/custom)
-- Queries trades from `useTrades` data
-- Computes all metrics for the card
-- Returns `ShareCardData` object
-
-## Integration Points
-
-- **Dashboard**: Add a "Share" icon button next to Today's P&L widget header
-- **Journal page**: Add "Share" button in the summary cards toolbar
-- **Reports page**: Add "Share Card" action on weekly/monthly reports
-
-## New Dependency
-- `html-to-image` — lightweight (~4KB), renders DOM nodes to PNG/JPEG via SVG foreignObject. No canvas server needed.
-
-## File Summary
-| File | Action |
-|------|--------|
-| `src/components/sharing/PnlShareModal.tsx` | Create |
-| `src/components/sharing/ShareCardTemplates.tsx` | Create |
-| `src/hooks/useShareCardData.ts` | Create |
-| `src/components/dashboard/TodaysPnl.tsx` | Add share button |
-| `src/pages/Journal.tsx` | Add share button |
-| `src/pages/Reports.tsx` | Add share button |
+### Implementation Order
+1. Add keyboard navigation (ArrowUp/Down/Enter) to search results
+2. Increase results area height and show lot size for F&O
+3. Replace exchange filter buttons with compact chips
+4. Add "remember last exchange" per segment
+5. Improve selected state with chip-style display
+6. Add focus-triggered recent items display
 

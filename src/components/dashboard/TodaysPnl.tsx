@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { calculatePnL } from "@/lib/calculations";
 import { formatCurrency } from "@/lib/formatting";
 import { TradeStatus } from "@/lib/constants";
+import { PnlShareModal } from "@/components/sharing/PnlShareModal";
 
 export function TodaysPnl() {
   const { trades } = useTrades();
@@ -45,7 +46,10 @@ export function TodaysPnl() {
 
       <div className="flex items-start justify-between">
         <div className="space-y-1.5">
-          <p className="text-sm text-muted-foreground font-medium">Today's P&L</p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-muted-foreground font-medium">Today's P&L</p>
+            <PnlShareModal defaultPeriod="today" />
+          </div>
           <p className={cn("text-3xl font-bold tracking-tight font-mono", totalPnl >= 0 ? "text-profit" : "text-loss")}>
             {formatCurrency(totalPnl)}
           </p>

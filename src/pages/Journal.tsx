@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, AlertTriangle, Download, LayoutDashboard, CalendarIcon } from "lucide-react";
+import { Calendar, AlertTriangle, Download, LayoutDashboard, CalendarIcon, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -28,6 +28,7 @@ import { JournalPatternsAndMistakes } from "@/components/journal/JournalPatterns
 import { JournalCalendarView } from "@/components/journal/JournalCalendarView";
 import { JournalKanbanBoard } from "@/components/journal/JournalKanbanBoard";
 import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
+import { PnlShareModal } from "@/components/sharing/PnlShareModal";
 import type { Trade } from "@/hooks/useTrades";
 
 const segmentOptions = [
@@ -159,6 +160,17 @@ export default function Journal() {
               </Popover>
             </>
           )}
+
+          {/* Share */}
+          <PnlShareModal
+            defaultPeriod="this_month"
+            trigger={
+              <Button variant="outline" className="border-border">
+                <Share2 className="w-4 h-4 mr-2" />
+                Share
+              </Button>
+            }
+          />
 
           {/* Export */}
           <Button
