@@ -1,0 +1,468 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  ArrowRight, BookOpen, CheckCircle2, ChevronRight, Eye, Zap, Trophy,
+  Crown, Lock, Shield, RefreshCw, Star, Quote, Sparkles, Minus,
+  TrendingUp, Layers, Globe, Clock, BarChart3, CandlestickChart,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { fadeUp, MotionSection, SectionBadge, GradientDivider } from "./LandingShared";
+
+/* ─── Data ─── */
+const steps = [
+  { step: "01", icon: BookOpen, title: "Log Your Trades", desc: "Add trades manually or auto-sync from Dhan. Tag setups, patterns, and mistakes." },
+  { step: "02", icon: Eye, title: "Spot Patterns", desc: "Segment-level analytics reveal what's working — by setup, time, and condition." },
+  { step: "03", icon: Zap, title: "Automate & Scale", desc: "Set rules, alerts, and trailing stops. Let the system enforce your discipline." },
+];
+
+const testimonials = [
+  { name: "Rahul M.", role: "Options Trader, Mumbai", style: "Options", quote: "TradeBook helped me identify that my Monday morning trades were consistently losing. After adjusting my strategy, my win rate went from 42% to 61%.", highlight: "win rate went from 42% to 61%", stars: 5, avatar: "R", featured: true },
+  { name: "Priya S.", role: "Swing Trader, Bangalore", style: "Swing", quote: "The segment-level analytics are a game-changer. I can see exactly which setups work for intraday vs positional.", highlight: "segment-level analytics", stars: 5, avatar: "P", featured: false },
+  { name: "Aditya K.", role: "F&O Trader, Delhi", style: "F&O", quote: "I tried 4 journals before TradeBook. None understood Indian markets — segments, lot sizes, MCX. Finally something built for how we actually trade.", highlight: "built for how we actually trade", stars: 5, avatar: "A", featured: false },
+  { name: "Vikram T.", role: "Scalper, Hyderabad", style: "Scalping", quote: "The trading rules checklist changed everything. I used to revenge trade after losses — now the pre-trade checklist keeps me disciplined and my drawdowns are half of what they were.", highlight: "drawdowns are half", stars: 5, avatar: "V", featured: true },
+  { name: "Sneha R.", role: "Positional Trader, Pune", style: "Positional", quote: "Getting EOD reports and morning briefings on Telegram means I never miss a setup. It's like having a trading assistant that actually understands my portfolio.", highlight: "EOD reports and morning briefings", stars: 5, avatar: "S", featured: false },
+];
+
+const allFeatures = [
+  "Unlimited trades", "Advanced analytics & reports", "Telegram notifications",
+  "Trailing stop loss engine", "Broker integration (Dhan)", "Unlimited watchlists",
+  "Pattern & mistake tracking", "Weekly reports", "Priority support",
+];
+
+const shortFeatures = [
+  "Unlimited trade logging", "AI-powered trade insights", "Advanced analytics suite",
+  "Trailing stop loss engine", "Broker integration (Dhan)",
+];
+
+const pricingPlans = [
+  { name: "Monthly", price: "₹0", originalPrice: "₹199", period: "/mo", description: "Full access, billed monthly", features: shortFeatures, cta: "Start Free", highlighted: false, isBeta: true, saveBadge: null, badge: null, badgeIcon: null, showAllNote: true },
+  { name: "Quarterly", price: "₹0", originalPrice: "₹499", period: "/quarter", description: "All features, best for active traders", features: allFeatures, cta: "Start Free", highlighted: true, isBeta: true, saveBadge: "Save 17%", badge: "Most Popular", badgeIcon: Zap, showAllNote: false },
+  { name: "Yearly", price: "₹1,499", originalPrice: null, period: "/year", description: "All features, best value", features: shortFeatures, cta: "Subscribe", highlighted: false, isBeta: false, saveBadge: "Save 37%", badge: "Best Value", badgeIcon: Crown, showAllNote: true },
+];
+
+const comparisonFeatures = [
+  { feature: "Multi-segment support", tradebook: true, others: false },
+  { feature: "Indian market focus (NSE/BSE/MCX)", tradebook: true, others: false },
+  { feature: "Trailing stop loss engine", tradebook: true, others: false },
+  { feature: "AI-powered trade insights", tradebook: true, others: false },
+  { feature: "Position sizing calculator", tradebook: true, others: "Basic" as string | boolean },
+  { feature: "Telegram notifications", tradebook: true, others: "Paid" as string | boolean },
+  { feature: "Broker integration", tradebook: true, others: "Limited" as string | boolean },
+  { feature: "Equity curve & drawdown", tradebook: true, others: true },
+  { feature: "Pattern & mistake tagging", tradebook: true, others: false },
+  { feature: "Free beta access", tradebook: true, others: "Limited" as string | boolean },
+];
+
+const faqs = [
+  { q: "Is my data safe?", a: "Absolutely. All data is encrypted at rest and in transit with bank-grade security. We never share or sell your trading data to anyone." },
+  { q: "Can I import from Zerodha, Angel One, or other brokers?", a: "Yes! Our CSV import supports all major Indian brokers. Simply export your trade history as CSV and import it into TradeBook with automatic column mapping." },
+  { q: "Is it really free during beta?", a: "Yes — all features are completely free during the beta period. No credit card required. We'll notify you before any pricing changes." },
+  { q: "Does it work on mobile?", a: "TradeBook is a Progressive Web App (PWA) that works beautifully on any device — phone, tablet, or desktop. Install it on your home screen for a native app experience." },
+  { q: "How is TradeBook different from a spreadsheet?", a: "Unlike spreadsheets, TradeBook offers automated analytics, segment-level breakdowns, trailing stop loss tracking, real-time alerts, and AI-powered insights — all purpose-built for Indian market traders." },
+  { q: "What broker integrations are supported?", a: "Currently Dhan is supported with live sync for real-time portfolio tracking. For all other brokers — Zerodha, Angel One, Groww, Upstox, and more — you can import trades via CSV with smart column mapping." },
+  { q: "Can I track F&O and multi-leg strategies?", a: "Yes! Full options support with multi-leg strategies, strategy-level P&L tracking, and segment-wise breakdowns for Futures, Options, and Commodities." },
+  { q: "Do you have AI-powered insights?", a: "Yes — AI analyzes your trading patterns, identifies recurring mistakes, highlights your best setups, and suggests actionable improvements to sharpen your edge." },
+  { q: "Can I set alerts and notifications?", a: "Set price alerts, percentage-change alerts, and volume spike alerts. Get notified via in-app notifications or Telegram for real-time monitoring." },
+  { q: "Is there a trading rules checklist?", a: "Yes! Create custom pre-trade checklists to enforce discipline. Review your rules before every trade and track how often you follow them." },
+];
+
+function HighlightedQuote({ testimonial }: { testimonial: typeof testimonials[0] }) {
+  return (
+    <>{testimonial.quote.split(testimonial.highlight).map((part, i, arr) => (
+      <React.Fragment key={i}>{part}{i < arr.length - 1 && <span className="text-[hsl(var(--tb-accent))] font-bold">{testimonial.highlight}</span>}</React.Fragment>
+    ))}</>
+  );
+}
+
+export function HowItWorksSection() {
+  const navigate = useNavigate();
+  return (
+    <section className="py-24 lg:py-32 bg-muted/10 dot-pattern" aria-label="How it works">
+      <MotionSection className="max-w-5xl mx-auto px-6">
+        <motion.div variants={fadeUp} className="text-center mb-20">
+          <SectionBadge>How It Works</SectionBadge>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-tight">Three steps to{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>mastery</span></h2>
+          <p className="text-muted-foreground max-w-md mx-auto text-base">From first trade to edge mastery — in minutes.</p>
+        </motion.div>
+        <div className="grid md:grid-cols-3 gap-8 relative">
+          {steps.map((item, i) => (
+            <motion.div key={item.step} variants={fadeUp} custom={i * 0.1} className="relative">
+              {i < steps.length - 1 && (<div className="hidden md:flex absolute top-16 -right-5 z-10 w-10 items-center justify-center"><ChevronRight className="w-5 h-5 text-[hsl(var(--tb-accent))] opacity-40" /></div>)}
+              <motion.div className="relative rounded-2xl border border-border/40 bg-card p-8 h-full text-center overflow-hidden" whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}>
+                <div className="absolute top-2 right-4 text-7xl font-black text-[hsl(var(--tb-accent))] opacity-[0.07] select-none">{item.step}</div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[hsl(var(--tb-accent))] mb-3">Step {item.step}</p>
+                <motion.div className="w-14 h-14 rounded-2xl bg-[hsl(var(--tb-accent)/0.06)] ring-4 ring-[hsl(var(--tb-accent)/0.04)] flex items-center justify-center mx-auto mb-6" whileHover={{ scale: 1.08, rotate: -3 }}>
+                  <item.icon className="w-6 h-6 text-[hsl(var(--tb-accent))]" />
+                </motion.div>
+                <h3 className="text-xl font-bold mb-3">{item.title}</h3>
+                <p className="text-base text-muted-foreground leading-relaxed">{item.desc}</p>
+              </motion.div>
+            </motion.div>
+          ))}
+        </div>
+        <motion.div variants={fadeUp} className="text-center mt-14">
+          <p className="text-muted-foreground mb-5">Ready to start? It takes less than 60 seconds.</p>
+          <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.97 }} className="inline-block">
+            <Button size="lg" className="h-12 px-8 gap-2 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_4px_16px_hsl(var(--tb-accent)/0.25)] font-semibold" onClick={() => navigate("/login?mode=signup")}>Create Free Account <ArrowRight className="w-4 h-4" /></Button>
+          </motion.div>
+        </motion.div>
+      </MotionSection>
+    </section>
+  );
+}
+
+export function ComparisonSection() {
+  const navigate = useNavigate();
+  return (
+    <section className="py-24 lg:py-32" aria-label="Comparison">
+      <MotionSection className="max-w-3xl mx-auto px-6">
+        <motion.div variants={fadeUp} className="text-center mb-14">
+          <SectionBadge>Comparison</SectionBadge>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-tight">Why{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>TradeBook</span>?</h2>
+          <p className="text-muted-foreground max-w-md mx-auto text-base">See how we compare to generic trading journals.</p>
+        </motion.div>
+        <motion.div variants={fadeUp} className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm">
+          <div className="grid grid-cols-3 gap-0 border-b border-border/40 px-6 py-5 bg-muted/30">
+            <span className="text-base font-semibold text-foreground">Feature</span>
+            <span className="text-sm font-bold text-center text-[hsl(var(--tb-accent))] flex items-center justify-center gap-1.5"><Trophy className="w-4 h-4" />TradeBook</span>
+            <span className="text-sm font-medium text-center text-muted-foreground/70">Others</span>
+          </div>
+          {comparisonFeatures.map((row, i) => (
+            <motion.div key={row.feature} variants={fadeUp} custom={i * 0.05} className={cn("grid grid-cols-3 gap-0 border-b border-border/20 last:border-0 px-6 py-4 transition-colors duration-200 hover:bg-[hsl(var(--tb-accent)/0.04)]", i % 2 === 0 ? "bg-muted/10" : "")}>
+              <span className="text-base text-foreground/90">{row.feature}</span>
+              <div className="flex justify-center">{row.tradebook === true ? <CheckCircle2 className="w-5 h-5 text-profit drop-shadow-[0_0_4px_rgba(34,197,94,0.3)]" /> : <span className="text-sm text-muted-foreground">{String(row.tradebook)}</span>}</div>
+              <div className="flex justify-center">{row.others === true ? <CheckCircle2 className="w-5 h-5 text-muted-foreground/40" /> : row.others === false ? <Minus className="w-5 h-5 text-muted-foreground/30" /> : <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-destructive/10 text-destructive border border-destructive/20">{String(row.others)}</span>}</div>
+            </motion.div>
+          ))}
+          <div className="flex items-center justify-between px-6 py-4 bg-[hsl(var(--tb-accent)/0.06)] border-t border-border/30">
+            <p className="text-sm text-muted-foreground">All features included in <span className="font-semibold text-foreground">free beta</span></p>
+            <Button size="sm" className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white" onClick={() => navigate("/login?mode=signup")}>Start Free <ArrowRight className="w-4 h-4 ml-1" /></Button>
+          </div>
+        </motion.div>
+      </MotionSection>
+    </section>
+  );
+}
+
+export function PricingSection() {
+  const navigate = useNavigate();
+  return (
+    <section id="pricing" className="py-24 lg:py-32 bg-muted/10 dot-pattern" aria-label="Pricing">
+      <MotionSection className="max-w-5xl mx-auto px-6">
+        <motion.div variants={fadeUp} className="text-center mb-14">
+          <SectionBadge>Pricing</SectionBadge>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-tight">Simple,{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>transparent</span>{" "}pricing</h2>
+          <p className="text-muted-foreground max-w-md mx-auto text-base">One plan. All features. Pick your billing cycle.</p>
+        </motion.div>
+        <motion.div variants={fadeUp} className="flex justify-center mb-12">
+          <div className="inline-flex items-center bg-muted/50 rounded-full p-1 gap-0.5">
+            <button className="px-5 py-2 rounded-full text-sm font-medium bg-card shadow-sm text-foreground transition-colors">Monthly</button>
+            <button className="px-5 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Annual</button>
+          </div>
+        </motion.div>
+        <div className="grid md:grid-cols-3 gap-7 items-start">
+          {pricingPlans.map((plan, i) => (
+            <motion.div key={plan.name} variants={fadeUp} custom={i * 0.1}>
+              <motion.div className={cn("rounded-2xl border bg-card/80 p-8 flex flex-col relative overflow-hidden", plan.highlighted ? "border-[hsl(var(--tb-accent)/0.35)] ring-1 ring-[hsl(var(--tb-accent)/0.1)] scale-[1.02] lg:scale-105 shadow-glow shimmer-cta dot-pattern" : "border-border/40")} whileHover={{ y: -3 }} transition={{ duration: 0.3 }}>
+                {plan.highlighted && <div className="absolute top-0 left-0 right-0 h-0.5 bg-[hsl(var(--tb-accent))]" />}
+                {plan.badge && <div className="inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] text-xs font-semibold mb-5">{plan.badgeIcon && <plan.badgeIcon className="w-3 h-3" />} {plan.badge}</div>}
+                <h3 className="text-xl font-bold">{plan.name}</h3>
+                {plan.isBeta && <div className="inline-flex self-start items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-profit/10 text-profit text-[11px] font-semibold mt-2">Free During Beta</div>}
+                <div className="mt-4 mb-1 flex items-baseline gap-1 flex-wrap">
+                  {plan.originalPrice && <span className="text-lg text-muted-foreground/50 line-through mr-1">{plan.originalPrice}</span>}
+                  <span className="text-4xl font-extrabold font-mono">{plan.price}</span>
+                  <span className="text-muted-foreground/70 text-sm">{plan.period}</span>
+                  {plan.saveBadge && <span className="ml-2 px-2 py-0.5 rounded-full bg-profit/10 text-profit text-[10px] font-bold">{plan.saveBadge}</span>}
+                </div>
+                <p className="text-sm text-muted-foreground mb-7">{plan.description}</p>
+                <ul className="space-y-3.5 flex-1 mb-4">
+                  {plan.features.map((f) => (<li key={f} className="flex items-start gap-2.5 text-sm"><CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0 mt-0.5" /><span>{f}</span></li>))}
+                </ul>
+                {plan.showAllNote && <p className="text-xs text-muted-foreground mb-6 flex items-center gap-1.5"><Sparkles className="w-3 h-3 text-[hsl(var(--tb-accent))]" /> All features included</p>}
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className={!plan.showAllNote ? "mt-5" : ""}>
+                  <Button className={cn("w-full h-12 rounded-full text-base", plan.highlighted ? "bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white shadow-[0_4px_12px_hsl(var(--tb-accent)/0.25)]" : "")} variant={plan.highlighted ? "default" : "outline"} onClick={() => navigate("/login?mode=signup")}>{plan.cta}{plan.highlighted && <ArrowRight className="w-4 h-4 ml-1" />}</Button>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          ))}
+        </div>
+        <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4 mt-14">
+          {[{ icon: Lock, text: "No credit card required" }, { icon: RefreshCw, text: "Cancel anytime" }, { icon: Shield, text: "14-day money-back guarantee" }].map((item) => (
+            <div key={item.text} className="flex items-center gap-2 bg-muted/40 rounded-full px-4 py-2 text-sm text-muted-foreground"><item.icon className="w-3.5 h-3.5" /><span>{item.text}</span></div>
+          ))}
+        </motion.div>
+      </MotionSection>
+    </section>
+  );
+}
+
+export function TestimonialsSection() {
+  return (
+    <section className="py-24 lg:py-32" aria-label="Testimonials">
+      <MotionSection className="max-w-6xl mx-auto px-6 lg:px-10">
+        <motion.div variants={fadeUp} className="text-center mb-20">
+          <SectionBadge>Testimonials</SectionBadge>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-tight">Trusted by{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>real traders</span></h2>
+          <p className="text-muted-foreground max-w-md mx-auto text-base">Here's what traders across India are saying.</p>
+        </motion.div>
+        <div className="grid md:grid-cols-3 gap-7">
+          <motion.div variants={fadeUp} className="md:col-span-2">
+            <motion.div className="rounded-2xl border border-foreground/10 bg-foreground text-background p-9 h-full flex flex-col dot-pattern relative overflow-hidden" whileHover={{ y: -3 }}>
+              <Quote className="w-10 h-10 text-background/15 mb-7" />
+              <p className="text-lg leading-relaxed flex-1 mb-7 font-medium">"<HighlightedQuote testimonial={testimonials[0]} />"</p>
+              <div className="flex items-center gap-1.5 mb-5">{[...Array(testimonials[0].stars)].map((_, j) => (<Star key={j} className="w-4 h-4 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />))}</div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[hsl(var(--tb-accent)/0.2)] flex items-center justify-center text-sm font-bold text-[hsl(var(--tb-accent))]">{testimonials[0].avatar}</div>
+                <div><p className="font-semibold">{testimonials[0].name}</p><p className="text-sm text-background/50">{testimonials[0].role}</p><span className="inline-block mt-1 bg-[hsl(var(--tb-accent)/0.15)] text-[hsl(var(--tb-accent))] rounded-full px-2 py-0.5 text-[10px] font-semibold">{testimonials[0].style}</span></div>
+              </div>
+            </motion.div>
+          </motion.div>
+          <div className="space-y-7">
+            {[1, 2].map((idx) => (
+              <motion.div key={idx} variants={fadeUp} custom={idx * 0.1}>
+                <motion.div className="rounded-2xl border border-border/40 bg-card p-7 h-full flex flex-col" whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}>
+                  <Quote className="w-6 h-6 text-[hsl(var(--tb-accent)/0.15)] mb-4" />
+                  <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-5">"<HighlightedQuote testimonial={testimonials[idx]} />"</p>
+                  <div className="flex items-center gap-1 mb-3">{[...Array(testimonials[idx].stars)].map((_, j) => (<Star key={j} className="w-3 h-3 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />))}</div>
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-[hsl(var(--tb-accent)/0.08)] flex items-center justify-center text-xs font-bold text-[hsl(var(--tb-accent))]">{testimonials[idx].avatar}</div>
+                    <div><p className="text-sm font-semibold">{testimonials[idx].name}</p><p className="text-xs text-muted-foreground/60">{testimonials[idx].role}</p></div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+        <div className="grid md:grid-cols-3 gap-7 mt-7">
+          <motion.div variants={fadeUp} custom={0.2}>
+            <motion.div className="rounded-2xl border border-border/40 bg-card p-7 h-full flex flex-col" whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}>
+              <Quote className="w-6 h-6 text-[hsl(var(--tb-accent)/0.15)] mb-4" />
+              <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-5">"<HighlightedQuote testimonial={testimonials[3]} />"</p>
+              <div className="flex items-center gap-1 mb-3">{[...Array(testimonials[3].stars)].map((_, j) => (<Star key={j} className="w-3 h-3 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />))}</div>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-[hsl(var(--tb-accent)/0.08)] flex items-center justify-center text-xs font-bold text-[hsl(var(--tb-accent))]">{testimonials[3].avatar}</div>
+                <div><p className="text-sm font-semibold">{testimonials[3].name}</p><p className="text-xs text-muted-foreground/60">{testimonials[3].role}</p></div>
+              </div>
+            </motion.div>
+          </motion.div>
+          <motion.div variants={fadeUp} custom={0.3} className="md:col-span-2">
+            <motion.div className="rounded-2xl border border-foreground/10 bg-foreground text-background p-9 h-full flex flex-col dot-pattern relative overflow-hidden" whileHover={{ y: -3 }}>
+              <Quote className="w-10 h-10 text-background/15 mb-7" />
+              <p className="text-lg leading-relaxed flex-1 mb-7 font-medium">"<HighlightedQuote testimonial={testimonials[3]} />"</p>
+              <div className="flex items-center gap-1.5 mb-5">{[...Array(testimonials[3].stars)].map((_, j) => (<Star key={j} className="w-4 h-4 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />))}</div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[hsl(var(--tb-accent)/0.2)] flex items-center justify-center text-sm font-bold text-[hsl(var(--tb-accent))]">{testimonials[3].avatar}</div>
+                <div><p className="font-semibold">{testimonials[3].name}</p><p className="text-sm text-background/50">{testimonials[3].role}</p><span className="inline-block mt-1 bg-[hsl(var(--tb-accent)/0.15)] text-[hsl(var(--tb-accent))] rounded-full px-2 py-0.5 text-[10px] font-semibold">{testimonials[3].style}</span></div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+        <motion.div variants={fadeUp} custom={0.4} className="mt-7">
+          <motion.div className="rounded-2xl border border-[hsl(var(--tb-accent)/0.2)] bg-[hsl(var(--tb-accent)/0.04)] p-7 flex flex-col md:flex-row md:items-center gap-6" whileHover={{ y: -2, borderColor: "hsl(var(--tb-accent) / 0.4)" }}>
+            <Quote className="w-7 h-7 text-[hsl(var(--tb-accent)/0.2)] shrink-0" />
+            <p className="text-sm text-muted-foreground leading-relaxed flex-1">"<HighlightedQuote testimonial={testimonials[4]} />"</p>
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="flex items-center gap-1 mr-2">{[...Array(testimonials[4].stars)].map((_, j) => (<Star key={j} className="w-3.5 h-3.5 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />))}</div>
+              <div className="w-8 h-8 rounded-full bg-[hsl(var(--tb-accent)/0.08)] flex items-center justify-center text-xs font-bold text-[hsl(var(--tb-accent))]">{testimonials[4].avatar}</div>
+              <div><p className="text-sm font-semibold">{testimonials[4].name}</p><p className="text-xs text-muted-foreground/60">{testimonials[4].role}</p><span className="inline-block mt-0.5 bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] rounded-full px-2 py-0.5 text-[10px] font-semibold">{testimonials[4].style}</span></div>
+            </div>
+          </motion.div>
+        </motion.div>
+        <motion.div variants={fadeUp} className="mt-14 flex flex-wrap items-center justify-center gap-3">
+          <span className="inline-flex items-center gap-1.5 bg-muted/40 rounded-full px-4 py-2 text-sm font-medium"><span className="flex items-center gap-0.5">{[...Array(5)].map((_, i) => (<Star key={i} className="w-3 h-3 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />))}</span>4.9/5 average rating</span>
+          <span className="text-muted-foreground/30">·</span>
+          <span className="inline-flex items-center gap-1.5 bg-muted/40 rounded-full px-4 py-2 text-sm font-medium">1,200+ active traders</span>
+          <span className="text-muted-foreground/30">·</span>
+          <span className="inline-flex items-center gap-1.5 bg-muted/40 rounded-full px-4 py-2 text-sm font-medium">42,000+ trades tracked</span>
+        </motion.div>
+      </MotionSection>
+    </section>
+  );
+}
+
+export function IndianMarketsSection() {
+  const navigate = useNavigate();
+  return (
+    <section className="py-24 lg:py-32 bg-muted/10 dot-pattern" aria-label="Built for Indian markets">
+      <MotionSection className="max-w-5xl mx-auto px-6">
+        <div className="grid md:grid-cols-2 gap-14 items-center">
+          <motion.div variants={fadeUp}>
+            <SectionBadge>Made in India</SectionBadge>
+            <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-tight">Built for{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>Indian</span>{" "}markets</h2>
+            <p className="text-muted-foreground text-base leading-relaxed mb-6">Unlike generic journals, TradeBook understands Indian market structure — segments, lot sizes, INR formatting, and market hours (9:15 AM – 3:30 PM).</p>
+            <ul className="space-y-2.5 mb-8">
+              {["NSE, BSE & MCX exchange support", "INR currency with Indian numbering (Lakhs, Crores)", "Dhan broker integration for auto-sync", "Indian market hours & holiday awareness"].map((item) => (
+                <li key={item} className="flex items-center gap-2.5 text-sm rounded-lg bg-muted/5 px-3 py-2.5 group hover:bg-muted/15 transition-colors cursor-default">
+                  <CheckCircle2 className="w-4 h-4 text-[hsl(var(--tb-accent))] shrink-0" /><span className="flex-1">{item}</span><ChevronRight className="w-3.5 h-3.5 text-muted-foreground/0 group-hover:text-muted-foreground/40 transition-colors" />
+                </li>
+              ))}
+            </ul>
+            <Button size="lg" className="rounded-full bg-gradient-primary text-primary-foreground" onClick={() => navigate("/login?mode=signup")}>Start Journaling <ArrowRight className="w-4 h-4 ml-1" /></Button>
+          </motion.div>
+          <motion.div variants={fadeUp} custom={0.15}>
+            <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+              <div className="h-[3px] flex"><div className="flex-1 bg-[#FF9933]" /><div className="flex-1 bg-white" /><div className="flex-1 bg-[#128807]" /></div>
+              <div className="p-6">
+                <h4 className="text-sm font-semibold text-foreground mb-4">Market Segments</h4>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {[{ label: "Equity", color: "hsl(152 60% 42%)", Icon: TrendingUp }, { label: "F&O", color: "hsl(24 90% 55%)", Icon: Layers }, { label: "Commodity", color: "hsl(45 90% 50%)", Icon: CandlestickChart }, { label: "Currency", color: "hsl(210 80% 55%)", Icon: Globe }, { label: "Intraday", color: "hsl(340 75% 55%)", Icon: Zap }, { label: "Positional", color: "hsl(270 60% 55%)", Icon: Clock }].map((seg) => (
+                    <motion.div key={seg.label} className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-border/40 bg-card text-sm font-semibold cursor-default transition-colors" style={{ borderColor: `${seg.color.replace(")", " / 0.25)")}` }} whileHover={{ backgroundColor: `${seg.color.replace(")", " / 0.08)")}`, scale: 1.03 }}>
+                      <seg.Icon className="w-3.5 h-3.5 shrink-0" style={{ color: seg.color }} /><span style={{ color: seg.color }}>{seg.label}</span>
+                    </motion.div>
+                  ))}
+                </div>
+                <div className="mt-5 pt-4 border-t border-border/50 flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-profit opacity-75" /><span className="relative inline-flex rounded-full h-2 w-2 bg-profit" /></span>
+                  <span>Market Open — 09:15 AM to 03:30 PM IST</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </MotionSection>
+    </section>
+  );
+}
+
+export function FAQSection() {
+  const navigate = useNavigate();
+  const left = faqs.slice(0, 5);
+  const right = faqs.slice(5);
+  return (
+    <section id="faq" className="py-24 lg:py-32 bg-muted/10 dot-pattern" aria-label="Frequently asked questions">
+      <MotionSection className="max-w-4xl mx-auto px-6">
+        <motion.div variants={fadeUp} className="text-center mb-14">
+          <SectionBadge>FAQ</SectionBadge>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-4 leading-tight">Got{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>questions</span>?</h2>
+          <p className="text-muted-foreground text-base">Everything you need to know about TradeBook</p>
+        </motion.div>
+        <motion.div variants={fadeUp}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-0">
+            <Accordion type="single" collapsible className="space-y-3">
+              {left.map((faq, i) => (
+                <AccordionItem key={i} value={`faq-l-${i}`} className="rounded-xl border border-border/40 bg-card/80 px-5 data-[state=open]:border-l-2 data-[state=open]:border-l-[hsl(var(--tb-accent))] data-[state=open]:border-[hsl(var(--tb-accent)/0.25)]">
+                  <AccordionTrigger className="text-left text-sm font-semibold hover:no-underline py-4"><span className="flex items-center gap-3"><span className="text-[10px] font-mono text-muted-foreground/60">{String(i + 1).padStart(2, "0")}</span>{faq.q}</span></AccordionTrigger>
+                  <AccordionContent className="text-sm text-muted-foreground leading-relaxed pl-8">{faq.a}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+            <Accordion type="single" collapsible className="space-y-3">
+              {right.map((faq, i) => (
+                <AccordionItem key={i} value={`faq-r-${i}`} className="rounded-xl border border-border/40 bg-card/80 px-5 data-[state=open]:border-l-2 data-[state=open]:border-l-[hsl(var(--tb-accent))] data-[state=open]:border-[hsl(var(--tb-accent)/0.25)]">
+                  <AccordionTrigger className="text-left text-sm font-semibold hover:no-underline py-4"><span className="flex items-center gap-3"><span className="text-[10px] font-mono text-muted-foreground/60">{String(i + 6).padStart(2, "0")}</span>{faq.q}</span></AccordionTrigger>
+                  <AccordionContent className="text-sm text-muted-foreground leading-relaxed pl-8">{faq.a}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </motion.div>
+        <motion.div variants={fadeUp} className="mt-14">
+          <div className="relative p-[1px] rounded-2xl bg-gradient-to-r from-[hsl(var(--tb-accent)/0.4)] via-border/30 to-[hsl(var(--tb-accent)/0.4)]">
+            <div className="rounded-2xl bg-card p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div>
+                <h3 className="text-lg font-bold mb-2 flex items-center gap-2"><BookOpen className="w-5 h-5 text-[hsl(var(--tb-accent))]" />Want to dive deeper?</h3>
+                <p className="text-sm text-muted-foreground mb-3">Explore our comprehensive documentation with visual guides</p>
+                <div className="flex flex-wrap gap-2">
+                  {["Getting Started", "Trade Management", "Analytics", "AI Insights", "Alerts & Notifications"].map(tag => (
+                    <span key={tag} className="text-[10px] uppercase tracking-wider font-medium bg-muted px-2.5 py-1 rounded-full text-muted-foreground">{tag}</span>
+                  ))}
+                </div>
+              </div>
+              <Button onClick={() => navigate("/docs")} className="gap-2 shrink-0"><BookOpen className="w-4 h-4" />Browse Documentation</Button>
+            </div>
+          </div>
+        </motion.div>
+      </MotionSection>
+    </section>
+  );
+}
+
+export function FinalCTASection() {
+  const navigate = useNavigate();
+  return (
+    <section className="py-28 lg:py-36 relative overflow-hidden" aria-label="Call to action">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.12)_0%,transparent_60%)]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.04)_0%,transparent_70%)]" />
+      </div>
+      <MotionSection className="relative max-w-3xl mx-auto px-6 text-center">
+        <motion.div variants={fadeUp} className="flex items-center justify-center gap-6 mb-8">
+          <div className="flex items-center gap-2">
+            <div className="flex -space-x-2">
+              {["bg-[hsl(var(--tb-accent))]", "bg-[hsl(var(--profit))]", "bg-[hsl(var(--ring))]"].map((bg, i) => (
+                <div key={i} className={`w-6 h-6 rounded-full ${bg} border-2 border-background`} />
+              ))}
+            </div>
+            <span className="text-sm font-semibold">1,200+ traders</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-sm font-semibold"><BarChart3 className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" />42,000+ trades logged</div>
+        </motion.div>
+        <motion.div variants={{ visible: { transition: { staggerChildren: 0.12 } } }} className="mb-7">
+          <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-tight">Stop losing money to</motion.h2>
+          <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-tight"><span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>undisciplined</span>{" "}trading</motion.h2>
+        </motion.div>
+        <motion.p variants={fadeUp} className="text-lg text-muted-foreground mb-12 max-w-xl mx-auto leading-relaxed">Join 1,200+ traders who journal, analyze, and compound their edge — every single day.</motion.p>
+        <motion.div variants={fadeUp} whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}>
+          <Button size="lg" className="shimmer-cta h-14 px-12 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_6px_24px_hsl(var(--tb-accent)/0.3)] font-semibold" onClick={() => navigate("/login?mode=signup")}>Get Started — It's Free <ArrowRight className="w-4 h-4" aria-hidden="true" /></Button>
+        </motion.div>
+        <motion.div variants={fadeUp} className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 rounded-full px-3 py-1.5"><Lock className="w-3 h-3" /> Bank-grade encryption</span>
+          <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 rounded-full px-3 py-1.5"><Shield className="w-3 h-3" /> No credit card required</span>
+          <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 rounded-full px-3 py-1.5"><Clock className="w-3 h-3" /> Setup in 2 minutes</span>
+        </motion.div>
+      </MotionSection>
+      <div className="h-[1px] bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.3)] to-transparent max-w-md mx-auto mt-16" />
+    </section>
+  );
+}
+
+export function FooterSection() {
+  const navigate = useNavigate();
+  return (
+    <footer className="border-t border-border/30 bg-card/50 dot-pattern py-16">
+      <div className="max-w-7xl mx-auto px-6 lg:px-10">
+        <div className="grid md:grid-cols-4 gap-10 mb-10">
+          <div className="md:col-span-1">
+            <div className="flex items-center gap-2.5 mb-5"><img src="/favicon-32x32.png" alt="TradeBook" className="h-8 object-contain" loading="lazy" /></div>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-5">The trading journal built for Indian markets. Track, analyze, and improve.</p>
+            <div className="flex items-center gap-2">
+              <a href="/login?mode=signup" className="inline-flex items-center gap-1.5 text-xs font-semibold bg-[hsl(var(--tb-accent))] text-white rounded-full px-4 py-1.5 hover:bg-[hsl(var(--tb-accent-hover))] transition-colors">Get Started <ArrowRight className="w-3 h-3" /></a>
+            </div>
+          </div>
+          <div>
+            <h4 className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-5">Product</h4>
+            <ul className="space-y-1 text-sm text-muted-foreground">
+              <li><a href="#features" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Features</a></li>
+              <li><a href="#pricing" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Pricing</a></li>
+              <li><a href="/docs" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Documentation</a></li>
+              <li><a href="#" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Changelog</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-5">Support</h4>
+            <ul className="space-y-1 text-sm text-muted-foreground">
+              <li><a href="mailto:founder@mrchartist.com" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Contact Us</a></li>
+              <li><a href="/docs" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Documentation</a></li>
+              <li><a href="#faq" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">FAQ</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-5">Legal</h4>
+            <ul className="space-y-1 text-sm text-muted-foreground">
+              <li><a href="/privacy" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Privacy Policy</a></li>
+              <li><a href="/terms" className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground transition-colors">Terms of Service</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className="h-[1px] bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.25)] to-transparent mb-7" />
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-muted-foreground/80 flex items-center gap-1.5">© {new Date().getFullYear()} TradeBook. All rights reserved. <span className="inline-flex items-center gap-1">Made with ❤️ in <span className="inline-flex gap-[2px]"><span className="w-1.5 h-1.5 rounded-full bg-[#FF9933]" /><span className="w-1.5 h-1.5 rounded-full bg-white border border-border/40" /><span className="w-1.5 h-1.5 rounded-full bg-[#138808]" /></span> India</span></p>
+          <span className="text-[10px] text-muted-foreground/60 bg-muted/30 rounded-full px-3 py-1">Not SEBI registered · For educational purposes only</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
