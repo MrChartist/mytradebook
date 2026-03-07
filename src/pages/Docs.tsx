@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { SEOHead } from "@/components/SEOHead";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -58,6 +58,8 @@ const SECTIONS = [
   { id: "getting-started", label: "Getting Started", icon: Play },
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "trade-management", label: "Trade Management", icon: CandlestickChart },
+  { id: "csv-import", label: "CSV Import", icon: Upload },
+  { id: "trade-templates", label: "Trade Templates", icon: FileText },
   { id: "alerts", label: "Alerts System", icon: Bell },
   { id: "studies", label: "Studies & Research", icon: BookOpen },
   { id: "watchlists", label: "Watchlists", icon: Eye },
@@ -72,6 +74,8 @@ const SECTIONS = [
   { id: "shortcuts", label: "Keyboard Shortcuts", icon: Keyboard },
   { id: "pwa", label: "Mobile & PWA", icon: Smartphone },
   { id: "settings", label: "Settings", icon: Settings },
+  { id: "faq", label: "FAQ & Troubleshooting", icon: MessageSquare },
+  { id: "changelog", label: "Changelog & Roadmap", icon: RefreshCw },
 ];
 
 function FeatureList({ items }: { items: string[] }) {
@@ -113,6 +117,23 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
       </div>
       <div className="p-7 pt-0">
         <div className="[&>p]:text-[14px] [&>p]:leading-relaxed [&>p]:max-w-prose">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+function VideoPlaceholder({ title, duration }: { title: string; duration: string }) {
+  return (
+    <div className="my-6 rounded-2xl border border-border/40 bg-card overflow-hidden group cursor-pointer hover:border-primary/40 transition-all">
+      <div className="relative bg-gradient-to-br from-muted/50 to-muted/20 flex items-center justify-center py-16">
+        <div className="absolute inset-0 dot-pattern opacity-20" />
+        <div className="relative flex flex-col items-center gap-3">
+          <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <Play className="w-7 h-7 text-primary ml-1" />
+          </div>
+          <p className="text-sm font-semibold text-foreground">{title}</p>
+          <span className="text-[10px] text-muted-foreground bg-muted/50 rounded-full px-3 py-1">{duration} · Coming Soon</span>
+        </div>
       </div>
     </div>
   );
@@ -197,9 +218,10 @@ export default function Docs() {
   // Sidebar group separators
   const sidebarGroups = [
     { label: "Getting Started", ids: ["getting-started"] },
-    { label: "Core Features", ids: ["dashboard", "trade-management", "alerts", "studies", "watchlists", "journal"] },
+    { label: "Core Features", ids: ["dashboard", "trade-management", "csv-import", "trade-templates", "alerts", "studies", "watchlists", "journal"] },
     { label: "Advanced", ids: ["analytics", "calendar", "mistakes", "fundamentals", "reports"] },
     { label: "Settings & Tools", ids: ["integrations", "ai-integration", "shortcuts", "pwa", "settings"] },
+    { label: "Help", ids: ["faq", "changelog"] },
   ];
 
   return (
@@ -237,7 +259,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
   sidebarGroups: { label: string; ids: string[] }[];
 }) {
   const { mode, toggle } = useDocsColorMode();
-
+  const [sidebarSearch, setSidebarSearch] = useState("");
+  const [showBackToTop, setShowBackToTop] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     return localStorage.getItem("docs-sidebar-collapsed") === "true";
   });
@@ -256,10 +279,15 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       const scrollTop = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       setScrollProgress(docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) : 0);
+      setShowBackToTop(scrollTop > 600);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const filteredSections = sidebarSearch
+    ? SECTIONS.filter((s) => s.label.toLowerCase().includes(sidebarSearch.toLowerCase()))
+    : SECTIONS;
 
   return (
     <div className={cn("min-h-screen bg-background text-foreground", isInsideApp && "pb-6", mode === "bw" && "docs-bw")} role="document">
@@ -348,7 +376,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             className="flex flex-wrap gap-3 mt-6"
           >
             {[
-              { label: "17 Sections", icon: FileText },
+              { label: "21 Sections", icon: FileText },
               { label: "50+ Mockups", icon: Eye },
               { label: "Every Feature", icon: Zap },
               { label: "Free & Pro", icon: Star },
@@ -389,20 +417,38 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     {sidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
                   </button>
                 </div>
-                <ScrollArea className="h-[calc(100vh-9rem)]">
+                {/* Search filter */}
+                {!sidebarCollapsed && (
+                  <div className="px-3 mb-3">
+                    <div className="relative">
+                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/50" />
+                      <input
+                        type="text"
+                        value={sidebarSearch}
+                        onChange={(e) => setSidebarSearch(e.target.value)}
+                        placeholder="Filter sections…"
+                        className="w-full h-8 pl-8 pr-3 rounded-lg bg-muted/40 border border-border/30 text-xs text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+                      />
+                    </div>
+                  </div>
+                )}
+                <ScrollArea className="h-[calc(100vh-12rem)]">
                   <nav className={cn(!sidebarCollapsed && "pr-4")}>
-                    {sidebarGroups.map((group, gi) => (
+                    {sidebarGroups.map((group, gi) => {
+                      const groupSections = filteredSections.filter((s) => group.ids.includes(s.id));
+                      if (groupSections.length === 0) return null;
+                      return (
                       <div key={group.label}>
                         {gi > 0 && !sidebarCollapsed && <Separator className="my-2 mx-3" />}
                         {gi > 0 && sidebarCollapsed && <Separator className="my-2" />}
                         {!sidebarCollapsed && (
                           <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground/50 px-3 py-1.5">{group.label}</p>
                         )}
-                        {SECTIONS.filter((s) => group.ids.includes(s.id)).map((s) => {
+                        {groupSections.map((s) => {
                           const btn = (
                             <button
                               key={s.id}
-                              onClick={() => scrollTo(s.id)}
+                              onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
                               className={cn(
                                 "w-full flex items-center rounded-lg text-sm transition-all duration-200 text-left relative hover:translate-x-0.5",
                                 sidebarCollapsed ? "justify-center p-2.5" : "gap-2.5 px-3 py-2.5",
@@ -434,7 +480,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                           return btn;
                         })}
                       </div>
-                    ))}
+                      );
+                    })}
                   </nav>
                 </ScrollArea>
               </div>
@@ -472,6 +519,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="TradeBook is a professional trading journal built specifically for Indian markets — NSE, BSE, and MCX. Whether you trade equities, futures, options, or commodities, it gives you the tools to log, analyze, and improve your trading."
                 icon={Play}
               />
+              <VideoPlaceholder title="Getting Started with TradeBook — Full Walkthrough" duration="5 min" />
               <OnboardingFlowMockup />
               <MobileAppMockup />
               <div className="grid md:grid-cols-2 gap-5">
@@ -709,7 +757,78 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 4. Alerts System ───────────────────────── */}
+            {/* ── 3b. CSV Import ──────────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <SectionHeader
+                id="csv-import"
+                title="CSV Import & Export"
+                description="Bulk import trades from CSV files with intelligent column mapping, or export your entire trade history for backup and external analysis."
+                icon={Upload}
+              />
+              <VideoPlaceholder title="How to Import Trades from CSV" duration="3 min" />
+              <div className="grid md:grid-cols-2 gap-5">
+                <FeatureCard icon={Upload} title="Importing Trades">
+                  <p className="text-sm text-muted-foreground mb-3">Step-by-step CSV import with validation:</p>
+                  <FeatureList items={[
+                    "Upload any CSV file — supports most broker export formats",
+                    "Interactive column mapping — match your CSV headers to TradeBook fields",
+                    "Auto-detect common column names (Symbol, Entry Price, Qty, etc.)",
+                    "Preview mapped data before importing",
+                    "Validation checks: missing required fields, invalid dates, duplicate trades",
+                    "Batch import — process hundreds of trades at once",
+                  ]} />
+                  <div className="mt-4"><CsvImportMockup /></div>
+                </FeatureCard>
+                <FeatureCard icon={Download} title="Exporting Data">
+                  <p className="text-sm text-muted-foreground mb-3">Full data export for backup or external tools:</p>
+                  <FeatureList items={[
+                    "Export all trades to CSV with every field included",
+                    "Includes tags, review data, P&L, and timestamps",
+                    "Filter by date range or segment before exporting",
+                    "Compatible with Excel, Google Sheets, and other tools",
+                    "One-click download from the Trades page header",
+                  ]} />
+                </FeatureCard>
+              </div>
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── 3c. Trade Templates ─────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <SectionHeader
+                id="trade-templates"
+                title="Trade Templates & Smart Suggestions"
+                description="Save your frequently-used trade setups as reusable templates. Plus, get AI-suggested setups based on your trading patterns."
+                icon={FileText}
+              />
+              <VideoPlaceholder title="Setting Up Trade Templates" duration="2 min" />
+              <div className="grid md:grid-cols-2 gap-5">
+                <FeatureCard icon={Zap} title="Creating Templates">
+                  <p className="text-sm text-muted-foreground mb-3">Build templates for your most common trade setups:</p>
+                  <FeatureList items={[
+                    "Pre-fill segment, trade type, default SL %, and tags",
+                    "Optional notes template and preferred timeframe",
+                    "Enable/disable auto-tracking per template",
+                    "Toggle Telegram posting per template",
+                    "One-click 'Use' button when creating new trades",
+                  ]} />
+                  <div className="mt-4"><TradeTemplateMockup /></div>
+                </FeatureCard>
+                <FeatureCard icon={Sparkles} title="Smart Suggestions" badge="AI">
+                  <p className="text-sm text-muted-foreground mb-3">AI analyzes your closed trades to surface patterns:</p>
+                  <FeatureList items={[
+                    "Identifies your most frequent trade setups automatically",
+                    "Shows top 3 combos (e.g., 'Options BUY 5min — used 23 times')",
+                    "One-click pre-fill from any suggestion",
+                    "Updates as you add more trades",
+                    "Helps standardize your approach over time",
+                  ]} />
+                </FeatureCard>
+              </div>
+            </motion.section>
+
+            <SectionDivider />
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
               <SectionHeader
                 id="alerts"
@@ -1515,6 +1634,118 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
             </motion.section>
 
+            <SectionDivider />
+
+            {/* ── FAQ & Troubleshooting ──────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <SectionHeader
+                id="faq"
+                title="FAQ & Troubleshooting"
+                description="Answers to frequently asked questions and solutions to common issues."
+                icon={MessageSquare}
+              />
+              <div className="space-y-4">
+                {[
+                  { q: "Is TradeBook free to use?", a: "Yes! The Free plan includes trade logging, watchlists, alerts, and basic analytics. The Pro plan unlocks advanced analytics, AI insights, weekly reports, and more." },
+                  { q: "Do I need a Dhan account to use TradeBook?", a: "No. Dhan integration is optional — it enables live prices, auto-sync, and one-click execution. You can use TradeBook fully without any broker connection." },
+                  { q: "Is my data secure?", a: "Absolutely. All data is encrypted at rest and in transit. Your API keys are stored securely server-side and never exposed to the browser. We use industry-standard authentication." },
+                  { q: "Can I import trades from my existing broker?", a: "Yes. Use the CSV Import feature to bulk import trades from any broker. Column mapping supports most common export formats." },
+                  { q: "Why are my live prices not updating?", a: "Check that your Dhan integration is connected and verified in Settings → Integrations. Prices only stream during market hours (9:15 AM – 3:30 PM IST)." },
+                  { q: "How do I fix Telegram notifications not sending?", a: "Verify your bot token and chat ID in Settings → Integrations → Telegram. Use the 'Send Test' button to confirm delivery. Check the Delivery Log for error details." },
+                  { q: "My dashboard shows no data — what's wrong?", a: "Ensure you have trades logged. Check the segment filter and month selector — they may be filtering out your data. Try selecting 'All Segments' and expanding the date range." },
+                  { q: "Can I use TradeBook on mobile?", a: "Yes! TradeBook is a Progressive Web App (PWA). Add it to your home screen for a native-like experience with offline trade queuing." },
+                ].map((faq) => (
+                  <div key={faq.q} className="premium-card-hover p-5 group">
+                    <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                      <MessageSquare className="w-4 h-4 text-primary shrink-0" />
+                      {faq.q}
+                    </h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed pl-6">{faq.a}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Changelog & Roadmap ────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <SectionHeader
+                id="changelog"
+                title="Changelog & Roadmap"
+                description="Recent updates and upcoming features. We ship improvements every week."
+                icon={RefreshCw}
+              />
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Recent updates */}
+                <div>
+                  <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-profit" /> Recent Updates
+                  </h3>
+                  <div className="space-y-3">
+                    {[
+                      { version: "v2.8", date: "Mar 2026", items: ["Stock Screener with 47 presets", "Custom filter builder", "Stock insight cards"] },
+                      { version: "v2.7", date: "Feb 2026", items: ["Portfolio Heat Map widget", "Daily Review Wizard", "Enhanced onboarding"] },
+                      { version: "v2.6", date: "Jan 2026", items: ["Multi-leg strategy support", "TSL profiles per segment", "AI Trade Insights"] },
+                      { version: "v2.5", date: "Dec 2025", items: ["Trade Templates & Smart Suggestions", "CSV Import improvements", "Offline trade queue"] },
+                    ].map((release) => (
+                      <div key={release.version} className="premium-card-hover p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge variant="secondary" className="bg-primary/10 text-primary border-none text-[10px]">{release.version}</Badge>
+                          <span className="text-[10px] text-muted-foreground">{release.date}</span>
+                        </div>
+                        <ul className="space-y-1">
+                          {release.items.map((item) => (
+                            <li key={item} className="text-xs text-muted-foreground flex items-center gap-1.5">
+                              <CheckCircle2 className="w-3 h-3 text-profit shrink-0" /> {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Roadmap */}
+                <div>
+                  <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[hsl(var(--tb-accent))]" /> Upcoming Roadmap
+                  </h3>
+                  <div className="space-y-3">
+                    {[
+                      { label: "Social Trading", desc: "Share your trade journal publicly with a custom RA-compliant profile", status: "In Progress" },
+                      { label: "Option Chain Analyzer", desc: "Visual option chain with Greeks, IV surface, and strategy payoff diagrams", status: "Planned" },
+                      { label: "Advanced Backtesting", desc: "Test your strategies against historical data with simulated P&L", status: "Planned" },
+                      { label: "Zerodha Integration", desc: "Connect your Zerodha Kite account for live prices and auto-sync", status: "Exploring" },
+                      { label: "P&L Sharing Cards", desc: "Generate beautiful P&L summary cards for social media sharing", status: "Planned" },
+                      { label: "Multi-Currency Support", desc: "Support for USD, EUR and other currencies for NRI traders", status: "Exploring" },
+                    ].map((item) => (
+                      <div key={item.label} className="premium-card-hover p-4 flex items-start gap-3">
+                        <div className="mt-0.5">
+                          <div className={cn(
+                            "w-2 h-2 rounded-full",
+                            item.status === "In Progress" ? "bg-[hsl(var(--tb-accent))] animate-pulse" :
+                            item.status === "Planned" ? "bg-primary/40" : "bg-muted-foreground/30"
+                          )} />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-sm font-semibold text-foreground">{item.label}</span>
+                            <span className={cn(
+                              "text-[9px] px-1.5 py-0.5 rounded-full font-semibold",
+                              item.status === "In Progress" ? "bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))]" :
+                              item.status === "Planned" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                            )}>{item.status}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.section>
+
             {/* CTA at bottom */}
             {!isInsideApp && (
               <motion.section
@@ -1544,16 +1775,65 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         </div>
       </div>
 
+      {/* Back to top button */}
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-card/80 backdrop-blur-xl border border-border/40 shadow-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-card transition-all"
+            aria-label="Back to top"
+            style={{ boxShadow: "0 4px 20px -6px rgba(0,0,0,0.1), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}
+          >
+            <ArrowUpRight className="w-4 h-4 -rotate-45" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
       {/* Footer — only on standalone */}
       {!isInsideApp && (
-        <footer className="border-t border-border/20 bg-card/50 dot-pattern py-10" role="contentinfo">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-muted-foreground/50">© {new Date().getFullYear()} TradeBook. All rights reserved.</p>
-            <nav className="flex items-center gap-4 text-xs text-muted-foreground/50" aria-label="Footer links">
-              <button onClick={() => navigate("/privacy")} className="hover:text-foreground transition-colors">Privacy</button>
-              <button onClick={() => navigate("/terms")} className="hover:text-foreground transition-colors">Terms</button>
-              <button onClick={() => navigate("/")} className="hover:text-foreground transition-colors">Home</button>
-            </nav>
+        <footer className="border-t border-border/30 bg-card/50 backdrop-blur-sm dot-pattern py-16" role="contentinfo" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
+          <div className="max-w-7xl mx-auto px-6 lg:px-10">
+            <div className="grid md:grid-cols-4 gap-10 mb-10">
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <img src="/favicon-32x32.png" alt="TradeBook" className="h-7 object-contain" loading="lazy" />
+                  <span className="text-sm font-bold text-foreground">TradeBook</span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed mb-4">The trading journal built for Indian markets.</p>
+                <Button size="sm" onClick={() => navigate("/login?mode=signup")} className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 text-[12px] h-8 shadow-[0_6px_16px_hsl(var(--tb-accent)/0.35)]">
+                  Get Started <ArrowRight className="w-3 h-3" />
+                </Button>
+              </div>
+              {[
+                { title: "Product", links: [{ label: "Features", href: "/#features" }, { label: "Pricing", href: "/#pricing" }, { label: "Documentation", href: "/docs" }] },
+                { title: "Resources", links: [{ label: "Changelog", href: "#changelog" }, { label: "FAQ", href: "#faq" }, { label: "Blog", href: "#" }] },
+                { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }, { label: "Contact", href: "mailto:founder@mrchartist.com" }] },
+              ].map((col) => (
+                <div key={col.title}>
+                  <h4 className="text-xs uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-4 border-l-2 border-[hsl(var(--tb-accent))] pl-2">{col.title}</h4>
+                  <ul className="space-y-1.5">
+                    {col.links.map((l) => (
+                      <li key={l.label}>
+                        <button onClick={() => l.href.startsWith("mailto") ? window.open(l.href) : l.href.startsWith("#") ? document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: "smooth" }) : navigate(l.href)} className="text-sm text-muted-foreground hover:text-foreground hover:translate-x-0.5 transition-all duration-200 inline-block">
+                          {l.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <div className="h-[1px] bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.25)] to-transparent mb-6" />
+            <div className="bg-muted/20 rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-3">
+              <p className="text-xs text-muted-foreground/80 flex items-center gap-1.5">
+                © {new Date().getFullYear()} TradeBook. All rights reserved.
+                <span className="inline-flex items-center gap-1">Made with ❤️ in <span className="inline-flex gap-[2px]"><span className="w-2 h-2 rounded-full bg-[#FF9933]" /><span className="w-2 h-2 rounded-full bg-white border border-border/40" /><span className="w-2 h-2 rounded-full bg-[#138808]" /></span> India</span>
+              </p>
+              <span className="text-[10px] text-muted-foreground/60 bg-muted/30 border border-border/30 rounded-full px-3 py-1">Not SEBI registered · For educational purposes only</span>
+            </div>
           </div>
         </footer>
       )}
