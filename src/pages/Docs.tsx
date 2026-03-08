@@ -891,6 +891,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
               </FeatureCard>
 
+              <ExpandableDetail title="Live Price Indicator — How Real-Time Data Works" icon={Radio} badge="Real Feature">
+                <p>When Dhan integration is active, the dashboard displays a live data indicator in the header showing:</p>
+                <FeatureList items={[
+                  "Streaming status — green dot with 'Live' text when prices are actively updating during market hours.",
+                  "Last updated timestamp — shows exact time of last price refresh (e.g., '2 seconds ago').",
+                  "Offline fallback — during market closed hours, displays 'Market Closed' with last available prices.",
+                  "Price polling — without Dhan, dashboard still shows your trade data but prices update only when you manually refresh.",
+                  "Widget updates — all dashboard widgets (P&L hero, KPIs, equity curve, positions table) update simultaneously when new prices arrive.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Live prices require an active Dhan Data API subscription. If you see 'API Error 806', you need to activate the Data API plan in your Dhan dashboard — it's separate from having API keys.</p>
+              </ExpandableDetail>
+
               <FeatureCard icon={Zap} title="Animated KPI Numbers" badge="New">
                 <p className="text-sm text-muted-foreground">
                   All key metrics on the dashboard use smooth "tick-up" number animations when values change. P&L figures, win rates, and trade counts animate from their previous value to the new one using requestAnimationFrame for 60fps smoothness. Profit cards pulse with a green glow, and all cards have a subtle 3D lift on hover.
