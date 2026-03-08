@@ -35,6 +35,7 @@ interface TradeDetailModalProps {
   trade: Trade | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onDuplicate?: (data: Partial<Trade>) => void;
 }
 
 const segmentLabels: Record<string, string> = {
