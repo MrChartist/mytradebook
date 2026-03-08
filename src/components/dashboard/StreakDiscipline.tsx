@@ -113,9 +113,9 @@ export function StreakDiscipline() {
         </div>
 
         {/* Best Trade */}
-        <div className="inner-panel">
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Best Trade</p>
-          <p className="text-lg font-bold mt-1 text-profit font-mono">
+        <div className="inner-panel !p-2.5">
+          <p className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-wider">Best Trade</p>
+          <p className="text-base font-bold mt-0.5 text-profit font-mono">
             +₹{stats.bestTrade.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
           </p>
         </div>
