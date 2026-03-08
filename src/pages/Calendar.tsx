@@ -70,6 +70,8 @@ export default function Calendar() {
   };
 
   return (
+    <>
+    <SEOHead title="Calendar" noIndex />
     <div className="space-y-4 animate-fade-in" role="region" aria-label="Trading calendar">
       <PageHeader title="Calendar" subtitle="Daily P&L heatmap and journal entries">
         {!(isToday && isTodayVisible) && (

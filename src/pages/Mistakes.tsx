@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import { Lightbulb, TrendingDown, Repeat, ArrowDown, BookOpen, Eye, ShieldCheck } from "lucide-react";
 import { useTrades } from "@/hooks/useTrades";
 import { useQuery } from "@tanstack/react-query";

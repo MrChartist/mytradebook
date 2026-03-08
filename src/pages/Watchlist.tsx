@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useSubscription } from "@/hooks/useSubscription";
 import { toast } from "sonner";
