@@ -1464,6 +1464,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">Smart Suggestions are purely frequency-based — they reflect what you actually trade, not what performed best. For performance-based insights, see the Analytics section.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Position Sizing", description: "Calculate optimal trade quantities", targetId: "position-sizing" },
+                { label: "Trading Rules", description: "Enforce pre-trade discipline", targetId: "trading-rules" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
