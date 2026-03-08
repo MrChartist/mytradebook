@@ -135,7 +135,7 @@ export function Sidebar() {
           {!collapsed && (
             <button
               onClick={() => setCollapsed(true)}
-              className="ml-auto w-7 h-7 rounded-lg border border-border/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors duration-200"
+              className="ml-auto w-7 h-7 rounded-[var(--radius-sm)] border border-border/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors duration-200"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
             </button>
