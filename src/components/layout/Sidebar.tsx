@@ -229,10 +229,10 @@ export function Sidebar() {
 
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2 rounded-xl text-muted-foreground hover:text-loss hover:bg-loss/8 transition-all duration-150 w-full"
+            className="flex items-center gap-3 px-3 py-2 rounded-[var(--radius-sm)] text-muted-foreground hover:text-loss hover:bg-loss/8 transition-all duration-200 w-full"
           >
             <LogOut className="w-[18px] h-[18px] flex-shrink-0" />
-            {!collapsed && <span className="text-[13px]">Logout</span>}
+            {!collapsed && <span className="text-body-sm">Logout</span>}
           </button>
         </div>
       </aside>
