@@ -138,6 +138,7 @@ export default function Alerts() {
     switch (sortBy) {
       case "symbol": list = [...list].sort((a, b) => a.symbol.localeCompare(b.symbol)); break;
       case "most_triggered": list = [...list].sort((a, b) => (b.trigger_count || 0) - (a.trigger_count || 0)); break;
+      case "status": list = [...list].sort((a, b) => getAlertStatus(a).label.localeCompare(getAlertStatus(b).label)); break;
       default: list = [...list].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
     }
 
