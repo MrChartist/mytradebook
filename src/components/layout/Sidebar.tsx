@@ -208,14 +208,14 @@ export function Sidebar() {
           <NavLink
             to="/settings"
             className={cn(
-              "flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 group",
+              "flex items-center gap-3 px-3 py-2 rounded-[var(--radius-sm)] transition-all duration-200 group",
               location.pathname === "/settings"
                 ? "bg-primary/8 text-primary font-medium"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
             )}
           >
             <Settings className="w-[18px] h-[18px]" />
-            {!collapsed && <span className="text-[13px]">Settings</span>}
+            {!collapsed && <span className="text-body-sm">Settings</span>}
           </NavLink>
 
           {collapsed && (
