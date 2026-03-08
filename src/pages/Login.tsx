@@ -118,13 +118,13 @@ export default function Login() {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) {
-      toast({ title: "Enter your email", description: "Please enter your email address first.", variant: "destructive" });
+    if (!email || !emailValid) {
+      toast({ title: "Invalid email", description: "Please enter a valid email address.", variant: "destructive" });
       return;
     }
     setLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) {
@@ -293,6 +293,7 @@ export default function Login() {
                         onChange={(e) => setEmail(e.target.value)}
                         autoComplete="email"
                         inputMode="email"
+                        className="h-11"
                         required
                       />
                     </div>
@@ -363,6 +364,7 @@ export default function Login() {
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           autoComplete="name"
+                          className="h-11"
                         />
                       </div>
                     )}
@@ -376,6 +378,7 @@ export default function Login() {
                         onChange={(e) => setEmail(e.target.value)}
                         onBlur={() => setEmailTouched(true)}
                         className={cn(
+                          "h-11",
                           emailError && "border-destructive focus-visible:ring-destructive"
                         )}
                         autoComplete="email"
@@ -406,7 +409,7 @@ export default function Login() {
                           placeholder="Enter your password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="pr-10"
+                          className="h-11 pr-10"
                           autoComplete={authMode === "login" ? "current-password" : "new-password"}
                           required
                           minLength={6}
@@ -510,8 +513,8 @@ export default function Login() {
 
                   <p className="text-[11px] text-muted-foreground/60 text-center mt-6">
                     By signing in, you agree to our{" "}
-                    <a href="/terms" className="text-primary hover:underline">Terms</a>{" "}and{" "}
-                    <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a>
+                    <Link to="/terms" className="text-primary hover:underline">Terms</Link>{" "}and{" "}
+                    <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
                   </p>
                 </>
               )}
