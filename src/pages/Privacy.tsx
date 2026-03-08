@@ -84,12 +84,12 @@ export default function Privacy() {
             </div>
 
             <div className="space-y-8 text-sm text-muted-foreground leading-relaxed">
-              <section id="collect" className="space-y-3 scroll-mt-28">
+              <section id="collect" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">1. Information We Collect</h2>
                 <p>We collect information you provide directly: name, email address, phone number, and trading data you choose to log. We also collect usage data such as page views and feature usage to improve the Service.</p>
               </section>
 
-              <section id="use" className="space-y-3 scroll-mt-28">
+              <section id="use" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">2. How We Use Your Information</h2>
                 <ul className="list-disc list-inside space-y-1">
                   <li>To provide and maintain the Service</li>
@@ -100,37 +100,37 @@ export default function Privacy() {
                 </ul>
               </section>
 
-              <section id="security" className="space-y-3 scroll-mt-28">
+              <section id="security" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">3. Data Security</h2>
                 <p>Your data is encrypted in transit and at rest. Broker API tokens are stored securely and never shared with third parties. We use row-level security to ensure users can only access their own data.</p>
               </section>
 
-              <section id="sharing" className="space-y-3 scroll-mt-28">
+              <section id="sharing" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">4. Data Sharing</h2>
                 <p>We do not sell, rent, or share your personal data or trading data with any third parties. Your trading journal is private by default.</p>
               </section>
 
-              <section id="broker" className="space-y-3 scroll-mt-28">
+              <section id="broker" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">5. Broker Integration</h2>
                 <p>When you connect a broker (e.g., Dhan), we store your API credentials securely to fetch live prices and sync orders. You can disconnect at any time, which removes stored credentials.</p>
               </section>
 
-              <section id="cookies" className="space-y-3 scroll-mt-28">
+              <section id="cookies" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">6. Cookies</h2>
                 <p>We use essential cookies for authentication and session management. No third-party tracking cookies are used.</p>
               </section>
 
-              <section id="retention" className="space-y-3 scroll-mt-28">
+              <section id="retention" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">7. Data Retention</h2>
                 <p>Your data is retained as long as your account is active. Upon account deletion, all personal data and trading records are permanently removed within 30 days.</p>
               </section>
 
-              <section id="rights" className="space-y-3 scroll-mt-28">
+              <section id="rights" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">8. Your Rights</h2>
                 <p>You can export, modify, or delete your data at any time from the Settings page. For data deletion requests, contact support@tradebook.app.</p>
               </section>
 
-              <section id="contact" className="space-y-3 scroll-mt-28">
+              <section id="contact" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">9. Contact</h2>
                 <p>For privacy-related questions, contact us at support@tradebook.app.</p>
               </section>
