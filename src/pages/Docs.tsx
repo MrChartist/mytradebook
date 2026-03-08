@@ -3760,6 +3760,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">For issues not covered here, check the FAQ section below or reach out via the in-app feedback button.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Integrations", description: "Connect your broker and Telegram", targetId: "integrations" },
+                { label: "FAQ", description: "Common questions answered", targetId: "faq" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
