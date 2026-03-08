@@ -1338,21 +1338,31 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p>For experienced traders, the Position Sizing Calculator can suggest position sizes based on the Kelly Criterion — factoring in your historical win rate and average win/loss ratio to optimize long-term capital growth.</p>
               </ExpandableDetail>
 
-              <ProTip variant="warning">
-                <p>Never risk more than 2% of your capital on a single trade. The calculator will flag oversized positions with a red warning if you exceed this threshold.</p>
-              </ProTip>
+              <ExpandableDetail title="Common Misunderstandings About Position Sizing" icon={AlertTriangle} badge="Watch Out">
+                <p>These are the mistakes traders most commonly make with position sizing — even experienced ones:</p>
+                <FeatureList items={[
+                  "\"I risk 2% so I'm safe\" — 2% per trade is only safe if you don't have 10 correlated positions open simultaneously. 10 × 2% = 20% portfolio risk if they all hit SL. Track total open risk, not just per-trade risk.",
+                  "\"My stop loss is tight so I can buy more shares\" — Tighter SL means bigger position, which means bigger gap risk if the stock opens past your SL. Always verify the max loss amount in rupees, not just the percentage.",
+                  "\"I'll add to a winning position\" — Adding to winners changes your average entry and risk profile. Recalculate position size for the new entry, not the original one.",
+                  "\"F&O lot sizes override position sizing\" — Futures and options have fixed lot sizes, but you still control how many lots. Use the calculator with lot-adjusted quantities to keep risk within bounds.",
+                ]} />
+              </ExpandableDetail>
 
               <SubTopic title="Risk Per Trade Guidelines" description="Recommended risk levels based on trading experience." id="ps-guidelines" />
               <ExpandableDetail title="Risk Per Trade Guidelines by Experience Level" icon={Shield} badge="Reference">
                 <p>Position sizing is the single biggest factor in long-term survival. Here are recommended risk-per-trade limits:</p>
                 <FeatureList items={[
-                  "Beginner (0–6 months) — Risk 0.5% per trade. Focus on process, not profits. Smaller sizes reduce emotional pressure.",
-                  "Intermediate (6–18 months) — Risk 1% per trade. You have a tested edge and consistent journaling habit.",
-                  "Advanced (18+ months) — Risk 1–2% per trade. You have a proven win rate and understand drawdown recovery math.",
-                  "Aggressive/Scalping — Risk up to 2–3% only with very tight stop losses and high-frequency setups.",
+                  "Beginner (0–6 months) — Risk 0.5% per trade. Focus on process, not profits. Smaller sizes reduce emotional pressure and give you room to make mistakes without catastrophic drawdowns.",
+                  "Intermediate (6–18 months) — Risk 1% per trade. You have a tested edge and consistent journaling habit. At this level, a 10-trade losing streak costs 10% — painful but recoverable.",
+                  "Advanced (18+ months) — Risk 1–2% per trade. You have a proven win rate and understand drawdown recovery math. You know your strategy's maximum consecutive losses.",
+                  "Aggressive/Scalping — Risk up to 2–3% only with very tight stop losses and high-frequency setups. This level requires significant experience and extremely disciplined exits.",
                 ]} />
-                <p className="text-[12px] text-muted-foreground/60 mt-3">Remember: a 50% drawdown requires a 100% gain to recover. Conservative sizing protects your capital during inevitable losing streaks.</p>
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Remember: a 50% drawdown requires a 100% gain to recover. Conservative sizing protects your capital during inevitable losing streaks. The calculator exists to make these numbers automatic — trust the math, not your gut.</p>
               </ExpandableDetail>
+
+              <ProTip variant="info">
+                <p><strong>Beginner tip:</strong> Start by setting risk at 0.5% and use the calculator on every single trade for at least 30 trades. Don't adjust the risk % based on "how good" a setup looks — the whole point is consistency. After 30 trades, review your analytics to see if you can gradually increase to 1%.</p>
+              </ProTip>
             </motion.section>
 
             <SectionDivider />
