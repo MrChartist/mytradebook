@@ -179,14 +179,14 @@ export default function Alerts() {
     return (
       <div className="space-y-5 animate-fade-in">
         <div className="flex justify-between items-center">
-          <div><Skeleton className="h-8 w-32 mb-2" /><Skeleton className="h-4 w-48" /></div>
-          <Skeleton className="h-10 w-28" />
+          <div><Skeleton className="h-8 w-32 mb-2 shimmer-skeleton" /><Skeleton className="h-4 w-48 shimmer-skeleton" /></div>
+          <Skeleton className="h-10 w-28 rounded-[1.25rem] shimmer-skeleton" />
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-20" />)}
+          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-20 rounded-[1.25rem] shimmer-skeleton" />)}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-48" />)}
+          {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-48 rounded-[1.25rem] shimmer-skeleton" />)}
         </div>
       </div>
     );
