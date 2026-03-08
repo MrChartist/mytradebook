@@ -49,14 +49,30 @@ const billingPlans = [
 ];
 
 export default function BillingSettings() {
+  const { plan, isTrialing, trialDaysLeft, isTrialExpired, limits } = useSubscription();
+
   return (
     <div className="space-y-6">
       {/* Status Card */}
       <div className="surface-card p-6">
         <h3 className="text-lg font-semibold mb-1">Your Plan</h3>
         <p className="text-sm text-muted-foreground mb-4">
-          All features are unlocked during the beta period.
+          {isTrialing
+            ? `You're on a Pro trial — ${trialDaysLeft} day${trialDaysLeft !== 1 ? "s" : ""} remaining.`
+            : isTrialExpired
+            ? "Your Pro trial has expired. Upgrade to continue using premium features."
+            : `You're on the ${plan.charAt(0).toUpperCase() + plan.slice(1)} plan.`}
         </p>
+
+        {limits.maxTradesPerMonth < Infinity && (
+          <div className="space-y-1.5 mb-4">
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Monthly trade limit</span>
+              <span>{limits.maxTradesPerMonth} trades/month</span>
+            </div>
+            <Progress value={0} className="h-2" />
+          </div>
+        )}
 
         <div className="p-4 rounded-xl bg-muted/50 border border-border">
           <div className="flex items-center gap-3">
@@ -64,12 +80,15 @@ export default function BillingSettings() {
             <div>
               <p className="text-sm font-medium">Payment integration coming soon</p>
               <p className="text-xs text-muted-foreground">
-                Razorpay integration will be available shortly. Until then, enjoy full access!
+                Razorpay / Stripe integration will be available shortly.
               </p>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Referral */}
+      <ReferralCard />
 
       {/* Plan Cards */}
       <div>
