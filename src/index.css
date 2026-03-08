@@ -1596,6 +1596,23 @@
     0% { transform: translateX(-100%) rotate(15deg); }
     100% { transform: translateX(200%) rotate(15deg); }
   }
+
+  .liquid-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .liquid-shine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.12), transparent);
+    animation: liquid-shine 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
   /* Shimmer skeleton animation */
   @keyframes shimmer-skeleton {
     0% { background-position: -200% 0; }
