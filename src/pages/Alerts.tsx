@@ -268,27 +268,36 @@ export default function Alerts() {
 
         {/* Tabs + Search + Sort + View */}
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-          <div className="flex gap-1.5 overflow-x-auto pb-1">
+          <div className="flex gap-1 overflow-x-auto pb-0.5 scrollbar-none">
             {(["all", "active", "triggered", "paused", "expired"] as FilterTab[]).map(tab => (
-              <Badge
+              <button
                 key={tab}
-                variant={activeTab === tab ? "default" : "outline"}
-                className="cursor-pointer capitalize shrink-0 text-xs"
                 onClick={() => setActiveTab(tab)}
+                className={cn(
+                  "px-3 py-1 text-[11px] font-medium rounded-md border transition-all duration-200 shrink-0 capitalize",
+                  activeTab === tab
+                    ? "border-primary/15 bg-primary/6 text-primary"
+                    : "border-border/15 text-muted-foreground/50 hover:text-foreground hover:border-border/30"
+                )}
               >
                 {tab} ({tabCounts[tab]})
-              </Badge>
+              </button>
             ))}
           </div>
           <div className="flex gap-2 flex-1 items-center">
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
               <Input
                 placeholder="Search symbol or notes..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-card border-border"
+                className="pl-9 h-9 text-[13px] bg-muted/20 border-border/20 focus:border-primary/30"
               />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                  <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
+                </button>
+              )}
             </div>
             <SortSelect value={sortBy} onValueChange={setSortBy} options={sortOptions} />
             <ViewToggle view={viewMode} onViewChange={setViewMode} />

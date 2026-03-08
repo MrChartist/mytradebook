@@ -469,18 +469,18 @@ export default function Trades() {
             ) : (
               <div className="flex gap-1">
                 {[{ key: "ALL", label: "All Segments" }, ...Object.entries(segmentLabels).map(([key, label]) => ({ key, label }))].map((seg) => (
-                  <Button
+                  <button
                     key={seg.key}
-                    variant="outline"
-                    size="sm"
                     onClick={() => setSegmentFilter(seg.key)}
                     className={cn(
-                      "border-border text-xs h-7",
-                      segmentFilter === seg.key && "bg-primary/10 border-primary/20 text-primary"
+                      "px-3 py-1 text-[11px] font-medium rounded-md border transition-all duration-200 shrink-0",
+                      segmentFilter === seg.key
+                        ? "border-primary/15 bg-primary/6 text-primary"
+                        : "border-border/15 text-muted-foreground/50 hover:text-foreground hover:border-border/30"
                     )}
                   >
                     {seg.label}
-                  </Button>
+                  </button>
                 ))}
               </div>
             )}
