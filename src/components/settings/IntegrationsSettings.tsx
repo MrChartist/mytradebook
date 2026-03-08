@@ -523,6 +523,8 @@ export default function IntegrationsSettings() {
               <div className="flex gap-2">
                 <Button
                   variant="outline"
+                  size="sm"
+                  className="h-8 text-[11px] rounded-lg border-border/20"
                   onClick={async () => {
                     setSyncingOrders(true);
                     try {
@@ -549,22 +551,23 @@ export default function IntegrationsSettings() {
                   disabled={syncingOrders}
                 >
                   {syncingOrders ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
                   ) : (
-                    <RefreshCw className="w-4 h-4 mr-2" />
+                    <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
                   )}
                   Sync Now
                 </Button>
                 <Button
                   variant="outline"
+                  size="sm"
+                  className="h-8 text-[11px] rounded-lg border-border/20 text-loss hover:text-loss"
                   onClick={handleDisconnectDhan}
                   disabled={disconnectingDhan}
-                  className="text-loss hover:text-loss"
                 >
                   {disconnectingDhan ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
                   ) : (
-                    <Unplug className="w-4 h-4 mr-2" />
+                    <Unplug className="w-3.5 h-3.5 mr-1.5" />
                   )}
                   Disconnect
                 </Button>
