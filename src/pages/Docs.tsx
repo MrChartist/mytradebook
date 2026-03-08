@@ -456,115 +456,84 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       {/* Shared navbar */}
       <LandingNavbar activePage="docs" isInsideApp={isInsideApp} />
 
-      {/* Hero */}
-      <div className={cn("pt-20 border-b border-border/15 bg-gradient-to-b from-primary/[0.02] to-transparent", isInsideApp && "border-none")}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-14 lg:py-20">
-          <div className="flex items-center gap-2.5 mb-6">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/8 text-primary text-[10px] font-bold tracking-wide">
-              Documentation
-            </span>
+      {/* Docs Header */}
+      <div className={cn("pt-20 border-b border-border/40", isInsideApp && "border-border/20")}>
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-8 py-8 lg:py-10">
+          <div className="flex items-center gap-3 mb-3">
+            <h1 className="text-2xl lg:text-[1.7rem] font-bold tracking-tight">Documentation</h1>
             <button
               onClick={toggle}
               className={cn(
-                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold transition-all border",
+                "inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-semibold transition-all border",
                 mode === "bw"
                   ? "bg-foreground text-background border-foreground"
-                  : "bg-muted/30 text-muted-foreground/60 border-border/20 hover:border-border/40"
+                  : "bg-muted/40 text-muted-foreground/60 border-border/30 hover:border-border/50"
               )}
             >
               <Palette className="w-3 h-3" />
               {mode === "bw" ? "B&W" : "Color"}
             </button>
           </div>
-          <h1 className="text-3xl lg:text-4xl xl:text-5xl font-extrabold tracking-tight mb-5 leading-[1.08] max-w-2xl">
-            Everything you need to know about{" "}
-            <span className="accent-script text-primary">TradeBook</span>
-          </h1>
-          <p className="text-[15px] lg:text-base text-muted-foreground/80 max-w-xl leading-[1.75]">
-            A comprehensive guide to every feature, capability, and workflow — from your first trade log to advanced analytics.
+          <p className="text-[14px] text-muted-foreground leading-relaxed max-w-xl">
+            Complete guide to every TradeBook feature — from trade logging to advanced analytics.
           </p>
-          <div className="flex items-center gap-2.5 mt-4 text-[11px] text-muted-foreground/50">
+          <div className="flex items-center gap-3 mt-3 text-[11px] text-muted-foreground/50">
             <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~35 min read</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
             <span>Last updated: March 2026</span>
-          </div>
-          {/* Hero stat chips */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25, duration: 0.35 }}
-            className="flex flex-wrap gap-2 mt-6"
-          >
-            {[
-              { label: "26 Sections", icon: FileText },
-              { label: "80+ Mockups", icon: Eye },
-              { label: "Every Feature", icon: Zap },
-              { label: "Free vs Pro", icon: Star },
-            ].map((stat) => (
-              <div key={stat.label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/15 bg-card/40 text-[11px] font-semibold text-foreground/80">
-                <stat.icon className="w-3 h-3 text-primary" />
-                {stat.label}
-              </div>
-            ))}
-          </motion.div>
-          <div className="mt-8">
-            <BentoFeatureGrid />
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
+            <span>26 sections</span>
           </div>
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-12 lg:py-14">
-        <div className="flex gap-12">
-          {/* Sidebar — desktop */}
+      <div className="max-w-[1440px] mx-auto">
+        <div className="flex">
+          {/* Left Sidebar — desktop */}
           <TooltipProvider delayDuration={200}>
             <aside className={cn(
-              "hidden lg:block shrink-0 transition-all duration-300",
-              sidebarCollapsed ? "w-14" : "w-64"
+              "hidden lg:block shrink-0 transition-all duration-300 border-r border-border/30",
+              sidebarCollapsed ? "w-14" : "w-[220px]"
             )}>
-              <div className="sticky top-24">
-                {/* Scroll progress bar */}
-                <div className="h-0.5 bg-muted/60 rounded-full overflow-hidden mb-4">
-                  <div className="h-full bg-primary/80 transition-all duration-150" style={{ width: `${scrollProgress}%` }} />
-                </div>
+              <div className="sticky top-20 py-6 pr-4 pl-4">
                 {/* Header with collapse toggle */}
-                <div className={cn("flex items-center mb-4", sidebarCollapsed ? "justify-center" : "justify-between px-3")}>
+                <div className={cn("flex items-center mb-3", sidebarCollapsed ? "justify-center" : "justify-between")}>
                   {!sidebarCollapsed && (
-                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/50">Contents</p>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50">Contents</p>
                   )}
                   <button
                     onClick={toggleSidebar}
-                    className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                    className="p-1 rounded text-muted-foreground/50 hover:text-foreground hover:bg-muted/40 transition-colors"
                     aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
                   >
-                    {sidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+                    {sidebarCollapsed ? <PanelLeftOpen className="w-3.5 h-3.5" /> : <PanelLeftClose className="w-3.5 h-3.5" />}
                   </button>
                 </div>
                 {/* Search filter */}
                 {!sidebarCollapsed && (
-                  <div className="px-2 mb-2.5">
+                  <div className="mb-3">
                     <div className="relative">
                       <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground/40" />
                       <input
                         type="text"
                         value={sidebarSearch}
                         onChange={(e) => setSidebarSearch(e.target.value)}
-                        placeholder="Filter sections…"
-                        className="w-full h-7 pl-7 pr-2.5 rounded-md bg-muted/30 border border-border/20 text-[11px] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all"
+                        placeholder="Filter…"
+                        className="w-full h-7 pl-7 pr-2 rounded bg-muted/30 border border-border/30 text-[11px] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
                       />
                     </div>
                   </div>
                 )}
-                <ScrollArea className="h-[calc(100vh-12rem)]">
-                  <nav className={cn(!sidebarCollapsed && "pr-4")}>
+                <ScrollArea className="h-[calc(100vh-10rem)]">
+                  <nav>
                     {sidebarGroups.map((group, gi) => {
                       const groupSections = filteredSections.filter((s) => group.ids.includes(s.id));
                       if (groupSections.length === 0) return null;
                       return (
                       <div key={group.label}>
-                         {gi > 0 && !sidebarCollapsed && <Separator className="my-2.5 mx-2" />}
-                         {gi > 0 && sidebarCollapsed && <Separator className="my-2" />}
+                         {gi > 0 && <div className="h-px bg-border/20 my-2" />}
                          {!sidebarCollapsed && (
-                           <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground/45 px-2.5 pt-1.5 pb-1">{group.label}</p>
+                           <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/40 px-2 pt-2 pb-1">{group.label}</p>
                         )}
                         {groupSections.map((s) => {
                           const btn = (
@@ -572,14 +541,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                                key={s.id}
                                onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
                                className={cn(
-                                 "w-full flex items-center rounded-md text-[12px] transition-all duration-200 text-left relative",
-                                 sidebarCollapsed ? "justify-center p-2" : "gap-2 px-2.5 py-[6px]",
+                                 "w-full flex items-center rounded text-[12px] transition-colors duration-150 text-left relative",
+                                 sidebarCollapsed ? "justify-center p-2" : "gap-2 px-2 py-[5px]",
                                  activeSection === s.id
-                                   ? "bg-primary/8 text-primary font-semibold"
-                                   : "text-muted-foreground/70 hover:text-foreground hover:bg-muted/30"
+                                   ? "text-foreground font-medium"
+                                   : "text-muted-foreground/60 hover:text-foreground"
                                )}
                              >
-                               {activeSection === s.id && (
+                               {activeSection === s.id && !sidebarCollapsed && (
                                  <motion.div
                                    layoutId="docs-active-pill"
                                    className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 rounded-full bg-primary"
@@ -611,17 +580,17 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </TooltipProvider>
 
           {/* Mobile tabs */}
-          <nav className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border/15" aria-label="Section navigation">
+          <nav className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border/30" aria-label="Section navigation">
             <div className="flex gap-1 overflow-x-auto px-3 py-2 no-scrollbar">
               {SECTIONS.map((s) => (
                 <button
                   key={s.id}
                   onClick={() => scrollTo(s.id)}
                   className={cn(
-                    "shrink-0 px-3 py-1.5 rounded-md text-[11px] font-medium transition-all whitespace-nowrap",
+                    "shrink-0 px-2.5 py-1 rounded text-[11px] font-medium transition-colors whitespace-nowrap",
                     activeSection === s.id
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted/30 text-muted-foreground/60"
+                      ? "bg-foreground text-background"
+                      : "text-muted-foreground/60 hover:text-foreground"
                   )}
                 >
                   {s.label}
@@ -631,7 +600,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </nav>
 
           {/* Main content */}
-          <main className={cn("flex-1 min-w-0 space-y-24 lg:pt-0 pt-14 transition-all duration-300", sidebarCollapsed ? "max-w-5xl" : "max-w-4xl")}>
+          <main className="flex-1 min-w-0 max-w-3xl px-6 lg:px-10 py-8 lg:py-10 space-y-16 pt-14 lg:pt-8">
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
