@@ -26,7 +26,19 @@ export function DocsNavbar({ isInsideApp = false, onSearchOpen }: DocsNavbarProp
   const [activeNav, setActiveNav] = useState("getting-started");
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 8);
+
+      // Track which section is currently in view
+      const scrollY = window.scrollY + 120;
+      for (let i = DOC_NAV_ITEMS.length - 1; i >= 0; i--) {
+        const el = document.getElementById(DOC_NAV_ITEMS[i].id);
+        if (el && el.offsetTop <= scrollY) {
+          setActiveNav(DOC_NAV_ITEMS[i].id);
+          break;
+        }
+      }
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
