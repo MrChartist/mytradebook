@@ -3193,7 +3193,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               ]} />
 
               <ProTip variant="best-practice">
-                <p>Don't try to memorize everything at once. Learn <strong>3 shortcuts per week</strong>: start with <ShortcutKey>⌘K</ShortcutKey> (Command Palette), <ShortcutKey>N</ShortcutKey> (New Trade), and <ShortcutKey>1</ShortcutKey> (Dashboard). After a week, add 3 more. Within a month you'll navigate entirely by keyboard.</p>
+                <p><strong>Why this feature exists:</strong> Speed matters when markets are moving. Every second spent clicking through menus is a second you could spend analyzing a setup. Keyboard shortcuts let experienced users create trades, switch pages, and search their data without taking their hands off the keyboard. The Command Palette alone can replace 80% of mouse interactions — think of it as Spotlight for your trading journal.</p>
+              </ProTip>
+
+              <ProTip variant="info">
+                <p><strong>Getting started:</strong> Learn <strong>3 shortcuts per week</strong>: start with <ShortcutKey>⌘K</ShortcutKey> (Command Palette), <ShortcutKey>N</ShortcutKey> (New Trade), and <ShortcutKey>1</ShortcutKey> (Dashboard). After a week, add 3 more. Within a month you'll navigate entirely by keyboard. Shortcuts are disabled inside input fields to prevent accidental triggers.</p>
               </ProTip>
 
               <InteractiveMockup label="Keyboard Shortcuts & Command Palette">
