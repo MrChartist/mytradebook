@@ -2544,6 +2544,21 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "In-App — Reports are always available on the Reports page. Navigate there anytime to see current and past weekly reports.",
                   "Telegram — If you've configured Telegram integration (Settings → Telegram), reports are automatically sent to your linked Telegram chat or channel every Monday at 6 AM IST. Great for reviewing on mobile before market opens.",
                   "PDF Download — Click the download button on any report to save it as a PDF. Useful for maintaining offline records or sharing with a mentor.",
+                ]} />
+              </ExpandableDetail>
+
+              <ExpandableDetail title="How to Actually Use Your Weekly Report — Interpretation Guide" icon={Target} badge="Workflow">
+                <p>A weekly report is only valuable if you act on it. Here's how to interpret each section:</p>
+                <FeatureList items={[
+                  "Total P&L — This is your headline number. But don't stop here. A ₹50,000 profit week with one lucky trade is less meaningful than a ₹20,000 week with consistent execution across 15 trades.",
+                  "Win Rate by Segment — Compare segments. If Options shows 35% win rate but highest total P&L, your Options R:R is working. If Intraday shows 70% win rate but negative P&L, your position sizing or exit timing is broken.",
+                  "Best Trade vs Worst Trade — These extremes reveal your range. If your best trade made ₹25,000 but your worst lost ₹40,000, risk management is your priority. Ideal ratio: worst loss < 50% of best win.",
+                  "Top Setup Tags — These are your edge. If 'Breakout' and 'Morning Gap' consistently top the list, allocate more capital and attention there. If a setup rarely appears as 'top', it's not actually your strength.",
+                  "Top Mistake Tags — The real gold. One mistake appearing 5+ times in a week is a habit, not an accident. This is next week's #1 focus area. Write it in Monday's journal.",
+                  "Week-over-Week Trend — Are you improving? Compare this week's win rate and profit factor to last week. Two consecutive declining weeks warrant a strategy review or trading pause.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Pro tip: Screenshot your report insights and paste them into your Monday journal entry. This creates a permanent record of your weekly learnings that compounds over months.</p>
+              </ExpandableDetail>
                   "Manual Generation — Don't want to wait until Monday? Generate a report for any completed week from the Reports page. Useful for mid-week check-ins during volatile markets.",
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">Telegram delivery requires a verified Telegram bot connection. See the Integrations section for setup instructions. Reports cover Monday–Friday of the selected week and require at least 1 closed trade to generate.</p>
