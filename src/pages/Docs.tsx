@@ -309,9 +309,9 @@ const SectionDivider = React.forwardRef<HTMLDivElement>((_, ref) => (
 ));
 SectionDivider.displayName = "SectionDivider";
 
-function SectionHeader({ id, title, description, icon: Icon }: {
+const SectionHeader = React.forwardRef<HTMLDivElement, {
   id: string; title: string; description: string; icon: React.ElementType;
-}) {
+}>(({ id, title, description, icon: Icon }, ref) => {
   const copyLink = useCallback(() => {
     const url = `${window.location.origin}/docs#${id}`;
     navigator.clipboard.writeText(url).then(() => {
@@ -321,7 +321,7 @@ function SectionHeader({ id, title, description, icon: Icon }: {
   }, [id]);
 
   return (
-    <div id={id} className="scroll-mt-24 mb-10 group">
+    <div ref={ref} id={id} className="scroll-mt-24 mb-10 group">
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
           <Icon className="w-5 h-5" style={{ color: 'hsl(var(--docs-accent))' }} />
@@ -340,7 +340,8 @@ function SectionHeader({ id, title, description, icon: Icon }: {
       <p className="docs-body-lg max-w-2xl lg:pl-[52px]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>{description}</p>
     </div>
   );
-}
+});
+SectionHeader.displayName = "SectionHeader";
 
 function ShortcutKey({ children }: { children: string }) {
   return (
