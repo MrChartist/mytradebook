@@ -808,8 +808,8 @@ export default function IntegrationsSettings() {
                   updateSettings.mutate({ ra_disclaimer: val || null } as any);
                 }}
               />
-              <p className="text-xs text-muted-foreground">
-                Leave blank for default: "For educational/research purpose only. Not a buy/sell recommendation."
+              <p className="text-[10px] text-muted-foreground/30">
+                Leave blank for default: "For educational/research purpose only."
               </p>
             </div>
           )}
