@@ -58,7 +58,7 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
               </p>
             )}
             {subtitle && (
-              <p className="text-[11px] text-muted-foreground/70">{subtitle}</p>
+              <p className="kpi-sublabel">{subtitle}</p>
             )}
           </div>
           <div
