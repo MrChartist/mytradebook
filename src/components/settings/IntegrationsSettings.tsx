@@ -370,7 +370,7 @@ export default function IntegrationsSettings() {
                 disabled={savingAi}
                 className="text-loss hover:text-loss h-8 text-[11px] rounded-lg border-border/20"
               >
-                {savingAi ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+              {savingAi ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5 mr-1.5" />}
                 Disconnect
               </Button>
             </>
