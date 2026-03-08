@@ -85,17 +85,17 @@ export function BentoFeatureGrid() {
   };
 
   return (
-    <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mt-8">
+    <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mt-6">
       {bentoItems.map((item) => (
         <button
           key={item.label}
           onClick={() => handleClick(item.sectionId)}
-          className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border/40 bg-card/60 hover:border-primary/40 hover:shadow-md transition-all cursor-pointer group"
+          className="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-border/15 bg-card/40 hover:border-primary/25 transition-all duration-200 cursor-pointer group"
         >
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform" style={{ backgroundColor: `${item.color}15` }}>
-            <item.icon className="w-5 h-5" style={{ color: item.color }} />
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200" style={{ backgroundColor: `${item.color}10` }}>
+            <item.icon className="w-4 h-4" style={{ color: item.color }} />
           </div>
-          <span className="text-xs font-semibold text-foreground">{item.label}</span>
+          <span className="text-[10px] font-semibold text-foreground/70">{item.label}</span>
         </button>
       ))}
     </div>
