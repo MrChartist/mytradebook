@@ -639,38 +639,45 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             </aside>
           </TooltipProvider>
 
-          {/* Mobile tabs */}
-          <nav className="lg:hidden fixed top-14 left-0 right-0 z-40 backdrop-blur-xl" style={{ background: 'hsl(var(--docs-bg) / 0.95)', borderBottom: '1px solid hsl(var(--docs-border-subtle))' }} aria-label="Section navigation">
+          {/* Mobile topic rail */}
+          <nav className="lg:hidden fixed top-14 left-0 right-0 z-40 backdrop-blur-xl" style={{ background: 'hsl(var(--docs-bg) / 0.92)', borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.6)' }} aria-label="Section navigation">
             <div className="relative">
-              {/* Fade edges */}
-              <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 z-10" style={{ background: 'linear-gradient(to right, hsl(var(--docs-bg) / 0.95), transparent)' }} />
-              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 z-10" style={{ background: 'linear-gradient(to left, hsl(var(--docs-bg) / 0.95), transparent)' }} />
+              {/* Fade edges — wider for better visibility */}
+              <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 z-10" style={{ background: 'linear-gradient(to right, hsl(var(--docs-bg) / 0.92), transparent)' }} />
+              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 z-10" style={{ background: 'linear-gradient(to left, hsl(var(--docs-bg) / 0.92), transparent)' }} />
               <div
-                className="flex gap-1 overflow-x-auto overscroll-x-contain px-4 py-2.5 no-scrollbar"
+                className="flex gap-1.5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-5 py-2 no-scrollbar"
                 style={{ WebkitOverflowScrolling: "touch" }}
+                ref={(el) => {
+                  // Auto-scroll active tab into view
+                  if (el) {
+                    const activeBtn = el.querySelector('[data-active="true"]');
+                    if (activeBtn) {
+                      const rect = activeBtn.getBoundingClientRect();
+                      const containerRect = el.getBoundingClientRect();
+                      if (rect.left < containerRect.left + 40 || rect.right > containerRect.right - 40) {
+                        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                      }
+                    }
+                  }
+                }}
               >
                 {SECTIONS.map((s) => {
                   const isActive = activeSection === s.id;
                   return (
                     <button
                       key={s.id}
+                      data-active={isActive}
                       onClick={() => scrollTo(s.id)}
-                      className={cn(
-                        "shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap text-[12px]",
-                        isActive ? "font-semibold" : ""
-                      )}
-                      style={{
-                        background: isActive ? 'hsl(var(--docs-accent-soft) / 0.14)' : 'transparent',
-                        color: isActive ? 'hsl(0 0% 100%)' : 'hsl(var(--docs-text-muted))',
-                      }}
+                      className={cn("docs-mobile-tab shrink-0 snap-start flex items-center gap-1.5", isActive && "active")}
                     >
                       <s.icon className="w-3 h-3 shrink-0" />
                       {s.label}
                     </button>
                   );
                 })}
-                {/* Spacer so last item isn't clipped by fade */}
-                <div className="shrink-0 w-4" aria-hidden="true" />
+                {/* Extra padding so last item is fully accessible */}
+                <div className="shrink-0 w-8" aria-hidden="true" />
               </div>
             </div>
           </nav>
