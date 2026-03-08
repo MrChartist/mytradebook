@@ -45,11 +45,10 @@ export class ErrorBoundary extends Component<Props, State> {
   private reportError(error: Error, errorInfo: ErrorInfo) {
     try {
       const payload = {
-        message: error.message,
-        stack: error.stack?.slice(0, 2000),
-        componentStack: errorInfo.componentStack?.slice(0, 2000),
-        url: window.location.href,
-        userAgent: navigator.userAgent,
+        message: error.message?.slice(0, 500),
+        stack: error.stack?.slice(0, 1500)?.replace(/[a-f0-9-]{36}/gi, '[id]'),
+        componentStack: errorInfo.componentStack?.slice(0, 1500),
+        url: window.location.pathname,
         timestamp: new Date().toISOString(),
         errorId: this.state.errorId,
       };

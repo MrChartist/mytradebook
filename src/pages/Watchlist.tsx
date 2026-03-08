@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useSubscription } from "@/hooks/useSubscription";
 import { toast } from "sonner";
@@ -103,6 +104,8 @@ export default function WatchlistPage() {
   }
 
   return (
+    <>
+    <SEOHead title="Watchlists" noIndex />
     <div className="space-y-4 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
@@ -299,6 +302,7 @@ export default function WatchlistPage() {
         </DialogContent>
       </Dialog>
     </div>
+    </>
   );
 }
 

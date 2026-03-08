@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import { useTrades } from "@/hooks/useTrades";
 import { JournalCalendarView } from "@/components/journal/JournalCalendarView";
 import { DailyJournalEditor } from "@/components/journal/DailyJournalEditor";
@@ -69,6 +70,8 @@ export default function Calendar() {
   };
 
   return (
+    <>
+    <SEOHead title="Calendar" noIndex />
     <div className="space-y-4 animate-fade-in" role="region" aria-label="Trading calendar">
       <PageHeader title="Calendar" subtitle="Daily P&L heatmap and journal entries">
         {!(isToday && isTodayVisible) && (
@@ -189,5 +192,6 @@ export default function Calendar() {
         />
       )}
     </div>
+    </>
   );
 }

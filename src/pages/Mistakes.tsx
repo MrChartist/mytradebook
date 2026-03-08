@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import { Lightbulb, TrendingDown, Repeat, ArrowDown, BookOpen, Eye, ShieldCheck } from "lucide-react";
 import { useTrades } from "@/hooks/useTrades";
 import { useQuery } from "@tanstack/react-query";
@@ -121,6 +122,7 @@ export default function Mistakes() {
   if (closedTrades.length === 0) {
     return (
       <div className="space-y-4 animate-fade-in">
+        <SEOHead title="Learning Review" noIndex />
         <PageHeader title="Learning Review" subtitle="Track behavioral patterns and build better trading habits." />
         <EmptyState
           icon={BookOpen}
@@ -137,6 +139,7 @@ export default function Mistakes() {
 
   return (
     <div className="space-y-4 animate-fade-in">
+      <SEOHead title="Learning Review" noIndex />
       <PageHeader title="Learning Review" subtitle="Track behavioral patterns and build better trading habits.">
         <Button variant="outline" size="sm" className="border-border" onClick={() => navigate("/settings?tab=tags")}>
           Manage Tags

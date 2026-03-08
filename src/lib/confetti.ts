@@ -1,7 +1,6 @@
-import confetti from "canvas-confetti";
-
-export function fireProfitConfetti() {
-  // Green-themed confetti burst
+export async function fireProfitConfetti() {
+  const { default: confetti } = await import("canvas-confetti");
+  
   const colors = ["#22c55e", "#4ade80", "#86efac", "#fbbf24", "#34d399"];
 
   confetti({

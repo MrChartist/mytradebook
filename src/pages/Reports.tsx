@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import { PlanGate } from "@/components/PlanGate";
 import {
   BarChart3,
@@ -252,6 +253,8 @@ export default function Reports() {
   }
 
   return (
+    <>
+    <SEOHead title="Weekly Reports" noIndex />
     <PlanGate plan="pro" feature="weeklyReports" message="Upgrade to Pro to access weekly performance reports.">
     <div className="space-y-4 animate-fade-in">
       <PageHeader title="Weekly Reports" subtitle="Auto-generated performance summaries">
@@ -452,5 +455,6 @@ export default function Reports() {
       )}
     </div>
     </PlanGate>
+    </>
   );
 }
