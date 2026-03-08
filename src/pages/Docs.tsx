@@ -1532,8 +1532,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 10b. Stock Screener (Fundamentals) ─────── */}
+            {/* ── Phase 15. Stock Screener (Fundamentals) ─────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={15} total={26} />
               <SectionHeader
                 id="fundamentals"
                 title="Stock Screener"
