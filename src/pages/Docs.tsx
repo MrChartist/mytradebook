@@ -1638,13 +1638,22 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Research Tools", id: "st-tools" },
                 { label: "Linking to Trades", id: "st-linking" },
               ]} />
+
+              <ProTip variant="best-practice">
+                <p><strong>Why this feature exists:</strong> Most traders research a stock, convince themselves to trade it, and then forget why they entered when it starts going against them. Studies create a paper trail of your thesis <em>before</em> you risk money. When you link a study to a trade, you can objectively compare "what I expected" with "what actually happened" — this feedback loop is how edges are built and refined over time.</p>
+              </ProTip>
+
               <ProTip>
                 <p>Link your studies to trades when you execute them. This builds a powerful feedback loop — you can see which of your research ideas actually led to profitable trades.</p>
               </ProTip>
 
-              <InteractiveMockup label="Study Card">
+              <AnnotatedMockup
+                label="Study Card"
+                caption="Each study shows its symbol, category, status, pattern tags, and live LTP. Active studies track your thesis in real-time so you know when conditions align with your research."
+                highlights={["Status Flow", "Pattern Tags", "Live Price"]}
+              >
                 <StudyCardMockup />
-              </InteractiveMockup>
+              </AnnotatedMockup>
 
               <SubTopic title="Publishing a Study" description="Create and publish research ideas in a structured format." id="st-publish" />
               <StepByStep title="Publishing a Study" steps={[
