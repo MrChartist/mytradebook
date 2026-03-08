@@ -575,24 +575,24 @@ export function FAQSection() {
 export function FinalCTASection() {
   const navigate = useNavigate();
   return (
-    <section className="py-28 lg:py-36 relative overflow-hidden" aria-label="Call to action">
+    <section className="py-32 lg:py-40 relative overflow-hidden" aria-label="Call to action">
       {/* Single subtle glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.06)_0%,transparent_65%)] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[450px] bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.05)_0%,transparent_65%)] pointer-events-none" />
 
       <MotionSection className="relative max-w-3xl mx-auto px-6 text-center">
-        <motion.div variants={fadeUp} className="flex items-center justify-center gap-4 mb-8">
+        <motion.div variants={fadeUp} className="flex items-center justify-center gap-4 mb-10">
           <div className="flex -space-x-2">
             {["hsl(var(--primary))", "hsl(var(--profit))", "hsl(210 80% 55%)"].map((c, i) => (
               <div key={i} className="w-7 h-7 rounded-full ring-2 ring-background" style={{ backgroundColor: c }} />
             ))}
           </div>
-          <span className="text-sm font-medium text-muted-foreground">1,200+ traders · 42,000+ trades</span>
+          <span className="text-[13px] font-medium text-muted-foreground">1,200+ traders · 42,000+ trades</span>
         </motion.div>
 
-        <motion.h2 variants={fadeUp} className="font-heading text-[2rem] lg:text-[3rem] font-bold leading-[1.1] tracking-[-0.02em] mb-3">
+        <motion.h2 variants={fadeUp} className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold leading-[1.08] tracking-[-0.018em] mb-3">
           Stop losing money to
         </motion.h2>
-        <motion.h2 variants={fadeUp} className="font-heading text-[2rem] lg:text-[3rem] font-bold leading-[1.1] tracking-[-0.02em] mb-8">
+        <motion.h2 variants={fadeUp} className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold leading-[1.08] tracking-[-0.018em] mb-10">
           <span className="accent-serif">undisciplined</span> trading
         </motion.h2>
 
