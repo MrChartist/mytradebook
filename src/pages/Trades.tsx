@@ -217,12 +217,12 @@ export default function Trades() {
   };
 
   return (
-    <div className="space-y-5 animate-fade-in" role="region" aria-label="Trade management">
+    <div className="space-y-4 animate-fade-in" role="region" aria-label="Trade management">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold">Trades</h1>
-          <p className="text-sm text-muted-foreground">Track and manage your positions</p>
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        <div className="space-y-0.5">
+          <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Trades</h1>
+          <p className="text-[13px] text-muted-foreground/70 leading-relaxed">Track and manage your positions</p>
         </div>
         <div className="flex gap-2 flex-wrap">
           <Button
@@ -325,7 +325,7 @@ export default function Trades() {
           </button>
         )}
         {(showStats || !isMobile) && (
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4" aria-live="polite" aria-label="Trade statistics">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5" aria-live="polite" aria-label="Trade statistics">
             <div
               role="button"
               tabIndex={0}

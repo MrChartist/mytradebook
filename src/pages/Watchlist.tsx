@@ -101,12 +101,12 @@ export default function WatchlistPage() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-4 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold">Watchlists</h1>
-          <p className="text-muted-foreground">Track instruments & create quick alerts</p>
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        <div className="space-y-0.5">
+          <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Watchlists</h1>
+          <p className="text-[13px] text-muted-foreground/70 leading-relaxed">Track instruments & create quick alerts</p>
         </div>
         <Button onClick={() => setCreateOpen(true)}>
           <Plus className="w-4 h-4 mr-2" /> New List
@@ -129,7 +129,7 @@ export default function WatchlistPage() {
           hint="Use ⌘K to quickly search and add instruments"
         />
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3.5">
           {/* Watchlists sidebar */}
           <div className="space-y-2">
             {watchlists.map((wl) => (

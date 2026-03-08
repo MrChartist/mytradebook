@@ -239,7 +239,7 @@ export default function Reports() {
 
   return (
     <PlanGate plan="pro" feature="weeklyReports" message="Upgrade to Pro to access weekly performance reports.">
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-4 animate-fade-in">
       <PageHeader title="Weekly Reports" subtitle="Auto-generated performance summaries">
         <PnlShareModal
           defaultPeriod="this_week"
@@ -285,29 +285,29 @@ export default function Reports() {
           hint="Reports break down performance by segment with top setups and common mistakes"
         />
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {groupedReports.map((report) => {
             const reportKey = `${report.weekStart}_${report.weekEnd}`;
             return (
-              <div key={reportKey} className="glass-card overflow-hidden">
+              <div key={reportKey} className="premium-card-hover !p-0 overflow-hidden">
                 {/* Report Header */}
-                <div className="p-5 border-b border-border flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div className="p-4 border-b border-border/15 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-lg font-semibold">
-                      Week: {formatDate(report.weekStart)} - {formatDate(report.weekEnd)}
+                    <h3 className="text-[15px] font-semibold">
+                      Week: {formatDate(report.weekStart)} – {formatDate(report.weekEnd)}
                     </h3>
-                    <p className="text-sm text-muted-foreground">{report.totalTrades} trades executed</p>
+                    <p className="text-[11px] text-muted-foreground/50">{report.totalTrades} trades executed</p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <p className="text-sm text-muted-foreground">Net P&L</p>
-                      <p className={cn("text-xl font-bold", report.totalPnl >= 0 ? "text-profit" : "text-loss")}>
+                      <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-medium">Net P&L</p>
+                      <p className={cn("text-lg font-bold font-mono", report.totalPnl >= 0 ? "text-profit" : "text-loss")}>
                         {report.totalPnl >= 0 ? "+" : ""}₹{report.totalPnl.toLocaleString()}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-muted-foreground">Win Rate</p>
-                      <p className={cn("text-xl font-bold", report.overallWinRate >= 50 ? "text-profit" : "text-loss")}>
+                      <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-medium">Win Rate</p>
+                      <p className={cn("text-lg font-bold font-mono", report.overallWinRate >= 50 ? "text-profit" : "text-loss")}>
                         {report.overallWinRate.toFixed(1)}%
                       </p>
                     </div>
@@ -315,33 +315,33 @@ export default function Reports() {
                 </div>
 
                 {/* Segments Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border/15">
                   {report.segments.map((segment) => {
                     const topSetups = (segment.top_setups as { name: string; count: number }[] | null) || [];
                     const commonMistakes = (segment.common_mistakes as { name: string; count: number }[] | null) || [];
                     return (
-                      <div key={segment.segment} className="p-5">
-                        <h4 className="font-medium text-sm text-muted-foreground mb-3">
+                      <div key={segment.segment} className="p-4">
+                        <h4 className="font-medium text-[11px] text-muted-foreground/60 uppercase tracking-wider mb-2.5">
                           {segmentDisplayNames[segment.segment] || segment.segment}
                         </h4>
-                        <div className="space-y-3">
+                        <div className="space-y-2">
                           <div className="flex items-center justify-between">
-                            <span className="text-sm">P&L</span>
-                            <span className={cn("font-semibold", (segment.total_pnl || 0) >= 0 ? "text-profit" : "text-loss")}>
+                            <span className="text-[12px] text-muted-foreground/50">P&L</span>
+                            <span className={cn("font-semibold font-mono text-[13px]", (segment.total_pnl || 0) >= 0 ? "text-profit" : "text-loss")}>
                               {(segment.total_pnl || 0) >= 0 ? "+" : ""}₹{(segment.total_pnl || 0).toLocaleString()}
                             </span>
                           </div>
                           <div className="flex items-center justify-between">
-                            <span className="text-sm">Win Rate</span>
-                            <span className={cn("font-semibold", (segment.win_rate || 0) >= 50 ? "text-profit" : "text-loss")}>
+                            <span className="text-[12px] text-muted-foreground/50">Win Rate</span>
+                            <span className={cn("font-semibold font-mono text-[13px]", (segment.win_rate || 0) >= 50 ? "text-profit" : "text-loss")}>
                               {(segment.win_rate || 0).toFixed(1)}%
                             </span>
                           </div>
                           <div className="flex items-center justify-between">
-                            <span className="text-sm">Trades</span>
-                            <span className="font-semibold">{segment.total_trades}</span>
+                            <span className="text-[12px] text-muted-foreground/50">Trades</span>
+                            <span className="font-semibold font-mono text-[13px]">{segment.total_trades}</span>
                           </div>
-                          <div className="pt-2 border-t border-border/50">
+                          <div className="pt-2 border-t border-border/15">
                             {topSetups.length > 0 && (
                               <div className="flex items-center gap-1 text-xs">
                                 <Award className="w-3 h-3 text-warning" />
@@ -364,7 +364,7 @@ export default function Reports() {
                 </div>
 
                 {/* Report Actions */}
-                <div className="p-4 bg-accent/30 flex justify-end gap-2">
+                <div className="p-3 bg-muted/20 border-t border-border/10 flex justify-end gap-2">
                   <Button variant="outline" size="sm" className="border-border" onClick={() => handleDownloadPdf(report)}>
                     <Download className="w-4 h-4 mr-2" />
                     Download PDF

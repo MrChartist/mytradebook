@@ -193,12 +193,12 @@ export default function Alerts() {
 
   return (
     <TooltipProvider>
-      <div className="space-y-5 animate-fade-in">
+      <div className="space-y-4 animate-fade-in">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold">Alerts</h1>
-            <p className="text-sm text-muted-foreground">Monitor price & market conditions</p>
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+          <div className="space-y-0.5">
+            <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Alerts</h1>
+            <p className="text-[13px] text-muted-foreground/70 leading-relaxed">Monitor price & market conditions</p>
           </div>
           <div className="flex gap-2">
             {activeCount > 0 && (
@@ -214,8 +214,10 @@ export default function Alerts() {
           </div>
         </div>
 
+        <div className="h-px bg-border/20" />
+
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
           <div
             role="button"
             tabIndex={0}

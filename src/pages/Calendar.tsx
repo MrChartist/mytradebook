@@ -60,40 +60,40 @@ export default function Calendar() {
   const selectedTrade = selectedTradeId ? trades.find((t) => t.id === selectedTradeId) : null;
 
   return (
-    <div className="space-y-6 animate-fade-in" role="region" aria-label="Trading calendar">
+    <div className="space-y-4 animate-fade-in" role="region" aria-label="Trading calendar">
 
       {/* Monthly Summary Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3" aria-live="polite" aria-label="Monthly summary">
-        <div className="glass-card p-3 text-center">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Month P&L</p>
-          <p className={cn("text-lg font-bold", monthStats.totalPnl >= 0 ? "text-profit" : "text-loss")}>
+        <div className="inner-panel !p-2.5 text-center">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50 font-medium">Month P&L</p>
+          <p className={cn("text-base font-bold font-mono mt-0.5", monthStats.totalPnl >= 0 ? "text-profit" : "text-loss")}>
             {monthStats.totalPnl >= 0 ? "+" : ""}₹{monthStats.totalPnl.toLocaleString()}
           </p>
         </div>
-        <div className="glass-card p-3 text-center">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Win / Loss Days</p>
-          <p className="text-lg font-bold">
+        <div className="inner-panel !p-2.5 text-center">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50 font-medium">Win / Loss Days</p>
+          <p className="text-base font-bold font-mono mt-0.5">
             <span className="text-profit">{monthStats.winDays}</span>
-            <span className="text-muted-foreground mx-1">/</span>
+            <span className="text-muted-foreground/30 mx-0.5">/</span>
             <span className="text-loss">{monthStats.lossDays}</span>
           </p>
         </div>
-        <div className="glass-card p-3 text-center">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Trading Days</p>
-          <p className="text-lg font-bold">{monthStats.tradingDays}</p>
+        <div className="inner-panel !p-2.5 text-center">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50 font-medium">Trading Days</p>
+          <p className="text-base font-bold font-mono mt-0.5">{monthStats.tradingDays}</p>
         </div>
-        <div className="glass-card p-3 text-center">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Best Day</p>
-          <p className="text-lg font-bold text-profit">+₹{monthStats.best.toLocaleString()}</p>
+        <div className="inner-panel !p-2.5 text-center">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50 font-medium">Best Day</p>
+          <p className="text-base font-bold font-mono text-profit mt-0.5">+₹{monthStats.best.toLocaleString()}</p>
         </div>
-        <div className="glass-card p-3 text-center">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Worst Day</p>
-          <p className="text-lg font-bold text-loss">₹{monthStats.worst.toLocaleString()}</p>
+        <div className="inner-panel !p-2.5 text-center">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50 font-medium">Worst Day</p>
+          <p className="text-base font-bold font-mono text-loss mt-0.5">₹{monthStats.worst.toLocaleString()}</p>
         </div>
       </div>
 
       {/* 2-column layout: Calendar + Right panel */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
           <JournalCalendarView
             calendarData={calendarData}
@@ -109,10 +109,10 @@ export default function Calendar() {
         </div>
 
         {/* Right panel: trade list + journal */}
-        <div className="space-y-4 lg:max-h-[calc(100vh-220px)] lg:overflow-y-auto lg:pr-1">
+        <div className="space-y-3.5 lg:max-h-[calc(100vh-220px)] lg:overflow-y-auto lg:pr-1">
           {/* Trade list for selected day */}
-          <div className="glass-card p-5">
-            <h4 className="font-semibold mb-3 text-sm">
+          <div className="premium-card-hover p-4">
+            <h4 className="font-semibold mb-3 text-[13px]">
               {selectedDate ? `Trades — ${format(selectedDate, "MMM dd, yyyy")}` : "Select a date"}
             </h4>
             {selectedDayData && selectedDayData.trades.length > 0 ? (

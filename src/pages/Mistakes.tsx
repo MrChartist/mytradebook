@@ -131,8 +131,8 @@ export default function Mistakes() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <PageHeader title="Mistakes Review" subtitle="Identify patterns in your losing trades and track improvement over time." />
+    <div className="space-y-4 animate-fade-in">
+      <PageHeader title="Mistakes Review" subtitle="Identify patterns in your losing trades and track improvement." />
 
       {/* Mistake Tag Analysis */}
       {analysis && analysis.topMistakes.length > 0 && (
@@ -143,9 +143,9 @@ export default function Mistakes() {
           </h2>
 
           {/* Top mistakes */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
             {analysis.topMistakes.slice(0, 6).map((item) => (
-              <div key={item.tag.id} className="glass-card p-4 space-y-2">
+              <div key={item.tag.id} className="premium-card-hover !p-4 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-sm">{item.tag.name}</span>
                   <Badge
@@ -185,9 +185,9 @@ export default function Mistakes() {
           </div>
 
           {/* Monthly trend */}
-          <div className="glass-card p-4">
-            <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-              <TrendingDown className="w-4 h-4 text-muted-foreground" />
+          <div className="premium-card-hover !p-4">
+            <h3 className="text-[13px] font-semibold mb-3 flex items-center gap-2">
+              <TrendingDown className="w-3.5 h-3.5 text-muted-foreground/50" />
               Mistake Trend (6 months)
             </h3>
             <div className="flex items-end gap-2 h-24">
@@ -217,7 +217,7 @@ export default function Mistakes() {
 
       {/* No mistake tags at all — show hint */}
       {analysis && analysis.topMistakes.length === 0 && (
-        <div className="glass-card p-6 text-center border border-dashed border-warning/30">
+        <div className="flex flex-col items-center justify-center py-8 rounded-xl border border-dashed border-warning/20 bg-muted/[0.03]">
           <AlertTriangle className="w-8 h-8 mx-auto text-warning mb-2" />
           <h3 className="font-semibold text-sm mb-1">No Mistake Tags Found</h3>
           <p className="text-muted-foreground text-xs">
@@ -233,7 +233,7 @@ export default function Mistakes() {
           Loss Severity Breakdown
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
           {columns.map((col) => (
             <div key={col.label} className="space-y-3">
               <div className="flex items-center justify-between">
