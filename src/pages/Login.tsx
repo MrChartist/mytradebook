@@ -409,7 +409,7 @@ export default function Login() {
                           placeholder="Enter your password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="pr-10"
+                          className="h-11 pr-10"
                           autoComplete={authMode === "login" ? "current-password" : "new-password"}
                           required
                           minLength={6}
