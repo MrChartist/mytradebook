@@ -789,12 +789,24 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Your trading cockpit. A single screen that shows your P&L, risk exposure, open positions, and trading discipline — all updated in real-time during market hours."
                 icon={LayoutDashboard}
               />
+              <QuickOverviewStrip stats={[
+                { label: "KPI Cards", value: "4" },
+                { label: "Chart Widgets", value: "6+" },
+                { label: "Drag & Drop", value: "Yes" },
+                { label: "Live Prices", value: "Real-time" },
+                { label: "Segments", value: "5" },
+              ]} />
               <QuickNav items={[
                 { label: "Performance Overview", id: "db-performance" },
                 { label: "Charts & Visualizations", id: "db-charts" },
                 { label: "Customization", id: "db-customization" },
                 { label: "Advanced Widgets", id: "db-advanced" },
               ]} />
+              <WhatWhyWhenBlock data={{
+                what: "A real-time command center showing your P&L, risk exposure, equity curve, open positions, and discipline metrics on a single screen.",
+                why: "Eliminates the need to hop between 5 different tabs. One glance tells you if you're in profit, whether your risk is healthy, and how your month is trending.",
+                when: "Check every morning before market opens (for context) and periodically during the session (for live P&L tracking).",
+              }} />
               <VisualWalkthrough
                 title="Dashboard Overview"
                 steps={[
