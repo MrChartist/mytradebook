@@ -1631,6 +1631,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   </div>
                 </div>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Alerts System", description: "Set automated price alerts", targetId: "alerts" },
+                { label: "Trade Management", description: "Log trades with your rules enforced", targetId: "trade-management" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
