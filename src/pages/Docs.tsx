@@ -1866,36 +1866,87 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               />
               <QuickNav items={[
                 { label: "Calendar View", id: "cal-view" },
+                { label: "Daily Review", id: "cal-review" },
                 { label: "Journal Editor", id: "cal-editor" },
+                { label: "Color Legend", id: "cal-colors" },
+                { label: "Performance Strip", id: "cal-strip" },
               ]} />
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <DailyJournalMockup />
-                <CalendarDayDetailMockup />
-              </div>
+
+              <ProTip variant="best-practice">
+                <p>Consistency beats detail. Writing <strong>2-3 sentences</strong> every trading day builds far more insight over time than a detailed 2-page entry once a week. Aim for daily habit, not daily perfection.</p>
+              </ProTip>
+
+              <InteractiveMockup label="Calendar & Day Detail">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <DailyJournalMockup />
+                  <CalendarDayDetailMockup />
+                </div>
+              </InteractiveMockup>
+
               <SubTopic title="Calendar View" description="A monthly heatmap grid showing your P&L performance at a glance." id="cal-view" />
               <FeatureCard icon={Calendar} title="P&L Heatmap Calendar">
+                <p className="text-sm text-muted-foreground mb-3">A 2-column desktop layout with the calendar grid on the left and a stacked trade list / journal editor panel on the right:</p>
                 <FeatureList items={[
-                  "Monthly grid with color-coded P&L per day",
-                  "Green shades for profitable days, red for losses",
-                  "Intensity reflects magnitude of P&L",
-                  "Click any date to open the journal editor",
+                  "Monthly grid with color-coded P&L per day — intensity reflects magnitude",
+                  "Green shades for profitable days, red for losses, neutral for flat or no-trade days",
+                  "Dot indicators on days that have journal entries written",
+                  "Orange dashed border highlights for 'Today' and 'Selected Date'",
+                  "Click any date to open the journal editor and see trades closed that day",
                 ]} />
               </FeatureCard>
+
+              <SubTopic title="Monthly Performance Strip" description="A quick-glance summary bar above the calendar." id="cal-strip" />
+              <FeatureCard icon={BarChart3} title="Monthly Performance Strip">
+                <p className="text-sm text-muted-foreground mb-3">Displayed above the calendar grid, this strip gives you instant context for the month:</p>
+                <FeatureList items={[
+                  "Total P&L for the selected month",
+                  "Win Days / Loss Days count",
+                  "Best Day and Worst Day with amounts",
+                  "Updates automatically as you navigate between months",
+                ]} />
+              </FeatureCard>
+
+              <SubTopic title="Your Daily End-of-Day Review" description="A structured routine for capturing lessons while they're fresh." id="cal-review" />
+              <StepByStep title="Your Daily End-of-Day Review" steps={[
+                { title: "Open the calendar and click today's date", description: "Navigate to the Calendar page. Today's date is highlighted with an orange dashed border. Click it to open the day detail panel.", detail: "You can also access this via the Daily Review Wizard in Dashboard Quick Actions for a guided 4-step flow." },
+                { title: "Record your mood", description: "Select your emotional state for the day — Confident, Calm, Anxious, FOMO, Frustrated, etc. This feeds into the Emotional P&L Correlation analytics.", detail: "Be honest. The value comes from correlating your mood with actual trading outcomes over time." },
+                { title: "Write your post-market review", description: "In 2-3 sentences, capture what happened today. Did you follow your plan? What surprised you? What would you do differently?", detail: "Focus on process, not outcome. A profitable day where you broke rules is still worth noting as a concern." },
+                { title: "Tag your best and worst trades", description: "Identify which trade was your best execution and which was your worst. This builds a feedback loop with your trade ratings.", detail: "Over time, patterns emerge — you'll see which setups consistently produce your best and worst trades." },
+                { title: "Document one lesson learned", description: "Write a single, specific takeaway. 'Don't trade BANKNIFTY in the first 5 minutes' is better than 'Be more patient'.", detail: "Specific, actionable lessons compound. After 30 days, you'll have a personalized trading rulebook." },
+              ]} />
+
               <SubTopic title="Journal Editor" description="Write structured daily reflections to track your trading mindset." id="cal-editor" />
               <FeatureCard icon={FileText} title="Daily Journal Entry">
+                <p className="text-sm text-muted-foreground mb-3">Each day has a structured journal entry with dedicated sections:</p>
                 <FeatureList items={[
-                  "Pre-market plan — write your plan before market opens",
-                  "Post-market review — reflect on the day's trades",
-                  "Market outlook notes",
-                  "Mood tracking (feeling confident, anxious, etc.)",
-                  "Lessons learned section",
-                  "View all trades closed on that date",
+                  "Pre-market plan — write your plan before market opens (key levels, setups to watch, risk budget)",
+                  "Post-market review — reflect on the day's trades and execution quality",
+                  "Market outlook notes — broader market context and sector observations",
+                  "Mood tracking — select from predefined emotional states",
+                  "Lessons learned — specific, actionable takeaways from the day",
+                  "Trade list — all trades closed on that date displayed inline for reference",
                 ]} />
                 <div className="mt-4"><DailyJournalWorkflowMockup /></div>
               </FeatureCard>
-              <ProTip variant="best-practice">
-                <p>Write your pre-market plan before 9:00 AM. Traders who plan their day before market open show 23% higher win rates in our data.</p>
+
+              <ProTip>
+                <p>Write your pre-market plan before 9:00 AM. Traders who plan their day before market open show 23% higher win rates in our data. The journal editor auto-saves, so you can jot quick notes and come back later.</p>
               </ProTip>
+
+              <SubTopic title="Calendar Color Legend" description="Understanding what each color and indicator means." id="cal-colors" />
+              <ExpandableDetail title="Calendar Color Legend Explained" icon={Calendar} badge="Reference">
+                <p>The calendar uses an intensity-based color system to give you instant visual feedback on each trading day:</p>
+                <FeatureList items={[
+                  "Deep Green — highly profitable day (top 20% of your daily P&L range)",
+                  "Light Green — moderately profitable day",
+                  "Neutral / Gray — flat day or no trades taken",
+                  "Light Red — small loss day",
+                  "Deep Red — significant loss day (bottom 20% of your daily P&L range)",
+                  "Small dot indicator — journal entry exists for that date",
+                  "Orange dashed border — marks 'Today' and the currently selected date",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Color intensity is relative to your own trading history, not absolute amounts. A ₹5,000 profit day will be deep green for a ₹1L account but barely colored for a ₹50L account. This keeps the heatmap meaningful regardless of account size.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
