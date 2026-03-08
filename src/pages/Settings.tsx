@@ -7,7 +7,7 @@ import IntegrationsSettings from "@/components/settings/IntegrationsSettings";
 import TagManagementSettings from "@/components/settings/TagManagementSettings";
 import BillingSettings from "@/components/settings/BillingSettings";
 import { useSearchParams } from "react-router-dom";
-import { PageHeader } from "@/components/ui/page-header";
+import { cn } from "@/lib/utils";
 
 const settingsTabs = [
   { id: "profile", label: "Profile", icon: User },
@@ -25,22 +25,32 @@ export default function Settings() {
     : "profile";
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <PageHeader title="Settings" subtitle="Manage your account and preferences" />
+    <div className="space-y-4 animate-fade-in">
+      {/* Header */}
+      <div className="space-y-0.5">
+        <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Settings</h1>
+        <p className="text-[13px] text-muted-foreground/70 leading-relaxed">Manage your account and preferences</p>
+      </div>
 
       <Tabs value={activeTab} onValueChange={(val) => setSearchParams({ tab: val })} className="w-full">
-        <TabsList className="w-full flex overflow-x-auto no-scrollbar justify-start gap-1.5 h-auto p-1 bg-muted/40 border border-border/50 rounded-xl mb-6">
-          {settingsTabs.map((tab) => (
-            <TabsTrigger
-              key={tab.id}
-              value={tab.id}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground data-[state=active]:font-medium"
-            >
-              <tab.icon className="w-4 h-4 shrink-0" />
-              <span className="whitespace-nowrap">{tab.label}</span>
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <div className="overflow-x-auto no-scrollbar -mx-1 px-1">
+          <TabsList className="inline-flex w-auto gap-0.5 h-auto p-0.5 bg-muted/40 border border-border/15 rounded-lg mb-5">
+            {settingsTabs.map((tab) => (
+              <TabsTrigger
+                key={tab.id}
+                value={tab.id}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-medium whitespace-nowrap transition-all duration-200",
+                  "data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground",
+                  "data-[state=inactive]:text-muted-foreground/50 data-[state=inactive]:hover:text-foreground"
+                )}
+              >
+                <tab.icon className="w-3.5 h-3.5 shrink-0" />
+                <span>{tab.label}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
         <TabsContent value="profile" className="mt-0">
           <ProfileSettings />

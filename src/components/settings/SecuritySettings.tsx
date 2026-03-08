@@ -58,16 +58,18 @@ export default function SecuritySettings() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Password Section */}
-      <div className="glass-card p-6">
-        <div className="flex items-center gap-2 mb-6">
-          <Key className="w-5 h-5 text-muted-foreground" />
-          <h2 className="text-lg font-semibold">Change Password</h2>
+      <div className="premium-card-hover p-5">
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="icon-badge-sm bg-primary/8">
+            <Key className="w-4 h-4 text-primary" />
+          </div>
+          <h2 className="text-[15px] font-semibold">Change Password</h2>
         </div>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="current-password">Current Password</Label>
+        <div className="space-y-3">
+          <div className="space-y-1.5">
+            <Label htmlFor="current-password" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Current Password</Label>
             <Input
               id="current-password"
               type="password"
@@ -75,48 +77,51 @@ export default function SecuritySettings() {
               onChange={(e) =>
                 setPasswordForm({ ...passwordForm, currentPassword: e.target.value })
               }
-              className="bg-accent border-border"
+              className="bg-muted/20 border-border/20 h-9 text-[13px] focus:border-primary/30"
               placeholder="Enter current password"
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="new-password">New Password</Label>
-            <Input
-              id="new-password"
-              type="password"
-              value={passwordForm.newPassword}
-              onChange={(e) =>
-                setPasswordForm({ ...passwordForm, newPassword: e.target.value })
-              }
-              className="bg-accent border-border"
-              placeholder="Enter new password"
-            />
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="new-password" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">New Password</Label>
+              <Input
+                id="new-password"
+                type="password"
+                value={passwordForm.newPassword}
+                onChange={(e) =>
+                  setPasswordForm({ ...passwordForm, newPassword: e.target.value })
+                }
+                className="bg-muted/20 border-border/20 h-9 text-[13px] focus:border-primary/30"
+                placeholder="Enter new password"
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="confirm-password">Confirm New Password</Label>
-            <Input
-              id="confirm-password"
-              type="password"
-              value={passwordForm.confirmPassword}
-              onChange={(e) =>
-                setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })
-              }
-              className="bg-accent border-border"
-              placeholder="Confirm new password"
-            />
+            <div className="space-y-1.5">
+              <Label htmlFor="confirm-password" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Confirm Password</Label>
+              <Input
+                id="confirm-password"
+                type="password"
+                value={passwordForm.confirmPassword}
+                onChange={(e) =>
+                  setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })
+                }
+                className="bg-muted/20 border-border/20 h-9 text-[13px] focus:border-primary/30"
+                placeholder="Confirm new password"
+              />
+            </div>
           </div>
 
           <Button
             variant="outline"
             onClick={handleChangePassword}
             disabled={changingPassword || !passwordForm.newPassword}
+            className="h-8 text-[11px] rounded-lg border-border/20"
           >
             {changingPassword ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
             ) : (
-              <Key className="w-4 h-4 mr-2" />
+              <Key className="w-3.5 h-3.5 mr-1.5" />
             )}
             Change Password
           </Button>
@@ -124,15 +129,17 @@ export default function SecuritySettings() {
       </div>
 
       {/* Two-Factor Authentication */}
-      <div className="glass-card p-6">
-        <div className="flex items-center gap-2 mb-6">
-          <ShieldCheck className="w-5 h-5 text-muted-foreground" />
-          <h2 className="text-lg font-semibold">Two-Factor Authentication</h2>
+      <div className="premium-card-hover p-5">
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="icon-badge-sm bg-primary/8">
+            <ShieldCheck className="w-4 h-4 text-primary" />
+          </div>
+          <h2 className="text-[15px] font-semibold">Two-Factor Authentication</h2>
         </div>
-        <div className="flex items-center justify-between p-4 rounded-lg bg-accent/50">
+        <div className="flex items-center justify-between py-3 border-b border-border/10">
           <div>
-            <p className="font-medium">Enable 2FA</p>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-[13px] font-medium">Enable 2FA</p>
+            <p className="text-[11px] text-muted-foreground/50 mt-0.5">
               Add an extra layer of security to your account
             </p>
           </div>
@@ -142,8 +149,8 @@ export default function SecuritySettings() {
           />
         </div>
         {twoFactorEnabled && (
-          <div className="mt-4 p-4 rounded-lg bg-muted/50 border border-border">
-            <p className="text-sm text-muted-foreground text-center">
+          <div className="mt-3 p-3 rounded-lg bg-muted/20 border border-border/10">
+            <p className="text-[12px] text-muted-foreground/50 text-center">
               2FA setup coming soon. You'll be able to scan a QR code with your authenticator app.
             </p>
           </div>
@@ -151,20 +158,21 @@ export default function SecuritySettings() {
       </div>
 
       {/* Active Sessions */}
-      <div className="glass-card p-6">
-        <h2 className="text-lg font-semibold mb-4">Active Sessions</h2>
-        <div className="space-y-3 mb-4">
-          <div className="flex items-center justify-between p-3 rounded-lg bg-accent/50">
-            <span className="text-sm text-muted-foreground">Current Session</span>
-            <span className="text-sm text-profit font-medium">Active</span>
-          </div>
+      <div className="premium-card-hover p-5">
+        <h2 className="text-[15px] font-semibold mb-3">Active Sessions</h2>
+        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/20 border border-border/10 mb-3.5">
+          <span className="text-[12px] text-muted-foreground/50">Current Session</span>
+          <span className="text-[11px] text-profit font-medium flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-profit" />
+            Active
+          </span>
         </div>
         <Button
           variant="destructive"
-          className="w-full"
+          className="w-full h-9 text-[13px] rounded-lg"
           onClick={handleLogoutAllDevices}
         >
-          <LogOut className="w-4 h-4 mr-2" />
+          <LogOut className="w-3.5 h-3.5 mr-1.5" />
           Log Out All Devices
         </Button>
       </div>

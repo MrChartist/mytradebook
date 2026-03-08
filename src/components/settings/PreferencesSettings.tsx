@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { Save, Loader2, Download, Upload } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Save, Loader2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,46 +36,45 @@ export default function PreferencesSettings() {
 
   if (isLoading) {
     return (
-      <div className="glass-card p-6 flex items-center justify-center min-h-[300px]">
-        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+      <div className="premium-card-hover p-5 flex items-center justify-center min-h-[300px]">
+        <Loader2 className="w-5 h-5 animate-spin text-muted-foreground/30" />
       </div>
     );
   }
 
   return (
-    <div className="glass-card p-6">
-      <h2 className="text-lg font-semibold mb-6">App Preferences</h2>
-      <div className="space-y-6">
+    <div className="premium-card-hover p-5">
+      <h2 className="text-[15px] font-semibold mb-4">App Preferences</h2>
+      <div className="space-y-1">
         {/* Default SL % */}
-        <div className="flex items-center justify-between p-4 rounded-lg bg-accent/50">
+        <div className="flex items-center justify-between py-3.5 border-b border-border/10">
           <div>
-            <Label htmlFor="sl-percent" className="font-medium">Default SL %</Label>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-[13px] font-medium">Default SL %</p>
+            <p className="text-[11px] text-muted-foreground/50 mt-0.5">
               Default stop-loss percentage for new trades
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <Input
-              id="sl-percent"
               type="number"
               value={formData.default_sl_percent}
               onChange={(e) =>
                 setFormData({ ...formData, default_sl_percent: parseFloat(e.target.value) || 2 })
               }
-              className="w-20 bg-card border-border text-right"
+              className="w-16 h-8 bg-muted/20 border-border/20 text-right text-[13px] font-mono"
               min={0.5}
               max={10}
               step={0.5}
             />
-            <span className="text-muted-foreground">%</span>
+            <span className="text-[11px] text-muted-foreground/40">%</span>
           </div>
         </div>
 
         {/* Alert Check Frequency */}
-        <div className="flex items-center justify-between p-4 rounded-lg bg-accent/50">
+        <div className="flex items-center justify-between py-3.5 border-b border-border/10">
           <div>
-            <p className="font-medium">Alert Check Frequency</p>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-[13px] font-medium">Alert Check Frequency</p>
+            <p className="text-[11px] text-muted-foreground/50 mt-0.5">
               How often to evaluate price alerts
             </p>
           </div>
@@ -84,7 +83,7 @@ export default function PreferencesSettings() {
             onChange={(e) =>
               setFormData({ ...formData, alert_frequency_minutes: parseInt(e.target.value) })
             }
-            className="w-28 h-10 rounded-md border border-input bg-card px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            className="h-8 rounded-lg border border-border/20 bg-muted/20 px-2.5 text-[13px] ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
             <option value="1">1 min</option>
             <option value="5">5 min</option>
@@ -93,10 +92,10 @@ export default function PreferencesSettings() {
         </div>
 
         {/* Auto-sync Dhan Portfolio */}
-        <div className="flex items-center justify-between p-4 rounded-lg bg-accent/50">
+        <div className="flex items-center justify-between py-3.5 border-b border-border/10">
           <div>
-            <p className="font-medium">Auto-sync Dhan Portfolio</p>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-[13px] font-medium">Auto-sync Dhan Portfolio</p>
+            <p className="text-[11px] text-muted-foreground/50 mt-0.5">
               Automatically sync positions from Dhan
             </p>
           </div>
@@ -109,17 +108,17 @@ export default function PreferencesSettings() {
         </div>
 
         {/* Theme */}
-        <div className="flex items-center justify-between p-4 rounded-lg bg-accent/50">
+        <div className="flex items-center justify-between py-3.5 border-b border-border/10">
           <div>
-            <p className="font-medium">Theme</p>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-[13px] font-medium">Theme</p>
+            <p className="text-[11px] text-muted-foreground/50 mt-0.5">
               Choose your preferred color scheme
             </p>
           </div>
           <select
             value={formData.theme}
             onChange={(e) => setFormData({ ...formData, theme: e.target.value })}
-            className="w-28 h-10 rounded-md border border-input bg-card px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            className="h-8 rounded-lg border border-border/20 bg-muted/20 px-2.5 text-[13px] ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
             <option value="light">Light</option>
             <option value="dark">Dark</option>
@@ -128,74 +127,75 @@ export default function PreferencesSettings() {
         </div>
 
         {/* Timezone */}
-        <div className="flex items-center justify-between p-4 rounded-lg bg-accent/50">
+        <div className="flex items-center justify-between py-3.5 border-b border-border/10">
           <div>
-            <p className="font-medium">Timezone</p>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-[13px] font-medium">Timezone</p>
+            <p className="text-[11px] text-muted-foreground/50 mt-0.5">
               Your local timezone for timestamps
             </p>
           </div>
           <select
             value={formData.timezone}
             onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
-            className="w-40 h-10 rounded-md border border-input bg-card px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            className="h-8 rounded-lg border border-border/20 bg-muted/20 px-2.5 text-[13px] ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
-            <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
-            <option value="America/New_York">America/New_York (EST)</option>
-            <option value="Europe/London">Europe/London (GMT)</option>
-            <option value="Asia/Singapore">Asia/Singapore (SGT)</option>
+            <option value="Asia/Kolkata">IST</option>
+            <option value="America/New_York">EST</option>
+            <option value="Europe/London">GMT</option>
+            <option value="Asia/Singapore">SGT</option>
           </select>
         </div>
 
         {/* Data Backup */}
-        <div className="flex items-center justify-between p-4 rounded-lg bg-accent/50">
+        <div className="flex items-center justify-between py-3.5">
           <div>
-            <p className="font-medium">Full Data Backup</p>
-            <p className="text-sm text-muted-foreground mt-1">
-              Export all your trades, journal, alerts, and settings as JSON
+            <p className="text-[13px] font-medium">Full Data Backup</p>
+            <p className="text-[11px] text-muted-foreground/50 mt-0.5">
+              Export trades, journal, alerts, and settings as JSON
             </p>
           </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={async () => {
-                try {
-                  toast.loading("Generating backup...", { id: "backup" });
-                  const { data, error } = await supabase.functions.invoke("export-data");
-                  if (error) throw error;
-                  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = `tradebook-backup-${new Date().toISOString().slice(0, 10)}.json`;
-                  a.click();
-                  URL.revokeObjectURL(url);
-                  toast.success("Backup downloaded!", { id: "backup" });
-                } catch (err) {
-                  console.error(err);
-                  toast.error("Backup failed", { id: "backup" });
-                }
-              }}
-            >
-              <Download className="w-4 h-4 mr-1.5" />
-              Export
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 text-[11px] rounded-lg border-border/20"
+            onClick={async () => {
+              try {
+                toast.loading("Generating backup...", { id: "backup" });
+                const { data, error } = await supabase.functions.invoke("export-data");
+                if (error) throw error;
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `tradebook-backup-${new Date().toISOString().slice(0, 10)}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                toast.success("Backup downloaded!", { id: "backup" });
+              } catch (err) {
+                console.error(err);
+                toast.error("Backup failed", { id: "backup" });
+              }
+            }}
+          >
+            <Download className="w-3.5 h-3.5 mr-1.5" />
+            Export
+          </Button>
         </div>
 
-        <Button
-          className="bg-gradient-primary"
-          onClick={handleSave}
-          disabled={updateSettings.isPending}
-        >
-          {updateSettings.isPending ? (
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-          ) : (
-            <Save className="w-4 h-4 mr-2" />
-          )}
-          Save Preferences
-        </Button>
+        <div className="pt-3.5">
+          <Button
+            className="bg-gradient-primary h-9 text-[13px] rounded-lg"
+            onClick={handleSave}
+            disabled={updateSettings.isPending}
+          >
+            {updateSettings.isPending ? (
+              <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+            ) : (
+              <Save className="w-3.5 h-3.5 mr-1.5" />
+            )}
+            Save Preferences
+          </Button>
+        </div>
       </div>
     </div>
   );
