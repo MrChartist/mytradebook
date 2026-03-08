@@ -316,7 +316,7 @@ export default function Dashboard() {
               key={opt.value}
               onClick={() => setSegment(opt.value)}
               className={cn(
-                "px-3 py-1 text-[11px] font-medium rounded-md border transition-all duration-200",
+                "px-3 py-1 text-[11px] font-medium rounded-md border transition-all duration-200 shrink-0",
                 segment === opt.value
                   ? "border-primary/15 bg-primary/6 text-primary"
                   : "border-border/15 text-muted-foreground/50 hover:text-foreground hover:border-border/30"
