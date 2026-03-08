@@ -52,24 +52,24 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out",
         scrolled
-           ? "bg-background/80 dark:bg-background/90 backdrop-blur-xl border-b border-border/30 shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]"
+           ? "bg-background/85 dark:bg-background/92 backdrop-blur-2xl border-b border-border/20 shadow-[0_1px_4px_0_rgba(0,0,0,0.03)]"
            : "bg-transparent backdrop-blur-none border-b border-transparent"
       )}
       aria-label="Main navigation"
     >
-      <div className="mx-auto max-w-7xl flex items-center justify-between px-4 sm:px-6 lg:px-8 h-14">
-        {/* Logo + breadcrumb */}
+      <div className="mx-auto max-w-7xl flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[3.5rem]">
+        {/* Logo */}
         <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-200"
+            className="flex items-center gap-2.5 hover:opacity-80 transition-opacity duration-200"
           >
             <img src={landingLogo} alt="TradeBook" className="h-8 object-contain" />
           </button>
           {activePage === "docs" && (
-            <div className="hidden sm:flex items-center gap-1 text-[11px] text-muted-foreground ml-1">
+            <div className="hidden sm:flex items-center gap-1 text-[11px] text-muted-foreground ml-1.5">
               <ChevronRight className="w-3 h-3 text-muted-foreground/40" />
               <button
                 onClick={() => navigate("/")}
@@ -83,8 +83,8 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
           )}
         </div>
 
-        {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-0.5">
+        {/* Desktop links — clean, generous spacing */}
+        <div className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map((item) => {
             const isActive = item.page === activePage;
             return (
@@ -92,17 +92,17 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
                 key={item.label}
                 onClick={() => handleNavClick(item.href)}
                 className={cn(
-                  "relative px-3 py-1.5 rounded-[var(--radius-sm)] text-[13px] font-medium transition-colors duration-200",
+                  "relative px-3.5 py-1.5 rounded-[var(--radius-sm)] text-[13px] font-medium transition-all duration-200",
                   isActive
                     ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                 )}
               >
                 {item.label}
                 {isActive && (
                   <motion.span
                     layoutId="nav-underline"
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-[2px] rounded-full bg-primary"
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-[2px] rounded-full bg-primary"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}
@@ -111,12 +111,12 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
           })}
         </div>
 
-        {/* Right side */}
-        <div className="flex items-center gap-1.5">
+        {/* Right side — balanced */}
+        <div className="flex items-center gap-2">
           {extraRight}
           <ThemeToggle />
           <button
-            className="md:hidden w-8 h-8 flex items-center justify-center rounded-[var(--radius-sm)] text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors duration-200"
+            className="md:hidden w-8 h-8 flex items-center justify-center rounded-[var(--radius-sm)] text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors duration-200"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle navigation menu"
           >
@@ -126,7 +126,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
             <Button
               size="sm"
               onClick={() => navigate("/dashboard")}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-[var(--radius-md)] px-3.5 h-8 text-[13px] font-semibold"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 h-8 text-[13px] font-semibold"
             >
               Dashboard
             </Button>
@@ -136,14 +136,14 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate("/login")}
-                className="hidden sm:inline-flex text-muted-foreground hover:text-foreground text-[13px] h-8 px-3"
+                className="hidden sm:inline-flex text-muted-foreground hover:text-foreground text-[13px] h-8 px-3.5"
               >
                 Sign In
               </Button>
               <Button
                 size="sm"
                 onClick={() => navigate("/login?mode=signup")}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-[var(--radius-md)] px-3.5 h-8 text-[13px] font-semibold gap-1.5"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 h-8 text-[13px] font-semibold gap-1.5"
               >
                 Get Started
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -161,9 +161,9 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="md:hidden overflow-hidden border-t border-border/30 bg-background/95 backdrop-blur-xl"
+            className="md:hidden overflow-hidden border-t border-border/20 bg-background/95 backdrop-blur-2xl"
           >
-            <div className="px-3 py-2.5 space-y-0.5">
+            <div className="px-4 py-3 space-y-0.5">
               {NAV_LINKS.map((item) => {
                 const isActive = item.page === activePage;
                 const Icon = item.icon;
@@ -172,10 +172,10 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
                     key={item.label}
                     onClick={() => handleNavClick(item.href)}
                     className={cn(
-                      "w-full flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius-sm)] text-[13px] font-medium transition-colors duration-200",
+                      "w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-[var(--radius-sm)] text-[14px] font-medium transition-colors duration-200",
                       isActive
-                        ? "bg-primary/8 text-primary"
-                        : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"
+                        ? "bg-primary/6 text-primary"
+                        : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
                     )}
                   >
                     <Icon className="w-4 h-4" />
@@ -184,11 +184,11 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
                 );
               })}
               {!isInsideApp && (
-                <div className="pt-2 mt-1 border-t border-border/20">
+                <div className="pt-2.5 mt-1.5 border-t border-border/15">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="w-full justify-center text-[13px]"
+                    className="w-full justify-center text-[14px]"
                     onClick={() => { setMobileMenuOpen(false); navigate("/login"); }}
                   >
                     Sign In

@@ -63,23 +63,23 @@ function getGridClasses(span: string, index: number): string {
 /* ─── Features Section ────────────────────────────────── */
 export function FeaturesSection() {
   return (
-    <section id="features" className="py-20 lg:py-28" aria-label="Features">
+    <section id="features" className="py-24 lg:py-32" aria-label="Features">
       <MotionSection className="max-w-6xl mx-auto px-6 lg:px-8">
         {/* Heading */}
-        <motion.div variants={fadeUp} className="text-center mb-14 lg:mb-18">
+        <motion.div variants={fadeUp} className="text-center mb-16 lg:mb-20">
           <SectionBadge>Features</SectionBadge>
-          <h2 className="font-heading text-[1.875rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.1] tracking-[-0.02em]">
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-5 leading-[1.08] tracking-[-0.018em]">
             Everything you need to{" "}
             <span className="accent-serif">trade</span>{" "}better
           </h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-base leading-[1.65] tracking-[-0.011em]">
+          <p className="text-muted-foreground max-w-lg mx-auto text-[15px] lg:text-[1rem] leading-[1.7] tracking-[-0.008em]">
             Journal, analyze, and automate — tools designed by traders, for traders.
           </p>
 
           {/* Category pills */}
-          <div className="flex items-center justify-center gap-1.5 mt-6 flex-wrap">
+          <div className="flex items-center justify-center gap-2 mt-7 flex-wrap">
             {(Object.keys(categoryLabels) as FeatureCategory[]).map((cat) => (
-              <span key={cat} className={cn("px-3 py-1 rounded-full text-[10px] font-semibold tracking-wide", categoryColors[cat])}>
+              <span key={cat} className={cn("px-3 py-1 rounded-full text-[10px] font-semibold tracking-[0.04em] uppercase", categoryColors[cat])}>
                 {categoryLabels[cat]}
               </span>
             ))}

@@ -81,12 +81,12 @@ const glassInner = "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)";
 export function HowItWorksSection() {
   const navigate = useNavigate();
   return (
-    <section className="py-24 lg:py-32" aria-label="How it works">
+    <section className="py-28 lg:py-36" aria-label="How it works">
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>How It Works</SectionBadge>
-          <h2 className="font-heading text-[2rem] lg:text-[3rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">Three steps to{" "}<span className="accent-serif">mastery</span></h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-base leading-[1.65]">From first trade to consistent edge — in minutes.</p>
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-6 leading-[1.08] tracking-[-0.018em]">Three steps to{" "}<span className="accent-serif">mastery</span></h2>
+          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-[1rem] leading-[1.7]">From first trade to consistent edge — in minutes.</p>
         </motion.div>
 
         {/* Timeline steps */}
@@ -171,14 +171,14 @@ export function ComparisonSection() {
 export function PricingSection() {
   const navigate = useNavigate();
   return (
-    <section id="pricing" className="py-20 lg:py-28" aria-label="Pricing">
+    <section id="pricing" className="py-24 lg:py-32" aria-label="Pricing">
       <MotionSection className="max-w-5xl mx-auto px-6 lg:px-8">
-        <motion.div variants={fadeUp} className="text-center mb-14">
+        <motion.div variants={fadeUp} className="text-center mb-16">
           <SectionBadge>Pricing</SectionBadge>
-          <h2 className="font-heading text-[1.875rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.1] tracking-[-0.02em]">
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-5 leading-[1.08] tracking-[-0.018em]">
             Simple,{" "}<span className="accent-serif">transparent</span>{" "}pricing
           </h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-base leading-[1.65]">
+          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-[1rem] leading-[1.7]">
             Everything free during beta. No credit card. No catch.
           </p>
         </motion.div>
@@ -324,14 +324,14 @@ export function TestimonialsSection() {
   const secondary = [testimonials[2], testimonials[3], testimonials[4]]; // Aditya, Vikram, Sneha
 
   return (
-    <section className="py-24 lg:py-32" aria-label="Testimonials">
+    <section className="py-28 lg:py-36" aria-label="Testimonials">
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>Testimonials</SectionBadge>
-          <h2 className="font-heading text-[2rem] lg:text-[3rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-6 leading-[1.08] tracking-[-0.018em]">
             Trusted by{" "}<span className="accent-serif">real traders</span>
           </h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-base leading-[1.65]">Here's what traders across India are saying.</p>
+          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-[1rem] leading-[1.7]">Here's what traders across India are saying.</p>
         </motion.div>
 
         {/* Hero testimonial — dark card */}
@@ -415,16 +415,16 @@ export function TestimonialsSection() {
 export function IndianMarketsSection() {
   const navigate = useNavigate();
   return (
-    <section className="py-24 lg:py-32" aria-label="Built for Indian markets">
+    <section className="py-28 lg:py-36" aria-label="Built for Indian markets">
       <MotionSection className="max-w-5xl mx-auto px-6">
-        <div className="grid md:grid-cols-2 gap-14 items-center">
+        <div className="grid md:grid-cols-2 gap-16 items-center">
           {/* Text side */}
           <motion.div variants={fadeUp}>
             <SectionBadge>Made in India</SectionBadge>
-            <h2 className="font-heading text-[2rem] lg:text-[2.75rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">
+            <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-6 leading-[1.08] tracking-[-0.018em]">
               Built for{" "}<span className="accent-serif">Indian</span>{" "}markets
             </h2>
-            <p className="text-muted-foreground text-[15px] leading-[1.7] mb-8 tracking-[-0.006em]">
+            <p className="text-muted-foreground text-[15px] lg:text-[1rem] leading-[1.7] mb-8 tracking-[-0.006em]">
               Unlike generic journals, TradeBook understands Indian market structure — segments, lot sizes, INR formatting, and trading hours.
             </p>
             <ul className="space-y-2 mb-10">
@@ -519,14 +519,14 @@ export function IndianMarketsSection() {
 export function FAQSection() {
   const navigate = useNavigate();
   return (
-    <section id="faq" className="py-24 lg:py-32" aria-label="Frequently asked questions">
+    <section id="faq" className="py-28 lg:py-36" aria-label="Frequently asked questions">
       <MotionSection className="max-w-2xl mx-auto px-6">
-        <motion.div variants={fadeUp} className="text-center mb-14">
+        <motion.div variants={fadeUp} className="text-center mb-16">
           <SectionBadge>FAQ</SectionBadge>
-          <h2 className="font-heading text-[2rem] lg:text-[3rem] font-bold mb-5 leading-[1.1] tracking-[-0.02em]">
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-5 leading-[1.08] tracking-[-0.018em]">
             Got{" "}<span className="accent-serif">questions</span>?
           </h2>
-          <p className="text-muted-foreground text-[15px] lg:text-base leading-[1.65]">Everything you need to know about TradeBook.</p>
+          <p className="text-muted-foreground text-[15px] lg:text-[1rem] leading-[1.7]">Everything you need to know about TradeBook.</p>
         </motion.div>
 
         <motion.div variants={fadeUp}>
@@ -575,28 +575,28 @@ export function FAQSection() {
 export function FinalCTASection() {
   const navigate = useNavigate();
   return (
-    <section className="py-28 lg:py-36 relative overflow-hidden" aria-label="Call to action">
+    <section className="py-32 lg:py-40 relative overflow-hidden" aria-label="Call to action">
       {/* Single subtle glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.06)_0%,transparent_65%)] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[450px] bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.05)_0%,transparent_65%)] pointer-events-none" />
 
       <MotionSection className="relative max-w-3xl mx-auto px-6 text-center">
-        <motion.div variants={fadeUp} className="flex items-center justify-center gap-4 mb-8">
+        <motion.div variants={fadeUp} className="flex items-center justify-center gap-4 mb-10">
           <div className="flex -space-x-2">
             {["hsl(var(--primary))", "hsl(var(--profit))", "hsl(210 80% 55%)"].map((c, i) => (
               <div key={i} className="w-7 h-7 rounded-full ring-2 ring-background" style={{ backgroundColor: c }} />
             ))}
           </div>
-          <span className="text-sm font-medium text-muted-foreground">1,200+ traders · 42,000+ trades</span>
+          <span className="text-[13px] font-medium text-muted-foreground">1,200+ traders · 42,000+ trades</span>
         </motion.div>
 
-        <motion.h2 variants={fadeUp} className="font-heading text-[2rem] lg:text-[3rem] font-bold leading-[1.1] tracking-[-0.02em] mb-3">
+        <motion.h2 variants={fadeUp} className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold leading-[1.08] tracking-[-0.018em] mb-3">
           Stop losing money to
         </motion.h2>
-        <motion.h2 variants={fadeUp} className="font-heading text-[2rem] lg:text-[3rem] font-bold leading-[1.1] tracking-[-0.02em] mb-8">
+        <motion.h2 variants={fadeUp} className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold leading-[1.08] tracking-[-0.018em] mb-10">
           <span className="accent-serif">undisciplined</span> trading
         </motion.h2>
 
-        <motion.p variants={fadeUp} className="text-lg text-muted-foreground mb-12 max-w-xl mx-auto leading-[1.65] tracking-[-0.008em]">
+        <motion.p variants={fadeUp} className="text-[1rem] lg:text-[1.125rem] text-muted-foreground mb-14 max-w-xl mx-auto leading-[1.7] tracking-[-0.006em]">
           Join traders who journal, analyze, and compound their edge — every single day.
         </motion.p>
 
@@ -635,7 +635,7 @@ export function FooterSection() {
   };
 
   return (
-    <footer className="border-t border-border/20 bg-card/40 backdrop-blur-sm py-20" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
+    <footer className="border-t border-border/15 bg-card/30 py-20 lg:py-24" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}>
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="grid md:grid-cols-12 gap-10 mb-14">
           {/* Brand column */}
