@@ -1265,7 +1265,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <CalendarHeatmapMockup />
                 <KanbanBoardMockup />
               </div>
-              <SubTopic title="Journal Views" description="Four specialized tabs for different aspects of your journal." />
+              <SubTopic title="Journal Views" description="Four specialized tabs for different aspects of your journal." id="jn-views" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={PieChart} title="Dashboard Tab">
                   <p className="text-sm text-muted-foreground mb-3">High-level summary of your trading performance:</p>
