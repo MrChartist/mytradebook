@@ -1,7 +1,12 @@
 import { useTrades } from "@/hooks/useTrades";
 import { cn } from "@/lib/utils";
-import { Trophy, TrendingDown, Zap, Flame } from "lucide-react";
-import { useMemo } from "react";
+import { Trophy, TrendingDown, Zap, Flame, Share2 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { StreakShareCard, type StreakCardData } from "@/components/sharing/StreakShareCard";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { toPng } from "html-to-image";
+import { toast } from "sonner";
 
 export function StreakDiscipline() {
   const { trades } = useTrades();
