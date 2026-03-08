@@ -2559,10 +2559,6 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">Pro tip: Screenshot your report insights and paste them into your Monday journal entry. This creates a permanent record of your weekly learnings that compounds over months.</p>
               </ExpandableDetail>
-                  "Manual Generation — Don't want to wait until Monday? Generate a report for any completed week from the Reports page. Useful for mid-week check-ins during volatile markets.",
-                ]} />
-                <p className="text-[12px] text-muted-foreground/60 mt-3">Telegram delivery requires a verified Telegram bot connection. See the Integrations section for setup instructions. Reports cover Monday–Friday of the selected week and require at least 1 closed trade to generate.</p>
-              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
