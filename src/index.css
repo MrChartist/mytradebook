@@ -887,79 +887,83 @@
   .docs-page .docs-sidebar-link {
     color: hsl(var(--docs-text-muted));
     transition: color 150ms ease-out, background 150ms ease-out;
-    border-radius: 0.375rem;
+    border-radius: 0.5rem;
     font-family: Inter, system-ui, sans-serif;
     font-size: 0.8125rem;
     font-weight: 450;
-    letter-spacing: 0.005em;
+    letter-spacing: 0.003em;
   }
   .docs-page .docs-sidebar-link:hover {
     color: hsl(var(--docs-text-primary));
-    background: hsl(var(--docs-elevated) / 0.7);
+    background: hsl(var(--docs-elevated) / 0.6);
   }
   .docs-page .docs-sidebar-link.active {
     color: hsl(var(--docs-accent));
-    background: hsl(var(--docs-accent-soft) / 0.07);
-    font-weight: 560;
+    background: hsl(var(--docs-accent-soft) / 0.06);
+    font-weight: 540;
   }
   .dark .docs-page .docs-sidebar-link.active {
-    color: hsl(var(--docs-accent));
-    background: hsl(var(--docs-accent-soft) / 0.09);
+    background: hsl(var(--docs-accent-soft) / 0.08);
   }
 
   /* Sidebar group label */
   .docs-page .docs-sidebar-group-label {
     font-family: Inter, system-ui, sans-serif;
-    font-size: 0.625rem;
-    font-weight: 650;
-    letter-spacing: 0.08em;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: hsl(var(--docs-text-muted) / 0.6);
-    padding: 0.375rem 0.625rem;
-    margin-top: 0.25rem;
+    color: hsl(var(--docs-text-muted) / 0.55);
+    padding: 0.25rem 0.75rem;
+    margin-bottom: 0.25rem;
   }
 
-  /* ── Docs right rail ── */
+  /* ── Docs right rail (On this page) ── */
   .docs-page .docs-anchor-link {
     font-family: Inter, system-ui, sans-serif;
-    color: hsl(var(--docs-text-muted) / 0.75);
-    font-size: 0.75rem;
-    font-weight: 430;
-    line-height: 1.45;
-    transition: color 150ms ease-out, border-color 150ms ease-out;
-    border-left: 1.5px solid hsl(var(--docs-border-subtle));
-    padding-left: 0.75rem;
+    color: hsl(var(--docs-text-muted) / 0.7);
+    font-size: 0.8125rem;
+    font-weight: 420;
+    line-height: 1.5;
+    transition: color 150ms ease-out, border-color 150ms ease-out, background 150ms ease-out;
+    border-left: 2px solid hsl(var(--docs-border-subtle) / 0.6);
+    padding-left: 0.875rem;
+    border-radius: 0 0.25rem 0.25rem 0;
   }
   .docs-page .docs-anchor-link:hover {
     color: hsl(var(--docs-text-primary));
+    background: hsl(var(--docs-elevated) / 0.4);
   }
   .docs-page .docs-anchor-link.active {
     color: hsl(var(--docs-accent));
     border-left-color: hsl(var(--docs-accent));
-    font-weight: 550;
+    font-weight: 520;
+    background: hsl(var(--docs-accent-soft) / 0.05);
   }
 
   /* ── Mobile topic rail ── */
   .docs-mobile-tab {
     font-family: Inter, system-ui, sans-serif;
-    font-size: 0.8125rem;
-    font-weight: 480;
-    letter-spacing: 0.005em;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
     white-space: nowrap;
-    padding: 0.375rem 0.875rem;
+    padding: 0.4rem 0.75rem;
     border-radius: 9999px;
     transition: all 150ms ease-out;
     color: hsl(var(--docs-text-muted));
     border: 1px solid transparent;
+    background: transparent;
   }
   .docs-mobile-tab:hover {
     color: hsl(var(--docs-text-primary));
+    background: hsl(var(--docs-elevated) / 0.5);
   }
   .docs-mobile-tab.active {
     color: hsl(var(--docs-accent));
-    background: hsl(var(--docs-accent-soft) / 0.08);
-    border-color: hsl(var(--docs-accent-soft) / 0.18);
-    font-weight: 580;
+    background: hsl(var(--docs-accent-soft) / 0.1);
+    border-color: hsl(var(--docs-accent-soft) / 0.2);
+    font-weight: 600;
   }
 
   /* ── Docs feature card ── */

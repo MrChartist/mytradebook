@@ -498,192 +498,233 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       {/* Shared navbar */}
       <LandingNavbar activePage="docs" isInsideApp={isInsideApp} />
 
-      {/* Docs Header */}
-      <div className="pt-20" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle))' }}>
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-          <div className="flex items-center gap-2 mb-2">
-            <p className="docs-caption uppercase tracking-[0.1em]">TradeBook</p>
-            <ChevronRight className="w-3 h-3" style={{ color: 'hsl(var(--docs-text-muted))' }} />
-            <p className="docs-caption uppercase tracking-[0.1em]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>Documentation</p>
-          </div>
-          <div className="flex items-center gap-4 mt-4 mb-4">
+      {/* ═══════════════════════════════════════════════════════════════
+          DOCS HEADER — Clean, minimal, premium
+          ═══════════════════════════════════════════════════════════════ */}
+      <header className="pt-16 lg:pt-20" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.7)' }}>
+        <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 py-10 lg:py-14">
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 mb-5" aria-label="Breadcrumb">
+            <span className="docs-caption uppercase tracking-[0.1em]" style={{ color: 'hsl(var(--docs-text-muted))' }}>TradeBook</span>
+            <ChevronRight className="w-3 h-3" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }} />
+            <span className="docs-caption uppercase tracking-[0.1em]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>Documentation</span>
+          </nav>
+
+          {/* Title row */}
+          <div className="flex flex-wrap items-center gap-4 mb-5">
             <h1 className="docs-title">Documentation</h1>
             <button
               onClick={toggle}
-              className={cn(
-                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all",
-                mode === "bw"
-                  ? "text-background"
-                  : ""
-              )}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-semibold transition-all"
               style={{
                 background: mode === "bw" ? 'hsl(var(--docs-text-strong))' : 'hsl(var(--docs-elevated))',
                 border: `1px solid ${mode === "bw" ? 'hsl(var(--docs-text-strong))' : 'hsl(var(--docs-border-subtle))'}`,
                 color: mode === "bw" ? 'hsl(var(--docs-bg))' : 'hsl(var(--docs-text-muted))',
               }}
+              aria-label="Toggle color mode"
             >
               <Palette className="w-3 h-3" />
               {mode === "bw" ? "B&W" : "Color"}
             </button>
           </div>
-          <p className="docs-body-lg max-w-xl" style={{ color: 'hsl(var(--docs-text-secondary))' }}>
+
+          {/* Subtitle */}
+          <p className="docs-body-lg max-w-2xl" style={{ color: 'hsl(var(--docs-text-secondary))' }}>
             Complete guide to every TradeBook feature — from trade logging to advanced analytics for Indian market traders.
           </p>
-          <div className="flex items-center gap-3 mt-5 docs-caption flex-wrap">
-            <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> ~35 min read</span>
-            <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.4)' }} />
+
+          {/* Meta row */}
+          <div className="flex items-center gap-4 mt-6 flex-wrap docs-caption" style={{ color: 'hsl(var(--docs-text-muted))' }}>
+            <span className="flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5" />
+              ~35 min read
+            </span>
+            <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.35)' }} />
             <span>Last updated: March 8, 2026</span>
-            <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.4)' }} />
-            <span>26 sections · 20+ interactive mockups</span>
+            <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.35)' }} />
+            <span>26 sections</span>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="max-w-[1440px] mx-auto">
-        <div className="flex">
-          {/* Left Sidebar — desktop */}
-          <TooltipProvider delayDuration={200}>
-            <aside className={cn(
-              "hidden lg:block shrink-0 transition-all duration-300",
-              sidebarCollapsed ? "w-14" : "w-[240px]"
-            )} style={{ borderRight: '1px solid hsl(var(--docs-border-subtle))' }}>
-              <div className="sticky top-20 py-5 px-3">
-                {/* Header with collapse toggle */}
-                <div className={cn("flex items-center mb-4", sidebarCollapsed ? "justify-center" : "justify-between px-2")}>
-                  {!sidebarCollapsed && (
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.1em]" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>Docs</p>
-                  )}
-                  <button
-                    onClick={toggleSidebar}
-                    className="p-1 rounded-md transition-colors hover:bg-[hsl(var(--docs-elevated))]"
-                    style={{ color: 'hsl(var(--docs-text-muted))' }}
-                    aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-                  >
-                    {sidebarCollapsed ? <PanelLeftOpen className="w-3.5 h-3.5" /> : <PanelLeftClose className="w-3.5 h-3.5" />}
-                  </button>
-                </div>
-                {/* Search filter */}
+      {/* ═══════════════════════════════════════════════════════════════
+          MOBILE TOPIC RAIL — Fixed horizontal tabs
+          ═══════════════════════════════════════════════════════════════ */}
+      <nav 
+        className="lg:hidden fixed top-14 left-0 right-0 z-40 backdrop-blur-xl" 
+        style={{ 
+          background: 'hsl(var(--docs-bg) / 0.94)', 
+          borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.5)',
+          boxShadow: '0 1px 8px -2px hsl(var(--docs-bg) / 0.2)'
+        }} 
+        aria-label="Section navigation"
+      >
+        <div className="relative">
+          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 z-10" style={{ background: 'linear-gradient(to right, hsl(var(--docs-bg) / 0.94), transparent)' }} />
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 z-10" style={{ background: 'linear-gradient(to left, hsl(var(--docs-bg) / 0.94), transparent)' }} />
+          <div
+            className="flex gap-1.5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-4 py-2.5 no-scrollbar"
+            style={{ WebkitOverflowScrolling: "touch" }}
+            ref={(el) => {
+              if (el) {
+                const activeBtn = el.querySelector('[data-active="true"]');
+                if (activeBtn) {
+                  const rect = activeBtn.getBoundingClientRect();
+                  const containerRect = el.getBoundingClientRect();
+                  if (rect.left < containerRect.left + 32 || rect.right > containerRect.right - 32) {
+                    activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                  }
+                }
+              }
+            }}
+          >
+            {SECTIONS.map((s) => {
+              const isActive = activeSection === s.id;
+              return (
+                <button
+                  key={s.id}
+                  data-active={isActive}
+                  onClick={() => scrollTo(s.id)}
+                  className={cn("docs-mobile-tab shrink-0 snap-start flex items-center gap-1.5", isActive && "active")}
+                >
+                  <s.icon className="w-3 h-3 shrink-0" />
+                  {s.label}
+                </button>
+              );
+            })}
+            <div className="shrink-0 w-6" aria-hidden="true" />
+          </div>
+        </div>
+      </nav>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          MAIN THREE-COLUMN LAYOUT
+          Left sidebar (240px) | Content (flex) | Right rail (200px)
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="max-w-[1360px] mx-auto flex">
+        
+        {/* ─────────────────────────────────────────────────────────────
+            LEFT SIDEBAR — Desktop only, collapsible
+            ───────────────────────────────────────────────────────────── */}
+        <TooltipProvider delayDuration={200}>
+          <aside 
+            className={cn(
+              "hidden lg:block shrink-0 transition-all duration-300 ease-out",
+              sidebarCollapsed ? "w-[56px]" : "w-[220px]"
+            )} 
+            style={{ borderRight: '1px solid hsl(var(--docs-border-subtle) / 0.6)' }}
+          >
+            <div className="sticky top-20 h-[calc(100vh-5rem)] flex flex-col py-6">
+              {/* Header */}
+              <div className={cn("flex items-center mb-5 px-4", sidebarCollapsed ? "justify-center" : "justify-between")}>
                 {!sidebarCollapsed && (
-                  <div className="mb-4 px-1">
-                    <div className="relative">
-                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }} />
-                      <input
-                        type="text"
-                        value={sidebarSearch}
-                        onChange={(e) => setSidebarSearch(e.target.value)}
-                        placeholder="Filter…"
-                        className="w-full h-8 pl-8 pr-3 rounded-md text-[12px] focus:outline-none transition-all"
-                        style={{
-                          background: 'hsl(var(--docs-elevated) / 0.6)',
-                          border: '1px solid hsl(var(--docs-border-subtle))',
-                          color: 'hsl(var(--docs-text-primary))',
-                        }}
-                      />
-                    </div>
-                  </div>
+                  <span className="docs-caption uppercase tracking-[0.08em]" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }}>Navigation</span>
                 )}
-                <ScrollArea className="h-[calc(100vh-11rem)]">
-                  <nav className="space-y-0.5">
-                    {sidebarGroups.map((group, gi) => {
-                      const groupSections = filteredSections.filter((s) => group.ids.includes(s.id));
-                      if (groupSections.length === 0) return null;
-                      return (
-                      <div key={group.label} className={cn(gi > 0 && "mt-1")}>
-                         {gi > 0 && <div className="h-px my-2 mx-2" style={{ background: 'hsl(var(--docs-border-subtle) / 0.6)' }} />}
-                         {!sidebarCollapsed && (
-                           <p className="docs-sidebar-group-label">{group.label}</p>
-                        )}
-                        <div className="space-y-px">
-                        {groupSections.map((s) => {
-                          const isActive = activeSection === s.id;
-                          const btn = (
-                             <button
-                               key={s.id}
-                               onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
-                               className={cn(
-                                 "docs-sidebar-link w-full flex items-center text-left relative",
-                                  sidebarCollapsed ? "justify-center p-2" : "gap-2.5 px-2.5 py-[6px]",
-                                  isActive && "active"
-                               )}
-                             >
-                               {isActive && !sidebarCollapsed && (
-                                 <motion.div
-                                   layoutId="docs-active-pill"
-                                   className="absolute left-0 top-1/2 -translate-y-1/2 w-[2.5px] h-4 rounded-full"
-                                   style={{ background: 'hsl(var(--docs-accent))' }}
-                                   transition={{ type: "spring", stiffness: 400, damping: 28 }}
-                                 />
-                               )}
-                               <s.icon className="w-3.5 h-3.5 shrink-0 transition-colors duration-150" style={{ color: isActive ? 'hsl(var(--docs-accent))' : 'hsl(var(--docs-text-muted) / 0.6)' }} />
-                               {!sidebarCollapsed && <span className="truncate text-[13px]">{s.label}</span>}
-                             </button>
-                          );
+                <button
+                  onClick={toggleSidebar}
+                  className="p-1.5 rounded-md transition-colors"
+                  style={{ color: 'hsl(var(--docs-text-muted))', background: 'transparent' }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = 'hsl(var(--docs-elevated))'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                  aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                >
+                  {sidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+                </button>
+              </div>
 
-                          if (sidebarCollapsed) {
-                            return (
-                              <Tooltip key={s.id}>
-                                <TooltipTrigger asChild>{btn}</TooltipTrigger>
-                                <TooltipContent side="right" sideOffset={8} className="text-xs">{s.label}</TooltipContent>
-                              </Tooltip>
+              {/* Search */}
+              {!sidebarCollapsed && (
+                <div className="px-3 mb-5">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }} />
+                    <input
+                      type="text"
+                      value={sidebarSearch}
+                      onChange={(e) => setSidebarSearch(e.target.value)}
+                      placeholder="Filter sections…"
+                      className="w-full h-9 pl-9 pr-3 rounded-lg text-[13px] transition-all focus:outline-none"
+                      style={{
+                        background: 'hsl(var(--docs-elevated) / 0.5)',
+                        border: '1px solid hsl(var(--docs-border-subtle))',
+                        color: 'hsl(var(--docs-text-primary))',
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Nav items */}
+              <ScrollArea className="flex-1 px-2">
+                <nav className="space-y-0.5 pb-6">
+                  {sidebarGroups.map((group, gi) => {
+                    const groupSections = filteredSections.filter((s) => group.ids.includes(s.id));
+                    if (groupSections.length === 0) return null;
+                    return (
+                      <div key={group.label} className={cn(gi > 0 && "mt-3")}>
+                        {gi > 0 && !sidebarCollapsed && (
+                          <div className="h-px mx-2 mb-3" style={{ background: 'hsl(var(--docs-border-subtle) / 0.5)' }} />
+                        )}
+                        {!sidebarCollapsed && (
+                          <p className="docs-sidebar-group-label mb-1">{group.label}</p>
+                        )}
+                        <div className="space-y-0.5">
+                          {groupSections.map((s) => {
+                            const isActive = activeSection === s.id;
+                            const btn = (
+                              <button
+                                key={s.id}
+                                onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
+                                className={cn(
+                                  "docs-sidebar-link w-full flex items-center text-left relative",
+                                  sidebarCollapsed ? "justify-center p-2.5" : "gap-2.5 px-3 py-[7px]",
+                                  isActive && "active"
+                                )}
+                              >
+                                {isActive && !sidebarCollapsed && (
+                                  <motion.div
+                                    layoutId="docs-active-indicator"
+                                    className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full"
+                                    style={{ background: 'hsl(var(--docs-accent))' }}
+                                    transition={{ type: "spring", stiffness: 380, damping: 26 }}
+                                  />
+                                )}
+                                <s.icon 
+                                  className="w-4 h-4 shrink-0 transition-colors duration-150" 
+                                  style={{ color: isActive ? 'hsl(var(--docs-accent))' : 'hsl(var(--docs-text-muted) / 0.55)' }} 
+                                />
+                                {!sidebarCollapsed && (
+                                  <span className="truncate">{s.label}</span>
+                                )}
+                              </button>
                             );
-                          }
-                          return <React.Fragment key={s.id}>{btn}</React.Fragment>;
-                        })}
+
+                            if (sidebarCollapsed) {
+                              return (
+                                <Tooltip key={s.id}>
+                                  <TooltipTrigger asChild>{btn}</TooltipTrigger>
+                                  <TooltipContent side="right" sideOffset={10} className="text-xs font-medium">
+                                    {s.label}
+                                  </TooltipContent>
+                                </Tooltip>
+                              );
+                            }
+                            return <React.Fragment key={s.id}>{btn}</React.Fragment>;
+                          })}
                         </div>
                       </div>
-                      );
-                    })}
-                  </nav>
-                </ScrollArea>
-              </div>
-            </aside>
-          </TooltipProvider>
-
-          {/* Mobile topic rail */}
-          <nav className="lg:hidden fixed top-14 left-0 right-0 z-40 backdrop-blur-xl" style={{ background: 'hsl(var(--docs-bg) / 0.92)', borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.6)' }} aria-label="Section navigation">
-            <div className="relative">
-              {/* Fade edges — wider for better visibility */}
-              <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 z-10" style={{ background: 'linear-gradient(to right, hsl(var(--docs-bg) / 0.92), transparent)' }} />
-              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 z-10" style={{ background: 'linear-gradient(to left, hsl(var(--docs-bg) / 0.92), transparent)' }} />
-              <div
-                className="flex gap-1.5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-5 py-2 no-scrollbar"
-                style={{ WebkitOverflowScrolling: "touch" }}
-                ref={(el) => {
-                  // Auto-scroll active tab into view
-                  if (el) {
-                    const activeBtn = el.querySelector('[data-active="true"]');
-                    if (activeBtn) {
-                      const rect = activeBtn.getBoundingClientRect();
-                      const containerRect = el.getBoundingClientRect();
-                      if (rect.left < containerRect.left + 40 || rect.right > containerRect.right - 40) {
-                        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                      }
-                    }
-                  }
-                }}
-              >
-                {SECTIONS.map((s) => {
-                  const isActive = activeSection === s.id;
-                  return (
-                    <button
-                      key={s.id}
-                      data-active={isActive}
-                      onClick={() => scrollTo(s.id)}
-                      className={cn("docs-mobile-tab shrink-0 snap-start flex items-center gap-1.5", isActive && "active")}
-                    >
-                      <s.icon className="w-3 h-3 shrink-0" />
-                      {s.label}
-                    </button>
-                  );
-                })}
-                {/* Extra padding so last item is fully accessible */}
-                <div className="shrink-0 w-8" aria-hidden="true" />
-              </div>
+                    );
+                  })}
+                </nav>
+              </ScrollArea>
             </div>
-          </nav>
+          </aside>
+        </TooltipProvider>
 
-          {/* Main content */}
-          <main className="flex-1 min-w-0 max-w-[760px] px-4 sm:px-6 lg:px-14 py-8 lg:py-14 space-y-16 pt-[7.5rem] lg:pt-12">
+        {/* ─────────────────────────────────────────────────────────────
+            CENTER CONTENT COLUMN — Readable width, proper padding
+            ───────────────────────────────────────────────────────────── */}
+        <main className="flex-1 min-w-0 px-5 sm:px-8 lg:px-12 xl:px-16 py-10 lg:py-14 pt-[8rem] lg:pt-14">
+          <div className="max-w-[720px] mx-auto space-y-14 lg:space-y-16">
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
@@ -4028,35 +4069,38 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
               </motion.section>
             )}
-          </main>
+          </div>
+        </main>
 
-          {/* Right sidebar — On this page */}
-          <aside className="hidden xl:block w-[190px] shrink-0">
-            <div className="sticky top-20 py-8 pl-5 pr-3">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-4" style={{ color: 'hsl(var(--docs-text-muted) / 0.55)' }}>On this page</p>
-              <AnimatePresence mode="wait">
-                <motion.nav 
-                  key={activeSection}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                  className="space-y-0.5"
-                >
-                  {(SECTION_ANCHORS[activeSection] || []).map((anchor) => (
-                    <button
-                      key={anchor.id}
-                      onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                      className="docs-anchor-link block w-full text-left py-1.5 transition-colors duration-150 leading-snug"
-                    >
-                      {anchor.label}
-                    </button>
-                  ))}
-                </motion.nav>
-              </AnimatePresence>
-            </div>
-          </aside>
-        </div>
+        {/* ─────────────────────────────────────────────────────────────
+            RIGHT RAIL — On this page / Section outline
+            ───────────────────────────────────────────────────────────── */}
+        <aside className="hidden xl:block w-[200px] shrink-0" style={{ borderLeft: '1px solid hsl(var(--docs-border-subtle) / 0.4)' }}>
+          <div className="sticky top-20 h-[calc(100vh-5rem)] py-8 pl-6 pr-4 overflow-y-auto">
+            <p className="docs-caption uppercase tracking-[0.08em] mb-5" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }}>On this page</p>
+            <AnimatePresence mode="wait">
+              <motion.nav 
+                key={activeSection}
+                initial={{ opacity: 0, x: 5 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -5 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+                className="space-y-1"
+              >
+                {(SECTION_ANCHORS[activeSection] || []).map((anchor, idx) => (
+                  <button
+                    key={anchor.id}
+                    onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                    className="docs-anchor-link block w-full text-left py-1.5 transition-all duration-150 leading-snug"
+                    style={{ paddingLeft: idx === 0 ? '0.75rem' : '0.75rem' }}
+                  >
+                    {anchor.label}
+                  </button>
+                ))}
+              </motion.nav>
+            </AnimatePresence>
+          </div>
+        </aside>
       </div>
 
       {/* Back to top button */}
