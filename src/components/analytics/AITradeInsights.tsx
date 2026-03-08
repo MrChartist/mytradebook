@@ -186,15 +186,24 @@ export function AITradeInsights({ compact = false, maxInsights }: AITradeInsight
             <Skeleton className="h-20 w-full rounded-lg" />
           </div>
         ) : !hasAiKey ? (
-          <div className="text-center py-8">
-            <Settings className="w-12 h-12 mx-auto text-muted-foreground/40 mb-3" />
-            <h3 className="text-base font-semibold mb-1">Connect Your AI Provider</h3>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto mb-4">
-              Configure your Gemini or OpenAI API key in Settings to unlock AI-powered trade insights — your key, your cost.
-            </p>
-            <Button variant="outline" onClick={() => navigate("/settings?tab=integrations")}>
-              <ExternalLink className="w-4 h-4 mr-2" /> Go to Settings
-            </Button>
+          <div className="text-center py-8 space-y-3">
+            <div className="w-12 h-12 mx-auto rounded-xl bg-primary/8 flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-base font-semibold mb-1">Bring Your Own AI Key</h3>
+              <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                Connect a <strong>free</strong> Google Gemini key to unlock AI-powered analysis of your trading patterns, timing, risk management, and behavioral insights.
+              </p>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Button onClick={() => navigate("/settings?tab=integrations")}>
+                <ExternalLink className="w-4 h-4 mr-2" /> Setup AI Key
+              </Button>
+              <p className="text-[10px] text-muted-foreground/40">
+                Your key is stored securely and only used server-side. No data leaves your account.
+              </p>
+            </div>
           </div>
         ) : insights.length === 0 ? (
           <div className="text-center py-8">
