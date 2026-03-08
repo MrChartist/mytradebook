@@ -586,17 +586,17 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </TooltipProvider>
 
           {/* Mobile tabs */}
-          <nav className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border/30" aria-label="Section navigation">
-            <div className="flex gap-1 overflow-x-auto px-3 py-2 no-scrollbar">
+          <nav className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border/20" aria-label="Section navigation">
+            <div className="flex gap-1.5 overflow-x-auto px-3 py-2.5 no-scrollbar">
               {SECTIONS.map((s) => (
                 <button
                   key={s.id}
                   onClick={() => scrollTo(s.id)}
                   className={cn(
-                    "shrink-0 px-2.5 py-1 rounded text-[12px] font-medium transition-colors whitespace-nowrap",
+                    "shrink-0 px-3 py-1.5 rounded-lg text-[12px] font-medium transition-colors whitespace-nowrap",
                     activeSection === s.id
                       ? "bg-foreground text-background"
-                      : "text-muted-foreground/60 hover:text-foreground"
+                      : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/30"
                   )}
                 >
                   {s.label}
