@@ -65,7 +65,7 @@ export function ProTip({ children, variant = "tip" }: { children: ReactNode; var
         <Icon className={cn("w-4 h-4 shrink-0 mt-0.5", s.iconColor)} />
         <div className="flex-1 min-w-0">
           <p className={cn("text-[11px] font-bold uppercase tracking-wider mb-2", s.iconColor)}>{s.label}</p>
-          <div className="docs-body [&>p]:mb-0">{children}</div>
+          <div className="docs-note [&>p]:mb-0">{children}</div>
         </div>
       </div>
     </div>
