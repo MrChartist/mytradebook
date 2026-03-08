@@ -704,9 +704,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p>Set your starting capital accurately before logging your first trade. This number drives all risk-per-trade calculations, position sizing suggestions, and portfolio % metrics. You can update it later in <strong>Settings → Capital Management</strong>, but getting it right from day one ensures your analytics are meaningful from the start.</p>
               </ProTip>
 
-              <InteractiveMockup label="Onboarding Flow">
+              <AnnotatedMockup
+                label="Onboarding Flow"
+                caption="The onboarding wizard walks you through account setup, starting capital configuration, and theme selection. Each step validates before proceeding."
+                highlights={["Capital Setup", "Theme Selection", "First Login"]}
+              >
                 <OnboardingFlowMockup />
-              </InteractiveMockup>
+              </AnnotatedMockup>
+              <MockupCaption>The mobile-optimized onboarding adapts to smaller screens with full-width fields and bottom-sheet interactions.</MockupCaption>
               <MobileAppMockup />
 
               <SubTopic title="Platform Overview" description="Understand the key areas of TradeBook." id="gs-platform-overview" />
