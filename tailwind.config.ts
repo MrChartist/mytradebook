@@ -77,7 +77,7 @@ export default {
       },
       fontFamily: {
         sans: ["'Inter'", "system-ui", "sans-serif"],
-        heading: ["'Sora'", "'Inter'", "sans-serif"],
+        heading: ["'Space Grotesk'", "'Inter'", "sans-serif"],
         mono: ["'JetBrains Mono'", "monospace"],
       },
       keyframes: {
