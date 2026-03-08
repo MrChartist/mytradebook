@@ -493,7 +493,7 @@ export function FinalCTASection() {
         </motion.div>
         <motion.div variants={{ visible: { transition: { staggerChildren: 0.12 } } }} className="mb-8 space-y-2">
           <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-[1.1]">Stop losing money to</motion.h2>
-          <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-[1.1]"><span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>undisciplined</span>{" "}trading</motion.h2>
+          <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-[1.1]"><span className="accent-script">undisciplined</span>{" "}trading</motion.h2>
         </motion.div>
         <motion.p variants={fadeUp} className="text-xl text-muted-foreground mb-12 max-w-xl mx-auto leading-[1.7]">Join 1,200+ traders who journal, analyze, and compound their edge — every single day.</motion.p>
         <motion.div variants={fadeUp} whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}>
