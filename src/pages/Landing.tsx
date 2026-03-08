@@ -17,7 +17,7 @@ const FeaturesSection = lazy(() => import("@/components/landing/FeaturesSection"
 const PricingSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.PricingSection })));
 const TestimonialsSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.TestimonialsSection })));
 const IndianMarketsSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.IndianMarketsSection })));
-const FAQSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.FAQSection })));
+const DocsCTASection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.DocsCTASection })));
 const FinalCTASection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.FinalCTASection })));
 const FooterSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.FooterSection })));
 
@@ -84,7 +84,7 @@ export default function Landing() {
         <GradientDivider />
 
         <Suspense fallback={<SectionFallback />}>
-          <FAQSection />
+          <DocsCTASection />
         </Suspense>
 
         <GradientDivider />
