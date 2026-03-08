@@ -994,6 +994,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="The core of TradeBook. Log every trade with detailed metadata — entry, exit, stop loss, targets, tags, chart images, and post-trade reviews. Manage your entire trading book from one screen."
                 icon={CandlestickChart}
               />
+              <QuickOverviewStrip stats={[
+                { label: "Trade Fields", value: "30+" },
+                { label: "Target Levels", value: "Up to 5" },
+                { label: "TSL Methods", value: "4" },
+                { label: "Post-Review", value: "Built-in" },
+              ]} />
               <QuickNav items={[
                 { label: "Creating Trades", id: "tm-creating" },
                 { label: "Trade Lifecycle", id: "tm-lifecycle" },
@@ -1002,6 +1008,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Sharing & Discipline", id: "tm-sharing" },
                 { label: "Quick Actions", id: "tm-quick" },
               ]} />
+              <WhatWhyWhenBlock data={{
+                what: "Log every trade with entry/exit, stop loss, targets, tags, chart images, and notes. Track status from open → partial → closed with full timeline.",
+                why: "Without detailed records, you can't analyze what's working. Trade management turns random trading into a systematic, reviewable process.",
+                when: "Every time you enter, modify, or exit a position. The faster you log, the more accurate your records.",
+              }} />
               <ProTip>
                 <p>Always set your stop loss before submitting a trade. TradeBook calculates your risk-to-reward ratio automatically — trades with R:R below 1:2 are flagged in your analytics.</p>
               </ProTip>
