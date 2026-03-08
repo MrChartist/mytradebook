@@ -18,7 +18,7 @@ import { TargetChipsInput } from "@/components/trade/TargetChipsInput";
 import { InstrumentPicker, type SelectedInstrument } from "@/components/trade/InstrumentPicker";
 import { PositionSizingCalculator } from "@/components/trade/PositionSizingCalculator";
 import { toast } from "sonner";
-import { fireProfitConfetti } from "@/lib/confetti";
+import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { supabase } from "@/integrations/supabase/client";
