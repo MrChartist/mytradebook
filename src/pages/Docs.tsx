@@ -1329,7 +1329,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "P&L distribution charts",
                   ]} />
                 </FeatureCard>
-                <SubTopic title="Time & Streak Analysis" description="Discover your best trading times and track momentum." />
+              </div>
+              <SubTopic title="Time & Streak Analysis" description="Discover your best trading times and track momentum." />
+              <div className="grid md:grid-cols-2 gap-5">
+                <FeatureCard icon={Clock} title="Time-Based Heatmaps" badge="Pro">
                   <FeatureList items={[
                     "Time of Day heatmap — which hours are most profitable",
                     "Day of Week heatmap — which days you perform best",
