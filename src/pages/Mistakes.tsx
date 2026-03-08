@@ -131,8 +131,8 @@ export default function Mistakes() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <PageHeader title="Mistakes Review" subtitle="Identify patterns in your losing trades and track improvement over time." />
+    <div className="space-y-4 animate-fade-in">
+      <PageHeader title="Mistakes Review" subtitle="Identify patterns in your losing trades and track improvement." />
 
       {/* Mistake Tag Analysis */}
       {analysis && analysis.topMistakes.length > 0 && (
