@@ -1834,7 +1834,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <DhanFlowDiagram />
                 <TelegramChannelsMockup />
               </div>
-              <SubTopic title="Broker Connection" description="Connect Dhan for live prices, portfolio sync, and one-click execution." />
+              <SubTopic title="Broker Connection" description="Connect Dhan for live prices, portfolio sync, and one-click execution." id="int-broker" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={LineChart} title="Dhan Broker Integration">
                   <p className="text-sm text-muted-foreground mb-3">Connect your Dhan trading account for seamless data sync:</p>
