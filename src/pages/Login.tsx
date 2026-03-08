@@ -293,6 +293,7 @@ export default function Login() {
                         onChange={(e) => setEmail(e.target.value)}
                         autoComplete="email"
                         inputMode="email"
+                        className="h-11"
                         required
                       />
                     </div>
