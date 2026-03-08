@@ -372,6 +372,39 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string
+          data: Json | null
+          id: string
+          message: string | null
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json | null
+          id?: string
+          message?: string | null
+          read?: boolean
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json | null
+          id?: string
+          message?: string | null
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pattern_tags: {
         Row: {
           category: string | null
@@ -405,6 +438,7 @@ export type Database = {
           last_login: string | null
           name: string | null
           phone: string | null
+          referral_code: string | null
           updated_at: string | null
           user_id: string
         }
@@ -416,6 +450,7 @@ export type Database = {
           last_login?: string | null
           name?: string | null
           phone?: string | null
+          referral_code?: string | null
           updated_at?: string | null
           user_id: string
         }
@@ -427,8 +462,78 @@ export type Database = {
           last_login?: string | null
           name?: string | null
           phone?: string | null
+          referral_code?: string | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      public_profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          disclaimer: string | null
+          display_name: string | null
+          id: string
+          is_public: boolean
+          monthly_stats: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          disclaimer?: string | null
+          display_name?: string | null
+          id?: string
+          is_public?: boolean
+          monthly_stats?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          disclaimer?: string | null
+          display_name?: string | null
+          id?: string
+          is_public?: boolean
+          monthly_stats?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          referred_user_id: string | null
+          referrer_id: string
+          reward_applied: boolean
+          status: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          referred_user_id?: string | null
+          referrer_id: string
+          reward_applied?: boolean
+          status?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          referred_user_id?: string | null
+          referrer_id?: string
+          reward_applied?: boolean
+          status?: string
         }
         Relationships: []
       }
