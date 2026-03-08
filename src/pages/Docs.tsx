@@ -2039,13 +2039,31 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Search}
               />
               <QuickNav items={[
+                { label: "First Screen", id: "sc-first" },
                 { label: "Scanner Presets", id: "sc-presets" },
                 { label: "Custom Filters", id: "sc-filters" },
+                { label: "Stock Insights", id: "sc-insights" },
                 { label: "Results Table", id: "sc-results" },
+                { label: "Technical Indicators", id: "sc-indicators" },
               ]} />
 
+              <SubTopic title="Running Your First Screen" description="A quick walkthrough to get results in under 30 seconds." id="sc-first" />
+              <StepByStep title="Running Your First Screen" steps={[
+                { title: "Open the Stock Screener page", description: "Navigate to the Screener from the sidebar. You'll see a category bar at the top with 5 preset groups: Market Cap, Price Action, Volume, Fundamental, and Technical.", detail: "On mobile, these appear as a horizontal pill-style bar you can swipe through." },
+                { title: "Pick a preset to start", description: "Click any preset — for example, 'Top Gainers' under Price Action. Results load instantly from the NSE data feed via TradingView.", detail: "Each preset is pre-configured with the right filters and sort order. You don't need to set anything up." },
+                { title: "Sort and explore the results", description: "Click any column header (Market Cap, P/E, RSI, Volume) to sort. Use the inline search bar to filter by symbol or company name.", detail: "The LTP column uses bold integers with muted decimals for quick scanning. Change% and RSI are color-coded." },
+                { title: "Click a stock for deep-dive", description: "Click any row to open the Stock Insight Card — a rich popup with Valuation, Financials, and Technicals tabs.", detail: "From the insight card, you can directly create a Trade, set an Alert, add to a Watchlist, or start a Study." },
+                { title: "Save a custom filter for next time", description: "Switch to the Custom Filter tab, build your conditions, name the preset, and save. It appears in 'My Presets' for instant reuse.", detail: "Saved presets persist across sessions and devices — build once, use forever." },
+              ]} />
+
+              <ProTip variant="best-practice">
+                <p>Save custom presets for your recurring workflows. If you screen for "P/E &lt; 15 AND ROE &gt; 15% AND RSI &lt; 40" every week, save it as <strong>"Value + Oversold"</strong> — one click replaces 3 minutes of manual filter setup every time.</p>
+              </ProTip>
+
               <SubTopic title="Scanner Presets" description="47 built-in presets across 5 categories for instant stock screening." id="sc-presets" />
-              <ScreenerPresetsMockup />
+              <InteractiveMockup label="Scanner Presets">
+                <ScreenerPresetsMockup />
+              </InteractiveMockup>
 
               <div className="grid md:grid-cols-2 gap-5 mt-6">
                 <FeatureCard icon={Filter} title="47 Built-in Scanner Presets" badge="Expanded">
@@ -2071,22 +2089,27 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </FeatureCard>
               </div>
 
-              <SubTopic title="Custom Filters & Stock Insights" description="Build multi-condition screens and explore detailed stock data." id="sc-filters" />
-              <ScreenerTableMockup />
+              <SubTopic title="Custom Filters" description="Build multi-condition screens with AND logic and save them as reusable presets." id="sc-filters" />
+              <InteractiveMockup label="Custom Filter Builder & Results">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <CustomFilterBuilderMockup />
+                  <ScreenerTableMockup />
+                </div>
+              </InteractiveMockup>
 
               <div className="grid md:grid-cols-2 gap-5 mt-6">
                 <FeatureCard icon={SlidersHorizontal} title="Custom Filter Builder">
                   <p className="text-sm text-muted-foreground mb-3">Build and save your own multi-condition screens:</p>
                   <FeatureList items={[
                     "14 screening metrics: P/E, P/B, ROE, Net Margin, Dividend Yield, D/E, Current Ratio, Market Cap, RSI, Change%, Volume, Rel. Volume, EPS, Beta",
-                    "AND logic — combine up to 8 conditions",
+                    "AND logic — combine up to 8 conditions simultaneously",
                     "Save named presets to database for instant reuse",
                     "Load/delete saved presets from My Presets section",
                     "Presets persist across sessions and devices",
                   ]} />
                 </FeatureCard>
                 <FeatureCard icon={Eye} title="Stock Insight Card">
-                  <p className="text-sm text-muted-foreground mb-3">Click any stock to open a rich detail popup:</p>
+                  <p className="text-sm text-muted-foreground mb-3" id="sc-insights">Click any stock to open a rich detail popup:</p>
                   <FeatureList items={[
                     "Hero header with ticker, sector, LTP and day change",
                     "Summary strip — P/E, Volume, Dividend Yield at a glance",
@@ -2097,10 +2120,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </FeatureCard>
               </div>
 
-              {/* Stock popup visual */}
               <div className="grid md:grid-cols-2 gap-5 mt-2">
                 <StockPopupMockup />
-                <CustomFilterBuilderMockup />
               </div>
 
               <SubTopic title="Data-Rich Results" description="Sort, filter, and explore screening results with sparklines and inline search." id="sc-results" />
@@ -2127,8 +2148,21 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </FeatureCard>
               </div>
 
-              {/* Sparkline visual */}
               <ScreenerSparklineMockup />
+
+              <SubTopic title="Technical Indicators Reference" description="Understanding the technical metrics used in screener filters and stock cards." id="sc-indicators" />
+              <ExpandableDetail title="Understanding Technical Indicators in the Screener" icon={Activity} badge="Reference">
+                <p>The screener uses several technical indicators for filtering and display. Here's what each one means and how to use it:</p>
+                <FeatureList items={[
+                  "RSI (Relative Strength Index) — Momentum oscillator ranging 0-100. Below 30 = oversold (potential bounce), above 70 = overbought (potential pullback). The screener shows RSI as a segmented gauge in Stock Insight Cards.",
+                  "SMA 50 (Simple Moving Average) — Average closing price over 50 days. Price above SMA 50 suggests an uptrend; below suggests a downtrend. The 'Above SMA 50' preset filters for stocks in technical uptrends.",
+                  "Beta — Measures a stock's volatility relative to the market (Nifty 50). Beta > 1 = more volatile than market, Beta < 1 = less volatile. 'High Beta' preset finds volatile stocks; 'Low Beta' finds stable ones.",
+                  "Relative Volume — Today's volume compared to the average volume over recent sessions. A relative volume of 3× means the stock is trading at 3 times its normal volume — often signals institutional interest or news.",
+                  "Change % — Percentage price change for the current session. Used by Top Gainers (highest positive) and Top Losers (most negative) presets.",
+                  "EPS (Earnings Per Share) — Company's profit divided by outstanding shares. Higher EPS generally indicates stronger profitability. The 'High EPS' preset filters for companies with strong earnings.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">These indicators are computed server-side from live NSE data. In the Custom Filter Builder, you can combine technical indicators with fundamental metrics (e.g., RSI &lt; 30 AND P/E &lt; 20) for powerful cross-domain screening.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
