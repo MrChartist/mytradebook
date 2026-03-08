@@ -495,7 +495,7 @@ export default function Trades() {
         <div className={cn(
           viewMode === "grid" ? "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4" : "space-y-2"
         )}>
-          {[...Array(6)].map((_, i) => <Skeleton key={i} className={viewMode === "grid" ? "h-52" : "h-16"} />)}
+          {[...Array(6)].map((_, i) => <Skeleton key={i} className={cn("shimmer-skeleton rounded-[1.25rem]", viewMode === "grid" ? "h-52" : "h-16")} />)}
         </div>
       ) : sortedTrades.length > 0 ? (
         <>

@@ -117,8 +117,8 @@ export default function WatchlistPage() {
 
       {isLoading ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <Skeleton className="h-[400px]" />
-          <Skeleton className="h-[400px] lg:col-span-2" />
+          <Skeleton className="h-[400px] rounded-[1.25rem] shimmer-skeleton" />
+          <Skeleton className="h-[400px] lg:col-span-2 rounded-[1.25rem] shimmer-skeleton" />
         </div>
       ) : watchlists.length === 0 ? (
         <EmptyState
