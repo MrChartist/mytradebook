@@ -337,7 +337,7 @@ export default function TelegramSettings() {
 
   if (isLoading) {
     return (
-      <div className="glass-card p-6 flex items-center justify-center min-h-[200px]">
+      <div className="premium-card-hover p-6 flex items-center justify-center min-h-[200px]">
         <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
