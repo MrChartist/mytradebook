@@ -458,9 +458,17 @@
     color: hsl(var(--primary));
   }
 
+  .dark .glass-nav-active {
+    background: hsl(var(--primary) / 0.1);
+  }
+
   /* Section divider for sidebar */
   .sidebar-section-label {
     @apply px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/50;
+  }
+
+  .dark .sidebar-section-label {
+    color: hsl(var(--muted-foreground) / 0.55);
   }
 
   .nav-active-bar {
