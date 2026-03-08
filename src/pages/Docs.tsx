@@ -1616,6 +1616,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "Touch-optimized with safe-area insets for modern devices",
                     "Responsive layouts across all pages",
                     "Floating Quick Actions button for fast trade/alert/review creation",
+                    "Swipe-to-act on trade rows — swipe left to reveal View/Close actions",
                   ]} />
                 </FeatureCard>
                 <FeatureCard icon={Play} title="Onboarding Checklist" badge="Enhanced">
