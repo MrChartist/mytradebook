@@ -563,7 +563,7 @@ export default function TelegramSettings() {
             {showCustomBot && (
               <div className="mt-2 space-y-2 p-3 rounded-lg border border-border bg-card">
                 <p className="text-xs text-muted-foreground">
-                  Use a separate bot token for this specific chat. Create one via <a href="https://t.me/BotFather" target="_blank" rel="noopener" className="text-primary hover:underline">@BotFather</a>.
+                  Use a separate bot token for this specific chat. Create one via <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">@BotFather</a>.
                 </p>
                 <div className="space-y-2">
                   <Label className="text-xs">Bot Token (for this chat only)</Label>
