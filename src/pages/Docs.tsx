@@ -1771,6 +1771,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p>Organize watchlists by purpose, not just by name. Create separate lists for <strong>active setups</strong> (stocks you're about to trade), <strong>sector tracking</strong> (banking, IT, pharma), and <strong>post-trade monitoring</strong> (recently closed positions). This keeps each list focused and actionable.</p>
               </ProTip>
 
+              <ExpandableDetail title="Watchlist Workflow Ideas for Different Trading Styles" icon={Eye} badge="Workflow">
+                <p>How you organize watchlists depends on your trading style. Here are proven setups:</p>
+                <FeatureList items={[
+                  "Intraday Scalpers — Create a daily 'Hot Today' list with 10-15 stocks from your morning scan. Clear and rebuild it each day. Focus on volume and momentum.",
+                  "Swing Traders — Maintain 3 lists: 'Pullback Zone' (waiting for entry), 'In Position' (current holds), and 'Graduated' (recently exited for cool-off). Move stocks between them as your thesis evolves.",
+                  "Options Traders — Organize by expiry: 'This Week Expiry', 'Next Week', 'Monthly'. Add the underlying + the specific contracts you're watching. Notes field for strike rationale.",
+                  "Positional/Investors — Sector-based lists work best: 'Banking', 'IT', 'FMCG', 'Small Caps'. Review each sector weekly and rotate focus based on market regime.",
+                  "Research Mode — A dedicated 'Study Queue' list for symbols you want to research but haven't committed to yet. Review weekly and either promote to active watchlists or delete.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">The notes field on each watchlist item is underutilized by most traders. Use it to record why you added the symbol, key levels to watch, and your planned action. When the alert triggers weeks later, you'll remember your thesis instantly.</p>
+              </ExpandableDetail>
+
               <SubTopic title="Organization" description="Create and manage multiple watchlists with visual distinction." id="wl-org" />
               <FeatureCard icon={List} title="Watchlist Organization">
                 <p className="text-sm text-muted-foreground mb-3">Flexible tools to keep your watchlists clean and useful:</p>
