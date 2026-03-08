@@ -529,7 +529,7 @@ export default function Docs() {
   return (
     <DocsColorModeProvider>
       <SEOHead
-        title="Docs"
+        title="Documentation & Feature Guide"
         description="Complete guide to TradeBook features — dashboard, trade logging, alerts, analytics, journal, and integrations for Indian market traders."
         path="/docs"
         jsonLd={{
