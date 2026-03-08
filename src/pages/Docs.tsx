@@ -1459,12 +1459,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "AI Suggestions", id: "al-ai" },
               ]} />
 
-              <InteractiveMockup label="Alert Card & Telegram Notification">
+              <VisualWalkthrough
+                title="Alert Card & Telegram Notification"
+                steps={[
+                  { marker: "A", label: "Alert Card", detail: "Shows symbol, condition, threshold, and live distance-to-target" },
+                  { marker: "B", label: "Telegram Message", detail: "Instant notification with alert details and check frequency" },
+                  { marker: "C", label: "Status Indicators", detail: "Active/snoozed/expired state with color coding" },
+                ]}
+              >
                 <div className="grid md:grid-cols-2 gap-6">
                   <AlertCardMockup />
                   <TelegramNotifMockup />
                 </div>
-              </InteractiveMockup>
+              </VisualWalkthrough>
 
               <SubTopic title="Setting Up Your First Alert" description="Get started with price monitoring in under a minute." id="al-first" />
               <StepByStep title="Setting Up Your First Alert" steps={[
