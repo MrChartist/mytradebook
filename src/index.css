@@ -643,11 +643,7 @@
     font-family: 'JetBrains Mono', monospace;
   }
 
-  .accent-script {
-    font-family: 'Dancing Script', 'Satisfy', cursive;
-    font-style: italic;
-    color: hsl(var(--tb-accent));
-  }
+  /* accent-script color is set in base layer above — no redefinition needed */
 
   /* ── Legacy code block theming (non-docs pages) ── */
   .docs-code-block pre,
