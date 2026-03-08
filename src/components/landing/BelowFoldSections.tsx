@@ -691,12 +691,11 @@ export function FooterSection() {
             <h4 className="text-xs uppercase tracking-[0.12em] font-bold text-muted-foreground/50 mb-4">Resources</h4>
             <ul className="space-y-1.5 text-[14px] text-muted-foreground">
               {[
-                { label: "FAQ", href: "#faq" },
-                { label: "Blog", href: "#" },
-                { label: "Contact Us", href: "mailto:founder@mrchartist.com" },
+                { label: "FAQ", action: () => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }) },
+                { label: "Contact Us", action: () => window.open("mailto:founder@mrchartist.com", "_blank") },
               ].map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className="inline-block py-0.5 hover:text-foreground transition-colors">{l.label}</a>
+                  <button onClick={l.action} className="inline-block py-0.5 hover:text-foreground transition-colors">{l.label}</button>
                 </li>
               ))}
             </ul>
