@@ -1158,11 +1158,16 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Define your personal pre-trade rules and enforce discipline. Every rule must be checked before a trade can be submitted."
                 icon={ClipboardCheck}
               />
-              <TradingRulesMockup />
               <QuickNav items={[
                 { label: "Setup & Usage", id: "tr-setup" },
+                { label: "Core vs Optional", id: "tr-core" },
                 { label: "Rule Examples", id: "tr-examples" },
               ]} />
+
+              <InteractiveMockup label="Trading Rules Checklist">
+                <TradingRulesMockup />
+              </InteractiveMockup>
+
               <SubTopic title="Setup & Usage" description="How to create and enforce your personal trading rules." id="tr-setup" />
               <FeatureCard icon={ClipboardCheck} title="How Trading Rules Work">
                 <p className="text-sm text-muted-foreground mb-3">Create a custom checklist that appears in the trade creation modal:</p>
@@ -1174,28 +1179,56 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Enforces consistent pre-trade analysis every time",
                 ]} />
               </FeatureCard>
+
               <ProTip variant="best-practice">
-                <p>Start with 3-5 rules maximum. The best rules are specific and actionable: "Confirm volume is above 20-day average" is better than "Check volume."</p>
+                <p>Start with 3–5 rules maximum. The best rules are specific and actionable: <em>"Confirm volume is above 20-day average"</em> is better than <em>"Check volume."</em></p>
               </ProTip>
-              <SubTopic title="Rule Examples" description="Pre-built rule sets for different trading styles." id="tr-examples" />
-              <ExpandableDetail title="Example Rules for Different Styles" icon={BookOpen} defaultOpen>
-                <div className="grid md:grid-cols-2 gap-4 mt-2">
+
+              <SubTopic title="Core vs Optional Rules" description="Distinguish between must-follow rules and situational guidelines." id="tr-core" />
+              <ExpandableDetail title="Structuring Your Rules: Core vs Optional" icon={Shield}>
+                <p>Not every rule applies to every trade. Organize yours into two tiers:</p>
+                <FeatureList items={[
+                  "Core rules (always active) — non-negotiable checks like 'Stop loss is set' or 'Risk under 2% of capital'. These should never be skipped.",
+                  "Optional rules (toggle on/off) — situational checks like 'No trades during news events' or 'Sector rotation confirms'. Toggle these inactive when they don't apply.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Use the active/inactive toggle to disable optional rules without deleting them. This keeps your checklist lean during fast-moving markets while preserving your full rule set.</p>
+              </ExpandableDetail>
+
+              <ProTip variant="info">
+                <p>Review your trading rules every weekend. Remove rules you never check, tighten vague ones, and add new rules based on mistakes from the past week. Your rules should evolve as your trading matures.</p>
+              </ProTip>
+
+              <SubTopic title="Rule Examples by Trading Style" description="Pre-built rule sets to get you started based on your approach." id="tr-examples" />
+              <ExpandableDetail title="Example Rule Sets for Different Trading Styles" icon={BookOpen} defaultOpen>
+                <div className="grid md:grid-cols-3 gap-5 mt-2">
                   <div>
-                    <p className="text-[12px] font-semibold text-foreground mb-2">Intraday Trader</p>
-                    <ul className="space-y-1 text-[12px] text-muted-foreground">
+                    <p className="text-[12px] font-semibold text-foreground mb-2">Scalper / Intraday</p>
+                    <ul className="space-y-1.5 text-[12px] text-muted-foreground">
                       <li>✓ Check pre-market gap direction</li>
                       <li>✓ Volume above VWAP</li>
                       <li>✓ No trades in first 5 minutes</li>
                       <li>✓ Risk under 1% of capital</li>
+                      <li>✓ Max 3 open trades at a time</li>
                     </ul>
                   </div>
                   <div>
                     <p className="text-[12px] font-semibold text-foreground mb-2">Swing Trader</p>
-                    <ul className="space-y-1 text-[12px] text-muted-foreground">
+                    <ul className="space-y-1.5 text-[12px] text-muted-foreground">
                       <li>✓ Higher timeframe trend aligns</li>
                       <li>✓ No earnings in next 5 days</li>
                       <li>✓ Sector is not overbought</li>
                       <li>✓ R:R is at least 1:3</li>
+                      <li>✓ Chart pattern confirmed on daily</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-semibold text-foreground mb-2">Positional Trader</p>
+                    <ul className="space-y-1.5 text-[12px] text-muted-foreground">
+                      <li>✓ Weekly trend is bullish</li>
+                      <li>✓ Fundamentals support the thesis</li>
+                      <li>✓ No major resistance within 5%</li>
+                      <li>✓ Position size under 10% of portfolio</li>
+                      <li>✓ Stop loss set below key support</li>
                     </ul>
                   </div>
                 </div>
