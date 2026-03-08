@@ -1478,7 +1478,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </FeatureCard>
 
               <ExpandableDetail title="Smart Alert Suggestions Deep Dive" icon={Sparkles} badge="AI">
-                <p>The Smart Alert engine works by analyzing your closed trade history through the <code className="px-1 py-0.5 rounded bg-muted text-[11px] font-mono">suggest-alerts</code> backend function:</p>
+                <p>The Smart Alert engine works by analyzing your closed trade history through the <code>suggest-alerts</code> backend function:</p>
                 <FeatureList items={[
                   "Identifies your top 5 most-traded symbols by frequency.",
                   "For each symbol, it analyzes your average entry/exit prices, win rate, and recent price action.",
@@ -1486,7 +1486,22 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Each suggestion includes AI-generated reasoning explaining why this alert level matters for your trading style.",
                   "One-click creation converts the suggestion into a fully configured alert with sensible defaults.",
                 ]} />
-                <p className="text-[12px] text-muted-foreground/60 mt-3">You need at least 10 closed trades before suggestions appear. The more trades you log, the more personalized the recommendations become.</p>
+                <CodeBlock tabs={[{
+                  label: "Example Response",
+                  language: "JSON",
+                  code: `{
+  "suggestions": [
+    {
+      "symbol": "RELIANCE",
+      "price": 2450.00,
+      "condition": "crosses_above",
+      "reasoning": "Your avg entry is ₹2,448. Price is 3.2% below — good re-entry zone.",
+      "confidence": 0.85
+    }
+  ]
+}`
+                }]} title="suggest-alerts" />
+                <p className="text-[12px] text-muted-foreground/55 mt-3">You need at least 10 closed trades before suggestions appear. The more trades you log, the more personalized the recommendations become.</p>
               </ExpandableDetail>
             </motion.section>
 
