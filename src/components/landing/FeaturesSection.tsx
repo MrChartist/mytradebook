@@ -54,7 +54,6 @@ const features: {
 function getGridClasses(span: string, index: number): string {
   if (span === "hero") return "md:col-span-12 lg:col-span-7";
   if (span === "large") {
-    // Alternate large cards between left (col 1-7) and right (col 6-12)
     const largeIndex = features.slice(0, index + 1).filter(f => f.span === "large").length;
     return largeIndex % 2 === 1 ? "md:col-span-7" : "md:col-span-7 md:col-start-6";
   }
@@ -67,20 +66,20 @@ export function FeaturesSection() {
     <section id="features" className="py-20 lg:py-28" aria-label="Features">
       <MotionSection className="max-w-6xl mx-auto px-6 lg:px-8">
         {/* Heading */}
-        <motion.div variants={fadeUp} className="text-center mb-16 lg:mb-20">
+        <motion.div variants={fadeUp} className="text-center mb-14 lg:mb-18">
           <SectionBadge>Features</SectionBadge>
-          <h2 className="text-3xl lg:text-5xl font-extrabold mb-5 leading-[1.1] tracking-tight">
+          <h2 className="text-3xl lg:text-5xl font-extrabold mb-4 leading-[1.1] tracking-tight">
             Everything you need to{" "}
             <span className="accent-script">trade</span>{" "}better
           </h2>
-          <p className="text-muted-foreground max-w-lg mx-auto text-lg leading-relaxed">
+          <p className="text-muted-foreground max-w-md mx-auto text-base lg:text-lg leading-relaxed">
             Journal, analyze, and automate — tools designed by traders, for traders.
           </p>
 
           {/* Category pills */}
-          <div className="flex items-center justify-center gap-2 mt-8 flex-wrap">
+          <div className="flex items-center justify-center gap-1.5 mt-6 flex-wrap">
             {(Object.keys(categoryLabels) as FeatureCategory[]).map((cat) => (
-              <span key={cat} className={cn("px-3.5 py-1.5 rounded-full text-[11px] font-semibold tracking-wide", categoryColors[cat])}>
+              <span key={cat} className={cn("px-3 py-1 rounded-full text-[10px] font-semibold tracking-wide", categoryColors[cat])}>
                 {categoryLabels[cat]}
               </span>
             ))}
@@ -88,7 +87,7 @@ export function FeaturesSection() {
         </motion.div>
 
         {/* Bento Grid */}
-        <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-12 gap-4 lg:gap-5">
+        <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-12 gap-3.5 lg:gap-4">
           {features.map((f, i) => (
             <motion.div
               key={f.title}
@@ -98,40 +97,35 @@ export function FeaturesSection() {
             >
               <motion.div
                 className={cn(
-                  "group rounded-2xl border border-border/30 bg-card/70 backdrop-blur-sm h-full relative overflow-hidden transition-all duration-300",
-                  f.span === "hero" ? "p-8 sm:p-10" : "p-6 sm:p-7",
+                  "group rounded-xl border border-border/25 bg-card/60 backdrop-blur-sm h-full relative overflow-hidden transition-all duration-300",
+                  f.span === "hero" ? "p-6 sm:p-8" : "p-5 sm:p-6",
                 )}
-                style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}
-                whileHover={{ y: -4, borderColor: "hsl(var(--border) / 0.5)" }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
+                style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}
+                whileHover={{ y: -3, borderColor: "hsl(var(--border) / 0.45)" }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
               >
                 {/* Colored top accent line */}
                 <div
-                  className="absolute top-0 left-6 right-6 h-[2px] rounded-b-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{ background: f.color }}
+                  className="absolute top-0 left-0 right-0 h-[1.5px] opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                  style={{ background: `linear-gradient(90deg, transparent, ${f.color}, transparent)` }}
                 />
 
-                {/* Subtle hover glow */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
                 <div className="relative">
-                  {/* Icon + Category */}
-                  <div className="flex items-center gap-3 mb-4">
-                    <motion.div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                  {/* Icon + Category — unified row */}
+                  <div className="flex items-center gap-2.5 mb-3.5">
+                    <div
+                      className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
                       style={{ backgroundColor: `${f.color.replace(")", " / 0.08)")}` }}
-                      whileHover={{ scale: 1.08, rotate: 3 }}
-                      transition={{ type: "spring", stiffness: 300 }}
                     >
-                      <f.icon className="w-5 h-5" style={{ color: f.color }} />
-                    </motion.div>
+                      <f.icon className="w-[18px] h-[18px]" style={{ color: f.color }} />
+                    </div>
                     <span className={cn("px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider", categoryColors[f.category])}>
                       {categoryLabels[f.category]}
                     </span>
                   </div>
 
-                  <h3 className={cn("font-bold mb-2 tracking-tight", f.span === "hero" ? "text-xl lg:text-2xl" : "text-lg")}>{f.title}</h3>
-                  <p className={cn("text-muted-foreground leading-relaxed", f.span === "hero" ? "text-base" : "text-[15px]")}>{f.description}</p>
+                  <h3 className={cn("font-bold tracking-tight mb-1.5", f.span === "hero" ? "text-lg lg:text-xl" : "text-[15px] lg:text-base")}>{f.title}</h3>
+                  <p className={cn("text-muted-foreground leading-relaxed", f.span === "hero" ? "text-[15px]" : "text-[13px]")}>{f.description}</p>
 
                   {f.previewKey && previewMap[f.previewKey]}
                 </div>
@@ -141,15 +135,15 @@ export function FeaturesSection() {
         </motion.div>
 
         {/* Bottom stat strip */}
-        <motion.div variants={fadeUp} className="mt-14 flex items-center justify-center gap-8 lg:gap-14 flex-wrap">
+        <motion.div variants={fadeUp} className="mt-12 flex items-center justify-center gap-10 lg:gap-16 flex-wrap">
           {[
             { value: "12", label: "Powerful features" },
             { value: "3", label: "Market segments" },
             { value: "100%", label: "Free in beta" },
           ].map((s) => (
             <div key={s.label} className="text-center">
-              <p className="text-2xl lg:text-3xl font-extrabold text-foreground font-mono">{s.value}</p>
-              <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
+              <p className="text-xl lg:text-2xl font-bold text-foreground font-mono">{s.value}</p>
+              <p className="text-[11px] text-muted-foreground/60 mt-0.5">{s.label}</p>
             </div>
           ))}
         </motion.div>
