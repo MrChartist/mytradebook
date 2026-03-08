@@ -1833,7 +1833,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </ProTip>
 
               <SubTopic title="Core Metrics & AI Insights" description="Fundamental performance statistics that define your trading edge." id="an-core" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={BarChart3} title="Core Metrics" badge="Pro">
                   <p className="text-sm text-muted-foreground mb-3">The essential numbers that tell you whether you have an edge:</p>
                   <FeatureList items={[
