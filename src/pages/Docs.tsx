@@ -2687,7 +2687,21 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Power-user keyboard shortcuts to navigate and take actions without touching the mouse. Plus a Command Palette for instant search."
                 icon={Keyboard}
               />
-              <ShortcutKeyboardMockup />
+              <QuickNav items={[
+                { label: "Command Palette", id: "kb-palette" },
+                { label: "Quick Actions", id: "kb-actions" },
+                { label: "Navigation", id: "kb-nav" },
+                { label: "Full Reference", id: "kb-reference" },
+              ]} />
+
+              <ProTip variant="best-practice">
+                <p>Don't try to memorize everything at once. Learn <strong>3 shortcuts per week</strong>: start with <ShortcutKey>⌘K</ShortcutKey> (Command Palette), <ShortcutKey>N</ShortcutKey> (New Trade), and <ShortcutKey>1</ShortcutKey> (Dashboard). After a week, add 3 more. Within a month you'll navigate entirely by keyboard.</p>
+              </ProTip>
+
+              <InteractiveMockup label="Keyboard Shortcuts & Command Palette">
+                <ShortcutKeyboardMockup />
+              </InteractiveMockup>
+
               <SubTopic title="Command Palette" description="Global search and action launcher accessible from anywhere." id="kb-palette" />
               <FeatureCard icon={Command} title="Command Palette (⌘K)" badge="Enhanced">
                 <p className="text-sm text-muted-foreground mb-3">
@@ -2701,53 +2715,75 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Search journal entries — matches text in plans, reviews, and lessons",
                   "Dynamic results appear after typing 2+ characters",
                   "Quick Trade Entry — keyboard-only trade logging (Symbol → Type → Price → Qty → Confirm)",
+                  "Recent section — tracks your last 5 visited pages for quick re-access",
                 ]} />
               </FeatureCard>
-              <SubTopic title="Shortcut Reference" description="Complete keyboard shortcut reference for quick actions and navigation." id="kb-shortcuts" />
-              <FeatureCard icon={Command} title="All Shortcuts">
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div>
-                    <h4 className="text-sm font-semibold mb-4">Quick Actions</h4>
-                    <div className="space-y-3">
-                      {[
-                        { key: "N", desc: "Create new trade" },
-                        { key: "A", desc: "Create new alert" },
-                        { key: "S", desc: "Create new study" },
-                        { key: "/", desc: "Open search / Command Palette" },
-                      ].map((s) => (
-                        <div key={s.key} className="flex items-center gap-3">
-                          <ShortcutKey>{s.key}</ShortcutKey>
-                          <span className="text-sm text-muted-foreground">{s.desc}</span>
-                        </div>
-                      ))}
+
+              <SubTopic title="Quick Actions" description="Create trades, alerts, and studies without touching the mouse." id="kb-actions" />
+              <FeatureCard icon={Zap} title="Quick Action Shortcuts">
+                <div className="space-y-3">
+                  {[
+                    { key: "N", desc: "Create new trade — opens the trade creation modal" },
+                    { key: "A", desc: "Create new alert — opens the alert creation modal" },
+                    { key: "S", desc: "Create new study — opens the study creation modal" },
+                    { key: "/", desc: "Open Command Palette — search anything, take any action" },
+                    { key: "⌘K", desc: "Open Command Palette (alternative shortcut)" },
+                  ].map((s) => (
+                    <div key={s.key} className="flex items-center gap-3">
+                      <ShortcutKey>{s.key}</ShortcutKey>
+                      <span className="text-sm text-muted-foreground">{s.desc}</span>
                     </div>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold mb-4">Navigation</h4>
-                    <div className="space-y-3">
-                      {[
-                        { key: "1", desc: "Go to Dashboard" },
-                        { key: "2", desc: "Go to Trades" },
-                        { key: "3", desc: "Go to Alerts" },
-                        { key: "4", desc: "Go to Studies" },
-                        { key: "5", desc: "Go to Watchlist" },
-                        { key: "6", desc: "Go to Analytics" },
-                      ].map((s) => (
-                        <div key={s.key} className="flex items-center gap-3">
-                          <ShortcutKey>{s.key}</ShortcutKey>
-                          <span className="text-sm text-muted-foreground">{s.desc}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  ))}
                 </div>
-                <div className="mt-6 p-4 rounded-xl bg-muted/30 border border-border/30">
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-semibold text-foreground">Command Palette:</span> Press <ShortcutKey>/</ShortcutKey> to open the command palette. Type to search for any action, page, or trade — jump anywhere instantly.
-                  </p>
-                </div>
-                <div className="mt-4"><KeyboardShortcutsDetailMockup /></div>
               </FeatureCard>
+
+              <SubTopic title="Navigation Shortcuts" description="Jump to any page with a single keypress." id="kb-nav" />
+              <FeatureCard icon={Command} title="Page Navigation">
+                <p className="text-sm text-muted-foreground mb-3">Press a number key to jump directly to any main page:</p>
+                <div className="grid md:grid-cols-2 gap-x-8 gap-y-3">
+                  {[
+                    { key: "1", desc: "Dashboard" },
+                    { key: "2", desc: "Trades" },
+                    { key: "3", desc: "Alerts" },
+                    { key: "4", desc: "Studies" },
+                    { key: "5", desc: "Watchlist" },
+                    { key: "6", desc: "Analytics" },
+                  ].map((s) => (
+                    <div key={s.key} className="flex items-center gap-3">
+                      <ShortcutKey>{s.key}</ShortcutKey>
+                      <span className="text-sm text-muted-foreground">{s.desc}</span>
+                    </div>
+                  ))}
+                </div>
+              </FeatureCard>
+
+              <SubTopic title="Full Shortcut Reference" description="Complete reference table for all available keyboard shortcuts." id="kb-reference" />
+              <ExpandableDetail title="Full Shortcut Reference Table" icon={Keyboard} badge="Reference">
+                <p>Every keyboard shortcut available in TradeBook, organized by category:</p>
+                <h4 className="text-xs font-semibold mt-4 mb-1.5 text-foreground/80">Creation Shortcuts</h4>
+                <FeatureList items={[
+                  "N — Open new trade modal. Works from any page.",
+                  "A — Open new alert modal. Pre-fills symbol if you're on a trade detail.",
+                  "S — Open new study modal. Pre-fills symbol context when available.",
+                ]} />
+                <h4 className="text-xs font-semibold mt-4 mb-1.5 text-foreground/80">Search & Command</h4>
+                <FeatureList items={[
+                  "/ or ⌘K (Ctrl+K) — Open the Command Palette. Type to search trades, alerts, journal entries, or navigate to any page.",
+                  "Esc — Close the Command Palette, any open modal, or cancel the current action.",
+                ]} />
+                <h4 className="text-xs font-semibold mt-4 mb-1.5 text-foreground/80">Navigation</h4>
+                <FeatureList items={[
+                  "1 through 6 — Jump to Dashboard, Trades, Alerts, Studies, Watchlist, or Analytics respectively.",
+                ]} />
+                <h4 className="text-xs font-semibold mt-4 mb-1.5 text-foreground/80">Quick Trade Entry (via Command Palette)</h4>
+                <FeatureList items={[
+                  "Open ⌘K → type symbol → select 'Quick Trade' → follow the guided flow: Symbol → Trade Type → Entry Price → Quantity → Confirm.",
+                  "Entire flow is keyboard-only — no mouse needed. Tab between fields, Enter to confirm each step.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Shortcuts are disabled when you're typing in an input field, textarea, or modal form to prevent accidental triggers. They activate only when no input element is focused.</p>
+              </ExpandableDetail>
+
+              <div className="mt-4"><KeyboardShortcutsDetailMockup /></div>
             </motion.section>
 
             <SectionDivider />
