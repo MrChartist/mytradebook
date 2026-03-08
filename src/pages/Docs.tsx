@@ -66,7 +66,8 @@ import {
 } from "@/components/docs/DocsVisualBlocks";
 import {
   ShareCardsMockup, AchievementsMockup, PositionSizingCalcMockup,
-  TradingRulesMockup, TradeCoachMockup, StreakShareMockup
+  TradingRulesMockup, TradeCoachMockup, StreakShareMockup,
+  NotificationCenterMockup, ReferralCardMockup, PublicProfileMockup
 } from "@/components/docs/DocsNewMockups";
 
 const SECTIONS = [
