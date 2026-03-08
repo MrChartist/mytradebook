@@ -27,4 +27,6 @@ Disallow: /settings
 Disallow: /studies
 Disallow: /watchlist
 
+Disallow: /fundamentals
+
 Sitemap: https://mytradebook.lovable.app/sitemap.xml
