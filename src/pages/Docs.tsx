@@ -1735,7 +1735,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                 </FeatureCard>
               </div>
-              <SubTopic title="Streak Celebrations" description="Visual streak cards to share your winning momentum." />
+              <SubTopic title="Streak Celebrations" description="Visual streak cards to share your winning momentum." id="sh-streaks" />
               <StreakShareMockup />
               <FeatureCard icon={Award} title="Streak Share Cards" badge="New">
                 <p className="text-sm text-muted-foreground mb-3">Celebrate your winning streaks with visual share cards:</p>
