@@ -107,10 +107,10 @@ export function Sidebar() {
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <NotificationBell />
-          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl">
+          <Button variant="ghost" size="icon" className="rounded-[var(--radius-sm)]">
             <Search className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl" onClick={() => setMobileOpen(true)}>
+          <Button variant="ghost" size="icon" className="rounded-[var(--radius-sm)]" onClick={() => setMobileOpen(true)}>
             <Menu className="w-5 h-5" />
           </Button>
         </div>
