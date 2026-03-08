@@ -2,8 +2,8 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import {
-  ArrowRight, BookOpen, CheckCircle2, ChevronRight, Eye, Zap, Trophy,
-  Crown, Lock, Shield, Star, Quote, Sparkles, Minus,
+  ArrowRight, BookOpen, CheckCircle2, ChevronRight, Zap,
+  Crown, Lock, Shield, Star, Quote, Sparkles,
   TrendingUp, Layers, Globe, Clock, BarChart3, CandlestickChart,
 } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
@@ -14,11 +14,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { fadeUp, blurIn, slideFromLeft, slideFromRight, popIn, MotionSection, SectionBadge, GradientDivider } from "./LandingShared";
 
 /* ─── Data ─── */
-const steps = [
-  { step: "01", icon: BookOpen, title: "Log", subtitle: "your trades", desc: "Manual entry or auto-sync from Dhan. Tag setups, patterns, and mistakes in seconds.", accent: "from-primary/20 to-primary/5" },
-  { step: "02", icon: Eye, title: "Analyze", subtitle: "your edge", desc: "Segment-level analytics reveal what's working — by setup, time, emotion, and market condition.", accent: "from-primary/15 to-primary/5" },
-  { step: "03", icon: Zap, title: "Automate", subtitle: "your discipline", desc: "Rules engine, smart alerts, and trailing stops enforce your system — even when you won't.", accent: "from-primary/10 to-primary/5" },
-];
 
 const testimonials = [
   { name: "Rahul M.", role: "Options Trader, Mumbai", style: "Options", quote: "TradeBook helped me identify that my Monday morning trades were consistently losing. After adjusting my strategy, my win rate went from 42% to 61%.", highlight: "win rate went from 42% to 61%", stars: 5, avatar: "R", featured: true },
@@ -33,18 +28,6 @@ const shortFeatures = [
   "Trailing stop loss engine", "Broker integration (Dhan)",
 ];
 
-const comparisonFeatures = [
-  { feature: "Multi-segment support", tradebook: true, others: false },
-  { feature: "Indian market focus (NSE/BSE/MCX)", tradebook: true, others: false },
-  { feature: "Trailing stop loss engine", tradebook: true, others: false },
-  { feature: "AI-powered trade insights", tradebook: true, others: false },
-  { feature: "Position sizing calculator", tradebook: true, others: "Basic" as string | boolean },
-  { feature: "Telegram notifications", tradebook: true, others: "Paid" as string | boolean },
-  { feature: "Broker integration", tradebook: true, others: "Limited" as string | boolean },
-  { feature: "Equity curve & drawdown", tradebook: true, others: true },
-  { feature: "Pattern & mistake tagging", tradebook: true, others: false },
-  { feature: "Free beta access", tradebook: true, others: "Limited" as string | boolean },
-];
 
 const faqs = [
   { q: "Is my data safe?", a: "Absolutely. All data is encrypted at rest and in transit with bank-grade security. We never share or sell your trading data to anyone." },
@@ -64,110 +47,6 @@ function HighlightedQuote({ testimonial }: { testimonial: typeof testimonials[0]
   );
 }
 
-export function HowItWorksSection() {
-  const navigate = useNavigate();
-  const timelineRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: timelineRef,
-    offset: ["start center", "end center"],
-  });
-  const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-
-  return (
-    <section className="py-28 lg:py-36" aria-label="How it works">
-      <MotionSection className="max-w-5xl mx-auto px-6">
-        <motion.div variants={fadeUp} className="text-center mb-20">
-          <SectionBadge>How It Works</SectionBadge>
-          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-6 leading-[1.06] tracking-[-0.03em]">Three steps to{" "}<span className="text-shimmer">mastery</span></h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-[1rem] leading-[1.7]">From first trade to consistent edge — in minutes.</p>
-        </motion.div>
-
-        {/* Timeline steps */}
-        <div className="relative" ref={timelineRef}>
-          {/* Vertical connector line — desktop, with scroll-driven gradient */}
-          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2">
-            <div className="h-full w-full bg-border/15" />
-            <motion.div
-              className="absolute top-0 left-0 w-full bg-gradient-to-b from-primary/60 via-primary/40 to-primary/20"
-              style={{ height: lineHeight }}
-            />
-          </div>
-
-          <div className="space-y-16 md:space-y-24">
-            {steps.map((item, i) => {
-              const isEven = i % 2 === 0;
-              const variant = isEven ? slideFromLeft : slideFromRight;
-              return (
-                <motion.div
-                  key={item.step}
-                  variants={variant}
-                  custom={i * 0.15}
-                  className={cn(
-                    "relative grid md:grid-cols-2 gap-8 md:gap-16 items-center",
-                    !isEven && "md:direction-rtl"
-                  )}
-                >
-                  {/* Center dot on timeline */}
-                  <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-                    <motion.div
-                      className="w-4 h-4 rounded-full bg-primary border-4 border-background shadow-sm"
-                      initial={{ scale: 0 }}
-                      whileInView={{ scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20, delay: i * 0.2 }}
-                    />
-                  </div>
-
-                  {/* Number side */}
-                  <div className={cn("flex items-center gap-6", isEven ? "md:justify-end" : "md:justify-start md:order-2")}>
-                    <span className="text-[7rem] lg:text-[9rem] font-black leading-none tracking-tighter text-foreground/[0.04] select-none font-heading">
-                      {item.step}
-                    </span>
-                  </div>
-
-                  {/* Content card */}
-                  <motion.div
-                    className={cn(
-                      "rounded-2xl border border-border/30 bg-card/70 backdrop-blur-sm p-8 relative overflow-hidden glass-card-animated",
-                      isEven ? "md:order-2" : "md:order-1"
-                    )}
-                    whileHover={{ y: -3, borderColor: "hsl(var(--border) / 0.5)" }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-12 h-12 rounded-xl bg-primary/8 flex items-center justify-center">
-                        <item.icon className="w-5.5 h-5.5 text-primary" />
-                      </div>
-                      <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                        Step {item.step}
-                      </span>
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2 tracking-[-0.015em]">{item.title}</h3>
-                    <p className="text-[15px] text-muted-foreground leading-[1.65]">{item.desc}</p>
-                  </motion.div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* CTA */}
-        <motion.div variants={fadeUp} className="text-center mt-20">
-          <p className="text-muted-foreground mb-5 text-[15px] tracking-[-0.006em]">Ready to start? Takes less than 60 seconds.</p>
-          <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.97 }} className="inline-block">
-            <Button size="lg" className="h-14 px-10 gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-wide" onClick={() => navigate("/login?mode=signup")}>
-              Create Free Account <ArrowRight className="w-4 h-4" />
-            </Button>
-          </motion.div>
-        </motion.div>
-      </MotionSection>
-    </section>
-  );
-}
-
-export function ComparisonSection() {
-  return null;
-}
 
 export function PricingSection() {
   const navigate = useNavigate();
@@ -294,45 +173,6 @@ export function PricingSection() {
             </motion.div>
           </motion.div>
         </div>
-
-        {/* Comparison table with staggered row reveals */}
-        <motion.div variants={fadeUp} className="max-w-3xl mx-auto mb-12">
-          <h3 className="text-base font-semibold text-center mb-5 tracking-[-0.015em]">How we compare</h3>
-          <div className="rounded-xl border border-border/20 bg-card/50 overflow-hidden" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}>
-            <div className="grid grid-cols-3 gap-0 border-b border-border/15 px-5 py-3 bg-muted/15">
-              <span className="text-[13px] font-bold text-foreground">Feature</span>
-              <span className="text-[13px] font-bold text-center text-primary flex items-center justify-center gap-1.5"><Trophy className="w-3.5 h-3.5" />TradeBook</span>
-              <span className="text-[13px] font-medium text-center text-muted-foreground/50">Others</span>
-            </div>
-            {comparisonFeatures.map((row, i) => (
-              <motion.div
-                key={row.feature}
-                className={cn("grid grid-cols-3 gap-0 border-b border-border/8 last:border-0 px-5 py-3", i % 2 === 0 ? "bg-muted/[0.03]" : "")}
-                initial={{ opacity: 0, y: 8 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.04, duration: 0.3 }}
-              >
-                <span className="text-[13px] text-foreground/80">{row.feature}</span>
-                <div className="flex justify-center">
-                  {row.tradebook === true ? (
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      whileInView={{ scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20, delay: i * 0.05 }}
-                    >
-                      <CheckCircle2 className="w-4 h-4 text-profit" />
-                    </motion.div>
-                  ) : (
-                    <span className="text-[13px] text-muted-foreground">{String(row.tradebook)}</span>
-                  )}
-                </div>
-                <div className="flex justify-center">{row.others === true ? <CheckCircle2 className="w-4 h-4 text-muted-foreground/25" /> : row.others === false ? <Minus className="w-4 h-4 text-muted-foreground/15" /> : <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted/30 text-muted-foreground/50">{String(row.others)}</span>}</div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
 
         {/* Trust badges */}
         <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-3">
