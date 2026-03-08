@@ -21,7 +21,7 @@ export function MobileBottomNav() {
   return (
     <>
       <MobileDrawer open={drawerOpen} onOpenChange={setDrawerOpen} />
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-card/90 to-card/70 backdrop-blur-xl border-t border-border/30 safe-area-bottom" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08), 0 -6px 16px hsl(0 0% 0% / 0.08)" }}>
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border/40 safe-area-bottom">
         <div className="flex items-center justify-around h-[58px]">
           {tabs.map((tab) => {
             const isActive = location.pathname === tab.path;
