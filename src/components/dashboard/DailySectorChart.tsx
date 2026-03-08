@@ -37,8 +37,9 @@ export function DailySectorChart() {
   const closedTrades = useMemo(() => monthTrades.filter((t) => t.status === "CLOSED"), [monthTrades]);
 
   const days = useMemo(() => {
-    const start = startOfMonth(selectedMonth);
-    const end = endOfMonth(selectedMonth) > new Date() ? new Date() : endOfMonth(selectedMonth);
+    const month = selectedMonth || new Date();
+    const start = startOfMonth(month);
+    const end = endOfMonth(month) > new Date() ? new Date() : endOfMonth(month);
     return eachDayOfInterval({ start, end }).filter((d) => !isWeekend(d));
   }, [selectedMonth]);
 
