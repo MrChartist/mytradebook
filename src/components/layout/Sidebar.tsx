@@ -27,6 +27,7 @@ import { MobileDrawer } from "./MobileDrawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useSubscription } from "@/hooks/useSubscription";
+import { NotificationBell } from "@/components/NotificationBell";
 import logo from "@/assets/logo.png";
 
 const mainNavItems = [
