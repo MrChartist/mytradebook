@@ -965,19 +965,27 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <QuickNav items={[
                 { label: "Import Workflow", id: "csv-import-workflow" },
                 { label: "Import & Export Details", id: "csv-details" },
+                { label: "Supported Formats", id: "csv-formats" },
               ]} />
+
               <SubTopic title="Import Workflow" description="Step-by-step process to bring your existing trades into TradeBook." id="csv-import-workflow" />
               <StepByStep title="How to Import" steps={[
-                { title: "Export from your broker", description: "Download your trade history as CSV from your broker's platform." },
-                { title: "Upload to TradeBook", description: "Go to Trades → Import CSV and select your file." },
-                { title: "Map columns", description: "Match your CSV column headers to TradeBook fields. Common names are auto-detected." },
-                { title: "Preview & confirm", description: "Review mapped data, fix any validation errors, then confirm the import." },
+                { title: "Export from your broker", description: "Download your trade history as CSV from your broker's platform.", detail: "Most brokers offer a 'Download' or 'Export' button in the trade history or contract notes section." },
+                { title: "Upload to TradeBook", description: "Go to Trades → Import CSV and select your file.", detail: "Drag-and-drop is supported. Files up to 5MB with hundreds of rows work smoothly." },
+                { title: "Map columns", description: "Match your CSV column headers to TradeBook fields. Common names are auto-detected.", detail: "Headers like 'ticker', 'qty', 'entry_price' are recognized automatically — you only need to fix unmatched ones." },
+                { title: "Preview & confirm", description: "Review mapped data, fix any validation errors, then confirm the import.", detail: "Validation highlights missing required fields, invalid dates, and potential duplicates before you commit." },
               ]} />
+
+              <ProTip variant="warning">
+                <p>Date format mismatches are the most common import issue. Ensure your CSV dates are in <strong>YYYY-MM-DD</strong> or <strong>DD/MM/YYYY</strong> format. US-style MM/DD/YYYY can cause silent errors where day and month get swapped — always double-check a few rows in the preview step before confirming.</p>
+              </ProTip>
+
               <VideoPlaceholder title="How to Import Trades from CSV" duration="3 min" />
+
               <SubTopic title="Import & Export Details" description="Detailed capabilities for importing and exporting trade data." id="csv-details" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Upload} title="Importing Trades">
-                  <p className="text-sm text-muted-foreground mb-3">Step-by-step CSV import with validation:</p>
+                  <p className="text-sm text-muted-foreground mb-3">Full-featured CSV import with validation:</p>
                   <FeatureList items={[
                     "Upload any CSV file — supports most broker export formats",
                     "Interactive column mapping — match your CSV headers to TradeBook fields",
@@ -986,7 +994,6 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "Validation checks: missing required fields, invalid dates, duplicate trades",
                     "Batch import — process hundreds of trades at once",
                   ]} />
-                  <div className="mt-4"><CsvImportMockup /></div>
                 </FeatureCard>
                 <FeatureCard icon={Download} title="Exporting Data">
                   <p className="text-sm text-muted-foreground mb-3">Full data export for backup or external tools:</p>
@@ -999,6 +1006,24 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                 </FeatureCard>
               </div>
+
+              <InteractiveMockup label="CSV Import Preview">
+                <CsvImportMockup />
+              </InteractiveMockup>
+
+              <SubTopic title="Supported Broker Formats" description="Pre-tested CSV formats from popular Indian brokers." id="csv-formats" />
+              <ExpandableDetail title="Supported Broker Formats" icon={FileText} badge="Reference">
+                <p>TradeBook's column auto-detection works with exports from most Indian brokers. Tested formats include:</p>
+                <FeatureList items={[
+                  "Zerodha (Kite) — contract notes and tradebook CSV exports",
+                  "Dhan — trade history downloads from the Dhan web dashboard",
+                  "Groww — stock and F&O trade history exports",
+                  "Angel One — trade book and order book CSV downloads",
+                  "Upstox — trade history exports from the Upstox Pro dashboard",
+                  "ICICI Direct — trade confirmation CSV reports",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">If your broker's format isn't auto-detected, you can still import — just manually map the columns in Step 3. Any CSV with symbol, date, price, and quantity columns will work.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
