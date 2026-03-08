@@ -1884,7 +1884,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
 
               <SubTopic title="Time-Based Analysis" description="Discover your most and least profitable trading windows." id="an-time" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Clock} title="Time-Based Heatmaps" badge="Pro">
                   <p className="text-sm text-muted-foreground mb-3">Two heatmaps that reveal your optimal trading schedule:</p>
                   <FeatureList items={[
