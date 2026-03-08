@@ -105,7 +105,7 @@ export function JournalCalendarView({
 
   if (isLoading) {
     return (
-      <div className="glass-card p-5">
+      <div className="surface-card p-5">
         <Skeleton className="h-8 w-48 mb-4" />
         <div className="grid grid-cols-7 gap-1">
           {Array.from({ length: 35 }).map((_, i) => (
