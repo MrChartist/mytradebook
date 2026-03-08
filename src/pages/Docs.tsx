@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { LandingNavbar } from "@/components/landing/LandingNavbar";
 import {
-  BentoFeatureGrid, OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
+  OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
   TradeLifecycleFlow, AlertCardMockup, TelegramNotifMockup, WatchlistMockup,
   CalendarHeatmapMockup, KanbanBoardMockup, EquityCurveMockup,
   AnalyticsHeatmapMockup, AnalyticsMetricCards, ShortcutKeyboardMockup,
@@ -91,6 +91,164 @@ const SECTIONS = [
   { id: "changelog", label: "Changelog & Roadmap", icon: RefreshCw },
 ];
 
+const SECTION_ANCHORS: Record<string, { label: string; id: string }[]> = {
+  "getting-started": [
+    { label: "Quick Start", id: "gs-quick-start" },
+    { label: "Platform Overview", id: "gs-platform-overview" },
+    { label: "System Requirements", id: "gs-system-req" },
+  ],
+  "dashboard": [
+    { label: "Performance Overview", id: "db-performance" },
+    { label: "Charts & Visualizations", id: "db-charts" },
+    { label: "Customization", id: "db-customization" },
+    { label: "Advanced Widgets", id: "db-advanced" },
+  ],
+  "trade-management": [
+    { label: "Creating Trades", id: "tm-creating" },
+    { label: "Trade Lifecycle", id: "tm-lifecycle" },
+    { label: "Risk Management", id: "tm-risk" },
+    { label: "Post-Trade Review", id: "tm-review" },
+    { label: "Sharing & Discipline", id: "tm-sharing" },
+    { label: "Quick Actions", id: "tm-quick" },
+  ],
+  "csv-import": [
+    { label: "Import Workflow", id: "csv-import-workflow" },
+    { label: "Import & Export Details", id: "csv-details" },
+    { label: "Format & Troubleshooting", id: "csv-format" },
+  ],
+  "trade-templates": [
+    { label: "Template Setup", id: "tpl-setup" },
+    { label: "Smart Suggestions", id: "tpl-smart" },
+    { label: "Automation Features", id: "tpl-auto" },
+  ],
+  "position-sizing": [
+    { label: "Calculation Workflow", id: "ps-workflow" },
+    { label: "Advanced Sizing", id: "ps-advanced" },
+    { label: "Practical Examples", id: "ps-examples" },
+  ],
+  "trading-rules": [
+    { label: "Setup & Usage", id: "tr-setup" },
+    { label: "Core vs Optional", id: "tr-core" },
+    { label: "Pre-Trade Checklist", id: "tr-checklist" },
+  ],
+  "alerts": [
+    { label: "First Alert", id: "al-first" },
+    { label: "Alert Types", id: "al-types" },
+    { label: "Delivery Channels", id: "al-delivery" },
+    { label: "Management", id: "al-manage" },
+  ],
+  "studies": [
+    { label: "Publishing a Study", id: "st-publish" },
+    { label: "Study Workflow", id: "st-workflow" },
+    { label: "Pattern Tagging", id: "st-patterns" },
+    { label: "Research Tools", id: "st-tools" },
+    { label: "Linking to Trades", id: "st-linking" },
+  ],
+  "watchlists": [
+    { label: "First Watchlist", id: "wl-first" },
+    { label: "Organization", id: "wl-org" },
+    { label: "Live Prices", id: "wl-prices" },
+    { label: "Alerts Integration", id: "wl-alerts" },
+  ],
+  "journal": [
+    { label: "Weekly Review", id: "jn-review" },
+    { label: "Dashboard Tab", id: "jn-dashboard" },
+    { label: "Calendar Tab", id: "jn-calendar" },
+    { label: "Mistakes Tab", id: "jn-mistakes" },
+    { label: "Filters & Segments", id: "jn-filters" },
+  ],
+  "analytics": [
+    { label: "Getting Started", id: "an-start" },
+    { label: "Core Metrics", id: "an-core" },
+    { label: "Advanced Tools", id: "an-advanced" },
+    { label: "AI Pattern Detection", id: "an-ai" },
+  ],
+  "calendar": [
+    { label: "Calendar View", id: "cal-view" },
+    { label: "Daily Review", id: "cal-review" },
+    { label: "Journal Integration", id: "cal-journal" },
+    { label: "Scheduling", id: "cal-schedule" },
+  ],
+  "mistakes": [
+    { label: "Categorizing", id: "mk-categorize" },
+    { label: "Pattern Recognition", id: "mk-patterns" },
+    { label: "Improvement Tools", id: "mk-tools" },
+    { label: "Analytics Link", id: "mk-analytics" },
+  ],
+  "fundamentals": [
+    { label: "First Screen", id: "sc-first" },
+    { label: "Scanner Presets", id: "sc-presets" },
+    { label: "Custom Filters", id: "sc-custom" },
+    { label: "Stock Details", id: "sc-details" },
+    { label: "Sparkline & Trends", id: "sc-sparklines" },
+  ],
+  "reports": [
+    { label: "Generating Reports", id: "rp-generate" },
+    { label: "Report Contents", id: "rp-contents" },
+    { label: "Delivery & Sharing", id: "rp-delivery" },
+    { label: "Customization", id: "rp-customization" },
+  ],
+  "sharing": [
+    { label: "Creating a Card", id: "sh-create" },
+    { label: "Card Types", id: "sh-cards" },
+    { label: "Social Features", id: "sh-social" },
+    { label: "Privacy Controls", id: "sh-privacy" },
+  ],
+  "achievements": [
+    { label: "Progress Tracking", id: "ach-progress" },
+    { label: "Badge Categories", id: "ach-categories" },
+    { label: "Sharing Badges", id: "ach-sharing" },
+    { label: "Milestone Rewards", id: "ach-milestones" },
+  ],
+  "trade-coach": [
+    { label: "Coaching Workflow", id: "tc-workflow" },
+    { label: "Analysis Dimensions", id: "tc-analysis" },
+    { label: "AI Integration", id: "tc-ai" },
+    { label: "Best Practices", id: "tc-best" },
+  ],
+  "integrations": [
+    { label: "Dhan Setup", id: "int-dhan" },
+    { label: "Telegram Setup", id: "int-telegram" },
+    { label: "Webhook & API", id: "int-webhook" },
+    { label: "Data Sync", id: "int-sync" },
+  ],
+  "ai-integration": [
+    { label: "Provider Setup", id: "ai-provider" },
+    { label: "How It Works", id: "ai-how" },
+    { label: "Credit Usage", id: "ai-credits" },
+    { label: "Privacy", id: "ai-privacy" },
+  ],
+  "shortcuts": [
+    { label: "Command Palette", id: "kb-palette" },
+    { label: "Quick Actions", id: "kb-actions" },
+    { label: "Navigation", id: "kb-nav" },
+    { label: "Full Reference", id: "kb-reference" },
+  ],
+  "pwa": [
+    { label: "Install on Phone", id: "pwa-install" },
+    { label: "Offline Queue", id: "pwa-offline" },
+    { label: "Mobile Navigation", id: "pwa-mobile" },
+    { label: "PWA vs Native", id: "pwa-vs-native" },
+  ],
+  "settings": [
+    { label: "Profile & Billing", id: "set-account" },
+    { label: "Tags & Preferences", id: "set-tags" },
+    { label: "Capital Management", id: "set-capital" },
+    { label: "Security & Integrations", id: "set-security" },
+  ],
+  "faq": [
+    { label: "Account & Billing", id: "faq-account" },
+    { label: "Data & Privacy", id: "faq-data" },
+    { label: "Integrations", id: "faq-integrations" },
+    { label: "Features", id: "faq-features" },
+  ],
+  "changelog": [
+    { label: "Latest Updates", id: "cl-updates" },
+    { label: "Roadmap", id: "cl-roadmap" },
+    { label: "Versioning", id: "cl-versioning" },
+  ],
+};
+
 function FeatureList({ items }: { items: string[] }) {
   return (
     <ul className="space-y-2.5 mt-4">
@@ -108,25 +266,19 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
 }) {
   return (
-    <div className="group rounded-xl border border-border/20 bg-card/60 backdrop-blur-sm relative overflow-hidden transition-all duration-200 hover:border-border/35">
-      {/* Top accent on hover */}
-      <div className="absolute top-0 left-0 right-0 h-[1.5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-transparent via-primary to-transparent" />
-      <div className="p-5 lg:p-6 pb-3.5">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
-            <Icon className="w-[18px] h-[18px] text-primary" />
-          </div>
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <h3 className="text-[15px] font-bold leading-tight tracking-tight">{title}</h3>
-            {badge && (
-              <span className="text-[9px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-full bg-primary/8 text-primary">
-                {badge}
-              </span>
-            )}
-          </div>
+    <div className="group rounded-lg border border-border/40 bg-card relative overflow-hidden transition-colors duration-200 hover:border-border/60">
+      <div className="p-5 pb-3">
+        <div className="flex items-center gap-2.5">
+          <Icon className="w-4 h-4 text-primary shrink-0" />
+          <h4 className="text-sm font-semibold leading-tight">{title}</h4>
+          {badge && (
+            <span className="text-[9px] font-semibold tracking-wide uppercase px-1.5 py-0.5 rounded bg-primary/8 text-primary">
+              {badge}
+            </span>
+          )}
         </div>
       </div>
-      <div className="px-5 lg:px-6 pb-6 lg:pb-7">
+      <div className="px-5 pb-5">
         <div className="[&>p]:text-[13px] [&>p]:leading-[1.7] [&>p]:text-muted-foreground">{children}</div>
       </div>
     </div>
@@ -135,14 +287,14 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
 
 function VideoPlaceholder({ title, duration }: { title: string; duration: string }) {
   return (
-    <div className="my-5 rounded-xl border border-border/20 bg-card/40 overflow-hidden group cursor-pointer hover:border-border/35 transition-all duration-200">
-      <div className="relative bg-gradient-to-br from-muted/30 to-muted/10 flex items-center justify-center py-12">
-        <div className="relative flex flex-col items-center gap-2.5">
-          <div className="w-12 h-12 rounded-full bg-primary/8 border border-primary/15 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-            <Play className="w-5 h-5 text-primary ml-0.5" />
-          </div>
-          <p className="text-[13px] font-semibold text-foreground">{title}</p>
-          <span className="text-[9px] text-muted-foreground/60 bg-muted/30 rounded-full px-2.5 py-0.5 font-medium">{duration} · Coming Soon</span>
+    <div className="my-5 rounded-lg border border-border/40 bg-muted/20 overflow-hidden group cursor-pointer hover:border-border/60 transition-colors duration-200">
+      <div className="flex items-center gap-3 px-4 py-6">
+        <div className="w-10 h-10 rounded-full bg-primary/8 border border-primary/15 flex items-center justify-center shrink-0">
+          <Play className="w-4 h-4 text-primary ml-0.5" />
+        </div>
+        <div>
+          <p className="text-[13px] font-medium text-foreground">{title}</p>
+          <span className="text-[11px] text-muted-foreground/60">{duration} · Coming Soon</span>
         </div>
       </div>
     </div>
@@ -150,13 +302,7 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
 }
 
 function SectionDivider() {
-  return (
-    <div className="flex items-center gap-4 py-4">
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/25 to-transparent" />
-      <div className="w-1 h-1 rounded-full bg-primary/15" />
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/25 to-transparent" />
-    </div>
-  );
+  return <div className="h-px bg-border/30 my-2" />;
 }
 
 function SectionHeader({ id, title, description, icon: Icon }: {
@@ -171,32 +317,19 @@ function SectionHeader({ id, title, description, icon: Icon }: {
   }, [id]);
 
   return (
-    <div id={id} className="scroll-mt-24 mb-8 relative group">
-      {/* Subtle left accent */}
-      <motion.div
-        initial={{ scaleY: 0 }}
-        whileInView={{ scaleY: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        className="absolute left-0 top-0 bottom-0 w-[2px] rounded-full bg-primary/40 origin-top"
-      />
-      <div className="pl-5">
-        <div className="flex items-center gap-3 mb-2.5">
-          <div className="w-9 h-9 rounded-xl bg-primary/8 flex items-center justify-center">
-            <Icon className="w-[18px] h-[18px] text-primary" />
-          </div>
-          <h2 className="text-xl lg:text-[1.65rem] font-extrabold tracking-tight leading-tight">{title}</h2>
-          <button
-            onClick={copyLink}
-            className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 ml-0.5 p-1 rounded-md text-muted-foreground/40 hover:text-primary hover:bg-primary/5 transition-all text-[11px] font-mono"
-            aria-label={`Copy link to ${title}`}
-            title="Copy section link"
-          >
-            <span id={`copy-${id}`}>#</span>
-          </button>
-        </div>
-        <p className="text-sm text-muted-foreground/80 leading-relaxed max-w-2xl">{description}</p>
+    <div id={id} className="scroll-mt-24 mb-6 pb-5 border-b border-border/30 group">
+      <div className="flex items-center gap-2 mb-2">
+        <h2 className="text-xl font-bold tracking-tight leading-tight">{title}</h2>
+        <button
+          onClick={copyLink}
+          className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 p-1 rounded text-muted-foreground/40 hover:text-primary transition-all text-[11px] font-mono"
+          aria-label={`Copy link to ${title}`}
+          title="Copy section link"
+        >
+          <span id={`copy-${id}`}>#</span>
+        </button>
       </div>
+      <p className="text-[13.5px] text-muted-foreground leading-relaxed max-w-2xl">{description}</p>
     </div>
   );
 }
@@ -301,14 +434,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
     });
   };
 
-  const [scrollProgress, setScrollProgress] = useState(0);
-
   useEffect(() => {
     const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      setScrollProgress(docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) : 0);
-      setShowBackToTop(scrollTop > 600);
+      setShowBackToTop(window.scrollY > 600);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -323,115 +451,84 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       {/* Shared navbar */}
       <LandingNavbar activePage="docs" isInsideApp={isInsideApp} />
 
-      {/* Hero */}
-      <div className={cn("pt-20 border-b border-border/15 bg-gradient-to-b from-primary/[0.02] to-transparent", isInsideApp && "border-none")}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-14 lg:py-20">
-          <div className="flex items-center gap-2.5 mb-6">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/8 text-primary text-[10px] font-bold tracking-wide">
-              Documentation
-            </span>
+      {/* Docs Header */}
+      <div className={cn("pt-20 border-b border-border/40", isInsideApp && "border-border/20")}>
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-8 py-8 lg:py-10">
+          <div className="flex items-center gap-3 mb-3">
+            <h1 className="text-2xl lg:text-[1.7rem] font-bold tracking-tight">Documentation</h1>
             <button
               onClick={toggle}
               className={cn(
-                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold transition-all border",
+                "inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-semibold transition-all border",
                 mode === "bw"
                   ? "bg-foreground text-background border-foreground"
-                  : "bg-muted/30 text-muted-foreground/60 border-border/20 hover:border-border/40"
+                  : "bg-muted/40 text-muted-foreground/60 border-border/30 hover:border-border/50"
               )}
             >
               <Palette className="w-3 h-3" />
               {mode === "bw" ? "B&W" : "Color"}
             </button>
           </div>
-          <h1 className="text-3xl lg:text-4xl xl:text-5xl font-extrabold tracking-tight mb-5 leading-[1.08] max-w-2xl">
-            Everything you need to know about{" "}
-            <span className="accent-script text-primary">TradeBook</span>
-          </h1>
-          <p className="text-[15px] lg:text-base text-muted-foreground/80 max-w-xl leading-[1.75]">
-            A comprehensive guide to every feature, capability, and workflow — from your first trade log to advanced analytics.
+          <p className="text-[14px] text-muted-foreground leading-relaxed max-w-xl">
+            Complete guide to every TradeBook feature — from trade logging to advanced analytics.
           </p>
-          <div className="flex items-center gap-2.5 mt-4 text-[11px] text-muted-foreground/50">
+          <div className="flex items-center gap-3 mt-3 text-[11px] text-muted-foreground/50">
             <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~35 min read</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
             <span>Last updated: March 2026</span>
-          </div>
-          {/* Hero stat chips */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25, duration: 0.35 }}
-            className="flex flex-wrap gap-2 mt-6"
-          >
-            {[
-              { label: "26 Sections", icon: FileText },
-              { label: "80+ Mockups", icon: Eye },
-              { label: "Every Feature", icon: Zap },
-              { label: "Free vs Pro", icon: Star },
-            ].map((stat) => (
-              <div key={stat.label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/15 bg-card/40 text-[11px] font-semibold text-foreground/80">
-                <stat.icon className="w-3 h-3 text-primary" />
-                {stat.label}
-              </div>
-            ))}
-          </motion.div>
-          <div className="mt-8">
-            <BentoFeatureGrid />
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
+            <span>26 sections</span>
           </div>
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-12 lg:py-14">
-        <div className="flex gap-12">
-          {/* Sidebar — desktop */}
+      <div className="max-w-[1440px] mx-auto">
+        <div className="flex">
+          {/* Left Sidebar — desktop */}
           <TooltipProvider delayDuration={200}>
             <aside className={cn(
-              "hidden lg:block shrink-0 transition-all duration-300",
-              sidebarCollapsed ? "w-14" : "w-64"
+              "hidden lg:block shrink-0 transition-all duration-300 border-r border-border/30",
+              sidebarCollapsed ? "w-14" : "w-[220px]"
             )}>
-              <div className="sticky top-24">
-                {/* Scroll progress bar */}
-                <div className="h-0.5 bg-muted/60 rounded-full overflow-hidden mb-4">
-                  <div className="h-full bg-primary/80 transition-all duration-150" style={{ width: `${scrollProgress}%` }} />
-                </div>
+              <div className="sticky top-20 py-6 pr-4 pl-4">
                 {/* Header with collapse toggle */}
-                <div className={cn("flex items-center mb-4", sidebarCollapsed ? "justify-center" : "justify-between px-3")}>
+                <div className={cn("flex items-center mb-3", sidebarCollapsed ? "justify-center" : "justify-between")}>
                   {!sidebarCollapsed && (
-                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/50">Contents</p>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50">Contents</p>
                   )}
                   <button
                     onClick={toggleSidebar}
-                    className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                    className="p-1 rounded text-muted-foreground/50 hover:text-foreground hover:bg-muted/40 transition-colors"
                     aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
                   >
-                    {sidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+                    {sidebarCollapsed ? <PanelLeftOpen className="w-3.5 h-3.5" /> : <PanelLeftClose className="w-3.5 h-3.5" />}
                   </button>
                 </div>
                 {/* Search filter */}
                 {!sidebarCollapsed && (
-                  <div className="px-2 mb-2.5">
+                  <div className="mb-3">
                     <div className="relative">
                       <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground/40" />
                       <input
                         type="text"
                         value={sidebarSearch}
                         onChange={(e) => setSidebarSearch(e.target.value)}
-                        placeholder="Filter sections…"
-                        className="w-full h-7 pl-7 pr-2.5 rounded-md bg-muted/30 border border-border/20 text-[11px] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all"
+                        placeholder="Filter…"
+                        className="w-full h-7 pl-7 pr-2 rounded bg-muted/30 border border-border/30 text-[11px] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
                       />
                     </div>
                   </div>
                 )}
-                <ScrollArea className="h-[calc(100vh-12rem)]">
-                  <nav className={cn(!sidebarCollapsed && "pr-4")}>
+                <ScrollArea className="h-[calc(100vh-10rem)]">
+                  <nav>
                     {sidebarGroups.map((group, gi) => {
                       const groupSections = filteredSections.filter((s) => group.ids.includes(s.id));
                       if (groupSections.length === 0) return null;
                       return (
                       <div key={group.label}>
-                         {gi > 0 && !sidebarCollapsed && <Separator className="my-2.5 mx-2" />}
-                         {gi > 0 && sidebarCollapsed && <Separator className="my-2" />}
+                         {gi > 0 && <div className="h-px bg-border/20 my-2" />}
                          {!sidebarCollapsed && (
-                           <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground/45 px-2.5 pt-1.5 pb-1">{group.label}</p>
+                           <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/40 px-2 pt-2 pb-1">{group.label}</p>
                         )}
                         {groupSections.map((s) => {
                           const btn = (
@@ -439,14 +536,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                                key={s.id}
                                onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
                                className={cn(
-                                 "w-full flex items-center rounded-md text-[12px] transition-all duration-200 text-left relative",
-                                 sidebarCollapsed ? "justify-center p-2" : "gap-2 px-2.5 py-[6px]",
+                                 "w-full flex items-center rounded text-[12px] transition-colors duration-150 text-left relative",
+                                 sidebarCollapsed ? "justify-center p-2" : "gap-2 px-2 py-[5px]",
                                  activeSection === s.id
-                                   ? "bg-primary/8 text-primary font-semibold"
-                                   : "text-muted-foreground/70 hover:text-foreground hover:bg-muted/30"
+                                   ? "text-foreground font-medium"
+                                   : "text-muted-foreground/60 hover:text-foreground"
                                )}
                              >
-                               {activeSection === s.id && (
+                               {activeSection === s.id && !sidebarCollapsed && (
                                  <motion.div
                                    layoutId="docs-active-pill"
                                    className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 rounded-full bg-primary"
@@ -478,17 +575,17 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </TooltipProvider>
 
           {/* Mobile tabs */}
-          <nav className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border/15" aria-label="Section navigation">
+          <nav className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border/30" aria-label="Section navigation">
             <div className="flex gap-1 overflow-x-auto px-3 py-2 no-scrollbar">
               {SECTIONS.map((s) => (
                 <button
                   key={s.id}
                   onClick={() => scrollTo(s.id)}
                   className={cn(
-                    "shrink-0 px-3 py-1.5 rounded-md text-[11px] font-medium transition-all whitespace-nowrap",
+                    "shrink-0 px-2.5 py-1 rounded text-[11px] font-medium transition-colors whitespace-nowrap",
                     activeSection === s.id
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted/30 text-muted-foreground/60"
+                      ? "bg-foreground text-background"
+                      : "text-muted-foreground/60 hover:text-foreground"
                   )}
                 >
                   {s.label}
@@ -498,7 +595,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </nav>
 
           {/* Main content */}
-          <main className={cn("flex-1 min-w-0 space-y-24 lg:pt-0 pt-14 transition-all duration-300", sidebarCollapsed ? "max-w-5xl" : "max-w-4xl")}>
+          <main className="flex-1 min-w-0 max-w-3xl px-6 lg:px-10 py-8 lg:py-10 space-y-16 pt-14 lg:pt-8">
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
@@ -3271,6 +3368,24 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </motion.section>
             )}
           </main>
+
+          {/* Right sidebar — On this page */}
+          <aside className="hidden xl:block w-[180px] shrink-0 border-l border-border/30">
+            <div className="sticky top-20 py-6 pl-5">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50 mb-3">On this page</p>
+              <nav className="space-y-0.5">
+                {(SECTION_ANCHORS[activeSection] || []).map((anchor) => (
+                  <button
+                    key={anchor.id}
+                    onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                    className="block w-full text-left text-[11px] text-muted-foreground/60 hover:text-foreground py-1 transition-colors duration-150 leading-snug"
+                  >
+                    {anchor.label}
+                  </button>
+                ))}
+              </nav>
+            </div>
+          </aside>
         </div>
       </div>
 
@@ -3278,31 +3393,30 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       <AnimatePresence>
         {showBackToTop && (
           <motion.button
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
+            exit={{ opacity: 0, y: 10 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-card/80 backdrop-blur-xl border border-border/40 shadow-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-card transition-all"
+            className="fixed bottom-6 right-6 z-50 w-9 h-9 rounded-lg bg-card border border-border/50 shadow-sm flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Back to top"
-            style={{ boxShadow: "0 4px 20px -6px rgba(0,0,0,0.1), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}
           >
-            <ArrowUpRight className="w-4 h-4 -rotate-45" />
+            <ArrowUpRight className="w-3.5 h-3.5 -rotate-45" />
           </motion.button>
         )}
       </AnimatePresence>
 
       {/* Footer — only on standalone */}
       {!isInsideApp && (
-        <footer className="border-t border-border/30 bg-card/50 backdrop-blur-sm dot-pattern py-16" role="contentinfo" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
-          <div className="max-w-7xl mx-auto px-6 lg:px-10">
-            <div className="grid md:grid-cols-4 gap-10 mb-10">
+        <footer className="border-t border-border/30 py-12" role="contentinfo">
+          <div className="max-w-[1440px] mx-auto px-6 lg:px-8">
+            <div className="grid md:grid-cols-4 gap-8 mb-8">
               <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <img src="/favicon-32x32.png" alt="TradeBook" className="h-7 object-contain" loading="lazy" />
-                  <span className="text-sm font-bold text-foreground">TradeBook</span>
+                <div className="flex items-center gap-2 mb-3">
+                  <img src="/favicon-32x32.png" alt="TradeBook" className="h-6 object-contain" loading="lazy" />
+                  <span className="text-sm font-semibold text-foreground">TradeBook</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed mb-4">The trading journal built for Indian markets.</p>
-                <Button size="sm" onClick={() => navigate("/login?mode=signup")} className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 text-[12px] h-8 shadow-[0_6px_16px_hsl(var(--tb-accent)/0.35)]">
+                <Button size="sm" onClick={() => navigate("/login?mode=signup")} className="rounded-lg px-4 text-[12px] h-8">
                   Get Started <ArrowRight className="w-3 h-3" />
                 </Button>
               </div>
@@ -3312,11 +3426,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }, { label: "Contact", href: "mailto:founder@mrchartist.com" }] },
               ].map((col) => (
                 <div key={col.title}>
-                  <h4 className="text-xs uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-4 border-l-2 border-[hsl(var(--tb-accent))] pl-2">{col.title}</h4>
+                  <h4 className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground/50 mb-3">{col.title}</h4>
                   <ul className="space-y-1.5">
                     {col.links.map((l) => (
                       <li key={l.label}>
-                        <button onClick={() => l.href.startsWith("mailto") ? window.open(l.href) : l.href.startsWith("#") ? document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: "smooth" }) : navigate(l.href)} className="text-sm text-muted-foreground hover:text-foreground hover:translate-x-0.5 transition-all duration-200 inline-block">
+                        <button onClick={() => l.href.startsWith("mailto") ? window.open(l.href) : l.href.startsWith("#") ? document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: "smooth" }) : navigate(l.href)} className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
                           {l.label}
                         </button>
                       </li>
@@ -3325,13 +3439,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
               ))}
             </div>
-            <div className="h-[1px] bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.25)] to-transparent mb-6" />
-            <div className="bg-muted/20 rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-3">
-              <p className="text-xs text-muted-foreground/80 flex items-center gap-1.5">
+            <div className="h-px bg-border/30 mb-4" />
+            <div className="flex flex-col md:flex-row items-center justify-between gap-2">
+              <p className="text-[11px] text-muted-foreground/60">
                 © {new Date().getFullYear()} TradeBook. All rights reserved.
-                <span className="inline-flex items-center gap-1">Made with ❤️ in <span className="inline-flex gap-[2px]"><span className="w-2 h-2 rounded-full bg-[#FF9933]" /><span className="w-2 h-2 rounded-full bg-white border border-border/40" /><span className="w-2 h-2 rounded-full bg-[#138808]" /></span> India</span>
               </p>
-              <span className="text-[10px] text-muted-foreground/60 bg-muted/30 border border-border/30 rounded-full px-3 py-1">Not SEBI registered · For educational purposes only</span>
+              <span className="text-[10px] text-muted-foreground/40">Not SEBI registered · For educational purposes only</span>
             </div>
           </div>
         </footer>
