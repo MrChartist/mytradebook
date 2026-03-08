@@ -1220,7 +1220,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Eye}
               />
               <WatchlistMockup />
-              <SubTopic title="Organization & Live Data" description="Create lists, track prices, and act on opportunities." />
+              <SubTopic title="Organization & Live Data" description="Create lists, track prices, and act on opportunities." id="wl-org" />
               <FeatureCard icon={Eye} title="Watchlist Capabilities">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
