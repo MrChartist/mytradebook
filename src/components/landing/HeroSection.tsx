@@ -104,7 +104,7 @@ export function HeroSection() {
           {/* Social proof pill */}
           <motion.div
             variants={fadeUp} initial="hidden" animate="visible" custom={0}
-            className="mb-10"
+            className="mb-8"
           >
             <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-card/50 dark:bg-card/30 backdrop-blur-xl border border-border/30 shadow-sm">
               <div className="flex -space-x-2">
@@ -118,7 +118,7 @@ export function HeroSection() {
                   </div>
                 ))}
               </div>
-              <span className="text-muted-foreground text-[13px] font-medium">
+              <span className="text-muted-foreground text-[13px] font-medium tracking-[-0.01em]">
                 1,200+ traders joined
               </span>
             </div>
@@ -127,18 +127,18 @@ export function HeroSection() {
           {/* Headline */}
           <motion.h1
             variants={fadeUp} initial="hidden" animate="visible" custom={0.1}
-            className="font-display text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold leading-[0.92] tracking-[-0.03em] text-foreground mb-6"
+            className="font-display text-[2.75rem] sm:text-[3.5rem] lg:text-[4.5rem] xl:text-[5.5rem] font-bold leading-[0.95] tracking-[-0.025em] text-foreground mb-7"
           >
             Know Your{" "}
             <span className="accent-script">Edge</span>.
             <br />
-            <span className="text-foreground/80">Compound It Daily.</span>
+            <span className="text-foreground/75">Compound It Daily.</span>
           </motion.h1>
 
           {/* Subtitle */}
           <motion.p
             variants={fadeUp} initial="hidden" animate="visible" custom={0.2}
-            className="text-lg lg:text-xl text-muted-foreground max-w-md mx-auto mb-12 leading-relaxed"
+            className="text-[1.0625rem] lg:text-lg text-muted-foreground max-w-[26rem] mx-auto mb-12 leading-[1.65] tracking-[-0.008em]"
           >
             The trading journal built for Indian markets — NSE, BSE, MCX.
           </motion.p>
@@ -150,7 +150,7 @@ export function HeroSection() {
           >
             <Button
               size="lg"
-              className="h-14 px-10 text-base gap-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg shadow-primary/20 font-semibold"
+              className="h-14 px-10 text-[15px] gap-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg shadow-primary/20 font-semibold tracking-[-0.01em]"
               onClick={() => navigate("/login?mode=signup")}
             >
               Start Free
@@ -159,7 +159,7 @@ export function HeroSection() {
 
             <button
               onClick={() => setVideoOpen(true)}
-              className="inline-flex items-center gap-2 text-[15px] text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium group"
+              className="inline-flex items-center gap-2 text-[15px] text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium group tracking-[-0.01em]"
             >
               <span className="w-8 h-8 rounded-full border border-border/40 bg-card/50 backdrop-blur-sm flex items-center justify-center group-hover:border-foreground/20 transition-colors duration-200">
                 <Play className="w-3 h-3 ml-0.5" />
