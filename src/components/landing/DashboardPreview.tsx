@@ -104,8 +104,8 @@ export function DashboardPreview() {
             </div>
           </div>
 
-          {/* Bottom fade */}
-          <div className="absolute bottom-0 left-0 right-0 h-28 sm:h-36 bg-gradient-to-t from-card via-card/95 to-transparent pointer-events-none z-10" />
+          {/* Bottom fade — stronger for cropped effect */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 sm:h-44 bg-gradient-to-t from-card via-card/98 to-transparent pointer-events-none z-10" />
           <div className="absolute bottom-4 sm:bottom-5 left-0 right-0 z-20 flex justify-center">
             <button
               onClick={() => navigate("/login?mode=signup")}
