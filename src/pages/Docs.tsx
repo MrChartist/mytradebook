@@ -1016,6 +1016,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p>Start with 3-5 rules maximum. The best rules are specific and actionable: "Confirm volume is above 20-day average" is better than "Check volume."</p>
               </ProTip>
               <SubTopic title="Rule Examples" description="Pre-built rule sets for different trading styles." />
+              <ExpandableDetail title="Example Rules for Different Styles" icon={BookOpen} defaultOpen>
                 <div className="grid md:grid-cols-2 gap-4 mt-2">
                   <div>
                     <p className="text-[12px] font-semibold text-foreground mb-2">Intraday Trader</p>
