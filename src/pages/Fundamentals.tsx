@@ -336,17 +336,22 @@ export default function Fundamentals() {
         {/* ── Header ── */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="space-y-0.5">
-            <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Fundamentals</h1>
-            <p className="text-[13px] text-muted-foreground/70 leading-relaxed">
-              Top NSE stocks with key metrics
-              <span className="text-muted-foreground/20 mx-1.5">·</span>
-              <span className="font-mono font-semibold text-foreground">{totalCount.toLocaleString()}</span> stocks
-              {isCustomMode && appliedFilters.length > 0 && (
+            <h1 className="text-[22px] lg:text-[26px] font-bold tracking-tight text-foreground font-heading">Fundamentals</h1>
+            <p className="text-[14px] text-muted-foreground/80 leading-relaxed">
+              {preset.id !== "all" && !isCustomMode ? (
                 <>
-                  <span className="text-muted-foreground/20 mx-1.5">·</span>
-                  <span className="font-medium text-primary">{appliedFilters.length} filters</span>
+                  <span className="font-medium text-foreground">{preset.label}</span>
+                  <span className="text-muted-foreground/40 mx-1.5">·</span>
+                  <span>{preset.description}</span>
+                  <span className="text-muted-foreground/40 mx-1.5">·</span>
                 </>
-              )}
+              ) : isCustomMode && appliedFilters.length > 0 ? (
+                <>
+                  <span className="font-medium text-primary">{appliedFilters.length} custom filters</span>
+                  <span className="text-muted-foreground/40 mx-1.5">·</span>
+                </>
+              ) : null}
+              <span className="font-mono font-semibold text-foreground">{totalCount.toLocaleString()}</span> stocks
             </p>
           </div>
           <div className="relative w-full sm:w-56">
