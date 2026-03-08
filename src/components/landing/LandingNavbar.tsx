@@ -57,10 +57,11 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
     >
       <div
         className={cn(
-          "flex items-center justify-between px-3 pl-4 h-14 rounded-full border border-border/40 backdrop-blur-xl shadow-lg transition-colors duration-300",
-          scrolled ? "bg-card/90 shadow-foreground/[0.04]" : "bg-card/70 shadow-foreground/[0.02]"
+          "flex items-center justify-between px-3 pl-4 h-14 rounded-full border backdrop-blur-xl transition-all duration-500 ease-out",
+          scrolled
+            ? "bg-card/90 border-border/50 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.12),inset_0_1px_0_0_hsl(0_0%_100%/0.06)]"
+            : "bg-transparent border-transparent shadow-none"
         )}
-        style={{ boxShadow: "0 4px 24px -6px rgba(0,0,0,0.08), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}
       >
         {/* Logo + context */}
         <motion.button
