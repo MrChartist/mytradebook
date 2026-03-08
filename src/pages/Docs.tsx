@@ -4538,16 +4538,21 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       <AnimatePresence>
         {showBackToTop && (
           <motion.button
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, scale: 0.8, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 10 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-5 right-5 z-50 w-11 h-11 rounded-xl shadow-lg flex flex-col items-center justify-center gap-0 transition-all"
-            style={{ background: 'hsl(var(--docs-elevated))', border: '1px solid hsl(var(--docs-border))', color: 'hsl(var(--docs-text-secondary))' }}
+            className="fixed bottom-6 right-6 sm:bottom-5 sm:right-5 z-50 w-12 h-12 sm:w-11 sm:h-11 rounded-xl shadow-lg flex flex-col items-center justify-center gap-0 transition-all hover:scale-105 active:scale-95"
+            style={{
+              background: 'hsl(var(--docs-surface))',
+              border: '1px solid hsl(var(--docs-border))',
+              color: 'hsl(var(--docs-text-secondary))',
+              boxShadow: '0 4px 12px -2px hsl(var(--docs-bg) / 0.3), 0 2px 4px -1px hsl(0 0% 0% / 0.06)',
+            }}
             aria-label="Back to top"
           >
             <ArrowUpRight className="w-4 h-4 -rotate-45" />
-            <span className="text-[8px] font-semibold leading-none -mt-0.5" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>{readProgress}%</span>
+            <span className="text-[8px] font-bold leading-none -mt-0.5" style={{ color: 'hsl(var(--docs-accent))' }}>{readProgress}%</span>
           </motion.button>
         )}
       </AnimatePresence>
