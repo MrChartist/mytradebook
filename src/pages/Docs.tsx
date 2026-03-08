@@ -4552,9 +4552,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── Phase 26. Changelog & Roadmap ────────────────── */}
+            {/* ── Phase 29. Changelog & Roadmap ────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={26} total={26} />
+              <PhaseHeader phase={29} total={29} />
               <SectionHeader
                 id="changelog"
                 title="Changelog & Roadmap"
