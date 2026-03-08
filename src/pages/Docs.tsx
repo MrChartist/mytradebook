@@ -3393,7 +3393,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           {/* Right sidebar — On this page */}
           <aside className="hidden xl:block w-[190px] shrink-0 border-l border-border/15">
             <div className="sticky top-20 py-8 pl-6">
-              <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground/40 mb-4">On this page</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground/50 mb-4">On this page</p>
               <nav className="space-y-0.5 border-l border-border/20 pl-3">
                 {(SECTION_ANCHORS[activeSection] || []).map((anchor) => (
                   <button
