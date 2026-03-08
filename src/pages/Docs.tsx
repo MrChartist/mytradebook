@@ -2174,9 +2174,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               />
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Recent updates */}
+                <SubTopic title="Recent Updates" description="Features shipped in recent releases." />
                 <div>
                   <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-profit" /> Recent Updates
+                    <CheckCircle2 className="w-4 h-4 text-profit" /> Latest Releases
                   </h3>
                   <div className="space-y-3">
                     {[
