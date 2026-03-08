@@ -127,43 +127,71 @@
   }
 
   .dark {
-    --background: 222 47% 5%;
-    --card-inner: 222 47% 10%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 10%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 24 85% 60%;
+    /* Deep, premium background tones with proper layering */
+    --background: 222 47% 6%;
+    --card-inner: 222 47% 9%;
+    --foreground: 210 25% 93%;
+    
+    /* Card surfaces with clear elevation distinction */
+    --card: 222 45% 9%;
+    --card-foreground: 210 25% 93%;
+    
+    /* Popover/dropdown surfaces slightly elevated */
+    --popover: 222 42% 11%;
+    --popover-foreground: 210 25% 93%;
+    
+    /* Primary accent - warm orange, slightly softer for dark */
+    --primary: 24 82% 58%;
     --primary-foreground: 20 15% 5%;
-    --secondary: 222 47% 14%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 222 47% 12%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 222 47% 16%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 215 25% 18%;
-    --input: 222 47% 14%;
-    --ring: 24 85% 60%;
+    
+    /* Secondary surfaces for subtle distinction */
+    --secondary: 222 40% 13%;
+    --secondary-foreground: 210 25% 90%;
+    
+    /* Muted tones - readable but not glaring */
+    --muted: 222 35% 12%;
+    --muted-foreground: 215 18% 58%;
+    
+    /* Accent for hover states */
+    --accent: 222 38% 15%;
+    --accent-foreground: 210 25% 93%;
+    
+    /* Status colors */
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 210 25% 95%;
+    
+    /* Borders - subtle but visible structure */
+    --border: 215 22% 20%;
+    --input: 222 38% 14%;
+    --ring: 24 82% 58%;
 
-    --tb-accent: 24 85% 60%;
-    --tb-accent-hover: 24 85% 52%;
+    /* TradeBook accent tuned for dark */
+    --tb-accent: 24 82% 58%;
+    --tb-accent-hover: 24 82% 50%;
 
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
-    --shadow-glow: 0 0 20px hsl(24 85% 60% / 0.25);
+    /* Trading colors - vivid but not neon */
+    --profit: 152 58% 45%;
+    --loss: 0 68% 58%;
+    --warning: 38 88% 52%;
 
-    --sidebar-background: 222 47% 5%;
-    --sidebar-foreground: 210 40% 90%;
-    --sidebar-primary: 24 85% 60%;
+    /* Shadows for dark mode depth */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.35), 0 1px 2px -1px rgb(0 0 0 / 0.25);
+    --shadow-md: 0 4px 8px -1px rgb(0 0 0 / 0.45), 0 2px 4px -2px rgb(0 0 0 / 0.35);
+    --shadow-lg: 0 12px 20px -4px rgb(0 0 0 / 0.55), 0 6px 8px -4px rgb(0 0 0 / 0.4);
+    --shadow-glow: 0 0 24px hsl(24 82% 58% / 0.2);
+    --shadow-profit-glow: 0 0 20px hsl(152 58% 45% / 0.18);
+    --shadow-loss-glow: 0 0 20px hsl(0 68% 58% / 0.18);
+
+    /* Sidebar - slightly elevated from page */
+    --sidebar-background: 222 47% 7%;
+    --sidebar-foreground: 210 22% 85%;
+    --sidebar-primary: 24 82% 58%;
     --sidebar-primary-foreground: 20 15% 5%;
-    --sidebar-accent: 222 47% 12%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 215 25% 14%;
-    --sidebar-ring: 24 85% 60%;
+    --sidebar-accent: 222 40% 13%;
+    --sidebar-accent-foreground: 210 25% 93%;
+    --sidebar-border: 215 22% 16%;
+    --sidebar-ring: 24 82% 58%;
   }
 }
 
@@ -237,8 +265,13 @@
 @layer components {
   /* ── Surface Cards ─────────────────────────────────── */
   .surface-card {
-    @apply bg-card rounded-[1.25rem] border border-border/80;
+    @apply bg-card rounded-[1.25rem] border border-border/70;
     box-shadow: var(--shadow-sm);
+  }
+
+  .dark .surface-card {
+    border-color: hsl(var(--border) / 0.55);
+    box-shadow: var(--shadow-sm), inset 0 1px 0 0 hsl(0 0% 100% / 0.025);
   }
 
   .surface-card-hover {
@@ -250,10 +283,19 @@
     border-color: hsl(var(--border));
   }
 
+  .dark .surface-card-hover:hover {
+    border-color: hsl(var(--border) / 0.8);
+  }
+
   /* ── Premium Card (rich, layered) ──────────────────── */
   .premium-card {
-    @apply bg-card rounded-[1.25rem] border border-border/80 p-6 relative overflow-hidden;
+    @apply bg-card rounded-[1.25rem] border border-border/70 p-6 relative overflow-hidden;
     box-shadow: var(--shadow-sm);
+  }
+
+  .dark .premium-card {
+    border-color: hsl(var(--border) / 0.6);
+    box-shadow: var(--shadow-sm), inset 0 1px 0 0 hsl(0 0% 100% / 0.03);
   }
 
   .premium-card::after {
@@ -267,6 +309,10 @@
     pointer-events: none;
   }
 
+  .dark .premium-card::after {
+    background: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.04) 30%, hsl(0 0% 100% / 0.04) 70%, transparent 100%);
+  }
+
   .premium-card-hover {
     @apply premium-card transition-all duration-200 ease-out;
   }
@@ -277,10 +323,20 @@
     border-color: hsl(var(--primary) / 0.18);
   }
 
+  .dark .premium-card-hover:hover {
+    border-color: hsl(var(--primary) / 0.28);
+    box-shadow: var(--shadow-md), 0 0 0 1px hsl(var(--primary) / 0.06);
+  }
+
   /* ── Inner Panel (nested depth) ────────────────────── */
   .inner-panel {
     background: hsl(var(--card-inner));
     @apply rounded-xl border border-border/30 p-3;
+  }
+
+  .dark .inner-panel {
+    background: hsl(var(--card-inner));
+    border-color: hsl(var(--border) / 0.35);
   }
 
   /* ── Card Corner Glows ────────────────────────────── */
@@ -335,18 +391,37 @@
     @apply bg-card border-r border-border;
   }
 
+  .dark .glass-sidebar {
+    border-color: hsl(var(--border) / 0.6);
+  }
+
   .glass-topbar {
     @apply bg-card/90 backdrop-blur-lg border-b border-border/40;
     box-shadow: var(--shadow-xs);
+  }
+
+  .dark .glass-topbar {
+    @apply bg-card/80;
+    border-color: hsl(var(--border) / 0.35);
   }
 
   .glass-input {
     @apply bg-background border border-input rounded-[var(--radius-md)] transition-all duration-200;
   }
 
+  .dark .glass-input {
+    background: hsl(var(--input));
+    border-color: hsl(var(--border) / 0.5);
+  }
+
   .glass-input:focus {
     border-color: hsl(var(--primary) / 0.4);
     box-shadow: 0 0 0 3px hsl(var(--primary) / 0.08);
+  }
+
+  .dark .glass-input:focus {
+    border-color: hsl(var(--primary) / 0.5);
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.12);
   }
 
   /* ── Trading colors ─────────────────────────────────── */
@@ -383,9 +458,17 @@
     color: hsl(var(--primary));
   }
 
+  .dark .glass-nav-active {
+    background: hsl(var(--primary) / 0.1);
+  }
+
   /* Section divider for sidebar */
   .sidebar-section-label {
     @apply px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/50;
+  }
+
+  .dark .sidebar-section-label {
+    color: hsl(var(--muted-foreground) / 0.55);
   }
 
   .nav-active-bar {
@@ -409,6 +492,11 @@
     transition: box-shadow 200ms ease-out, border-color 200ms ease-out, transform 200ms ease-out;
   }
 
+  .dark .dashboard-card {
+    border-color: hsl(var(--border) / 0.5);
+    box-shadow: var(--shadow-sm), inset 0 1px 0 0 hsl(0 0% 100% / 0.025);
+  }
+
   .dashboard-card::after {
     content: '';
     position: absolute;
@@ -420,6 +508,10 @@
     pointer-events: none;
   }
 
+  .dark .dashboard-card::after {
+    background: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.03) 30%, hsl(0 0% 100% / 0.03) 70%, transparent 100%);
+  }
+
   .dashboard-card-hover {
     @apply dashboard-card;
   }
@@ -428,6 +520,10 @@
     box-shadow: var(--shadow-md);
     border-color: hsl(var(--primary) / 0.15);
     transform: translateY(-2px);
+  }
+
+  .dark .dashboard-card-hover:hover {
+    border-color: hsl(var(--primary) / 0.25);
   }
 
   .icon-badge {
