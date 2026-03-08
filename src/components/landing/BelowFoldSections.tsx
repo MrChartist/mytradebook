@@ -661,8 +661,6 @@ export function FooterSection() {
 
             <div className="flex items-center gap-2">
               {[
-                { href: "https://x.com", icon: "𝕏", label: "Twitter" },
-                { href: "https://t.me", icon: "✈", label: "Telegram" },
                 { href: "mailto:founder@mrchartist.com", icon: "✉", label: "Email" },
               ].map((s) => (
                 <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="w-8 h-8 rounded-full bg-muted/30 border border-border/20 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all text-xs">
