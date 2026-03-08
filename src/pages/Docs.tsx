@@ -93,10 +93,10 @@ const SECTIONS = [
 
 function FeatureList({ items }: { items: string[] }) {
   return (
-    <ul className="space-y-2 mt-4">
+    <ul className="space-y-2.5 mt-4">
       {items.map((item) => (
-        <li key={item} className="flex items-start gap-2 text-[13px] text-muted-foreground leading-relaxed">
-          <ChevronRight className="w-4 h-4 text-primary mt-[1px] shrink-0" />
+        <li key={item} className="flex items-start gap-2.5 text-[13px] text-muted-foreground leading-relaxed">
+          <ChevronRight className="w-3.5 h-3.5 text-primary mt-[2px] shrink-0" />
           <span>{item}</span>
         </li>
       ))}
