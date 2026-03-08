@@ -168,120 +168,143 @@ export function HowItWorksSection() {
 }
 
 export function ComparisonSection() {
-  const navigate = useNavigate();
-  return (
-    <section className="py-24 lg:py-32" aria-label="Comparison">
-      <MotionSection className="max-w-3xl mx-auto px-6">
-        <motion.div variants={fadeUp} className="text-center mb-14">
-          <SectionBadge>Comparison</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Why{" "}<span className="accent-script">TradeBook</span>?</h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-lg">See how we compare to generic trading journals.</p>
-        </motion.div>
-        <motion.div variants={fadeUp} className="rounded-2xl border border-border/60 bg-card overflow-hidden" style={{ boxShadow: `${glassInner}, 0 4px 20px -6px rgba(0,0,0,0.06)` }}>
-          <div className="grid grid-cols-3 gap-0 border-b border-border/40 px-6 py-5 bg-muted/30">
-            <span className="text-base font-bold text-foreground">Feature</span>
-            <span className="text-sm font-bold text-center text-[hsl(var(--tb-accent))] flex items-center justify-center gap-1.5"><Trophy className="w-4 h-4" />TradeBook</span>
-            <span className="text-sm font-medium text-center text-muted-foreground/70">Others</span>
-          </div>
-          {comparisonFeatures.map((row, i) => (
-             <motion.div key={row.feature} variants={fadeUp} custom={i * 0.05} className={cn("grid grid-cols-3 gap-0 border-b border-border/20 last:border-0 px-6 py-5 transition-colors duration-200 hover:bg-muted/30", i % 2 === 0 ? "bg-muted/10" : "")}>
-              <span className="text-[15px] text-foreground/90">{row.feature}</span>
-              <div className="flex justify-center">{row.tradebook === true ? <CheckCircle2 className="w-5 h-5 text-profit drop-shadow-[0_0_4px_rgba(34,197,94,0.3)]" /> : <span className="text-sm text-muted-foreground">{String(row.tradebook)}</span>}</div>
-              <div className="flex justify-center">{row.others === true ? <CheckCircle2 className="w-5 h-5 text-muted-foreground/40" /> : row.others === false ? <Minus className="w-5 h-5 text-muted-foreground/30" /> : <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-destructive/10 text-destructive border border-destructive/20">{String(row.others)}</span>}</div>
-            </motion.div>
-          ))}
-          <div className="flex items-center justify-between px-6 py-4 bg-[hsl(var(--tb-accent)/0.06)] border-t border-border/30">
-            <p className="text-sm text-muted-foreground">All features included in <span className="font-semibold text-foreground">free beta</span></p>
-            <Button size="sm" className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white" onClick={() => navigate("/login?mode=signup")}>Start Free <ArrowRight className="w-4 h-4 ml-1" /></Button>
-          </div>
-        </motion.div>
-      </MotionSection>
-    </section>
-  );
+  return null;
 }
 
 export function PricingSection() {
   const navigate = useNavigate();
-  const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   return (
-    <section id="pricing" className="py-24 lg:py-32 bg-muted/10 dot-pattern" aria-label="Pricing">
+    <section id="pricing" className="py-24 lg:py-32" aria-label="Pricing">
       <MotionSection className="max-w-5xl mx-auto px-6">
-        <motion.div variants={fadeUp} className="text-center mb-14">
+        <motion.div variants={fadeUp} className="text-center mb-16">
           <SectionBadge>Pricing</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Simple,{" "}<span className="accent-script">transparent</span>{" "}pricing</h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-lg">One plan. All features. Pick your billing cycle.</p>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1] tracking-tight">
+            Simple,{" "}<span className="accent-script">transparent</span>{" "}pricing
+          </h2>
+          <p className="text-muted-foreground max-w-lg mx-auto text-lg">
+            Everything free during beta. No credit card. No catch.
+          </p>
         </motion.div>
-        <motion.div variants={fadeUp} className="flex justify-center mb-12">
-          <div className="inline-flex items-center bg-muted/50 rounded-full p-1 gap-0.5">
-            <button
-              onClick={() => setBilling("monthly")}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${billing === "monthly" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+
+        {/* 2-card layout */}
+        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-16">
+          {/* Free Beta Card */}
+          <motion.div variants={fadeUp} custom={0}>
+            <motion.div
+              className="rounded-2xl border border-primary/25 bg-card/70 backdrop-blur-sm p-8 h-full flex flex-col relative overflow-hidden ring-2 ring-primary/10"
+              style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}
+              whileHover={{ y: -3, borderColor: "hsl(var(--primary) / 0.4)" }}
+              transition={{ duration: 0.3 }}
             >
-              Monthly
-            </button>
-            <button
-              onClick={() => setBilling("annual")}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${billing === "annual" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              Annual {billing === "annual" && <span className="ml-1 text-[10px] text-profit font-bold">Save 37%</span>}
-            </button>
-          </div>
-        </motion.div>
-        <div className="grid md:grid-cols-3 gap-7 items-start">
-          {pricingPlans.map((plan, i) => {
-            const showAnnual = billing === "annual";
-            const displayPrice = showAnnual && plan.name === "Monthly" ? "₹149" : showAnnual && plan.name === "Quarterly" ? "₹399" : plan.price;
-            const displayPeriod = showAnnual && plan.name !== "Yearly" ? "/mo (billed yearly)" : plan.period;
-            return (
-            <motion.div key={plan.name} variants={fadeUp} custom={i * 0.1}>
-              <motion.div
-                className={cn(
-                  "rounded-2xl border bg-card/80 p-8 flex flex-col relative overflow-hidden",
-                  plan.highlighted
-                    ? "border-[hsl(var(--tb-accent)/0.35)] ring-2 ring-[hsl(var(--tb-accent)/0.12)] scale-[1.02] lg:scale-105 shadow-glow shimmer-cta dot-pattern backdrop-blur-sm"
-                    : "border-border/40"
-                )}
-                style={{ boxShadow: glassInner }}
-                whileHover={{ y: -3 }}
-                transition={{ duration: 0.3 }}
-              >
-                {plan.highlighted && <div className="absolute top-0 left-0 right-0 h-0.5 bg-[hsl(var(--tb-accent))]" />}
-                {plan.badge && <div className="inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] text-xs font-semibold mb-5">{plan.badgeIcon && <plan.badgeIcon className="w-3 h-3" />} {plan.badge}</div>}
-                <h3 className="text-xl font-bold">{plan.name}</h3>
-                {plan.isBeta && <div className="inline-flex self-start items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-profit/10 text-profit text-[11px] font-semibold mt-2 animate-pulse">Free During Beta</div>}
-                <div className="mt-4 mb-1 flex items-baseline gap-1 flex-wrap">
-                  {plan.originalPrice && <span className="text-lg text-muted-foreground/50 line-through mr-1">{plan.originalPrice}</span>}
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={displayPrice}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      transition={{ duration: 0.25 }}
-                      className="text-5xl font-extrabold font-mono"
-                    >
-                      {displayPrice}
-                    </motion.span>
-                  </AnimatePresence>
-                  <span className="text-muted-foreground/70 text-sm">{displayPeriod}</span>
-                  {plan.saveBadge && <span className="ml-2 px-2 py-0.5 rounded-full bg-profit/10 text-profit text-[10px] font-bold">{plan.saveBadge}</span>}
-                </div>
-                <p className="text-[15px] text-muted-foreground mb-8">{plan.description}</p>
-                <ul className="space-y-3.5 flex-1 mb-4">
-                  {plan.features.map((f) => (<li key={f} className="flex items-start gap-2.5 text-[15px] leading-relaxed"><CheckCircle2 className="w-[18px] h-[18px] text-[hsl(var(--tb-accent))] shrink-0 mt-0.5" /><span>{f}</span></li>))}
-                </ul>
-                {plan.showAllNote && <p className="text-xs text-muted-foreground mb-6 flex items-center gap-1.5"><Sparkles className="w-3 h-3 text-[hsl(var(--tb-accent))]" /> All features included</p>}
-                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className={!plan.showAllNote ? "mt-5" : ""}>
-                  <Button className={cn("w-full h-12 rounded-full text-base", plan.highlighted ? "bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white shadow-[0_4px_12px_hsl(var(--tb-accent)/0.25)]" : "")} variant={plan.highlighted ? "default" : "outline"} onClick={() => navigate("/login?mode=signup")}>{plan.cta}{plan.highlighted && <ArrowRight className="w-4 h-4 ml-1" />}</Button>
-                </motion.div>
+              <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary" />
+              <div className="inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-profit/10 text-profit text-[11px] font-bold mb-5">
+                <Zap className="w-3 h-3" /> Currently Active
+              </div>
+              <h3 className="text-2xl font-bold tracking-tight">Free Beta</h3>
+              <div className="mt-4 mb-2 flex items-baseline gap-2">
+                <span className="text-lg text-muted-foreground/50 line-through">₹499</span>
+                <span className="text-5xl font-extrabold font-mono">₹0</span>
+                <span className="text-muted-foreground text-sm">/month</span>
+              </div>
+              <p className="text-[15px] text-muted-foreground mb-8">Full access to every feature. Free while we're in beta.</p>
+              <ul className="space-y-3 flex-1 mb-8">
+                {[
+                  "Unlimited trade logging",
+                  "AI-powered trade insights",
+                  "Advanced analytics & reports",
+                  "Trailing stop loss engine",
+                  "Broker integration (Dhan)",
+                  "Telegram notifications",
+                  "Pattern & mistake tracking",
+                  "Weekly performance reports",
+                  "Watchlists & alerts",
+                ].map((f) => (
+                  <li key={f} className="flex items-start gap-2.5 text-[15px] leading-relaxed">
+                    <CheckCircle2 className="w-[18px] h-[18px] text-profit shrink-0 mt-0.5" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                <Button
+                  size="lg"
+                  className="w-full h-13 rounded-full text-base bg-foreground hover:bg-foreground/90 text-background font-semibold shadow-lg"
+                  onClick={() => navigate("/login?mode=signup")}
+                >
+                  Start Free <ArrowRight className="w-4 h-4 ml-1.5" />
+                </Button>
               </motion.div>
             </motion.div>
-            );
-          })}
+          </motion.div>
+
+          {/* Pro Card (Coming Soon) */}
+          <motion.div variants={fadeUp} custom={0.1}>
+            <motion.div
+              className="rounded-2xl border border-border/30 bg-card/50 backdrop-blur-sm p-8 h-full flex flex-col relative overflow-hidden"
+              style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}
+              whileHover={{ y: -3 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-muted/50 text-muted-foreground text-[11px] font-bold mb-5">
+                <Crown className="w-3 h-3" /> Coming Soon
+              </div>
+              <h3 className="text-2xl font-bold tracking-tight">Pro</h3>
+              <div className="mt-4 mb-2 flex items-baseline gap-2">
+                <span className="text-5xl font-extrabold font-mono text-muted-foreground/40">₹499</span>
+                <span className="text-muted-foreground text-sm">/month</span>
+              </div>
+              <p className="text-[15px] text-muted-foreground mb-8">Priority support, advanced AI, and team features.</p>
+              <ul className="space-y-3 flex-1 mb-8">
+                {[
+                  "Everything in Free Beta",
+                  "Priority support & onboarding",
+                  "Advanced AI coach",
+                  "Team & shared workspaces",
+                  "Custom report exports",
+                ].map((f) => (
+                  <li key={f} className="flex items-start gap-2.5 text-[15px] leading-relaxed text-muted-foreground">
+                    <Lock className="w-[18px] h-[18px] text-muted-foreground/30 shrink-0 mt-0.5" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full h-13 rounded-full text-base font-semibold"
+                disabled
+              >
+                Notify Me
+              </Button>
+            </motion.div>
+          </motion.div>
         </div>
-        <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4 mt-14">
+
+        {/* Comparison table inline */}
+        <motion.div variants={fadeUp} className="max-w-3xl mx-auto mb-14">
+          <h3 className="text-lg font-bold text-center mb-6 tracking-tight">How we compare</h3>
+          <div className="rounded-2xl border border-border/30 bg-card/70 overflow-hidden" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
+            <div className="grid grid-cols-3 gap-0 border-b border-border/20 px-6 py-4 bg-muted/20">
+              <span className="text-sm font-bold text-foreground">Feature</span>
+              <span className="text-sm font-bold text-center text-primary flex items-center justify-center gap-1.5"><Trophy className="w-3.5 h-3.5" />TradeBook</span>
+              <span className="text-sm font-medium text-center text-muted-foreground/60">Others</span>
+            </div>
+            {comparisonFeatures.map((row, i) => (
+              <div key={row.feature} className={cn("grid grid-cols-3 gap-0 border-b border-border/10 last:border-0 px-6 py-4", i % 2 === 0 ? "bg-muted/5" : "")}>
+                <span className="text-[14px] text-foreground/85">{row.feature}</span>
+                <div className="flex justify-center">{row.tradebook === true ? <CheckCircle2 className="w-4.5 h-4.5 text-profit" /> : <span className="text-sm text-muted-foreground">{String(row.tradebook)}</span>}</div>
+                <div className="flex justify-center">{row.others === true ? <CheckCircle2 className="w-4.5 h-4.5 text-muted-foreground/30" /> : row.others === false ? <Minus className="w-4.5 h-4.5 text-muted-foreground/20" /> : <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-muted/40 text-muted-foreground">{String(row.others)}</span>}</div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Trust badges */}
+        <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4">
           {[{ icon: Lock, text: "No credit card required" }, { icon: RefreshCw, text: "Cancel anytime" }, { icon: Shield, text: "14-day money-back guarantee" }].map((item) => (
-            <div key={item.text} className="flex items-center gap-2 bg-muted/40 rounded-full px-4 py-2 text-sm text-muted-foreground"><item.icon className="w-3.5 h-3.5" /><span>{item.text}</span></div>
+            <div key={item.text} className="flex items-center gap-2 bg-muted/30 rounded-full px-4 py-2 text-sm text-muted-foreground">
+              <item.icon className="w-3.5 h-3.5" /><span>{item.text}</span>
+            </div>
           ))}
         </motion.div>
       </MotionSection>
