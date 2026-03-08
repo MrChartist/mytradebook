@@ -4,10 +4,11 @@ import { JournalCalendarView } from "@/components/journal/JournalCalendarView";
 import { DailyJournalEditor } from "@/components/journal/DailyJournalEditor";
 import { TradeDetailModal } from "@/components/modals/TradeDetailModal";
 import { useDailyJournal } from "@/hooks/useDailyJournal";
-import { format, isSameMonth } from "date-fns";
+import { format, isSameMonth, isSameDay } from "date-fns";
 import { cn } from "@/lib/utils";
-import { ArrowUpRight, ArrowDownRight, Eye } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Eye, CalendarCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default function Calendar() {
   const { trades, isLoading } = useTrades();
@@ -55,18 +56,28 @@ export default function Calendar() {
 
   const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
   const selectedDayData = calendarData.find((d) => d.dateStr === selectedDateStr);
+  const isToday = isSameDay(selectedDate, new Date());
+  const isTodayVisible = isSameMonth(new Date(), currentMonth);
 
   const handleTradeClick = (trade: { id: string }) => setSelectedTradeId(trade.id);
   const selectedTrade = selectedTradeId ? trades.find((t) => t.id === selectedTradeId) : null;
 
+  const handleGoToToday = () => {
+    const now = new Date();
+    setSelectedDate(now);
+    setCurrentMonth(now);
+  };
+
   return (
     <div className="space-y-4 animate-fade-in" role="region" aria-label="Trading calendar">
-      {/* Header */}
-      <div className="space-y-0.5">
-        <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Calendar</h1>
-        <p className="text-[13px] text-muted-foreground/70 leading-relaxed">Daily P&L heatmap and journal entries</p>
-      </div>
-      <div className="h-px bg-border/20" />
+      <PageHeader title="Calendar" subtitle="Daily P&L heatmap and journal entries">
+        {!(isToday && isTodayVisible) && (
+          <Button variant="outline" size="sm" className="border-border" onClick={handleGoToToday}>
+            <CalendarCheck className="w-4 h-4 mr-2" />
+            Today
+          </Button>
+        )}
+      </PageHeader>
 
       {/* Monthly Summary Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3" aria-live="polite" aria-label="Monthly summary">
@@ -122,9 +133,16 @@ export default function Calendar() {
         <div className="space-y-3.5 lg:max-h-[calc(100vh-220px)] lg:overflow-y-auto lg:pr-1">
           {/* Trade list for selected day */}
           <div className="premium-card-hover p-4">
-            <h4 className="font-semibold mb-3 text-[13px]">
-              {selectedDate ? `Trades — ${format(selectedDate, "MMM dd, yyyy")}` : "Select a date"}
-            </h4>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-semibold text-[13px]">
+                Trades — {format(selectedDate, "MMM dd, yyyy")}
+              </h4>
+              {selectedDayData && (
+                <span className={cn("text-xs font-bold font-mono", selectedDayData.pnl >= 0 ? "text-profit" : "text-loss")}>
+                  {selectedDayData.pnl >= 0 ? "+" : ""}₹{selectedDayData.pnl.toLocaleString()}
+                </span>
+              )}
+            </div>
             {selectedDayData && selectedDayData.trades.length > 0 ? (
               <div className="space-y-2">
                 {selectedDayData.trades.map((trade: any) => (
@@ -148,17 +166,13 @@ export default function Calendar() {
                     </div>
                   </div>
                 ))}
-                <div className="pt-2 border-t border-border flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Day Total</span>
-                  <span className={cn("font-bold text-sm", selectedDayData.pnl >= 0 ? "text-profit" : "text-loss")}>
-                    {selectedDayData.pnl >= 0 ? "+" : ""}₹{selectedDayData.pnl.toLocaleString()}
-                  </span>
-                </div>
               </div>
             ) : (
-              <div className="text-center py-8 space-y-3">
-                <p className="text-muted-foreground text-xs">No trades on this date</p>
-                <p className="text-[11px] text-muted-foreground/60">Use the journal below to note observations</p>
+              <div className="text-center py-6 space-y-1.5">
+                <p className="text-muted-foreground text-xs">No closed trades on this date</p>
+                <p className="text-[11px] text-muted-foreground/50">
+                  {isToday ? "Trades will appear here once closed" : "Record observations in the journal below"}
+                </p>
               </div>
             )}
           </div>
