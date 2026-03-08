@@ -188,7 +188,7 @@ export function PricingSection() {
 
 export function TestimonialsSection() {
   const featured = testimonials[0];
-  const secondary = [testimonials[2], testimonials[3], testimonials[4]];
+  const secondary = [testimonials[1], testimonials[2], testimonials[5]];
 
   return (
     <section className="py-28 lg:py-36" aria-label="Testimonials">
