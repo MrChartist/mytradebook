@@ -1471,32 +1471,67 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Create multiple named watchlists to track instruments you're interested in. See live prices, quick-sort by performance, and act directly from the watchlist."
                 icon={Eye}
               />
-              <WatchlistMockup />
-              <SubTopic title="Organization & Live Data" description="Create lists, track prices, and act on opportunities." id="wl-org" />
-              <FeatureCard icon={Eye} title="Watchlist Capabilities">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="text-sm font-semibold mb-2">Organization</h4>
-                    <FeatureList items={[
-                      "Create multiple named watchlists",
-                      "Assign colors for visual distinction",
-                      "Add instruments via unified symbol search",
-                      "Drag to reorder instruments within a list",
-                    ]} />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold mb-2">Live Data & Actions</h4>
-                    <FeatureList items={[
-                      "Live prices: LTP, change %, volume, day high/low",
-                      "Sort by % change, volume, LTP, or alphabetically",
-                      "Quick action: create alert directly from any item",
-                      "Quick action: create trade directly from any item",
-                      "Market closed detection with last-known prices",
-                    ]} />
-                  </div>
-                </div>
+              <QuickNav items={[
+                { label: "First Watchlist", id: "wl-first" },
+                { label: "Organization", id: "wl-org" },
+                { label: "Live Data & Actions", id: "wl-actions" },
+                { label: "Live Price Requirements", id: "wl-prices" },
+              ]} />
+
+              <InteractiveMockup label="Watchlist Overview">
+                <WatchlistMockup />
+              </InteractiveMockup>
+
+              <SubTopic title="Building Your First Watchlist" description="Get started tracking instruments in under a minute." id="wl-first" />
+              <StepByStep title="Building Your First Watchlist" steps={[
+                { title: "Create a new watchlist", description: "Go to Watchlists and click '+ New Watchlist'. Give it a name and optionally assign a color.", detail: "Use descriptive names like 'Nifty 50 Breakouts' or 'F&O Weekly Expiry' for quick identification." },
+                { title: "Add instruments", description: "Use the symbol search to find stocks, futures, or options. Click to add them to the list.", detail: "The search covers NSE, BSE, and MCX — same unified search used across the platform." },
+                { title: "Organize & reorder", description: "Drag instruments to reorder by priority. Your most-watched symbols stay at the top.", detail: "You can move instruments between watchlists or add the same symbol to multiple lists." },
+                { title: "Monitor & act", description: "View live prices during market hours. Click any instrument to create an alert or log a trade directly.", detail: "Sort by % change to spot the day's biggest movers at a glance." },
+              ]} />
+
+              <ProTip variant="best-practice">
+                <p>Organize watchlists by purpose, not just by name. Create separate lists for <strong>active setups</strong> (stocks you're about to trade), <strong>sector tracking</strong> (banking, IT, pharma), and <strong>post-trade monitoring</strong> (recently closed positions). This keeps each list focused and actionable.</p>
+              </ProTip>
+
+              <SubTopic title="Organization" description="Create and manage multiple watchlists with visual distinction." id="wl-org" />
+              <FeatureCard icon={List} title="Watchlist Organization">
+                <p className="text-sm text-muted-foreground mb-3">Flexible tools to keep your watchlists clean and useful:</p>
+                <FeatureList items={[
+                  "Create unlimited named watchlists",
+                  "Assign colors for instant visual distinction between lists",
+                  "Add instruments via unified symbol search (NSE, BSE, MCX)",
+                  "Drag-to-reorder instruments within any list",
+                  "Add notes per instrument for quick context",
+                  "Delete or move instruments between lists",
+                ]} />
+              </FeatureCard>
+
+              <SubTopic title="Live Data & Quick Actions" description="Real-time prices and one-click actions from any watchlist item." id="wl-actions" />
+              <FeatureCard icon={Zap} title="Live Data & Quick Actions">
+                <p className="text-sm text-muted-foreground mb-3">Act on opportunities without leaving the watchlist:</p>
+                <FeatureList items={[
+                  "Live prices: LTP, change %, volume, day high/low",
+                  "Sort by % change, volume, LTP, or alphabetically",
+                  "Quick action: create alert directly from any instrument",
+                  "Quick action: create trade directly from any instrument",
+                  "Market closed detection with last-known prices displayed",
+                  "Sparkline price charts for at-a-glance trend direction",
+                ]} />
                 <div className="mt-4"><WatchlistDetailMockup /></div>
               </FeatureCard>
+
+              <SubTopic title="Live Price Data Requirements" description="What's needed for real-time price streaming." id="wl-prices" />
+              <ExpandableDetail title="Live Price Data Requirements" icon={Activity} badge="Reference">
+                <p>Live prices in watchlists depend on your broker integration status:</p>
+                <FeatureList items={[
+                  "With Dhan connected — real-time LTP, volume, day high/low, and % change stream directly into your watchlists during market hours (9:15 AM – 3:30 PM IST).",
+                  "Without Dhan — watchlists still work for organization and quick actions, but prices won't update live. You'll see the last-known price from your most recent session.",
+                  "Market closed hours — regardless of integration, prices show the last traded values with a 'Market Closed' indicator.",
+                  "Price refresh — with Dhan connected, prices update every few seconds. The live indicator in the header shows streaming status.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">To connect your broker for live prices, go to Settings → Integrations → Dhan. See the Integrations section for full setup instructions.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
