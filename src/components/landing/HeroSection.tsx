@@ -83,8 +83,9 @@ export function HeroSection() {
           <img
             src={heroLifestyle}
             alt=""
-            className="w-full h-full object-cover"
-            loading="eager"
+            className="w-full h-full object-cover will-change-transform"
+            fetchPriority="high"
+            decoding="async"
             style={{ filter: "blur(28px) saturate(1.1) brightness(1.08)", transform: "scale(1.1)" }}
           />
         </motion.div>
