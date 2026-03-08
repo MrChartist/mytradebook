@@ -59,16 +59,19 @@ export type Database = {
           cooldown_minutes: number | null
           created_at: string | null
           delivery_in_app: boolean | null
+          evaluation_metrics: Json | null
           exchange: string | null
           exchange_segment: string | null
           expires_at: string | null
           id: string
           instrument_id: string | null
+          last_checked_at: string | null
           last_triggered: string | null
           linked_study_id: string | null
           notes: string | null
           parameters: Json | null
           previous_ltp: number | null
+          priority: string | null
           recurrence: Database["public"]["Enums"]["alert_recurrence"] | null
           scanner_id: string | null
           scope: string | null
@@ -93,16 +96,19 @@ export type Database = {
           cooldown_minutes?: number | null
           created_at?: string | null
           delivery_in_app?: boolean | null
+          evaluation_metrics?: Json | null
           exchange?: string | null
           exchange_segment?: string | null
           expires_at?: string | null
           id?: string
           instrument_id?: string | null
+          last_checked_at?: string | null
           last_triggered?: string | null
           linked_study_id?: string | null
           notes?: string | null
           parameters?: Json | null
           previous_ltp?: number | null
+          priority?: string | null
           recurrence?: Database["public"]["Enums"]["alert_recurrence"] | null
           scanner_id?: string | null
           scope?: string | null
@@ -127,16 +133,19 @@ export type Database = {
           cooldown_minutes?: number | null
           created_at?: string | null
           delivery_in_app?: boolean | null
+          evaluation_metrics?: Json | null
           exchange?: string | null
           exchange_segment?: string | null
           expires_at?: string | null
           id?: string
           instrument_id?: string | null
+          last_checked_at?: string | null
           last_triggered?: string | null
           linked_study_id?: string | null
           notes?: string | null
           parameters?: Json | null
           previous_ltp?: number | null
+          priority?: string | null
           recurrence?: Database["public"]["Enums"]["alert_recurrence"] | null
           scanner_id?: string | null
           scope?: string | null
@@ -1433,6 +1442,7 @@ export type Database = {
           dhan_token_expiry: string | null
           dhan_verified_at: string | null
           id: string
+          notification_preferences: Json | null
           ra_disclaimer: string | null
           ra_public_mode: boolean | null
           starting_capital: number | null
@@ -1473,6 +1483,7 @@ export type Database = {
           dhan_token_expiry?: string | null
           dhan_verified_at?: string | null
           id?: string
+          notification_preferences?: Json | null
           ra_disclaimer?: string | null
           ra_public_mode?: boolean | null
           starting_capital?: number | null
@@ -1513,6 +1524,7 @@ export type Database = {
           dhan_token_expiry?: string | null
           dhan_verified_at?: string | null
           id?: string
+          notification_preferences?: Json | null
           ra_disclaimer?: string | null
           ra_public_mode?: boolean | null
           starting_capital?: number | null

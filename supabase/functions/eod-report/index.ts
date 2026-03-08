@@ -22,6 +22,19 @@ const segmentDisplayNames: Record<string, string> = {
   Commodities: "MCX / COMMODITIES",
 };
 
+const SEPARATOR = "━━━━━━━━━━━━━━━━━━━━━━";
+const FOOTER = "\n_via TradeBook_";
+
+function pnlEmoji(pnl: number): string {
+  if (pnl > 0) return "🟢";
+  if (pnl < 0) return "🔴";
+  return "⚪";
+}
+
+function fmt(val: number): string {
+  return `₹${val.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -51,7 +64,7 @@ serve(async (req) => {
       return jsonResponse({ success: true, message: "No enabled chats" });
     }
 
-    // Group chats by user_id, and determine which segments each chat wants reports for
+    // Group chats by user_id
     const userChatMap = new Map<string, Array<{ chat_id: string; bot_token: string | null; report_segments: string[] }>>();
 
     for (const chat of allChats) {
@@ -69,7 +82,6 @@ serve(async (req) => {
           reportSegments = reportConfig.filter((s: string) => ALL_SEGMENTS.includes(s));
         }
       } else if (chat.segments && chat.segments.length > 0) {
-        // Fallback: old segments array — treat as report segments too
         reportSegments = chat.segments.filter((s: string) => ALL_SEGMENTS.includes(s));
       }
 
@@ -85,13 +97,25 @@ serve(async (req) => {
     let totalSent = 0;
 
     for (const [userId, chats] of userChatMap.entries()) {
-      // Collect all unique segments this user's chats want reports for
+      // Check quiet hours preference
+      const { data: settings } = await supabase
+        .from("user_settings")
+        .select("notification_preferences")
+        .eq("user_id", userId)
+        .maybeSingle();
+      
+      const prefs = settings?.notification_preferences || {};
+      if (prefs.dnd_enabled && prefs.dnd_until) {
+        if (new Date(prefs.dnd_until) > now) continue; // Skip if DND is active
+      }
+
+      // Collect all unique segments
       const allRequestedSegments = new Set<string>();
       for (const chat of chats) {
         for (const seg of chat.report_segments) allRequestedSegments.add(seg);
       }
 
-      // Fetch trades closed today for this user
+      // Fetch trades closed today
       const { data: closedToday } = await supabase
         .from("trades")
         .select("symbol, trade_type, entry_price, pnl, pnl_percent, status, segment, contract_key")
@@ -136,35 +160,45 @@ serve(async (req) => {
         const wins = segClosed.filter((t: any) => (t.pnl || 0) > 0).length;
         const losses = segClosed.filter((t: any) => (t.pnl || 0) < 0).length;
         const winRate = segClosed.length > 0 ? (wins / segClosed.length * 100).toFixed(1) : "—";
-
         const displayName = segmentDisplayNames[segment] || segment;
+        const emoji = pnlEmoji(totalPnl);
 
-        let msg = `🌙 *END OF DAY: ${displayName}*\n`;
+        let msg = `🌙 *END OF DAY REPORT*\n`;
+        msg += `${SEPARATOR}\n\n`;
+        msg += `📂 *${displayName}*\n`;
         msg += `📅 ${istNow.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "short" })}\n\n`;
 
-        const pnlEmoji = totalPnl >= 0 ? "🟢" : "🔴";
-        msg += `${pnlEmoji} *Day P&L: ${totalPnl >= 0 ? "+" : ""}₹${totalPnl.toLocaleString("en-IN", { maximumFractionDigits: 0 })}*\n`;
-        msg += `📈 Trades: ${segClosed.length} closed | W ${wins} / L ${losses} | WR: ${winRate}%\n`;
-        if (segOpened.length > 0) {
-          msg += `🆕 New entries: ${segOpened.length}\n`;
-        }
-        msg += `📂 Still open: ${segOpen.length}\n\n`;
+        msg += `${emoji} *Day P&L: ${totalPnl >= 0 ? "+" : ""}${fmt(totalPnl)}*\n\n`;
+        
+        msg += `📊 *Performance*\n`;
+        msg += `• Trades Closed: ${segClosed.length}\n`;
+        msg += `• Won: ${wins} | Lost: ${losses}\n`;
+        msg += `• Win Rate: ${winRate}%\n`;
+        if (segOpened.length > 0) msg += `• New Entries: ${segOpened.length}\n`;
+        msg += `• Still Open: ${segOpen.length}\n`;
 
         if (segClosed.length > 0) {
-          msg += `*Closed Trades:*\n`;
+          msg += `\n${SEPARATOR}\n\n`;
+          msg += `📋 *Closed Trades*\n`;
           for (const t of segClosed.slice(0, 8)) {
-            const emoji = (t.pnl || 0) >= 0 ? "✅" : "❌";
+            const tradeEmoji = (t.pnl || 0) >= 0 ? "✅" : "❌";
             const dir = t.trade_type === "BUY" ? "L" : "S";
             const sym = t.contract_key || t.symbol;
-            msg += `${emoji} ${sym} (${dir}) → ${(t.pnl || 0) >= 0 ? "+" : ""}₹${(t.pnl || 0).toLocaleString("en-IN", { maximumFractionDigits: 0 })} (${(t.pnl_percent || 0).toFixed(1)}%)\n`;
+            const pnlStr = `${(t.pnl || 0) >= 0 ? "+" : ""}${fmt(t.pnl || 0)}`;
+            msg += `${tradeEmoji} ${sym} (${dir}) → ${pnlStr}\n`;
           }
           if (segClosed.length > 8) msg += `   ...+${segClosed.length - 8} more\n`;
-          msg += `\n`;
         }
 
-        msg += `⏱ Sent at ${istNow.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })} IST`;
+        if ((triggeredAlerts || []).length > 0) {
+          msg += `\n🔔 *Alerts Triggered: ${triggeredAlerts?.length}*\n`;
+        }
 
-        // Send to chats that have this segment in their report config
+        msg += `\n${SEPARATOR}\n`;
+        msg += `⏱️ ${istNow.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })} IST`;
+        msg += FOOTER;
+
+        // Send to chats that have this segment
         const targetChats = chats.filter((c) => c.report_segments.includes(segment));
         for (const chat of targetChats) {
           const token = chat.bot_token || TELEGRAM_BOT_TOKEN;
@@ -176,7 +210,6 @@ serve(async (req) => {
             });
             totalSent++;
 
-            // Log delivery
             await supabase.from("telegram_delivery_log").insert({
               user_id: userId,
               chat_id: chat.chat_id,
@@ -184,7 +217,7 @@ serve(async (req) => {
               segment: segment,
               success: true,
               attempt_number: 1,
-            }).then(() => {});
+            });
           } catch (e) {
             console.error(`EOD failed for ${userId} segment ${segment}:`, e);
             await supabase.from("telegram_delivery_log").insert({
@@ -195,7 +228,7 @@ serve(async (req) => {
               success: false,
               error_message: e instanceof Error ? e.message : "Unknown",
               attempt_number: 1,
-            }).then(() => {});
+            });
           }
         }
       }
