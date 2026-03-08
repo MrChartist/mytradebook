@@ -68,11 +68,11 @@ export function FeaturesSection() {
         {/* Heading */}
         <motion.div variants={fadeUp} className="text-center mb-14 lg:mb-18">
           <SectionBadge>Features</SectionBadge>
-          <h2 className="font-display text-3xl lg:text-5xl font-bold mb-4 leading-[1.1] tracking-tight">
+          <h2 className="font-display text-[1.875rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.1] tracking-[-0.02em]">
             Everything you need to{" "}
             <span className="accent-script">trade</span>{" "}better
           </h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-base lg:text-lg leading-relaxed">
+          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-base leading-[1.65] tracking-[-0.006em]">
             Journal, analyze, and automate — tools designed by traders, for traders.
           </p>
 
