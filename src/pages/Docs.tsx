@@ -3526,9 +3526,188 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── Phase 19. AI Trade Coach ────────────────────── */}
+            {/* ── Phase 19. Notification Center ────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={19} total={26} />
+              <PhaseHeader phase={19} total={29} />
+              <SectionHeader
+                id="notifications"
+                title="Notification Center"
+                description="A unified feed for all your alerts, trade events, and system messages — accessible from the bell icon in the navigation bar."
+                icon={Bell}
+              />
+              <QuickNav items={[
+                { label: "Notification Types", id: "notif-types" },
+                { label: "Unread Management", id: "notif-unread" },
+                { label: "Click Actions", id: "notif-actions" },
+              ]} />
+
+              <ProTip variant="best-practice">
+                <p><strong>Why this matters:</strong> Traders often set alerts and then forget about them. The Notification Center aggregates every event — alert triggers, trade closes, weekly reports, system messages — into one persistent feed you can scan in seconds. Combined with Telegram delivery, you'll never miss a signal.</p>
+              </ProTip>
+
+              <NotificationCenterMockup />
+
+              <SubTopic title="Notification Types" description="Four categories of notifications delivered to your bell icon." id="notif-types" />
+              <FeatureCard icon={Bell} title="What Gets Notified">
+                <FeatureList items={[
+                  "Alert triggers — price alerts, condition-based alerts, and scanner matches appear instantly when triggered",
+                  "Trade events — partial closes, full closes, trailing SL activations, and target hits generate notifications",
+                  "System messages — weekly report generation, morning briefings, and account-related updates",
+                  "Reports — generated weekly reports and EOD summaries with direct links to view them",
+                ]} />
+              </FeatureCard>
+
+              <SubTopic title="Unread Management" description="Track what's new and mark items as read." id="notif-unread" />
+              <FeatureCard icon={Eye} title="Reading & Managing Notifications">
+                <FeatureList items={[
+                  "Unread count badge — the bell icon shows a red badge with the count of unread notifications",
+                  "Date grouping — notifications are grouped into Today, Yesterday, This Week, and Older for easy scanning",
+                  "Mark individual as read — click any notification to mark it as read and navigate to the related item",
+                  "Mark all as read — one-click button to clear all unread indicators at once",
+                  "Unread state persisted locally — your read/unread state survives page refreshes",
+                ]} />
+              </FeatureCard>
+
+              <SubTopic title="Click Actions" description="Each notification links directly to the relevant item." id="notif-actions" />
+              <ExpandableDetail title="Click-to-Navigate Behavior" icon={ArrowRight}>
+                <p>Clicking a notification takes you directly to the related item:</p>
+                <FeatureList items={[
+                  "Alert trigger → Opens the Alerts page with the triggered alert highlighted",
+                  "Trade event → Opens the Trade Detail modal for that specific trade",
+                  "Weekly report → Navigates to the Reports page with the generated report",
+                  "System message → Navigates to the relevant settings or feature page",
+                ]} />
+              </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Referral Program", description: "Invite friends, earn bonus days", targetId: "referral" },
+                { label: "Alerts System", description: "Set up the alerts that trigger notifications", targetId: "alerts" },
+              ]} />
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 20. Referral Program ────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={20} total={29} />
+              <SectionHeader
+                id="referral"
+                title="Referral Program"
+                description="Invite friends to TradeBook and earn 30 extra trial days for every successful signup. Share your unique link and track your rewards."
+                icon={Gift}
+              />
+              <QuickNav items={[
+                { label: "Getting Your Link", id: "ref-link" },
+                { label: "Sharing", id: "ref-sharing" },
+                { label: "Tracking Rewards", id: "ref-tracking" },
+              ]} />
+
+              <ReferralCardMockup />
+
+              <SubTopic title="Getting Your Referral Link" description="Find and copy your unique referral URL." id="ref-link" />
+              <StepByStep title="How to Get Your Referral Link" steps={[
+                { title: "Go to Settings", description: "Navigate to the Settings page from the sidebar or bottom nav." },
+                { title: "Find the Referral Card", description: "Scroll to the 'Referral Program' card in your settings. Your unique link is auto-generated on first visit." },
+                { title: "Copy the link", description: "Click the copy button next to your referral URL. It's now on your clipboard, ready to share." },
+              ]} />
+
+              <SubTopic title="How Sharing Works" description="What happens when someone uses your link." id="ref-sharing" />
+              <FeatureCard icon={Share2} title="Referral Flow">
+                <FeatureList items={[
+                  "Share your unique link via WhatsApp, Telegram, Twitter, or any platform",
+                  "When someone signs up using your link, they're tracked as your referral",
+                  "Once the referred user completes signup and email verification, the referral is marked as 'completed'",
+                  "You automatically receive 30 bonus trial days added to your account",
+                  "There's no limit on how many people you can refer",
+                ]} />
+              </FeatureCard>
+
+              <SubTopic title="Tracking Your Rewards" description="Monitor referral stats and bonus days earned." id="ref-tracking" />
+              <FeatureCard icon={Trophy} title="Referral Stats">
+                <FeatureList items={[
+                  "Total referred — number of people who clicked your link",
+                  "Successful signups — number who completed registration",
+                  "Bonus days earned — calculated as successful signups × 30 days",
+                  "All stats are visible in the Referral Card on your Settings page",
+                ]} />
+              </FeatureCard>
+
+              <ProTip variant="info">
+                <p>Referral bonus days stack with your existing trial period. If you have 10 days left and refer 2 friends who sign up, you'll have 70 days remaining (10 + 30 + 30).</p>
+              </ProTip>
+
+              <NextStepBlock steps={[
+                { label: "Public Profile", description: "Share your trading journey publicly", targetId: "public-profile" },
+                { label: "Sharing & Social", description: "Share P&L cards and streaks", targetId: "sharing" },
+              ]} />
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 21. Public Profile ──────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={21} total={29} />
+              <SectionHeader
+                id="public-profile"
+                title="Public Profile"
+                description="Create an opt-in public trader profile to share your trading stats, bio, and monthly performance — without exposing individual trade details."
+                icon={Users}
+              />
+              <QuickNav items={[
+                { label: "Setup", id: "pp-setup" },
+                { label: "Privacy Controls", id: "pp-privacy" },
+                { label: "Monthly Stats", id: "pp-stats" },
+              ]} />
+
+              <PublicProfileMockup />
+
+              <SubTopic title="Setting Up Your Profile" description="Create and customize your public trader page." id="pp-setup" />
+              <StepByStep title="How to Create Your Public Profile" steps={[
+                { title: "Go to Settings", description: "Navigate to Settings from the sidebar." },
+                { title: "Find Public Profile section", description: "Look for the 'Public Profile' or 'RA Mode' settings card." },
+                { title: "Add your details", description: "Enter a display name, bio, and optionally upload an avatar. These are visible to anyone who visits your profile." },
+                { title: "Toggle public visibility", description: "Enable the 'Public' toggle to make your profile accessible at /profile/[your-id]." },
+                { title: "Add a disclaimer", description: "Optionally add a custom disclaimer (e.g., 'Not SEBI registered'). A default disclaimer is shown if you don't set one." },
+              ]} />
+
+              <SubTopic title="Privacy Controls" description="You control exactly what's visible." id="pp-privacy" />
+              <FeatureCard icon={Shield} title="What's Shown vs Hidden">
+                <p className="text-sm text-muted-foreground mb-3">Your public profile shows aggregate stats only — never individual trade details:</p>
+                <FeatureList items={[
+                  "Visible — display name, bio, avatar, monthly win rate, average R:R, trade count, and current streak",
+                  "Hidden — individual trades, entry/exit prices, P&L amounts, specific symbols, notes, and journal entries",
+                  "The is_public toggle is off by default — your profile is private unless you explicitly enable it",
+                  "You can disable your public profile at any time by toggling it off in Settings",
+                  "Monthly stats are self-reported aggregates — visitors see performance summaries, not raw data",
+                ]} />
+              </FeatureCard>
+
+              <SubTopic title="Monthly Stats" description="Aggregate performance displayed on your profile." id="pp-stats" />
+              <FeatureCard icon={BarChart3} title="Monthly Performance Display">
+                <FeatureList items={[
+                  "Win rate percentage for the current and recent months",
+                  "Average risk-to-reward ratio across closed trades",
+                  "Total trade count to show activity level",
+                  "Current winning/losing streak",
+                  "Stats update automatically as you close trades — no manual input needed",
+                ]} />
+              </FeatureCard>
+
+              <ProTip variant="warning">
+                <p>Public profiles are designed for accountability and community — not as financial advice. Always include a disclaimer, especially if you share your profile link on social media. TradeBook adds a default "Not SEBI registered" disclaimer if you don't set a custom one.</p>
+              </ProTip>
+
+              <NextStepBlock steps={[
+                { label: "AI Trade Coach", description: "Get AI feedback on every trade", targetId: "trade-coach" },
+                { label: "Sharing & Social", description: "Share P&L and streak cards", targetId: "sharing" },
+              ]} />
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 22. AI Trade Coach ────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={22} total={29} />
               <SectionHeader
                 id="trade-coach"
                 title="AI Trade Coach"
