@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight, BookOpen, CheckCircle2, ChevronRight, Eye, Zap, Trophy,
-  Crown, Lock, Shield, RefreshCw, Star, Quote, Sparkles, Minus,
+  Crown, Lock, Shield, Star, Quote, Sparkles, Minus,
   TrendingUp, Layers, Globe, Clock, BarChart3, CandlestickChart,
 } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
