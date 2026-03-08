@@ -423,8 +423,8 @@ function RightRail({ activeSection }: { activeSection: string }) {
   }, [activeSection]);
 
   return (
-    <aside className="hidden xl:block w-[200px] shrink-0" style={{ borderLeft: '1px solid hsl(var(--docs-border-subtle) / 0.35)' }}>
-      <div className="sticky top-20 h-[calc(100vh-5rem)] py-8 pl-5 pr-3 overflow-y-auto">
+    <aside className="hidden xl:block w-[210px] shrink-0" style={{ borderLeft: '1px solid hsl(var(--docs-border-subtle) / 0.3)' }}>
+      <div className="sticky top-[3.25rem] h-[calc(100vh-3.25rem)] py-7 pl-5 pr-3 overflow-y-auto">
         <p
           className="text-[10.5px] font-semibold uppercase tracking-[0.1em] mb-5"
           style={{ color: 'hsl(var(--docs-text-muted) / 0.45)' }}
@@ -634,10 +634,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       </header>
 
       {/* ═══════════════════════════════════════════════════════════════
-          MOBILE TOPIC RAIL — Fixed horizontal tabs
+          MOBILE TOPIC RAIL — Fixed horizontal tabs below navbar
           ═══════════════════════════════════════════════════════════════ */}
       <nav 
-        className="lg:hidden fixed top-14 left-0 right-0 z-40 backdrop-blur-xl" 
+        className="lg:hidden fixed top-[3.25rem] left-0 right-0 z-40 backdrop-blur-xl" 
         style={{ 
           background: 'hsl(var(--docs-bg) / 0.94)', 
           borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.5)',
@@ -685,9 +685,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
       {/* ═══════════════════════════════════════════════════════════════
           MAIN THREE-COLUMN LAYOUT
-          Left sidebar (240px) | Content (flex) | Right rail (200px)
+          Left sidebar (250px) | Content (flex) | Right rail (210px)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="max-w-[1360px] mx-auto flex">
+      <div className="max-w-[1440px] mx-auto flex">
         
         {/* ─────────────────────────────────────────────────────────────
             LEFT SIDEBAR — Desktop only, collapsible, with nested sub-topics
@@ -696,11 +696,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           <aside 
             className={cn(
               "hidden lg:block shrink-0 transition-all duration-300 ease-out",
-              sidebarCollapsed ? "w-[56px]" : "w-[240px]"
+              sidebarCollapsed ? "w-[56px]" : "w-[250px]"
             )} 
-            style={{ borderRight: '1px solid hsl(var(--docs-border-subtle) / 0.5)' }}
+            style={{ borderRight: '1px solid hsl(var(--docs-border-subtle) / 0.4)' }}
           >
-            <div className="sticky top-20 h-[calc(100vh-5rem)] flex flex-col py-5">
+            <div className="sticky top-[3.25rem] h-[calc(100vh-3.25rem)] flex flex-col py-5">
               {/* Header */}
               <div className={cn("flex items-center mb-4 px-4", sidebarCollapsed ? "justify-center" : "justify-between")}>
                 {!sidebarCollapsed && (
@@ -839,8 +839,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         {/* ─────────────────────────────────────────────────────────────
             CENTER CONTENT COLUMN — Readable width, proper padding
             ───────────────────────────────────────────────────────────── */}
-        <main className="flex-1 min-w-0 px-5 sm:px-8 lg:px-12 xl:px-16 py-10 lg:py-14 pt-[8rem] lg:pt-14">
-          <div className="max-w-[720px] mx-auto space-y-14 lg:space-y-16">
+        <main className="flex-1 min-w-0 px-6 sm:px-10 lg:px-14 xl:px-16 py-10 lg:py-12 pt-[7.5rem] lg:pt-12">
+          <div className="max-w-[740px] mx-auto space-y-14 lg:space-y-16">
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
