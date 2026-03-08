@@ -794,6 +794,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </p>
                 <div className="mt-4"><TodaysPnlHeroMockup /></div>
                 <MockupCaption>Green background for profit days, red for loss days. The hero card pulses with a subtle glow animation when P&L updates in real-time.</MockupCaption>
+              </FeatureCard>
 
               <FeatureCard icon={BarChart3} title="KPI Cards">
                 <p className="text-sm text-muted-foreground mb-3">Four key metrics at a glance, each clickable to navigate to the relevant page:</p>
