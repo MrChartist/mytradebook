@@ -10,6 +10,7 @@ import { toast } from "sonner";
 
 export function StreakDiscipline() {
   const { trades } = useTrades();
+  const [shareOpen, setShareOpen] = useState(false);
 
   const stats = useMemo(() => {
     const closed = trades
