@@ -3307,6 +3307,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "PWA vs Native", id: "pwa-vs-native" },
               ]} />
 
+              <ProTip variant="best-practice">
+                <p><strong>Why this feature exists:</strong> Most trading happens on the go — during commutes, between meetings, or while monitoring positions away from your desk. A PWA gives you the full TradeBook experience in an app-like wrapper without downloading anything from an app store. It launches instantly, works offline for trade logging, and auto-updates silently. The offline trade queue ensures you never lose a trade entry because of spotty mobile connectivity — especially useful in India's varied network conditions.</p>
+              </ProTip>
+
+              <ProTip variant="info">
+                <p><strong>Where it's used:</strong> Every feature in TradeBook works on mobile — trade creation, alerts, journal, watchlists, analytics. The bottom navigation bar replaces the sidebar, swipe gestures replace right-click menus, and the floating action button gives one-tap access to create trades, alerts, or journal entries.</p>
+              </ProTip>
+
               <SubTopic title="Installing TradeBook" description="Get the full app experience on any device — no app store required." id="pwa-install" />
 
               <StepByStep title="Installing TradeBook on Your Phone" steps={[
