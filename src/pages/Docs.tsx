@@ -571,12 +571,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                         value={sidebarSearch}
                         onChange={(e) => setSidebarSearch(e.target.value)}
                         placeholder="Filter…"
-                        className="w-full h-8 pl-8 pr-3 rounded-md text-[12px] focus:outline-none focus:ring-1 transition-all"
+                        className="w-full h-8 pl-8 pr-3 rounded-md text-[12px] focus:outline-none transition-all"
                         style={{
                           background: 'hsl(var(--docs-elevated) / 0.6)',
                           border: '1px solid hsl(var(--docs-border-subtle))',
                           color: 'hsl(var(--docs-text-primary))',
-                          ringColor: 'hsl(var(--docs-accent) / 0.3)',
                         }}
                       />
                     </div>
