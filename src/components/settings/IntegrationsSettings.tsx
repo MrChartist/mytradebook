@@ -818,31 +818,31 @@ export default function IntegrationsSettings() {
       </PlanGate>
 
       {/* Instrument Master Sync */}
-      <div className="glass-card p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
-            <Database className="w-5 h-5 text-purple-400" />
+      <div className="premium-card-hover p-5">
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="icon-badge-sm bg-[hsl(270_60%_55%)]/8">
+            <Database className="w-4 h-4 text-[hsl(270_60%_55%)]" />
           </div>
           <div>
-            <h3 className="font-semibold">Instrument Database</h3>
-            <p className="text-sm text-muted-foreground">NSE/NFO/MCX instruments for search & pricing</p>
+            <h3 className="text-[15px] font-semibold">Instrument Database</h3>
+            <p className="text-[11px] text-muted-foreground/50">NSE/NFO/MCX instruments for search & pricing</p>
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* Counts by segment */}
-          <div className="grid grid-cols-3 gap-3">
-            <div className="p-3 rounded-lg bg-accent">
-              <div className="text-xs text-muted-foreground">NSE Equity</div>
-              <div className="text-lg font-bold">{syncStatus.nseEqCount.toLocaleString()}</div>
+          <div className="grid grid-cols-3 gap-2.5">
+            <div className="inner-panel !p-2.5">
+              <div className="text-[10px] text-muted-foreground/50 font-medium uppercase tracking-wider">NSE Equity</div>
+              <div className="text-base font-bold font-mono mt-0.5">{syncStatus.nseEqCount.toLocaleString()}</div>
             </div>
-            <div className="p-3 rounded-lg bg-accent">
-              <div className="text-xs text-muted-foreground">NSE F&O</div>
-              <div className="text-lg font-bold">{syncStatus.nfoCount.toLocaleString()}</div>
+            <div className="inner-panel !p-2.5">
+              <div className="text-[10px] text-muted-foreground/50 font-medium uppercase tracking-wider">NSE F&O</div>
+              <div className="text-base font-bold font-mono mt-0.5">{syncStatus.nfoCount.toLocaleString()}</div>
             </div>
-            <div className="p-3 rounded-lg bg-accent">
-              <div className="text-xs text-muted-foreground">MCX</div>
-              <div className="text-lg font-bold">{syncStatus.mcxCount.toLocaleString()}</div>
+            <div className="inner-panel !p-2.5">
+              <div className="text-[10px] text-muted-foreground/50 font-medium uppercase tracking-wider">MCX</div>
+              <div className="text-base font-bold font-mono mt-0.5">{syncStatus.mcxCount.toLocaleString()}</div>
             </div>
           </div>
           
