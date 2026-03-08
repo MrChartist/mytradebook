@@ -36,34 +36,30 @@ function MockupFrame({ children, className, label }: { children: ReactNode; clas
   const isBw = mode === "bw";
   return (
     <div className={cn(
-      "rounded-2xl border overflow-hidden transition-all duration-300 group/frame",
+      "rounded-xl border overflow-hidden transition-all duration-200",
       isBw
-        ? "docs-bw-filter border-dashed border-foreground/20 bg-card hover:scale-[1.005]"
-        : "border-border/40 bg-card shadow-sm hover:shadow-md hover:border-border/60",
+        ? "docs-bw-filter border-dashed border-foreground/15 bg-card"
+        : "border-border/20 bg-card/50 hover:border-border/30",
       className
     )}>
-      {/* Window chrome title bar */}
+      {/* Window chrome */}
       <div className={cn(
-        "flex items-center gap-2 px-4 py-2 border-b",
-        isBw ? "border-foreground/10 bg-muted/30" : "border-border/30 bg-muted/30"
+        "flex items-center gap-1.5 px-3.5 py-1.5 border-b",
+        isBw ? "border-foreground/8 bg-muted/20" : "border-border/15 bg-muted/15"
       )}>
-        <div className="flex items-center gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-loss/50" />
-          <div className="w-2.5 h-2.5 rounded-full bg-[hsl(var(--warning)/0.5)]" />
-          <div className="w-2.5 h-2.5 rounded-full bg-profit/50" />
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded-full bg-loss/40" />
+          <div className="w-2 h-2 rounded-full bg-warning/40" />
+          <div className="w-2 h-2 rounded-full bg-profit/40" />
         </div>
         {label && (
-          <span className="text-[9px] font-semibold text-muted-foreground/60 ml-2 tracking-wide uppercase">{label}</span>
+          <span className="text-[8px] font-semibold text-muted-foreground/40 ml-1.5 tracking-wide uppercase">{label}</span>
         )}
-        <div className="ml-auto flex items-center gap-1">
-          <div className="w-4 h-[3px] rounded-full bg-muted-foreground/10" />
-          <div className="w-4 h-[3px] rounded-full bg-muted-foreground/10" />
-        </div>
       </div>
-      {/* Content area */}
+      {/* Content */}
       <div className={cn(
-        "p-5 md:p-8",
-        !isBw && "bg-gradient-to-b from-card to-muted/10"
+        "p-4 md:p-6",
+        !isBw && "bg-gradient-to-b from-card/80 to-muted/5"
       )}>
         {children}
       </div>
@@ -89,17 +85,17 @@ export function BentoFeatureGrid() {
   };
 
   return (
-    <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mt-8">
+    <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mt-6">
       {bentoItems.map((item) => (
         <button
           key={item.label}
           onClick={() => handleClick(item.sectionId)}
-          className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border/40 bg-card/60 hover:border-primary/40 hover:shadow-md transition-all cursor-pointer group"
+          className="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-border/15 bg-card/40 hover:border-primary/25 transition-all duration-200 cursor-pointer group"
         >
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform" style={{ backgroundColor: `${item.color}15` }}>
-            <item.icon className="w-5 h-5" style={{ color: item.color }} />
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200" style={{ backgroundColor: `${item.color}10` }}>
+            <item.icon className="w-4 h-4" style={{ color: item.color }} />
           </div>
-          <span className="text-xs font-semibold text-foreground">{item.label}</span>
+          <span className="text-[10px] font-semibold text-foreground/70">{item.label}</span>
         </button>
       ))}
     </div>
