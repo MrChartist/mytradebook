@@ -646,8 +646,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         aria-label="Section navigation"
       >
         <div className="relative">
-          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 z-10" style={{ background: 'linear-gradient(to right, hsl(var(--docs-bg) / 0.94), transparent)' }} />
-          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 z-10" style={{ background: 'linear-gradient(to left, hsl(var(--docs-bg) / 0.94), transparent)' }} />
+          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 z-10" style={{ background: 'linear-gradient(to right, hsl(var(--docs-bg) / 0.94), transparent)' }} />
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 z-10" style={{ background: 'linear-gradient(to left, hsl(var(--docs-bg) / 0.94), transparent)' }} />
           <div
             className="flex gap-1.5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-4 py-2.5 no-scrollbar"
             style={{ WebkitOverflowScrolling: "touch" }}
