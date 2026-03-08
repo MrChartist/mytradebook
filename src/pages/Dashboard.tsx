@@ -309,7 +309,7 @@ export default function Dashboard() {
             ))}
           </div>
 
-          <div className="w-px h-4 bg-border/20" />
+          <div className="w-px h-4 bg-border/20 shrink-0" />
 
           {SEGMENT_OPTIONS.map((opt) => (
             <button
