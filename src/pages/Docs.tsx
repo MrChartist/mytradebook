@@ -2716,7 +2716,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <SectionHeader
                 id="trade-coach"
                 title="AI Trade Coach"
-                description="Get instant AI-powered feedback on every closed trade. The coach analyzes your entry, exit, timing, and risk management — then gives actionable advice."
+                description="Get instant AI-powered feedback on every closed trade. The coach analyzes your entry, exit, timing, and risk management — then gives actionable advice you can apply to your next trade."
                 icon={Sparkles}
               />
               <QuickNav items={[
@@ -2725,9 +2725,17 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "How It Evaluates", id: "tc-model" },
               ]} />
 
-              <InteractiveMockup label="AI Trade Coach Feedback">
+              <ProTip variant="best-practice">
+                <p><strong>Why this feature exists:</strong> Professional traders have mentors, accountability partners, or structured review processes. Most retail traders close a trade and immediately move on to the next one — never processing what happened. The AI Trade Coach forces a structured pause after every close, analyzing your execution against your own plan. It's not replacing human mentorship, but it's the next best thing for traders who trade alone. Over 50+ reviewed trades, patterns in the feedback become unmistakable: "You keep exiting too early on Options trades" or "Your SL placement on Intraday is consistently too tight."</p>
+              </ProTip>
+
+              <AnnotatedMockup
+                label="AI Trade Coach Feedback"
+                caption="The coach provides structured markdown feedback with specific observations about your entry timing, exit quality, and risk management. Feedback is saved permanently on each trade record."
+                highlights={["Strengths", "Improvements", "Rating"]}
+              >
                 <TradeCoachMockup />
-              </InteractiveMockup>
+              </AnnotatedMockup>
 
               <SubTopic title="Coaching Workflow" description="Automatic 4-step analysis triggered after every closed trade." id="tc-workflow" />
               <StepByStep title="How the AI Trade Coach Works" steps={[
