@@ -30,9 +30,6 @@ export default function Landing() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
-  const s3 = useCountUp(5, 1200);
-  const s4 = useCountUp(50, 1500);
-  const s5 = useCountUp(1200, 2000);
 
   useEffect(() => {
     if (!loading && user) navigate("/dashboard");
