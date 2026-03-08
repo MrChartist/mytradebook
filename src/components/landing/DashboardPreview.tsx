@@ -99,7 +99,7 @@ export function DashboardPreview() {
             </div>
 
             {/* Main content */}
-            <div className="flex-1 p-3 sm:p-5 min-w-0">
+            <div className="flex-1 p-2.5 sm:p-4 min-w-0">
               <DashboardTab />
             </div>
           </div>
