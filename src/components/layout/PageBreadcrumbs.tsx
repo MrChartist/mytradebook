@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { Home, ChevronRight } from "lucide-react";
+import { Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Breadcrumb,
@@ -45,26 +45,26 @@ export function PageBreadcrumbs() {
   const settingsTab = segment === "settings" ? searchParams.get("tab") : null;
 
   return (
-    <Breadcrumb className="mb-4">
-      <BreadcrumbList className="bg-muted/30 rounded-full px-3 py-1.5 inline-flex">
+    <Breadcrumb className="mb-5">
+      <BreadcrumbList className="text-[12px] gap-1.5">
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link to="/dashboard" className="flex items-center gap-1 hover:text-[hsl(var(--tb-accent))] transition-colors">
+            <Link to="/dashboard" className="flex items-center gap-1 text-muted-foreground/60 hover:text-primary transition-colors duration-200">
               <Home className="w-3.5 h-3.5" />
               <span className="sr-only">Home</span>
             </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator className="opacity-40" />
+        <BreadcrumbSeparator className="text-muted-foreground/30" />
         
         {group && segment !== group.path.slice(1) && (
           <>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to={group.path}>{group.label}</Link>
+                <Link to={group.path} className="text-muted-foreground hover:text-foreground transition-colors duration-200">{group.label}</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
-            <BreadcrumbSeparator />
+            <BreadcrumbSeparator className="text-muted-foreground/30" />
           </>
         )}
 
@@ -72,17 +72,17 @@ export function PageBreadcrumbs() {
           <>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to="/settings">Settings</Link>
+                <Link to="/settings" className="text-muted-foreground hover:text-foreground transition-colors duration-200">Settings</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
-            <BreadcrumbSeparator />
+            <BreadcrumbSeparator className="text-muted-foreground/30" />
             <BreadcrumbItem>
-              <BreadcrumbPage className="capitalize">{settingsTab}</BreadcrumbPage>
+              <BreadcrumbPage className="capitalize font-medium text-foreground">{settingsTab}</BreadcrumbPage>
             </BreadcrumbItem>
           </>
         ) : (
           <BreadcrumbItem>
-            <BreadcrumbPage>{PAGE_LABELS[segment]}</BreadcrumbPage>
+            <BreadcrumbPage className="font-medium text-foreground">{PAGE_LABELS[segment]}</BreadcrumbPage>
           </BreadcrumbItem>
         )}
       </BreadcrumbList>

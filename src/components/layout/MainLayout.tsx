@@ -23,7 +23,6 @@ function MainLayoutInner({ children }: MainLayoutProps) {
   const { collapsed } = useSidebarContext();
   const { isOnline, queuedCount } = useOfflineTradeQueue();
 
-  // Listen for service worker updates and show refresh toast
   useEffect(() => {
     const handler = (e: Event) => {
       const registration = (e as CustomEvent).detail as ServiceWorkerRegistration;
@@ -43,7 +42,6 @@ function MainLayoutInner({ children }: MainLayoutProps) {
     return () => window.removeEventListener("sw-update-available", handler);
   }, []);
 
-  // Check if Dhan token is expired
   const isDhanConnected = !!settings?.dhan_verified_at && !!settings?.dhan_enabled;
   const tokenExpiry = settings?.dhan_token_expiry ? new Date(settings.dhan_token_expiry) : null;
   const isTokenExpired = isDhanConnected && tokenExpiry && tokenExpiry < new Date();
@@ -53,24 +51,24 @@ function MainLayoutInner({ children }: MainLayoutProps) {
       <Sidebar />
       <main className={cn(
         "min-h-screen pt-14 lg:pt-0 transition-[margin] duration-300",
-        collapsed ? "lg:ml-[68px]" : "lg:ml-[230px]"
+        collapsed ? "lg:ml-[64px]" : "lg:ml-[220px]"
       )}>
         <TrialBanner />
         {!isOnline && (
           <div className="bg-warning/10 border-b border-warning/20 px-4 py-2 flex items-center justify-center gap-2">
             <WifiOff className="w-4 h-4 text-warning shrink-0" />
-            <span className="text-sm text-warning font-medium">
+            <span className="text-[13px] text-warning font-medium">
               You're offline{queuedCount > 0 ? ` — ${queuedCount} trade${queuedCount > 1 ? "s" : ""} queued` : ""}
             </span>
           </div>
         )}
         {isTokenExpired && (
           <div
-            className="bg-loss/10 border-b border-loss/20 px-4 py-2 flex items-center justify-center gap-2 cursor-pointer hover:bg-loss/15 transition-colors"
+            className="bg-loss/10 border-b border-loss/20 px-4 py-2 flex items-center justify-center gap-2 cursor-pointer hover:bg-loss/15 transition-colors duration-200"
             onClick={() => navigate("/settings")}
           >
             <AlertTriangle className="w-4 h-4 text-loss shrink-0" />
-            <span className="text-sm text-loss font-medium">
+            <span className="text-[13px] text-loss font-medium">
               Dhan token expired — click to update in Settings
             </span>
           </div>

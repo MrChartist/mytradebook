@@ -16,13 +16,11 @@ export function MobileBottomNav() {
   const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const activeTab = tabs.find((t) => location.pathname === t.path);
-
   return (
     <>
       <MobileDrawer open={drawerOpen} onOpenChange={setDrawerOpen} />
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border/40 safe-area-bottom">
-        <div className="flex items-center justify-around h-[56px]">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border/30 safe-area-bottom">
+        <div className="flex items-center justify-around h-[52px]">
           {tabs.map((tab) => {
             const isActive = location.pathname === tab.path;
             return (
@@ -30,16 +28,16 @@ export function MobileBottomNav() {
                 key={tab.path}
                 to={tab.path}
                 className={cn(
-                  "relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full",
+                  "relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors duration-200",
                   isActive ? "text-primary" : "text-muted-foreground"
                 )}
               >
-                <tab.icon className={cn("w-5 h-5 transition-all duration-200", isActive && "text-primary")} />
-                <span className={cn("text-[10px] font-medium", isActive && "font-semibold")}>{tab.label}</span>
+                <tab.icon className="w-[18px] h-[18px]" />
+                <span className={cn("text-[10px]", isActive ? "font-semibold" : "font-medium")}>{tab.label}</span>
                 {isActive && (
                   <motion.div
                     layoutId="mobile-nav-indicator"
-                    className="absolute -bottom-0 w-8 h-[2.5px] rounded-full bg-primary"
+                    className="absolute top-0 w-8 h-[2px] rounded-full bg-primary"
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   />
                 )}
@@ -50,7 +48,7 @@ export function MobileBottomNav() {
             onClick={() => setDrawerOpen(true)}
             className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-muted-foreground"
           >
-            <MoreHorizontal className="w-5 h-5" />
+            <MoreHorizontal className="w-[18px] h-[18px]" />
             <span className="text-[10px] font-medium">More</span>
           </button>
         </div>
