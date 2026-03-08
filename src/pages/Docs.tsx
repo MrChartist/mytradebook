@@ -555,27 +555,16 @@ export default function Docs() {
 
 function DocsSearchModal({ open, onClose, scrollTo }: { open: boolean; onClose: () => void; scrollTo: (id: string) => void }) {
   const [query, setQuery] = useState("");
+  const [selectedIdx, setSelectedIdx] = useState(0);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const listRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (open) {
       setQuery("");
+      setSelectedIdx(0);
       setTimeout(() => inputRef.current?.focus(), 100);
     }
-  }, [open]);
-
-  // Also listen for Cmd+K / Ctrl+K
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        if (!open) {
-          // parent will handle opening
-        }
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
   }, [open]);
 
   const allItems = SECTIONS.flatMap(s => {
@@ -590,12 +579,23 @@ function DocsSearchModal({ open, onClose, scrollTo }: { open: boolean; onClose: 
     ? allItems.filter(item => item.label.toLowerCase().includes(query.toLowerCase()) || ("parent" in item && item.parent?.toLowerCase().includes(query.toLowerCase())))
     : allItems.filter(i => i.type === "section");
 
+  const visibleItems = filtered.slice(0, 25);
+
+  useEffect(() => { setSelectedIdx(0); }, [query]);
+
+  const selectItem = useCallback((idx: number) => {
+    if (visibleItems[idx]) {
+      scrollTo(visibleItems[idx].id);
+      onClose();
+    }
+  }, [visibleItems, scrollTo, onClose]);
+
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-[60]" role="dialog" aria-modal="true">
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed top-[10%] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md z-[61]">
+      <div className="fixed top-[8%] sm:top-[12%] left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] max-w-md z-[61]">
         <div
           className="rounded-xl overflow-hidden shadow-2xl"
           style={{
@@ -615,36 +615,51 @@ function DocsSearchModal({ open, onClose, scrollTo }: { open: boolean; onClose: 
               style={{ color: 'hsl(var(--docs-text-primary))' }}
               onKeyDown={e => {
                 if (e.key === "Escape") onClose();
-                if (e.key === "Enter" && filtered.length > 0) {
-                  scrollTo(filtered[0].id);
-                  onClose();
-                }
+                if (e.key === "Enter") { selectItem(selectedIdx); }
+                if (e.key === "ArrowDown") { e.preventDefault(); setSelectedIdx(i => Math.min(i + 1, visibleItems.length - 1)); }
+                if (e.key === "ArrowUp") { e.preventDefault(); setSelectedIdx(i => Math.max(i - 1, 0)); }
               }}
             />
+            {query.trim() && (
+              <span className="text-[10px] shrink-0" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }}>
+                {filtered.length} result{filtered.length !== 1 ? "s" : ""}
+              </span>
+            )}
             <kbd
-              className="text-[10px] font-mono px-1.5 py-0.5 rounded"
+              className="text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0"
               style={{ background: 'hsl(var(--docs-elevated))', color: 'hsl(var(--docs-text-muted))' }}
             >
               ESC
             </kbd>
           </div>
-          <div className="max-h-[50vh] overflow-y-auto py-1">
+          <div ref={listRef} className="max-h-[50vh] overflow-y-auto py-1">
             {filtered.length === 0 && (
               <p className="text-center text-sm py-8" style={{ color: 'hsl(var(--docs-text-muted))' }}>No results found</p>
             )}
-            {filtered.slice(0, 20).map(item => (
+            {visibleItems.map((item, idx) => (
               <button
                 key={item.id}
-                onClick={() => { scrollTo(item.id); onClose(); }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-[hsl(var(--docs-elevated)/0.5)]"
+                onClick={() => selectItem(idx)}
+                onMouseEnter={() => setSelectedIdx(idx)}
+                className={cn(
+                  "w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors",
+                  idx === selectedIdx ? "bg-[hsl(var(--docs-accent)/0.08)]" : "hover:bg-[hsl(var(--docs-elevated)/0.5)]"
+                )}
+                ref={el => { if (idx === selectedIdx && el) el.scrollIntoView({ block: "nearest" }); }}
               >
-                <item.icon className="w-3.5 h-3.5 shrink-0" style={{ color: 'hsl(var(--docs-accent))' }} />
-                <div className="min-w-0">
+                <item.icon className="w-3.5 h-3.5 shrink-0" style={{ color: idx === selectedIdx ? 'hsl(var(--docs-accent))' : 'hsl(var(--docs-text-muted) / 0.5)' }} />
+                <div className="min-w-0 flex-1">
                   <span className="text-[13px] block truncate" style={{ color: 'hsl(var(--docs-text-primary))' }}>{item.label}</span>
                   {"parent" in item && item.parent && (
                     <span className="text-[11px] block truncate" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>{item.parent}</span>
                   )}
                 </div>
+                <span
+                  className="text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0"
+                  style={{ background: 'hsl(var(--docs-elevated))', color: 'hsl(var(--docs-text-muted) / 0.6)' }}
+                >
+                  {item.type === "section" ? "Section" : "Topic"}
+                </span>
               </button>
             ))}
           </div>
