@@ -2134,6 +2134,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Answers to frequently asked questions and solutions to common issues."
                 icon={MessageSquare}
               />
+              <SubTopic title="Common Questions" description="Quick answers to the most frequently asked questions." />
               <div className="space-y-4">
                 {[
                   { q: "Is TradeBook free to use?", a: "Yes! The Free plan includes trade logging, watchlists, alerts, and basic analytics. The Pro plan unlocks advanced analytics, AI insights, weekly reports, and more." },
