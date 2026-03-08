@@ -277,7 +277,7 @@ export default function Dashboard() {
         <div className="h-px bg-border/20" />
 
         {/* Row 2: Month selector + Segment filter */}
-        <div className="flex items-center gap-2.5 flex-wrap">
+        <div className="flex items-center gap-2.5 overflow-x-auto pb-1 scrollbar-none -mx-1 px-1">
           <div className="flex gap-0.5 bg-muted/40 rounded-lg p-0.5 border border-border/15">
             {[
               { label: "All", value: "all" },
@@ -309,14 +309,14 @@ export default function Dashboard() {
             ))}
           </div>
 
-          <div className="w-px h-4 bg-border/20" />
+          <div className="w-px h-4 bg-border/20 shrink-0" />
 
           {SEGMENT_OPTIONS.map((opt) => (
             <button
               key={opt.value}
               onClick={() => setSegment(opt.value)}
               className={cn(
-                "px-3 py-1 text-[11px] font-medium rounded-md border transition-all duration-200",
+                "px-3 py-1 text-[11px] font-medium rounded-md border transition-all duration-200 shrink-0",
                 segment === opt.value
                   ? "border-primary/15 bg-primary/6 text-primary"
                   : "border-border/15 text-muted-foreground/50 hover:text-foreground hover:border-border/30"

@@ -597,7 +597,7 @@ export default function Fundamentals() {
         {isLoading ? (
           <div className="space-y-2">
             {Array.from({ length: 10 }).map((_, i) => (
-              <Skeleton key={i} className="h-11 w-full rounded-lg" />
+              <Skeleton key={i} className="h-11 w-full rounded-lg shimmer-skeleton" />
             ))}
           </div>
         ) : stocks.length === 0 ? (
