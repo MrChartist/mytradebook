@@ -27,11 +27,7 @@ export default function Settings() {
 
   return (
     <div className="space-y-4 animate-fade-in">
-      {/* Header */}
-      <div className="space-y-0.5">
-        <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Settings</h1>
-        <p className="text-[13px] text-muted-foreground/70 leading-relaxed">Manage your account and preferences</p>
-      </div>
+      <PageHeader title="Settings" subtitle="Manage your account and preferences." />
 
       <Tabs value={activeTab} onValueChange={(val) => setSearchParams({ tab: val })} className="w-full">
         <div className="overflow-x-auto no-scrollbar -mx-1 px-1">
