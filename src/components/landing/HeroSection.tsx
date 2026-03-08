@@ -1,12 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Play, Shield, Zap } from "lucide-react";
+import { ArrowRight, Play, Shield, Zap, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fadeUp } from "./LandingShared";
 import { DashboardPreview } from "./DashboardPreview";
 import { VideoModal } from "./VideoModal";
-import heroLifestyle from "@/assets/hero-lifestyle.jpg";
 
 const statsConfig = [
   { end: 1200, suffix: "+", label: "Traders Joined" },
@@ -47,22 +46,12 @@ function useCountUpOnView(end: number, duration = 1800) {
   return { count, ref };
 }
 
-const avatarColors = [
-  "hsl(var(--tb-accent))",
-  "hsl(var(--profit))",
-  "hsl(210 80% 55%)",
-  "hsl(270 60% 55%)",
-  "hsl(340 70% 55%)",
-];
-const avatarInitials = ["RP", "AK", "SM", "VK", "PT"];
-
 export function HeroSection() {
   const navigate = useNavigate();
   const [videoOpen, setVideoOpen] = useState(false);
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const imgScale = useTransform(scrollYProgress, [0, 1], [1, 1.06]);
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, 50]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, 60]);
 
   const stat0 = useCountUpOnView(statsConfig[0].end, 1800);
   const stat1 = useCountUpOnView(statsConfig[1].end, 1400);
@@ -78,91 +67,82 @@ export function HeroSection() {
   return (
     <>
       <section ref={heroRef} className="relative min-h-[100svh] flex flex-col overflow-hidden" aria-label="Hero">
-        {/* Background */}
-        <motion.div className="absolute inset-0 will-change-transform" style={{ scale: imgScale }}>
-          <img
-            src={heroLifestyle}
-            alt=""
-            className="w-full h-full object-cover will-change-transform"
-            fetchPriority="high"
-            decoding="async"
-            style={{ filter: "blur(28px) saturate(1.1) brightness(1.08)", transform: "scale(1.1)" }}
-          />
-        </motion.div>
+        {/* Dot grid pattern background */}
+        <div className="absolute inset-0 dot-pattern opacity-40 dark:opacity-20" />
 
-        {/* Overlays */}
-        <div className="absolute inset-0 bg-background/82 dark:bg-background/88" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-transparent to-background" />
+        {/* Radial gradient glow */}
+        <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(ellipse at center, hsl(var(--tb-accent) / 0.06) 0%, hsl(var(--tb-accent) / 0.02) 40%, transparent 70%)" }}
+        />
 
-        {/* Subtle radial accent */}
-        <div className="absolute top-[28%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-[hsl(var(--tb-accent)/0.025)] blur-[180px] pointer-events-none" />
+        {/* Secondary cool glow */}
+        <div className="absolute top-[50%] left-[20%] w-[500px] h-[400px] rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(ellipse at center, hsl(210 80% 55% / 0.03) 0%, transparent 70%)" }}
+        />
+
+        {/* Bottom fade to background */}
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent pointer-events-none" />
 
         {/* Content */}
         <motion.div
           style={{ y: contentY }}
-          className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 pt-28 pb-14 text-center"
+          className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 pt-32 pb-14 text-center"
         >
-          {/* Social proof pill */}
+          {/* Beta badge pill */}
           <motion.div
             variants={fadeUp} initial="hidden" animate="visible" custom={0}
-            className="mb-10"
+            className="mb-8"
           >
-            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-card/50 dark:bg-card/25 backdrop-blur-xl border border-border/25 shadow-sm">
-              <div className="flex -space-x-2">
-                {avatarInitials.map((init, i) => (
-                  <div
-                    key={init}
-                    className="w-6 h-6 rounded-full ring-2 ring-background flex items-center justify-center text-[7px] font-bold text-white"
-                    style={{ backgroundColor: avatarColors[i] }}
-                  >
-                    {init}
-                  </div>
-                ))}
-              </div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/30 bg-card/50 dark:bg-card/20 backdrop-blur-xl shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
               <span className="text-muted-foreground text-[13px] font-medium tracking-[-0.01em]">
-                1,200+ traders trust TradeBook
+                Free during beta — no card needed
               </span>
             </div>
           </motion.div>
 
-          {/* Headline — Bodoni, 60-68px desktop */}
+          {/* Headline — Sora, bold, gradient keyword */}
           <motion.h1
             variants={fadeUp} initial="hidden" animate="visible" custom={0.1}
-            className="font-heading text-[2.25rem] sm:text-[3rem] md:text-[3.75rem] lg:text-[4.25rem] font-semibold leading-[1.04] tracking-[-0.02em] text-foreground mb-8 max-w-4xl"
+            className="font-heading text-[2.5rem] sm:text-[3.25rem] md:text-[4rem] lg:text-[4.75rem] font-bold leading-[1.02] tracking-[-0.04em] text-foreground mb-7 max-w-4xl"
           >
             Know Your{" "}
-            <span className="accent-serif text-primary">Edge</span>.
+            <span className="text-gradient">Edge</span>.
             <br />
-            <span className="text-foreground/70">Compound It Daily.</span>
+            <span className="text-foreground/50">Compound It Daily.</span>
           </motion.h1>
 
-          {/* Subtitle — Source Sans, 18px, clean */}
+          {/* Subtitle — Inter, clean */}
           <motion.p
             variants={fadeUp} initial="hidden" animate="visible" custom={0.2}
-            className="text-[1rem] md:text-[1.0625rem] lg:text-[1.125rem] text-muted-foreground max-w-[28rem] mx-auto mb-14 leading-[1.7] tracking-[-0.006em]"
+            className="text-[1rem] md:text-[1.0625rem] lg:text-[1.125rem] text-muted-foreground max-w-[30rem] mx-auto mb-12 leading-[1.7] tracking-[-0.006em]"
           >
             The smart trading journal built for Indian markets. Track every trade across NSE, BSE & MCX — and find your real edge.
           </motion.p>
 
-          {/* CTA buttons — clear hierarchy */}
+          {/* CTA buttons */}
           <motion.div
             variants={fadeUp} initial="hidden" animate="visible" custom={0.3}
-            className="flex flex-col sm:flex-row items-center gap-4 mb-6"
+            className="flex flex-col sm:flex-row items-center gap-4 mb-7"
           >
             <Button
               size="lg"
-              className="h-[3.25rem] px-10 text-[15px] gap-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg shadow-primary/15 font-semibold tracking-[-0.01em]"
+              className="h-[3.25rem] px-10 text-[15px] gap-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full font-semibold tracking-[-0.01em] relative overflow-hidden group"
               onClick={() => navigate("/login?mode=signup")}
             >
-              Start Free — No Card Needed
-              <ArrowRight className="w-4 h-4" />
+              {/* Glow effect on hover */}
+              <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-primary/0 via-white/10 to-primary/0" />
+              <span className="relative flex items-center gap-2.5">
+                Start Free — No Card Needed
+                <ArrowRight className="w-4 h-4" />
+              </span>
             </Button>
 
             <button
               onClick={() => setVideoOpen(true)}
               className="inline-flex items-center gap-2.5 text-[14px] text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium group tracking-[-0.01em]"
             >
-              <span className="w-9 h-9 rounded-full border border-border/30 bg-card/40 backdrop-blur-sm flex items-center justify-center group-hover:border-foreground/20 group-hover:bg-card/60 transition-all duration-200">
+              <span className="w-9 h-9 rounded-full border border-border/30 bg-card/40 backdrop-blur-sm flex items-center justify-center group-hover:border-primary/30 group-hover:bg-card/60 transition-all duration-200">
                 <Play className="w-3.5 h-3.5 ml-0.5" />
               </span>
               Watch Demo
@@ -172,7 +152,7 @@ export function HeroSection() {
           {/* Trust micro-line */}
           <motion.div
             variants={fadeUp} initial="hidden" animate="visible" custom={0.4}
-            className="flex items-center gap-4 text-[12px] text-muted-foreground/60"
+            className="flex items-center gap-4 text-[12px] text-muted-foreground/50"
           >
             <span className="flex items-center gap-1.5"><Shield className="w-3 h-3" /> Bank-grade security</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
@@ -180,19 +160,19 @@ export function HeroSection() {
           </motion.div>
         </motion.div>
 
-        {/* Stats bar — cleaner, tighter */}
+        {/* Stats bar */}
         <motion.div
           variants={fadeUp} initial="hidden" animate="visible" custom={0.5}
           className="relative z-10 mx-4 sm:mx-8 lg:mx-auto lg:max-w-2xl mb-10"
         >
-          <div className="rounded-2xl bg-card/40 dark:bg-card/25 backdrop-blur-xl border border-border/20 shadow-sm">
+          <div className="rounded-2xl bg-card/40 dark:bg-card/20 backdrop-blur-xl border border-border/20 shadow-sm">
             <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-border/15">
               {statsConfig.map((stat, i) => (
                 <div key={stat.label} ref={statRefs[i].ref} className="px-4 sm:px-5 py-4 text-center">
                   <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground tracking-[-0.02em] font-mono tabular-nums">
                     {formatStat(i, statRefs[i].count)}
                   </p>
-                  <p className="text-[10px] text-muted-foreground/60 uppercase tracking-[0.12em] mt-1.5 font-semibold">
+                  <p className="text-[10px] text-muted-foreground/50 uppercase tracking-[0.12em] mt-1.5 font-semibold">
                     {stat.label}
                   </p>
                 </div>
@@ -202,7 +182,7 @@ export function HeroSection() {
         </motion.div>
       </section>
 
-      {/* Dashboard Preview — editorial transition */}
+      {/* Dashboard Preview */}
       <div className="relative bg-background">
         <div className="absolute inset-x-0 -top-32 h-32 bg-gradient-to-b from-transparent to-background pointer-events-none" />
         <div className="pt-4 sm:pt-12 pb-4">

@@ -626,12 +626,12 @@
   /* ── Landing Page Typography ───────────────────── */
   .landing-page h1,
   .landing-page h2 {
-    font-family: 'Libre Bodoni', Georgia, serif;
-    letter-spacing: -0.02em;
+    font-family: 'Sora', 'Inter', sans-serif;
+    letter-spacing: -0.03em;
   }
 
   .landing-page h3 {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     letter-spacing: -0.015em;
   }
 
@@ -640,11 +640,17 @@
   .landing-page button,
   .landing-page a,
   .landing-page li {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
   }
 
   .landing-page .font-mono {
     font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── Glow line accent ── */
+  .glow-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, hsl(var(--tb-accent) / 0.5) 30%, hsl(var(--tb-accent) / 0.5) 70%, transparent 100%);
   }
 
   /* accent-script color is set in base layer above — no redefinition needed */
