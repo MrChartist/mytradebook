@@ -817,6 +817,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">TradeBook excels at post-trade analysis, discipline enforcement, and behavioral improvement. It's the tool you use after your trading platform, not instead of it.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Dashboard", description: "Your real-time trading cockpit", targetId: "dashboard" },
+                { label: "Trade Management", description: "Learn how to log and manage trades", targetId: "trade-management" },
+                { label: "Settings", description: "Configure your account and preferences", targetId: "settings" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -1302,6 +1308,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <div className="mt-4"><TradeTemplateMockup /></div>
               </FeatureCard>
+
+              <NextStepBlock steps={[
+                { label: "CSV Import", description: "Bulk import trades from your broker", targetId: "csv-import" },
+                { label: "Analytics", description: "Deep performance breakdowns", targetId: "analytics" },
+                { label: "Journal", description: "Review and reflect on your trading", targetId: "journal" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -1377,6 +1389,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">If your broker's format isn't auto-detected, you can still import — just manually map the columns in Step 3. Any CSV with symbol, date, price, and quantity columns will work.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Trade Templates", description: "Save frequent trade setups", targetId: "trade-templates" },
+                { label: "Trade Management", description: "Full trade lifecycle guide", targetId: "trade-management" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -1447,6 +1464,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">Smart Suggestions are purely frequency-based — they reflect what you actually trade, not what performed best. For performance-based insights, see the Analytics section.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Position Sizing", description: "Calculate optimal trade quantities", targetId: "position-sizing" },
+                { label: "Trading Rules", description: "Enforce pre-trade discipline", targetId: "trading-rules" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -1512,6 +1534,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="info">
                 <p><strong>Beginner tip:</strong> Start by setting risk at 0.5% and use the calculator on every single trade for at least 30 trades. Don't adjust the risk % based on "how good" a setup looks — the whole point is consistency. After 30 trades, review your analytics to see if you can gradually increase to 1%.</p>
               </ProTip>
+
+              <NextStepBlock steps={[
+                { label: "Trading Rules", description: "Pre-trade discipline checklist", targetId: "trading-rules" },
+                { label: "Trade Management", description: "Use sizing in the trade form", targetId: "trade-management" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -1604,6 +1631,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   </div>
                 </div>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Alerts System", description: "Set automated price alerts", targetId: "alerts" },
+                { label: "Trade Management", description: "Log trades with your rules enforced", targetId: "trade-management" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -1798,6 +1830,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 }]} title="suggest-alerts" />
                 <p className="text-[12px] text-muted-foreground/55 mt-3">You need at least 10 closed trades before suggestions appear. The more trades you log, the more personalized the recommendations become.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Watchlists", description: "Track instruments with live prices", targetId: "watchlists" },
+                { label: "Studies & Research", description: "Link alerts to your research", targetId: "studies" },
+                { label: "Integrations", description: "Connect Telegram for alert delivery", targetId: "integrations" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -1896,6 +1934,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">This feedback loop is one of the most powerful features for improving your edge. Traders who link studies to trades can objectively measure which types of research lead to profitable outcomes.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Alerts", description: "Set alerts at your study price levels", targetId: "alerts" },
+                { label: "Watchlists", description: "Track study symbols in watchlists", targetId: "watchlists" },
+                { label: "Trade Management", description: "Execute trades from studies", targetId: "trade-management" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -1979,6 +2023,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">To connect your broker for live prices, go to Settings → Integrations → Dhan. See the Integrations section for full setup instructions.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Alerts", description: "Set price alerts from your watchlist", targetId: "alerts" },
+                { label: "Studies", description: "Research watchlist symbols deeper", targetId: "studies" },
+                { label: "Integrations", description: "Connect Dhan for live prices", targetId: "integrations" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -2077,6 +2127,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <div className="mt-4"><JournalFiltersSegmentationMockup /></div>
               </FeatureCard>
+
+              <NextStepBlock steps={[
+                { label: "Analytics", description: "Deep performance breakdowns", targetId: "analytics" },
+                { label: "Calendar", description: "Daily journal and P&L heatmap", targetId: "calendar" },
+                { label: "Mistakes Review", description: "Identify recurring trading errors", targetId: "mistakes" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -2322,6 +2378,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">As a rule of thumb: if a metric is based on fewer than 20 data points, treat it as directional rather than definitive. The analytics page dims or hides metrics that don't meet minimum thresholds.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Reports", description: "Weekly performance summaries", targetId: "reports" },
+                { label: "Journal", description: "Connect analytics to daily habits", targetId: "journal" },
+                { label: "Mistakes Review", description: "Fix your costliest errors", targetId: "mistakes" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -2418,6 +2480,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">Color intensity is relative to your own trading history, not absolute amounts. A ₹5,000 profit day will be deep green for a ₹1L account but barely colored for a ₹50L account. This keeps the heatmap meaningful regardless of account size.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Journal", description: "Multi-view journal with analytics", targetId: "journal" },
+                { label: "Mistakes Review", description: "Track and fix recurring errors", targetId: "mistakes" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -2496,6 +2563,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">Focus on fixing one mistake category at a time. Trying to eliminate all mistakes simultaneously leads to analysis paralysis. Pick your most costly mistake, work on it for 2-4 weeks, then move to the next one.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Analytics", description: "Deep performance breakdowns", targetId: "analytics" },
+                { label: "Calendar", description: "Daily journal for tracking context", targetId: "calendar" },
+                { label: "Trading Rules", description: "Prevent mistakes with checklists", targetId: "trading-rules" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -2634,6 +2707,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">These indicators are computed server-side from live NSE data. In the Custom Filter Builder, you can combine technical indicators with fundamental metrics (e.g., RSI &lt; 30 AND P/E &lt; 20) for powerful cross-domain screening.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Watchlists", description: "Save screener results to watchlists", targetId: "watchlists" },
+                { label: "Alerts", description: "Set alerts on screener stocks", targetId: "alerts" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -2730,6 +2808,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">Pro tip: Screenshot your report insights and paste them into your Monday journal entry. This creates a permanent record of your weekly learnings that compounds over months.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Analytics", description: "Explore detailed performance metrics", targetId: "analytics" },
+                { label: "Journal", description: "Write weekly reflections", targetId: "journal" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -2834,6 +2917,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip>
                 <p>Sharing your wins publicly creates accountability. Traders who share their journal consistently show 15% higher discipline scores in our data. The share triggers are placed on Dashboard, Journal, Reports, and Trade Detail modals — so you're always one click away.</p>
               </ProTip>
+
+              <NextStepBlock steps={[
+                { label: "Achievements", description: "Earn badges for your trading journey", targetId: "achievements" },
+                { label: "Trade Coach", description: "Get AI feedback on your trades", targetId: "trade-coach" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -2945,6 +3033,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="info">
                 <p>Check the Achievements grid on your Dashboard to see which badges you're closest to earning. Focus on discipline badges first — they reinforce good trading habits that compound over time.</p>
               </ProTip>
+
+              <NextStepBlock steps={[
+                { label: "Sharing & Social", description: "Share your wins and streaks", targetId: "sharing" },
+                { label: "Trade Coach", description: "AI-powered trade analysis", targetId: "trade-coach" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -3030,6 +3123,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">The coach is most powerful when you treat its feedback as input to your overall improvement system — not as isolated comments on individual trades.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "AI Insights Setup", description: "Configure your AI provider", targetId: "ai-integration" },
+                { label: "Journal", description: "Reference coach feedback in reviews", targetId: "journal" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -3150,6 +3248,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">If issues persist after checking the above, try disconnecting and reconnecting your Dhan account. This refreshes the OAuth tokens and re-validates all credentials.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "AI Insights", description: "Set up AI trade analysis", targetId: "ai-integration" },
+                { label: "Settings", description: "Manage all integration settings", targetId: "settings" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -3277,6 +3380,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <div className="mt-5">
                 <AISettingsPreviewMockup />
               </div>
+
+              <NextStepBlock steps={[
+                { label: "Trade Coach", description: "See AI coach in action", targetId: "trade-coach" },
+                { label: "Settings", description: "Configure AI in settings", targetId: "settings" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -3391,6 +3499,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </ExpandableDetail>
 
               <div className="mt-4"><KeyboardShortcutsDetailMockup /></div>
+
+              <NextStepBlock steps={[
+                { label: "Mobile & PWA", description: "Install TradeBook on your phone", targetId: "pwa" },
+                { label: "Settings", description: "Customize your workspace", targetId: "settings" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -3505,6 +3618,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   <p className="text-[12px] text-muted-foreground/60 mt-3 italic">Free column = PWA (TradeBook). Pro column = Native App. TradeBook's PWA delivers a near-native experience without the overhead of app store distribution.</p>
                 </div>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Settings", description: "Configure your account", targetId: "settings" },
+                { label: "Keyboard Shortcuts", description: "Navigate faster with hotkeys", targetId: "shortcuts" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -3642,6 +3760,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">For issues not covered here, check the FAQ section below or reach out via the in-app feedback button.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Integrations", description: "Connect your broker and Telegram", targetId: "integrations" },
+                { label: "FAQ", description: "Common questions answered", targetId: "faq" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -3757,6 +3880,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="info">
                 <p><strong>Still stuck?</strong> If your issue isn't covered here, reach out to support at <code>founder@mrchartist.com</code>. Include your browser name, device type, a screenshot of the issue, and any error messages from the browser console (F12 → Console tab) — it helps us resolve things much faster.</p>
               </ProTip>
+
+              <NextStepBlock steps={[
+                { label: "Changelog", description: "See what's new and coming next", targetId: "changelog" },
+                { label: "Getting Started", description: "Back to the basics", targetId: "getting-started" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
