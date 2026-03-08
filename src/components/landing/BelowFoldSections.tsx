@@ -434,7 +434,7 @@ export function IndianMarketsSection() {
                 "Dhan broker auto-sync",
                 "Market hours & holiday awareness",
               ].map((item) => (
-                <li key={item} className="flex items-center gap-2.5 text-[15px] text-foreground/85">
+                <li key={item} className="flex items-center gap-2.5 text-[15px] text-foreground/85 tracking-[-0.006em]">
                   <CheckCircle2 className="w-4 h-4 text-profit shrink-0" />
                   <span>{item}</span>
                 </li>
