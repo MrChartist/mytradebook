@@ -4302,8 +4302,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
               <QuickNav items={[
                 { label: "Profile & Billing", id: "set-account" },
+                { label: "Subscription & Plans", id: "set-plans" },
                 { label: "Tags & Preferences", id: "set-tags" },
                 { label: "Capital Management", id: "set-capital" },
+                { label: "Data Export & Backup", id: "set-export" },
                 { label: "Security & Integrations", id: "set-security" },
               ]} />
 
