@@ -694,7 +694,7 @@
        Divider:      1px, gradient fade, 3rem margin
      ================================================================ */
 
-  /* ── Light mode docs variables ── */
+   /* ── Light mode docs variables ── */
   :root .docs-page {
     --docs-bg: 220 20% 97%;
     --docs-surface: 0 0% 100%;
@@ -702,9 +702,9 @@
     --docs-border: 220 13% 86%;
     --docs-border-subtle: 220 13% 91%;
     --docs-text-strong: 220 25% 10%;
-    --docs-text-primary: 220 15% 22%;
-    --docs-text-secondary: 220 10% 42%;
-    --docs-text-muted: 220 8% 56%;
+    --docs-text-primary: 220 15% 20%;
+    --docs-text-secondary: 220 10% 38%;
+    --docs-text-muted: 220 8% 52%;
     --docs-accent: 24 85% 50%;
     --docs-accent-hover: 24 85% 43%;
     --docs-accent-soft: 24 85% 50%;
@@ -724,9 +724,9 @@
     --docs-border: 220 24% 22%;
     --docs-border-subtle: 220 22% 15%;
     --docs-text-strong: 210 30% 96%;
-    --docs-text-primary: 215 18% 78%;
-    --docs-text-secondary: 218 14% 58%;
-    --docs-text-muted: 220 10% 42%;
+    --docs-text-primary: 215 18% 80%;
+    --docs-text-secondary: 218 14% 62%;
+    --docs-text-muted: 220 10% 44%;
     --docs-accent: 24 78% 56%;
     --docs-accent-hover: 24 78% 48%;
     --docs-accent-soft: 24 78% 56%;
@@ -742,6 +742,7 @@
   .docs-page {
     background: hsl(var(--docs-bg)) !important;
     color: hsl(var(--docs-text-primary));
+    scroll-behavior: smooth;
   }
 
   /* ── Docs Typography Scale ────────────────────────
@@ -803,20 +804,21 @@
   .docs-body-lg {
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 1.0625rem;
-    line-height: 1.76;
+    line-height: 1.8;
     font-weight: 400;
     color: hsl(var(--docs-text-primary));
     letter-spacing: -0.003em;
   }
 
-  /* Body standard: 15.5px — main content text */
+  /* Body standard: 16px — main content text, optimized for reading */
   .docs-body {
     font-family: 'Inter', system-ui, sans-serif;
-    font-size: 0.96875rem;
-    line-height: 1.78;
+    font-size: 1rem;
+    line-height: 1.82;
     font-weight: 400;
     color: hsl(var(--docs-text-primary));
     letter-spacing: -0.005em;
+    word-spacing: 0.02em;
   }
 
   /* Label: 13px — form labels, tag labels, meta identifiers */
@@ -856,11 +858,11 @@
     letter-spacing: 0.005em;
   }
 
-  /* Note/callout body: 14.5px — ProTip, info, warning content */
+  /* Note/callout body: 15px — ProTip, info, warning content */
   .docs-note {
     font-family: 'Inter', system-ui, sans-serif;
-    font-size: 0.90625rem;
-    line-height: 1.68;
+    font-size: 0.9375rem;
+    line-height: 1.72;
     font-weight: 440;
     color: hsl(var(--docs-text-primary));
   }
@@ -891,9 +893,9 @@
     .docs-topic-heading { font-size: 1.3125rem; }
     .docs-subtopic-heading { font-size: 1.125rem; }
     .docs-card-title { font-size: 1rem; }
-    .docs-body-lg { font-size: 1rem; line-height: 1.68; }
-    .docs-body { font-size: 0.9375rem; line-height: 1.7; }
-    .docs-note { font-size: 0.875rem; }
+    .docs-body-lg { font-size: 1rem; line-height: 1.72; }
+    .docs-body { font-size: 0.9375rem; line-height: 1.75; }
+    .docs-note { font-size: 0.875rem; line-height: 1.68; }
     .docs-code { font-size: 0.8125rem; }
   }
 
@@ -904,11 +906,11 @@
     .docs-topic-heading { font-size: 1.1875rem; line-height: 1.24; }
     .docs-subtopic-heading { font-size: 1.0625rem; line-height: 1.3; }
     .docs-card-title { font-size: 0.9375rem; }
-    .docs-body-lg { font-size: 0.9375rem; line-height: 1.65; }
-    .docs-body { font-size: 0.96875rem; line-height: 1.68; }
+    .docs-body-lg { font-size: 0.9375rem; line-height: 1.7; }
+    .docs-body { font-size: 1rem; line-height: 1.75; }
     .docs-sidebar-item { font-size: 0.8125rem; line-height: 1.38; }
     .docs-caption { font-size: 0.6875rem; }
-    .docs-note { font-size: 0.875rem; line-height: 1.65; }
+    .docs-note { font-size: 0.875rem; line-height: 1.68; }
     .docs-code { font-size: 0.78125rem; }
   }
 
