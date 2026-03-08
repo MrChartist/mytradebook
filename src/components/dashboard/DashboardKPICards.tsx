@@ -97,11 +97,11 @@ export function DashboardKPICards({ alerts }: Props) {
         />
         <div className="flex gap-3 mt-3">
           <div className="inner-panel flex-1">
-            <p className="text-[10px] text-muted-foreground">Realized</p>
+            <p className="kpi-sublabel">Realized</p>
             <p className={cn("text-xs font-bold font-mono mt-0.5", realizedToday >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(realizedToday)}</p>
           </div>
           <div className="inner-panel flex-1">
-            <p className="text-[10px] text-muted-foreground">Unrealized</p>
+            <p className="kpi-sublabel">Unrealized</p>
             <p className={cn("text-xs font-bold font-mono mt-0.5", unrealizedToday >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(unrealizedToday)}</p>
           </div>
         </div>
