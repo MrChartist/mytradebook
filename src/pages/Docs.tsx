@@ -4542,11 +4542,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-6 right-4 lg:right-6 z-50 w-10 h-10 rounded-xl shadow-lg flex items-center justify-center transition-all"
+            className="fixed bottom-5 right-5 z-50 w-11 h-11 rounded-xl shadow-lg flex flex-col items-center justify-center gap-0 transition-all"
             style={{ background: 'hsl(var(--docs-elevated))', border: '1px solid hsl(var(--docs-border))', color: 'hsl(var(--docs-text-secondary))' }}
             aria-label="Back to top"
           >
             <ArrowUpRight className="w-4 h-4 -rotate-45" />
+            <span className="text-[8px] font-semibold leading-none -mt-0.5" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>{readProgress}%</span>
           </motion.button>
         )}
       </AnimatePresence>
