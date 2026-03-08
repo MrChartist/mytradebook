@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
-import { Save, Loader2, CheckCircle, Download } from "lucide-react";
+import { Save, Loader2, CheckCircle, Download, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import CapitalManagementCard from "@/components/settings/CapitalManagementCard";
+import { usePublicProfile } from "@/hooks/usePublicProfile";
 
 export default function ProfileSettings() {
   const { profile, user } = useAuth();
@@ -142,8 +145,82 @@ export default function ProfileSettings() {
       {/* Capital Management */}
       <CapitalManagementCard />
 
+      {/* Public Profile */}
+      <PublicProfileCard />
+
       {/* Data Export */}
       <DataExportCard />
+    </div>
+  );
+}
+
+function PublicProfileCard() {
+  const { publicProfile, upsertProfile } = usePublicProfile();
+  const [isPublic, setIsPublic] = useState(false);
+  const [displayName, setDisplayName] = useState("");
+  const [bio, setBio] = useState("");
+  const [disclaimer, setDisclaimer] = useState("");
+  const [saving, setSaving] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (publicProfile) {
+      setIsPublic(publicProfile.is_public);
+      setDisplayName(publicProfile.display_name || "");
+      setBio(publicProfile.bio || "");
+      setDisclaimer(publicProfile.disclaimer || "");
+    }
+  }, [publicProfile]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await upsertProfile.mutateAsync({ is_public: isPublic, display_name: displayName, bio, disclaimer });
+      toast.success("Public profile updated");
+    } catch {
+      toast.error("Failed to update public profile");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const profileUrl = user ? `${window.location.origin}/trader/${user.id}` : "";
+
+  return (
+    <div className="mt-6 pt-6 border-t border-border space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold flex items-center gap-2">
+            <Globe className="w-4 h-4" />
+            Public Profile
+          </h2>
+          <p className="text-sm text-muted-foreground">Allow others to see your trader stats</p>
+        </div>
+        <Switch checked={isPublic} onCheckedChange={setIsPublic} />
+      </div>
+      {isPublic && (
+        <div className="space-y-3">
+          <div className="space-y-1.5">
+            <Label>Display Name</Label>
+            <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Your trader name" className="bg-accent border-border" />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Bio</Label>
+            <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="A brief description..." className="bg-accent border-border" rows={2} />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Disclaimer</Label>
+            <Textarea value={disclaimer} onChange={(e) => setDisclaimer(e.target.value)} placeholder="Not SEBI registered..." className="bg-accent border-border" rows={2} />
+          </div>
+          <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2 border border-border truncate">
+            Profile URL: {profileUrl}
+          </div>
+        </div>
+      )}
+      <Button variant="outline" size="sm" onClick={handleSave} disabled={saving}>
+        {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+        Save Public Profile
+      </Button>
     </div>
   );
 }

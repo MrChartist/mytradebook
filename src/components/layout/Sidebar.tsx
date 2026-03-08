@@ -27,6 +27,7 @@ import { MobileDrawer } from "./MobileDrawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useSubscription } from "@/hooks/useSubscription";
+import { NotificationBell } from "@/components/NotificationBell";
 import logo from "@/assets/logo.png";
 
 const mainNavItems = [
@@ -105,6 +106,7 @@ export function Sidebar() {
         <img src={logo} alt="TradeBook" className="h-8 object-contain drop-shadow-sm" />
         <div className="flex items-center gap-2">
           <ThemeToggle />
+          <NotificationBell />
           <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl">
             <Search className="w-4 h-4" />
           </Button>
@@ -160,7 +162,10 @@ export function Sidebar() {
           {!collapsed && (
             <div className="flex items-center justify-between px-3 py-1.5 mb-1">
               <span className="text-[11px] text-muted-foreground">Theme</span>
-              <ThemeToggle />
+              <div className="flex items-center gap-1">
+                <NotificationBell />
+                <ThemeToggle />
+              </div>
             </div>
           )}
           {/* Profile */}

@@ -37,6 +37,7 @@ const Fundamentals = lazy(() => import("./pages/Fundamentals"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const PublicProfile = lazy(() => import("./pages/PublicProfile"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -85,6 +86,7 @@ const App = () => (
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/auth/callback" element={<AuthCallback />} />
                   <Route path="/dhan-callback" element={<DhanCallback />} />
+                  <Route path="/trader/:userId" element={<PublicProfile />} />
                   <Route
                     path="/dashboard"
                     element={

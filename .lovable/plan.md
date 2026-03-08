@@ -1,102 +1,217 @@
+# TradeBook — 5-Phase Improvement Plan
 
+> Master roadmap covering website, docs, missing features, and polish.
+> Last updated: March 2026
 
-# Phase 5 — Growth & Monetization
+---
 
-Phase 5 covers 21 items across payments, plan enforcement, community features, notifications, and integrations. Given the scope, this plan focuses on what can be built now and defers items requiring external setup (Zerodha API partnership, email drip campaigns, etc.).
+## Phase 1: Landing Page & Conversion Optimization
+**Goal:** Make the first impression unforgettable and maximize sign-up conversions.
 
-## Current State
-- **Billing UI** exists in `BillingSettings.tsx` with 3 plans (Monthly/Quarterly/Yearly), all disabled buttons
-- **Subscription table** exists in DB with `plan`, `status`, `payment_provider`, `provider_subscription_id` columns
-- **`useSubscription`** hook exists but hardcodes `effectivePlan: "pro"` — no real enforcement
-- **`PlanGate`** component wraps 4 areas (Reports, Analytics AI, Analytics segments, Integrations) but always renders children
-- **`TrialBanner`** returns null
-- **`handle_new_user_subscription`** DB trigger creates a subscription with `plan: 'pro'`, `status: 'trialing'`, `trial_ends_at: now() + 14 days`
-- Google OAuth already works
+### Missing / To Improve
+- [ ] **Live Dashboard Preview** — replace static mockup with an animated, interactive mini-dashboard on the hero section (show real-looking equity curve, P&L ticking up, alerts firing)
+- [ ] **Feature comparison table** — detailed TradeBook vs Excel vs other journals (currently basic)
+- [ ] **Video walkthrough embed** — hero section "Watch Demo" button currently has no video; record and embed a 90-second Loom/YouTube
+- [ ] **Social proof counter** — "1,200+ traders" is hardcoded; connect to real user count from DB
+- [ ] **Trust badges** — add SSL, data encryption, "Made in India" trust strip below hero
+- [ ] **Pricing toggle** — add Monthly/Annual toggle with discount badge (currently static)
+- [ ] **Mobile landing navbar** — hamburger menu items need better spacing and CTA prominence
+- [ ] **Exit-intent popup** — show "Start free trial" modal when user is about to leave (desktop)
+- [ ] **Loading skeleton** — below-fold lazy sections show a spinner; replace with content skeletons
+- [ ] **OG image update** — current og-image.png may be outdated; regenerate with latest branding
 
-## Prioritized Implementation (10 actionable items)
+### Files to Touch
+- `src/pages/Landing.tsx`
+- `src/components/landing/HeroSection.tsx`
+- `src/components/landing/BelowFoldSections.tsx`
+- `src/components/landing/DashboardPreview.tsx`
+- `public/og-image.png`
 
-### 1. Enable Stripe Payments
-- Use Lovable's Stripe integration to create products/prices for Monthly (₹199), Quarterly (₹499), Yearly (₹1,499)
-- Create checkout edge function + webhook handler for subscription lifecycle
-- Update `BillingSettings.tsx` with working checkout buttons + manage subscription link
+---
 
-### 2. Real Plan Enforcement in `useSubscription`
-- Remove beta overrides; read actual `subscription.plan` and `subscription.status`
-- Define real `PLAN_LIMITS`: Free gets 20 trades/month, 3 watchlists, no advanced analytics/telegram/broker
-- Calculate `isTrialing`, `isTrialExpired`, `trialDaysLeft` from `trial_ends_at`
-- `canAccess` checks actual plan limits
+## Phase 2: Documentation Completeness & Quality
+**Goal:** Every feature documented with visual mockups, zero gaps.
 
-### 3. PlanGate Upgrade UI
-- When feature is gated, render an upgrade card with lock icon, feature name, and "Upgrade to Pro" button linking to `/settings?tab=billing`
-- Keep existing wrapper locations (Reports, Analytics, Integrations)
+### Missing Docs Sections (not yet in docs)
+- [ ] **Sharing & Social Cards** — P&L Share Modal, Trade Share Modal, Streak Share Card (components exist but no dedicated docs section)
+- [ ] **Achievements & Gamification** — Badge grid, unlock conditions, progress tracking (component exists: `AchievementsBadgeGrid.tsx`)
+- [ ] **Position Sizing Calculator** — risk-per-trade calculator built into trade creation (component exists: `PositionSizingCalculator.tsx`)
+- [ ] **Trading Rules Checklist** — pre-trade discipline checklist (component exists: `TradingRulesChecklist.tsx`)
+- [ ] **Trade Coach Panel** — AI-powered coaching per trade (component exists: `TradeCoachPanel.tsx`)
+- [ ] **Multi-Leg Strategies** — options strategy builder (component exists: `MultiLegStrategyModal.tsx`)
+- [ ] **Smart Alert Suggestions** — AI-suggested alerts based on portfolio (component exists: `SmartAlertSuggestions.tsx`)
+- [ ] **Drawdown Recovery Analysis** — how long to recover from max drawdown (mentioned in roadmap but not documented)
+- [ ] **Risk-Reward scatter charts** — actual R:R vs planned R:R visualization
+- [ ] **Day of Week Analysis** — separate detailed section (currently bundled in "Time-Based Heatmaps")
 
-### 4. Trial Banner
-- Show countdown in `TrialBanner` when `isTrialing`: "X days left in your Pro trial"
-- Show "Trial expired" with upgrade CTA when expired
-- Dismiss state stored in sessionStorage
+### Docs UX Improvements
+- [ ] **Search across docs content** — current sidebar search only filters section names, not body text
+- [ ] **Deep-link anchors** — clicking a FeatureCard title should update URL hash for sharing
+- [ ] **Print/PDF export** — "Download as PDF" button for offline reading
+- [ ] **Reading time estimate** — show estimated reading time per section
+- [ ] **Interactive mockups** — some mockups should have hover states or click interactions
+- [ ] **Video placeholders** — all 3 video placeholders still say "Coming Soon"; record or remove
+- [ ] **Mobile docs sidebar** — horizontal scroll tabs are hard to use with 21 items; add a dropdown
 
-### 5. Usage Tracking (Monthly Trade Count)
-- Add a `useMemo` in `useSubscription` that counts trades created this billing period
-- Show usage bar in `BillingSettings`: "15/20 trades used this month"
-- `PlanGate` for trade creation when limit reached
+### Files to Touch
+- `src/pages/Docs.tsx`
+- `src/components/docs/DocsMockups.tsx`
 
-### 6. Contextual Upgrade Prompts
-- Add upgrade nudges at natural friction points: CreateTradeModal (when near limit), Analytics page header, Telegram settings
-- Small banners, not modals — non-intrusive
+---
 
-### 7. In-App Notification Center
-- **New table**: `notifications` (id, user_id, type, title, message, read, data jsonb, created_at)
-- **New component**: `NotificationBell` in sidebar/navbar — bell icon with unread count badge
-- **New component**: `NotificationPanel` — slide-out panel listing notifications
-- Edge functions (trade-monitor, evaluate-alerts) already send Telegram; add DB insert for in-app notifications
-- Enable realtime on notifications table
+## Phase 3: Core Feature Gaps & Polish
+**Goal:** Ship missing functionality that users expect but doesn't exist yet.
 
-### 8. Public Trader Profiles
-- **New table**: `public_profiles` (user_id, display_name, bio, avatar_url, is_public, disclaimer, monthly_stats jsonb, created_at)
-- **New page**: `/trader/:userId` — public profile showing opt-in stats (win rate, streak, equity curve)
-- Settings toggle in ProfileSettings to enable/disable public profile
-- Uses existing `ra_public_mode` and `ra_disclaimer` from user_settings
+### Missing Features
+- [ ] **Drawdown Recovery Analysis widget** — chart showing recovery time from each drawdown period (analytics page)
+- [ ] **Trade Similarity Engine** — "This trade looks like 5 previous trades where you won 4/5" (requires vector embeddings or simple feature matching)
+- [ ] **Streak share from dashboard** — direct "Share Streak" button on the StreakDiscipline widget
+- [ ] **Bulk trade actions** — select multiple trades → bulk close, bulk tag, bulk delete
+- [ ] **Trade duplication** — "Clone this trade" for similar setups
+- [ ] **Alert → Trade conversion** — when an alert triggers, one-click to create a trade with pre-filled data
+- [ ] **Study → Trade linking improvements** — show linked trades inside study detail, not just the other way
+- [ ] **Journal streak tracking** — track consecutive days with journal entries written
+- [ ] **Custom dashboard widgets** — user-created KPI cards with custom formulas
+- [ ] **Instrument favorites** — star instruments across the app for quick access everywhere
+- [ ] **Option Greeks display** — show delta, gamma, theta, vega for F&O trades
+- [ ] **P&L by broker** — if multiple brokers connected, show performance per broker
+- [ ] **Trade notes markdown** — support basic markdown in trade notes (bold, lists, links)
+- [ ] **Data backup/restore** — one-click full account backup to JSON
 
-### 9. Referral Program
-- **New table**: `referrals` (id, referrer_id, referred_user_id, code, status, reward_applied, created_at)
-- Add `referral_code` column to profiles table
-- Generate unique referral code per user
-- Show referral link + stats in Settings → Billing
-- On signup, check for referral code in URL params, record referral
-- Reward: extend trial by 30 days for referrer when referred user signs up
+### UX Polish
+- [ ] **Instrument Picker UX** — implement the combobox pattern, keyboard nav, chip-style selection (from existing plan)
+- [ ] **Loading states consistency** — some pages use skeletons, others use spinners; standardize
+- [ ] **Empty states** — some pages lack good empty states (e.g., first visit to Analytics with no trades)
+- [ ] **Error boundary improvements** — current ErrorBoundary is basic; add retry button and error reporting
+- [ ] **Form validation feedback** — some forms show errors only on submit; add real-time validation
+- [ ] **Confirmation dialogs** — some destructive actions lack confirmation (e.g., deleting watchlist items)
 
-### 10. PWA Push Notifications (prep)
-- Add push subscription registration in service worker
-- Store push subscriptions in DB table `push_subscriptions`
-- Wire into notification center — when in-app notification created, also send push if subscribed
-- Requires VAPID keys (will use secrets tool)
+### Files to Touch
+- `src/pages/Analytics.tsx` (drawdown recovery)
+- `src/components/trade/InstrumentPicker.tsx` (combobox refactor)
+- `src/pages/Trades.tsx` (bulk actions)
+- `src/components/dashboard/StreakDiscipline.tsx` (share button)
+- New components as needed
 
-## Deferred Items (require external dependencies)
-- **Zerodha Kite integration** — requires Kite Connect API partnership/credentials; defer to separate phase
-- **Angel One integration** — same as above
-- **Email drip campaigns** — needs email provider (Resend/Postmark); separate initiative
-- **Leaderboard** — depends on public profiles being adopted first
-- **Comment system** — depends on community adoption
-- **Google Sheets export** — low priority, JSON export already exists
+---
 
-## Files Summary
+## Phase 4: Performance, SEO & Accessibility
+**Goal:** Fast load times, great SEO, and WCAG-compliant accessibility.
 
-| Action | File | Change |
-|--------|------|--------|
-| Enable | Stripe integration | Products, prices, webhooks |
-| Edit | `useSubscription.ts` | Real plan logic |
-| Edit | `PlanGate.tsx` | Upgrade fallback UI |
-| Edit | `TrialBanner.tsx` | Trial countdown |
-| Edit | `BillingSettings.tsx` | Stripe checkout + usage bar |
-| Create | `src/components/NotificationBell.tsx` | Bell icon + panel |
-| Create | `src/pages/PublicProfile.tsx` | Public trader page |
-| Edit | `src/components/settings/ProfileSettings.tsx` | Public profile toggle |
-| Edit | `src/components/layout/Sidebar.tsx` | Add notification bell |
-| Migration | `notifications` table | In-app notifications |
-| Migration | `public_profiles` table | Public profiles |
-| Migration | `referrals` table | Referral tracking |
-| Edge fn | `stripe-webhook/index.ts` | Subscription lifecycle |
-| Edit | `App.tsx` | Add PublicProfile route |
+### Performance
+- [ ] **Bundle analysis** — audit bundle size; the app has 100+ components, many may be loaded eagerly
+- [ ] **Code splitting** — lazy-load analytics components (recharts is heavy), modal components, and settings tabs
+- [ ] **Image optimization** — convert PNGs to WebP, add width/height attributes, lazy-load below-fold images
+- [ ] **React Query optimization** — review stale times, add proper prefetching for likely navigations
+- [ ] **Virtualized lists** — trades list and watchlist items should use virtualization for 500+ items
+- [ ] **Service Worker caching** — PWA service worker should cache API responses for offline analytics viewing
+- [ ] **Font optimization** — preload critical fonts, use `font-display: swap`
 
-This is a large phase — recommend implementing in 2-3 sub-batches: (A) Stripe + plan enforcement + trial banner, (B) notification center + referral, (C) public profiles.
+### SEO
+- [ ] **Structured data** — add FAQ schema to landing page FAQ section, BreadcrumbList to docs
+- [ ] **Sitemap update** — `public/sitemap.xml` may be missing newer pages (Docs, Fundamentals, etc.)
+- [ ] **Canonical URLs** — ensure all pages have proper canonical tags
+- [ ] **Meta descriptions** — audit all pages for unique, keyword-rich meta descriptions
+- [ ] **robots.txt review** — ensure crawl directives are correct
+- [ ] **Internal linking** — docs should link to relevant app pages, landing should deep-link to docs sections
+- [ ] **Alt text audit** — ensure all images have descriptive alt text
 
+### Accessibility
+- [ ] **ARIA labels** — audit all interactive elements for proper ARIA attributes
+- [ ] **Keyboard navigation** — ensure all modals, popovers, and dropdowns are fully keyboard-navigable
+- [ ] **Color contrast** — verify all text meets WCAG AA contrast ratios in both light and dark modes
+- [ ] **Focus indicators** — ensure visible focus rings on all interactive elements
+- [ ] **Screen reader testing** — test critical flows (create trade, set alert) with screen readers
+- [ ] **Skip navigation link** — add "Skip to main content" link for keyboard users
+- [ ] **Reduced motion** — respect `prefers-reduced-motion` for all animations
+
+### Files to Touch
+- `src/App.tsx` (lazy loading)
+- `src/main.tsx` (font preloading)
+- `public/sitemap.xml`
+- `public/robots.txt`
+- `index.html` (meta, preloads)
+- All component files (a11y audit)
+
+---
+
+## Phase 5: Growth, Monetization & Community
+**Goal:** Activate monetization, build community features, and enable viral growth.
+
+### Monetization
+- [ ] **Stripe/Razorpay integration** — connect payment provider for Pro plan subscriptions
+- [ ] **Plan enforcement** — actually gate features behind plan limits (currently all unlocked in beta)
+- [ ] **Usage tracking** — track trade count per month for plan limit enforcement
+- [ ] **Upgrade prompts** — contextual "Upgrade to Pro" prompts when users hit free limits
+- [ ] **Trial expiry flow** — email reminders at 3 days, 1 day before trial ends
+- [ ] **Referral program** — "Invite a trader, get 1 month free" referral system
+- [ ] **Annual billing discount** — 20% off for annual subscriptions
+
+### Community & Social
+- [ ] **Public trader profiles** — opt-in public journal with RA-compliant disclaimer
+- [ ] **Leaderboard** — anonymous win-rate / streak leaderboard (opt-in)
+- [ ] **Trade idea sharing** — share studies/trade ideas with the community
+- [ ] **Comment system** — allow comments on shared studies/trades
+- [ ] **Social login** — Google OAuth for faster signup (infrastructure exists in Supabase)
+
+### Notifications & Engagement
+- [ ] **Email notifications** — weekly summary email with P&L, win rate, and insights
+- [ ] **Push notifications** — PWA push notifications for alerts (requires service worker updates)
+- [ ] **In-app notification center** — bell icon with unread count, notification history
+- [ ] **Onboarding email drip** — 5-email sequence for new users (Day 1, 3, 5, 7, 14)
+
+### Integrations
+- [ ] **Zerodha Kite integration** — auto-sync trades and live prices from Zerodha
+- [ ] **Angel One integration** — third broker option for wider market coverage
+- [ ] **TradingView webhook** — receive TradingView alerts directly into TradeBook alerts
+- [ ] **Google Sheets export** — one-click sync trade data to a Google Sheet
+- [ ] **Webhook API** — public API for custom integrations (zapier, custom bots)
+
+### Files to Touch
+- New edge functions for payments, notifications
+- `src/hooks/useSubscription.ts` (plan enforcement)
+- `src/components/PlanGate.tsx` (gate improvements)
+- New pages: PublicProfile, Leaderboard, NotificationCenter
+- `supabase/functions/` (new functions for webhooks, emails)
+
+---
+
+## Priority Matrix
+
+| Priority | Phase | Impact | Effort |
+|----------|-------|--------|--------|
+| 🔴 P0 | Phase 3 | Instrument Picker UX refactor | Medium |
+| 🔴 P0 | Phase 2 | Document all missing features | Low |
+| 🟡 P1 | Phase 1 | Landing page video + social proof | Medium |
+| 🟡 P1 | Phase 4 | Bundle optimization + code splitting | Medium |
+| 🟡 P1 | Phase 3 | Bulk trade actions | Medium |
+| 🟢 P2 | Phase 5 | Payment integration | High |
+| 🟢 P2 | Phase 4 | Full a11y audit | Medium |
+| 🟢 P2 | Phase 5 | Zerodha integration | High |
+| 🔵 P3 | Phase 5 | Public profiles & leaderboard | High |
+| 🔵 P3 | Phase 3 | Trade Similarity Engine | Very High |
+
+---
+
+## Completed ✅
+- [x] AI Pattern Detection — behavioral insights (v3.0)
+- [x] Sector Rotation Heatmap (v3.0)
+- [x] Setup Win-Rate Matrix (v3.0)
+- [x] Emotional P&L Correlation (v3.0)
+- [x] Dashboard drag-and-drop reordering (v2.9)
+- [x] Floating Trade Ticker (v2.9)
+- [x] Animated KPI numbers (v2.9)
+- [x] Mobile swipe-to-act on trades (v2.9)
+- [x] Quick Trade Entry via Command Palette (v2.9)
+- [x] Stock Screener with 47 presets (v2.8)
+- [x] Portfolio Heat Map widget (v2.7)
+- [x] Daily Review Wizard (v2.7)
+- [x] Multi-leg strategy support (v2.6)
+- [x] TSL profiles per segment (v2.6)
+- [x] AI Trade Insights (v2.6)
+- [x] Trade Templates & Smart Suggestions (v2.5)
+- [x] CSV Import/Export (v2.5)
+- [x] Offline trade queue (v2.5)
+- [x] Docs: AI Pattern Detection, Sector Rotation, Win-Rate Matrix, Emotional P&L documented
+- [x] Docs: Share Cards, Achievements, Floating Ticker, Animated Numbers documented
+- [x] Docs: Changelog updated with v2.9 and v3.0
