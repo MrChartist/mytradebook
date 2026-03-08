@@ -271,6 +271,13 @@
   .card-padding-sm { @apply p-4; }
   .card-padding-lg { @apply p-6; }
 
+  /* Firefox scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.15) transparent;
+  }
+
+  /* Webkit scrollbar */
   ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
@@ -1739,6 +1746,8 @@
 /* Hide scrollbar utility */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* ── Ticker scroll animation ────────────────── */
 @keyframes ticker-scroll {
