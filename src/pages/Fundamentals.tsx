@@ -617,7 +617,7 @@ export default function Fundamentals() {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-card border-b-2 border-border sticky top-0 z-10">
+                  <TableRow className="bg-card border-b border-border/30 sticky top-0 z-10">
                     <TableHead className="w-[170px] sticky left-0 bg-card z-20 py-2 px-3" style={{ boxShadow: "2px 0 4px -2px rgba(0,0,0,0.06)" }}>Symbol</TableHead>
                     <TableHead className="hidden md:table-cell py-2 px-3">Sector</TableHead>
                     <TableHead className={cn("text-right py-2 px-3", sortKey === "close" && "border-b-2 border-primary")}><SortHeader label="LTP" field="close" /></TableHead>
