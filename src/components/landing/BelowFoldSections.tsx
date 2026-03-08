@@ -603,7 +603,7 @@ export function FinalCTASection() {
         <motion.div variants={fadeUp} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
           <Button
             size="lg"
-            className="h-16 px-12 text-lg gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-wide"
+            className="h-16 px-12 text-[17px] gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-[-0.01em]"
             onClick={() => navigate("/login?mode=signup")}
           >
             Get Started — It's Free <ArrowRight className="w-4 h-4" />
