@@ -427,7 +427,7 @@ export function FAQSection() {
       <MotionSection className="max-w-4xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>FAQ</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-[1.1]">Got{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>questions</span>?</h2>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-[1.1]">Got{" "}<span className="accent-script">questions</span>?</h2>
           <p className="text-muted-foreground text-lg">Everything you need to know about TradeBook</p>
         </motion.div>
         <motion.div variants={fadeUp}>
