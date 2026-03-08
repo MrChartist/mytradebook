@@ -84,7 +84,7 @@ export function HeroSection() {
 
           <motion.h1
             variants={fadeUp} initial="hidden" animate="visible" custom={0.1}
-            className="text-5xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] font-extrabold leading-[1.05] tracking-[-0.03em] text-foreground mb-6"
+            className="text-6xl sm:text-7xl lg:text-8xl xl:text-[7rem] font-extrabold leading-[0.95] tracking-[-0.04em] text-foreground mb-8"
           >
             Know Your{" "}
             <span className="accent-script">
@@ -92,9 +92,7 @@ export function HeroSection() {
             </span>
             .
             <br />
-            <span className="bg-gradient-to-r from-foreground via-foreground/90 to-foreground/60 bg-clip-text text-transparent">
-              Compound It Daily.
-            </span>
+            Compound It Daily.
           </motion.h1>
 
           {/* Subtitle */}
