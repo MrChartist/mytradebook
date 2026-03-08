@@ -749,14 +749,14 @@
      Designed for technical reading, not posters.
      ────────────────────────────────────────────────── */
 
-  /* Page title: 48px desktop — Libre Bodoni serif anchor, restrained */
+  /* Page title: 48px desktop — Sora display anchor */
   .docs-title {
-    font-family: 'Libre Bodoni', Georgia, serif;
+    font-family: 'Sora', 'Inter', sans-serif;
     font-size: 3rem;
     line-height: 1.08;
     font-weight: 700;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.025em;
+    letter-spacing: -0.03em;
   }
 
   /* Section title: 30px desktop — clear section entry, not oversized */
