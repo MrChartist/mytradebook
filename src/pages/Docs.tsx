@@ -460,7 +460,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
       {/* Docs Header */}
       <div className="pt-20" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle))' }}>
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-8 py-12 lg:py-16">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
           <div className="flex items-center gap-2 mb-2">
             <p className="docs-caption uppercase tracking-[0.1em]">TradeBook</p>
             <ChevronRight className="w-3 h-3" style={{ color: 'hsl(var(--docs-text-muted))' }} />
