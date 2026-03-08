@@ -58,6 +58,7 @@ export function TradeCoachPanel({ trade }: Props) {
         <div className="flex items-center gap-2">
           <Brain className="w-5 h-5 text-primary" />
           <span className="text-sm font-semibold">AI Trade Coach</span>
+          <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-md bg-primary/10 text-primary">Included</span>
         </div>
         <Button
           variant="ghost"

@@ -206,12 +206,16 @@ export function AITradeInsights({ compact = false, maxInsights }: AITradeInsight
             </div>
           </div>
         ) : insights.length === 0 ? (
-          <div className="text-center py-8">
-            <Brain className="w-12 h-12 mx-auto text-muted-foreground/40 mb-3" />
-            <h3 className="text-base font-semibold mb-1">Get AI-Powered Insights</h3>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto">
-              Click "Analyze My Trades" to let AI review your trading patterns, timing, and risk management to suggest improvements.
-            </p>
+          <div className="text-center py-8 space-y-3">
+            <div className="w-12 h-12 mx-auto rounded-xl bg-muted/40 flex items-center justify-center">
+              <Brain className="w-6 h-6 text-muted-foreground/40" />
+            </div>
+            <div>
+              <h3 className="text-base font-semibold mb-1">Ready to Analyze</h3>
+              <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                Click "Analyze My Trades" to review your timing patterns, segment performance, risk habits, and win/loss streaks.
+              </p>
+            </div>
           </div>
         ) : (
           <>

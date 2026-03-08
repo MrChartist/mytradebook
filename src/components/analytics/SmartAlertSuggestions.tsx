@@ -36,15 +36,18 @@ export function SmartAlertSuggestions({ onCreateAlert }: { onCreateAlert?: (symb
 
   if (!hasLoaded) {
     return (
-      <div className="p-4 rounded-xl border border-dashed border-primary/20 bg-primary/5 text-center space-y-3">
-        <div className="flex items-center justify-center gap-2">
-          <Sparkles className="w-5 h-5 text-primary" />
-          <span className="text-sm font-semibold">Smart Alert Suggestions</span>
+      <div className="p-4 rounded-xl border border-dashed border-primary/20 bg-primary/5 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-primary" />
+            <span className="text-sm font-semibold">Smart Alert Suggestions</span>
+          </div>
+          <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-md bg-primary/10 text-primary">Included</span>
         </div>
-        <p className="text-xs text-muted-foreground">
-          AI analyzes your trading patterns and suggests alerts for frequently traded stocks
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          AI reviews your most traded symbols and suggests price alerts based on historical entry/exit levels.
         </p>
-        <Button size="sm" onClick={fetchSuggestions} disabled={isLoading}>
+        <Button size="sm" onClick={fetchSuggestions} disabled={isLoading} className="w-full">
           {isLoading ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 mr-1.5" />}
           Get Suggestions
         </Button>
