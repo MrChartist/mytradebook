@@ -100,7 +100,7 @@ function ChatIdHelpGuide() {
           <p className="font-semibold text-foreground mb-1">📢 Channel</p>
           <ol className="list-decimal list-inside space-y-0.5 ml-1">
             <li>Add your bot as an <strong>admin</strong> to the channel</li>
-            <li>Forward any channel post to <a href="https://t.me/userinfobot" target="_blank" rel="noopener" className="text-primary hover:underline">@userinfobot</a></li>
+            <li>Forward any channel post to <a href="https://t.me/userinfobot" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">@userinfobot</a></li>
             <li>Channel IDs start with <code className="bg-accent px-1 rounded">-100</code> (e.g. <code className="bg-accent px-1 rounded">-1001234567890</code>)</li>
           </ol>
         </div>
