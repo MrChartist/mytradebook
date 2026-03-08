@@ -979,7 +979,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Get recommended quantity", description: "Max shares = (Capital × Risk%) ÷ Risk per share. Automatically rounds down." },
                 { title: "Review max loss", description: "See the maximum loss in rupees before you commit to the trade." },
               ]} />
-              <ExpandableDetail title="Advanced: Kelly Criterion" icon={Target}>
+              <SubTopic title="Advanced Sizing" description="Expert-level position sizing with the Kelly Criterion." />
                 <p>For experienced traders, the Position Sizing Calculator can suggest position sizes based on the Kelly Criterion — factoring in your historical win rate and average win/loss ratio to optimize long-term capital growth.</p>
               </ExpandableDetail>
               <ProTip variant="warning">
