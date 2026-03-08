@@ -119,44 +119,44 @@ interface ComparisonRow {
 
 export function ComparisonTable({ rows, title }: { rows: ComparisonRow[]; title?: string }) {
   return (
-    <div className={cn(CARD_RADIUS, "border", CARD_BORDER, CARD_SPACING, "overflow-hidden")}>
+    <div className={cn(CARD_RADIUS, CARD_SPACING, "overflow-hidden")} style={{ border: '1px solid hsl(var(--docs-border-subtle, 215 25% 18%))' }}>
       {title && (
-        <div className="px-5 py-3 bg-muted/20 border-b border-border/20">
-          <p className="text-[14px] font-semibold text-foreground flex items-center gap-2">
-            <Crown className="w-3.5 h-3.5 text-primary" />
+        <div className="px-6 py-3.5" style={{ background: 'hsl(var(--docs-elevated, 222 40% 10%) / 0.5)', borderBottom: '1px solid hsl(var(--docs-border-subtle, 215 25% 18%) / 0.5)' }}>
+          <p className="docs-card-title flex items-center gap-2" style={{ fontSize: '0.9375rem' }}>
+            <Crown className="w-3.5 h-3.5" style={{ color: 'hsl(var(--docs-accent, 24 88% 58%))' }} />
             {title}
           </p>
         </div>
       )}
       <div className="overflow-x-auto">
-        <table className="w-full text-[14px]">
+        <table className="w-full docs-body" style={{ fontSize: '0.9375rem' }}>
           <thead>
-            <tr className="border-b border-border/20">
-              <th className="text-left px-5 py-3 font-medium text-muted-foreground/70 w-[55%]">Feature</th>
-              <th className="text-center px-3 py-3 font-medium text-muted-foreground/70 w-[22.5%]">
+            <tr style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle, 215 25% 18%) / 0.5)' }}>
+              <th className="text-left px-6 py-3 font-medium w-[55%]" style={{ color: 'hsl(var(--docs-text-muted, 217 12% 44%))' }}>Feature</th>
+              <th className="text-center px-3 py-3 font-medium w-[22.5%]" style={{ color: 'hsl(var(--docs-text-muted, 217 12% 44%))' }}>
                 <span className="flex items-center justify-center gap-1"><Unlock className="w-3 h-3" /> Free</span>
               </th>
               <th className="text-center px-3 py-3 font-medium w-[22.5%]">
-                <span className="flex items-center justify-center gap-1 text-primary"><Crown className="w-3 h-3" /> Pro</span>
+                <span className="flex items-center justify-center gap-1" style={{ color: 'hsl(var(--docs-accent, 24 88% 58%))' }}><Crown className="w-3 h-3" /> Pro</span>
               </th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row, i) => (
-              <tr key={i} className="border-b border-border/10 last:border-0">
-                <td className="px-5 py-2.5 text-foreground/80">{row.feature}</td>
-                <td className="px-3 py-2.5 text-center">
+              <tr key={i} style={{ borderBottom: i < rows.length - 1 ? '1px solid hsl(var(--docs-border-subtle, 215 25% 18%) / 0.3)' : 'none' }}>
+                <td className="px-6 py-3" style={{ color: 'hsl(var(--docs-text-primary, 213 20% 78%))' }}>{row.feature}</td>
+                <td className="px-3 py-3 text-center">
                   {typeof row.free === "boolean" ? (
-                    row.free ? <Check className="w-4 h-4 text-profit mx-auto" /> : <X className="w-4 h-4 text-muted-foreground/25 mx-auto" />
+                    row.free ? <Check className="w-4 h-4 text-profit mx-auto" /> : <X className="w-4 h-4 mx-auto" style={{ color: 'hsl(var(--docs-text-muted, 217 12% 44%) / 0.3)' }} />
                   ) : (
-                    <span className="text-muted-foreground/70">{row.free}</span>
+                    <span style={{ color: 'hsl(var(--docs-text-secondary, 215 16% 62%))' }}>{row.free}</span>
                   )}
                 </td>
-                <td className="px-3 py-2.5 text-center">
+                <td className="px-3 py-3 text-center">
                   {typeof row.pro === "boolean" ? (
-                    row.pro ? <Check className="w-4 h-4 text-profit mx-auto" /> : <X className="w-4 h-4 text-muted-foreground/25 mx-auto" />
+                    row.pro ? <Check className="w-4 h-4 text-profit mx-auto" /> : <X className="w-4 h-4 mx-auto" style={{ color: 'hsl(var(--docs-text-muted, 217 12% 44%) / 0.3)' }} />
                   ) : (
-                    <span className="text-primary font-semibold">{row.pro}</span>
+                    <span className="font-semibold" style={{ color: 'hsl(var(--docs-accent, 24 88% 58%))' }}>{row.pro}</span>
                   )}
                 </td>
               </tr>
