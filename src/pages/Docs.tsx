@@ -804,8 +804,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         <div className="relative">
           <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 z-10" style={{ background: 'linear-gradient(to right, hsl(var(--docs-bg) / 0.94), transparent)' }} />
           <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 z-10" style={{ background: 'linear-gradient(to left, hsl(var(--docs-bg) / 0.94), transparent)' }} />
+          {/* Primary group pills */}
           <div
-            className="flex gap-1.5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-4 py-2.5 no-scrollbar"
+            className="flex gap-1.5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-4 py-2 no-scrollbar"
             style={{ WebkitOverflowScrolling: "touch" }}
             ref={(el) => {
               if (el) {
@@ -822,12 +823,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           >
             {sidebarGroups.map((group) => {
               const groupActive = group.ids.includes(activeSection);
-              const firstId = group.ids[0];
+              const isExpanded = expandedGroup === group.label;
               return (
                 <button
                   key={group.label}
                   data-active={groupActive}
-                  onClick={() => scrollTo(firstId)}
+                  onClick={() => {
+                    if (isExpanded) {
+                      // Already expanded — scroll to first section
+                      scrollTo(group.ids[0]);
+                    } else {
+                      setExpandedGroup(group.label);
+                    }
+                  }}
                   className={cn("docs-mobile-tab shrink-0 snap-start flex items-center gap-1.5", groupActive && "active")}
                 >
                   {group.label}
@@ -836,6 +844,54 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             })}
             <div className="shrink-0 w-6" aria-hidden="true" />
           </div>
+          {/* Expanded section drill-down row */}
+          <AnimatePresence>
+            {expandedGroup && (() => {
+              const group = sidebarGroups.find(g => g.label === expandedGroup);
+              if (!group || group.ids.length <= 1) return null;
+              const groupSections = SECTIONS.filter(s => group.ids.includes(s.id));
+              return (
+                <motion.div
+                  key={expandedGroup}
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="overflow-hidden"
+                  style={{ borderTop: '1px solid hsl(var(--docs-border-subtle) / 0.3)' }}
+                >
+                  <div
+                    className="flex gap-1 overflow-x-auto overscroll-x-contain px-4 py-1.5 no-scrollbar"
+                    style={{ WebkitOverflowScrolling: "touch" }}
+                  >
+                    {groupSections.map(s => {
+                      const isActive = activeSection === s.id;
+                      return (
+                        <button
+                          key={s.id}
+                          onClick={() => scrollTo(s.id)}
+                          className={cn(
+                            "shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all whitespace-nowrap",
+                            isActive
+                              ? "font-semibold"
+                              : "opacity-70 hover:opacity-100"
+                          )}
+                          style={{
+                            color: isActive ? 'hsl(var(--docs-accent))' : 'hsl(var(--docs-text-secondary))',
+                            background: isActive ? 'hsl(var(--docs-accent) / 0.08)' : 'transparent',
+                          }}
+                        >
+                          <s.icon className="w-3 h-3" />
+                          {s.label}
+                        </button>
+                      );
+                    })}
+                    <div className="shrink-0 w-4" aria-hidden="true" />
+                  </div>
+                </motion.div>
+              );
+            })()}
+          </AnimatePresence>
         </div>
       </nav>
 
