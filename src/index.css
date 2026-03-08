@@ -501,6 +501,17 @@
     font-style: italic;
     color: hsl(var(--tb-accent));
   }
+
+  /* ── Docs card content typography normalization ── */
+  .docs-card-content > p {
+    font-size: 0.9375rem; /* 15px */
+    line-height: 1.7;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .docs-card-content > p.text-sm {
+    font-size: 0.9375rem !important; /* Override text-sm inside docs cards */
+  }
 }
 
 @layer utilities {
