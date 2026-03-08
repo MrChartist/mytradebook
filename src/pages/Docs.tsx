@@ -3198,7 +3198,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ))}
               </div>
 
-              <ExpandableDetail title="Version Numbering Explained" icon={RefreshCw} id="cl-versioning">
+              <ExpandableDetail title="Version Numbering Explained" icon={RefreshCw}>
                 <p>TradeBook follows a <strong>semantic-style versioning</strong> scheme to communicate the scope of each release:</p>
                 <ul className="mt-3 space-y-1.5 text-[13px] text-muted-foreground/80">
                   <li className="flex items-start gap-2"><span className="text-primary mt-0.5">•</span> <strong>Major (vX.0)</strong> — Significant new feature areas or architectural changes (e.g., AI Pattern Detection, Sector Heatmap)</li>
