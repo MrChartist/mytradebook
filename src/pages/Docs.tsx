@@ -3447,7 +3447,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }, { label: "Contact", href: "mailto:founder@mrchartist.com" }] },
               ].map((col) => (
                 <div key={col.title}>
-                  <h4 className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/40 mb-3">{col.title}</h4>
+                  <h4 className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/50 mb-3">{col.title}</h4>
                   <ul className="space-y-1.5">
                     {col.links.map((l) => (
                       <li key={l.label}>

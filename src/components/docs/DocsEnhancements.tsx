@@ -256,7 +256,7 @@ export function SubTopic({ title, description, id }: { title: string; descriptio
     <div id={id} className={cn("mt-8 mb-4 first:mt-4", id && "scroll-mt-24")}>
       <h3 className="text-[17px] font-semibold tracking-tight text-foreground">{title}</h3>
       {description && (
-        <p className="text-[15px] text-muted-foreground/70 leading-relaxed mt-1">{description}</p>
+        <p className="text-[15px] text-muted-foreground/75 leading-relaxed mt-1">{description}</p>
       )}
     </div>
   );
