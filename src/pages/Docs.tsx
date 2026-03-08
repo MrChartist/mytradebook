@@ -266,25 +266,19 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
 }) {
   return (
-    <div className="group rounded-xl border border-border/20 bg-card/60 backdrop-blur-sm relative overflow-hidden transition-all duration-200 hover:border-border/35">
-      {/* Top accent on hover */}
-      <div className="absolute top-0 left-0 right-0 h-[1.5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-transparent via-primary to-transparent" />
-      <div className="p-5 lg:p-6 pb-3.5">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
-            <Icon className="w-[18px] h-[18px] text-primary" />
-          </div>
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <h3 className="text-[15px] font-bold leading-tight tracking-tight">{title}</h3>
-            {badge && (
-              <span className="text-[9px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-full bg-primary/8 text-primary">
-                {badge}
-              </span>
-            )}
-          </div>
+    <div className="group rounded-lg border border-border/40 bg-card relative overflow-hidden transition-colors duration-200 hover:border-border/60">
+      <div className="p-5 pb-3">
+        <div className="flex items-center gap-2.5">
+          <Icon className="w-4 h-4 text-primary shrink-0" />
+          <h4 className="text-sm font-semibold leading-tight">{title}</h4>
+          {badge && (
+            <span className="text-[9px] font-semibold tracking-wide uppercase px-1.5 py-0.5 rounded bg-primary/8 text-primary">
+              {badge}
+            </span>
+          )}
         </div>
       </div>
-      <div className="px-5 lg:px-6 pb-6 lg:pb-7">
+      <div className="px-5 pb-5">
         <div className="[&>p]:text-[13px] [&>p]:leading-[1.7] [&>p]:text-muted-foreground">{children}</div>
       </div>
     </div>
