@@ -111,12 +111,12 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
     <div className="group rounded-xl border border-border/20 bg-card/60 backdrop-blur-sm relative overflow-hidden transition-all duration-200 hover:border-border/35">
       {/* Top accent on hover */}
       <div className="absolute top-0 left-0 right-0 h-[1.5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-transparent via-primary to-transparent" />
-      <div className="p-5 lg:p-6 pb-3">
-        <div className="flex items-center gap-2.5">
+      <div className="p-5 lg:p-6 pb-3.5">
+        <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
             <Icon className="w-[18px] h-[18px] text-primary" />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <h3 className="text-[15px] font-bold leading-tight tracking-tight">{title}</h3>
             {badge && (
               <span className="text-[9px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-full bg-primary/8 text-primary">
@@ -126,8 +126,8 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
           </div>
         </div>
       </div>
-      <div className="px-5 lg:px-6 pb-5 lg:pb-6">
-        <div className="[&>p]:text-[13px] [&>p]:leading-relaxed [&>p]:text-muted-foreground">{children}</div>
+      <div className="px-5 lg:px-6 pb-6 lg:pb-7">
+        <div className="[&>p]:text-[13px] [&>p]:leading-[1.7] [&>p]:text-muted-foreground">{children}</div>
       </div>
     </div>
   );
