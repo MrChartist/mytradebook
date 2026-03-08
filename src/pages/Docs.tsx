@@ -1581,6 +1581,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p><strong>Why this feature exists:</strong> You can't watch 50 stocks simultaneously, but you can set 50 alerts. Alerts free you from staring at screens and replace reactive trading ("I just happened to see RELIANCE spike") with intentional trading ("My alert triggered at ₹2,450 because that's my planned entry level"). The best traders spend more time planning than watching — alerts make that possible.</p>
               </ProTip>
 
+              <QuickOverviewStrip stats={[
+                { label: "Condition Types", value: "7" },
+                { label: "Recurrence Modes", value: "3" },
+                { label: "Delivery", value: "In-app + Telegram" },
+                { label: "AI Suggestions", value: "Yes" },
+              ]} />
               <QuickNav items={[
                 { label: "First Alert", id: "al-first" },
                 { label: "Alert Types", id: "al-types" },
@@ -1589,6 +1595,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Management", id: "al-management" },
                 { label: "AI Suggestions", id: "al-ai" },
               ]} />
+
+              <WhatWhyWhenBlock data={{
+                what: "Set price, volume, and percentage alerts on any NSE/BSE/MCX instrument. Get notified instantly in-app or via Telegram when conditions are met.",
+                why: "You can't watch 50 stocks simultaneously, but you can set 50 alerts. Replaces reactive trading with intentional, plan-based entries.",
+                when: "After completing your research or study. Set alerts at your planned entry levels so you trade your plan, not your emotions.",
+              }} />
 
               <VisualWalkthrough
                 title="Alert Card & Telegram Notification"
