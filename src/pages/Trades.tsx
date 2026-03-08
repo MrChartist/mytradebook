@@ -127,7 +127,7 @@ export default function Trades() {
 
   // Compute last 7 days sparkline data for P&L and Win Rate
   const { pnlSparkline, winRateSparkline } = useMemo(() => {
-    const closedAll = allTrades.filter(t => t.status === "CLOSED");
+    const closedAll = allTradesForCounts.filter(t => t.status === "CLOSED");
     const days = 7;
     const pnlData: number[] = [];
     const wrData: number[] = [];
