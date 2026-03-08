@@ -1033,7 +1033,7 @@
 
   /* ── Docs Navbar ── */
   .docs-navbar {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
   }
   .docs-navbar--top {
     background: transparent;
