@@ -46,7 +46,7 @@ export default function Landing() {
   }, [user, loading, navigate]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden font-sans landing-page">
       <SEOHead
         title="Trading Journal for Indian Markets — NSE, MCX, F&O"
         description="Track, analyze, and improve your trades with TradeBook. Real-time alerts, broker integration, and segment-based analytics built for Equity, F&O, and Commodity traders in India."
