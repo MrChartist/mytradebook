@@ -3671,6 +3671,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Versioning", id: "cl-versioning" },
               ]} />
 
+              <ProTip variant="info">
+                <p><strong>How to read this section:</strong> The changelog shows what's already shipped — sorted newest first. The roadmap shows what's coming next, grouped by development stage: <strong>Coming Soon</strong> (actively being built), <strong>In Progress</strong> (design/development underway), <strong>Planned</strong> (committed but not started), and <strong>Exploring</strong> (under consideration). Roadmap priorities are influenced by user feedback — reach out at <code>founder@mrchartist.com</code> to vote for features you want.</p>
+              </ProTip>
+
               <ProTip variant="best-practice">
                 <p>Check the changelog weekly to stay on top of new features. Many improvements — like new analytics widgets or shortcut enhancements — ship silently and can significantly improve your workflow if you know about them.</p>
               </ProTip>
