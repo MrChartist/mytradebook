@@ -498,15 +498,28 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           {/* Main content */}
           <main className={cn("flex-1 min-w-0 space-y-20 lg:pt-0 pt-14 transition-all duration-300", sidebarCollapsed ? "max-w-5xl" : "max-w-4xl")}>
 
-            {/* ── 1. Getting Started ─────────────────────── */}
+            {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={1} total={26} />
               <SectionHeader
                 id="getting-started"
                 title="Getting Started"
                 description="TradeBook is a professional trading journal built specifically for Indian markets — NSE, BSE, and MCX. Whether you trade equities, futures, options, or commodities, it gives you the tools to log, analyze, and improve your trading."
                 icon={Play}
               />
+              <QuickNav items={[
+                { label: "Create Account", id: "getting-started" },
+                { label: "Navigate", id: "getting-started" },
+                { label: "Free vs Pro", id: "getting-started" },
+              ]} />
               <VideoPlaceholder title="Getting Started with TradeBook — Full Walkthrough" duration="5 min" />
+              <StepByStep title="Your First 5 Minutes" steps={[
+                { title: "Sign up with email", description: "Create your account with email and password. Verify via the confirmation email.", detail: "No credit card required — you get 14 days of Pro features free." },
+                { title: "Set your starting capital", description: "Enter your trading capital amount during onboarding. This is used for risk calculations.", detail: "You can update this anytime in Settings → Preferences." },
+                { title: "Choose your theme", description: "Pick light or dark mode. The interface adapts instantly.", detail: "Tip: Dark mode reduces eye strain during long market hours." },
+                { title: "Log your first trade", description: "Click '+ New Trade' or press N on keyboard. Fill in symbol, entry price, and quantity.", detail: "Try the Command Palette (⌘K) for even faster trade entry." },
+                { title: "Explore the dashboard", description: "Your trading cockpit shows P&L, risk gauge, equity curve, and all key metrics.", detail: "Drag-and-drop widgets to customize your layout." },
+              ]} />
               <OnboardingFlowMockup />
               <MobileAppMockup />
               <div className="grid md:grid-cols-2 gap-5">
@@ -531,6 +544,24 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                 </FeatureCard>
               </div>
+              <ProTip variant="info">
+                <p>Press <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-[11px] font-mono font-semibold">⌘K</kbd> anywhere to open the Command Palette — search trades, create alerts, and navigate instantly without touching the mouse.</p>
+              </ProTip>
+              <ComparisonTable
+                title="Free vs Pro — At a Glance"
+                rows={[
+                  { feature: "Trade logging", free: true, pro: true },
+                  { feature: "Watchlists & Alerts", free: true, pro: true },
+                  { feature: "Daily Journal", free: true, pro: true },
+                  { feature: "CSV Import/Export", free: true, pro: true },
+                  { feature: "Advanced Analytics", free: false, pro: true },
+                  { feature: "AI Pattern Detection", free: false, pro: true },
+                  { feature: "AI Trade Coach", free: false, pro: true },
+                  { feature: "Weekly Reports", free: false, pro: true },
+                  { feature: "Stock Screener", free: "Basic", pro: "Full" },
+                  { feature: "Trade Templates", free: "3 max", pro: "Unlimited" },
+                ]}
+              />
             </motion.section>
 
             <SectionDivider />
