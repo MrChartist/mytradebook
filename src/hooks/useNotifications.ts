@@ -27,7 +27,7 @@ export function useNotifications() {
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
-        .limit(50);
+        .limit(100);
       if (error) throw error;
       return (data ?? []) as unknown as Notification[];
     },
@@ -87,6 +87,18 @@ export function useNotifications() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notifications", user?.id] }),
   });
 
+  const clearAll = useMutation({
+    mutationFn: async () => {
+      if (!user?.id) return;
+      const { error } = await supabase
+        .from("notifications")
+        .delete()
+        .eq("user_id", user.id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notifications", user?.id] }),
+  });
+
   return {
     notifications,
     isLoading,
@@ -94,5 +106,6 @@ export function useNotifications() {
     markAsRead: markAsRead.mutate,
     markAllRead: markAllRead.mutate,
     deleteNotification: deleteNotification.mutate,
+    clearAll: clearAll.mutate,
   };
 }

@@ -32,6 +32,15 @@ interface Alert {
   security_id: string | null;
   exchange_segment: string | null;
   check_interval_minutes: number | null;
+  last_checked_at: string | null;
+  priority: string | null;
+}
+
+interface EvaluationMetrics {
+  total_evaluated: number;
+  total_triggered: number;
+  avg_latency_ms: number;
+  errors: number;
 }
 
 // Fetch prices using per-user Dhan credentials via security_ids
@@ -42,7 +51,6 @@ async function fetchPricesForUser(
 ): Promise<Record<string, { ltp: number; previousClose: number; volume: number; high: number; low: number }>> {
   const priceData: Record<string, { ltp: number; previousClose: number; volume: number; high: number; low: number }> = {};
 
-  // Get user's Dhan credentials
   const { data: settings } = await supabase
     .from("user_settings")
     .select("dhan_access_token, dhan_client_id, dhan_enabled")
@@ -57,17 +65,14 @@ async function fetchPricesForUser(
     return priceData;
   }
 
-  // Build request body grouped by exchange_segment using security_ids
   const requestBody: Record<string, number[]> = {};
   const secIdToSymbol: Record<string, string> = {};
 
   for (const alert of alerts) {
-    // Try to use security_id from alert, or look up from instrument_master
     let secId = alert.security_id;
     let exchSeg = alert.exchange_segment || "NSE_EQ";
 
     if (!secId) {
-      // Look up from instrument_master
       const { data: inst } = await supabase
         .from("instrument_master")
         .select("security_id, exchange_segment")
@@ -155,6 +160,14 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const startTime = Date.now();
+  const metrics: EvaluationMetrics = {
+    total_evaluated: 0,
+    total_triggered: 0,
+    avg_latency_ms: 0,
+    errors: 0,
+  };
+
   try {
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -176,32 +189,41 @@ serve(async (req) => {
     const marketClose = 15 * 60 + 30;
     const isMarketHours = istTimeNorm >= marketOpen && istTimeNorm <= marketClose;
 
-    // Fetch all active alerts
+    // Fetch all active alerts with staggered check interval support
     const { data: alerts, error: alertsError } = await supabase
       .from("alerts")
       .select("*")
-      .eq("active", true);
+      .eq("active", true)
+      .order("last_checked_at", { ascending: true, nullsFirst: true })
+      .limit(500); // Process in batches
 
     if (alertsError) throw new Error(`Failed to fetch alerts: ${alertsError.message}`);
     if (!alerts || alerts.length === 0) {
-      return jsonResponse({ success: true, message: "No active alerts" });
+      return jsonResponse({ success: true, message: "No active alerts", metrics });
     }
 
-    // Filter eligible alerts
+    // Filter eligible alerts with staggered check intervals
     const eligible = (alerts as Alert[]).filter(a => {
       if (a.expires_at && new Date(a.expires_at) < now) return false;
       if (a.snooze_until && new Date(a.snooze_until) > now) return false;
       if (a.active_hours_only && !isMarketHours) return false;
+      
+      // Cooldown check
       if (a.last_triggered && a.cooldown_minutes && a.cooldown_minutes > 0) {
         const cooldownEnd = new Date(new Date(a.last_triggered).getTime() + a.cooldown_minutes * 60000);
         if (now < cooldownEnd) return false;
       }
-      // Respect check_interval_minutes: skip if last checked too recently
-      const interval = a.check_interval_minutes || 5;
-      if (interval > 5 && a.last_triggered) {
-        // Use last_triggered as proxy; for non-triggered alerts, previous_ltp update serves as check marker
-        // We'll use a simpler approach: check if enough time passed since last trigger
+      
+      // Staggered check interval - use last_checked_at
+      const checkInterval = a.check_interval_minutes || 5;
+      if (a.last_checked_at) {
+        const nextCheckAt = new Date(new Date(a.last_checked_at).getTime() + checkInterval * 60000);
+        if (now < nextCheckAt) return false;
       }
+      
+      // Priority-based throttling: high priority always, normal every check, low every other
+      if (a.priority === "low" && Math.random() > 0.5) return false;
+      
       return true;
     });
 
@@ -214,15 +236,24 @@ serve(async (req) => {
 
     const triggered: Alert[] = [];
     let skippedNoPrice = 0;
+    const evaluationLatencies: number[] = [];
 
     for (const [userId, userAlerts] of Object.entries(alertsByUser)) {
+      const userStartTime = Date.now();
+      
       // Fetch real prices using this user's Dhan credentials
       const priceData = await fetchPricesForUser(supabase, userId, userAlerts);
 
       for (const alert of userAlerts) {
+        const evalStart = Date.now();
         const quote = priceData[alert.symbol];
         
-        // NO MOCK PRICES - skip if we can't get a real price
+        // Update last_checked_at regardless of price availability
+        await supabase
+          .from("alerts")
+          .update({ last_checked_at: now.toISOString() })
+          .eq("id", alert.id);
+        
         if (!quote || quote.ltp <= 0) {
           console.log(`No real price for ${alert.symbol}, skipping alert ${alert.id}`);
           skippedNoPrice++;
@@ -249,36 +280,34 @@ serve(async (req) => {
           case "PRICE_CROSS_ABOVE":
             if (prevLtp !== null && prevLtp !== undefined) {
               isTriggered = prevLtp <= alert.threshold && price > alert.threshold;
-            } else {
-              isTriggered = false;
             }
-            conditionDesc = `Price crossed above ₹${alert.threshold} (prev: ₹${prevLtp?.toFixed(2) || "—"}, now: ₹${price.toFixed(2)})`;
+            conditionDesc = `Price crossed above ₹${alert.threshold}`;
             break;
 
           case "PRICE_CROSS_BELOW":
             if (prevLtp !== null && prevLtp !== undefined) {
               isTriggered = prevLtp >= alert.threshold && price < alert.threshold;
-            } else {
-              isTriggered = false;
             }
-            conditionDesc = `Price crossed below ₹${alert.threshold} (prev: ₹${prevLtp?.toFixed(2) || "—"}, now: ₹${price.toFixed(2)})`;
+            conditionDesc = `Price crossed below ₹${alert.threshold}`;
             break;
 
           case "PERCENT_CHANGE_GT": {
             const pc = quote.previousClose || 0;
-            if (pc <= 0) break;
-            const pct = ((price - pc) / pc) * 100;
-            isTriggered = pct > alert.threshold;
-            conditionDesc = `Day change ${pct.toFixed(2)}% > ${alert.threshold}%`;
+            if (pc > 0) {
+              const pct = ((price - pc) / pc) * 100;
+              isTriggered = pct > alert.threshold;
+              conditionDesc = `Day change ${pct.toFixed(2)}% > ${alert.threshold}%`;
+            }
             break;
           }
 
           case "PERCENT_CHANGE_LT": {
             const pc = quote.previousClose || 0;
-            if (pc <= 0) break;
-            const pct = ((price - pc) / pc) * 100;
-            isTriggered = pct < -alert.threshold;
-            conditionDesc = `Day change ${pct.toFixed(2)}% < -${alert.threshold}%`;
+            if (pc > 0) {
+              const pct = ((price - pc) / pc) * 100;
+              isTriggered = pct < -alert.threshold;
+              conditionDesc = `Day change ${pct.toFixed(2)}% < -${alert.threshold}%`;
+            }
             break;
           }
 
@@ -298,6 +327,7 @@ serve(async (req) => {
 
         if (isTriggered) {
           triggered.push(alert);
+          metrics.total_triggered++;
 
           const updates: Record<string, unknown> = {
             last_triggered: now.toISOString(),
@@ -308,99 +338,65 @@ serve(async (req) => {
 
           await supabase.from("alerts").update(updates).eq("id", alert.id);
 
-          // Alert Chains
-          if ((alert as any).chain_children) {
-            try {
-              const children = (alert as any).chain_children as Array<Record<string, unknown>>;
-              if (Array.isArray(children) && children.length > 0) {
-                const childInserts = children.map((child: any) => ({
-                  user_id: alert.user_id,
-                  symbol: child.symbol || alert.symbol,
-                  condition_type: child.condition_type || "PRICE_GT",
-                  threshold: child.threshold,
-                  recurrence: child.recurrence || "ONCE",
-                  notes: child.notes || `Chained from ${alert.symbol} alert`,
-                  telegram_enabled: child.telegram_enabled ?? alert.telegram_enabled,
-                  exchange: child.exchange || alert.exchange || "NSE",
-                  active: true,
-                }));
-                await supabase.from("alerts").insert(childInserts);
-                console.log(`Created ${childInserts.length} chained alerts from ${alert.id}`);
-              }
-            } catch (e) { console.error(`Chain creation failed for ${alert.id}:`, e); }
+          // Create in-app notification
+          try {
+            await supabase.from("notifications").insert({
+              user_id: alert.user_id,
+              type: "alert_triggered",
+              title: `${alert.symbol} Alert Triggered`,
+              message: conditionDesc,
+              data: { alert_id: alert.id, price, condition: alert.condition_type },
+            });
+          } catch (e) {
+            console.error("Failed to create notification:", e);
           }
 
-          // Send Telegram
+          // Alert Chains
+          if (alert.chain_children && Array.isArray(alert.chain_children) && alert.chain_children.length > 0) {
+            try {
+              const childInserts = alert.chain_children.map((child: any) => ({
+                user_id: alert.user_id,
+                symbol: child.symbol || alert.symbol,
+                condition_type: child.condition_type || "PRICE_GT",
+                threshold: child.threshold,
+                recurrence: child.recurrence || "ONCE",
+                notes: child.notes || `Chained from ${alert.symbol} alert`,
+                telegram_enabled: child.telegram_enabled ?? alert.telegram_enabled,
+                exchange: child.exchange || alert.exchange || "NSE",
+                active: true,
+              }));
+              await supabase.from("alerts").insert(childInserts);
+              console.log(`Created ${childInserts.length} chained alerts from ${alert.id}`);
+            } catch (e) {
+              console.error(`Chain creation failed for ${alert.id}:`, e);
+              metrics.errors++;
+            }
+          }
+
+          // Send Telegram via telegram-notify function
           if (alert.telegram_enabled && TELEGRAM_BOT_TOKEN) {
-            const { data: settings } = await supabase
-              .from("user_settings")
-              .select("telegram_chat_id")
-              .eq("user_id", alert.user_id)
-              .maybeSingle();
-
-            const chatId = settings?.telegram_chat_id;
-            if (chatId) {
-              const ct = alert.condition_type;
-              const isCross = ct.startsWith("PRICE_CROSS");
-              const isPct = ct.includes("PERCENT_CHANGE");
-              const isVol = ct === "VOLUME_SPIKE";
-
-              const emojiMap: Record<string, string> = {
-                PRICE_GT: "📈", PRICE_LT: "📉",
-                PRICE_CROSS_ABOVE: "⚡", PRICE_CROSS_BELOW: "⚡",
-                PERCENT_CHANGE_GT: "📊", PERCENT_CHANGE_LT: "📊",
-                VOLUME_SPIKE: "🔊", CUSTOM: "🚨",
-              };
-              const headerMap: Record<string, string> = {
-                PRICE_GT: "PRICE ABOVE HIT", PRICE_LT: "PRICE BELOW HIT",
-                PRICE_CROSS_ABOVE: "CROSS ABOVE CONFIRMED", PRICE_CROSS_BELOW: "CROSS BELOW CONFIRMED",
-                PERCENT_CHANGE_GT: "DAY % CHANGE ABOVE", PERCENT_CHANGE_LT: "DAY % CHANGE BELOW",
-                VOLUME_SPIKE: "VOLUME SPIKE", CUSTOM: "CUSTOM ALERT",
-              };
-
-              const emoji = emojiMap[ct] || "🚨";
-              const header = headerMap[ct] || "ALERT TRIGGERED";
-              const exchangeMap: Record<string, string> = {
-                NSE: "NSE·EQ", BSE: "BSE·EQ", NFO: "NSE·F&O", MCX: "MCX",
-              };
-              const tag = exchangeMap[alert.exchange || "NSE"] || alert.exchange || "NSE·EQ";
-              const ts = now.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "short", timeStyle: "short" });
-              const modeLabel = alert.recurrence === "ONCE" ? "One-time" : alert.recurrence === "DAILY" ? "Repeating (Daily)" : "Repeating";
-
-              let triggerText = "";
-              if (isPct) triggerText = `Triggered: Day % ${ct.includes("GT") ? "above" : "below"} ${alert.threshold}%`;
-              else if (isVol) triggerText = `Spike Triggered ✅`;
-              else if (isCross) triggerText = `Crossed: ₹${alert.threshold.toLocaleString()}`;
-              else triggerText = `Level: ${ct.includes("GT") ? "Above" : "Below"} ₹${alert.threshold.toLocaleString()}`;
-
-              const intervalLabel = alert.check_interval_minutes
-                ? alert.check_interval_minutes >= 60
-                  ? `${Math.floor(alert.check_interval_minutes / 60)}h`
-                  : `${alert.check_interval_minutes}m`
-                : "5m";
-
-              let message = `${emoji} *${header}*\n`;
-              message += `*${alert.symbol}* (${tag})\n\n`;
-              message += `${triggerText}\n`;
-              message += `Now: LTP ₹${price.toLocaleString()}\n`;
-              message += `Mode: ${modeLabel} · Checked every ${intervalLabel}\n`;
-              if (alert.notes) message += `Reason: ${alert.notes}\n`;
-              message += `\n⏱ ${ts}`;
-
-              try {
-                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "Markdown" }),
-                });
-              } catch (e) { console.error(`Telegram failed for ${alert.id}:`, e); }
+            try {
+              await supabase.functions.invoke("telegram-notify", {
+                body: {
+                  type: "alert_triggered",
+                  alert_id: alert.id,
+                  current_price: price,
+                },
+              });
+            } catch (e) {
+              console.error(`Telegram notify failed for ${alert.id}:`, e);
+              metrics.errors++;
             }
           }
         }
+
+        const evalEnd = Date.now();
+        evaluationLatencies.push(evalEnd - evalStart);
+        metrics.total_evaluated++;
       }
     }
 
-    // Auto-deactivate expired
+    // Auto-deactivate expired alerts
     const expiredIds = (alerts as Alert[])
       .filter(a => a.expires_at && new Date(a.expires_at) < now && a.active)
       .map(a => a.id);
@@ -408,17 +404,29 @@ serve(async (req) => {
       await supabase.from("alerts").update({ active: false }).in("id", expiredIds);
     }
 
+    // Calculate average latency
+    if (evaluationLatencies.length > 0) {
+      metrics.avg_latency_ms = Math.round(
+        evaluationLatencies.reduce((a, b) => a + b, 0) / evaluationLatencies.length
+      );
+    }
+
+    const totalTime = Date.now() - startTime;
+
     return jsonResponse({
       success: true,
-      evaluated: eligible.length,
-      triggered: triggered.length,
+      evaluated: metrics.total_evaluated,
+      triggered: metrics.total_triggered,
       skipped: alerts.length - eligible.length,
       skipped_no_price: skippedNoPrice,
       expired_deactivated: expiredIds.length,
+      total_time_ms: totalTime,
+      metrics,
     });
   } catch (error: unknown) {
     console.error("Alert evaluation error:", error);
-    return jsonResponse({ success: false, error: error instanceof Error ? error.message : "Unknown" }, 500);
+    metrics.errors++;
+    return jsonResponse({ success: false, error: error instanceof Error ? error.message : "Unknown", metrics }, 500);
   }
 });
 
