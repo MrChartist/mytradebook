@@ -782,17 +782,17 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               }
             }}
           >
-            {SECTIONS.map((s) => {
-              const isActive = activeSection === s.id;
+            {sidebarGroups.map((group) => {
+              const groupActive = group.ids.includes(activeSection);
+              const firstId = group.ids[0];
               return (
                 <button
-                  key={s.id}
-                  data-active={isActive}
-                  onClick={() => scrollTo(s.id)}
-                  className={cn("docs-mobile-tab shrink-0 snap-start flex items-center gap-1.5", isActive && "active")}
+                  key={group.label}
+                  data-active={groupActive}
+                  onClick={() => scrollTo(firstId)}
+                  className={cn("docs-mobile-tab shrink-0 snap-start flex items-center gap-1.5", groupActive && "active")}
                 >
-                  <s.icon className="w-3 h-3 shrink-0" />
-                  {s.label}
+                  {group.label}
                 </button>
               );
             })}
