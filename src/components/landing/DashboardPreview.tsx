@@ -55,8 +55,7 @@ function TabContent({ tab }: { tab: TabKey }) {
 }
 
 export function DashboardPreview() {
-  const navigate = useNavigate();
-  const [hovered, setHovered] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabKey>("dashboard");
   const [activeTab, setActiveTab] = useState<TabKey>("dashboard");
   const [paused, setPaused] = useState(false);
   const [progress, setProgress] = useState(0);
