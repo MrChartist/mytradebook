@@ -60,7 +60,8 @@ import {
 } from "@/components/docs/DocsEnhancements";
 import {
   AnnotatedMockup, MockupCaption, FeatureZoneGrid,
-  VisualWalkthrough, VisualSummaryRow
+  VisualWalkthrough, VisualSummaryRow, WhatWhyWhenBlock,
+  UseCaseCards, CommonMistakesPanel, NextStepBlock, QuickOverviewStrip
 } from "@/components/docs/DocsVisualBlocks";
 import {
   ShareCardsMockup, AchievementsMockup, PositionSizingCalcMockup,
@@ -788,12 +789,24 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Your trading cockpit. A single screen that shows your P&L, risk exposure, open positions, and trading discipline — all updated in real-time during market hours."
                 icon={LayoutDashboard}
               />
+              <QuickOverviewStrip stats={[
+                { label: "KPI Cards", value: "4" },
+                { label: "Chart Widgets", value: "6+" },
+                { label: "Drag & Drop", value: "Yes" },
+                { label: "Live Prices", value: "Real-time" },
+                { label: "Segments", value: "5" },
+              ]} />
               <QuickNav items={[
                 { label: "Performance Overview", id: "db-performance" },
                 { label: "Charts & Visualizations", id: "db-charts" },
                 { label: "Customization", id: "db-customization" },
                 { label: "Advanced Widgets", id: "db-advanced" },
               ]} />
+              <WhatWhyWhenBlock data={{
+                what: "A real-time command center showing your P&L, risk exposure, equity curve, open positions, and discipline metrics on a single screen.",
+                why: "Eliminates the need to hop between 5 different tabs. One glance tells you if you're in profit, whether your risk is healthy, and how your month is trending.",
+                when: "Check every morning before market opens (for context) and periodically during the session (for live P&L tracking).",
+              }} />
               <VisualWalkthrough
                 title="Dashboard Overview"
                 steps={[
@@ -963,6 +976,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="best-practice">
                 <p>Check your dashboard every morning before market opens. The segment filter lets you focus on today's active market — switch to "All" only during your weekly review.</p>
               </ProTip>
+              <NextStepBlock steps={[
+                { label: "Trade Management", description: "Learn how to log and manage trades", targetId: "trade-management" },
+                { label: "Alerts System", description: "Set up price alerts for your watchlist", targetId: "alerts" },
+                { label: "Settings", description: "Configure your starting capital and preferences", targetId: "settings" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
@@ -976,6 +994,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="The core of TradeBook. Log every trade with detailed metadata — entry, exit, stop loss, targets, tags, chart images, and post-trade reviews. Manage your entire trading book from one screen."
                 icon={CandlestickChart}
               />
+              <QuickOverviewStrip stats={[
+                { label: "Trade Fields", value: "30+" },
+                { label: "Target Levels", value: "Up to 5" },
+                { label: "TSL Methods", value: "4" },
+                { label: "Post-Review", value: "Built-in" },
+              ]} />
               <QuickNav items={[
                 { label: "Creating Trades", id: "tm-creating" },
                 { label: "Trade Lifecycle", id: "tm-lifecycle" },
@@ -984,6 +1008,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Sharing & Discipline", id: "tm-sharing" },
                 { label: "Quick Actions", id: "tm-quick" },
               ]} />
+              <WhatWhyWhenBlock data={{
+                what: "Log every trade with entry/exit, stop loss, targets, tags, chart images, and notes. Track status from open → partial → closed with full timeline.",
+                why: "Without detailed records, you can't analyze what's working. Trade management turns random trading into a systematic, reviewable process.",
+                when: "Every time you enter, modify, or exit a position. The faster you log, the more accurate your records.",
+              }} />
               <ProTip>
                 <p>Always set your stop loss before submitting a trade. TradeBook calculates your risk-to-reward ratio automatically — trades with R:R below 1:2 are flagged in your analytics.</p>
               </ProTip>
@@ -1552,6 +1581,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p><strong>Why this feature exists:</strong> You can't watch 50 stocks simultaneously, but you can set 50 alerts. Alerts free you from staring at screens and replace reactive trading ("I just happened to see RELIANCE spike") with intentional trading ("My alert triggered at ₹2,450 because that's my planned entry level"). The best traders spend more time planning than watching — alerts make that possible.</p>
               </ProTip>
 
+              <QuickOverviewStrip stats={[
+                { label: "Condition Types", value: "7" },
+                { label: "Recurrence Modes", value: "3" },
+                { label: "Delivery", value: "In-app + Telegram" },
+                { label: "AI Suggestions", value: "Yes" },
+              ]} />
               <QuickNav items={[
                 { label: "First Alert", id: "al-first" },
                 { label: "Alert Types", id: "al-types" },
@@ -1560,6 +1595,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Management", id: "al-management" },
                 { label: "AI Suggestions", id: "al-ai" },
               ]} />
+
+              <WhatWhyWhenBlock data={{
+                what: "Set price, volume, and percentage alerts on any NSE/BSE/MCX instrument. Get notified instantly in-app or via Telegram when conditions are met.",
+                why: "You can't watch 50 stocks simultaneously, but you can set 50 alerts. Replaces reactive trading with intentional, plan-based entries.",
+                when: "After completing your research or study. Set alerts at your planned entry levels so you trade your plan, not your emotions.",
+              }} />
 
               <VisualWalkthrough
                 title="Alert Card & Telegram Notification"
@@ -1834,33 +1875,30 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Live Price Requirements", id: "wl-prices" },
               ]} />
 
+              <WhatWhyWhenBlock data={{
+                what: "Create multiple named watchlists with live prices, sparklines, % change sorting, and quick actions (create trade, set alert) directly from any item.",
+                why: "Without organized watchlists, you trade whatever catches your eye. Organized lists keep you focused on researched setups.",
+                when: "Update daily before market open. Clear stale symbols weekly. Use separate lists for different workflows.",
+              }} />
+
               <InteractiveMockup label="Watchlist Overview">
                 <WatchlistMockup />
               </InteractiveMockup>
 
-              <SubTopic title="Building Your First Watchlist" description="Get started tracking instruments in under a minute." id="wl-first" />
-              <StepByStep title="Building Your First Watchlist" steps={[
-                { title: "Create a new watchlist", description: "Go to Watchlists and click '+ New Watchlist'. Give it a name and optionally assign a color.", detail: "Use descriptive names like 'Nifty 50 Breakouts' or 'F&O Weekly Expiry' for quick identification." },
-                { title: "Add instruments", description: "Use the symbol search to find stocks, futures, or options. Click to add them to the list.", detail: "The search covers NSE, BSE, and MCX — same unified search used across the platform." },
-                { title: "Organize & reorder", description: "Drag instruments to reorder by priority. Your most-watched symbols stay at the top.", detail: "You can move instruments between watchlists or add the same symbol to multiple lists." },
-                { title: "Monitor & act", description: "View live prices during market hours. Click any instrument to create an alert or log a trade directly.", detail: "Sort by % change to spot the day's biggest movers at a glance." },
+              <UseCaseCards title="Watchlist Workflows by Trading Style" cases={[
+                { emoji: "⚡", title: "Intraday Scalper", description: "Daily 'Hot Today' list with 10-15 stocks from morning scan. Rebuild each day." },
+                { emoji: "📈", title: "Swing Trader", description: "3 lists: 'Pullback Zone', 'In Position', 'Graduated'. Move stocks between them." },
+                { emoji: "🎯", title: "Options Trader", description: "Organize by expiry: 'This Week', 'Next Week', 'Monthly'. Add contracts you're watching." },
+                { emoji: "🏗️", title: "Positional", description: "Sector-based: 'Banking', 'IT', 'FMCG'. Review each sector weekly." },
               ]} />
 
-              <ProTip variant="best-practice">
-                <p>Organize watchlists by purpose, not just by name. Create separate lists for <strong>active setups</strong> (stocks you're about to trade), <strong>sector tracking</strong> (banking, IT, pharma), and <strong>post-trade monitoring</strong> (recently closed positions). This keeps each list focused and actionable.</p>
-              </ProTip>
-
-              <ExpandableDetail title="Watchlist Workflow Ideas for Different Trading Styles" icon={Eye} badge="Workflow">
-                <p>How you organize watchlists depends on your trading style. Here are proven setups:</p>
-                <FeatureList items={[
-                  "Intraday Scalpers — Create a daily 'Hot Today' list with 10-15 stocks from your morning scan. Clear and rebuild it each day. Focus on volume and momentum.",
-                  "Swing Traders — Maintain 3 lists: 'Pullback Zone' (waiting for entry), 'In Position' (current holds), and 'Graduated' (recently exited for cool-off). Move stocks between them as your thesis evolves.",
-                  "Options Traders — Organize by expiry: 'This Week Expiry', 'Next Week', 'Monthly'. Add the underlying + the specific contracts you're watching. Notes field for strike rationale.",
-                  "Positional/Investors — Sector-based lists work best: 'Banking', 'IT', 'FMCG', 'Small Caps'. Review each sector weekly and rotate focus based on market regime.",
-                  "Research Mode — A dedicated 'Study Queue' list for symbols you want to research but haven't committed to yet. Review weekly and either promote to active watchlists or delete.",
-                ]} />
-                <p className="text-[12px] text-muted-foreground/60 mt-3">The notes field on each watchlist item is underutilized by most traders. Use it to record why you added the symbol, key levels to watch, and your planned action. When the alert triggers weeks later, you'll remember your thesis instantly.</p>
-              </ExpandableDetail>
+              <SubTopic title="Building Your First Watchlist" description="Get started tracking instruments in under a minute." id="wl-first" />
+              <StepByStep title="Building Your First Watchlist" steps={[
+                { title: "Create a new watchlist", description: "Go to Watchlists and click '+ New Watchlist'. Give it a name and optionally assign a color.", detail: "Use descriptive names like 'Nifty 50 Breakouts' or 'F&O Weekly Expiry'." },
+                { title: "Add instruments", description: "Use the symbol search to find stocks, futures, or options. Click to add them.", detail: "Search covers NSE, BSE, and MCX." },
+                { title: "Organize & reorder", description: "Drag instruments to reorder by priority.", detail: "Move instruments between watchlists or add the same symbol to multiple lists." },
+                { title: "Monitor & act", description: "View live prices. Click any instrument to create an alert or log a trade.", detail: "Sort by % change to spot the day's biggest movers." },
+              ]} />
 
               <SubTopic title="Organization" description="Create and manage multiple watchlists with visual distinction." id="wl-org" />
               <FeatureCard icon={List} title="Watchlist Organization">
@@ -2021,6 +2059,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Statistical Depth", id: "an-stats" },
               ]} />
 
+              <QuickOverviewStrip stats={[
+                { label: "Metric Types", value: "15+" },
+                { label: "AI Insights", value: "Behavioral" },
+                { label: "Heatmaps", value: "4" },
+                { label: "Min. Trades", value: "30+" },
+              ]} />
+
+              <WhatWhyWhenBlock data={{
+                what: "Deep performance analytics: win rate, profit factor, equity curve, time heatmaps, streak tracking, risk-of-ruin, AI pattern detection, and more.",
+                why: "Trading without analytics is driving blind. These metrics reveal which setups make money, when you should avoid trading, and where your biggest leaks are.",
+                when: "Review weekly after your journal session. Don't check daily — small samples produce misleading signals. Focus on 30+ trade windows.",
+              }} />
+
               <ProTip variant="best-practice">
                 <p><strong>Why this feature exists:</strong> Trading without analytics is like driving without a dashboard — you might be going fast, but you have no idea if you're heading toward a cliff. Analytics transforms your raw trade data into actionable intelligence: which setups actually make you money, what times of day you should avoid, whether your risk management is working, and where your biggest behavioral leaks are. The difference between a struggling trader and a profitable one is often just awareness of these patterns.</p>
               </ProTip>
@@ -2052,15 +2103,15 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
               </VisualWalkthrough>
 
-              <ExpandableDetail title="Common Analytics Misunderstandings" icon={AlertTriangle} badge="Watch Out">
-                <p>Before diving into your analytics, be aware of these common interpretation mistakes:</p>
-                <FeatureList items={[
-                  "\"My win rate is 55% so I'm profitable\" — Win rate means nothing without knowing the average win vs average loss size. A 55% win rate with R:R of 0.5:1 is a net loser. Always check Expectancy alongside Win Rate.",
-                  "\"My best hour is 10 AM\" — Only if you have 30+ trades in that hour. With 5 trades, one big winner can distort the average. The analytics show trade counts alongside P&L — check statistical significance before making schedule changes.",
-                  "\"I should stop trading Options because my win rate there is 40%\" — Options often have lower win rates but higher R:R. A 40% win rate with 3:1 average R:R is extremely profitable. Look at total P&L per segment, not just win rate.",
-                  "\"The AI says I overtrade on Mondays, so I should skip Mondays\" — AI insights are starting points, not final answers. Check the underlying data. If you take 8 trades on Mondays vs 3 on other days, reducing to 4 Monday trades might be better than skipping entirely.",
-                ]} />
-              </ExpandableDetail>
+              <CommonMistakesPanel
+                title="Analytics Interpretation Mistakes"
+                items={[
+                  { mistake: "\"My win rate is 55% so I'm profitable\"", fix: "Win rate means nothing without average win/loss size. Check Expectancy alongside Win Rate." },
+                  { mistake: "\"My best hour is 10 AM\" (based on 5 trades)", fix: "Need 30+ trades per time slot for statistical significance. Check trade counts alongside P&L." },
+                  { mistake: "\"Stop trading Options — only 40% win rate\"", fix: "Options often have lower win rate but higher R:R. A 40% rate with 3:1 R:R is very profitable." },
+                  { mistake: "\"AI says I overtrade on Mondays, skip Mondays\"", fix: "AI insights are starting points. Check underlying data — reducing volume may beat skipping entirely." },
+                ]}
+              />
 
               <SubTopic title="Core Metrics & AI Insights" description="Fundamental performance statistics that define your trading edge." id="an-core" />
               <div className="space-y-5">
