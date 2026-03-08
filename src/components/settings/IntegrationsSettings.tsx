@@ -770,29 +770,27 @@ export default function IntegrationsSettings() {
       </div>
 
       {/* RA Public Mode */}
-      <div className="surface-card p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
-            <Shield className="w-5 h-5 text-amber-500" />
+      <div className="premium-card-hover p-5">
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="icon-badge-sm bg-warning/8">
+            <Shield className="w-4 h-4 text-warning" />
           </div>
-          <div>
-            <h3 className="font-semibold">RA Public Mode</h3>
-            <p className="text-sm text-muted-foreground">SEBI-compliant messaging for public channels</p>
+          <div className="flex-1">
+            <h3 className="text-[15px] font-semibold">RA Public Mode</h3>
+            <p className="text-[11px] text-muted-foreground/50">SEBI-compliant messaging for public channels</p>
           </div>
-          <div className="ml-auto">
-            <Switch
-              checked={settings?.ra_public_mode ?? false}
-              onCheckedChange={(checked) => {
-                updateSettings.mutate({ ra_public_mode: checked } as any);
-              }}
-            />
-          </div>
+          <Switch
+            checked={settings?.ra_public_mode ?? false}
+            onCheckedChange={(checked) => {
+              updateSettings.mutate({ ra_public_mode: checked } as any);
+            }}
+          />
         </div>
 
-        <div className="space-y-4">
-          <div className="p-3 rounded-lg bg-accent/50 border border-border">
-            <p className="text-sm text-muted-foreground">
-              When enabled, all Telegram notifications will <strong>hide quantity/lots</strong> and append a compliance disclaimer. Use this for public channels and research distribution.
+        <div className="space-y-3">
+          <div className="p-2.5 rounded-lg bg-muted/20 border border-border/10">
+            <p className="text-[11px] text-muted-foreground/40 leading-relaxed">
+              When enabled, Telegram notifications will <strong className="text-foreground/60">hide quantity/lots</strong> and append a compliance disclaimer.
             </p>
           </div>
 
