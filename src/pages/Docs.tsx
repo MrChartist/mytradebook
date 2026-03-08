@@ -1534,8 +1534,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="A professional-grade NSE stock scanner with 47 built-in presets across 5 categories — Market Cap, Price Action, Volume, Fundamental, and Technical. Includes custom filter builder, saved presets, and deep-dive stock insight cards."
                 icon={Search}
               />
+              <QuickNav items={[
+                { label: "Scanner Presets", id: "fundamentals" },
+                { label: "Custom Filters", id: "fundamentals" },
+                { label: "Stock Insights", id: "fundamentals" },
+                { label: "Results Table", id: "fundamentals" },
+              ]} />
 
-              {/* Scanner presets visual */}
+              <SubTopic title="Scanner Presets" description="47 built-in presets across 5 categories for instant stock screening." />
               <ScreenerPresetsMockup />
 
               <div className="grid md:grid-cols-2 gap-5 mt-6">
