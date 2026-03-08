@@ -4413,6 +4413,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </ul>
               </ExpandableDetail>
 
+              <SubTopic title="Data Export & Backup" description="Export your trading data for backup or external analysis." id="set-export" />
+              <div className="space-y-5">
+                <FeatureCard icon={Download} title="Export Options">
+                  <FeatureList items={[
+                    "JSON full backup — export your entire trading database (trades, journal entries, settings, tags) as a single JSON file via the backend export function",
+                    "CSV trade export — download your trades as a CSV file for use in Excel, Google Sheets, or external analysis tools",
+                    "CSV includes all trade fields: symbol, entry/exit prices, P&L, dates, tags, notes, segment, and more",
+                    "JSON backup preserves relationships between trades, studies, alerts, and tags — ideal for full data portability",
+                    "Access exports from Settings or trigger them via keyboard shortcut (⌘K → 'Export')",
+                  ]} />
+                </FeatureCard>
+              </div>
+
               <SubTopic title="Security & Integrations" description="Password management and third-party connections." id="set-security" />
               <div className="space-y-5">
                 <FeatureCard icon={Lock} title="Security">
