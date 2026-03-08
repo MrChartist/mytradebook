@@ -2062,6 +2062,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Statistical Depth", id: "an-stats" },
               ]} />
 
+              <QuickOverviewStrip stats={[
+                { label: "Metric Types", value: "15+" },
+                { label: "AI Insights", value: "Behavioral" },
+                { label: "Heatmaps", value: "4" },
+                { label: "Min. Trades", value: "30+" },
+              ]} />
+
+              <WhatWhyWhenBlock data={{
+                what: "Deep performance analytics: win rate, profit factor, equity curve, time heatmaps, streak tracking, risk-of-ruin, AI pattern detection, and more.",
+                why: "Trading without analytics is driving blind. These metrics reveal which setups make money, when you should avoid trading, and where your biggest leaks are.",
+                when: "Review weekly after your journal session. Don't check daily — small samples produce misleading signals. Focus on 30+ trade windows.",
+              }} />
+
               <ProTip variant="best-practice">
                 <p><strong>Why this feature exists:</strong> Trading without analytics is like driving without a dashboard — you might be going fast, but you have no idea if you're heading toward a cliff. Analytics transforms your raw trade data into actionable intelligence: which setups actually make you money, what times of day you should avoid, whether your risk management is working, and where your biggest behavioral leaks are. The difference between a struggling trader and a profitable one is often just awareness of these patterns.</p>
               </ProTip>
