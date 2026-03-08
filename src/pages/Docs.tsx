@@ -289,9 +289,9 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
 
 function VideoPlaceholder({ title, duration }: { title: string; duration: string }) {
   return (
-    <div className="my-5 rounded-lg border border-border/40 bg-muted/20 overflow-hidden group cursor-pointer hover:border-border/60 transition-colors duration-200">
-      <div className="flex items-center gap-3 px-4 py-6">
-        <div className="w-10 h-10 rounded-full bg-primary/8 border border-primary/15 flex items-center justify-center shrink-0">
+    <div className="my-6 rounded-xl border border-border/40 bg-muted/15 overflow-hidden group cursor-pointer hover:border-border/60 transition-colors duration-200">
+      <div className="flex items-center gap-4 px-5 py-6">
+        <div className="w-11 h-11 rounded-full bg-primary/8 border border-primary/15 flex items-center justify-center shrink-0 group-hover:bg-primary/12 transition-colors">
           <Play className="w-4 h-4 text-primary ml-0.5" />
         </div>
         <div>
