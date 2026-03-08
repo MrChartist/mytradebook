@@ -2917,6 +2917,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip>
                 <p>Sharing your wins publicly creates accountability. Traders who share their journal consistently show 15% higher discipline scores in our data. The share triggers are placed on Dashboard, Journal, Reports, and Trade Detail modals — so you're always one click away.</p>
               </ProTip>
+
+              <NextStepBlock steps={[
+                { label: "Achievements", description: "Earn badges for your trading journey", targetId: "achievements" },
+                { label: "Trade Coach", description: "Get AI feedback on your trades", targetId: "trade-coach" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
