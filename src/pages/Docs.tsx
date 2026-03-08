@@ -746,7 +746,28 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       {/* Docs-specific navbar */}
       <DocsNavbar isInsideApp={isInsideApp} onSearchOpen={() => setSearchOpen(true)} />
 
-      {/* ═══════════════════════════════════════════════════════════════
+      {/* Sticky breadcrumb (desktop) - appears after scrolling */}
+      <AnimatePresence>
+        {showBackToTop && (() => { const cso = SECTIONS.find(s => s.id === activeSection); const cgo = sidebarGroups.find(g => g.ids.includes(activeSection)); return cso ? (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+            className="fixed top-[3.25rem] left-0 right-0 z-[38] hidden lg:block"
+            style={{ background: 'hsl(var(--docs-bg) / 0.85)', backdropFilter: 'blur(12px)', borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.3)' }}
+          >
+            <div className="max-w-[1480px] mx-auto px-5 sm:px-8 lg:px-12 py-1.5 flex items-center gap-2 text-[11px]" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>
+              <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:underline" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }}>Docs</button>
+              <ChevronRight className="w-2.5 h-2.5" style={{ color: 'hsl(var(--docs-text-muted) / 0.3)' }} />
+              {cgo && (<><span style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }}>{cgo.label}</span><ChevronRight className="w-2.5 h-2.5" style={{ color: 'hsl(var(--docs-text-muted) / 0.3)' }} /></>)}
+              <span className="font-medium" style={{ color: 'hsl(var(--docs-accent))' }}>{cso.label}</span>
+            </div>
+          </motion.div>
+        ) : null; })()}
+      </AnimatePresence>
+
+
           DOCS HEADER — Compact, documentation-first
           ═══════════════════════════════════════════════════════════════ */}
       <header className="pt-14 lg:pt-16 relative overflow-hidden" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.5)' }}>
