@@ -455,7 +455,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       <div className={cn("pt-20 border-b border-border/40", isInsideApp && "border-border/20")}>
         <div className="max-w-[1440px] mx-auto px-6 lg:px-8 py-8 lg:py-10">
           <div className="flex items-center gap-3 mb-3">
-            <h1 className="text-2xl lg:text-[1.7rem] font-bold tracking-tight">Documentation</h1>
+            <h1 className="font-display text-2xl lg:text-[1.7rem] font-bold tracking-tight">Documentation</h1>
             <button
               onClick={toggle}
               className={cn(
