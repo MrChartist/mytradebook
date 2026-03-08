@@ -685,9 +685,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
       {/* ═══════════════════════════════════════════════════════════════
           MAIN THREE-COLUMN LAYOUT
-          Left sidebar (240px) | Content (flex) | Right rail (200px)
+          Left sidebar (250px) | Content (flex) | Right rail (210px)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="max-w-[1360px] mx-auto flex">
+      <div className="max-w-[1440px] mx-auto flex">
         
         {/* ─────────────────────────────────────────────────────────────
             LEFT SIDEBAR — Desktop only, collapsible, with nested sub-topics
@@ -696,11 +696,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           <aside 
             className={cn(
               "hidden lg:block shrink-0 transition-all duration-300 ease-out",
-              sidebarCollapsed ? "w-[56px]" : "w-[240px]"
+              sidebarCollapsed ? "w-[56px]" : "w-[250px]"
             )} 
-            style={{ borderRight: '1px solid hsl(var(--docs-border-subtle) / 0.5)' }}
+            style={{ borderRight: '1px solid hsl(var(--docs-border-subtle) / 0.4)' }}
           >
-            <div className="sticky top-20 h-[calc(100vh-5rem)] flex flex-col py-5">
+            <div className="sticky top-[3.25rem] h-[calc(100vh-3.25rem)] flex flex-col py-5">
               {/* Header */}
               <div className={cn("flex items-center mb-4 px-4", sidebarCollapsed ? "justify-center" : "justify-between")}>
                 {!sidebarCollapsed && (
