@@ -165,42 +165,44 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.97 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="md:hidden mt-2 rounded-2xl border border-border/40 bg-card/95 backdrop-blur-xl shadow-xl p-3 space-y-0.5"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="md:hidden overflow-hidden border-t border-border/30 bg-card/95 backdrop-blur-xl"
           >
-            {NAV_LINKS.map((item) => {
-              const isActive = item.page === activePage;
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.label}
-                  onClick={() => handleNavClick(item.href)}
-                  className={cn(
-                    "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150",
-                    isActive
-                      ? "bg-[hsl(var(--tb-accent)/0.08)] text-foreground border-l-[3px] border-l-[hsl(var(--tb-accent))]"
-                      : "text-foreground/70 hover:bg-muted/50 hover:text-foreground"
-                  )}
-                >
-                  <Icon className="w-4 h-4 text-muted-foreground" />
-                  {item.label}
-                </button>
-              );
-            })}
-            {!isInsideApp && (
-              <div className="pt-2 border-t border-border/30 mt-2">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-center rounded-xl text-sm"
-                  onClick={() => { setMobileMenuOpen(false); navigate("/login"); }}
-                >
-                  Sign In
-                </Button>
-              </div>
-            )}
+            <div className="px-4 py-3 space-y-0.5">
+              {NAV_LINKS.map((item) => {
+                const isActive = item.page === activePage;
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.label}
+                    onClick={() => handleNavClick(item.href)}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150",
+                      isActive
+                        ? "bg-[hsl(var(--tb-accent)/0.08)] text-foreground border-l-[3px] border-l-[hsl(var(--tb-accent))]"
+                        : "text-foreground/70 hover:bg-muted/50 hover:text-foreground"
+                    )}
+                  >
+                    <Icon className="w-4 h-4 text-muted-foreground" />
+                    {item.label}
+                  </button>
+                );
+              })}
+              {!isInsideApp && (
+                <div className="pt-2 border-t border-border/30 mt-2">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-center rounded-xl text-sm"
+                    onClick={() => { setMobileMenuOpen(false); navigate("/login"); }}
+                  >
+                    Sign In
+                  </Button>
+                </div>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
