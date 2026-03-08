@@ -2432,7 +2432,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               ]} />
 
               <SubTopic title="Card Types" description="Three types of share cards for different occasions." id="sh-cards" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Share2} title="P&L Share Cards">
                   <p className="text-sm text-muted-foreground mb-3">Generate visual P&L summaries to share on social media:</p>
                   <FeatureList items={[
