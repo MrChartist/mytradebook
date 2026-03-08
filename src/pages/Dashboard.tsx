@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, createContext, useContext } from "react";
+import { useState, useMemo, useCallback, createContext, useContext, lazy, Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
 import { OnboardingWelcome } from "@/components/dashboard/OnboardingWelcome";
@@ -11,11 +11,15 @@ import { DashboardMonthlyMetrics } from "@/components/dashboard/DashboardMonthly
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { EquityCurve } from "@/components/dashboard/EquityCurve";
 import { StreakDiscipline } from "@/components/dashboard/StreakDiscipline";
-import { JournalCalendarView } from "@/components/journal/JournalCalendarView";
 import { RiskGoalWidget } from "@/components/dashboard/RiskGoalWidget";
-import { AITradeInsights } from "@/components/analytics/AITradeInsights";
-import { PortfolioHeatMap } from "@/components/dashboard/PortfolioHeatMap";
-import { AchievementsBadgeGrid } from "@/components/dashboard/AchievementsBadgeGrid";
+import { FloatingTradeTicker } from "@/components/dashboard/FloatingTradeTicker";
+import { SortableWidgetItem } from "@/components/dashboard/DashboardWidgetSortable";
+
+// Lazy-loaded heavy widgets
+const JournalCalendarView = lazy(() => import("@/components/journal/JournalCalendarView").then(m => ({ default: m.JournalCalendarView })));
+const AITradeInsights = lazy(() => import("@/components/analytics/AITradeInsights").then(m => ({ default: m.AITradeInsights })));
+const PortfolioHeatMap = lazy(() => import("@/components/dashboard/PortfolioHeatMap").then(m => ({ default: m.PortfolioHeatMap })));
+const AchievementsBadgeGrid = lazy(() => import("@/components/dashboard/AchievementsBadgeGrid").then(m => ({ default: m.AchievementsBadgeGrid })));
 import { FloatingTradeTicker } from "@/components/dashboard/FloatingTradeTicker";
 import { SortableWidgetItem } from "@/components/dashboard/DashboardWidgetSortable";
 import { useAchievements } from "@/hooks/useAchievements";
