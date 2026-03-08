@@ -150,7 +150,7 @@ export function Sidebar() {
         {/* Navigation */}
         <nav className="flex-1 px-2 py-2.5 space-y-px overflow-y-auto">
           {!collapsed && (
-            <div className="px-2.5 pb-1 pt-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/50">
+            <div className="px-2.5 pb-1 pt-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
               Main
             </div>
           )}
