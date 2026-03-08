@@ -831,6 +831,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   A compact equity curve chart showing your cumulative P&L over the selected month with gradient fill. Shows peak equity, max drawdown, and date labels. Hover over data points to see exact values. The curve updates automatically as you close trades.
                 </p>
                 <div className="mt-4"><EquityCurveWidgetMockup /></div>
+                <MockupCaption>Hover over any data point to see the exact date, P&L value, and drawdown percentage. The gradient fill changes from green to red based on trend direction.</MockupCaption>
               </FeatureCard>
 
               <FeatureCard icon={Award} title="Streak & Discipline Tracker">
