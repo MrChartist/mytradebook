@@ -78,7 +78,7 @@ export default function Analytics() {
   ];
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in" role="region" aria-label="Trading analytics">
       <PageHeader title="Analytics" subtitle="Deep dive into your trading performance.">
         <div className="flex items-center gap-1 bg-muted rounded-full p-0.5">
           {presets.map((p) => (
