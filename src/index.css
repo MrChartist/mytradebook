@@ -228,10 +228,10 @@
   .text-caption { font-size: 0.75rem;  line-height: 1.5; letter-spacing: 0.005em; } /* 12px */
   .text-body-sm { font-size: 0.875rem; line-height: 1.55; letter-spacing: -0.006em; } /* 14px */
   .text-body  { font-size: 1rem;      line-height: 1.6; letter-spacing: -0.011em; }  /* 16px */
-  .text-heading-sm { font-size: 1.125rem; line-height: 1.45; letter-spacing: -0.015em; font-weight: 600; font-family: Manrope, sans-serif; } /* 18px */
-  .text-heading { font-size: 1.375rem; line-height: 1.35; letter-spacing: -0.02em; font-weight: 600; font-family: Manrope, sans-serif; } /* 22px */
-  .text-heading-lg { font-size: 1.75rem; line-height: 1.25; letter-spacing: -0.025em; font-weight: 700; font-family: Manrope, sans-serif; } /* 28px */
-  .text-display { font-size: 2.25rem; line-height: 1.15; letter-spacing: -0.028em; font-weight: 700; font-family: Manrope, sans-serif; } /* 36px */
+  .text-heading-sm { font-size: 1.125rem; line-height: 1.45; letter-spacing: -0.015em; font-weight: 600; font-family: 'Source Sans 3', sans-serif; } /* 18px */
+  .text-heading { font-size: 1.375rem; line-height: 1.35; letter-spacing: -0.02em; font-weight: 600; font-family: 'Source Sans 3', sans-serif; } /* 22px */
+  .text-heading-lg { font-size: 1.75rem; line-height: 1.25; letter-spacing: -0.025em; font-weight: 700; font-family: 'Source Sans 3', sans-serif; } /* 28px */
+  .text-display { font-size: 2.25rem; line-height: 1.15; letter-spacing: -0.028em; font-weight: 700; font-family: 'Libre Bodoni', Georgia, serif; } /* 36px — premium display */
 
   /* ── Accent serif (Instrument Serif) — use sparingly in headings ── */
   .accent-serif {
