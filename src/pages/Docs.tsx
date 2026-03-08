@@ -306,7 +306,7 @@ const FAQGroup = ({ icon: Icon, title, items }: {
 const FeatureCard = React.forwardRef<HTMLDivElement, {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
 }>(({ icon: Icon, title, children, badge }, ref) => (
-  <div ref={ref} className="docs-feature-card group mt-6 overflow-hidden">
+  <div ref={ref} className="docs-feature-card group mt-7 overflow-hidden">
     <div className="px-6 pt-5 pb-3">
       <div className="flex items-center gap-3">
         <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
