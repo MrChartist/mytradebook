@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import {
-  BookOpen, Plus, Search, Tag, Calendar, Edit, Trash2,
+  BookOpen, Plus, Search, Tag, Calendar, Trash2,
   TrendingUp, BarChart2, Newspaper, Bell, ChevronDown, X, Filter,
 } from "lucide-react";
 import { useLivePrices, type InstrumentInput } from "@/hooks/useLivePrices";
