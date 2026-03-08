@@ -3248,6 +3248,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">If issues persist after checking the above, try disconnecting and reconnecting your Dhan account. This refreshes the OAuth tokens and re-validates all credentials.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "AI Insights", description: "Set up AI trade analysis", targetId: "ai-integration" },
+                { label: "Settings", description: "Manage all integration settings", targetId: "settings" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
