@@ -603,10 +603,10 @@ export default function IntegrationsSettings() {
               </div>
 
               {dhanAuthMode === "apikey" ? (
-                <div className="space-y-3">
-                  <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-                    <p className="text-xs text-muted-foreground">
-                      <strong>API Key</strong> is valid for 12 months. After setup, your access token auto-renews daily — no manual paste needed.
+                <div className="space-y-2.5">
+                  <div className="p-2.5 rounded-lg bg-primary/4 border border-primary/10">
+                    <p className="text-[10px] text-muted-foreground/50">
+                      <strong className="text-foreground/70">API Key</strong> is valid for 12 months. After setup, your access token auto-renews daily.
                     </p>
                   </div>
 
