@@ -51,7 +51,7 @@ const timeframeLabels: Record<string, string> = {
   "1H": "1 Hour", "4H": "4 Hour", "1D": "Daily", "1W": "Weekly",
 };
 
-export function TradeDetailModal({ trade, open, onOpenChange }: TradeDetailModalProps) {
+export function TradeDetailModal({ trade, open, onOpenChange, onDuplicate }: TradeDetailModalProps) {
   const { closeTrade, updateTrade, deleteTrade } = useTrades();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const { events, addEvent } = useTradeEvents(trade?.id || null);
