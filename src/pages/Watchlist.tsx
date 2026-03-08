@@ -68,6 +68,8 @@ export default function WatchlistPage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [listToDelete, setListToDelete] = useState<Watchlist | null>(null);
+  const [renameTarget, setRenameTarget] = useState<Watchlist | null>(null);
+  const [renameName, setRenameName] = useState("");
   const [newName, setNewName] = useState("");
   const [newDesc, setNewDesc] = useState("");
   const [newColor, setNewColor] = useState("#6366f1");
