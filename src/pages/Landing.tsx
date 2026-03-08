@@ -103,42 +103,6 @@ export default function Landing() {
       {/* ── Hero (eagerly loaded) ─────────────────────────── */}
       <HeroSection />
 
-      {/* ── Trust Strip + Stats ───────────────────────────── */}
-      <section className="py-16 bg-muted/10 dot-pattern" aria-label="Trust and statistics">
-        <div className="max-w-5xl mx-auto px-6">
-          <p className="text-center text-xs text-muted-foreground uppercase tracking-[0.18em] font-semibold mb-8">Trusted by 1,200+ traders across Indian markets</p>
-          <div className="flex items-center justify-center gap-12 sm:gap-20 flex-wrap">
-            {[{ name: "NSE", icon: Activity }, { name: "BSE", icon: BarChart3 }, { name: "MCX", icon: PieChart }, { name: "Dhan", icon: Zap }, { name: "Telegram", icon: Send }].map((l) => (
-              <motion.div key={l.name} className="flex items-center gap-2.5 text-muted-foreground/70 hover:text-[hsl(var(--tb-accent))] transition-colors duration-300" whileHover={{ scale: 1.06 }}>
-                <l.icon className="w-4.5 h-4.5" /><span className="text-sm font-semibold tracking-wide">{l.name}</span>
-              </motion.div>
-            ))}
-          </div>
-          <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.2)] to-transparent my-10" />
-          <div className="flex items-center justify-center gap-10 sm:gap-20 flex-wrap">
-            {[{ ref: s3.ref, value: s3.count, suffix: "", label: "Market Segments" }, { ref: s4.ref, value: s4.count, suffix: "+", label: "Analytics Metrics" }, { ref: s5.ref, value: s5.count, suffix: "+", label: "Trades Tracked" }].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-3xl sm:text-4xl font-extrabold font-mono tracking-tight text-[hsl(var(--tb-accent))]" ref={stat.ref}>{stat.value}{stat.suffix}</div>
-                <div className="text-[11px] text-muted-foreground uppercase tracking-[0.14em] mt-1.5 font-medium">{stat.label}</div>
-              </div>
-            ))}
-            <div className="text-center"><div className="text-3xl sm:text-4xl font-extrabold font-mono tracking-tight text-[hsl(var(--tb-accent))]">24/7</div><div className="text-[11px] text-muted-foreground uppercase tracking-[0.14em] mt-1.5 font-medium">Cloud Access</div></div>
-          </div>
-          {/* Recent signups indicator */}
-          <div className="flex items-center justify-center gap-2 mt-8">
-            <div className="flex -space-x-1.5">
-              {["bg-[hsl(var(--tb-accent))]", "bg-profit", "bg-primary", "bg-[hsl(210_80%_55%)]"].map((bg, i) => (
-                <div key={i} className={`w-5 h-5 rounded-full ${bg} ring-2 ring-background text-[7px] font-bold text-white flex items-center justify-center`}>
-                  {["R", "P", "A", "V"][i]}
-                </div>
-              ))}
-            </div>
-            <span className="text-[11px] text-muted-foreground">
-              <span className="text-profit font-semibold">12 traders</span> joined today
-            </span>
-          </div>
-        </div>
-      </section>
 
       <GradientDivider />
 
