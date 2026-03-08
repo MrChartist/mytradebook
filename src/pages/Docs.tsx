@@ -972,15 +972,6 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="warning">
                 <p>Never risk more than 2% of your capital on a single trade. The calculator will flag oversized positions with a red warning if you exceed this threshold.</p>
               </ProTip>
-              <ComparisonTable
-                title="Position Sizing — Free vs Pro"
-                rows={[
-                  { feature: "Basic calculator", free: true, pro: true },
-                  { feature: "Kelly Criterion", free: false, pro: true },
-                  { feature: "Auto-fill from trade form", free: true, pro: true },
-                  { feature: "Risk % presets", free: false, pro: true },
-                ]}
-              />
             </motion.section>
 
             <SectionDivider />
