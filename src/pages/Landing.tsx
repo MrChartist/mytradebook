@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import landingLogo from "@/assets/logo.png";
+import { StickyCTA } from "@/components/landing/StickyCTA";
 
 // Eagerly loaded — above the fold
 import { HeroSection } from "@/components/landing/HeroSection";
