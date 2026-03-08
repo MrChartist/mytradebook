@@ -91,6 +91,164 @@ const SECTIONS = [
   { id: "changelog", label: "Changelog & Roadmap", icon: RefreshCw },
 ];
 
+const SECTION_ANCHORS: Record<string, { label: string; id: string }[]> = {
+  "getting-started": [
+    { label: "Quick Start", id: "gs-quick-start" },
+    { label: "Platform Overview", id: "gs-platform-overview" },
+    { label: "System Requirements", id: "gs-system-req" },
+  ],
+  "dashboard": [
+    { label: "Performance Overview", id: "db-performance" },
+    { label: "Charts & Visualizations", id: "db-charts" },
+    { label: "Customization", id: "db-customization" },
+    { label: "Advanced Widgets", id: "db-advanced" },
+  ],
+  "trade-management": [
+    { label: "Creating Trades", id: "tm-creating" },
+    { label: "Trade Lifecycle", id: "tm-lifecycle" },
+    { label: "Risk Management", id: "tm-risk" },
+    { label: "Post-Trade Review", id: "tm-review" },
+    { label: "Sharing & Discipline", id: "tm-sharing" },
+    { label: "Quick Actions", id: "tm-quick" },
+  ],
+  "csv-import": [
+    { label: "Import Workflow", id: "csv-import-workflow" },
+    { label: "Import & Export Details", id: "csv-details" },
+    { label: "Format & Troubleshooting", id: "csv-format" },
+  ],
+  "trade-templates": [
+    { label: "Template Setup", id: "tpl-setup" },
+    { label: "Smart Suggestions", id: "tpl-smart" },
+    { label: "Automation Features", id: "tpl-auto" },
+  ],
+  "position-sizing": [
+    { label: "Calculation Workflow", id: "ps-workflow" },
+    { label: "Advanced Sizing", id: "ps-advanced" },
+    { label: "Practical Examples", id: "ps-examples" },
+  ],
+  "trading-rules": [
+    { label: "Setup & Usage", id: "tr-setup" },
+    { label: "Core vs Optional", id: "tr-core" },
+    { label: "Pre-Trade Checklist", id: "tr-checklist" },
+  ],
+  "alerts": [
+    { label: "First Alert", id: "al-first" },
+    { label: "Alert Types", id: "al-types" },
+    { label: "Delivery Channels", id: "al-delivery" },
+    { label: "Management", id: "al-manage" },
+  ],
+  "studies": [
+    { label: "Publishing a Study", id: "st-publish" },
+    { label: "Study Workflow", id: "st-workflow" },
+    { label: "Pattern Tagging", id: "st-patterns" },
+    { label: "Research Tools", id: "st-tools" },
+    { label: "Linking to Trades", id: "st-linking" },
+  ],
+  "watchlists": [
+    { label: "First Watchlist", id: "wl-first" },
+    { label: "Organization", id: "wl-org" },
+    { label: "Live Prices", id: "wl-prices" },
+    { label: "Alerts Integration", id: "wl-alerts" },
+  ],
+  "journal": [
+    { label: "Weekly Review", id: "jn-review" },
+    { label: "Dashboard Tab", id: "jn-dashboard" },
+    { label: "Calendar Tab", id: "jn-calendar" },
+    { label: "Mistakes Tab", id: "jn-mistakes" },
+    { label: "Filters & Segments", id: "jn-filters" },
+  ],
+  "analytics": [
+    { label: "Getting Started", id: "an-start" },
+    { label: "Core Metrics", id: "an-core" },
+    { label: "Advanced Tools", id: "an-advanced" },
+    { label: "AI Pattern Detection", id: "an-ai" },
+  ],
+  "calendar": [
+    { label: "Calendar View", id: "cal-view" },
+    { label: "Daily Review", id: "cal-review" },
+    { label: "Journal Integration", id: "cal-journal" },
+    { label: "Scheduling", id: "cal-schedule" },
+  ],
+  "mistakes": [
+    { label: "Categorizing", id: "mk-categorize" },
+    { label: "Pattern Recognition", id: "mk-patterns" },
+    { label: "Improvement Tools", id: "mk-tools" },
+    { label: "Analytics Link", id: "mk-analytics" },
+  ],
+  "fundamentals": [
+    { label: "First Screen", id: "sc-first" },
+    { label: "Scanner Presets", id: "sc-presets" },
+    { label: "Custom Filters", id: "sc-custom" },
+    { label: "Stock Details", id: "sc-details" },
+    { label: "Sparkline & Trends", id: "sc-sparklines" },
+  ],
+  "reports": [
+    { label: "Generating Reports", id: "rp-generate" },
+    { label: "Report Contents", id: "rp-contents" },
+    { label: "Delivery & Sharing", id: "rp-delivery" },
+    { label: "Customization", id: "rp-customization" },
+  ],
+  "sharing": [
+    { label: "Creating a Card", id: "sh-create" },
+    { label: "Card Types", id: "sh-cards" },
+    { label: "Social Features", id: "sh-social" },
+    { label: "Privacy Controls", id: "sh-privacy" },
+  ],
+  "achievements": [
+    { label: "Progress Tracking", id: "ach-progress" },
+    { label: "Badge Categories", id: "ach-categories" },
+    { label: "Sharing Badges", id: "ach-sharing" },
+    { label: "Milestone Rewards", id: "ach-milestones" },
+  ],
+  "trade-coach": [
+    { label: "Coaching Workflow", id: "tc-workflow" },
+    { label: "Analysis Dimensions", id: "tc-analysis" },
+    { label: "AI Integration", id: "tc-ai" },
+    { label: "Best Practices", id: "tc-best" },
+  ],
+  "integrations": [
+    { label: "Dhan Setup", id: "int-dhan" },
+    { label: "Telegram Setup", id: "int-telegram" },
+    { label: "Webhook & API", id: "int-webhook" },
+    { label: "Data Sync", id: "int-sync" },
+  ],
+  "ai-integration": [
+    { label: "Provider Setup", id: "ai-provider" },
+    { label: "How It Works", id: "ai-how" },
+    { label: "Credit Usage", id: "ai-credits" },
+    { label: "Privacy", id: "ai-privacy" },
+  ],
+  "shortcuts": [
+    { label: "Command Palette", id: "kb-palette" },
+    { label: "Quick Actions", id: "kb-actions" },
+    { label: "Navigation", id: "kb-nav" },
+    { label: "Full Reference", id: "kb-reference" },
+  ],
+  "pwa": [
+    { label: "Install on Phone", id: "pwa-install" },
+    { label: "Offline Queue", id: "pwa-offline" },
+    { label: "Mobile Navigation", id: "pwa-mobile" },
+    { label: "PWA vs Native", id: "pwa-vs-native" },
+  ],
+  "settings": [
+    { label: "Profile & Billing", id: "set-account" },
+    { label: "Tags & Preferences", id: "set-tags" },
+    { label: "Capital Management", id: "set-capital" },
+    { label: "Security & Integrations", id: "set-security" },
+  ],
+  "faq": [
+    { label: "Account & Billing", id: "faq-account" },
+    { label: "Data & Privacy", id: "faq-data" },
+    { label: "Integrations", id: "faq-integrations" },
+    { label: "Features", id: "faq-features" },
+  ],
+  "changelog": [
+    { label: "Latest Updates", id: "cl-updates" },
+    { label: "Roadmap", id: "cl-roadmap" },
+    { label: "Versioning", id: "cl-versioning" },
+  ],
+};
+
 function FeatureList({ items }: { items: string[] }) {
   return (
     <ul className="space-y-2.5 mt-4">
