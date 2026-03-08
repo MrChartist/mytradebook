@@ -21,8 +21,7 @@ import {
   Wallet, Share2, MessageSquare, Command, Hash, Palette,
   PanelLeftClose, PanelLeftOpen, SlidersHorizontal
 } from "lucide-react";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import docsLogo from "@/assets/logo.png";
+import { LandingNavbar } from "@/components/landing/LandingNavbar";
 import {
   BentoFeatureGrid, OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
   TradeLifecycleFlow, AlertCardMockup, TelegramNotifMockup, WatchlistMockup,
@@ -308,52 +307,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
   return (
     <div className={cn("min-h-screen bg-background text-foreground", isInsideApp && "pb-6", mode === "bw" && "docs-bw")} role="document">
-      {/* Floating island navbar */}
-      <motion.nav
-        initial={{ y: -40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 260, damping: 20 }}
-        className="fixed top-4 left-0 right-0 z-50 mx-auto max-w-3xl px-4"
-        aria-label="Documentation navigation"
-      >
-        <div className="flex items-center justify-between rounded-full border border-border/40 bg-card/80 backdrop-blur-xl px-4 sm:px-6 h-14" style={{ boxShadow: "0 4px 20px -6px rgba(0,0,0,0.06), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
-          {/* Logo */}
-          <button onClick={() => navigate("/")} className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0">
-            <img src={docsLogo} alt="TradeBook" className="h-8 object-contain" />
-          </button>
-
-          {/* Center links */}
-          <div className="hidden sm:flex items-center gap-0.5">
-            {[{ label: "Features", href: "/#features" }, { label: "Pricing", href: "/#pricing" }, { label: "FAQ", href: "/#faq" }].map((item) => (
-              <Button key={item.label} variant="ghost" size="sm" className="text-muted-foreground rounded-full text-[13px] font-medium relative after:absolute after:bottom-0.5 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-[hsl(var(--tb-accent))] after:opacity-0 hover:after:opacity-100 after:transition-opacity" onClick={() => navigate(item.href)}>{item.label}</Button>
-            ))}
-            <Button variant="ghost" size="sm" className="text-foreground font-semibold rounded-full text-[13px] relative after:absolute after:bottom-0.5 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-[hsl(var(--tb-accent))] after:opacity-100" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Docs</Button>
-          </div>
-
-          {/* Right side */}
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            {isInsideApp ? (
-              <Button size="sm" onClick={() => navigate("/dashboard")} className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 text-[13px] h-9 shadow-[0_6px_16px_hsl(var(--tb-accent)/0.35)]">
-                Dashboard
-              </Button>
-            ) : (
-              <>
-                <Button variant="ghost" size="sm" onClick={() => navigate("/login")} className="text-muted-foreground rounded-full text-[13px] hidden sm:inline-flex">
-                  Sign In
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => navigate("/login?mode=signup")}
-                  className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 text-[13px] h-9 shadow-[0_6px_16px_hsl(var(--tb-accent)/0.35)]"
-                >
-                  Get Started
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      </motion.nav>
+      {/* Shared navbar */}
+      <LandingNavbar activePage="docs" isInsideApp={isInsideApp} />
 
       {/* Hero — extra top padding for fixed navbar */}
       <div className={cn("pt-20 border-b border-border/20 bg-gradient-to-b from-[hsl(var(--tb-accent)/0.04)] to-transparent", isInsideApp && "border-none")}>
@@ -376,9 +331,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               {mode === "bw" ? "B&W" : "Color"}
             </button>
           </div>
-          <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight mb-4">
+          <h1 className="text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight mb-4">
             Everything you need to know about{" "}
-            <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', cursive" }}>
+            <span className="accent-script text-[hsl(var(--tb-accent))]">
               TradeBook
             </span>
           </h1>
