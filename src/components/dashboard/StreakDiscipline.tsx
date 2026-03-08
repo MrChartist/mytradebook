@@ -105,9 +105,9 @@ export function StreakDiscipline() {
         </div>
 
         {/* Avg RR */}
-        <div className="inner-panel">
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Avg R:R</p>
-          <p className={cn("text-xl font-bold font-mono mt-1", stats.avgRR >= 1.5 ? "text-profit" : stats.avgRR >= 1 ? "text-foreground" : "text-loss")}>
+        <div className="inner-panel !p-2.5">
+          <p className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-wider">Avg R:R</p>
+          <p className={cn("text-lg font-bold font-mono mt-0.5", stats.avgRR >= 1.5 ? "text-profit" : stats.avgRR >= 1 ? "text-foreground" : "text-loss")}>
             1:{stats.avgRR.toFixed(1)}
           </p>
         </div>
