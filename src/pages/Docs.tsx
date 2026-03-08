@@ -55,7 +55,8 @@ import {
 } from "@/components/docs/DocsMockups";
 import {
   ProTip, StepByStep, ExpandableDetail, ComparisonTable,
-  InteractiveMockup, PhaseHeader, QuickNav, KeyMetric, SubTopic
+  InteractiveMockup, PhaseHeader, QuickNav, KeyMetric, SubTopic,
+  CodeBlock, OutputBlock
 } from "@/components/docs/DocsEnhancements";
 import {
   ShareCardsMockup, AchievementsMockup, PositionSizingCalcMockup,
@@ -1477,7 +1478,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </FeatureCard>
 
               <ExpandableDetail title="Smart Alert Suggestions Deep Dive" icon={Sparkles} badge="AI">
-                <p>The Smart Alert engine works by analyzing your closed trade history through the <code className="px-1 py-0.5 rounded bg-muted text-[11px] font-mono">suggest-alerts</code> backend function:</p>
+                <p>The Smart Alert engine works by analyzing your closed trade history through the <code>suggest-alerts</code> backend function:</p>
                 <FeatureList items={[
                   "Identifies your top 5 most-traded symbols by frequency.",
                   "For each symbol, it analyzes your average entry/exit prices, win rate, and recent price action.",
@@ -1485,7 +1486,22 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Each suggestion includes AI-generated reasoning explaining why this alert level matters for your trading style.",
                   "One-click creation converts the suggestion into a fully configured alert with sensible defaults.",
                 ]} />
-                <p className="text-[12px] text-muted-foreground/60 mt-3">You need at least 10 closed trades before suggestions appear. The more trades you log, the more personalized the recommendations become.</p>
+                <CodeBlock tabs={[{
+                  label: "Example Response",
+                  language: "JSON",
+                  code: `{
+  "suggestions": [
+    {
+      "symbol": "RELIANCE",
+      "price": 2450.00,
+      "condition": "crosses_above",
+      "reasoning": "Your avg entry is ₹2,448. Price is 3.2% below — good re-entry zone.",
+      "confidence": 0.85
+    }
+  ]
+}`
+                }]} title="suggest-alerts" />
+                <p className="text-[12px] text-muted-foreground/55 mt-3">You need at least 10 closed trades before suggestions appear. The more trades you log, the more personalized the recommendations become.</p>
               </ExpandableDetail>
             </motion.section>
 
@@ -2696,6 +2712,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><TelegramIntegrationDetailMockup /></div>
               </FeatureCard>
 
+              <CodeBlock tabs={[
+                { label: "Bot Token", language: "Text", code: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz" },
+                { label: "Chat IDs", language: "Text", code: "Personal chat:  123456789\nGroup chat:    -1001234567890\nChannel:       -1001234567890" },
+              ]} title="Telegram Credentials Format" />
+
               <SubTopic title="Troubleshooting" description="Common connection issues and how to resolve them." id="int-troubleshoot" />
               <ExpandableDetail title="Troubleshooting Dhan Connection Issues" icon={AlertTriangle} badge="Help">
                 <p>Common issues when connecting or using the Dhan integration, and how to fix them:</p>
@@ -2824,6 +2845,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   <li className="flex items-start gap-2"><span className="text-primary mt-0.5">•</span> Only aggregated statistics are sent — not your full trade history or personal data</li>
                 </ul>
                 <p className="mt-3 text-[12px] text-muted-foreground/60 italic">Tip: If you're on Gemini's free tier and hit the 15 requests/minute limit, just wait a minute. For most traders, this limit is never reached during normal usage.</p>
+
+                <CodeBlock tabs={[
+                  { label: "Gemini", language: "Shell", code: "# Get your free API key from:\n# https://aistudio.google.com/app/apikey\n\nAPI_KEY=AIzaSy...your-key-here\n\n# Free tier limits:\n#   15 requests / minute\n#   1,000,000 tokens / day\n#   ~500 trade analyses / day" },
+                  { label: "OpenAI", language: "Shell", code: "# Get your API key from:\n# https://platform.openai.com/api-keys\n\nAPI_KEY=sk-...your-key-here\n\n# Pricing (GPT-4o Mini):\n#   ~₹1-2 per trade analysis\n#   Requires billing credits" },
+                ]} title="API Key Reference" />
+
+                <OutputBlock label="Example AI Coach Response">{"## Trade Analysis: RELIANCE (Long)\n\n### ✅ What Went Well\n- Entry at ₹2,450 aligned with your historical avg entry\n- Stop loss at ₹2,410 (1.6%) — well-placed below support\n\n### ⚠️ Room for Improvement\n- Exit at ₹2,498 captured only 40% of the move\n- Consider trailing SL to lock in more upside\n\n### Rating: ★★★★☆ (4/5)"}</OutputBlock>
               </ExpandableDetail>
 
               <div className="mt-5">
