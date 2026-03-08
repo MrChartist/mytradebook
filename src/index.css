@@ -963,11 +963,12 @@
   .docs-page .docs-anchor-link {
     font-family: 'Source Sans 3', system-ui, sans-serif;
     color: hsl(var(--docs-text-muted) / 0.7);
-    font-size: 0.8125rem;
-    font-weight: 420;
-    line-height: 1.5;
+    font-size: 0.78125rem;
+    font-weight: 430;
+    line-height: 1.45;
+    letter-spacing: 0.005em;
     transition: color 150ms ease-out, border-color 150ms ease-out, background 150ms ease-out;
-    border-left: 2px solid hsl(var(--docs-border-subtle) / 0.6);
+    border-left: 2px solid hsl(var(--docs-border-subtle) / 0.5);
     padding-left: 0.875rem;
     border-radius: 0 0.25rem 0.25rem 0;
   }
@@ -978,7 +979,7 @@
   .docs-page .docs-anchor-link.active {
     color: hsl(var(--docs-accent));
     border-left-color: hsl(var(--docs-accent));
-    font-weight: 520;
+    font-weight: 530;
     background: hsl(var(--docs-accent-soft) / 0.05);
   }
 
