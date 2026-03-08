@@ -1121,7 +1121,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><DeliveryChannelsMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Alert Management" description="Organize, filter, and monitor all your alerts." />
+              <SubTopic title="Alert Management" description="Organize, filter, and monitor all your alerts." id="al-management" />
               <FeatureCard icon={Eye} title="Alert Management">
                 <p className="text-sm text-muted-foreground mb-3">Organize and monitor your alerts:</p>
                 <FeatureList items={[
