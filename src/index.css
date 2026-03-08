@@ -411,15 +411,15 @@
   }
 
   .icon-badge {
-    @apply w-10 h-10 rounded-full flex items-center justify-center shrink-0;
+    @apply w-9 h-9 rounded-[var(--radius-sm)] flex items-center justify-center shrink-0;
   }
 
   .icon-badge-sm {
-    @apply w-8 h-8 rounded-full flex items-center justify-center shrink-0;
+    @apply w-7 h-7 rounded-[var(--radius-sm)] flex items-center justify-center shrink-0;
   }
 
   .breadcrumb-bar {
-    @apply flex items-center gap-2 text-sm text-muted-foreground;
+    @apply flex items-center gap-2 text-body-sm text-muted-foreground;
   }
 
   .breadcrumb-bar .breadcrumb-active {
