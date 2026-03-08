@@ -1313,7 +1313,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── 2. Dashboard ───────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4, delay: 0.05 }}>
-              <PhaseHeader phase={2} total={26} />
+              <PhaseHeader phase={2} total={29} />
               <SectionHeader
                 id="dashboard"
                 title="Dashboard"
