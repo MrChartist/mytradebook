@@ -1793,7 +1793,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                       { label: "Option Chain Analyzer", desc: "Visual option chain with Greeks, IV surface, and strategy payoff diagrams", status: "Planned" },
                       { label: "Advanced Backtesting", desc: "Test your strategies against historical data with simulated P&L", status: "Planned" },
                       { label: "Zerodha Integration", desc: "Connect your Zerodha Kite account for live prices and auto-sync", status: "Exploring" },
-                      { label: "P&L Sharing Cards", desc: "Generate beautiful P&L summary cards for social media sharing", status: "Planned" },
+                      { label: "Trade Similarity Engine", desc: "AI finds similar past trades and shows your historical win rate for that pattern", status: "Planned" },
                       { label: "Multi-Currency Support", desc: "Support for USD, EUR and other currencies for NRI traders", status: "Exploring" },
                     ].map((item) => (
                       <div key={item.label} className="premium-card-hover p-4 flex items-start gap-3">
