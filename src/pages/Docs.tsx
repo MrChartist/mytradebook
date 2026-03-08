@@ -2176,30 +2176,78 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Auto-generated weekly performance reports with segment-by-segment breakdowns. Review your week, download as PDF, or send to Telegram."
                 icon={PieChart}
               />
-              <WeeklyReportMockup />
-              <SubTopic title="Report Generation & Contents" description="Auto-generated weekly summaries with segment breakdowns and action items." id="rp-contents" />
-              <FeatureCard icon={FileText} title="Report Features" badge="Pro">
+              <QuickNav items={[
+                { label: "Generating Reports", id: "rp-generate" },
+                { label: "Report Contents", id: "rp-contents" },
+                { label: "Insights & Actions", id: "rp-insights" },
+                { label: "Delivery Options", id: "rp-delivery" },
+              ]} />
+
+              <ProTip variant="best-practice">
+                <p>Read your weekly report <strong>before Monday's first trade</strong>. Knowing last week's best setups, worst mistakes, and segment performance gives you a focused plan instead of trading blindly into the new week.</p>
+              </ProTip>
+
+              <InteractiveMockup label="Weekly Report Preview">
+                <WeeklyReportMockup />
+              </InteractiveMockup>
+
+              <SubTopic title="Generating and Reviewing Your Weekly Report" description="A step-by-step guide to getting the most from your weekly summary." id="rp-generate" />
+              <StepByStep title="Generating and Reviewing Your Weekly Report" steps={[
+                { title: "Reports generate automatically every Monday", description: "At 6:00 AM IST every Monday, a new report is generated covering the previous Monday–Friday trading week. No action needed — it's waiting for you.", detail: "You can also manually generate a report anytime from the Reports page if you want a mid-week check-in." },
+                { title: "Review segment-by-segment P&L", description: "Start with the segment breakdown — Equity Intraday, Positional, Futures, Options, Commodities. See which segments made money and which didn't.", detail: "If one segment is consistently negative, consider reducing position sizes there or pausing it until you fix the underlying issue." },
+                { title: "Check your best and worst trades", description: "The report highlights your single best and worst trades of the week. These extremes often reveal important lessons about position sizing and setup quality.", detail: "Ask yourself: was the best trade skill or luck? Was the worst trade avoidable or just a normal stop-out?" },
+                { title: "Review top setups and common mistakes", description: "See which setup tags produced the most profit and which mistake tags cost you the most. This is your actionable feedback loop.", detail: "Your top 2 setups should get more of your capital allocation next week. Your top 2 mistakes should become focus areas." },
+                { title: "Set 1-2 goals for the coming week", description: "Based on the report insights, pick one setup to focus on and one mistake to avoid. Write these in Monday's pre-market journal entry.", detail: "Specific goals like 'Only take Breakout setups in first hour' outperform vague goals like 'Trade better'." },
+              ]} />
+
+              <SubTopic title="Report Contents" description="What's included in every weekly report." id="rp-contents" />
+              <FeatureCard icon={FileText} title="Report Structure" badge="Pro">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="text-sm font-semibold mb-2">Generation</h4>
+                    <h4 className="text-sm font-semibold mb-2">Performance Metrics</h4>
                     <FeatureList items={[
-                      "Auto-generated every Monday at 6:00 AM IST",
-                      "Manual generation available anytime",
-                      "Covers the previous Monday–Friday trading week",
+                      "Total P&L for the week — realized across all segments",
+                      "Win rate and total trade count per segment",
+                      "Average gain on winning trades vs average loss on losers",
+                      "Best trade P&L and worst trade P&L with symbols",
                     ]} />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold mb-2">Report Contents</h4>
+                    <h4 className="text-sm font-semibold mb-2">Segment Breakdown</h4>
                     <FeatureList items={[
-                      "Segment-by-segment P&L breakdown",
-                      "Win rate and total trades per segment",
-                      "Top performing setups of the week",
-                      "Most common mistakes of the week",
-                      "Download as PDF or send to Telegram",
+                      "Equity Intraday — day trades closed same session",
+                      "Equity Positional — swing trades held overnight",
+                      "Futures — index and stock futures",
+                      "Options — all options strategies",
+                      "Commodities — MCX trades if applicable",
                     ]} />
                   </div>
                 </div>
               </FeatureCard>
+
+              <SubTopic title="Insights & Action Items" description="Actionable takeaways extracted from your weekly data." id="rp-insights" />
+              <FeatureCard icon={Sparkles} title="Report Insights & Action Items" badge="Pro">
+                <p className="text-sm text-muted-foreground mb-3">Each report surfaces actionable insights beyond raw numbers:</p>
+                <FeatureList items={[
+                  "Top performing setups — which pattern/setup tags generated the most profit this week",
+                  "Most common mistakes — recurring mistake tags with loss attribution",
+                  "Win rate trend — comparison with your 4-week rolling average",
+                  "Segment concentration — warnings if you're over-allocated to one segment",
+                  "Improvement suggestions — based on week-over-week metric changes",
+                ]} />
+              </FeatureCard>
+
+              <SubTopic title="Delivery Options" description="How and where your reports are delivered." id="rp-delivery" />
+              <ExpandableDetail title="Customizing Report Delivery" icon={Bell} badge="Setup Guide">
+                <p>Weekly reports can be delivered through multiple channels so you never miss your weekly review:</p>
+                <FeatureList items={[
+                  "In-App — Reports are always available on the Reports page. Navigate there anytime to see current and past weekly reports.",
+                  "Telegram — If you've configured Telegram integration (Settings → Telegram), reports are automatically sent to your linked Telegram chat or channel every Monday at 6 AM IST. Great for reviewing on mobile before market opens.",
+                  "PDF Download — Click the download button on any report to save it as a PDF. Useful for maintaining offline records or sharing with a mentor.",
+                  "Manual Generation — Don't want to wait until Monday? Generate a report for any completed week from the Reports page. Useful for mid-week check-ins during volatile markets.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Telegram delivery requires a verified Telegram bot connection. See the Integrations section for setup instructions. Reports cover Monday–Friday of the selected week and require at least 1 closed trade to generate.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
