@@ -1001,14 +1001,14 @@ function TokenValidityCard({ settings, userId }: { settings: any; userId?: strin
           </span>
         </div>
         {tokenExpiry && tokenStatus === "active" && (
-          <span className="text-xs text-muted-foreground">
+          <span className="text-[10px] text-muted-foreground/40">
             Expires: {new Date(tokenExpiry).toLocaleString()}
           </span>
         )}
       </div>
 
       {tokenStatus === "expired" && (
-        <p className="text-xs text-loss">
+        <p className="text-[10px] text-loss">
           Token expired. Renew it below or generate a new token from{" "}
           <a
             href="https://login.dhan.co"
