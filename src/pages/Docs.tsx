@@ -770,7 +770,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><PositionSizingDetailMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Post-Trade Review & Reflection" description="Structured review process after closing every trade." />
+              <SubTopic title="Post-Trade Review & Reflection" description="Structured review process after closing every trade." id="tm-review" />
               <FeatureCard icon={Star} title="Post-Trade Review">
                 <p className="text-sm text-muted-foreground mb-3">When you close a trade, a review modal prompts you to reflect:</p>
                 <FeatureList items={[
