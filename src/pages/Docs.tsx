@@ -752,14 +752,24 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </ProTip>
               <QuickNav items={[
                 { label: "Creating Trades", id: "tm-creating" },
+                { label: "Trade Lifecycle", id: "tm-lifecycle" },
                 { label: "Risk Management", id: "tm-risk" },
                 { label: "Post-Trade Review", id: "tm-review" },
                 { label: "Sharing & Discipline", id: "tm-sharing" },
                 { label: "Quick Actions", id: "tm-quick" },
               ]} />
+
               <SubTopic title="Creating & Managing Trades" description="Log trades with detailed metadata and smart defaults." id="tm-creating" />
-              <FeatureCard icon={Search} title="Creating a Trade">
-                <p className="text-sm text-muted-foreground mb-3">Step-by-step trade creation with smart defaults:</p>
+
+              <StepByStep title="Creating Your First Trade" steps={[
+                { title: "Open the trade form", description: "Click '+ New Trade' in the sidebar or press N on your keyboard. The Command Palette (⌘K) also works.", detail: "On mobile, tap the floating '+' button at the bottom right." },
+                { title: "Search for an instrument", description: "Type the stock name or symbol. The unified search covers NSE, BSE, and MCX — equities, futures, and options.", detail: "The segment (Intraday, Positional, F&O, etc.) is auto-detected from the instrument type." },
+                { title: "Set entry details", description: "Enter your entry price, quantity, and trade type (BUY or SELL). Add a stop loss and up to 5 target levels.", detail: "The position sizing calculator shows your optimal quantity based on risk %." },
+                { title: "Add context & submit", description: "Attach setup tags, chart links, confidence score, and notes. Check off your trading rules, then submit.", detail: "Templates can pre-fill most of these fields for your common setups." },
+              ]} />
+
+              <FeatureCard icon={Search} title="Trade Creation Form">
+                <p className="text-sm text-muted-foreground mb-3">Full trade creation with smart defaults and rich metadata:</p>
                 <FeatureList items={[
                   "Unified instrument search across NSE, BSE, MCX (equity, futures, options)",
                   "Auto-detect segment based on instrument type",
@@ -767,11 +777,16 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Choose trade type: BUY or SELL",
                   "Add confidence score (1-5) and rating (1-10)",
                   "Attach setup tags, pattern tags, and notes",
-                  "Upload up to 5 chart images per trade",
+                  "Link up to 5 chart images per trade (TradingView or direct URLs)",
                 ]} />
                 <div className="mt-4"><CreateTradeMockup /></div>
               </FeatureCard>
 
+              <ProTip variant="best-practice">
+                <p>Always attach chart screenshots or TradingView links to your trades. When you review them weeks later, the chart context is invaluable — it shows what you <em>saw</em> at entry time, not what the chart looks like in hindsight. You can attach up to 5 links per trade.</p>
+              </ProTip>
+
+              <SubTopic title="Trade Statuses & Lifecycle" description="Every trade flows through a clear lifecycle with distinct statuses." id="tm-lifecycle" />
               <FeatureCard icon={Layers} title="Trade Statuses & Lifecycle">
                 <p className="text-sm text-muted-foreground mb-3">Every trade flows through a clear lifecycle:</p>
                 <FeatureList items={[
@@ -782,6 +797,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <div className="mt-4"><TradeStatusLifecycleMockup /></div>
               </FeatureCard>
+
+              <ExpandableDetail title="Understanding Trade Statuses" icon={Layers} badge="Deep Dive">
+                <p>Each status has specific rules and triggers:</p>
+                <FeatureList items={[
+                  "Planned → Open: When you confirm entry. The entry time and price are locked.",
+                  "Open → Closed: When you close the position. P&L is calculated from entry and exit prices, factoring in quantity and trade type.",
+                  "Planned → Cancelled: When you decide not to take the trade. No P&L impact.",
+                  "Open trades show live unrealized P&L when connected to Dhan for live prices.",
+                  "Closed trades trigger the Post-Trade Review modal and AI Coach analysis.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">You can also backfill historical trades using the custom date-time picker — useful when migrating from another journal or logging trades after market hours.</p>
+              </ExpandableDetail>
 
               <SubTopic title="Risk Management Tools" description="Automated stop loss, position sizing, and multi-leg strategies." id="tm-risk" />
               <FeatureCard icon={Target} title="Trailing Stop Loss (TSL)">
