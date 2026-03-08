@@ -324,14 +324,14 @@ export function TestimonialsSection() {
   const secondary = [testimonials[2], testimonials[3], testimonials[4]]; // Aditya, Vikram, Sneha
 
   return (
-    <section className="py-24 lg:py-32" aria-label="Testimonials">
+    <section className="py-28 lg:py-36" aria-label="Testimonials">
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>Testimonials</SectionBadge>
-          <h2 className="font-heading text-[2rem] lg:text-[3rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-6 leading-[1.08] tracking-[-0.018em]">
             Trusted by{" "}<span className="accent-serif">real traders</span>
           </h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-base leading-[1.65]">Here's what traders across India are saying.</p>
+          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-[1rem] leading-[1.7]">Here's what traders across India are saying.</p>
         </motion.div>
 
         {/* Hero testimonial — dark card */}
