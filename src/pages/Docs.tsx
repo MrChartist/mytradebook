@@ -618,6 +618,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><CalendarHeatmapWidgetMockup /></div>
               </FeatureCard>
 
+              <SubTopic title="Customization & Layout" description="Tailor your dashboard to your workflow." />
               <FeatureCard icon={Settings} title="Widget Customization" badge="Enhanced">
                 <p className="text-sm text-muted-foreground mb-3">Personalize your dashboard by showing/hiding widgets and drag-to-reorder them:</p>
                 <FeatureList items={[
