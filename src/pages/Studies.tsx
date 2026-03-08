@@ -96,7 +96,6 @@ export default function Studies() {
 
   const filters: StudyFilters = {
     ...(selectedCategory && { category: selectedCategory as StudyFilters["category"] }),
-    ...(searchQuery && { symbol: searchQuery }),
   };
 
   const { studies, isLoading, deleteStudy, updateStudy } = useStudies(filters);
