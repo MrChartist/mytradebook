@@ -441,13 +441,13 @@ export default function IntegrationsSettings() {
                 </p>
               </div>
 
-              <Button onClick={handleSaveAi} disabled={savingAi || !aiApiKey.trim()} className="w-full">
-                {savingAi ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Key className="w-4 h-4 mr-2" />}
+              <Button onClick={handleSaveAi} disabled={savingAi || !aiApiKey.trim()} className="w-full h-9 text-[13px] rounded-lg">
+                {savingAi ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Key className="w-3.5 h-3.5 mr-1.5" />}
                 Save & Connect
               </Button>
 
-              <p className="text-xs text-muted-foreground text-center">
-                Your key is stored securely and only used server-side. You control your own AI costs.
+              <p className="text-[10px] text-muted-foreground/30 text-center">
+                Your key is stored securely and only used server-side.
               </p>
             </>
           )}
