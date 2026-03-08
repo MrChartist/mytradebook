@@ -1107,25 +1107,44 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Built-in risk calculator that tells you exactly how many shares to buy based on your capital, risk tolerance, and stop loss distance."
                 icon={Calculator}
               />
-              <PositionSizingCalcMockup />
               <QuickNav items={[
                 { label: "Calculation Workflow", id: "ps-workflow" },
                 { label: "Advanced Sizing", id: "ps-advanced" },
+                { label: "Risk Guidelines", id: "ps-guidelines" },
               ]} />
+
+              <InteractiveMockup label="Position Sizing Calculator">
+                <PositionSizingCalcMockup />
+              </InteractiveMockup>
+
               <SubTopic title="Calculation Workflow" description="How the calculator determines your optimal position size." id="ps-workflow" />
               <StepByStep title="How It Works" steps={[
-                { title: "Set your capital & risk %", description: "Define your total capital and the max % you're willing to risk per trade (e.g., 1.5%)." },
-                { title: "Enter entry & stop loss prices", description: "The calculator computes the risk per share (entry − SL)." },
-                { title: "Get recommended quantity", description: "Max shares = (Capital × Risk%) ÷ Risk per share. Automatically rounds down." },
-                { title: "Review max loss", description: "See the maximum loss in rupees before you commit to the trade." },
+                { title: "Set your capital & risk %", description: "Define your total capital and the max % you're willing to risk per trade (e.g., 1.5%).", detail: "Your starting capital is pulled from Settings automatically — no need to re-enter it each time." },
+                { title: "Enter entry & stop loss prices", description: "The calculator computes the risk per share (entry − SL).", detail: "For short trades, risk per share = SL − entry price." },
+                { title: "Get recommended quantity", description: "Max shares = (Capital × Risk%) ÷ Risk per share. Automatically rounds down.", detail: "The calculator also shows total position value so you can check margin requirements." },
+                { title: "Review max loss", description: "See the maximum loss in rupees before you commit to the trade.", detail: "If the max loss exceeds 2% of capital, a red warning is displayed." },
               ]} />
+
               <SubTopic title="Advanced Sizing" description="Expert-level position sizing with the Kelly Criterion." id="ps-advanced" />
               <ExpandableDetail title="Advanced: Kelly Criterion" icon={Target}>
                 <p>For experienced traders, the Position Sizing Calculator can suggest position sizes based on the Kelly Criterion — factoring in your historical win rate and average win/loss ratio to optimize long-term capital growth.</p>
               </ExpandableDetail>
+
               <ProTip variant="warning">
                 <p>Never risk more than 2% of your capital on a single trade. The calculator will flag oversized positions with a red warning if you exceed this threshold.</p>
               </ProTip>
+
+              <SubTopic title="Risk Per Trade Guidelines" description="Recommended risk levels based on trading experience." id="ps-guidelines" />
+              <ExpandableDetail title="Risk Per Trade Guidelines by Experience Level" icon={Shield} badge="Reference">
+                <p>Position sizing is the single biggest factor in long-term survival. Here are recommended risk-per-trade limits:</p>
+                <FeatureList items={[
+                  "Beginner (0–6 months) — Risk 0.5% per trade. Focus on process, not profits. Smaller sizes reduce emotional pressure.",
+                  "Intermediate (6–18 months) — Risk 1% per trade. You have a tested edge and consistent journaling habit.",
+                  "Advanced (18+ months) — Risk 1–2% per trade. You have a proven win rate and understand drawdown recovery math.",
+                  "Aggressive/Scalping — Risk up to 2–3% only with very tight stop losses and high-frequency setups.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Remember: a 50% drawdown requires a 100% gain to recover. Conservative sizing protects your capital during inevitable losing streaks.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
