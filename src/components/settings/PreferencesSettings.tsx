@@ -334,6 +334,24 @@ export default function PreferencesSettings() {
         </div>
       </div>
 
+      {/* Onboarding Checklist */}
+      <div className="surface-card p-5 lg:p-6 space-y-3">
+        <h3 className="text-base font-semibold">Onboarding Checklist</h3>
+        <p className="text-[13px] text-muted-foreground leading-relaxed">
+          Re-enable the getting-started checklist on your dashboard.
+        </p>
+        <Button
+          variant="outline"
+          className="h-9 text-[13px]"
+          onClick={() => {
+            try { localStorage.removeItem("tradebook_onboarding_dismissed"); } catch (_) {}
+            toast.success("Onboarding checklist will show on your next dashboard visit.");
+          }}
+        >
+          Show Onboarding Again
+        </Button>
+      </div>
+
       {/* Save Button */}
       <div className="pt-2">
         <Button

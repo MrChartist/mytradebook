@@ -30,12 +30,9 @@ export function OnboardingWelcome() {
   const { alerts } = useAlerts();
   const { settings } = useUserSettings();
   const { entries: journalEntries } = useDailyJournal();
-  const [dismissed, setDismissed] = useState(true);
-
-  useEffect(() => {
-    const stored = localStorage.getItem(ONBOARDING_KEY);
-    setDismissed(stored === "true");
-  }, []);
+  const [dismissed, setDismissed] = useState(() => {
+    try { return localStorage.getItem(ONBOARDING_KEY) === "true"; } catch { return false; }
+  });
 
   const dismiss = () => {
     localStorage.setItem(ONBOARDING_KEY, "true");
@@ -53,7 +50,7 @@ export function OnboardingWelcome() {
     { id: "trade", icon: BookOpen, title: "Log Your First Trade", description: "Add a trade manually or sync from your broker.", route: "/trades", completed: hasTradesLogged },
     { id: "watchlist", icon: Eye, title: "Create a Watchlist", description: "Track symbols you're watching for setups.", route: "/watchlist", completed: hasWatchlists },
     { id: "alert", icon: Bell, title: "Set a Price Alert", description: "Get notified when price hits your level.", route: "/alerts", completed: hasAlerts },
-    { id: "broker", icon: Link, title: "Connect Your Broker", description: "Link your Dhan account for auto-sync.", route: "/settings", completed: hasBrokerConnected },
+    { id: "broker", icon: Link, title: "Connect Your Broker", description: "Link your Dhan account for auto-sync.", route: "/settings?tab=integrations", completed: hasBrokerConnected },
     { id: "journal", icon: FileText, title: "Write a Journal Entry", description: "Reflect on your trading day.", route: "/journal", completed: hasJournalEntry },
     { id: "analytics", icon: BarChart3, title: "Review Your Analytics", description: "See win rate, equity curve, and segment breakdown.", route: "/analytics", completed: hasClosedTrades },
   ];
