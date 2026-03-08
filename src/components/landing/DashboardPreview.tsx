@@ -29,7 +29,7 @@ export function DashboardPreview() {
   const isInView = useInView(containerRef, { once: true, margin: "-60px" });
 
   return (
-    <div ref={containerRef} className="relative max-w-6xl mx-auto px-2 sm:px-6 pb-16 sm:pb-24 overflow-hidden">
+    <div ref={containerRef} className="relative max-w-7xl mx-auto px-2 sm:px-6 pb-16 sm:pb-24 overflow-hidden">
       {/* Background watermark */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
         <span className="text-[6rem] sm:text-[8rem] lg:text-[12rem] font-black text-muted-foreground/[0.03] uppercase tracking-widest">
