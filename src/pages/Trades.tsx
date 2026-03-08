@@ -422,35 +422,36 @@ export default function Trades() {
 
       {/* Status Tabs + Filters + Sort + View */}
       <div className="space-y-3">
-        <div className="flex gap-1 flex-wrap">
+        <div className="flex gap-1 overflow-x-auto pb-0.5 scrollbar-none">
           {(["ALL", "PENDING", "OPEN", "CLOSED", "CANCELLED"] as StatusFilter[]).map((status) => (
-            <Button
+            <button
               key={status}
-              variant="outline"
-              size="sm"
               onClick={() => setStatusFilter(status)}
               className={cn(
-                "border-border text-xs h-7",
-                statusFilter === status && (
-                  status === "ALL" ? "bg-primary/10 border-primary/20 text-primary" :
-                  statusConfig[status]?.color
-                )
+                "px-3 py-1 text-[11px] font-medium rounded-md border transition-all duration-200 shrink-0",
+                statusFilter === status
+                  ? "border-primary/15 bg-primary/6 text-primary"
+                  : "border-border/15 text-muted-foreground/50 hover:text-foreground hover:border-border/30"
               )}
             >
-              {status === "ALL" ? "All" : statusConfig[status]?.label}
-              <span className="ml-1 text-muted-foreground">({statusCounts[status]})</span>
-            </Button>
+              {status === "ALL" ? "All" : statusConfig[status]?.label} ({statusCounts[status]})
+            </button>
           ))}
         </div>
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <div className="relative flex-1 w-full sm:w-auto">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
             <Input
               placeholder="Search trades..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-card border-border"
+              className="pl-9 h-9 text-[13px] bg-muted/20 border-border/20 focus:border-primary/30"
             />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
+              </button>
+            )}
           </div>
           <div className="flex gap-2 items-center flex-wrap">
             {/* Segment filter: Select on mobile, buttons on desktop */}
@@ -468,18 +469,18 @@ export default function Trades() {
             ) : (
               <div className="flex gap-1">
                 {[{ key: "ALL", label: "All Segments" }, ...Object.entries(segmentLabels).map(([key, label]) => ({ key, label }))].map((seg) => (
-                  <Button
+                  <button
                     key={seg.key}
-                    variant="outline"
-                    size="sm"
                     onClick={() => setSegmentFilter(seg.key)}
                     className={cn(
-                      "border-border text-xs h-7",
-                      segmentFilter === seg.key && "bg-primary/10 border-primary/20 text-primary"
+                      "px-3 py-1 text-[11px] font-medium rounded-md border transition-all duration-200 shrink-0",
+                      segmentFilter === seg.key
+                        ? "border-primary/15 bg-primary/6 text-primary"
+                        : "border-border/15 text-muted-foreground/50 hover:text-foreground hover:border-border/30"
                     )}
                   >
                     {seg.label}
-                  </Button>
+                  </button>
                 ))}
               </div>
             )}
