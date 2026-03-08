@@ -239,9 +239,13 @@ const SECTION_ANCHORS: Record<string, { label: string; id: string }[]> = {
   ],
   "faq": [
     { label: "Account & Billing", id: "faq-account" },
-    { label: "Data & Privacy", id: "faq-data" },
+    { label: "Trades & Import", id: "faq-trades" },
+    { label: "Alerts & Notifications", id: "faq-alerts" },
+    { label: "Analytics & Reports", id: "faq-analytics" },
     { label: "Integrations", id: "faq-integrations" },
+    { label: "Mobile & Offline", id: "faq-mobile" },
     { label: "Features", id: "faq-features" },
+    { label: "Troubleshooting", id: "faq-troubleshooting" },
   ],
   "changelog": [
     { label: "Latest Updates", id: "cl-updates" },
