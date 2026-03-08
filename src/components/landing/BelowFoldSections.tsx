@@ -615,91 +615,132 @@ export function FinalCTASection() {
 export function FooterSection() {
   const navigate = useNavigate();
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const [email, setEmail] = useState("");
+
+  const handleNewsletter = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    // TODO: connect to backend
+    setEmail("");
+  };
+
   return (
-    <footer className="border-t border-border/30 bg-card/50 backdrop-blur-sm dot-pattern py-20" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
+    <footer className="border-t border-border/20 bg-card/40 backdrop-blur-sm py-20" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
-        <div className="grid md:grid-cols-5 gap-10 mb-12">
+        <div className="grid md:grid-cols-12 gap-10 mb-14">
           {/* Brand column */}
-          <div className="md:col-span-2">
-            <div className="relative flex items-center gap-2.5 mb-3">
-              <div className="absolute -inset-4 rounded-full bg-[hsl(var(--tb-accent)/0.06)] blur-2xl pointer-events-none" />
-              <img src="/favicon-32x32.png" alt="TradeBook" className="h-8 object-contain relative" loading="lazy" />
-              <span className="text-lg font-bold tracking-tight text-foreground relative">TradeBook</span>
+          <div className="md:col-span-4">
+            <div className="flex items-center gap-2.5 mb-3">
+              <img src="/favicon-32x32.png" alt="TradeBook" className="h-7 object-contain" loading="lazy" />
+              <span className="text-lg font-bold tracking-tight text-foreground">TradeBook</span>
             </div>
-            <p className="text-[15px] text-muted-foreground leading-relaxed mb-5 max-w-xs">The trading journal built for Indian markets. Track, analyze, and improve your edge.</p>
-            <div className="flex items-center gap-3 mb-5">
-              <motion.a href="/login?mode=signup" className="inline-flex items-center gap-1.5 text-xs font-semibold bg-[hsl(var(--tb-accent))] text-white rounded-full px-4 py-1.5 hover:bg-[hsl(var(--tb-accent-hover))] transition-all hover:-translate-y-0.5 shadow-[0_6px_16px_hsl(var(--tb-accent)/0.35)]" whileHover={{ scale: 1.03 }}>Get Started <ArrowRight className="w-3 h-3" /></motion.a>
-            </div>
+            <p className="text-[14px] text-muted-foreground leading-relaxed mb-6 max-w-xs">
+              The trading journal built for Indian markets. Track, analyze, and improve your edge.
+            </p>
+
+            {/* Newsletter */}
+            <form onSubmit={handleNewsletter} className="flex gap-2 mb-6 max-w-xs">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Your email"
+                className="flex-1 h-9 px-3.5 rounded-full bg-muted/30 border border-border/30 text-sm placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary/40 transition-colors"
+                required
+              />
+              <button
+                type="submit"
+                className="h-9 px-4 rounded-full bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors"
+              >
+                Subscribe
+              </button>
+            </form>
+
             <div className="flex items-center gap-2">
               {[
                 { href: "https://x.com", icon: "𝕏", label: "Twitter" },
                 { href: "https://t.me", icon: "✈", label: "Telegram" },
                 { href: "mailto:founder@mrchartist.com", icon: "✉", label: "Email" },
               ].map((s) => (
-                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="w-8 h-8 rounded-full bg-muted/40 border border-border/30 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all text-xs">{s.icon}</a>
+                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="w-8 h-8 rounded-full bg-muted/30 border border-border/20 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all text-xs">
+                  {s.icon}
+                </a>
               ))}
             </div>
           </div>
 
           {/* Product */}
-          <div>
-            <h4 className="text-xs uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-5 border-l-2 border-[hsl(var(--tb-accent))] pl-2">Product</h4>
-            <ul className="space-y-1 text-[15px] text-muted-foreground">
+          <div className="md:col-span-2 md:col-start-6">
+            <h4 className="text-xs uppercase tracking-[0.12em] font-bold text-muted-foreground/50 mb-4">Product</h4>
+            <ul className="space-y-1.5 text-[14px] text-muted-foreground">
               {[
                 { label: "Features", href: "#features" },
                 { label: "Pricing", href: "#pricing" },
                 { label: "Documentation", href: "/docs" },
+                { label: "Changelog", href: "#" },
               ].map((l) => (
-                <li key={l.label}><a href={l.href} className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground hover:translate-x-0.5 transition-all duration-200">{l.label}</a></li>
+                <li key={l.label}>
+                  <a href={l.href} className="inline-block py-0.5 hover:text-foreground transition-colors">{l.label}</a>
+                </li>
               ))}
             </ul>
           </div>
 
           {/* Resources */}
-          <div>
-            <h4 className="text-xs uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-5 border-l-2 border-[hsl(var(--tb-accent))] pl-2">Resources</h4>
-            <ul className="space-y-1 text-[15px] text-muted-foreground">
+          <div className="md:col-span-2">
+            <h4 className="text-xs uppercase tracking-[0.12em] font-bold text-muted-foreground/50 mb-4">Resources</h4>
+            <ul className="space-y-1.5 text-[14px] text-muted-foreground">
               {[
-                { label: "Changelog", href: "#" },
                 { label: "FAQ", href: "#faq" },
                 { label: "Blog", href: "#" },
+                { label: "Contact Us", href: "mailto:founder@mrchartist.com" },
               ].map((l) => (
-                <li key={l.label}><a href={l.href} className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground hover:translate-x-0.5 transition-all duration-200">{l.label}</a></li>
+                <li key={l.label}>
+                  <a href={l.href} className="inline-block py-0.5 hover:text-foreground transition-colors">{l.label}</a>
+                </li>
               ))}
             </ul>
           </div>
 
-          {/* Support & Legal */}
-          <div>
-            <h4 className="text-xs uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-5 border-l-2 border-[hsl(var(--tb-accent))] pl-2">Support</h4>
-            <ul className="space-y-1 text-[15px] text-muted-foreground mb-6">
-              {[
-                { label: "Contact Us", href: "mailto:founder@mrchartist.com" },
-                { label: "Documentation", href: "/docs" },
-              ].map((l) => (
-                <li key={l.label}><a href={l.href} className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground hover:translate-x-0.5 transition-all duration-200">{l.label}</a></li>
-              ))}
-            </ul>
-            <h4 className="text-xs uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-5 border-l-2 border-[hsl(var(--tb-accent))] pl-2">Legal</h4>
-            <ul className="space-y-1 text-[15px] text-muted-foreground">
+          {/* Legal */}
+          <div className="md:col-span-2">
+            <h4 className="text-xs uppercase tracking-[0.12em] font-bold text-muted-foreground/50 mb-4">Legal</h4>
+            <ul className="space-y-1.5 text-[14px] text-muted-foreground">
               {[
                 { label: "Privacy Policy", href: "/privacy" },
                 { label: "Terms of Service", href: "/terms" },
               ].map((l) => (
-                <li key={l.label}><a href={l.href} className="inline-block rounded-full px-2.5 py-1 -mx-2.5 hover:bg-muted/50 hover:text-foreground hover:translate-x-0.5 transition-all duration-200">{l.label}</a></li>
+                <li key={l.label}>
+                  <a href={l.href} className="inline-block py-0.5 hover:text-foreground transition-colors">{l.label}</a>
+                </li>
               ))}
             </ul>
           </div>
         </div>
 
-        <div className="h-[1px] bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.25)] to-transparent mb-7" />
+        <div className="h-px bg-gradient-to-r from-transparent via-border/30 to-transparent mb-7" />
 
         {/* Bottom bar */}
-        <div className="bg-muted/20 rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground/80 flex items-center gap-1.5">© {new Date().getFullYear()} TradeBook. All rights reserved. <span className="inline-flex items-center gap-1">Made with ❤️ in <span className="inline-flex gap-[2px]"><span className="w-2 h-2 rounded-full bg-[#FF9933]" /><span className="w-2 h-2 rounded-full bg-white border border-border/40" /><span className="w-2 h-2 rounded-full bg-[#138808]" /></span> India</span></p>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-muted-foreground/70 flex items-center gap-1.5">
+            © {new Date().getFullYear()} TradeBook. All rights reserved.{" "}
+            <span className="inline-flex items-center gap-1">
+              Made with ❤️ in{" "}
+              <span className="inline-flex gap-[2px]">
+                <span className="w-2 h-2 rounded-full bg-[#FF9933]" />
+                <span className="w-2 h-2 rounded-full bg-white border border-border/30" />
+                <span className="w-2 h-2 rounded-full bg-[#138808]" />
+              </span>{" "}
+              India
+            </span>
+          </p>
           <div className="flex items-center gap-3">
-            <span className="text-[10px] text-muted-foreground/60 bg-muted/30 border border-border/30 rounded-full px-3 py-1">Not SEBI registered · For educational purposes only</span>
-            <button onClick={scrollToTop} className="text-[11px] text-muted-foreground hover:text-foreground bg-muted/30 border border-border/30 rounded-full px-3 py-1 hover:bg-muted/50 transition-all" aria-label="Back to top">↑ Top</button>
+            <span className="text-[10px] text-muted-foreground/50 bg-muted/20 border border-border/20 rounded-full px-3 py-1">
+              Not SEBI registered · For educational purposes only
+            </span>
+            <button onClick={scrollToTop} className="text-[11px] text-muted-foreground hover:text-foreground bg-muted/20 border border-border/20 rounded-full px-3 py-1 hover:bg-muted/40 transition-all" aria-label="Back to top">
+              ↑ Top
+            </button>
           </div>
         </div>
       </div>
