@@ -2948,6 +2948,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Troubleshooting", id: "int-troubleshoot" },
               ]} />
 
+              <ProTip variant="best-practice">
+                <p><strong>Why integrations matter:</strong> TradeBook is most powerful when connected to your broker and messaging platforms. Without Dhan, you manually enter all prices and positions. Without Telegram, you have to check the app constantly for alerts. Integrations automate the boring parts — data entry, price monitoring, notification delivery — so you can focus on the decision-making parts of trading that actually require your brain.</p>
+              </ProTip>
+
               <ProTip variant="warning">
                 <p>Never share your API keys or access tokens publicly. TradeBook stores all credentials securely server-side — they are <strong>never exposed to the browser</strong> and cannot be read back from the client. Treat your Dhan API key and Telegram bot token like passwords.</p>
               </ProTip>
