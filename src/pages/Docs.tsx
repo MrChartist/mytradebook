@@ -2673,14 +2673,32 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Trophy}
               />
               <QuickNav items={[
+                { label: "Why Gamification", id: "ach-why" },
                 { label: "Progress Tracking", id: "ach-progress" },
                 { label: "Badge Categories", id: "ach-categories" },
                 { label: "Full Catalog", id: "ach-catalog" },
               ]} />
 
+              <ProTip variant="best-practice">
+                <p><strong>Why achievements matter:</strong> Trading is a long game, and progress is often invisible. You don't "level up" visibly — you just slowly get better at reading charts and managing risk. Achievements create visible milestones that mark your journey. The psychological boost from unlocking a "50 Trades" badge keeps you motivated during drawdown periods when P&L isn't rewarding you. They reward process, not just profits.</p>
+              </ProTip>
+
               <InteractiveMockup label="Achievement Badges Grid">
                 <AchievementsMockup />
               </InteractiveMockup>
+
+              <SubTopic title="Why Gamification Works for Traders" description="The psychology behind achievements and how they improve your trading." id="ach-why" />
+              <ExpandableDetail title="The Science Behind Trading Gamification" icon={Trophy} badge="Psychology">
+                <p>Gamification in trading isn't about making trading "fun" — it's about leveraging behavioral psychology to build better habits:</p>
+                <FeatureList items={[
+                  "Variable Reward Schedules — Badges unlock at unexpected times (after your 47th trade, not your 50th attempt), which keeps the dopamine loop engaged. This is the same psychology that makes games addictive, but pointed at productive behavior.",
+                  "Loss Aversion Counter — Achievements provide wins during losing streaks. Even if you're down ₹10,000 this week, unlocking the 'Journal Keeper' badge gives your brain a small victory to hold onto.",
+                  "Identity Reinforcement — Badges help you see yourself as a 'serious trader'. The more badges you unlock, the more your self-image aligns with 'disciplined trader who journals and follows rules' rather than 'gambler who wings it'.",
+                  "Process Over Outcome — Notice how discipline badges (setting SL, using templates, journaling) exist alongside profit badges. This teaches your brain that the process matters, not just the P&L outcome.",
+                  "Social Proof — Sharing badges creates external accountability. When you tweet your '7-Day Streak' badge, you're publicly committing to your trading identity. Breaking that streak now has social cost.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">The most effective traders we've observed treat badges as secondary feedback loops. They don't trade FOR badges — they notice badges as confirmation that their process is working. If you're not unlocking badges, it's a signal to audit your consistency.</p>
+              </ExpandableDetail>
 
               <SubTopic title="Tracking Your Progress" description="How to monitor your journey toward unlocking badges." id="ach-progress" />
               <StepByStep title="Tracking Your Progress Toward Badges" steps={[
