@@ -249,6 +249,11 @@ export function FeaturesSection() {
                   <h3 className="text-xl font-bold mb-1.5">{f.title}</h3>
                   <p className="text-[15px] text-foreground/80 leading-relaxed">{f.description}</p>
                   {f.previewKey && previewMap[f.previewKey]}
+                  {f.previewKey && (
+                    <a href="/docs" className="inline-flex items-center gap-1 mt-3 text-[12px] font-semibold text-[hsl(var(--tb-accent))] hover:underline">
+                      Explore →
+                    </a>
+                  )}
                 </div>
               </motion.div>
             </motion.div>

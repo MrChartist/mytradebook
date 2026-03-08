@@ -192,6 +192,9 @@ export default function Landing() {
       <Suspense fallback={<SectionFallback />}>
         <FooterSection />
       </Suspense>
+
+      {/* Sticky CTA bar */}
+      <StickyCTA />
     </div>
   );
 }
