@@ -771,12 +771,12 @@
 
   /* Topic heading: 24px desktop — primary content divider */
   .docs-topic-heading {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
     font-size: 1.5rem;
     line-height: 1.22;
     font-weight: 650;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.014em;
+    letter-spacing: -0.016em;
   }
 
   /* Sub-topic heading: 20px desktop — secondary content divider */
