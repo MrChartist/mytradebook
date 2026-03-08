@@ -64,12 +64,12 @@ function getGridClasses(span: string, index: number): string {
 /* ─── Features Section ────────────────────────────────── */
 export function FeaturesSection() {
   return (
-    <section id="features" className="py-24 lg:py-32" aria-label="Features">
-      <MotionSection className="max-w-7xl mx-auto px-6 lg:px-10">
+    <section id="features" className="py-20 lg:py-28" aria-label="Features">
+      <MotionSection className="max-w-6xl mx-auto px-6 lg:px-8">
         {/* Heading */}
         <motion.div variants={fadeUp} className="text-center mb-16 lg:mb-20">
           <SectionBadge>Features</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1] tracking-tight">
+          <h2 className="text-3xl lg:text-5xl font-extrabold mb-5 leading-[1.1] tracking-tight">
             Everything you need to{" "}
             <span className="accent-script">trade</span>{" "}better
           </h2>

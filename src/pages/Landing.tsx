@@ -11,7 +11,7 @@ import {
   useCountUp, GradientDivider,
 } from "@/components/landing/LandingShared";
 
-// Lazy-loaded — below the fold (only loaded when user scrolls)
+// Lazy-loaded — below the fold
 const FeaturesSection = lazy(() => import("@/components/landing/FeaturesSection").then(m => ({ default: m.FeaturesSection })));
 const HowItWorksSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.HowItWorksSection })));
 const ComparisonSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.ComparisonSection })));
@@ -23,7 +23,7 @@ const FinalCTASection = lazy(() => import("@/components/landing/BelowFoldSection
 const FooterSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.FooterSection })));
 
 function SectionFallback() {
-  return <div className="py-24 flex items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>;
+  return <div className="py-24 flex items-center justify-center"><div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>;
 }
 
 export default function Landing() {
@@ -54,61 +54,60 @@ export default function Landing() {
         }}
       />
 
-      {/* ── Navbar ────────────────────────────────────────── */}
       <LandingNavbar activePage="home" />
 
-      {/* ── Hero (eagerly loaded) ─────────────────────────── */}
+      {/* Hero */}
       <HeroSection />
 
+      {/* Below-fold sections with breathing room */}
+      <div className="space-y-0">
+        <GradientDivider />
 
-      <GradientDivider />
+        <Suspense fallback={<SectionFallback />}>
+          <FeaturesSection />
+        </Suspense>
 
-      {/* ── Below-fold sections (lazy loaded) ─────────────── */}
-      <Suspense fallback={<SectionFallback />}>
-        <FeaturesSection />
-      </Suspense>
+        <GradientDivider />
 
-      <GradientDivider />
+        <Suspense fallback={<SectionFallback />}>
+          <HowItWorksSection />
+        </Suspense>
 
-      <Suspense fallback={<SectionFallback />}>
-        <HowItWorksSection />
-      </Suspense>
+        <GradientDivider />
 
-      <GradientDivider />
+        <Suspense fallback={<SectionFallback />}>
+          <PricingSection />
+        </Suspense>
 
-      <Suspense fallback={<SectionFallback />}>
-        <PricingSection />
-      </Suspense>
+        <GradientDivider />
 
-      <GradientDivider />
+        <Suspense fallback={<SectionFallback />}>
+          <TestimonialsSection />
+        </Suspense>
 
-      <Suspense fallback={<SectionFallback />}>
-        <TestimonialsSection />
-      </Suspense>
+        <GradientDivider />
 
-      <GradientDivider />
+        <Suspense fallback={<SectionFallback />}>
+          <IndianMarketsSection />
+        </Suspense>
 
-      <Suspense fallback={<SectionFallback />}>
-        <IndianMarketsSection />
-      </Suspense>
+        <GradientDivider />
 
-      <GradientDivider />
+        <Suspense fallback={<SectionFallback />}>
+          <FAQSection />
+        </Suspense>
 
-      <Suspense fallback={<SectionFallback />}>
-        <FAQSection />
-      </Suspense>
+        <GradientDivider />
 
-      <GradientDivider />
+        <Suspense fallback={<SectionFallback />}>
+          <FinalCTASection />
+        </Suspense>
 
-      <Suspense fallback={<SectionFallback />}>
-        <FinalCTASection />
-      </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <FooterSection />
+        </Suspense>
+      </div>
 
-      <Suspense fallback={<SectionFallback />}>
-        <FooterSection />
-      </Suspense>
-
-      {/* Sticky CTA bar */}
       <StickyCTA />
     </div>
   );

@@ -34,21 +34,21 @@ export function useCountUp(end: number, duration = 2000) {
 
 /* ─── Motion Wrappers ───────────────────────────────────── */
 export const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 20 },
   visible: (delay: number = 0) => ({
     opacity: 1, y: 0,
-    transition: { duration: 0.7, delay, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] },
+    transition: { duration: 0.6, delay, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] },
   }),
 };
 
 export const staggerContainer = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+  visible: { transition: { staggerChildren: 0.06, delayChildren: 0.08 } },
 };
 
 export const scaleIn = {
-  hidden: { opacity: 0, scale: 0.94 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: "easeOut" as const } },
+  hidden: { opacity: 0, scale: 0.96 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.7, ease: "easeOut" as const } },
 };
 
 export function MotionSection({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -70,7 +70,7 @@ export function MotionSection({ children, className }: { children: React.ReactNo
 /* ─── Section Label Badge ───────────────────────────────── */
 export function SectionBadge({ children }: { children: React.ReactNode }) {
   return (
-    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border/60 bg-muted/30 text-[13px] font-bold uppercase tracking-[0.12em] text-muted-foreground mb-6">
+    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-border/40 bg-muted/20 text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground/70 mb-5">
       {children}
     </div>
   );
@@ -78,5 +78,5 @@ export function SectionBadge({ children }: { children: React.ReactNode }) {
 
 /* ─── Gradient Divider ──────────────────────────────────── */
 export function GradientDivider() {
-  return <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.15)] to-transparent max-w-2xl mx-auto" />;
+  return <div className="h-px bg-gradient-to-r from-transparent via-border/30 to-transparent max-w-3xl mx-auto my-2" />;
 }
