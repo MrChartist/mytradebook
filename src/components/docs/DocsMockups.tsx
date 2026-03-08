@@ -32,41 +32,44 @@ export function useDocsColorMode() {
 /* ──────────────────────────────────────────────
    Shared wrapper for all mockups — App window chrome
    ────────────────────────────────────────────── */
-function MockupFrame({ children, className, label }: { children: ReactNode; className?: string; label?: string }) {
-  const { mode } = useDocsColorMode();
-  const isBw = mode === "bw";
-  return (
-    <div className={cn(
-      "rounded-xl border overflow-hidden transition-all duration-200",
-      isBw
-        ? "docs-bw-filter border-dashed border-foreground/15 bg-card"
-        : "border-border/20 bg-card/50 hover:border-border/30",
-      className
-    )}>
-      {/* Window chrome */}
-      <div className={cn(
-        "flex items-center gap-1.5 px-3.5 py-1.5 border-b",
-        isBw ? "border-foreground/8 bg-muted/20" : "border-border/15 bg-muted/15"
+const MockupFrame = React.forwardRef<HTMLDivElement, { children: ReactNode; className?: string; label?: string }>(
+  ({ children, className, label }, ref) => {
+    const { mode } = useDocsColorMode();
+    const isBw = mode === "bw";
+    return (
+      <div ref={ref} className={cn(
+        "rounded-xl border overflow-hidden transition-all duration-200",
+        isBw
+          ? "docs-bw-filter border-dashed border-foreground/15 bg-card"
+          : "border-border/20 bg-card/50 hover:border-border/30",
+        className
       )}>
-        <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded-full bg-loss/40" />
-          <div className="w-2 h-2 rounded-full bg-warning/40" />
-          <div className="w-2 h-2 rounded-full bg-profit/40" />
+        {/* Window chrome */}
+        <div className={cn(
+          "flex items-center gap-1.5 px-3.5 py-1.5 border-b",
+          isBw ? "border-foreground/8 bg-muted/20" : "border-border/15 bg-muted/15"
+        )}>
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 rounded-full bg-loss/40" />
+            <div className="w-2 h-2 rounded-full bg-warning/40" />
+            <div className="w-2 h-2 rounded-full bg-profit/40" />
+          </div>
+          {label && (
+            <span className="text-[8px] font-semibold text-muted-foreground/40 ml-1.5 tracking-wide uppercase">{label}</span>
+          )}
         </div>
-        {label && (
-          <span className="text-[8px] font-semibold text-muted-foreground/40 ml-1.5 tracking-wide uppercase">{label}</span>
-        )}
+        {/* Content */}
+        <div className={cn(
+          "p-4 md:p-6",
+          !isBw && "bg-gradient-to-b from-card/80 to-muted/5"
+        )}>
+          {children}
+        </div>
       </div>
-      {/* Content */}
-      <div className={cn(
-        "p-4 md:p-6",
-        !isBw && "bg-gradient-to-b from-card/80 to-muted/5"
-      )}>
-        {children}
-      </div>
-    </div>
-  );
-}
+    );
+  }
+);
+MockupFrame.displayName = "MockupFrame";
 
 /* ──────────────────────────────────────────────
    1. BentoFeatureGrid — Hero overview
