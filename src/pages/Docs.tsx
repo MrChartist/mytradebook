@@ -270,7 +270,7 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
       <div className="p-5 pb-3">
         <div className="flex items-center gap-2.5">
           <Icon className="w-4 h-4 text-primary shrink-0" />
-          <h4 className="text-sm font-semibold leading-tight">{title}</h4>
+          <h4 className="text-[15px] font-semibold leading-tight">{title}</h4>
           {badge && (
             <span className="text-[9px] font-semibold tracking-wide uppercase px-1.5 py-0.5 rounded bg-primary/8 text-primary">
               {badge}
