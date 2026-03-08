@@ -23,6 +23,7 @@ import {
   Calculator, ClipboardCheck, Trophy, Info, Radio
 } from "lucide-react";
 import { LandingNavbar } from "@/components/landing/LandingNavbar";
+import { DocsNavbar } from "@/components/docs/DocsNavbar";
 import {
   OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
   TradeLifecycleFlow, AlertCardMockup, TelegramNotifMockup, WatchlistMockup,
@@ -587,24 +588,17 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
   return (
     <div className={cn("docs-page min-h-screen", isInsideApp && "pb-6", mode === "bw" && "docs-bw")} role="document">
-      {/* Shared navbar */}
-      <LandingNavbar activePage="docs" isInsideApp={isInsideApp} />
+      {/* Docs-specific navbar */}
+      <DocsNavbar isInsideApp={isInsideApp} />
 
       {/* ═══════════════════════════════════════════════════════════════
-          DOCS HEADER — Clean, minimal, premium
+          DOCS HEADER — Compact, documentation-first
           ═══════════════════════════════════════════════════════════════ */}
-      <header className="pt-16 lg:pt-20" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.7)' }}>
-        <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 py-10 lg:py-14">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 mb-5" aria-label="Breadcrumb">
-            <span className="docs-caption uppercase tracking-[0.1em]" style={{ color: 'hsl(var(--docs-text-muted))' }}>TradeBook</span>
-            <ChevronRight className="w-3 h-3" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }} />
-            <span className="docs-caption uppercase tracking-[0.1em]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>Documentation</span>
-          </nav>
-
+      <header className="pt-14 lg:pt-16" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.5)' }}>
+        <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 py-7 lg:py-9">
           {/* Title row */}
-          <div className="flex flex-wrap items-center gap-4 mb-5">
-            <h1 className="docs-title">Documentation</h1>
+          <div className="flex flex-wrap items-center gap-3 mb-3">
+            <h1 className="docs-title" style={{ fontSize: 'clamp(1.75rem, 3vw, 2.5rem)' }}>Documentation</h1>
             <button
               onClick={toggle}
               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-semibold transition-all"
@@ -621,19 +615,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </div>
 
           {/* Subtitle */}
-          <p className="docs-body-lg max-w-2xl" style={{ color: 'hsl(var(--docs-text-secondary))' }}>
-            Complete guide to every TradeBook feature — from trade logging to advanced analytics for Indian market traders.
+          <p className="docs-body max-w-xl" style={{ color: 'hsl(var(--docs-text-muted))' }}>
+            Complete guide to every feature — trade logging, analytics, alerts, and integrations for Indian market traders.
           </p>
 
           {/* Meta row */}
-          <div className="flex items-center gap-4 mt-6 flex-wrap docs-caption" style={{ color: 'hsl(var(--docs-text-muted))' }}>
+          <div className="flex items-center gap-3.5 mt-4 flex-wrap docs-caption" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>
             <span className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5" />
+              <Clock className="w-3 h-3" />
               ~35 min read
             </span>
-            <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.35)' }} />
-            <span>Last updated: March 8, 2026</span>
-            <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.35)' }} />
+            <span className="w-0.5 h-0.5 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.3)' }} />
+            <span>Updated Mar 8, 2026</span>
+            <span className="w-0.5 h-0.5 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.3)' }} />
             <span>26 sections</span>
           </div>
         </div>
