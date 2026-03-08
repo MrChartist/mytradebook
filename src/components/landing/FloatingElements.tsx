@@ -1,19 +1,56 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Bell, PieChart, Trophy, Brain, Target, Activity,
-  CandlestickChart, Gauge,
+  Bell, PieChart, Trophy, Brain,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
+const WORDS = ["Edge", "Pattern", "Discipline", "Strategy"];
+
+// Only 4 strong floating cards, with live-updating numbers + staggered entrance + mouse parallax
 export function FloatingElements() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <motion.div
-        className="absolute top-32 left-[6%] hidden lg:block"
-        animate={{ y: [0, -10, 0], rotate: [-2, 0, -2] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-      >
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [pnl, setPnl] = useState(2450);
+  const [winRate, setWinRate] = useState(68.4);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Mouse parallax (desktop only)
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    setMousePos({ x, y });
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [handleMouseMove]);
+
+  // Live-updating numbers
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPnl((prev) => {
+        const delta = Math.floor(Math.random() * 200) - 80;
+        return Math.max(1800, Math.min(3200, prev + delta));
+      });
+      setWinRate((prev) => {
+        const delta = (Math.random() - 0.4) * 1.5;
+        return Math.max(62, Math.min(75, +(prev + delta).toFixed(1)));
+      });
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const cards = [
+    // RELIANCE trade card — top left
+    {
+      key: "reliance",
+      className: "absolute top-32 left-[6%] hidden lg:block",
+      parallaxFactor: 12,
+      delay: 0.2,
+      enterFrom: { x: -80, opacity: 0 },
+      content: (
         <div className="rounded-2xl border border-border/30 bg-card/70 backdrop-blur-lg p-3.5 shadow-lg shadow-black/[0.04] w-44" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08), 0 10px 15px -3px rgb(0 0 0 / 0.06)" }}>
           <div className="flex items-center gap-2 mb-2">
             <div className="w-1.5 h-5 rounded-full bg-profit" />
@@ -22,15 +59,20 @@ export function FloatingElements() {
               <p className="text-[8px] text-muted-foreground">BUY · ₹2,945</p>
             </div>
           </div>
-          <p className="text-[11px] font-mono font-bold text-profit">+₹2,450</p>
+          <p className="text-[11px] font-mono font-bold text-profit transition-all duration-500">
+            +₹{pnl.toLocaleString("en-IN")}
+          </p>
         </div>
-      </motion.div>
-
-      <motion.div
-        className="absolute top-40 right-[7%] hidden lg:block"
-        animate={{ y: [0, -8, 0], rotate: [1, 3, 1] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-      >
+      ),
+    },
+    // Alert card — top right
+    {
+      key: "alert",
+      className: "absolute top-40 right-[7%] hidden lg:block",
+      parallaxFactor: -10,
+      delay: 0.5,
+      enterFrom: { x: 80, opacity: 0 },
+      content: (
         <div className="rounded-2xl border border-border/30 bg-card/70 backdrop-blur-lg px-3.5 py-2.5 shadow-lg shadow-black/[0.04] flex items-center gap-2.5" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08), 0 10px 15px -3px rgb(0 0 0 / 0.06)" }}>
           <div className="w-7 h-7 rounded-lg bg-[hsl(var(--tb-accent)/0.08)] flex items-center justify-center">
             <Bell className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" />
@@ -40,24 +82,16 @@ export function FloatingElements() {
             <p className="text-[8px] text-muted-foreground">NIFTY crossed 24,300</p>
           </div>
         </div>
-      </motion.div>
-
-      <motion.div
-        className="absolute top-[58%] left-[4%] hidden xl:block"
-        animate={{ y: [0, -12, 0] }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-      >
-        <div className="rounded-2xl border border-profit/15 bg-card/70 backdrop-blur-lg px-4 py-2.5 shadow-lg" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08), 0 10px 15px -3px rgb(0 0 0 / 0.06)" }}>
-          <p className="text-[9px] text-muted-foreground uppercase tracking-wider">MTD P&L</p>
-          <p className="text-sm font-bold font-mono text-profit">+₹24,850</p>
-        </div>
-      </motion.div>
-
-      <motion.div
-        className="absolute bottom-[28%] right-[5%] hidden lg:block"
-        animate={{ y: [0, -10, 0], rotate: [1, -1, 1] }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
-      >
+      ),
+    },
+    // Win Rate — bottom right
+    {
+      key: "winrate",
+      className: "absolute bottom-[28%] right-[5%] hidden lg:block",
+      parallaxFactor: -8,
+      delay: 0.8,
+      enterFrom: { x: 60, y: 30, opacity: 0 },
+      content: (
         <div className="rounded-2xl border border-profit/15 bg-card/70 backdrop-blur-lg px-4 py-2.5 shadow-lg" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08), 0 10px 15px -3px rgb(0 0 0 / 0.06)" }}>
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-profit/10 flex items-center justify-center">
@@ -65,31 +99,20 @@ export function FloatingElements() {
             </div>
             <div>
               <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Win Rate</p>
-              <p className="text-sm font-bold font-mono text-profit">68.4%</p>
+              <p className="text-sm font-bold font-mono text-profit transition-all duration-500">{winRate}%</p>
             </div>
           </div>
         </div>
-      </motion.div>
-
-      <motion.div
-        className="absolute top-[52%] right-[6%] hidden xl:block"
-        animate={{ y: [0, -8, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-      >
-        <div className="rounded-2xl border border-[hsl(var(--tb-accent)/0.2)] bg-card/70 backdrop-blur-lg px-3.5 py-2 shadow-lg flex items-center gap-2" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08), 0 8px 12px -3px rgb(0 0 0 / 0.06)" }}>
-          <Trophy className="w-4 h-4 text-[hsl(var(--tb-accent))]" />
-          <div>
-            <p className="text-[10px] font-semibold">5-Day Streak</p>
-            <p className="text-[8px] text-muted-foreground">All targets hit</p>
-          </div>
-        </div>
-      </motion.div>
-
-      <motion.div
-        className="absolute bottom-[22%] left-[5%] hidden xl:block"
-        animate={{ y: [0, -9, 0], rotate: [0, 1, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
-      >
+      ),
+    },
+    // AI Insight — bottom left
+    {
+      key: "ai",
+      className: "absolute bottom-[22%] left-[5%] hidden xl:block",
+      parallaxFactor: 10,
+      delay: 1.1,
+      enterFrom: { x: -60, y: 30, opacity: 0 },
+      content: (
         <div className="rounded-2xl border border-[hsl(270_60%_55%/0.15)] bg-card/70 backdrop-blur-lg px-3.5 py-2.5 shadow-lg flex items-center gap-2.5 max-w-[200px]" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08), 0 8px 12px -3px rgb(0 0 0 / 0.06)" }}>
           <div className="w-7 h-7 rounded-lg bg-[hsl(270_60%_55%/0.1)] flex items-center justify-center shrink-0">
             <Brain className="w-3.5 h-3.5 text-[hsl(270_60%_55%)]" />
@@ -98,46 +121,40 @@ export function FloatingElements() {
             <span className="font-semibold text-foreground/80">AI:</span> Reduce size on Mondays
           </p>
         </div>
-      </motion.div>
+      ),
+    },
+  ];
 
-      <motion.div
-        className="absolute top-24 left-[22%] hidden xl:block"
-        animate={{ y: [0, -6, 0] }}
-        transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2.5 }}
-      >
-        <div className="rounded-full border border-border/30 bg-card/60 backdrop-blur-lg px-3 py-1.5 shadow-sm flex items-center gap-1.5" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
-          <Activity className="w-3 h-3 text-muted-foreground/50" />
-          <span className="text-[9px] font-medium text-muted-foreground">47 trades this week</span>
-        </div>
-      </motion.div>
-
-      <motion.div
-        className="absolute top-28 right-[20%] hidden xl:block"
-        animate={{ y: [0, -7, 0] }}
-        transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut", delay: 1.8 }}
-      >
-        <div className="rounded-full border border-border/30 bg-card/60 backdrop-blur-lg px-3 py-1.5 shadow-sm flex items-center gap-1.5" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
-          <Target className="w-3 h-3 text-[hsl(var(--tb-accent)/0.6)]" />
-          <span className="text-[9px] font-mono font-semibold text-muted-foreground">R:R 1:2.4</span>
-        </div>
-      </motion.div>
-
-      {[
-        { Icon: CandlestickChart, top: "20%", left: "14%", delay: 0.5, size: "w-9 h-9" },
-        { Icon: Gauge, top: "72%", right: "9%", delay: 1.5, size: "w-8 h-8" },
-        { Icon: Activity, top: "28%", right: "15%", delay: 2, size: "w-7 h-7" },
-        { Icon: Target, top: "68%", left: "11%", delay: 0.8, size: "w-8 h-8" },
-      ].map(({ Icon, delay, size, ...pos }, i) => (
+  return (
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none">
+      {cards.map((card) => (
         <motion.div
-          key={i}
-          className={cn("absolute hidden lg:flex items-center justify-center rounded-2xl border border-border/20 bg-card/50 backdrop-blur-sm shadow-sm", size)}
-          style={pos as React.CSSProperties}
-          animate={{ y: [0, -6, 0], opacity: [0.35, 0.6, 0.35] }}
-          transition={{ duration: 5 + i, repeat: Infinity, ease: "easeInOut", delay }}
+          key={card.key}
+          className={card.className}
+          initial={card.enterFrom}
+          animate={{
+            x: mousePos.x * card.parallaxFactor,
+            y: mousePos.y * (card.parallaxFactor * 0.6),
+            opacity: 1,
+          }}
+          transition={{
+            x: { type: "spring", stiffness: 50, damping: 20 },
+            y: { type: "spring", stiffness: 50, damping: 20 },
+            opacity: { duration: 0.8, delay: card.delay },
+          }}
         >
-          <Icon className="w-3.5 h-3.5 text-muted-foreground/40" />
+          {/* Subtle bob animation layered on top */}
+          <motion.div
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 5 + Math.random() * 3, repeat: Infinity, ease: "easeInOut" }}
+          >
+            {card.content}
+          </motion.div>
         </motion.div>
       ))}
     </div>
   );
 }
+
+// Exported for HeroSection to use
+export { WORDS };
