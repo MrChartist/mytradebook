@@ -304,9 +304,10 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
   );
 }
 
-function SectionDivider() {
-  return <div className="docs-divider" />;
-}
+const SectionDivider = React.forwardRef<HTMLDivElement>((_, ref) => (
+  <div ref={ref} className="docs-divider" />
+));
+SectionDivider.displayName = "SectionDivider";
 
 function SectionHeader({ id, title, description, icon: Icon }: {
   id: string; title: string; description: string; icon: React.ElementType;
