@@ -319,7 +319,7 @@ function SectionHeader({ id, title, description, icon: Icon }: {
   }, [id]);
 
   return (
-    <div id={id} className="scroll-mt-24 mb-6 group">
+    <div id={id} className="scroll-mt-24 mb-8 group">
       <div className="flex items-center gap-2.5 mb-3">
         <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
           <Icon className="w-4 h-4 text-primary" />
