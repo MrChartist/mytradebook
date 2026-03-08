@@ -54,8 +54,8 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out",
         scrolled
-          ? "bg-background/80 backdrop-blur-xl border-b border-border/40 shadow-[0_1px_8px_-3px_rgba(0,0,0,0.08)]"
-          : "bg-transparent backdrop-blur-none border-b border-transparent"
+           ? "bg-background/80 dark:bg-background/90 backdrop-blur-xl border-b border-border/40 shadow-[0_1px_8px_-3px_rgba(0,0,0,0.08)] dark:shadow-[0_1px_8px_-3px_rgba(0,0,0,0.3)]"
+           : "bg-transparent backdrop-blur-none border-b border-transparent"
       )}
       aria-label="Main navigation"
     >

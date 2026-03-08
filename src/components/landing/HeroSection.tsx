@@ -48,11 +48,11 @@ export function HeroSection() {
         </motion.div>
 
         {/* Light overlays — soft, airy feel */}
-        <div className="absolute inset-0 bg-background/70 dark:bg-background/75" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/90" />
+        <div className="absolute inset-0 bg-background/70 dark:bg-background/85" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/95 dark:from-background/60 dark:via-background/20 dark:to-background/95" />
 
         {/* Subtle warm accent glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-[hsl(var(--tb-accent)/0.06)] blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-[hsl(var(--tb-accent)/0.06)] dark:bg-[hsl(var(--tb-accent)/0.04)] blur-[120px] pointer-events-none" />
 
         {/* Content */}
         <motion.div
@@ -64,7 +64,7 @@ export function HeroSection() {
             variants={fadeUp} initial="hidden" animate="visible" custom={0}
             className="mb-8"
           >
-            <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-card/60 backdrop-blur-xl border border-border/40 shadow-sm">
+            <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-card/60 dark:bg-card/40 backdrop-blur-xl border border-border/40 dark:border-border/30 shadow-sm">
               <div className="flex -space-x-2">
                 {avatarInitials.map((init, i) => (
                   <div
@@ -133,7 +133,7 @@ export function HeroSection() {
         {/* Stats bar */}
         <motion.div
           variants={fadeUp} initial="hidden" animate="visible" custom={0.5}
-          className="relative z-10 mx-4 sm:mx-8 lg:mx-auto lg:max-w-3xl mb-8 rounded-2xl bg-card/60 backdrop-blur-xl border border-border/40 shadow-sm"
+          className="relative z-10 mx-4 sm:mx-8 lg:mx-auto lg:max-w-3xl mb-8 rounded-2xl bg-card/60 dark:bg-card/40 backdrop-blur-xl border border-border/40 dark:border-border/30 shadow-sm"
         >
           <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-border/30">
             {stats.map((stat) => (
