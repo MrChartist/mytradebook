@@ -1534,6 +1534,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="info">
                 <p><strong>Beginner tip:</strong> Start by setting risk at 0.5% and use the calculator on every single trade for at least 30 trades. Don't adjust the risk % based on "how good" a setup looks — the whole point is consistency. After 30 trades, review your analytics to see if you can gradually increase to 1%.</p>
               </ProTip>
+
+              <NextStepBlock steps={[
+                { label: "Trading Rules", description: "Pre-trade discipline checklist", targetId: "trading-rules" },
+                { label: "Trade Management", description: "Use sizing in the trade form", targetId: "trade-management" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
