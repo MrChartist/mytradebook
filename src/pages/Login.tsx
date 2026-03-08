@@ -220,9 +220,9 @@ export default function Login() {
           <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-profit/10 rounded-full blur-[100px] animate-pulse-slow" />
 
           <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20">
-            <h2 className="text-4xl xl:text-5xl font-display font-bold leading-tight mb-6 tracking-tight">
+            <h2 className="text-4xl xl:text-5xl font-heading font-bold leading-tight mb-6 tracking-tight">
               Know Your{" "}
-              <span className="font-dancing italic text-[hsl(var(--tb-accent))]">Edge</span>.
+              <span className="accent-serif text-[hsl(var(--tb-accent))]">Edge</span>.
               <br />
               Compound It Daily.
             </h2>
