@@ -45,7 +45,7 @@ export function ProTip({ children, variant = "tip" }: { children: ReactNode; var
   const Icon = s.icon;
 
   return (
-    <div className={cn("rounded-lg border p-4 my-5", s.border, s.bg)}>
+    <div className={cn("rounded-xl border p-4 my-6", s.border, s.bg)}>
       <div className="flex items-start gap-3">
         <Icon className={cn("w-4 h-4 shrink-0 mt-0.5", s.iconColor)} />
         <div className="flex-1 min-w-0">
@@ -69,7 +69,7 @@ interface Step {
 export function StepByStep({ steps, title }: { steps: Step[]; title?: string }) {
   return (
     <div className="my-6">
-      {title && <p className="text-sm font-semibold text-foreground mb-4">{title}</p>}
+      {title && <p className="text-[15px] font-semibold text-foreground mb-4">{title}</p>}
       <div className="relative">
         <div className="absolute left-[13px] top-4 bottom-4 w-px bg-border/40" />
         <div className="space-y-4">
@@ -104,7 +104,7 @@ interface ComparisonRow {
 
 export function ComparisonTable({ rows, title }: { rows: ComparisonRow[]; title?: string }) {
   return (
-    <div className="my-5 rounded-lg border border-border/40 overflow-hidden">
+    <div className="my-6 rounded-xl border border-border/40 overflow-hidden">
       {title && (
         <div className="px-4 py-2.5 bg-muted/30 border-b border-border/30">
           <p className="text-[14px] font-semibold text-foreground flex items-center gap-2">
@@ -167,7 +167,7 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
   const IconComp = Icon || ChevronRight;
 
   return (
-    <div className="rounded-lg border border-border/40 overflow-hidden my-4">
+    <div className="rounded-xl border border-border/40 overflow-hidden my-5">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-muted/20 transition-colors"

@@ -281,7 +281,7 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
         </div>
       </div>
       <div className="px-5 pb-5">
-        <div className="[&>p]:text-[15px] [&>p]:leading-[1.7] [&>p]:text-muted-foreground">{children}</div>
+        <div className="docs-card-content">{children}</div>
       </div>
     </div>
   );
@@ -334,14 +334,14 @@ function SectionHeader({ id, title, description, icon: Icon }: {
           <span id={`copy-${id}`}>#</span>
         </button>
       </div>
-      <p className="text-[15px] text-muted-foreground leading-relaxed max-w-2xl pl-[42px]">{description}</p>
+      <p className="text-[15px] text-muted-foreground leading-relaxed max-w-2xl lg:pl-[42px]">{description}</p>
     </div>
   );
 }
 
 function ShortcutKey({ children }: { children: string }) {
   return (
-    <kbd className="px-2 py-1 rounded-md bg-muted border border-border text-xs font-mono font-semibold text-foreground">
+    <kbd className="px-2 py-1 rounded-md bg-muted border border-border text-[12px] font-mono font-semibold text-foreground">
       {children}
     </kbd>
   );
@@ -586,17 +586,17 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </TooltipProvider>
 
           {/* Mobile tabs */}
-          <nav className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border/30" aria-label="Section navigation">
-            <div className="flex gap-1 overflow-x-auto px-3 py-2 no-scrollbar">
+          <nav className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border/20" aria-label="Section navigation">
+            <div className="flex gap-1.5 overflow-x-auto px-3 py-2.5 no-scrollbar">
               {SECTIONS.map((s) => (
                 <button
                   key={s.id}
                   onClick={() => scrollTo(s.id)}
                   className={cn(
-                    "shrink-0 px-2.5 py-1 rounded text-[12px] font-medium transition-colors whitespace-nowrap",
+                    "shrink-0 px-3 py-1.5 rounded-lg text-[12px] font-medium transition-colors whitespace-nowrap",
                     activeSection === s.id
                       ? "bg-foreground text-background"
-                      : "text-muted-foreground/60 hover:text-foreground"
+                      : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/30"
                   )}
                 >
                   {s.label}
@@ -667,7 +667,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
 
               <ProTip variant="info">
-                <p>Press <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-[11px] font-mono font-semibold">⌘K</kbd> anywhere to open the Command Palette — search trades, create alerts, and navigate instantly without touching the mouse.</p>
+                <p>Press <kbd className="px-1.5 py-0.5 rounded-md bg-muted border border-border text-[12px] font-mono font-semibold">⌘K</kbd> anywhere to open the Command Palette — search trades, create alerts, and navigate instantly without touching the mouse.</p>
               </ProTip>
 
               <SubTopic title="System Requirements & Browser Support" id="gs-system-req" />
@@ -3384,12 +3384,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           <aside className="hidden xl:block w-[190px] shrink-0 border-l border-border/15">
             <div className="sticky top-20 py-8 pl-6">
               <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground/40 mb-4">On this page</p>
-              <nav className="space-y-1 border-l border-border/20 pl-3">
+              <nav className="space-y-0.5 border-l border-border/20 pl-3">
                 {(SECTION_ANCHORS[activeSection] || []).map((anchor) => (
                   <button
                     key={anchor.id}
                     onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                    className="block w-full text-left text-[13px] text-muted-foreground/50 hover:text-foreground py-1.5 transition-colors duration-150 leading-snug hover:border-l-2 hover:border-primary hover:-ml-[13px] hover:pl-[11px]"
+                    className="block w-full text-left text-[13px] text-muted-foreground/50 hover:text-foreground py-1.5 transition-colors duration-150 leading-snug"
                   >
                     {anchor.label}
                   </button>
