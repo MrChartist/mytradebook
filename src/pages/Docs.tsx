@@ -4201,34 +4201,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         </main>
 
         {/* ─────────────────────────────────────────────────────────────
-            RIGHT RAIL — On this page / Section outline
+            RIGHT RAIL — On this page / Section outline with scroll-aware active heading
             ───────────────────────────────────────────────────────────── */}
-        <aside className="hidden xl:block w-[200px] shrink-0" style={{ borderLeft: '1px solid hsl(var(--docs-border-subtle) / 0.4)' }}>
-          <div className="sticky top-20 h-[calc(100vh-5rem)] py-8 pl-6 pr-4 overflow-y-auto">
-            <p className="docs-caption uppercase tracking-[0.08em] mb-5" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }}>On this page</p>
-            <AnimatePresence mode="wait">
-              <motion.nav 
-                key={activeSection}
-                initial={{ opacity: 0, x: 5 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -5 }}
-                transition={{ duration: 0.18, ease: "easeOut" }}
-                className="space-y-1"
-              >
-                {(SECTION_ANCHORS[activeSection] || []).map((anchor, idx) => (
-                  <button
-                    key={anchor.id}
-                    onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                    className="docs-anchor-link block w-full text-left py-1.5 transition-all duration-150 leading-snug"
-                    style={{ paddingLeft: idx === 0 ? '0.75rem' : '0.75rem' }}
-                  >
-                    {anchor.label}
-                  </button>
-                ))}
-              </motion.nav>
-            </AnimatePresence>
-          </div>
-        </aside>
+        <RightRail activeSection={activeSection} />
       </div>
 
       {/* Back to top button */}
