@@ -801,7 +801,7 @@ export default function IntegrationsSettings() {
                 id="ra-disclaimer"
                 placeholder="e.g., Research/Education only. Not investment advice. RA: MyBrand | Reg No: INH... | Disclosures: link"
                 defaultValue={settings?.ra_disclaimer || ""}
-                className="resize-none text-sm"
+                className="resize-none text-[13px] bg-muted/20 border-border/20 focus:border-primary/30"
                 rows={3}
                 onBlur={(e) => {
                   const val = e.target.value.trim();
