@@ -604,7 +604,7 @@ export default function Fundamentals() {
             </p>
           </div>
         ) : (
-          <div className="rounded-[1.25rem] border border-border overflow-hidden bg-card relative">
+          <div className="rounded-[1.25rem] border border-border/30 overflow-hidden bg-card relative">
             {isFetching && (
               <div className="absolute top-0 left-0 right-0 z-20">
                 <div className="h-0.5 bg-primary/20 overflow-hidden">
