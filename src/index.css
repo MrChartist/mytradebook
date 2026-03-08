@@ -801,7 +801,7 @@
 
   /* Body large: 17px — intro paragraphs, section descriptions */
   .docs-body-lg {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 1.0625rem;
     line-height: 1.7;
     font-weight: 400;
