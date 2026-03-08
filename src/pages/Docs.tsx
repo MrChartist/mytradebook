@@ -20,7 +20,7 @@ import {
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
   Wallet, Share2, MessageSquare, Command, Hash, Palette,
   PanelLeftClose, PanelLeftOpen, SlidersHorizontal,
-  Calculator, ClipboardCheck, Trophy, Info, Radio
+  Calculator, ClipboardCheck, Trophy, Info, Radio, Gift
 } from "lucide-react";
 // DocsNavbar is used instead of LandingNavbar on this page
 import { DocsNavbar } from "@/components/docs/DocsNavbar";
