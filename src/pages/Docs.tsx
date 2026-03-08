@@ -3380,6 +3380,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <div className="mt-5">
                 <AISettingsPreviewMockup />
               </div>
+
+              <NextStepBlock steps={[
+                { label: "Trade Coach", description: "See AI coach in action", targetId: "trade-coach" },
+                { label: "Settings", description: "Configure AI in settings", targetId: "settings" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
