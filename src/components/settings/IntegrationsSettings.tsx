@@ -350,10 +350,10 @@ export default function IntegrationsSettings() {
           )}
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {isAiConnected ? (
             <>
-              <div className="p-3 rounded-lg bg-profit/10 border border-profit/20">
+              <div className="p-2.5 rounded-lg bg-profit/6 border border-profit/15">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-profit" />
