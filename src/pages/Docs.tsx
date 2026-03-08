@@ -390,13 +390,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             )}>
               <div className="sticky top-24">
                 {/* Scroll progress bar */}
-                <div className="h-0.5 bg-muted rounded-full overflow-hidden mb-3">
-                  <div className="h-full bg-primary transition-all duration-150" style={{ width: `${scrollProgress}%` }} />
+                <div className="h-0.5 bg-muted/60 rounded-full overflow-hidden mb-4">
+                  <div className="h-full bg-primary/80 transition-all duration-150" style={{ width: `${scrollProgress}%` }} />
                 </div>
                 {/* Header with collapse toggle */}
-                <div className={cn("flex items-center mb-3", sidebarCollapsed ? "justify-center" : "justify-between px-3")}>
+                <div className={cn("flex items-center mb-4", sidebarCollapsed ? "justify-center" : "justify-between px-3")}>
                   {!sidebarCollapsed && (
-                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Table of Contents</p>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/50">Contents</p>
                   )}
                   <button
                     onClick={toggleSidebar}
