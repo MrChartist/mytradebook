@@ -2357,25 +2357,85 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Earn badges as you hit trading milestones. From your first trade to 100-day streaks, achievements make your trading journey rewarding and motivating."
                 icon={Trophy}
               />
-              <AchievementsMockup />
-              <SubTopic title="Badge Categories" description="Five achievement groups covering milestones, streaks, discipline, analytics, and social." id="ach-categories" />
-              <FeatureCard icon={Trophy} title="Badge Categories">
-                <p className="text-sm text-muted-foreground mb-3">Achievements are grouped into categories:</p>
-                <FeatureList items={[
-                  "Milestones — trade count targets (1, 10, 50, 100, 500 trades)",
-                  "Streaks — consecutive profitable days (3, 5, 7, 14, 30 days)",
-                  "Discipline — following rules, setting SL, using templates",
-                  "Analytics — reviewing your data, using AI insights, generating reports",
-                  "Social — sharing trades, inviting friends, writing journal entries",
-                ]} />
-              </FeatureCard>
-              <SubTopic title="Progress Tracking" description="How badges are earned and tracked automatically." id="ach-progress" />
+              <QuickNav items={[
+                { label: "Progress Tracking", id: "ach-progress" },
+                { label: "Badge Categories", id: "ach-categories" },
+                { label: "Full Catalog", id: "ach-catalog" },
+              ]} />
+
+              <InteractiveMockup label="Achievement Badges Grid">
+                <AchievementsMockup />
+              </InteractiveMockup>
+
+              <SubTopic title="Tracking Your Progress" description="How to monitor your journey toward unlocking badges." id="ach-progress" />
+              <StepByStep title="Tracking Your Progress Toward Badges" steps={[
+                { title: "Check your Dashboard badges widget", description: "The Achievements grid on your Dashboard shows all badges with progress bars. Badges closest to unlocking are highlighted.", detail: "Each badge displays a percentage — e.g., '35/50 trades' for the 50-trade milestone badge." },
+                { title: "Keep trading and journaling consistently", description: "Most badges track activity you're already doing — logging trades, setting stop losses, writing journal entries. No extra effort needed.", detail: "Streak badges require consecutive days, so consistency matters more than volume. Missing one day resets the counter." },
+                { title: "Watch for unlock notifications", description: "When you hit a threshold, a real-time toast notification celebrates the unlock with an animation. The badge timestamp is recorded permanently.", detail: "Unlocked badges are visible on your profile and can be shared via social cards." },
+                { title: "Review progress periodically", description: "Check which badges you're close to earning and set mini-goals. 'Just 5 more trades for the 100-trade milestone' keeps you motivated.", detail: "Some badges unlock at surprising times — the discipline badges reward process adherence, not just trading volume." },
+              ]} />
+
+              <SubTopic title="Badge Categories" description="Four achievement groups covering milestones, streaks, profit, and discipline." id="ach-categories" />
+              <div className="grid md:grid-cols-2 gap-5">
+                <FeatureCard icon={Trophy} title="Milestones & Streaks">
+                  <p className="text-sm text-muted-foreground mb-3">Track your trading volume and consistency:</p>
+                  <FeatureList items={[
+                    "Milestones — trade count targets (1, 10, 50, 100, 500 trades)",
+                    "Streaks — consecutive profitable days (3, 5, 7, 14, 30 days)",
+                    "Progress bars update in real-time as you log trades",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Award} title="Profit & Discipline">
+                  <p className="text-sm text-muted-foreground mb-3">Reward good habits and consistent execution:</p>
+                  <FeatureList items={[
+                    "Profit — cumulative P&L targets and win rate milestones",
+                    "Discipline — following rules, setting SL, using templates, journaling",
+                    "Process badges reward how you trade, not just outcomes",
+                  ]} />
+                </FeatureCard>
+              </div>
+
               <ExpandableDetail title="How Achievements Are Tracked" icon={Target} defaultOpen>
-                <p className="text-[13px] text-muted-foreground mb-2">Achievements are tracked automatically as you use TradeBook. Each badge has a threshold (e.g., "Log 50 trades") and your progress is updated in real-time. When you reach the threshold, the badge unlocks with a celebration animation.</p>
-                <p className="text-[13px] text-muted-foreground">View your progress in the Dashboard achievements widget or Settings → Profile. Unlocked badges show a timestamp of when they were earned.</p>
+                <p className="text-[13px] text-muted-foreground mb-2">Achievements are tracked automatically as you use TradeBook. Each badge has a threshold (e.g., "Log 50 trades") and your progress is updated in real-time. When you reach the threshold, the badge unlocks with a celebration animation and a toast notification.</p>
+                <p className="text-[13px] text-muted-foreground">View your progress in the Dashboard achievements widget. Unlocked badges show a timestamp of when they were earned.</p>
               </ExpandableDetail>
+
+              <SubTopic title="Full Badge Catalog" description="Every available badge and what it takes to unlock it." id="ach-catalog" />
+              <ExpandableDetail title="Full Badge Catalog — All 16 Badges" icon={Trophy} badge="Reference">
+                <p>Here's every badge available in TradeBook, organized by category:</p>
+                <h4 className="text-xs font-semibold mt-4 mb-1.5 text-foreground/80">Milestones</h4>
+                <FeatureList items={[
+                  "First Trade — Log your very first trade. Welcome to the journey.",
+                  "10 Trades — Complete 10 closed trades. You're building a habit.",
+                  "50 Trades — 50 closed trades logged. Serious commitment showing.",
+                  "Century — 100 closed trades. You now have statistically meaningful data.",
+                  "500 Club — 500 closed trades. Veteran trader status unlocked.",
+                ]} />
+                <h4 className="text-xs font-semibold mt-4 mb-1.5 text-foreground/80">Streaks</h4>
+                <FeatureList items={[
+                  "Hot Streak (3 Days) — 3 consecutive profitable trading days.",
+                  "On Fire (7 Days) — 7 consecutive profitable trading days.",
+                  "Unstoppable (14 Days) — 14 consecutive profitable days. Elite consistency.",
+                  "Iron Discipline (30 Days) — 30 consecutive profitable days. Legendary.",
+                ]} />
+                <h4 className="text-xs font-semibold mt-4 mb-1.5 text-foreground/80">Profit</h4>
+                <FeatureList items={[
+                  "First Green — Your first profitable trade. The seed is planted.",
+                  "5-Figure Club — Cumulative P&L crosses ₹10,000.",
+                  "Consistent Winner — Maintain a 60%+ win rate over 50+ trades.",
+                ]} />
+                <h4 className="text-xs font-semibold mt-4 mb-1.5 text-foreground/80">Discipline</h4>
+                <FeatureList items={[
+                  "Rule Follower — Use the trading rules checklist on 10 trades.",
+                  "Journal Keeper — Write daily journal entries for 7 consecutive trading days.",
+                  "Risk Manager — Set stop-loss on 20 consecutive trades.",
+                  "Analyst — Generate and review 4 weekly reports.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Badge thresholds are designed to be achievable with consistent effort over weeks, not days. The system rewards sustained good habits rather than one-time heroics.</p>
+              </ExpandableDetail>
+
               <ProTip variant="info">
-                <p>Check the Achievements grid on your Dashboard to see which badges you're closest to earning. Some badges unlock hidden features or special share card templates!</p>
+                <p>Check the Achievements grid on your Dashboard to see which badges you're closest to earning. Focus on discipline badges first — they reinforce good trading habits that compound over time.</p>
               </ProTip>
             </motion.section>
 
