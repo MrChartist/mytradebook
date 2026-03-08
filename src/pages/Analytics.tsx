@@ -69,8 +69,6 @@ export default function Analytics() {
   const bestTrade = closed.length ? Math.max(...closed.map((t) => t.pnl || 0)) : 0;
   const worstTrade = closed.length ? Math.min(...closed.map((t) => t.pnl || 0)) : 0;
 
-  const periodLabel = datePreset === "all" ? "All time" : datePreset === "custom" ? "Custom range" : presets.find(p => p.value === datePreset)?.label || "";
-
   const presets: { label: string; value: DatePreset }[] = [
     { label: "7D", value: "7d" },
     { label: "30D", value: "30d" },
@@ -78,6 +76,8 @@ export default function Analytics() {
     { label: "MTD", value: "mtd" },
     { label: "All", value: "all" },
   ];
+
+  const periodLabel = datePreset === "all" ? "All time" : datePreset === "custom" ? "Custom range" : presets.find(p => p.value === datePreset)?.label || "";
 
   return (
     <div className="space-y-4 animate-fade-in" role="region" aria-label="Trading analytics">
