@@ -587,26 +587,36 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
           {/* Mobile tabs */}
           <nav className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border/20" aria-label="Section navigation">
-            <div className="flex gap-1.5 overflow-x-auto px-3 py-2.5 no-scrollbar">
-              {SECTIONS.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => scrollTo(s.id)}
-                  className={cn(
-                    "shrink-0 px-3 py-1.5 rounded-lg text-[12px] font-medium transition-colors whitespace-nowrap",
-                    activeSection === s.id
-                      ? "bg-foreground text-background"
-                      : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/30"
-                  )}
-                >
-                  {s.label}
-                </button>
-              ))}
+            <div className="relative">
+              {/* Fade edges */}
+              <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-4 z-10 bg-gradient-to-r from-background/95 to-transparent" />
+              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-4 z-10 bg-gradient-to-l from-background/95 to-transparent" />
+              <div
+                className="flex gap-1.5 overflow-x-auto overscroll-x-contain px-4 py-2.5 no-scrollbar"
+                style={{ WebkitOverflowScrolling: "touch" }}
+              >
+                {SECTIONS.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => scrollTo(s.id)}
+                    className={cn(
+                      "shrink-0 px-3 py-1.5 rounded-lg text-[12px] font-medium transition-colors whitespace-nowrap",
+                      activeSection === s.id
+                        ? "bg-foreground text-background"
+                        : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/30"
+                    )}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+                {/* Spacer so last item isn't clipped by fade */}
+                <div className="shrink-0 w-2" aria-hidden="true" />
+              </div>
             </div>
           </nav>
 
           {/* Main content */}
-          <main className="flex-1 min-w-0 max-w-[740px] px-6 lg:px-12 py-8 lg:py-10 space-y-20 pt-14 lg:pt-8">
+          <main className="flex-1 min-w-0 max-w-[740px] px-6 lg:px-12 py-8 lg:py-10 space-y-20 pt-[6.5rem] lg:pt-8">
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
