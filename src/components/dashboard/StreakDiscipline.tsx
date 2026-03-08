@@ -130,12 +130,12 @@ export function StreakDiscipline() {
       </div>
 
       {/* Discipline bar */}
-      <div className="mt-3 inner-panel">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">SL Discipline</p>
-          <p className="text-xs font-semibold font-mono">{stats.disciplineScore}%</p>
+      <div className="mt-2.5 inner-panel !p-2.5">
+        <div className="flex items-center justify-between mb-1.5">
+          <p className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-wider">SL Discipline</p>
+          <p className="text-[11px] font-semibold font-mono">{stats.disciplineScore}%</p>
         </div>
-        <div className="h-2.5 bg-muted rounded-full overflow-hidden relative">
+        <div className="h-2 bg-muted/50 rounded-full overflow-hidden relative">
           <div
             className={cn(
               "h-full rounded-full transition-all relative bar-shine",

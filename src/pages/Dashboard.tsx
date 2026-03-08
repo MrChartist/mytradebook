@@ -180,9 +180,9 @@ export default function Dashboard() {
         return <DashboardPositionsTable key={w.id} />;
       case "streakCalendar":
         return (
-          <div key={w.id} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <div className="min-h-[360px]"><StreakDiscipline /></div>
-            <div className="min-h-[360px]">
+          <div key={w.id} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="min-h-[340px]"><StreakDiscipline /></div>
+            <div className="min-h-[340px]">
               <JournalCalendarView
                 calendarData={calendarData}
                 isLoading={tradesLoading}
