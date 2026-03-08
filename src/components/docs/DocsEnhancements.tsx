@@ -240,15 +240,41 @@ export function InteractiveMockup({ children, label, className }: { children: Re
 /* ──────────────────────────────────────────────
    PhaseHeader — Section phase number badge
    ────────────────────────────────────────────── */
-export function PhaseHeader({ phase, total = 21 }: { phase: number; total?: number }) {
-  return null;
+export function PhaseHeader({ phase, total = 26 }: { phase: number; total?: number }) {
+  return (
+    <div className="flex items-center gap-2.5 mb-4">
+      <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg text-[11px] font-bold" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)', color: 'hsl(var(--docs-accent))' }}>
+        {phase}
+      </span>
+      <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, hsl(var(--docs-border-subtle)), transparent 60%)' }} />
+      <span className="text-[10px] font-mono" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }}>{phase}/{total}</span>
+    </div>
+  );
 }
 
 /* ──────────────────────────────────────────────
    QuickNav — Jump links within a section
    ────────────────────────────────────────────── */
 export function QuickNav({ items }: { items: { label: string; id: string }[] }) {
-  return null;
+  return (
+    <div className="flex flex-wrap items-center gap-1.5 mb-8 mt-2">
+      <span className="text-[10px] font-semibold uppercase tracking-wider mr-1" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>Jump to</span>
+      {items.map((item, i) => (
+        <button
+          key={item.id}
+          onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+          className="px-2.5 py-1 rounded-md text-[11px] font-medium transition-all duration-150"
+          style={{
+            background: 'hsl(var(--docs-elevated))',
+            border: '1px solid hsl(var(--docs-border-subtle))',
+            color: 'hsl(var(--docs-text-secondary))',
+          }}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 /* ──────────────────────────────────────────────
