@@ -140,7 +140,21 @@ export default function Studies() {
   };
 
   const filteredStudies = useMemo(() => {
-    let list = selectedStatus ? studies.filter(s => s.status === selectedStatus) : studies;
+    let list = [...studies];
+
+    // Text search on symbol + title
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(s =>
+        s.symbol.toLowerCase().includes(q) ||
+        s.title.toLowerCase().includes(q)
+      );
+    }
+
+    // Status filter
+    if (selectedStatus) {
+      list = list.filter(s => s.status === selectedStatus);
+    }
 
     // Tag filtering (OR logic)
     if (selectedTags.length > 0) {
@@ -150,20 +164,20 @@ export default function Studies() {
     // Sort
     switch (sortBy) {
       case "oldest":
-        list = [...list].sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
+        list.sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
         break;
       case "symbol":
-        list = [...list].sort((a, b) => a.symbol.localeCompare(b.symbol));
+        list.sort((a, b) => a.symbol.localeCompare(b.symbol));
         break;
       case "status":
-        list = [...list].sort((a, b) => (a.status || "Draft").localeCompare(b.status || "Draft"));
+        list.sort((a, b) => (a.status || "Draft").localeCompare(b.status || "Draft"));
         break;
-      default: // latest
-        list = [...list].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+      default:
+        list.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
     }
 
     return list;
-  }, [studies, selectedStatus, selectedTags, sortBy]);
+  }, [studies, searchQuery, selectedStatus, selectedTags, sortBy]);
 
   const statusCounts = studies.reduce((acc: Record<string, number>, s) => {
     const st = s.status || "Draft";
