@@ -216,9 +216,9 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
-    font-size: 1rem; /* 16px base for app */
+    font-size: 1rem;
     line-height: 1.6;
     letter-spacing: -0.011em;
   }
