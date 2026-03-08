@@ -36,7 +36,10 @@ export function ConfirmDeleteModal({
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
+            onClick={(e) => {
+              e.preventDefault();
+              onConfirm();
+            }}
             disabled={isLoading}
             className="bg-loss hover:bg-loss/90"
           >
