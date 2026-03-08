@@ -455,5 +455,6 @@ export default function Reports() {
       )}
     </div>
     </PlanGate>
+    </>
   );
 }
