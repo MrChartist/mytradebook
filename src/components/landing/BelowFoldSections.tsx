@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight, BookOpen, CheckCircle2, ChevronRight, Eye, Zap, Trophy,
   Crown, Lock, Shield, Star, Quote, Sparkles, Minus,
@@ -11,7 +11,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { fadeUp, MotionSection, SectionBadge, GradientDivider } from "./LandingShared";
+import { fadeUp, blurIn, slideFromLeft, slideFromRight, popIn, MotionSection, SectionBadge, GradientDivider } from "./LandingShared";
 
 /* ─── Data ─── */
 const steps = [
@@ -64,34 +64,44 @@ function HighlightedQuote({ testimonial }: { testimonial: typeof testimonials[0]
   );
 }
 
-const glassInner = "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)";
-
 export function HowItWorksSection() {
   const navigate = useNavigate();
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: timelineRef,
+    offset: ["start center", "end center"],
+  });
+  const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+
   return (
     <section className="py-28 lg:py-36" aria-label="How it works">
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>How It Works</SectionBadge>
-          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-6 leading-[1.06] tracking-[-0.03em]">Three steps to{" "}<span className="text-gradient">mastery</span></h2>
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-6 leading-[1.06] tracking-[-0.03em]">Three steps to{" "}<span className="text-shimmer">mastery</span></h2>
           <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-[1rem] leading-[1.7]">From first trade to consistent edge — in minutes.</p>
         </motion.div>
 
         {/* Timeline steps */}
-        <div className="relative">
-          {/* Vertical connector line — desktop */}
+        <div className="relative" ref={timelineRef}>
+          {/* Vertical connector line — desktop, with scroll-driven gradient */}
           <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2">
-            <div className="h-full w-full bg-gradient-to-b from-transparent via-border/40 to-transparent" />
+            <div className="h-full w-full bg-border/15" />
+            <motion.div
+              className="absolute top-0 left-0 w-full bg-gradient-to-b from-primary/60 via-primary/40 to-primary/20"
+              style={{ height: lineHeight }}
+            />
           </div>
 
           <div className="space-y-16 md:space-y-24">
             {steps.map((item, i) => {
               const isEven = i % 2 === 0;
+              const variant = isEven ? slideFromLeft : slideFromRight;
               return (
                 <motion.div
                   key={item.step}
-                  variants={fadeUp}
-                  custom={i * 0.12}
+                  variants={variant}
+                  custom={i * 0.15}
                   className={cn(
                     "relative grid md:grid-cols-2 gap-8 md:gap-16 items-center",
                     !isEven && "md:direction-rtl"
@@ -99,12 +109,18 @@ export function HowItWorksSection() {
                 >
                   {/* Center dot on timeline */}
                   <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-                    <div className="w-4 h-4 rounded-full bg-primary border-4 border-background shadow-sm" />
+                    <motion.div
+                      className="w-4 h-4 rounded-full bg-primary border-4 border-background shadow-sm"
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20, delay: i * 0.2 }}
+                    />
                   </div>
 
                   {/* Number side */}
                   <div className={cn("flex items-center gap-6", isEven ? "md:justify-end" : "md:justify-start md:order-2")}>
-                    <span className="text-[7rem] lg:text-[9rem] font-black leading-none tracking-tighter text-foreground/[0.04] select-none">
+                    <span className="text-[7rem] lg:text-[9rem] font-black leading-none tracking-tighter text-foreground/[0.04] select-none font-heading">
                       {item.step}
                     </span>
                   </div>
@@ -112,17 +128,14 @@ export function HowItWorksSection() {
                   {/* Content card */}
                   <motion.div
                     className={cn(
-                      "rounded-2xl border border-border/30 bg-card/70 backdrop-blur-sm p-8 relative overflow-hidden",
+                      "rounded-2xl border border-border/30 bg-card/70 backdrop-blur-sm p-8 relative overflow-hidden glass-card-animated",
                       isEven ? "md:order-2" : "md:order-1"
                     )}
-                    style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}
                     whileHover={{ y: -3, borderColor: "hsl(var(--border) / 0.5)" }}
                     transition={{ duration: 0.3 }}
                   >
                     <div className="flex items-center gap-4 mb-4">
-                      <div
-                        className="w-12 h-12 rounded-xl bg-primary/8 flex items-center justify-center"
-                      >
+                      <div className="w-12 h-12 rounded-xl bg-primary/8 flex items-center justify-center">
                         <item.icon className="w-5.5 h-5.5 text-primary" />
                       </div>
                       <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
@@ -153,7 +166,7 @@ export function HowItWorksSection() {
 }
 
 export function ComparisonSection() {
-  return null; // Comparison data is now inline in PricingSection
+  return null;
 }
 
 export function PricingSection() {
@@ -164,7 +177,7 @@ export function PricingSection() {
         <motion.div variants={fadeUp} className="text-center mb-16">
           <SectionBadge>Pricing</SectionBadge>
           <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.06] tracking-[-0.03em]">
-            Simple,{" "}<span className="text-gradient">transparent</span>{" "}pricing
+            Simple,{" "}<span className="text-shimmer">transparent</span>{" "}pricing
           </h2>
           <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-[1rem] leading-[1.7]">
             Everything free during beta. No credit card. No catch.
@@ -174,12 +187,12 @@ export function PricingSection() {
         {/* 2-card layout */}
         <div className="grid md:grid-cols-2 gap-4 lg:gap-5 max-w-3xl mx-auto mb-14">
           {/* Free Beta Card */}
-          <motion.div variants={fadeUp} custom={0}>
+          <motion.div variants={popIn} custom={0}>
             <motion.div
-              className="group rounded-xl border border-primary/20 bg-card/60 backdrop-blur-sm p-6 lg:p-7 h-full flex flex-col relative overflow-hidden"
+              className="group rounded-xl border border-primary/20 bg-card/60 backdrop-blur-sm p-6 lg:p-7 h-full flex flex-col relative overflow-hidden liquid-shine"
               style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}
-              whileHover={{ y: -3, borderColor: "hsl(var(--primary) / 0.35)" }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
+              whileHover={{ y: -4, borderColor: "hsl(var(--primary) / 0.35)" }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             >
               {/* Top accent */}
               <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-primary to-transparent" />
@@ -208,11 +221,18 @@ export function PricingSection() {
                   "Pattern & mistake tracking",
                   "Weekly performance reports",
                   "Watchlists & alerts",
-                ].map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-[13px] leading-[1.6]">
+                ].map((f, i) => (
+                  <motion.li
+                    key={f}
+                    className="flex items-start gap-2 text-[13px] leading-[1.6]"
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.04, duration: 0.3 }}
+                  >
                     <CheckCircle2 className="w-4 h-4 text-profit shrink-0 mt-[1px]" />
                     <span className="tracking-[-0.006em]">{f}</span>
-                  </li>
+                  </motion.li>
                 ))}
               </ul>
 
@@ -229,12 +249,12 @@ export function PricingSection() {
           </motion.div>
 
           {/* Pro Card (Coming Soon) */}
-          <motion.div variants={fadeUp} custom={0.08}>
+          <motion.div variants={popIn} custom={0.1}>
             <motion.div
               className="group rounded-xl border border-border/20 bg-card/40 backdrop-blur-sm p-6 lg:p-7 h-full flex flex-col relative overflow-hidden"
               style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}
-              whileHover={{ y: -3, borderColor: "hsl(var(--border) / 0.4)" }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
+              whileHover={{ y: -4, borderColor: "hsl(var(--border) / 0.4)" }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="inline-flex self-start items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted/40 text-muted-foreground text-[10px] font-bold tracking-wide mb-5">
                 <Crown className="w-3 h-3" /> Coming Soon
@@ -275,7 +295,7 @@ export function PricingSection() {
           </motion.div>
         </div>
 
-        {/* Comparison table */}
+        {/* Comparison table with staggered row reveals */}
         <motion.div variants={fadeUp} className="max-w-3xl mx-auto mb-12">
           <h3 className="text-base font-semibold text-center mb-5 tracking-[-0.015em]">How we compare</h3>
           <div className="rounded-xl border border-border/20 bg-card/50 overflow-hidden" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}>
@@ -285,21 +305,48 @@ export function PricingSection() {
               <span className="text-[13px] font-medium text-center text-muted-foreground/50">Others</span>
             </div>
             {comparisonFeatures.map((row, i) => (
-              <div key={row.feature} className={cn("grid grid-cols-3 gap-0 border-b border-border/8 last:border-0 px-5 py-3", i % 2 === 0 ? "bg-muted/[0.03]" : "")}>
+              <motion.div
+                key={row.feature}
+                className={cn("grid grid-cols-3 gap-0 border-b border-border/8 last:border-0 px-5 py-3", i % 2 === 0 ? "bg-muted/[0.03]" : "")}
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.04, duration: 0.3 }}
+              >
                 <span className="text-[13px] text-foreground/80">{row.feature}</span>
-                <div className="flex justify-center">{row.tradebook === true ? <CheckCircle2 className="w-4 h-4 text-profit" /> : <span className="text-[13px] text-muted-foreground">{String(row.tradebook)}</span>}</div>
+                <div className="flex justify-center">
+                  {row.tradebook === true ? (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20, delay: i * 0.05 }}
+                    >
+                      <CheckCircle2 className="w-4 h-4 text-profit" />
+                    </motion.div>
+                  ) : (
+                    <span className="text-[13px] text-muted-foreground">{String(row.tradebook)}</span>
+                  )}
+                </div>
                 <div className="flex justify-center">{row.others === true ? <CheckCircle2 className="w-4 h-4 text-muted-foreground/25" /> : row.others === false ? <Minus className="w-4 h-4 text-muted-foreground/15" /> : <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted/30 text-muted-foreground/50">{String(row.others)}</span>}</div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>
 
         {/* Trust badges */}
         <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-3">
-          {[{ icon: Lock, text: "No credit card required" }, { icon: Shield, text: "Your data stays private" }, { icon: Clock, text: "Set up in under 2 minutes" }].map((item) => (
-            <div key={item.text} className="flex items-center gap-1.5 bg-muted/20 rounded-full px-3 py-1.5 text-[12px] text-muted-foreground/60">
+          {[{ icon: Lock, text: "No credit card required" }, { icon: Shield, text: "Your data stays private" }, { icon: Clock, text: "Set up in under 2 minutes" }].map((item, i) => (
+            <motion.div
+              key={item.text}
+              className="flex items-center gap-1.5 bg-muted/20 rounded-full px-3 py-1.5 text-[12px] text-muted-foreground/60"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1, duration: 0.4 }}
+            >
               <item.icon className="w-3 h-3" /><span>{item.text}</span>
-            </div>
+            </motion.div>
           ))}
         </motion.div>
       </MotionSection>
@@ -308,8 +355,8 @@ export function PricingSection() {
 }
 
 export function TestimonialsSection() {
-  const featured = testimonials[0]; // Rahul — strongest quote with metrics
-  const secondary = [testimonials[2], testimonials[3], testimonials[4]]; // Aditya, Vikram, Sneha
+  const featured = testimonials[0];
+  const secondary = [testimonials[2], testimonials[3], testimonials[4]];
 
   return (
     <section className="py-28 lg:py-36" aria-label="Testimonials">
@@ -317,15 +364,15 @@ export function TestimonialsSection() {
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>Testimonials</SectionBadge>
           <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-6 leading-[1.06] tracking-[-0.03em]">
-            Trusted by{" "}<span className="text-gradient">real traders</span>
+            Trusted by{" "}<span className="text-shimmer">real traders</span>
           </h2>
           <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-[1rem] leading-[1.7]">Here's what traders across India are saying.</p>
         </motion.div>
 
-        {/* Hero testimonial — dark card */}
+        {/* Hero testimonial — dark card with gradient border */}
         <motion.div variants={fadeUp} className="mb-8">
           <motion.div
-            className="rounded-2xl border border-foreground/10 bg-foreground text-background p-10 md:p-14 relative overflow-hidden"
+            className="rounded-2xl border border-foreground/10 bg-foreground text-background p-10 md:p-14 relative overflow-hidden gradient-border-animated"
             whileHover={{ y: -3 }}
             transition={{ duration: 0.3 }}
           >
@@ -352,15 +399,15 @@ export function TestimonialsSection() {
           </motion.div>
         </motion.div>
 
-        {/* 3 smaller testimonials */}
+        {/* 3 smaller testimonials — staggered popIn */}
         <div className="grid md:grid-cols-3 gap-5 mb-14">
           {secondary.map((t, i) => (
-            <motion.div key={t.name} variants={fadeUp} custom={i * 0.08}>
+            <motion.div key={t.name} variants={popIn} custom={i * 0.1}>
               <motion.div
                 className="rounded-2xl border border-border/30 bg-card/70 backdrop-blur-sm p-7 h-full flex flex-col"
                 style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}
-                whileHover={{ y: -3, borderColor: "hsl(var(--border) / 0.5)" }}
-                transition={{ duration: 0.3 }}
+                whileHover={{ y: -4, borderColor: "hsl(var(--border) / 0.5)" }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               >
                 <Quote className="w-6 h-6 text-primary/10 mb-3" />
                 <p className="text-[15px] text-muted-foreground leading-[1.65] flex-1 mb-5 tracking-[-0.006em]">
@@ -407,10 +454,10 @@ export function IndianMarketsSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-16 items-center">
           {/* Text side */}
-          <motion.div variants={fadeUp}>
+          <motion.div variants={slideFromLeft}>
             <SectionBadge>Made in India</SectionBadge>
             <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-6 leading-[1.06] tracking-[-0.03em]">
-              Built for{" "}<span className="text-gradient">Indian</span>{" "}markets
+              Built for{" "}<span className="text-shimmer">Indian</span>{" "}markets
             </h2>
             <p className="text-muted-foreground text-[15px] lg:text-[1rem] leading-[1.7] mb-8 tracking-[-0.006em]">
               Unlike generic journals, TradeBook understands Indian market structure — segments, lot sizes, INR formatting, and trading hours.
@@ -421,21 +468,36 @@ export function IndianMarketsSection() {
                 "INR formatting with Lakhs & Crores",
                 "Dhan broker auto-sync",
                 "Market hours & holiday awareness",
-              ].map((item) => (
-                <li key={item} className="flex items-center gap-2.5 text-[15px] text-foreground/85 tracking-[-0.006em]">
+              ].map((item, i) => (
+                <motion.li
+                  key={item}
+                  className="flex items-center gap-2.5 text-[15px] text-foreground/85 tracking-[-0.006em]"
+                  initial={{ opacity: 0, x: -15 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08, duration: 0.4 }}
+                >
                   <CheckCircle2 className="w-4 h-4 text-profit shrink-0" />
                   <span>{item}</span>
-                </li>
+                </motion.li>
               ))}
             </ul>
 
-            {/* Exchange badges */}
+            {/* Exchange badges — animated pulse borders */}
             <div className="flex items-center gap-3 mb-8">
-              {["NSE", "BSE", "MCX"].map((exchange) => (
-                <div key={exchange} className="flex items-center gap-2 px-4 py-2 rounded-full border border-border/30 bg-card/70 text-sm font-bold tracking-wide">
-                  <div className="w-2 h-2 rounded-full bg-profit" />
+              {["NSE", "BSE", "MCX"].map((exchange, i) => (
+                <motion.div
+                  key={exchange}
+                  className="flex items-center gap-2 px-4 py-2 rounded-full border border-border/30 bg-card/70 text-sm font-bold tracking-wide"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ type: "spring", stiffness: 260, damping: 20, delay: i * 0.1 }}
+                  whileHover={{ borderColor: "hsl(var(--profit) / 0.4)" }}
+                >
+                  <div className="w-2 h-2 rounded-full bg-profit animate-pulse" />
                   {exchange}
-                </div>
+                </motion.div>
               ))}
             </div>
 
@@ -446,14 +508,19 @@ export function IndianMarketsSection() {
             </motion.div>
           </motion.div>
 
-          {/* Segments card */}
-          <motion.div variants={fadeUp} custom={0.15}>
+          {/* Segments card — cascade reveal */}
+          <motion.div variants={slideFromRight} custom={0.15}>
             <div className="rounded-2xl border border-border/30 bg-card/70 backdrop-blur-sm overflow-hidden" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
-              {/* Tricolor stripe */}
-              <div className="h-1 flex">
+              {/* Animated tricolor stripe */}
+              <div className="h-1 flex overflow-hidden relative">
                 <div className="flex-1 bg-[#FF9933]" />
                 <div className="flex-1 bg-white dark:bg-white/80" />
                 <div className="flex-1 bg-[#128807]" />
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                  animate={{ x: ["-100%", "200%"] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "linear", repeatDelay: 2 }}
+                />
               </div>
 
               {/* Mock window chrome */}
@@ -476,12 +543,17 @@ export function IndianMarketsSection() {
                     { label: "Currency", color: "hsl(210 80% 55%)", Icon: Globe },
                     { label: "Intraday", color: "hsl(340 75% 55%)", Icon: Zap },
                     { label: "Positional", color: "hsl(270 60% 55%)", Icon: Clock },
-                  ].map((seg) => (
+                  ].map((seg, i) => (
                     <motion.div
                       key={seg.label}
                       className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-border/20 bg-muted/5 text-sm font-semibold cursor-default"
                       whileHover={{ backgroundColor: `${seg.color.replace(")", " / 0.06)")}`, scale: 1.02 }}
                       transition={{ duration: 0.2 }}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      // Cascade from top-left
+                      {...{ transition: { delay: (Math.floor(i / 2) + (i % 2)) * 0.06, duration: 0.3 } }}
                     >
                       <seg.Icon className="w-3.5 h-3.5 shrink-0" style={{ color: seg.color }} />
                       <span style={{ color: seg.color }}>{seg.label}</span>
@@ -512,7 +584,7 @@ export function FAQSection() {
         <motion.div variants={fadeUp} className="text-center mb-16">
           <SectionBadge>FAQ</SectionBadge>
           <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.06] tracking-[-0.03em]">
-            Got{" "}<span className="text-gradient">questions</span>?
+            Got{" "}<span className="text-shimmer">questions</span>?
           </h2>
           <p className="text-muted-foreground text-[15px] lg:text-[1rem] leading-[1.7]">Everything you need to know about TradeBook.</p>
         </motion.div>
@@ -523,7 +595,7 @@ export function FAQSection() {
               <AccordionItem
                 key={i}
                 value={`faq-${i}`}
-                className="rounded-xl border border-border/30 bg-card/70 px-6 data-[state=open]:border-primary/20 data-[state=open]:shadow-sm transition-colors"
+                className="rounded-xl border border-border/30 bg-card/70 px-6 data-[state=open]:border-primary/20 data-[state=open]:shadow-sm transition-all duration-300"
               >
                 <AccordionTrigger className="text-left text-[15px] font-semibold hover:no-underline py-4 tracking-[-0.01em]">
                   <span className="flex items-center gap-3">
@@ -541,7 +613,7 @@ export function FAQSection() {
           </Accordion>
         </motion.div>
 
-        {/* Docs CTA — simplified */}
+        {/* Docs CTA */}
         <motion.div variants={fadeUp} className="mt-14">
           <div className="rounded-2xl border border-border/30 bg-card/70 p-8 flex flex-col sm:flex-row items-center justify-between gap-5" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
             <div>
@@ -564,45 +636,71 @@ export function FinalCTASection() {
   const navigate = useNavigate();
   return (
     <section className="py-32 lg:py-40 relative overflow-hidden" aria-label="Call to action">
-      {/* Single subtle glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[450px] bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.05)_0%,transparent_65%)] pointer-events-none" />
+      {/* Aurora animated background */}
+      <div className="absolute inset-0 aurora-bg" />
+      
+      {/* Glows */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[450px] bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.06)_0%,transparent_65%)] pointer-events-none" />
+      <div className="absolute top-[30%] left-[20%] w-[400px] h-[400px] bg-[radial-gradient(ellipse_at_center,hsl(210_80%_55%/0.03)_0%,transparent_70%)] pointer-events-none" />
+
+      {/* Grain */}
+      <div className="absolute inset-0 grain-overlay pointer-events-none" />
 
       <MotionSection className="relative max-w-3xl mx-auto px-6 text-center">
         <motion.div variants={fadeUp} className="flex items-center justify-center gap-4 mb-10">
           <div className="flex -space-x-2">
             {["hsl(var(--primary))", "hsl(var(--profit))", "hsl(210 80% 55%)"].map((c, i) => (
-              <div key={i} className="w-7 h-7 rounded-full ring-2 ring-background" style={{ backgroundColor: c }} />
+              <motion.div
+                key={i}
+                className="w-7 h-7 rounded-full ring-2 ring-background"
+                style={{ backgroundColor: c }}
+                initial={{ opacity: 0, scale: 0 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ type: "spring", stiffness: 260, damping: 20, delay: i * 0.1 }}
+              />
             ))}
           </div>
           <span className="text-[13px] font-medium text-muted-foreground">1,200+ traders · 42,000+ trades</span>
         </motion.div>
 
-        <motion.h2 variants={fadeUp} className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold leading-[1.06] tracking-[-0.03em] mb-3">
+        <motion.h2 variants={blurIn} className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold leading-[1.06] tracking-[-0.03em] mb-3">
           Stop losing money to
         </motion.h2>
-        <motion.h2 variants={fadeUp} className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold leading-[1.06] tracking-[-0.03em] mb-10">
-          <span className="text-gradient">undisciplined</span> trading
+        <motion.h2 variants={blurIn} custom={0.1} className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold leading-[1.06] tracking-[-0.03em] mb-10">
+          <span className="text-shimmer">undisciplined</span> trading
         </motion.h2>
 
         <motion.p variants={fadeUp} className="text-[1rem] lg:text-[1.125rem] text-muted-foreground mb-14 max-w-xl mx-auto leading-[1.7] tracking-[-0.006em]">
           Join traders who journal, analyze, and compound their edge — every single day.
         </motion.p>
 
-        <motion.div variants={fadeUp} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
+        <motion.div variants={popIn} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
           <Button
             size="lg"
-            className="h-16 px-12 text-[17px] gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-[-0.01em]"
+            className="h-16 px-12 text-[17px] gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-[-0.01em] relative overflow-hidden group"
             onClick={() => navigate("/login?mode=signup")}
           >
-            Get Started — It's Free <ArrowRight className="w-4 h-4" />
+            {/* Shine sweep */}
+            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-1000" />
+            <span className="relative flex items-center gap-2.5">
+              Get Started — It's Free <ArrowRight className="w-4 h-4" />
+            </span>
           </Button>
         </motion.div>
 
         <motion.div variants={fadeUp} className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          {[{ icon: Lock, text: "Bank-grade encryption" }, { icon: Shield, text: "No credit card required" }, { icon: Clock, text: "Setup in 2 minutes" }].map((item) => (
-            <span key={item.text} className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/30 rounded-full px-3 py-1.5">
+          {[{ icon: Lock, text: "Bank-grade encryption" }, { icon: Shield, text: "No credit card required" }, { icon: Clock, text: "Setup in 2 minutes" }].map((item, i) => (
+            <motion.span
+              key={item.text}
+              className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/30 rounded-full px-3 py-1.5"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1, duration: 0.4 }}
+            >
               <item.icon className="w-3 h-3" /> {item.text}
-            </span>
+            </motion.span>
           ))}
         </motion.div>
       </MotionSection>
@@ -619,7 +717,6 @@ export function FooterSection() {
     e.preventDefault();
     if (!email.trim()) return;
     setEmail("");
-    // Visual feedback — backend integration pending
     const el = document.createElement("div");
     el.textContent = "✓ Thanks! We'll keep you posted.";
     el.className = "fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-card border border-border/40 text-foreground text-sm px-4 py-2.5 rounded-lg shadow-lg";

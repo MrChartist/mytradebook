@@ -1,120 +1,217 @@
+# TradeBook — 5-Phase Improvement Plan
 
+> Master roadmap covering website, docs, missing features, and polish.
+> Last updated: March 2026
 
-# Landing Page Redesign — Modern AI-Era Animated SaaS
+---
 
-## Current State
-The landing page uses **Sora + Inter** — clean but conventional. Animations are basic fade-ups. The layout is standard section-after-section. It needs more personality, movement, and a premium "new-age" feel.
+## Phase 1: Landing Page & Conversion Optimization
+**Goal:** Make the first impression unforgettable and maximize sign-up conversions.
 
-## Font Upgrade
+### Missing / To Improve
+- [ ] **Live Dashboard Preview** — replace static mockup with an animated, interactive mini-dashboard on the hero section (show real-looking equity curve, P&L ticking up, alerts firing)
+- [ ] **Feature comparison table** — detailed TradeBook vs Excel vs other journals (currently basic)
+- [ ] **Video walkthrough embed** — hero section "Watch Demo" button currently has no video; record and embed a 90-second Loom/YouTube
+- [ ] **Social proof counter** — "1,200+ traders" is hardcoded; connect to real user count from DB
+- [ ] **Trust badges** — add SSL, data encryption, "Made in India" trust strip below hero
+- [ ] **Pricing toggle** — add Monthly/Annual toggle with discount badge (currently static)
+- [ ] **Mobile landing navbar** — hamburger menu items need better spacing and CTA prominence
+- [ ] **Exit-intent popup** — show "Start free trial" modal when user is about to leave (desktop)
+- [ ] **Loading skeleton** — below-fold lazy sections show a spinner; replace with content skeletons
+- [ ] **OG image update** — current og-image.png may be outdated; regenerate with latest branding
 
-**Replace Sora with Space Grotesk** — a sharper, more geometric display font with distinctive character shapes (open apertures, squared curves). It reads more "tech/AI product" than Sora while staying highly legible.
+### Files to Touch
+- `src/pages/Landing.tsx`
+- `src/components/landing/HeroSection.tsx`
+- `src/components/landing/BelowFoldSections.tsx`
+- `src/components/landing/DashboardPreview.tsx`
+- `public/og-image.png`
 
-- **Space Grotesk** → all display headings, hero, section titles (weights: 500, 600, 700)
-- **Inter** → stays for body/UI (unchanged)
-- **JetBrains Mono** → stays for code/numbers (unchanged)
+---
 
-Files: `index.html` (swap font link), `tailwind.config.ts` (update `fontFamily.heading`)
+## Phase 2: Documentation Completeness & Quality
+**Goal:** Every feature documented with visual mockups, zero gaps.
 
-## Phase-by-Phase Implementation
+### Missing Docs Sections (not yet in docs)
+- [ ] **Sharing & Social Cards** — P&L Share Modal, Trade Share Modal, Streak Share Card (components exist but no dedicated docs section)
+- [ ] **Achievements & Gamification** — Badge grid, unlock conditions, progress tracking (component exists: `AchievementsBadgeGrid.tsx`)
+- [ ] **Position Sizing Calculator** — risk-per-trade calculator built into trade creation (component exists: `PositionSizingCalculator.tsx`)
+- [ ] **Trading Rules Checklist** — pre-trade discipline checklist (component exists: `TradingRulesChecklist.tsx`)
+- [ ] **Trade Coach Panel** — AI-powered coaching per trade (component exists: `TradeCoachPanel.tsx`)
+- [ ] **Multi-Leg Strategies** — options strategy builder (component exists: `MultiLegStrategyModal.tsx`)
+- [ ] **Smart Alert Suggestions** — AI-suggested alerts based on portfolio (component exists: `SmartAlertSuggestions.tsx`)
+- [ ] **Drawdown Recovery Analysis** — how long to recover from max drawdown (mentioned in roadmap but not documented)
+- [ ] **Risk-Reward scatter charts** — actual R:R vs planned R:R visualization
+- [ ] **Day of Week Analysis** — separate detailed section (currently bundled in "Time-Based Heatmaps")
 
-### Phase 1 — Font Swap + CSS Animation System
-**Files:** `index.html`, `tailwind.config.ts`, `src/index.css`, `src/components/landing/LandingShared.tsx`
+### Docs UX Improvements
+- [ ] **Search across docs content** — current sidebar search only filters section names, not body text
+- [ ] **Deep-link anchors** — clicking a FeatureCard title should update URL hash for sharing
+- [ ] **Print/PDF export** — "Download as PDF" button for offline reading
+- [ ] **Reading time estimate** — show estimated reading time per section
+- [ ] **Interactive mockups** — some mockups should have hover states or click interactions
+- [ ] **Video placeholders** — all 3 video placeholders still say "Coming Soon"; record or remove
+- [ ] **Mobile docs sidebar** — horizontal scroll tabs are hard to use with 21 items; add a dropdown
 
-1. Swap Sora → Space Grotesk in `index.html` Google Fonts link
-2. Update `tailwind.config.ts` heading font family
-3. Add new CSS animations to `index.css`:
-   - `@keyframes float` — gentle Y bobbing for floating elements
-   - `@keyframes gradient-shift` — moving gradient backgrounds
-   - `@keyframes blur-in` — blur→sharp entrance
-   - `@keyframes grain` — subtle noise texture overlay
-   - `.aurora-bg` — animated aurora gradient for hero background
-   - `.glass-card` — standardized glass morphism card with hover lift
-   - `.text-shimmer` — animated gradient text that shifts
-4. Update `LandingShared.tsx`:
-   - Add new motion variants: `blurIn`, `slideFromLeft`, `slideFromRight`, `popIn`
-   - Enhance `MotionSection` with optional parallax offset
-   - Update `SectionBadge` with animated border gradient
+### Files to Touch
+- `src/pages/Docs.tsx`
+- `src/components/docs/DocsMockups.tsx`
 
-### Phase 2 — Hero Section Redesign
-**File:** `src/components/landing/HeroSection.tsx`
+---
 
-- Replace static dot-pattern with animated aurora gradient mesh background (CSS-only, performant)
-- Add floating glassmorphic elements (trade card, win-rate badge, streak counter) that bob independently using `float` animation with staggered delays — brings the hero to life
-- Hero headline uses Space Grotesk with `.text-shimmer` gradient on the accent word
-- Subtitle entrance uses `blurIn` variant (blurred→sharp with Y movement)
-- CTA button gets a moving gradient border on hover (not just opacity change)
-- Stats bar cards get individual `popIn` entrances with stagger
-- Dashboard preview section: add a subtle mouse-follow tilt effect using `useMotionValue` + `useTransform` for 3D perspective that responds to cursor position
+## Phase 3: Core Feature Gaps & Polish
+**Goal:** Ship missing functionality that users expect but doesn't exist yet.
 
-### Phase 3 — Features Section
-**File:** `src/components/landing/FeaturesSection.tsx`
+### Missing Features
+- [ ] **Drawdown Recovery Analysis widget** — chart showing recovery time from each drawdown period (analytics page)
+- [ ] **Trade Similarity Engine** — "This trade looks like 5 previous trades where you won 4/5" (requires vector embeddings or simple feature matching)
+- [ ] **Streak share from dashboard** — direct "Share Streak" button on the StreakDiscipline widget
+- [ ] **Bulk trade actions** — select multiple trades → bulk close, bulk tag, bulk delete
+- [ ] **Trade duplication** — "Clone this trade" for similar setups
+- [ ] **Alert → Trade conversion** — when an alert triggers, one-click to create a trade with pre-filled data
+- [ ] **Study → Trade linking improvements** — show linked trades inside study detail, not just the other way
+- [ ] **Journal streak tracking** — track consecutive days with journal entries written
+- [ ] **Custom dashboard widgets** — user-created KPI cards with custom formulas
+- [ ] **Instrument favorites** — star instruments across the app for quick access everywhere
+- [ ] **Option Greeks display** — show delta, gamma, theta, vega for F&O trades
+- [ ] **P&L by broker** — if multiple brokers connected, show performance per broker
+- [ ] **Trade notes markdown** — support basic markdown in trade notes (bold, lists, links)
+- [ ] **Data backup/restore** — one-click full account backup to JSON
 
-- Category pills get an animated underline on hover instead of static bg
-- Bento grid cards: add animated gradient border on hover (the border color shifts), replace static `boxShadow` hover with a moving glow that follows card edges
-- Hero card (Smart Journal) gets a subtle animated background pattern
-- Each card icon gets a micro-bounce on card hover
-- Section heading uses `slideFromLeft` for title, `slideFromRight` for subtitle (split entrance)
+### UX Polish
+- [ ] **Instrument Picker UX** — implement the combobox pattern, keyboard nav, chip-style selection (from existing plan)
+- [ ] **Loading states consistency** — some pages use skeletons, others use spinners; standardize
+- [ ] **Empty states** — some pages lack good empty states (e.g., first visit to Analytics with no trades)
+- [ ] **Error boundary improvements** — current ErrorBoundary is basic; add retry button and error reporting
+- [ ] **Form validation feedback** — some forms show errors only on submit; add real-time validation
+- [ ] **Confirmation dialogs** — some destructive actions lack confirmation (e.g., deleting watchlist items)
 
-### Phase 4 — How It Works + Testimonials
-**File:** `src/components/landing/BelowFoldSections.tsx`
+### Files to Touch
+- `src/pages/Analytics.tsx` (drawdown recovery)
+- `src/components/trade/InstrumentPicker.tsx` (combobox refactor)
+- `src/pages/Trades.tsx` (bulk actions)
+- `src/components/dashboard/StreakDiscipline.tsx` (share button)
+- New components as needed
 
-**How It Works:**
-- Timeline connector line becomes animated — a gradient dot that travels down the line as you scroll (using `useScroll` + `useTransform`)
-- Step cards enter from alternating sides (`slideFromLeft` / `slideFromRight`) instead of uniform `fadeUp`
-- Step numbers get a count-up animation as they enter viewport
+---
 
-**Testimonials:**
-- Hero testimonial card gets a subtle animated gradient border
-- Secondary cards enter with staggered `popIn` instead of uniform `fadeUp`
-- Add auto-rotating quote highlight — the highlighted text portion pulses gently
+## Phase 4: Performance, SEO & Accessibility
+**Goal:** Fast load times, great SEO, and WCAG-compliant accessibility.
 
-### Phase 5 — Pricing + Indian Markets + FAQ
-**File:** `src/components/landing/BelowFoldSections.tsx`
+### Performance
+- [ ] **Bundle analysis** — audit bundle size; the app has 100+ components, many may be loaded eagerly
+- [ ] **Code splitting** — lazy-load analytics components (recharts is heavy), modal components, and settings tabs
+- [ ] **Image optimization** — convert PNGs to WebP, add width/height attributes, lazy-load below-fold images
+- [ ] **React Query optimization** — review stale times, add proper prefetching for likely navigations
+- [ ] **Virtualized lists** — trades list and watchlist items should use virtualization for 500+ items
+- [ ] **Service Worker caching** — PWA service worker should cache API responses for offline analytics viewing
+- [ ] **Font optimization** — preload critical fonts, use `font-display: swap`
 
-**Pricing:**
-- Free Beta card gets an animated "shine" sweep (like the existing `liquid-shine` but refined)
-- Comparison table rows animate in with stagger as they enter viewport
-- Check/cross icons get micro-scale-in animation
+### SEO
+- [ ] **Structured data** — add FAQ schema to landing page FAQ section, BreadcrumbList to docs
+- [ ] **Sitemap update** — `public/sitemap.xml` may be missing newer pages (Docs, Fundamentals, etc.)
+- [ ] **Canonical URLs** — ensure all pages have proper canonical tags
+- [ ] **Meta descriptions** — audit all pages for unique, keyword-rich meta descriptions
+- [ ] **robots.txt review** — ensure crawl directives are correct
+- [ ] **Internal linking** — docs should link to relevant app pages, landing should deep-link to docs sections
+- [ ] **Alt text audit** — ensure all images have descriptive alt text
 
-**Indian Markets:**
-- Segment grid items get a sequential reveal animation (cascade from top-left)
-- Exchange badges get animated pulse borders
-- The tricolor stripe becomes an animated gradient that shifts
+### Accessibility
+- [ ] **ARIA labels** — audit all interactive elements for proper ARIA attributes
+- [ ] **Keyboard navigation** — ensure all modals, popovers, and dropdowns are fully keyboard-navigable
+- [ ] **Color contrast** — verify all text meets WCAG AA contrast ratios in both light and dark modes
+- [ ] **Focus indicators** — ensure visible focus rings on all interactive elements
+- [ ] **Screen reader testing** — test critical flows (create trade, set alert) with screen readers
+- [ ] **Skip navigation link** — add "Skip to main content" link for keyboard users
+- [ ] **Reduced motion** — respect `prefers-reduced-motion` for all animations
 
-**FAQ:**
-- Accordion items get smooth height + blur transition (content blurs in as it expands)
+### Files to Touch
+- `src/App.tsx` (lazy loading)
+- `src/main.tsx` (font preloading)
+- `public/sitemap.xml`
+- `public/robots.txt`
+- `index.html` (meta, preloads)
+- All component files (a11y audit)
 
-### Phase 6 — Final CTA + Footer + Global Polish
-**Files:** `BelowFoldSections.tsx`, `StickyCTA.tsx`, `LandingNavbar.tsx`
+---
 
-**Final CTA:**
-- Background gets animated aurora mesh (reuse from hero but different colors)
-- CTA button gets magnetic hover effect (button moves slightly toward cursor)
-- Trust badges fade in sequentially
+## Phase 5: Growth, Monetization & Community
+**Goal:** Activate monetization, build community features, and enable viral growth.
 
-**Navbar:**
-- Active link indicator becomes animated (sliding pill that moves between items using `layoutId`)
-- On scroll: navbar border becomes an animated gradient line
+### Monetization
+- [ ] **Stripe/Razorpay integration** — connect payment provider for Pro plan subscriptions
+- [ ] **Plan enforcement** — actually gate features behind plan limits (currently all unlocked in beta)
+- [ ] **Usage tracking** — track trade count per month for plan limit enforcement
+- [ ] **Upgrade prompts** — contextual "Upgrade to Pro" prompts when users hit free limits
+- [ ] **Trial expiry flow** — email reminders at 3 days, 1 day before trial ends
+- [ ] **Referral program** — "Invite a trader, get 1 month free" referral system
+- [ ] **Annual billing discount** — 20% off for annual subscriptions
 
-**StickyCTA:**
-- Entry animation becomes a spring bounce instead of simple slide
-- Add subtle pulsing glow on the CTA button
+### Community & Social
+- [ ] **Public trader profiles** — opt-in public journal with RA-compliant disclaimer
+- [ ] **Leaderboard** — anonymous win-rate / streak leaderboard (opt-in)
+- [ ] **Trade idea sharing** — share studies/trade ideas with the community
+- [ ] **Comment system** — allow comments on shared studies/trades
+- [ ] **Social login** — Google OAuth for faster signup (infrastructure exists in Supabase)
 
-### Phase 7 — Responsive + Performance Pass
-- Disable heavy animations on mobile (reduce `float` elements, simplify aurora to static gradient)
-- Add `prefers-reduced-motion` media query checks — fall back to simple fades
-- Ensure all new animations use `transform` and `opacity` only (GPU-composited, no layout thrash)
-- Test all sections at 320px, 375px, 768px, 1024px, 1440px
+### Notifications & Engagement
+- [ ] **Email notifications** — weekly summary email with P&L, win rate, and insights
+- [ ] **Push notifications** — PWA push notifications for alerts (requires service worker updates)
+- [ ] **In-app notification center** — bell icon with unread count, notification history
+- [ ] **Onboarding email drip** — 5-email sequence for new users (Day 1, 3, 5, 7, 14)
 
-## What Does NOT Change
-- Color system (warm orange primary)
-- Section order and content
-- Dashboard preview internals
-- Feature mini-previews content
-- Routing, auth, SEO
-- App interior pages
-- Footer content/links
+### Integrations
+- [ ] **Zerodha Kite integration** — auto-sync trades and live prices from Zerodha
+- [ ] **Angel One integration** — third broker option for wider market coverage
+- [ ] **TradingView webhook** — receive TradingView alerts directly into TradeBook alerts
+- [ ] **Google Sheets export** — one-click sync trade data to a Google Sheet
+- [ ] **Webhook API** — public API for custom integrations (zapier, custom bots)
 
-## Summary
-7 phases, ~8 files. Core changes: Space Grotesk font, aurora backgrounds, floating glassmorphic elements, animated gradient borders, scroll-driven timeline, parallax effects, magnetic buttons, staggered reveals. All CSS/framer-motion — no new dependencies.
+### Files to Touch
+- New edge functions for payments, notifications
+- `src/hooks/useSubscription.ts` (plan enforcement)
+- `src/components/PlanGate.tsx` (gate improvements)
+- New pages: PublicProfile, Leaderboard, NotificationCenter
+- `supabase/functions/` (new functions for webhooks, emails)
 
+---
+
+## Priority Matrix
+
+| Priority | Phase | Impact | Effort |
+|----------|-------|--------|--------|
+| 🔴 P0 | Phase 3 | Instrument Picker UX refactor | Medium |
+| 🔴 P0 | Phase 2 | Document all missing features | Low |
+| 🟡 P1 | Phase 1 | Landing page video + social proof | Medium |
+| 🟡 P1 | Phase 4 | Bundle optimization + code splitting | Medium |
+| 🟡 P1 | Phase 3 | Bulk trade actions | Medium |
+| 🟢 P2 | Phase 5 | Payment integration | High |
+| 🟢 P2 | Phase 4 | Full a11y audit | Medium |
+| 🟢 P2 | Phase 5 | Zerodha integration | High |
+| 🔵 P3 | Phase 5 | Public profiles & leaderboard | High |
+| 🔵 P3 | Phase 3 | Trade Similarity Engine | Very High |
+
+---
+
+## Completed ✅
+- [x] AI Pattern Detection — behavioral insights (v3.0)
+- [x] Sector Rotation Heatmap (v3.0)
+- [x] Setup Win-Rate Matrix (v3.0)
+- [x] Emotional P&L Correlation (v3.0)
+- [x] Dashboard drag-and-drop reordering (v2.9)
+- [x] Floating Trade Ticker (v2.9)
+- [x] Animated KPI numbers (v2.9)
+- [x] Mobile swipe-to-act on trades (v2.9)
+- [x] Quick Trade Entry via Command Palette (v2.9)
+- [x] Stock Screener with 47 presets (v2.8)
+- [x] Portfolio Heat Map widget (v2.7)
+- [x] Daily Review Wizard (v2.7)
+- [x] Multi-leg strategy support (v2.6)
+- [x] TSL profiles per segment (v2.6)
+- [x] AI Trade Insights (v2.6)
+- [x] Trade Templates & Smart Suggestions (v2.5)
+- [x] CSV Import/Export (v2.5)
+- [x] Offline trade queue (v2.5)
+- [x] Docs: AI Pattern Detection, Sector Rotation, Win-Rate Matrix, Emotional P&L documented
+- [x] Docs: Share Cards, Achievements, Floating Ticker, Animated Numbers documented
+- [x] Docs: Changelog updated with v2.9 and v3.0

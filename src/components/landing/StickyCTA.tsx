@@ -25,10 +25,10 @@ export function StickyCTA() {
     <AnimatePresence>
       {visible && (
         <motion.div
-          initial={{ y: 80, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 80, opacity: 0 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
+          initial={{ y: 80, opacity: 0, scale: 0.95 }}
+          animate={{ y: 0, opacity: 1, scale: 1 }}
+          exit={{ y: 80, opacity: 0, scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 300, damping: 25 }}
           className="fixed bottom-0 left-0 right-0 z-40 pointer-events-none"
         >
           <div className="max-w-md mx-auto px-4 pb-4 pointer-events-auto">
@@ -43,11 +43,15 @@ export function StickyCTA() {
               </p>
               <Button
                 size="sm"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 h-8 text-[13px] font-semibold gap-1.5 shrink-0"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 h-8 text-[13px] font-semibold gap-1.5 shrink-0 relative overflow-hidden group"
                 onClick={() => navigate("/login?mode=signup")}
               >
-                Get Started
-                <ArrowRight className="w-3.5 h-3.5" />
+                <span className="relative flex items-center gap-1.5">
+                  Get Started
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </span>
+                {/* Pulsing glow */}
+                <span className="absolute inset-0 rounded-full animate-glow opacity-50" />
               </Button>
             </div>
           </div>
