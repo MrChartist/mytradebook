@@ -84,20 +84,20 @@ interface Step {
 export function StepByStep({ steps, title }: { steps: Step[]; title?: string }) {
   return (
     <div className={CARD_SPACING}>
-      {title && <p className="text-[15px] font-semibold text-foreground mb-4">{title}</p>}
+      {title && <p className="docs-subtopic-heading mb-5" style={{ fontSize: '1rem', fontWeight: 600 }}>{title}</p>}
       <div className="relative pl-1">
-        <div className="absolute left-[13px] top-5 bottom-5 w-px bg-border/30" />
-        <div className="space-y-5">
+        <div className="absolute left-[14px] top-6 bottom-6 w-px" style={{ background: 'hsl(var(--docs-border-subtle))' }} />
+        <div className="space-y-6">
           {steps.map((step, i) => (
             <div key={i} className="flex items-start gap-4 relative">
-              <div className="w-[26px] h-[26px] rounded-full bg-card border border-border/40 flex items-center justify-center shrink-0 z-10 relative shadow-sm">
-                <span className="text-[11px] font-bold text-muted-foreground/70">{i + 1}</span>
+              <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 z-10 relative" style={{ background: 'hsl(var(--docs-surface))', border: '1px solid hsl(var(--docs-border-subtle))' }}>
+                <span className="text-[11px] font-bold" style={{ color: 'hsl(var(--docs-text-muted))' }}>{i + 1}</span>
               </div>
               <div className="flex-1 pt-0.5 min-w-0">
-                <p className="text-[15px] font-medium text-foreground leading-snug">{step.title}</p>
-                <p className="text-[14px] text-muted-foreground/75 mt-1.5 leading-relaxed">{step.description}</p>
+                <p className="docs-card-title leading-snug" style={{ fontSize: '1rem' }}>{step.title}</p>
+                <p className="docs-body mt-2" style={{ color: 'hsl(var(--docs-text-secondary))' }}>{step.description}</p>
                 {step.detail && (
-                  <p className="text-[13px] text-muted-foreground/55 mt-1.5 leading-relaxed italic">{step.detail}</p>
+                  <p className="docs-helper mt-2 italic">{step.detail}</p>
                 )}
               </div>
             </div>
