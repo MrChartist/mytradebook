@@ -1,20 +1,14 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { SEOHead } from "@/components/SEOHead";
 import { useAuth } from "@/contexts/AuthContext";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  ArrowRight, BarChart3, Activity, PieChart, Zap, Send, Menu, X,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import landingLogo from "@/assets/logo.png";
 import { StickyCTA } from "@/components/landing/StickyCTA";
+import { LandingNavbar } from "@/components/landing/LandingNavbar";
 
 // Eagerly loaded — above the fold
 import { HeroSection } from "@/components/landing/HeroSection";
 import {
-  useCountUp, fadeUp, MotionSection, GradientDivider,
+  useCountUp, GradientDivider,
 } from "@/components/landing/LandingShared";
 
 // Lazy-loaded — below the fold (only loaded when user scrolls)
