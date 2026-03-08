@@ -364,6 +364,7 @@ export default function Login() {
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           autoComplete="name"
+                          className="h-11"
                         />
                       </div>
                     )}
