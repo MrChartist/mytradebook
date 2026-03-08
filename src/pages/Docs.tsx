@@ -1935,7 +1935,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
 
               <SubTopic title="AI-Powered Behavioral Analytics" description="Machine learning insights into your trading psychology and hidden patterns." id="an-ai" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Sparkles} title="AI Pattern Detection" badge="New">
                   <p className="text-sm text-muted-foreground mb-3">
                     AI analyzes your entire trade history to surface hidden behavioral patterns — things you'd never spot manually:
