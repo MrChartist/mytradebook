@@ -242,7 +242,7 @@ export function InteractiveMockup({ children, label, className }: { children: Re
    ────────────────────────────────────────────── */
 export function PhaseHeader({ phase, total = 26 }: { phase: number; total?: number }) {
   return (
-    <div className="flex items-center gap-2.5 mb-4">
+    <div className="hidden sm:flex items-center gap-2.5 mb-4">
       <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg text-[11px] font-bold ring-1 ring-[hsl(var(--docs-accent-soft)/0.2)]" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)', color: 'hsl(var(--docs-accent))' }}>
         {phase}
       </span>

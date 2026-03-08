@@ -361,7 +361,7 @@ const SectionHeader = React.forwardRef<HTMLDivElement, {
   }, [id]);
 
   return (
-    <div ref={ref} id={id} className="scroll-mt-32 mb-10 pt-2 group">
+    <div ref={ref} id={id} className="scroll-mt-36 mb-10 pt-2 group">
       <div className="flex items-center gap-3.5 mb-4">
         <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ring-1 ring-[hsl(var(--docs-accent-soft)/0.15)]" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
           <Icon className="w-5 h-5" style={{ color: 'hsl(var(--docs-accent))' }} />
@@ -555,27 +555,16 @@ export default function Docs() {
 
 function DocsSearchModal({ open, onClose, scrollTo }: { open: boolean; onClose: () => void; scrollTo: (id: string) => void }) {
   const [query, setQuery] = useState("");
+  const [selectedIdx, setSelectedIdx] = useState(0);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const listRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (open) {
       setQuery("");
+      setSelectedIdx(0);
       setTimeout(() => inputRef.current?.focus(), 100);
     }
-  }, [open]);
-
-  // Also listen for Cmd+K / Ctrl+K
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        if (!open) {
-          // parent will handle opening
-        }
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
   }, [open]);
 
   const allItems = SECTIONS.flatMap(s => {
@@ -590,12 +579,23 @@ function DocsSearchModal({ open, onClose, scrollTo }: { open: boolean; onClose: 
     ? allItems.filter(item => item.label.toLowerCase().includes(query.toLowerCase()) || ("parent" in item && item.parent?.toLowerCase().includes(query.toLowerCase())))
     : allItems.filter(i => i.type === "section");
 
+  const visibleItems = filtered.slice(0, 25);
+
+  useEffect(() => { setSelectedIdx(0); }, [query]);
+
+  const selectItem = useCallback((idx: number) => {
+    if (visibleItems[idx]) {
+      scrollTo(visibleItems[idx].id);
+      onClose();
+    }
+  }, [visibleItems, scrollTo, onClose]);
+
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-[60]" role="dialog" aria-modal="true">
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed top-[10%] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md z-[61]">
+      <div className="fixed top-[8%] sm:top-[12%] left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] max-w-md z-[61]">
         <div
           className="rounded-xl overflow-hidden shadow-2xl"
           style={{
@@ -615,36 +615,51 @@ function DocsSearchModal({ open, onClose, scrollTo }: { open: boolean; onClose: 
               style={{ color: 'hsl(var(--docs-text-primary))' }}
               onKeyDown={e => {
                 if (e.key === "Escape") onClose();
-                if (e.key === "Enter" && filtered.length > 0) {
-                  scrollTo(filtered[0].id);
-                  onClose();
-                }
+                if (e.key === "Enter") { selectItem(selectedIdx); }
+                if (e.key === "ArrowDown") { e.preventDefault(); setSelectedIdx(i => Math.min(i + 1, visibleItems.length - 1)); }
+                if (e.key === "ArrowUp") { e.preventDefault(); setSelectedIdx(i => Math.max(i - 1, 0)); }
               }}
             />
+            {query.trim() && (
+              <span className="text-[10px] shrink-0" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }}>
+                {filtered.length} result{filtered.length !== 1 ? "s" : ""}
+              </span>
+            )}
             <kbd
-              className="text-[10px] font-mono px-1.5 py-0.5 rounded"
+              className="text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0"
               style={{ background: 'hsl(var(--docs-elevated))', color: 'hsl(var(--docs-text-muted))' }}
             >
               ESC
             </kbd>
           </div>
-          <div className="max-h-[50vh] overflow-y-auto py-1">
+          <div ref={listRef} className="max-h-[50vh] overflow-y-auto py-1">
             {filtered.length === 0 && (
               <p className="text-center text-sm py-8" style={{ color: 'hsl(var(--docs-text-muted))' }}>No results found</p>
             )}
-            {filtered.slice(0, 20).map(item => (
+            {visibleItems.map((item, idx) => (
               <button
                 key={item.id}
-                onClick={() => { scrollTo(item.id); onClose(); }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-[hsl(var(--docs-elevated)/0.5)]"
+                onClick={() => selectItem(idx)}
+                onMouseEnter={() => setSelectedIdx(idx)}
+                className={cn(
+                  "w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors",
+                  idx === selectedIdx ? "bg-[hsl(var(--docs-accent)/0.08)]" : "hover:bg-[hsl(var(--docs-elevated)/0.5)]"
+                )}
+                ref={el => { if (idx === selectedIdx && el) el.scrollIntoView({ block: "nearest" }); }}
               >
-                <item.icon className="w-3.5 h-3.5 shrink-0" style={{ color: 'hsl(var(--docs-accent))' }} />
-                <div className="min-w-0">
+                <item.icon className="w-3.5 h-3.5 shrink-0" style={{ color: idx === selectedIdx ? 'hsl(var(--docs-accent))' : 'hsl(var(--docs-text-muted) / 0.5)' }} />
+                <div className="min-w-0 flex-1">
                   <span className="text-[13px] block truncate" style={{ color: 'hsl(var(--docs-text-primary))' }}>{item.label}</span>
                   {"parent" in item && item.parent && (
                     <span className="text-[11px] block truncate" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>{item.parent}</span>
                   )}
                 </div>
+                <span
+                  className="text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0"
+                  style={{ background: 'hsl(var(--docs-elevated))', color: 'hsl(var(--docs-text-muted) / 0.6)' }}
+                >
+                  {item.type === "section" ? "Section" : "Topic"}
+                </span>
               </button>
             ))}
           </div>
@@ -676,9 +691,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
     });
   };
 
+  const [readProgress, setReadProgress] = useState(0);
+
   useEffect(() => {
     const handleScroll = () => {
       setShowBackToTop(window.scrollY > 600);
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      setReadProgress(docHeight > 0 ? Math.min(100, Math.round((window.scrollY / docHeight) * 100)) : 0);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -700,8 +719,27 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
     ? SECTIONS.filter((s) => s.label.toLowerCase().includes(sidebarSearch.toLowerCase()))
     : SECTIONS;
 
+  const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
+
+  // Auto-expand the group that contains the active section
+  useEffect(() => {
+    const group = sidebarGroups.find(g => g.ids.includes(activeSection));
+    if (group) setExpandedGroup(group.label);
+  }, [activeSection, sidebarGroups]);
+
   return (
     <div className={cn("docs-page min-h-screen", isInsideApp && "pb-6", mode === "bw" && "docs-bw")} role="document">
+      {/* Reading progress bar */}
+      <div className="fixed top-0 left-0 right-0 z-[60] h-[2px]" style={{ background: 'hsl(var(--docs-border-subtle) / 0.2)' }}>
+        <div
+          className="h-full transition-[width] duration-150 ease-out"
+          style={{
+            width: `${readProgress}%`,
+            background: 'linear-gradient(90deg, hsl(var(--docs-accent)), hsl(var(--docs-accent) / 0.7))',
+          }}
+        />
+      </div>
+
       {/* Search modal */}
       <DocsSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} scrollTo={scrollTo} />
 
@@ -766,8 +804,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         <div className="relative">
           <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 z-10" style={{ background: 'linear-gradient(to right, hsl(var(--docs-bg) / 0.94), transparent)' }} />
           <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 z-10" style={{ background: 'linear-gradient(to left, hsl(var(--docs-bg) / 0.94), transparent)' }} />
+          {/* Primary group pills */}
           <div
-            className="flex gap-1.5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-4 py-2.5 no-scrollbar"
+            className="flex gap-1.5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-4 py-2 no-scrollbar"
             style={{ WebkitOverflowScrolling: "touch" }}
             ref={(el) => {
               if (el) {
@@ -784,12 +823,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           >
             {sidebarGroups.map((group) => {
               const groupActive = group.ids.includes(activeSection);
-              const firstId = group.ids[0];
+              const isExpanded = expandedGroup === group.label;
               return (
                 <button
                   key={group.label}
                   data-active={groupActive}
-                  onClick={() => scrollTo(firstId)}
+                  onClick={() => {
+                    if (isExpanded) {
+                      // Already expanded — scroll to first section
+                      scrollTo(group.ids[0]);
+                    } else {
+                      setExpandedGroup(group.label);
+                    }
+                  }}
                   className={cn("docs-mobile-tab shrink-0 snap-start flex items-center gap-1.5", groupActive && "active")}
                 >
                   {group.label}
@@ -798,6 +844,54 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             })}
             <div className="shrink-0 w-6" aria-hidden="true" />
           </div>
+          {/* Expanded section drill-down row */}
+          <AnimatePresence>
+            {expandedGroup && (() => {
+              const group = sidebarGroups.find(g => g.label === expandedGroup);
+              if (!group || group.ids.length <= 1) return null;
+              const groupSections = SECTIONS.filter(s => group.ids.includes(s.id));
+              return (
+                <motion.div
+                  key={expandedGroup}
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="overflow-hidden"
+                  style={{ borderTop: '1px solid hsl(var(--docs-border-subtle) / 0.3)' }}
+                >
+                  <div
+                    className="flex gap-1 overflow-x-auto overscroll-x-contain px-4 py-1.5 no-scrollbar"
+                    style={{ WebkitOverflowScrolling: "touch" }}
+                  >
+                    {groupSections.map(s => {
+                      const isActive = activeSection === s.id;
+                      return (
+                        <button
+                          key={s.id}
+                          onClick={() => scrollTo(s.id)}
+                          className={cn(
+                            "shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all whitespace-nowrap",
+                            isActive
+                              ? "font-semibold"
+                              : "opacity-70 hover:opacity-100"
+                          )}
+                          style={{
+                            color: isActive ? 'hsl(var(--docs-accent))' : 'hsl(var(--docs-text-secondary))',
+                            background: isActive ? 'hsl(var(--docs-accent) / 0.08)' : 'transparent',
+                          }}
+                        >
+                          <s.icon className="w-3 h-3" />
+                          {s.label}
+                        </button>
+                      );
+                    })}
+                    <div className="shrink-0 w-4" aria-hidden="true" />
+                  </div>
+                </motion.div>
+              );
+            })()}
+          </AnimatePresence>
         </div>
       </nav>
 
@@ -957,7 +1051,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         {/* ─────────────────────────────────────────────────────────────
             CENTER CONTENT COLUMN — Readable width, proper padding
             ───────────────────────────────────────────────────────────── */}
-        <main className="flex-1 min-w-0 px-5 sm:px-8 lg:px-12 xl:px-16 py-10 lg:py-12 pt-[7rem] lg:pt-12">
+        <main className="flex-1 min-w-0 px-5 sm:px-8 lg:px-12 xl:px-16 py-10 lg:py-12 pt-[8.5rem] lg:pt-12">
           <div className="max-w-[720px] mx-auto space-y-16 lg:space-y-18">
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
@@ -4448,11 +4542,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-6 right-4 lg:right-6 z-50 w-10 h-10 rounded-xl shadow-lg flex items-center justify-center transition-all"
+            className="fixed bottom-5 right-5 z-50 w-11 h-11 rounded-xl shadow-lg flex flex-col items-center justify-center gap-0 transition-all"
             style={{ background: 'hsl(var(--docs-elevated))', border: '1px solid hsl(var(--docs-border))', color: 'hsl(var(--docs-text-secondary))' }}
             aria-label="Back to top"
           >
             <ArrowUpRight className="w-4 h-4 -rotate-45" />
+            <span className="text-[8px] font-semibold leading-none -mt-0.5" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>{readProgress}%</span>
           </motion.button>
         )}
       </AnimatePresence>
