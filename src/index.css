@@ -1442,8 +1442,9 @@
   .docs-page [role="document"] ul > li {
     position: relative;
     padding-left: 1.25rem;
-    margin-bottom: 0.5rem;
-    line-height: 1.7;
+    margin-bottom: 0.625rem;
+    line-height: 1.78;
+    font-size: 1rem;
   }
   .docs-page .docs-card-content ul > li::before,
   .docs-page [role="document"] ul > li::before {
