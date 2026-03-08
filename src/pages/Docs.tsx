@@ -363,10 +363,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             className="flex flex-wrap gap-2 mt-5"
           >
             {[
-              { label: "21 Sections", icon: FileText },
-              { label: "60+ Mockups", icon: Eye },
+              { label: "26 Sections", icon: FileText },
+              { label: "80+ Mockups", icon: Eye },
               { label: "Every Feature", icon: Zap },
-              { label: "Free & Pro", icon: Star },
+              { label: "Free vs Pro", icon: Star },
             ].map((stat) => (
               <div key={stat.label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/15 bg-card/40 text-[11px] font-semibold text-foreground/80">
                 <stat.icon className="w-3 h-3 text-primary" />
