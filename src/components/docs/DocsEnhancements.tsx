@@ -13,7 +13,7 @@ import {
    ────────────────────────────────────────────── */
 const CARD_BORDER = "border-[hsl(var(--docs-border-subtle,215_25%_18%))]";
 const CARD_RADIUS = "rounded-xl";
-const CARD_SPACING = "my-7";
+const CARD_SPACING = "my-6";
 const BODY_TEXT = "docs-body";
 
 /* ──────────────────────────────────────────────

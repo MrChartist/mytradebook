@@ -1031,6 +1031,7 @@
   .docs-page .docs-anchor-link.active {
     color: hsl(var(--docs-accent));
     border-left-color: hsl(var(--docs-accent));
+    border-left-width: 3px;
     font-weight: 530;
     background: hsl(var(--docs-accent-soft) / 0.05);
   }
