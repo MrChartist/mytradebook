@@ -706,9 +706,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip>
                 <p>Always set your stop loss before submitting a trade. TradeBook calculates your risk-to-reward ratio automatically — trades with R:R below 1:2 are flagged in your analytics.</p>
               </ProTip>
-
-              <SubTopic title="Creating & Managing Trades" description="Log trades with detailed metadata and smart defaults." />
-              <FeatureCard icon={Search} title="Creating a Trade">
+              <QuickNav items={[
+                { label: "Creating Trades", id: "tm-creating" },
+                { label: "Risk Management", id: "tm-risk" },
+                { label: "Post-Trade Review", id: "tm-review" },
+                { label: "Sharing & Discipline", id: "tm-sharing" },
+                { label: "Quick Actions", id: "tm-quick" },
+              ]} />
+              <SubTopic title="Creating & Managing Trades" description="Log trades with detailed metadata and smart defaults." id="tm-creating" />
                 <p className="text-sm text-muted-foreground mb-3">Step-by-step trade creation with smart defaults:</p>
                 <FeatureList items={[
                   "Unified instrument search across NSE, BSE, MCX (equity, futures, options)",
