@@ -589,11 +589,11 @@ export function FinalCTASection() {
           <span className="text-sm font-medium text-muted-foreground">1,200+ traders · 42,000+ trades</span>
         </motion.div>
 
-        <motion.h2 variants={fadeUp} className="font-display text-[2rem] lg:text-[3rem] font-bold leading-[1.1] tracking-[-0.02em] mb-3">
+        <motion.h2 variants={fadeUp} className="font-heading text-[2rem] lg:text-[3rem] font-bold leading-[1.1] tracking-[-0.02em] mb-3">
           Stop losing money to
         </motion.h2>
-        <motion.h2 variants={fadeUp} className="font-display text-[2rem] lg:text-[3rem] font-bold leading-[1.1] tracking-[-0.02em] mb-8">
-          <span className="accent-script">undisciplined</span> trading
+        <motion.h2 variants={fadeUp} className="font-heading text-[2rem] lg:text-[3rem] font-bold leading-[1.1] tracking-[-0.02em] mb-8">
+          <span className="accent-serif">undisciplined</span> trading
         </motion.h2>
 
         <motion.p variants={fadeUp} className="text-lg text-muted-foreground mb-12 max-w-xl mx-auto leading-[1.65] tracking-[-0.008em]">
