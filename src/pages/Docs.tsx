@@ -22,7 +22,7 @@ import {
   PanelLeftClose, PanelLeftOpen, SlidersHorizontal,
   Calculator, ClipboardCheck, Trophy, Info, Radio
 } from "lucide-react";
-import { LandingNavbar } from "@/components/landing/LandingNavbar";
+// DocsNavbar is used instead of LandingNavbar on this page
 import { DocsNavbar } from "@/components/docs/DocsNavbar";
 import {
   OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
