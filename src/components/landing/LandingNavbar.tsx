@@ -85,7 +85,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
         </div>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-2 text-sm">
+        <div className="hidden md:flex items-center gap-1.5 text-sm">
           {NAV_LINKS.map((item) => {
             const isActive = item.page === activePage;
             return (
