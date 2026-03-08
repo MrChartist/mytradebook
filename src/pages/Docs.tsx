@@ -548,10 +548,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                                onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
                                className={cn(
                                  "w-full flex items-center rounded-lg text-[13px] transition-all duration-150 text-left relative",
-                                 sidebarCollapsed ? "justify-center p-2" : "gap-2.5 px-2.5 py-[7px]",
-                                 isActive
-                                   ? "text-foreground font-medium bg-muted/50"
-                                   : "text-muted-foreground/55 hover:text-foreground hover:bg-muted/25"
+                                  sidebarCollapsed ? "justify-center p-2" : "gap-2.5 px-2.5 py-[7px]",
+                                  isActive
+                                    ? "text-foreground font-medium bg-muted/50"
+                                    : "text-muted-foreground/65 hover:text-foreground hover:bg-muted/25"
                                )}
                              >
                                {isActive && !sidebarCollapsed && (
