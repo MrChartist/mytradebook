@@ -258,8 +258,10 @@ const SECTION_ANCHORS: Record<string, { label: string; id: string }[]> = {
   ],
   "settings": [
     { label: "Profile & Billing", id: "set-account" },
+    { label: "Subscription & Plans", id: "set-plans" },
     { label: "Tags & Preferences", id: "set-tags" },
     { label: "Capital Management", id: "set-capital" },
+    { label: "Data Export & Backup", id: "set-export" },
     { label: "Security & Integrations", id: "set-security" },
   ],
   "faq": [
