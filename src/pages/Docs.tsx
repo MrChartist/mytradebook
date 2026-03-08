@@ -4069,35 +4069,38 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
               </motion.section>
             )}
-          </main>
+          </div>
+        </main>
 
-          {/* Right sidebar — On this page */}
-          <aside className="hidden xl:block w-[190px] shrink-0">
-            <div className="sticky top-20 py-8 pl-5 pr-3">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-4" style={{ color: 'hsl(var(--docs-text-muted) / 0.55)' }}>On this page</p>
-              <AnimatePresence mode="wait">
-                <motion.nav 
-                  key={activeSection}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                  className="space-y-0.5"
-                >
-                  {(SECTION_ANCHORS[activeSection] || []).map((anchor) => (
-                    <button
-                      key={anchor.id}
-                      onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                      className="docs-anchor-link block w-full text-left py-1.5 transition-colors duration-150 leading-snug"
-                    >
-                      {anchor.label}
-                    </button>
-                  ))}
-                </motion.nav>
-              </AnimatePresence>
-            </div>
-          </aside>
-        </div>
+        {/* ─────────────────────────────────────────────────────────────
+            RIGHT RAIL — On this page / Section outline
+            ───────────────────────────────────────────────────────────── */}
+        <aside className="hidden xl:block w-[200px] shrink-0" style={{ borderLeft: '1px solid hsl(var(--docs-border-subtle) / 0.4)' }}>
+          <div className="sticky top-20 h-[calc(100vh-5rem)] py-8 pl-6 pr-4 overflow-y-auto">
+            <p className="docs-caption uppercase tracking-[0.08em] mb-5" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }}>On this page</p>
+            <AnimatePresence mode="wait">
+              <motion.nav 
+                key={activeSection}
+                initial={{ opacity: 0, x: 5 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -5 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+                className="space-y-1"
+              >
+                {(SECTION_ANCHORS[activeSection] || []).map((anchor, idx) => (
+                  <button
+                    key={anchor.id}
+                    onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                    className="docs-anchor-link block w-full text-left py-1.5 transition-all duration-150 leading-snug"
+                    style={{ paddingLeft: idx === 0 ? '0.75rem' : '0.75rem' }}
+                  >
+                    {anchor.label}
+                  </button>
+                ))}
+              </motion.nav>
+            </AnimatePresence>
+          </div>
+        </aside>
       </div>
 
       {/* Back to top button */}
