@@ -266,7 +266,7 @@ export default function Login() {
           >
             {/* Mobile Logo */}
             <div className="lg:hidden flex items-center gap-3 mb-6 justify-center">
-              <img src={logo} alt="TradeBook" className="h-10 object-contain" />
+              <BrandLogo size="lg" />
             </div>
 
             <div className="liquid-glass p-6 sm:p-8 rounded-2xl">

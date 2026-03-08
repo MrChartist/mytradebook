@@ -730,9 +730,9 @@ export function FooterSection() {
         <div className="grid md:grid-cols-12 gap-10 mb-14">
           {/* Brand column */}
           <div className="md:col-span-4">
-            <div className="flex items-center gap-2.5 mb-3">
-              <img src="/favicon-32x32.png" alt="TradeBook" className="h-6 w-6 object-contain" loading="lazy" />
-              <span className="text-base font-bold tracking-tight text-foreground">TradeBook</span>
+            <div className="flex flex-col mb-3">
+              <span className="text-base font-heading font-bold tracking-tight text-foreground">TradeBook</span>
+              <span className="text-[10px] font-medium text-muted-foreground/50">by Mr Chartist</span>
             </div>
             <p className="text-[14px] text-muted-foreground leading-[1.65] mb-6 max-w-xs tracking-[-0.006em]">
               The trading journal built for Indian markets. Track, analyze, and improve your edge.

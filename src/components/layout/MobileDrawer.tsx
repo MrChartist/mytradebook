@@ -82,7 +82,7 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
       <SheetContent side="left" className="w-[260px] p-0 bg-card border-border/40">
         <SheetHeader className="px-3 h-14 flex items-center border-b border-border/30">
           <div className="flex items-center gap-2">
-            <img src={logo} alt="TradeBook" className="h-8 object-contain" />
+            <BrandLogoInline size="sm" />
             <SheetTitle className="sr-only">TradeBook</SheetTitle>
           </div>
         </SheetHeader>

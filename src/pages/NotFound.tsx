@@ -47,7 +47,7 @@ const NotFound = () => {
         >
           {/* Logo */}
           <Link to="/" className="inline-block mb-8">
-            <img src={logo} alt="TradeBook" className="h-10 object-contain mx-auto" />
+            <BrandLogo size="lg" />
           </Link>
 
           {/* 404 Hero */}

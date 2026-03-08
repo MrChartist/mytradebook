@@ -133,10 +133,10 @@ export function Sidebar() {
         {/* Logo */}
         <div className="flex items-center gap-2 px-3 h-14 border-b border-border/30">
           {collapsed ? (
-            <img src={logo} alt="TradeBook" className="h-7 w-7 object-contain flex-shrink-0 mx-auto" />
+            <span className="font-heading font-bold text-[13px] text-foreground mx-auto">TB</span>
           ) : (
             <>
-              <img src={logo} alt="TradeBook" className="h-8 object-contain" />
+              <BrandLogoInline size="sm" />
               <button
                 onClick={() => setCollapsed(true)}
                 aria-label="Collapse sidebar"

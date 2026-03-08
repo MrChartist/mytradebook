@@ -30,7 +30,7 @@ export default function Terms() {
       >
         <div className="flex items-center justify-between px-3 pl-4 py-2 rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg shadow-foreground/[0.03]">
           <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="TradeBook" className="h-8 object-contain" />
+            <BrandLogoInline size="sm" />
           </Link>
           <div className="flex items-center gap-2">
             <ThemeToggle />
