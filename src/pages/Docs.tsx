@@ -2031,7 +2031,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="TradeBook is a fully installable Progressive Web App. Add it to your home screen for a native-like experience with offline capabilities."
                 icon={Smartphone}
               />
-              <SubTopic title="Installation & Offline" description="Install as a native-like app with offline trade queuing." />
+              <SubTopic title="Installation & Offline" description="Install as a native-like app with offline trade queuing." id="pwa-install" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Smartphone} title="Install as App">
                   <p className="text-sm text-muted-foreground mb-3">
