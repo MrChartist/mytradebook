@@ -241,9 +241,9 @@ export function QuickNav({ items }: { items: { label: string; id: string }[] }) 
 export function KeyMetric({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
     <div className="rounded-lg border border-border/40 bg-muted/20 p-3 text-center">
-      <p className="text-[12px] text-muted-foreground/60 mb-0.5">{label}</p>
+      <p className="text-[12px] text-muted-foreground/70 mb-0.5">{label}</p>
       <p className="text-lg font-bold font-mono text-foreground">{value}</p>
-      {sub && <p className="text-[12px] text-muted-foreground/50 mt-0.5">{sub}</p>}
+      {sub && <p className="text-[12px] text-muted-foreground/60 mt-0.5">{sub}</p>}
     </div>
   );
 }
