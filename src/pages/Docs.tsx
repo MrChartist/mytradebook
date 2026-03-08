@@ -1763,7 +1763,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Trophy}
               />
               <AchievementsMockup />
-              <SubTopic title="Badge Categories" description="Five achievement groups covering milestones, streaks, discipline, analytics, and social." />
+              <SubTopic title="Badge Categories" description="Five achievement groups covering milestones, streaks, discipline, analytics, and social." id="ach-categories" />
               <FeatureCard icon={Trophy} title="Badge Categories">
                 <p className="text-sm text-muted-foreground mb-3">Achievements are grouped into categories:</p>
                 <FeatureList items={[
@@ -1774,7 +1774,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Social — sharing trades, inviting friends, writing journal entries",
                 ]} />
               </FeatureCard>
-              <SubTopic title="Progress Tracking" description="How badges are earned and tracked automatically." />
+              <SubTopic title="Progress Tracking" description="How badges are earned and tracked automatically." id="ach-progress" />
               <ExpandableDetail title="How Achievements Are Tracked" icon={Target} defaultOpen>
                 <p className="text-[13px] text-muted-foreground mb-2">Achievements are tracked automatically as you use TradeBook. Each badge has a threshold (e.g., "Log 50 trades") and your progress is updated in real-time. When you reach the threshold, the badge unlocks with a celebration animation.</p>
                 <p className="text-[13px] text-muted-foreground">View your progress in the Dashboard achievements widget or Settings → Profile. Unlocked badges show a timestamp of when they were earned.</p>
