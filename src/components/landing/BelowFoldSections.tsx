@@ -5,11 +5,13 @@ import {
   ArrowRight, BookOpen, CheckCircle2, ChevronRight, Zap,
   Crown, Lock, Shield, Star, Quote, Sparkles,
   TrendingUp, Layers, Globe, Clock, BarChart3, CandlestickChart,
+  ChevronDown,
 } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 import { fadeUp, blurIn, slideFromLeft, slideFromRight, popIn, MotionSection, SectionBadge, GradientDivider } from "./LandingShared";
 
