@@ -185,9 +185,9 @@ export default function Mistakes() {
           </div>
 
           {/* Monthly trend */}
-          <div className="glass-card p-4">
-            <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-              <TrendingDown className="w-4 h-4 text-muted-foreground" />
+          <div className="premium-card-hover !p-4">
+            <h3 className="text-[13px] font-semibold mb-3 flex items-center gap-2">
+              <TrendingDown className="w-3.5 h-3.5 text-muted-foreground/50" />
               Mistake Trend (6 months)
             </h3>
             <div className="flex items-end gap-2 h-24">
