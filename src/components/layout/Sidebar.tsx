@@ -160,7 +160,7 @@ export function Sidebar() {
           {/* Theme toggle */}
           {!collapsed && (
             <div className="flex items-center justify-between px-3 py-1.5 mb-1.5">
-              <span className="text-[11px] text-muted-foreground font-medium">Theme</span>
+              <span className="text-caption text-muted-foreground font-medium">Theme</span>
               <div className="flex items-center gap-1.5">
                 <NotificationBell />
                 <ThemeToggle />
