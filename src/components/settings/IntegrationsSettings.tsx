@@ -795,8 +795,8 @@ export default function IntegrationsSettings() {
           </div>
 
           {settings?.ra_public_mode && (
-            <div className="space-y-2">
-              <Label htmlFor="ra-disclaimer">Custom Disclaimer (optional)</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="ra-disclaimer" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Custom Disclaimer</Label>
               <Textarea
                 id="ra-disclaimer"
                 placeholder="e.g., Research/Education only. Not investment advice. RA: MyBrand | Reg No: INH... | Disclosures: link"
