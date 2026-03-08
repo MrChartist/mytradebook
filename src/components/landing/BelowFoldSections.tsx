@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import {
-  ArrowRight, CheckCircle2, ChevronRight, Zap,
+  ArrowRight, BookOpen, CheckCircle2, ChevronRight, Zap,
   Crown, Lock, Shield, Star, Quote, Sparkles,
   TrendingUp, Layers, Globe, Clock, BarChart3, CandlestickChart,
 } from "lucide-react";
