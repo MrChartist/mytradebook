@@ -279,9 +279,9 @@ export default function IntegrationsSettings() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="glass-card p-6 flex items-center justify-center min-h-[200px]">
-          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+      <div className="space-y-4">
+        <div className="premium-card-hover p-5 flex items-center justify-center min-h-[200px]">
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground/30" />
         </div>
       </div>
     );
@@ -331,61 +331,61 @@ export default function IntegrationsSettings() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* AI Provider Integration */}
-      <div className="glass-card p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="icon-badge bg-primary/10">
-            <Sparkles className="w-5 h-5 text-primary" />
+      <div className="premium-card-hover p-5">
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="icon-badge-sm bg-primary/8">
+            <Sparkles className="w-4 h-4 text-primary" />
           </div>
-          <div>
-            <h3 className="font-semibold">AI Trade Insights</h3>
-            <p className="text-sm text-muted-foreground">Connect your own Gemini or OpenAI key for AI-powered analysis</p>
+          <div className="flex-1">
+            <h3 className="text-[15px] font-semibold">AI Trade Insights</h3>
+            <p className="text-[11px] text-muted-foreground/50">Connect Gemini or OpenAI for AI-powered analysis</p>
           </div>
           {isAiConnected && (
-            <div className="ml-auto flex items-center gap-2 text-profit">
-              <CheckCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">{settings?.ai_provider === "gemini" ? "Gemini" : "OpenAI"}</span>
+            <div className="flex items-center gap-1.5 text-profit">
+              <CheckCircle className="w-3.5 h-3.5" />
+              <span className="text-[11px] font-medium">{settings?.ai_provider === "gemini" ? "Gemini" : "OpenAI"}</span>
             </div>
           )}
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {isAiConnected ? (
             <>
-              <div className="p-3 rounded-lg bg-profit/10 border border-profit/20">
+              <div className="p-2.5 rounded-lg bg-profit/6 border border-profit/15">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-profit" />
-                    <span className="text-sm font-medium">
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle className="w-3.5 h-3.5 text-profit" />
+                    <span className="text-[12px] font-medium">
                       {settings?.ai_provider === "gemini" ? "Google Gemini" : "OpenAI"} connected
                     </span>
                   </div>
-                  <Badge variant="outline" className="text-[10px]">BYOK</Badge>
+                  <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-md bg-muted/40 text-muted-foreground/50">BYOK</span>
                 </div>
               </div>
               <Button
                 variant="outline"
                 onClick={handleDisconnectAi}
                 disabled={savingAi}
-                className="text-loss hover:text-loss"
+                className="text-loss hover:text-loss h-8 text-[11px] rounded-lg border-border/20"
               >
-                {savingAi ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+              {savingAi ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5 mr-1.5" />}
                 Disconnect
               </Button>
             </>
           ) : (
             <>
               {/* Provider tabs */}
-              <div className="flex gap-1 p-1 rounded-lg bg-accent">
+              <div className="flex gap-0.5 p-0.5 rounded-lg bg-muted/40 border border-border/15">
                 <button
                   type="button"
                   onClick={() => setAiProvider("gemini")}
                   className={cn(
-                    "flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors",
+                    "flex-1 py-1.5 px-3 text-[12px] font-medium rounded-md transition-all duration-200",
                     aiProvider === "gemini"
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-card text-foreground shadow-sm"
+                      : "text-muted-foreground/50 hover:text-foreground"
                   )}
                 >
                   Google Gemini
@@ -394,18 +394,18 @@ export default function IntegrationsSettings() {
                   type="button"
                   onClick={() => setAiProvider("openai")}
                   className={cn(
-                    "flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors",
+                    "flex-1 py-1.5 px-3 text-[12px] font-medium rounded-md transition-all duration-200",
                     aiProvider === "openai"
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-card text-foreground shadow-sm"
+                      : "text-muted-foreground/50 hover:text-foreground"
                   )}
                 >
                   OpenAI
                 </button>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="ai-api-key">
+              <div className="space-y-1.5">
+                <Label htmlFor="ai-api-key" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">
                   {aiProvider === "gemini" ? "Gemini API Key" : "OpenAI API Key"}
                 </Label>
                 <div className="relative">
@@ -414,7 +414,7 @@ export default function IntegrationsSettings() {
                     type={showAiKey ? "text" : "password"}
                     value={aiApiKey}
                     onChange={(e) => setAiApiKey(e.target.value)}
-                    className="bg-accent border-border pr-10"
+                    className="bg-muted/20 border-border/20 pr-10 h-9 text-[13px] font-mono focus:border-primary/30"
                     placeholder={aiProvider === "gemini" ? "AIza..." : "sk-..."}
                   />
                   <Button
@@ -427,7 +427,7 @@ export default function IntegrationsSettings() {
                     {showAiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[10px] text-muted-foreground/40">
                   Get your key from{" "}
                   {aiProvider === "gemini" ? (
                     <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
@@ -441,13 +441,13 @@ export default function IntegrationsSettings() {
                 </p>
               </div>
 
-              <Button onClick={handleSaveAi} disabled={savingAi || !aiApiKey.trim()} className="w-full">
-                {savingAi ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Key className="w-4 h-4 mr-2" />}
+              <Button onClick={handleSaveAi} disabled={savingAi || !aiApiKey.trim()} className="w-full h-9 text-[13px] rounded-lg">
+                {savingAi ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Key className="w-3.5 h-3.5 mr-1.5" />}
                 Save & Connect
               </Button>
 
-              <p className="text-xs text-muted-foreground text-center">
-                Your key is stored securely and only used server-side. You control your own AI costs.
+              <p className="text-[10px] text-muted-foreground/30 text-center">
+                Your key is stored securely and only used server-side.
               </p>
             </>
           )}
@@ -461,35 +461,35 @@ export default function IntegrationsSettings() {
 
       {/* Dhan API Integration */}
       <PlanGate plan="pro" feature="brokerIntegration" message="Upgrade to Pro to connect your Dhan broker account.">
-      <div className="glass-card p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-            <Smartphone className="w-5 h-5 text-blue-400" />
+      <div className="premium-card-hover p-5">
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="icon-badge-sm bg-[hsl(210_80%_55%)]/8">
+            <Smartphone className="w-4 h-4 text-[hsl(210_80%_55%)]" />
           </div>
-          <div>
-            <h3 className="font-semibold">Dhan Trading API</h3>
-            <p className="text-sm text-muted-foreground">Connect for live prices and order execution</p>
+          <div className="flex-1">
+            <h3 className="text-[15px] font-semibold">Dhan Trading API</h3>
+            <p className="text-[11px] text-muted-foreground/50">Live prices and order execution</p>
           </div>
           {isDhanConnected && (
-            <div className="ml-auto flex items-center gap-2 text-profit">
-              <CheckCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">{settings?.dhan_account_name || "Connected"}</span>
+            <div className="flex items-center gap-1.5 text-profit">
+              <CheckCircle className="w-3.5 h-3.5" />
+              <span className="text-[11px] font-medium">{settings?.dhan_account_name || "Connected"}</span>
             </div>
           )}
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {isDhanConnected ? (
             <>
-              <div className="p-3 rounded-lg bg-profit/10 border border-profit/20">
+              <div className="p-2.5 rounded-lg bg-profit/6 border border-profit/15">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-profit" />
-                    <span className="text-sm font-medium">
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle className="w-3.5 h-3.5 text-profit" />
+                    <span className="text-[12px] font-medium">
                       {settings?.dhan_account_name} ({settings?.dhan_client_id})
                     </span>
                   </div>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-[10px] text-muted-foreground/40">
                     Connected {settings?.dhan_verified_at 
                       ? new Date(settings.dhan_verified_at).toLocaleDateString() 
                       : ""}
@@ -501,13 +501,13 @@ export default function IntegrationsSettings() {
               <TokenValidityCard settings={settings} userId={user?.id} />
 
               {/* Auto-Sync Toggle */}
-              <div className="p-3 rounded-lg border border-border bg-accent/30 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <RefreshCw className="w-4 h-4 text-primary" />
+              <div className="p-2.5 rounded-lg border border-border/15 bg-muted/20 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <RefreshCw className="w-3.5 h-3.5 text-primary" />
                   <div>
-                    <p className="text-sm font-medium">Auto-Sync Orders</p>
-                    <p className="text-xs text-muted-foreground">
-                      Import executed orders every 5 min during market hours
+                    <p className="text-[12px] font-medium">Auto-Sync Orders</p>
+                    <p className="text-[10px] text-muted-foreground/40">
+                      Import executed orders every 5 min
                     </p>
                   </div>
                 </div>
@@ -573,87 +573,87 @@ export default function IntegrationsSettings() {
           ) : (
             <>
               {/* Auth mode tabs */}
-              <div className="flex gap-1 p-1 rounded-lg bg-accent">
+              <div className="flex gap-0.5 p-0.5 rounded-lg bg-muted/40 border border-border/15">
                 <button
                   type="button"
                   onClick={() => setDhanAuthMode("apikey")}
                   className={cn(
-                    "flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors",
+                    "flex-1 py-1.5 px-3 text-[12px] font-medium rounded-md transition-all duration-200 inline-flex items-center justify-center gap-1",
                     dhanAuthMode === "apikey"
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-card text-foreground shadow-sm"
+                      : "text-muted-foreground/50 hover:text-foreground"
                   )}
                 >
-                  <Key className="w-3.5 h-3.5 inline mr-1.5" />
-                  API Key (Recommended)
+                  <Key className="w-3 h-3" />
+                  API Key
                 </button>
                 <button
                   type="button"
                   onClick={() => setDhanAuthMode("token")}
                   className={cn(
-                    "flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors",
+                    "flex-1 py-1.5 px-3 text-[12px] font-medium rounded-md transition-all duration-200 inline-flex items-center justify-center gap-1",
                     dhanAuthMode === "token"
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-card text-foreground shadow-sm"
+                      : "text-muted-foreground/50 hover:text-foreground"
                   )}
                 >
-                  <Shield className="w-3.5 h-3.5 inline mr-1.5" />
+                  <Shield className="w-3 h-3" />
                   Access Token
                 </button>
               </div>
 
               {dhanAuthMode === "apikey" ? (
-                <div className="space-y-3">
-                  <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-                    <p className="text-xs text-muted-foreground">
-                      <strong>API Key</strong> is valid for 12 months. After setup, your access token auto-renews daily — no manual paste needed.
+                <div className="space-y-2.5">
+                  <div className="p-2.5 rounded-lg bg-primary/4 border border-primary/10">
+                    <p className="text-[10px] text-muted-foreground/50">
+                      <strong className="text-foreground/70">API Key</strong> is valid for 12 months. After setup, your access token auto-renews daily.
                     </p>
                   </div>
 
                   {/* Redirect URL instruction */}
-                  <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                    <p className="text-xs font-medium text-amber-700 dark:text-amber-400 mb-1">
-                      ⚠️ Important: Set this Redirect URL in your Dhan API Key settings
+                  <div className="p-2.5 rounded-lg bg-warning/6 border border-warning/15">
+                    <p className="text-[10px] font-medium text-warning mb-1">
+                      ⚠️ Set this Redirect URL in Dhan API settings
                     </p>
-                    <code className="text-xs bg-accent px-2 py-1 rounded block break-all select-all">
+                    <code className="text-[10px] bg-muted/30 px-2 py-1 rounded-md block break-all select-all font-mono">
                       {window.location.origin}/dhan-callback
                     </code>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Go to web.dhan.co → My Profile → Access DhanHQ APIs → API Key → Edit → Set Redirect URL to the above.
+                    <p className="text-[10px] text-muted-foreground/40 mt-1">
+                      web.dhan.co → My Profile → Access DhanHQ APIs → API Key → Edit → Set Redirect URL
                     </p>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="dhan-client-id-ak">Client ID</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="dhan-client-id-ak" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Client ID</Label>
                     <Input
                       id="dhan-client-id-ak"
                       value={dhanClientId}
                       onChange={(e) => setDhanClientId(e.target.value)}
-                      className="bg-accent border-border"
+                      className="bg-muted/20 border-border/20 h-9 text-[13px] focus:border-primary/30"
                       placeholder="Your Dhan Client ID"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="dhan-api-key">API Key</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="dhan-api-key" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">API Key</Label>
                     <Input
                       id="dhan-api-key"
                       value={dhanApiKey}
                       onChange={(e) => setDhanApiKey(e.target.value)}
-                      className="bg-accent border-border"
+                      className="bg-muted/20 border-border/20 h-9 text-[13px] font-mono focus:border-primary/30"
                       placeholder="Your Dhan API Key"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="dhan-api-secret">API Secret</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="dhan-api-secret" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">API Secret</Label>
                     <div className="relative">
                       <Input
                         id="dhan-api-secret"
                         type={showApiSecret ? "text" : "password"}
                         value={dhanApiSecret}
                         onChange={(e) => setDhanApiSecret(e.target.value)}
-                        className="bg-accent border-border pr-10"
+                        className="bg-muted/20 border-border/20 pr-10 h-9 text-[13px] font-mono focus:border-primary/30"
                         placeholder="Your Dhan API Secret"
                       />
                       <Button
@@ -770,48 +770,46 @@ export default function IntegrationsSettings() {
       </div>
 
       {/* RA Public Mode */}
-      <div className="surface-card p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
-            <Shield className="w-5 h-5 text-amber-500" />
+      <div className="premium-card-hover p-5">
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="icon-badge-sm bg-warning/8">
+            <Shield className="w-4 h-4 text-warning" />
           </div>
-          <div>
-            <h3 className="font-semibold">RA Public Mode</h3>
-            <p className="text-sm text-muted-foreground">SEBI-compliant messaging for public channels</p>
+          <div className="flex-1">
+            <h3 className="text-[15px] font-semibold">RA Public Mode</h3>
+            <p className="text-[11px] text-muted-foreground/50">SEBI-compliant messaging for public channels</p>
           </div>
-          <div className="ml-auto">
-            <Switch
-              checked={settings?.ra_public_mode ?? false}
-              onCheckedChange={(checked) => {
-                updateSettings.mutate({ ra_public_mode: checked } as any);
-              }}
-            />
-          </div>
+          <Switch
+            checked={settings?.ra_public_mode ?? false}
+            onCheckedChange={(checked) => {
+              updateSettings.mutate({ ra_public_mode: checked } as any);
+            }}
+          />
         </div>
 
-        <div className="space-y-4">
-          <div className="p-3 rounded-lg bg-accent/50 border border-border">
-            <p className="text-sm text-muted-foreground">
-              When enabled, all Telegram notifications will <strong>hide quantity/lots</strong> and append a compliance disclaimer. Use this for public channels and research distribution.
+        <div className="space-y-3">
+          <div className="p-2.5 rounded-lg bg-muted/20 border border-border/10">
+            <p className="text-[11px] text-muted-foreground/40 leading-relaxed">
+              When enabled, Telegram notifications will <strong className="text-foreground/60">hide quantity/lots</strong> and append a compliance disclaimer.
             </p>
           </div>
 
           {settings?.ra_public_mode && (
-            <div className="space-y-2">
-              <Label htmlFor="ra-disclaimer">Custom Disclaimer (optional)</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="ra-disclaimer" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Custom Disclaimer</Label>
               <Textarea
                 id="ra-disclaimer"
                 placeholder="e.g., Research/Education only. Not investment advice. RA: MyBrand | Reg No: INH... | Disclosures: link"
                 defaultValue={settings?.ra_disclaimer || ""}
-                className="resize-none text-sm"
+                className="resize-none text-[13px] bg-muted/20 border-border/20 focus:border-primary/30"
                 rows={3}
                 onBlur={(e) => {
                   const val = e.target.value.trim();
                   updateSettings.mutate({ ra_disclaimer: val || null } as any);
                 }}
               />
-              <p className="text-xs text-muted-foreground">
-                Leave blank for default: "For educational/research purpose only. Not a buy/sell recommendation."
+              <p className="text-[10px] text-muted-foreground/30">
+                Leave blank for default: "For educational/research purpose only."
               </p>
             </div>
           )}
@@ -820,53 +818,53 @@ export default function IntegrationsSettings() {
       </PlanGate>
 
       {/* Instrument Master Sync */}
-      <div className="glass-card p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
-            <Database className="w-5 h-5 text-purple-400" />
+      <div className="premium-card-hover p-5">
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="icon-badge-sm bg-[hsl(270_60%_55%)]/8">
+            <Database className="w-4 h-4 text-[hsl(270_60%_55%)]" />
           </div>
           <div>
-            <h3 className="font-semibold">Instrument Database</h3>
-            <p className="text-sm text-muted-foreground">NSE/NFO/MCX instruments for search & pricing</p>
+            <h3 className="text-[15px] font-semibold">Instrument Database</h3>
+            <p className="text-[11px] text-muted-foreground/50">NSE/NFO/MCX instruments for search & pricing</p>
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* Counts by segment */}
-          <div className="grid grid-cols-3 gap-3">
-            <div className="p-3 rounded-lg bg-accent">
-              <div className="text-xs text-muted-foreground">NSE Equity</div>
-              <div className="text-lg font-bold">{syncStatus.nseEqCount.toLocaleString()}</div>
+          <div className="grid grid-cols-3 gap-2.5">
+            <div className="inner-panel !p-2.5">
+              <div className="text-[10px] text-muted-foreground/50 font-medium uppercase tracking-wider">NSE Equity</div>
+              <div className="text-base font-bold font-mono mt-0.5">{syncStatus.nseEqCount.toLocaleString()}</div>
             </div>
-            <div className="p-3 rounded-lg bg-accent">
-              <div className="text-xs text-muted-foreground">NSE F&O</div>
-              <div className="text-lg font-bold">{syncStatus.nfoCount.toLocaleString()}</div>
+            <div className="inner-panel !p-2.5">
+              <div className="text-[10px] text-muted-foreground/50 font-medium uppercase tracking-wider">NSE F&O</div>
+              <div className="text-base font-bold font-mono mt-0.5">{syncStatus.nfoCount.toLocaleString()}</div>
             </div>
-            <div className="p-3 rounded-lg bg-accent">
-              <div className="text-xs text-muted-foreground">MCX</div>
-              <div className="text-lg font-bold">{syncStatus.mcxCount.toLocaleString()}</div>
+            <div className="inner-panel !p-2.5">
+              <div className="text-[10px] text-muted-foreground/50 font-medium uppercase tracking-wider">MCX</div>
+              <div className="text-base font-bold font-mono mt-0.5">{syncStatus.mcxCount.toLocaleString()}</div>
             </div>
           </div>
           
           {/* Sync status */}
           {syncStatus.status && (
-            <div className={`p-3 rounded-lg flex items-center gap-2 ${
+            <div className={`p-2.5 rounded-lg flex items-center gap-2 ${
               syncStatus.status === "completed" || syncStatus.status === "partial"
-                ? "bg-profit/10 border border-profit/20"
+                ? "bg-profit/6 border border-profit/15"
                 : syncStatus.status === "running"
-                ? "bg-blue-500/10 border border-blue-500/20"
-                : "bg-loss/10 border border-loss/20"
+                ? "bg-[hsl(210_80%_55%)]/6 border border-[hsl(210_80%_55%)]/15"
+                : "bg-loss/6 border border-loss/15"
             }`}>
               {(syncStatus.status === "completed" || syncStatus.status === "partial") ? (
                 <CheckCircle className="w-4 h-4 text-profit" />
               ) : syncStatus.status === "running" ? (
-                <Loader2 className="w-4 h-4 text-blue-400 animate-spin" />
+                <Loader2 className="w-3.5 h-3.5 text-[hsl(210_80%_55%)] animate-spin" />
               ) : (
                 <AlertTriangle className="w-4 h-4 text-loss" />
               )}
-              <span className={`text-sm font-medium ${
+              <span className={`text-[12px] font-medium ${
                 (syncStatus.status === "completed" || syncStatus.status === "partial") ? "text-profit" 
-                : syncStatus.status === "running" ? "text-blue-400"
+                : syncStatus.status === "running" ? "text-[hsl(210_80%_55%)]"
                 : "text-loss"
               }`}>
                 {syncStatus.status === "completed" ? "Sync successful" 
@@ -878,19 +876,19 @@ export default function IntegrationsSettings() {
           )}
           
           {syncStatus.errorMessage && (
-            <div className="p-2 rounded bg-loss/10 border border-loss/20">
-              <p className="text-xs text-loss">{syncStatus.errorMessage}</p>
+            <div className="p-2 rounded-lg bg-loss/6 border border-loss/15">
+              <p className="text-[10px] text-loss">{syncStatus.errorMessage}</p>
             </div>
           )}
           
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Clock className="w-3.5 h-3.5" />
+            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground/40">
+              <Clock className="w-3 h-3" />
               Last sync: {syncStatus.lastSync 
                 ? new Date(syncStatus.lastSync).toLocaleString() 
                 : "Never"}
             </div>
-            <div className="text-sm font-medium">
+            <div className="text-[11px] font-medium font-mono">
               Total: {totalInstruments.toLocaleString()}
             </div>
           </div>
@@ -909,7 +907,7 @@ export default function IntegrationsSettings() {
             </Button>
           </div>
 
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[10px] text-muted-foreground/30">
             Auto-syncs daily at 6 AM IST. Use "Sync Now" for new listings and F&O contracts.
           </p>
         </div>
@@ -980,7 +978,7 @@ function TokenValidityCard({ settings, userId }: { settings: any; userId?: strin
   };
 
   return (
-    <div className="p-3 rounded-lg border border-border bg-accent/30 space-y-2">
+    <div className="p-2.5 rounded-lg border border-border/15 bg-muted/20 space-y-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div
@@ -992,7 +990,7 @@ function TokenValidityCard({ settings, userId }: { settings: any; userId?: strin
                 : "bg-muted-foreground"
             }`}
           />
-          <span className="text-sm font-medium">
+          <span className="text-[12px] font-medium">
             Token: {tokenStatus === "active" ? "Active" : tokenStatus === "expired" ? "Expired" : "Unknown"}
           </span>
         </div>

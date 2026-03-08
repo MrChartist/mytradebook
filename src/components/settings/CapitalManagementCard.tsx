@@ -9,7 +9,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Table,
@@ -54,68 +53,68 @@ export default function CapitalManagementCard() {
   };
 
   return (
-    <div className="glass-card p-6 space-y-5">
-      <h2 className="text-lg font-semibold">Capital Management</h2>
+    <div className="premium-card-hover p-5 space-y-4">
+      <h2 className="text-[15px] font-semibold">Capital Management</h2>
 
       {/* Summary stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="p-3 rounded-lg bg-accent/50">
-          <p className="text-xs text-muted-foreground">Starting Capital</p>
-          <p className="text-lg font-bold font-mono">₹{startingCapital.toLocaleString("en-IN")}</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+        <div className="inner-panel !p-2.5">
+          <p className="text-[10px] text-muted-foreground/50 font-medium uppercase tracking-wider">Starting</p>
+          <p className="text-base font-bold font-mono mt-0.5">₹{startingCapital.toLocaleString("en-IN")}</p>
         </div>
-        <div className="p-3 rounded-lg bg-profit/5 border border-profit/10">
-          <p className="text-xs text-muted-foreground flex items-center gap-1"><ArrowDownToLine className="w-3 h-3 text-profit" /> Total Deposited</p>
-          <p className="text-lg font-bold font-mono text-profit">₹{totalDeposited.toLocaleString("en-IN")}</p>
+        <div className="inner-panel !p-2.5 !border-profit/10">
+          <p className="text-[10px] text-muted-foreground/50 font-medium flex items-center gap-1 uppercase tracking-wider"><ArrowDownToLine className="w-2.5 h-2.5 text-profit" /> Deposited</p>
+          <p className="text-base font-bold font-mono text-profit mt-0.5">₹{totalDeposited.toLocaleString("en-IN")}</p>
         </div>
-        <div className="p-3 rounded-lg bg-loss/5 border border-loss/10">
-          <p className="text-xs text-muted-foreground flex items-center gap-1"><ArrowUpFromLine className="w-3 h-3 text-loss" /> Total Withdrawn</p>
-          <p className="text-lg font-bold font-mono text-loss">₹{totalWithdrawn.toLocaleString("en-IN")}</p>
+        <div className="inner-panel !p-2.5 !border-loss/10">
+          <p className="text-[10px] text-muted-foreground/50 font-medium flex items-center gap-1 uppercase tracking-wider"><ArrowUpFromLine className="w-2.5 h-2.5 text-loss" /> Withdrawn</p>
+          <p className="text-base font-bold font-mono text-loss mt-0.5">₹{totalWithdrawn.toLocaleString("en-IN")}</p>
         </div>
-        <div className="p-3 rounded-lg bg-accent/50">
-          <p className="text-xs text-muted-foreground">Net Capital</p>
-          <p className="text-lg font-bold font-mono">₹{netCapital.toLocaleString("en-IN")}</p>
+        <div className="inner-panel !p-2.5">
+          <p className="text-[10px] text-muted-foreground/50 font-medium uppercase tracking-wider">Net Capital</p>
+          <p className="text-base font-bold font-mono mt-0.5">₹{netCapital.toLocaleString("en-IN")}</p>
         </div>
       </div>
 
       {/* Action buttons */}
-      <div className="flex gap-3">
-        <Button variant="outline" size="sm" onClick={() => openDialog("DEPOSIT")} className="text-profit border-profit/30 hover:bg-profit/10">
-          <Plus className="w-4 h-4 mr-1" /> Add Funds
+      <div className="flex gap-2.5">
+        <Button variant="outline" size="sm" onClick={() => openDialog("DEPOSIT")} className="h-8 text-[11px] rounded-lg text-profit border-profit/20 hover:bg-profit/5">
+          <Plus className="w-3.5 h-3.5 mr-1" /> Add Funds
         </Button>
-        <Button variant="outline" size="sm" onClick={() => openDialog("WITHDRAWAL")} className="text-loss border-loss/30 hover:bg-loss/10">
-          <Minus className="w-4 h-4 mr-1" /> Withdraw Funds
+        <Button variant="outline" size="sm" onClick={() => openDialog("WITHDRAWAL")} className="h-8 text-[11px] rounded-lg text-loss border-loss/20 hover:bg-loss/5">
+          <Minus className="w-3.5 h-3.5 mr-1" /> Withdraw Funds
         </Button>
       </div>
 
       {/* Transaction history */}
       {transactions.length > 0 && (
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border border-border/15 rounded-xl overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-                <TableHead>Notes</TableHead>
-                <TableHead className="w-10" />
+              <TableRow className="border-b border-border/15">
+                <TableHead className="text-[10px] py-2 px-3">Date</TableHead>
+                <TableHead className="text-[10px] py-2 px-3">Type</TableHead>
+                <TableHead className="text-[10px] py-2 px-3 text-right">Amount</TableHead>
+                <TableHead className="text-[10px] py-2 px-3">Notes</TableHead>
+                <TableHead className="w-8 py-2 px-2" />
               </TableRow>
             </TableHeader>
             <TableBody>
               {[...transactions].reverse().map((tx) => (
-                <TableRow key={tx.id}>
-                  <TableCell className="text-xs font-mono">{format(new Date(tx.transaction_date), "dd MMM yyyy")}</TableCell>
-                  <TableCell>
-                    <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full", tx.type === "DEPOSIT" ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss")}>
+                <TableRow key={tx.id} className="border-b border-border/10">
+                  <TableCell className="text-[11px] font-mono py-2 px-3">{format(new Date(tx.transaction_date), "dd MMM yyyy")}</TableCell>
+                  <TableCell className="py-2 px-3">
+                    <span className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded-md", tx.type === "DEPOSIT" ? "bg-profit/8 text-profit" : "bg-loss/8 text-loss")}>
                       {tx.type}
                     </span>
                   </TableCell>
-                  <TableCell className={cn("text-right font-mono text-sm", tx.type === "DEPOSIT" ? "text-profit" : "text-loss")}>
+                  <TableCell className={cn("text-right font-mono text-[12px] py-2 px-3", tx.type === "DEPOSIT" ? "text-profit" : "text-loss")}>
                     {tx.type === "DEPOSIT" ? "+" : "−"}₹{Number(tx.amount).toLocaleString("en-IN")}
                   </TableCell>
-                  <TableCell className="text-xs text-muted-foreground max-w-[150px] truncate">{tx.notes || "—"}</TableCell>
-                  <TableCell>
-                    <button onClick={() => deleteTransaction.mutate(tx.id)} className="text-muted-foreground hover:text-loss transition-colors">
-                      <Trash2 className="w-3.5 h-3.5" />
+                  <TableCell className="text-[11px] text-muted-foreground/40 max-w-[150px] truncate py-2 px-3">{tx.notes || "—"}</TableCell>
+                  <TableCell className="py-2 px-2">
+                    <button onClick={() => deleteTransaction.mutate(tx.id)} className="text-muted-foreground/30 hover:text-loss transition-colors">
+                      <Trash2 className="w-3 h-3" />
                     </button>
                   </TableCell>
                 </TableRow>
@@ -126,30 +125,32 @@ export default function CapitalManagementCard() {
       )}
 
       {transactions.length === 0 && (
-        <p className="text-xs text-muted-foreground text-center py-4">No capital transactions recorded yet.</p>
+        <div className="flex flex-col items-center justify-center py-6 rounded-lg border border-dashed border-border/20 bg-muted/[0.03]">
+          <p className="text-[11px] text-muted-foreground/30">No capital transactions recorded yet</p>
+        </div>
       )}
 
       {/* Add/Withdraw Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{txType === "DEPOSIT" ? "Add Funds" : "Withdraw Funds"}</DialogTitle>
+            <DialogTitle className="text-base">{txType === "DEPOSIT" ? "Add Funds" : "Withdraw Funds"}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <div className="space-y-2">
-              <Label>Amount (₹)</Label>
-              <Input type="number" min="1" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="50000" className="bg-accent border-border" />
+          <div className="space-y-3.5 pt-1">
+            <div className="space-y-1.5">
+              <Label className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Amount (₹)</Label>
+              <Input type="number" min="1" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="50000" className="bg-muted/20 border-border/20 h-9 text-[13px]" />
             </div>
-            <div className="space-y-2">
-              <Label>Date</Label>
-              <Input type="date" value={txDate} onChange={(e) => setTxDate(e.target.value)} className="bg-accent border-border" />
+            <div className="space-y-1.5">
+              <Label className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Date</Label>
+              <Input type="date" value={txDate} onChange={(e) => setTxDate(e.target.value)} className="bg-muted/20 border-border/20 h-9 text-[13px]" />
             </div>
-            <div className="space-y-2">
-              <Label>Notes (optional)</Label>
-              <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. Monthly SIP deposit" className="bg-accent border-border" rows={2} />
+            <div className="space-y-1.5">
+              <Label className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Notes (optional)</Label>
+              <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. Monthly SIP deposit" className="bg-muted/20 border-border/20 text-[13px]" rows={2} />
             </div>
-            <Button onClick={handleSubmit} disabled={addTransaction.isPending || !amount} className="w-full bg-gradient-primary">
-              {addTransaction.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+            <Button onClick={handleSubmit} disabled={addTransaction.isPending || !amount} className="w-full bg-gradient-primary h-9 text-[13px] rounded-lg">
+              {addTransaction.isPending ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : null}
               {txType === "DEPOSIT" ? "Add Funds" : "Withdraw Funds"}
             </Button>
           </div>
