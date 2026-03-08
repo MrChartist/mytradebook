@@ -69,7 +69,7 @@ interface Step {
 export function StepByStep({ steps, title }: { steps: Step[]; title?: string }) {
   return (
     <div className="my-6">
-      {title && <p className="text-sm font-semibold text-foreground mb-4">{title}</p>}
+      {title && <p className="text-[15px] font-semibold text-foreground mb-4">{title}</p>}
       <div className="relative">
         <div className="absolute left-[13px] top-4 bottom-4 w-px bg-border/40" />
         <div className="space-y-4">
