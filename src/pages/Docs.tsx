@@ -1959,7 +1959,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 6. Position Sizing ────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={6} total={26} />
+              <PhaseHeader phase={6} total={29} />
               <SectionHeader
                 id="position-sizing"
                 title="Position Sizing Calculator"
