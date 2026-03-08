@@ -2875,7 +2875,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </FeatureCard>
               </div>
 
-              <ExpandableDetail title="PWA vs Native App — What's the Difference?" icon={Smartphone} id="pwa-vs-native">
+              <ExpandableDetail title="PWA vs Native App — What's the Difference?" icon={Smartphone}>
                 <p>TradeBook is built as a <strong>Progressive Web App (PWA)</strong>, which means it installs directly from your browser — no app store needed. Here's how it compares to traditional native apps:</p>
                 <div className="mt-4">
                   <ComparisonTable title="PWA vs Native Comparison" rows={[
