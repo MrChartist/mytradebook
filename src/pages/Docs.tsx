@@ -1539,6 +1539,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </ProTip>
               <MistakeTrendMockup />
               <SubTopic title="Pattern Recognition" description="Identify repeat mistakes and track their frequency over time." id="mk-patterns" />
+              <FeatureCard icon={Search} title="Mistake Pattern Analysis">
                 <FeatureList items={[
                   "Repeat pattern analysis with occurrence counts",
                   "Total loss attributed to each mistake type",
@@ -1546,7 +1547,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Most common vs most costly mistakes comparison",
                 ]} />
               </FeatureCard>
-              <SubTopic title="Severity Classification" description="Categorize mistakes by financial impact to prioritize fixes." />
+              <SubTopic title="Severity Classification" description="Categorize mistakes by financial impact to prioritize fixes." id="mk-severity" />
               <FeatureCard icon={AlertTriangle} title="Severity Breakdown">
                 <FeatureList items={[
                   "Low severity: losses under ₹500",
