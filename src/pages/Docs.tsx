@@ -293,8 +293,8 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
           <Play className="w-4 h-4 text-primary ml-0.5" />
         </div>
         <div>
-          <p className="text-[13px] font-medium text-foreground">{title}</p>
-          <span className="text-[11px] text-muted-foreground/60">{duration} · Coming Soon</span>
+          <p className="text-[15px] font-medium text-foreground">{title}</p>
+          <span className="text-[12px] text-muted-foreground/60">{duration} · Coming Soon</span>
         </div>
       </div>
     </div>
