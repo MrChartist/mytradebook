@@ -43,8 +43,8 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
       >
         <div className="flex items-start justify-between relative">
           <div className="space-y-2">
-            <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">{title}</p>
-            <p className="text-[28px] font-bold tracking-tight font-mono leading-none">{value}</p>
+            <p className="kpi-label">{title}</p>
+            <p className="kpi-value">{value}</p>
             {change && (
               <p
                 className={cn(
