@@ -719,8 +719,27 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
     ? SECTIONS.filter((s) => s.label.toLowerCase().includes(sidebarSearch.toLowerCase()))
     : SECTIONS;
 
+  const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
+
+  // Auto-expand the group that contains the active section
+  useEffect(() => {
+    const group = sidebarGroups.find(g => g.ids.includes(activeSection));
+    if (group) setExpandedGroup(group.label);
+  }, [activeSection, sidebarGroups]);
+
   return (
     <div className={cn("docs-page min-h-screen", isInsideApp && "pb-6", mode === "bw" && "docs-bw")} role="document">
+      {/* Reading progress bar */}
+      <div className="fixed top-0 left-0 right-0 z-[60] h-[2px]" style={{ background: 'hsl(var(--docs-border-subtle) / 0.2)' }}>
+        <div
+          className="h-full transition-[width] duration-150 ease-out"
+          style={{
+            width: `${readProgress}%`,
+            background: 'linear-gradient(90deg, hsl(var(--docs-accent)), hsl(var(--docs-accent) / 0.7))',
+          }}
+        />
+      </div>
+
       {/* Search modal */}
       <DocsSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} scrollTo={scrollTo} />
 
