@@ -84,6 +84,7 @@ export default function Alerts() {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [selectedAlertId, setSelectedAlertId] = useState<string | null>(null);
   const [bulkPausing, setBulkPausing] = useState(false);
+  const [createTradeFromAlert, setCreateTradeFromAlert] = useState<Alert | null>(null);
 
   const { alerts, isLoading, toggleAlert, deleteAlert, updateAlert } = useAlerts();
 
