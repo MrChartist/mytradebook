@@ -519,14 +519,14 @@ export function IndianMarketsSection() {
 export function FAQSection() {
   const navigate = useNavigate();
   return (
-    <section id="faq" className="py-24 lg:py-32" aria-label="Frequently asked questions">
+    <section id="faq" className="py-28 lg:py-36" aria-label="Frequently asked questions">
       <MotionSection className="max-w-2xl mx-auto px-6">
-        <motion.div variants={fadeUp} className="text-center mb-14">
+        <motion.div variants={fadeUp} className="text-center mb-16">
           <SectionBadge>FAQ</SectionBadge>
-          <h2 className="font-heading text-[2rem] lg:text-[3rem] font-bold mb-5 leading-[1.1] tracking-[-0.02em]">
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-5 leading-[1.08] tracking-[-0.018em]">
             Got{" "}<span className="accent-serif">questions</span>?
           </h2>
-          <p className="text-muted-foreground text-[15px] lg:text-base leading-[1.65]">Everything you need to know about TradeBook.</p>
+          <p className="text-muted-foreground text-[15px] lg:text-[1rem] leading-[1.7]">Everything you need to know about TradeBook.</p>
         </motion.div>
 
         <motion.div variants={fadeUp}>
