@@ -573,31 +573,31 @@ export default function IntegrationsSettings() {
           ) : (
             <>
               {/* Auth mode tabs */}
-              <div className="flex gap-1 p-1 rounded-lg bg-accent">
+              <div className="flex gap-0.5 p-0.5 rounded-lg bg-muted/40 border border-border/15">
                 <button
                   type="button"
                   onClick={() => setDhanAuthMode("apikey")}
                   className={cn(
-                    "flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors",
+                    "flex-1 py-1.5 px-3 text-[12px] font-medium rounded-md transition-all duration-200 inline-flex items-center justify-center gap-1",
                     dhanAuthMode === "apikey"
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-card text-foreground shadow-sm"
+                      : "text-muted-foreground/50 hover:text-foreground"
                   )}
                 >
-                  <Key className="w-3.5 h-3.5 inline mr-1.5" />
-                  API Key (Recommended)
+                  <Key className="w-3 h-3" />
+                  API Key
                 </button>
                 <button
                   type="button"
                   onClick={() => setDhanAuthMode("token")}
                   className={cn(
-                    "flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors",
+                    "flex-1 py-1.5 px-3 text-[12px] font-medium rounded-md transition-all duration-200 inline-flex items-center justify-center gap-1",
                     dhanAuthMode === "token"
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-card text-foreground shadow-sm"
+                      : "text-muted-foreground/50 hover:text-foreground"
                   )}
                 >
-                  <Shield className="w-3.5 h-3.5 inline mr-1.5" />
+                  <Shield className="w-3 h-3" />
                   Access Token
                 </button>
               </div>
