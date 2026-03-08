@@ -67,9 +67,12 @@ export function DocsNavbar({ isInsideApp = false, onSearchOpen }: DocsNavbarProp
         <div className="flex items-center gap-2.5 shrink-0">
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-2 transition-opacity duration-200 hover:opacity-75"
+            className="flex items-center gap-2.5 transition-opacity duration-200 hover:opacity-75"
           >
-            <img src={landingLogo} alt="TradeBook" className="h-[26px] object-contain" />
+            <img src={landingLogo} alt="TradeBook" className="h-[30px] object-contain" />
+            <span className="hidden sm:inline font-heading text-[16px] font-semibold tracking-tight" style={{ color: 'hsl(var(--docs-text-strong))' }}>
+              TradeBook
+            </span>
           </button>
           <div className="hidden sm:flex items-center">
             <span 
