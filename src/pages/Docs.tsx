@@ -1450,8 +1450,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 9. Calendar & Daily Journal ────────────── */}
+            {/* ── Phase 13. Calendar & Daily Journal ────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={13} total={26} />
               <SectionHeader
                 id="calendar"
                 title="Calendar & Daily Journal"
