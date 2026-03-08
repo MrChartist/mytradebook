@@ -213,18 +213,21 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
     </div>
   );
 }
+
+/* ──────────────────────────────────────────────
+   InteractiveMockup — Wrapper with hover states
    ────────────────────────────────────────────── */
 export function InteractiveMockup({ children, label, className }: { children: ReactNode; label?: string; className?: string }) {
   return (
-    <div className={cn(CARD_RADIUS, "border", CARD_BORDER, "overflow-hidden", CARD_SPACING, className)}>
+    <div className={cn(CARD_RADIUS, "overflow-hidden", CARD_SPACING, className)} style={{ border: '1px solid hsl(var(--docs-border-subtle, 215 25% 18%))', background: 'hsl(var(--docs-surface, 222 44% 6%))' }}>
       {label && (
-        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/15 bg-muted/8">
+        <div className="flex items-center gap-2 px-5 py-2.5" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle, 215 25% 18%) / 0.5)', background: 'hsl(var(--docs-elevated, 222 40% 10%) / 0.3)' }}>
           <div className="flex items-center gap-1.5">
-            <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/15" />
-            <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/15" />
-            <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/15" />
+            <div className="w-[7px] h-[7px] rounded-full" style={{ background: 'hsl(var(--docs-text-muted, 217 12% 44%) / 0.2)' }} />
+            <div className="w-[7px] h-[7px] rounded-full" style={{ background: 'hsl(var(--docs-text-muted, 217 12% 44%) / 0.2)' }} />
+            <div className="w-[7px] h-[7px] rounded-full" style={{ background: 'hsl(var(--docs-text-muted, 217 12% 44%) / 0.2)' }} />
           </div>
-          <span className="text-[11px] font-medium text-muted-foreground/45 ml-1 tracking-wide uppercase">{label}</span>
+          <span className="docs-caption ml-1 tracking-wide uppercase">{label}</span>
         </div>
       )}
       <div className="p-5 md:p-6">
@@ -253,10 +256,10 @@ export function QuickNav({ items }: { items: { label: string; id: string }[] }) 
    ────────────────────────────────────────────── */
 export function KeyMetric({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <div className={cn(CARD_RADIUS, "border", CARD_BORDER, "bg-muted/15 p-4 text-center")}>
-      <p className="text-[12px] text-muted-foreground/65 mb-1 uppercase tracking-wide font-medium">{label}</p>
-      <p className="text-lg font-bold font-mono text-foreground">{value}</p>
-      {sub && <p className="text-[12px] text-muted-foreground/55 mt-1">{sub}</p>}
+    <div className={cn(CARD_RADIUS, "p-5 text-center")} style={{ border: '1px solid hsl(var(--docs-border-subtle, 215 25% 18%))', background: 'hsl(var(--docs-surface, 222 44% 6%))' }}>
+      <p className="docs-caption mb-1.5 uppercase tracking-wide">{label}</p>
+      <p className="text-lg font-bold font-mono" style={{ color: 'hsl(var(--docs-text-strong, 210 40% 97%))' }}>{value}</p>
+      {sub && <p className="docs-helper mt-1.5">{sub}</p>}
     </div>
   );
 }
@@ -266,10 +269,10 @@ export function KeyMetric({ label, value, sub }: { label: string; value: string;
    ────────────────────────────────────────────── */
 export function SubTopic({ title, description, id }: { title: string; description?: string; id?: string }) {
   return (
-    <div id={id} className={cn("mt-10 mb-5 first:mt-4", id && "scroll-mt-24")}>
-      <h3 className="text-[17px] font-semibold tracking-tight text-foreground">{title}</h3>
+    <div id={id} className={cn("mt-12 mb-6 first:mt-4", id && "scroll-mt-24")}>
+      <h3 className="docs-subtopic-heading">{title}</h3>
       {description && (
-        <p className="text-[15px] text-muted-foreground/70 leading-relaxed mt-1.5">{description}</p>
+        <p className="docs-body mt-2" style={{ color: 'hsl(var(--docs-text-secondary, 215 16% 62%))' }}>{description}</p>
       )}
     </div>
   );
