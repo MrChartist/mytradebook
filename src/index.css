@@ -920,7 +920,7 @@
 
   /* ── Docs right rail (On this page) ── */
   .docs-page .docs-anchor-link {
-    font-family: Inter, system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     color: hsl(var(--docs-text-muted) / 0.7);
     font-size: 0.8125rem;
     font-weight: 420;
