@@ -59,6 +59,10 @@ import {
   CodeBlock, OutputBlock
 } from "@/components/docs/DocsEnhancements";
 import {
+  AnnotatedMockup, MockupCaption, FeatureZoneGrid,
+  VisualWalkthrough, VisualSummaryRow
+} from "@/components/docs/DocsVisualBlocks";
+import {
   ShareCardsMockup, AchievementsMockup, PositionSizingCalcMockup,
   TradingRulesMockup, TradeCoachMockup, StreakShareMockup
 } from "@/components/docs/DocsNewMockups";
@@ -700,9 +704,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p>Set your starting capital accurately before logging your first trade. This number drives all risk-per-trade calculations, position sizing suggestions, and portfolio % metrics. You can update it later in <strong>Settings → Capital Management</strong>, but getting it right from day one ensures your analytics are meaningful from the start.</p>
               </ProTip>
 
-              <InteractiveMockup label="Onboarding Flow">
+              <AnnotatedMockup
+                label="Onboarding Flow"
+                caption="The onboarding wizard walks you through account setup, starting capital configuration, and theme selection. Each step validates before proceeding."
+                highlights={["Capital Setup", "Theme Selection", "First Login"]}
+              >
                 <OnboardingFlowMockup />
-              </InteractiveMockup>
+              </AnnotatedMockup>
+              <MockupCaption>The mobile-optimized onboarding adapts to smaller screens with full-width fields and bottom-sheet interactions.</MockupCaption>
               <MobileAppMockup />
 
               <SubTopic title="Platform Overview" description="Understand the key areas of TradeBook." id="gs-platform-overview" />
@@ -764,9 +773,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Customization", id: "db-customization" },
                 { label: "Advanced Widgets", id: "db-advanced" },
               ]} />
-              <InteractiveMockup label="Dashboard Overview">
+              <VisualWalkthrough
+                title="Dashboard Overview"
+                steps={[
+                  { marker: "1", label: "P&L Hero", detail: "Today's total P&L with realized vs unrealized split" },
+                  { marker: "2", label: "KPI Cards", detail: "MTD P&L, Open Positions, Win Rate, Active Alerts" },
+                  { marker: "3", label: "Risk Gauge", detail: "Color-coded risk % with daily/monthly goal progress" },
+                  { marker: "4", label: "Equity Curve", detail: "Cumulative P&L chart with drawdown markers" },
+                  { marker: "5", label: "Calendar Heatmap", detail: "Monthly grid color-coded by daily P&L" },
+                  { marker: "6", label: "Segment Filters", detail: "Filter all widgets by market segment and month" },
+                ]}
+              >
                 <DashboardMockup />
-              </InteractiveMockup>
+              </VisualWalkthrough>
 
               <SubTopic title="Performance Overview" description="Real-time P&L and key trading metrics at a glance." id="db-performance" />
               <FeatureCard icon={Activity} title="Today's P&L Hero Card">
@@ -774,6 +793,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   The top hero card shows your total P&L for the day with a large, color-coded number. Green for profit, red for loss. Breaks down realized vs unrealized gains and shows win/loss count. Updates in real-time if you have live prices enabled via Dhan integration.
                 </p>
                 <div className="mt-4"><TodaysPnlHeroMockup /></div>
+                <MockupCaption>Green background for profit days, red for loss days. The hero card pulses with a subtle glow animation when P&L updates in real-time.</MockupCaption>
               </FeatureCard>
 
               <FeatureCard icon={BarChart3} title="KPI Cards">
@@ -785,6 +805,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Active Alerts — triggered today count with price/technical split → Alerts",
                 ]} />
                 <div className="mt-4"><KPICardsDetailMockup /></div>
+                <MockupCaption>Each KPI card is clickable — tap to navigate directly to the relevant detail page (Reports, Trades, Analytics, or Alerts).</MockupCaption>
               </FeatureCard>
 
               <FeatureCard icon={Gauge} title="Risk Gauge & Goal Tracker">
@@ -810,6 +831,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   A compact equity curve chart showing your cumulative P&L over the selected month with gradient fill. Shows peak equity, max drawdown, and date labels. Hover over data points to see exact values. The curve updates automatically as you close trades.
                 </p>
                 <div className="mt-4"><EquityCurveWidgetMockup /></div>
+                <MockupCaption>Hover over any data point to see the exact date, P&L value, and drawdown percentage. The gradient fill changes from green to red based on trend direction.</MockupCaption>
               </FeatureCard>
 
               <FeatureCard icon={Award} title="Streak & Discipline Tracker">
@@ -824,6 +846,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   A compact monthly calendar where each day is color-coded by P&L — green shades for profitable days, red shades for losses. Shows P&L amounts in each cell. Click any day to jump to the full calendar view with daily journal and trade details.
                 </p>
                 <div className="mt-4"><CalendarHeatmapWidgetMockup /></div>
+                <MockupCaption>Intensity of green/red shading corresponds to magnitude of profit/loss. Hover for exact amounts; click any day to open the full calendar view.</MockupCaption>
               </FeatureCard>
 
               <SubTopic title="Customization & Layout" description="Tailor your dashboard to your workflow." id="db-customization" />
@@ -889,18 +912,20 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
               </FeatureCard>
 
-              <InteractiveMockup label="Segment & Month Filters">
-                <FeatureCard icon={Filter} title="Segment & Month Filters">
-                  <p className="text-sm text-muted-foreground mb-3">Filter the entire dashboard by market segment and time period:</p>
-                  <FeatureList items={[
-                    "Segments: All, Intraday, Positional, Futures, Options, Commodities",
-                    "Quick month selector for the last 3 months",
-                    "Live indicator shows streaming status and last update time",
-                    "All KPIs, charts, and widgets update based on filters",
-                  ]} />
-                  <div className="mt-4"><SegmentFilterMockup /></div>
-                </FeatureCard>
-              </InteractiveMockup>
+              <AnnotatedMockup
+                label="Segment & Month Filters"
+                caption="Filter the entire dashboard by market segment and time period. All KPIs, charts, and widgets update instantly based on your selection."
+                highlights={["Segment Tabs", "Month Selector", "Live Indicator"]}
+                layout="side"
+              >
+                <FeatureZoneGrid zones={[
+                  { zone: "A", title: "Segment Tabs", description: "All, Intraday, Positional, Futures, Options, Commodities" },
+                  { zone: "B", title: "Month Selector", description: "Quick month selector for the last 3 months" },
+                  { zone: "C", title: "Live Indicator", description: "Shows streaming status and last price update time" },
+                  { zone: "D", title: "Widget Updates", description: "All dashboard widgets re-render based on your filters" },
+                ]} />
+                <SegmentFilterMockup />
+              </AnnotatedMockup>
 
               <ProTip variant="best-practice">
                 <p>Check your dashboard every morning before market opens. The segment filter lets you focus on today's active market — switch to "All" only during your weekly review.</p>
@@ -950,8 +975,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Attach setup tags, pattern tags, and notes",
                   "Link up to 5 chart images per trade (TradingView or direct URLs)",
                 ]} />
-                <div className="mt-4"><CreateTradeMockup /></div>
               </FeatureCard>
+              <AnnotatedMockup
+                caption="The trade form adapts based on your selected instrument — F&O trades show lot size and expiry, while equity trades focus on price and quantity."
+                highlights={["Instrument Search", "Stop Loss", "Targets", "Tags"]}
+              >
+                <CreateTradeMockup />
+              </AnnotatedMockup>
 
               <ProTip variant="best-practice">
                 <p>Always attach chart screenshots or TradingView links to your trades. When you review them weeks later, the chart context is invaluable — it shows what you <em>saw</em> at entry time, not what the chart looks like in hindsight. You can attach up to 5 links per trade.</p>
@@ -967,6 +997,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Cancelled — trade idea abandoned before entry",
                 ]} />
                 <div className="mt-4"><TradeStatusLifecycleMockup /></div>
+                <MockupCaption>Planned → Open → Closed is the standard flow. Cancelled trades are excluded from all P&L calculations and analytics.</MockupCaption>
               </FeatureCard>
 
               <ExpandableDetail title="Understanding Trade Statuses" icon={Layers} badge="Deep Dive">
@@ -1104,7 +1135,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   Import trades from CSV files with column mapping. Export your entire trade history to CSV for backup or external analysis. The export includes all trade fields, tags, and review data.
                 </p>
                 <div className="mt-4"><TradeViewsMockup /></div>
+                <MockupCaption>Switch between List and Grid views using the toggle in the top-right. Grid view shows chart thumbnails for visual scanning.</MockupCaption>
                 <div className="mt-4"><CsvImportMockup /></div>
+                <MockupCaption>The CSV importer auto-detects column headers and lets you review mappings before committing the import.</MockupCaption>
               </FeatureCard>
 
               <FeatureCard icon={Zap} title="Trade Templates & Smart Suggestions">
@@ -1426,12 +1459,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "AI Suggestions", id: "al-ai" },
               ]} />
 
-              <InteractiveMockup label="Alert Card & Telegram Notification">
+              <VisualWalkthrough
+                title="Alert Card & Telegram Notification"
+                steps={[
+                  { marker: "A", label: "Alert Card", detail: "Shows symbol, condition, threshold, and live distance-to-target" },
+                  { marker: "B", label: "Telegram Message", detail: "Instant notification with alert details and check frequency" },
+                  { marker: "C", label: "Status Indicators", detail: "Active/snoozed/expired state with color coding" },
+                ]}
+              >
                 <div className="grid md:grid-cols-2 gap-6">
                   <AlertCardMockup />
                   <TelegramNotifMockup />
                 </div>
-              </InteractiveMockup>
+              </VisualWalkthrough>
 
               <SubTopic title="Setting Up Your First Alert" description="Get started with price monitoring in under a minute." id="al-first" />
               <StepByStep title="Setting Up Your First Alert" steps={[
