@@ -901,12 +901,12 @@
   /* ── Docs card content typography ── */
   .docs-card-content > p {
     font-family: 'Source Sans 3', system-ui, sans-serif;
-    font-size: 1rem;
-    line-height: 1.75;
+    font-size: 0.96875rem;
+    line-height: 1.72;
     color: hsl(var(--docs-text-secondary));
   }
   .docs-card-content > p.text-sm {
-    font-size: 1rem !important;
+    font-size: 0.96875rem !important;
     color: hsl(var(--docs-text-secondary)) !important;
   }
 
