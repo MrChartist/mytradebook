@@ -152,13 +152,16 @@ export function AIPatternDetection({ trades }: Props) {
           </div>
           <div>
             <h3 className="text-sm font-semibold">AI Pattern Detection</h3>
-            <p className="text-xs text-muted-foreground">Behavioral insights from your trade history</p>
+            <p className="text-xs text-muted-foreground">Time, day, segment & streak patterns from {closed.length} trades</p>
           </div>
         </div>
-        <Button size="sm" onClick={handleDetect} disabled={loading}>
-          {loading ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1.5" />}
-          {hasRun ? "Re-analyze" : "Detect Patterns"}
-        </Button>
+        <div className="flex items-center gap-2">
+          <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-md bg-primary/10 text-primary">Included</span>
+          <Button size="sm" onClick={handleDetect} disabled={loading}>
+            {loading ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1.5" />}
+            {hasRun ? "Re-analyze" : "Detect Patterns"}
+          </Button>
+        </div>
       </div>
 
       {insights.length > 0 && (

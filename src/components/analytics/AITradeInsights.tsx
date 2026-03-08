@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Brain, Clock, Shield, Target, TrendingUp, Sparkles, RefreshCw, ChevronDown, Settings, ExternalLink } from "lucide-react";
+import { Brain, Clock, Shield, Target, TrendingUp, Sparkles, RefreshCw, ChevronDown, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -103,11 +103,14 @@ export function AITradeInsights({ compact = false, maxInsights }: AITradeInsight
               <Skeleton className="h-16 w-full rounded-lg" />
             </>
           ) : !hasAiKey ? (
-            <div className="text-center py-4">
-              <Settings className="w-8 h-8 mx-auto text-muted-foreground/40 mb-2" />
-              <p className="text-xs text-muted-foreground mb-2">Connect your Gemini or OpenAI key to unlock AI insights</p>
-              <Button variant="outline" size="sm" className="text-xs" onClick={() => navigate("/settings?tab=integrations")}>
-                <ExternalLink className="w-3 h-3 mr-1" /> Setup AI Key
+            <div className="text-center py-4 space-y-2">
+              <Sparkles className="w-8 h-8 mx-auto text-muted-foreground/30 mb-1" />
+              <p className="text-xs font-medium">Bring Your Own AI Key</p>
+              <p className="text-[10px] text-muted-foreground/50 leading-relaxed max-w-[260px] mx-auto">
+                Connect a free Gemini API key to get personalized insights on timing, risk, and behavioral patterns.
+              </p>
+              <Button variant="outline" size="sm" className="text-[11px] h-7" onClick={() => navigate("/settings?tab=integrations")}>
+                <ExternalLink className="w-3 h-3 mr-1" /> Setup in Settings
               </Button>
             </div>
           ) : insights.length === 0 ? (
@@ -183,23 +186,36 @@ export function AITradeInsights({ compact = false, maxInsights }: AITradeInsight
             <Skeleton className="h-20 w-full rounded-lg" />
           </div>
         ) : !hasAiKey ? (
-          <div className="text-center py-8">
-            <Settings className="w-12 h-12 mx-auto text-muted-foreground/40 mb-3" />
-            <h3 className="text-base font-semibold mb-1">Connect Your AI Provider</h3>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto mb-4">
-              Configure your Gemini or OpenAI API key in Settings to unlock AI-powered trade insights — your key, your cost.
-            </p>
-            <Button variant="outline" onClick={() => navigate("/settings?tab=integrations")}>
-              <ExternalLink className="w-4 h-4 mr-2" /> Go to Settings
-            </Button>
+          <div className="text-center py-8 space-y-3">
+            <div className="w-12 h-12 mx-auto rounded-xl bg-primary/8 flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-base font-semibold mb-1">Bring Your Own AI Key</h3>
+              <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                Connect a <strong>free</strong> Google Gemini key to unlock AI-powered analysis of your trading patterns, timing, risk management, and behavioral insights.
+              </p>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Button onClick={() => navigate("/settings?tab=integrations")}>
+                <ExternalLink className="w-4 h-4 mr-2" /> Setup AI Key
+              </Button>
+              <p className="text-[10px] text-muted-foreground/40">
+                Your key is stored securely and only used server-side. No data leaves your account.
+              </p>
+            </div>
           </div>
         ) : insights.length === 0 ? (
-          <div className="text-center py-8">
-            <Brain className="w-12 h-12 mx-auto text-muted-foreground/40 mb-3" />
-            <h3 className="text-base font-semibold mb-1">Get AI-Powered Insights</h3>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto">
-              Click "Analyze My Trades" to let AI review your trading patterns, timing, and risk management to suggest improvements.
-            </p>
+          <div className="text-center py-8 space-y-3">
+            <div className="w-12 h-12 mx-auto rounded-xl bg-muted/40 flex items-center justify-center">
+              <Brain className="w-6 h-6 text-muted-foreground/40" />
+            </div>
+            <div>
+              <h3 className="text-base font-semibold mb-1">Ready to Analyze</h3>
+              <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                Click "Analyze My Trades" to review your timing patterns, segment performance, risk habits, and win/loss streaks.
+              </p>
+            </div>
           </div>
         ) : (
           <>
