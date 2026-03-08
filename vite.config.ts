@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => ({
         background_color: "#0a0f1c",
         display: "standalone",
         orientation: "portrait",
-        start_url: "/",
+        start_url: "/dashboard",
         categories: ["finance", "productivity"],
         icons: [
           {

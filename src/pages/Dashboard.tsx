@@ -135,7 +135,7 @@ export default function Dashboard() {
   }, [trades]);
 
   const handleCalendarDayClick = useCallback((dateStr: string) => {
-    navigate("/calendar");
+    navigate(`/calendar?date=${dateStr}`);
   }, [navigate]);
 
   const alertsVisible = widgets.find((w) => w.id === "alerts")?.visible ?? true;

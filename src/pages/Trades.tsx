@@ -115,14 +115,15 @@ export default function Trades() {
   const { syncPortfolio, monitorTrades, isSyncing } = useDhanIntegration();
   const { templates } = useTradeTemplates();
 
-  const { trades: allTrades } = useTrades();
+  // Reuse filtered trades for counts when no filter is active, otherwise use summary from hook
+  const { trades: allTradesForCounts } = useTrades();
   const statusCounts = useMemo(() => ({
-    ALL: allTrades.length,
-    PENDING: allTrades.filter(t => t.status === "PENDING").length,
-    OPEN: allTrades.filter(t => t.status === "OPEN").length,
-    CLOSED: allTrades.filter(t => t.status === "CLOSED").length,
-    CANCELLED: allTrades.filter(t => t.status === "CANCELLED").length,
-  }), [allTrades]);
+    ALL: allTradesForCounts.length,
+    PENDING: allTradesForCounts.filter(t => t.status === "PENDING").length,
+    OPEN: allTradesForCounts.filter(t => t.status === "OPEN").length,
+    CLOSED: allTradesForCounts.filter(t => t.status === "CLOSED").length,
+    CANCELLED: allTradesForCounts.filter(t => t.status === "CANCELLED").length,
+  }), [allTradesForCounts]);
 
   // Compute last 7 days sparkline data for P&L and Win Rate
   const { pnlSparkline, winRateSparkline } = useMemo(() => {
