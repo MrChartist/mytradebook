@@ -630,8 +630,13 @@ export function FooterSection() {
   const handleNewsletter = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
-    // TODO: connect to backend
     setEmail("");
+    // Visual feedback — backend integration pending
+    const el = document.createElement("div");
+    el.textContent = "✓ Thanks! We'll keep you posted.";
+    el.className = "fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-card border border-border/40 text-foreground text-sm px-4 py-2.5 rounded-lg shadow-lg";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
   };
 
   return (

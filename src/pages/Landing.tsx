@@ -8,7 +8,7 @@ import { LandingNavbar } from "@/components/landing/LandingNavbar";
 // Eagerly loaded — above the fold
 import { HeroSection } from "@/components/landing/HeroSection";
 import {
-  useCountUp, GradientDivider,
+  GradientDivider,
 } from "@/components/landing/LandingShared";
 
 // Lazy-loaded — below the fold
@@ -30,9 +30,6 @@ export default function Landing() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
-  const s3 = useCountUp(5, 1200);
-  const s4 = useCountUp(50, 1500);
-  const s5 = useCountUp(1200, 2000);
 
   useEffect(() => {
     if (!loading && user) navigate("/dashboard");
