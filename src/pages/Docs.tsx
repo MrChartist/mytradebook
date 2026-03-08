@@ -1308,6 +1308,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <div className="mt-4"><TradeTemplateMockup /></div>
               </FeatureCard>
+
+              <NextStepBlock steps={[
+                { label: "CSV Import", description: "Bulk import trades from your broker", targetId: "csv-import" },
+                { label: "Analytics", description: "Deep performance breakdowns", targetId: "analytics" },
+                { label: "Journal", description: "Review and reflect on your trading", targetId: "journal" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
