@@ -129,7 +129,7 @@ export default function Alerts() {
 
     switch (activeTab) {
       case "active": list = list.filter(a => a.active && !isSnoozed(a, now)); break;
-      case "triggered": list = list.filter(a => !!a.last_triggered); break;
+      case "triggered": list = list.filter(a => a.last_triggered && new Date(a.last_triggered).toDateString() === now.toDateString()); break;
       case "paused": list = list.filter(a => !a.active || isSnoozed(a, now)); break;
       case "expired": list = list.filter(a => a.expires_at && new Date(a.expires_at) < now); break;
     }
