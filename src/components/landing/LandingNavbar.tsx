@@ -67,7 +67,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
             className="flex items-center gap-2.5"
             whileHover={{ scale: 1.03 }}
           >
-            <img src={landingLogo} alt="TradeBook" className="h-8 object-contain" />
+            <img src={landingLogo} alt="TradeBook" className="h-9 object-contain" />
           </motion.button>
           {activePage === "docs" && (
             <div className="hidden sm:flex items-center gap-1.5 text-[12px] text-muted-foreground">
@@ -85,7 +85,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
         </div>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-1 text-sm">
+        <div className="hidden md:flex items-center gap-2 text-sm">
           {NAV_LINKS.map((item) => {
             const isActive = item.page === activePage;
             return (
@@ -93,7 +93,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
                 key={item.label}
                 onClick={() => handleNavClick(item.href)}
                 className={cn(
-                  "relative px-4 py-1.5 rounded-full text-[13px] font-medium transition-colors duration-200",
+                  "relative px-4 py-1.5 rounded-full text-sm font-medium transition-colors duration-200",
                   isActive
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground"

@@ -84,7 +84,7 @@ export function HeroSection() {
 
           <motion.h1
             variants={fadeUp} initial="hidden" animate="visible" custom={0.1}
-            className="text-5xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] font-extrabold leading-[1.05] tracking-[-0.03em] text-foreground mb-6"
+            className="text-6xl sm:text-7xl lg:text-8xl xl:text-[7rem] font-extrabold leading-[0.95] tracking-[-0.04em] text-foreground mb-8"
           >
             Know Your{" "}
             <span className="accent-script">
@@ -92,15 +92,13 @@ export function HeroSection() {
             </span>
             .
             <br />
-            <span className="bg-gradient-to-r from-foreground via-foreground/90 to-foreground/60 bg-clip-text text-transparent">
-              Compound It Daily.
-            </span>
+            Compound It Daily.
           </motion.h1>
 
           {/* Subtitle */}
           <motion.p
             variants={fadeUp} initial="hidden" animate="visible" custom={0.2}
-            className="text-lg lg:text-xl text-muted-foreground max-w-lg mx-auto mb-12 leading-relaxed font-medium tracking-wide"
+            className="text-xl lg:text-2xl text-muted-foreground max-w-xl mx-auto mb-14 leading-relaxed font-medium tracking-wide"
           >
             The trading journal built for Indian markets — NSE, BSE, MCX.
           </motion.p>
@@ -113,7 +111,7 @@ export function HeroSection() {
             <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
               <Button
                 size="lg"
-                className="h-14 px-10 text-base gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-wide"
+                className="h-16 px-12 text-lg gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-wide"
                 onClick={() => navigate("/login?mode=signup")}
               >
                 Start Free
@@ -123,14 +121,11 @@ export function HeroSection() {
 
             <motion.button
               onClick={() => setVideoOpen(true)}
-              className="inline-flex items-center gap-2.5 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+              className="inline-flex items-center gap-2 text-base text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4 decoration-border hover:decoration-foreground font-medium tracking-wide"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
             >
-              <span className="w-11 h-11 rounded-full bg-card/80 backdrop-blur-sm border border-border/50 flex items-center justify-center group-hover:bg-card transition-colors shadow-sm">
-                <Play className="w-4 h-4 text-foreground ml-0.5" />
-              </span>
-              <span className="font-medium tracking-wide">Watch Demo</span>
+              Watch Demo
             </motion.button>
           </motion.div>
         </motion.div>
