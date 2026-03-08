@@ -145,6 +145,9 @@ export default function ProfileSettings() {
       {/* Capital Management */}
       <CapitalManagementCard />
 
+      {/* Public Profile */}
+      <PublicProfileCard />
+
       {/* Data Export */}
       <DataExportCard />
     </div>
