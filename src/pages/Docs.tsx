@@ -3033,6 +3033,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="info">
                 <p>Check the Achievements grid on your Dashboard to see which badges you're closest to earning. Focus on discipline badges first — they reinforce good trading habits that compound over time.</p>
               </ProTip>
+
+              <NextStepBlock steps={[
+                { label: "Sharing & Social", description: "Share your wins and streaks", targetId: "sharing" },
+                { label: "Trade Coach", description: "AI-powered trade analysis", targetId: "trade-coach" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
