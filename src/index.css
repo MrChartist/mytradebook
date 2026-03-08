@@ -916,8 +916,12 @@
   .docs-card-content > p {
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.96875rem;
-    line-height: 1.72;
+    line-height: 1.78;
     color: hsl(var(--docs-text-secondary));
+    margin-bottom: 0.5rem;
+  }
+  .docs-card-content > p:last-child {
+    margin-bottom: 0;
   }
   .docs-card-content > p.text-sm {
     font-size: 0.96875rem !important;
