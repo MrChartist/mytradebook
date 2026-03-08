@@ -422,24 +422,20 @@ export default function Trades() {
 
       {/* Status Tabs + Filters + Sort + View */}
       <div className="space-y-3">
-        <div className="flex gap-1 flex-wrap">
+        <div className="flex gap-1 overflow-x-auto pb-0.5 scrollbar-none">
           {(["ALL", "PENDING", "OPEN", "CLOSED", "CANCELLED"] as StatusFilter[]).map((status) => (
-            <Button
+            <button
               key={status}
-              variant="outline"
-              size="sm"
               onClick={() => setStatusFilter(status)}
               className={cn(
-                "border-border text-xs h-7",
-                statusFilter === status && (
-                  status === "ALL" ? "bg-primary/10 border-primary/20 text-primary" :
-                  statusConfig[status]?.color
-                )
+                "px-3 py-1 text-[11px] font-medium rounded-md border transition-all duration-200 shrink-0",
+                statusFilter === status
+                  ? "border-primary/15 bg-primary/6 text-primary"
+                  : "border-border/15 text-muted-foreground/50 hover:text-foreground hover:border-border/30"
               )}
             >
-              {status === "ALL" ? "All" : statusConfig[status]?.label}
-              <span className="ml-1 text-muted-foreground">({statusCounts[status]})</span>
-            </Button>
+              {status === "ALL" ? "All" : statusConfig[status]?.label} ({statusCounts[status]})
+            </button>
           ))}
         </div>
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
