@@ -233,9 +233,9 @@
   .text-heading-lg { font-size: 1.75rem; line-height: 1.25; letter-spacing: -0.025em; font-weight: 700; font-family: 'Source Sans 3', sans-serif; } /* 28px */
   .text-display { font-size: 2.25rem; line-height: 1.15; letter-spacing: -0.028em; font-weight: 700; font-family: 'Libre Bodoni', Georgia, serif; } /* 36px — premium display */
 
-  /* ── Accent serif (Instrument Serif) — use sparingly in headings ── */
+  /* ── Accent serif (Libre Bodoni) — use sparingly in premium headings ── */
   .accent-serif {
-    font-family: 'Instrument Serif', Georgia, serif;
+    font-family: 'Libre Bodoni', Georgia, serif;
     font-style: italic;
     font-weight: 400;
   }
