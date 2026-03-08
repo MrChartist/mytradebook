@@ -727,6 +727,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
     if (group) setExpandedGroup(group.label);
   }, [activeSection, sidebarGroups]);
 
+  const currentSectionObj = SECTIONS.find(s => s.id === activeSection);
+  const currentGroupObj = sidebarGroups.find(g => g.ids.includes(activeSection));
+  const [mobileTocOpen, setMobileTocOpen] = useState(false);
+
   return (
     <div className={cn("docs-page min-h-screen", isInsideApp && "pb-6", mode === "bw" && "docs-bw")} role="document" style={{ scrollBehavior: 'smooth' }}>
       {/* Reading progress bar */}
