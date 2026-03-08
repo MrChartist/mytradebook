@@ -277,25 +277,25 @@ const FAQGroup = ({ icon: Icon, title, items }: {
   title: string; 
   items: { q: string; a: string }[] 
 }) => (
-  <div className="mb-6">
-    <div className="flex items-center gap-2.5 mb-4">
+  <div className="mb-8">
+    <div className="flex items-center gap-2.5 mb-5">
       <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
         <Icon className="w-3.5 h-3.5" style={{ color: 'hsl(var(--docs-accent))' }} />
       </div>
-      <h3 className="text-[13px] font-bold" style={{ color: 'hsl(var(--docs-text-strong))' }}>{title}</h3>
+      <h3 className="text-[14px] font-bold" style={{ color: 'hsl(var(--docs-text-strong))' }}>{title}</h3>
       <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: 'hsl(var(--docs-elevated))', color: 'hsl(var(--docs-text-muted))' }}>{items.length} questions</span>
     </div>
-    <div className="space-y-2">
+    <div className="space-y-2.5">
       {items.map((faq) => (
         <details key={faq.q} className="group premium-card-hover">
-          <summary className="cursor-pointer p-4 flex items-start gap-3 list-none [&::-webkit-details-marker]:hidden">
+          <summary className="cursor-pointer p-4 sm:p-5 flex items-start gap-3 list-none [&::-webkit-details-marker]:hidden">
             <div className="w-5 h-5 rounded-md flex items-center justify-center mt-0.5 shrink-0 transition-colors" style={{ background: 'hsl(var(--docs-elevated))' }}>
               <ChevronRight className="w-3 h-3 transition-transform group-open:rotate-90" style={{ color: 'hsl(var(--docs-accent))' }} />
             </div>
-            <span className="text-[13px] font-medium leading-snug" style={{ color: 'hsl(var(--docs-text-primary))' }}>{faq.q}</span>
+            <span className="text-[14px] font-medium leading-relaxed" style={{ color: 'hsl(var(--docs-text-primary))' }}>{faq.q}</span>
           </summary>
-          <div className="px-4 pb-4 pt-0 pl-12">
-            <p className="text-[13px] leading-relaxed" style={{ color: 'hsl(var(--docs-text-secondary))' }}>{faq.a}</p>
+          <div className="px-4 sm:px-5 pb-5 pt-0 pl-12 sm:pl-14">
+            <p className="text-[14px] leading-[1.75]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>{faq.a}</p>
           </div>
         </details>
       ))}
