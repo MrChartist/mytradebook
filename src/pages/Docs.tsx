@@ -2023,6 +2023,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">To connect your broker for live prices, go to Settings → Integrations → Dhan. See the Integrations section for full setup instructions.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Alerts", description: "Set price alerts from your watchlist", targetId: "alerts" },
+                { label: "Studies", description: "Research watchlist symbols deeper", targetId: "studies" },
+                { label: "Integrations", description: "Connect Dhan for live prices", targetId: "integrations" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
