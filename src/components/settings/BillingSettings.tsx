@@ -2,6 +2,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Check, Zap, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSubscription } from "@/hooks/useSubscription";
+import { Progress } from "@/components/ui/progress";
+import ReferralCard from "@/components/settings/ReferralCard";
 
 const allFeatures = [
   "Unlimited trades",
