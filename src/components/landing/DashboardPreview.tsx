@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import {
   Home, BookOpen, Layers, Target, Eye, Calendar,
   BarChart3, LineChart, FileText, AlertTriangle, Settings,
