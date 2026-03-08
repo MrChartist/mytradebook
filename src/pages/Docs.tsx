@@ -3056,26 +3056,25 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <SectionHeader
                 id="faq"
                 title="FAQ & Troubleshooting"
-                description="Answers to frequently asked questions and solutions to common issues."
+                description="Answers to frequently asked questions and solutions to common issues, organized by category."
                 icon={MessageSquare}
               />
-              <SubTopic title="Common Questions" description="Quick answers to the most frequently asked questions." id="faq-common" />
-              <div className="space-y-4">
+
+              <QuickNav items={[
+                { label: "Account & Billing", id: "faq-account" },
+                { label: "Data & Privacy", id: "faq-data" },
+                { label: "Integrations", id: "faq-integrations" },
+                { label: "Features", id: "faq-features" },
+              ]} />
+
+              <SubTopic title="Account & Billing" id="faq-account" />
+              <ExpandableDetail title="Account & Billing Questions" icon={Users} defaultOpen>
                 {[
                   { q: "Is TradeBook free to use?", a: "Yes! The Free plan includes trade logging, watchlists, alerts, and basic analytics. The Pro plan unlocks advanced analytics, AI insights, weekly reports, and more." },
-                  { q: "Do I need a Dhan account to use TradeBook?", a: "No. Dhan integration is optional — it enables live prices, auto-sync, and one-click execution. You can use TradeBook fully without any broker connection." },
-                  { q: "Is my data secure?", a: "Absolutely. All data is encrypted at rest and in transit. Your API keys are stored securely server-side and never exposed to the browser. We use industry-standard authentication." },
+                  { q: "How does the 14-day Pro trial work?", a: "New accounts automatically get a 14-day Pro trial with full access to all features. No credit card required. After the trial, you can continue on the Free plan or upgrade to Pro." },
                   { q: "Can I import trades from my existing broker?", a: "Yes. Use the CSV Import feature to bulk import trades from any broker. Column mapping supports most common export formats." },
-                  { q: "Why are my live prices not updating?", a: "Check that your Dhan integration is connected and verified in Settings → Integrations. Prices only stream during market hours (9:15 AM – 3:30 PM IST)." },
-                  { q: "How do I fix Telegram notifications not sending?", a: "Verify your bot token and chat ID in Settings → Integrations → Telegram. Use the 'Send Test' button to confirm delivery. Check the Delivery Log for error details." },
-                  { q: "My dashboard shows no data — what's wrong?", a: "Ensure you have trades logged. Check the segment filter and month selector — they may be filtering out your data. Try selecting 'All Segments' and expanding the date range." },
-                  { q: "Can I use TradeBook on mobile?", a: "Yes! TradeBook is a Progressive Web App (PWA). Add it to your home screen for a native-like experience with offline trade queuing." },
-                  { q: "What is the AI Trade Coach?", a: "The AI Trade Coach provides instant feedback on your closed trades — analyzing entry, exit, timing, and risk management. It auto-triggers when you close a trade and the feedback is saved for future reference." },
-                  { q: "How do Trading Rules work?", a: "Trading Rules are a customizable checklist that appears before you submit a new trade. Add your personal rules (e.g., 'Check trend on higher timeframe'), and the system enforces checking them all before entry." },
-                  { q: "Can I get AI-suggested alerts?", a: "Yes! Smart Alert Suggestions analyzes your frequently traded symbols and recommends price alerts with AI-generated reasoning. One-click to create any suggestion as an active alert." },
-                  { q: "How does the Command Palette work?", a: "Press ⌘K or / to open the Command Palette. It searches across pages, trades, alerts, and journal entries. You can also create new trades, alerts, and studies directly from it." },
                 ].map((faq) => (
-                  <div key={faq.q} className="premium-card-hover p-5 group">
+                  <div key={faq.q} className="premium-card-hover p-5 group my-3">
                     <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
                       <MessageSquare className="w-4 h-4 text-primary shrink-0" />
                       {faq.q}
@@ -3083,7 +3082,67 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     <p className="text-sm text-muted-foreground leading-relaxed pl-6">{faq.a}</p>
                   </div>
                 ))}
-              </div>
+              </ExpandableDetail>
+
+              <SubTopic title="Data & Privacy" id="faq-data" />
+              <ExpandableDetail title="Data & Privacy Questions" icon={Shield} defaultOpen>
+                {[
+                  { q: "Is my data secure?", a: "Absolutely. All data is encrypted at rest and in transit. Your API keys are stored securely server-side and never exposed to the browser. We use industry-standard authentication." },
+                  { q: "My dashboard shows no data — what's wrong?", a: "Ensure you have trades logged. Check the segment filter and month selector — they may be filtering out your data. Try selecting 'All Segments' and expanding the date range." },
+                  { q: "Can I use TradeBook on mobile?", a: "Yes! TradeBook is a Progressive Web App (PWA). Add it to your home screen for a native-like experience with offline trade queuing." },
+                ].map((faq) => (
+                  <div key={faq.q} className="premium-card-hover p-5 group my-3">
+                    <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                      <MessageSquare className="w-4 h-4 text-primary shrink-0" />
+                      {faq.q}
+                    </h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed pl-6">{faq.a}</p>
+                  </div>
+                ))}
+              </ExpandableDetail>
+
+              <SubTopic title="Integrations" id="faq-integrations" />
+              <ExpandableDetail title="Integration & Connection Questions" icon={Layers} defaultOpen>
+                {[
+                  { q: "Do I need a Dhan account to use TradeBook?", a: "No. Dhan integration is optional — it enables live prices, auto-sync, and one-click execution. You can use TradeBook fully without any broker connection." },
+                  { q: "Why are my live prices not updating?", a: "Check that your Dhan integration is connected and verified in Settings → Integrations. Prices only stream during market hours (9:15 AM – 3:30 PM IST)." },
+                  { q: "How do I fix Telegram notifications not sending?", a: "Verify your bot token and chat ID in Settings → Integrations → Telegram. Use the 'Send Test' button to confirm delivery. Check the Delivery Log for error details." },
+                  { q: "How do I set up AI Trade Insights?", a: "Go to Settings → Integrations → AI Trade Insights. Choose Google Gemini (free) or OpenAI, generate an API key from the provider, paste it in, and save. Analysis starts automatically on your next closed trade." },
+                ].map((faq) => (
+                  <div key={faq.q} className="premium-card-hover p-5 group my-3">
+                    <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                      <MessageSquare className="w-4 h-4 text-primary shrink-0" />
+                      {faq.q}
+                    </h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed pl-6">{faq.a}</p>
+                  </div>
+                ))}
+              </ExpandableDetail>
+
+              <SubTopic title="Features" id="faq-features" />
+              <ExpandableDetail title="Feature & Usage Questions" icon={Sparkles} defaultOpen>
+                {[
+                  { q: "What is the AI Trade Coach?", a: "The AI Trade Coach provides instant feedback on your closed trades — analyzing entry, exit, timing, and risk management. It auto-triggers when you close a trade and the feedback is saved for future reference." },
+                  { q: "How do Trading Rules work?", a: "Trading Rules are a customizable checklist that appears before you submit a new trade. Add your personal rules (e.g., 'Check trend on higher timeframe'), and the system enforces checking them all before entry." },
+                  { q: "Can I get AI-suggested alerts?", a: "Yes! Smart Alert Suggestions analyzes your frequently traded symbols and recommends price alerts with AI-generated reasoning. One-click to create any suggestion as an active alert." },
+                  { q: "How does the Command Palette work?", a: "Press ⌘K or / to open the Command Palette. It searches across pages, trades, alerts, and journal entries. You can also create new trades, alerts, and studies directly from it." },
+                  { q: "How do Achievements work?", a: "Achievements are earned automatically as you hit milestones — like logging your first trade, reaching a win streak, or completing a week of journaling. Check your badge grid on the Dashboard to track progress." },
+                  { q: "What is the Position Sizing Calculator?", a: "It calculates your ideal position size based on your capital, risk percentage, and stop loss distance. Available inside the trade creation modal to help you size positions consistently." },
+                  { q: "Where can I find documentation for a specific feature?", a: "Use the sidebar search on this Docs page to filter sections by keyword. You can also use the QuickNav links at the top of each section to jump to specific topics." },
+                ].map((faq) => (
+                  <div key={faq.q} className="premium-card-hover p-5 group my-3">
+                    <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                      <MessageSquare className="w-4 h-4 text-primary shrink-0" />
+                      {faq.q}
+                    </h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed pl-6">{faq.a}</p>
+                  </div>
+                ))}
+              </ExpandableDetail>
+
+              <ProTip variant="info">
+                <p>Can't find what you're looking for? If you're experiencing a bug, data issue, or something that isn't covered here, reach out to support. Include your browser, device type, and a screenshot if possible — it helps us resolve things much faster.</p>
+              </ProTip>
             </motion.section>
 
             <SectionDivider />
