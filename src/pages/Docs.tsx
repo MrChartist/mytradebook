@@ -976,6 +976,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="best-practice">
                 <p>Check your dashboard every morning before market opens. The segment filter lets you focus on today's active market — switch to "All" only during your weekly review.</p>
               </ProTip>
+              <NextStepBlock steps={[
+                { label: "Trade Management", description: "Learn how to log and manage trades", targetId: "trade-management" },
+                { label: "Alerts System", description: "Set up price alerts for your watchlist", targetId: "alerts" },
+                { label: "Settings", description: "Configure your starting capital and preferences", targetId: "settings" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
