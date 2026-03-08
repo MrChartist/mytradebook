@@ -183,7 +183,11 @@ export function PricingSection() {
           </div>
         </motion.div>
         <div className="grid md:grid-cols-3 gap-7 items-start">
-          {pricingPlans.map((plan, i) => (
+          {pricingPlans.map((plan, i) => {
+            const showAnnual = billing === "annual";
+            const displayPrice = showAnnual && plan.name === "Monthly" ? "₹149" : showAnnual && plan.name === "Quarterly" ? "₹399" : plan.price;
+            const displayPeriod = showAnnual && plan.name !== "Yearly" ? "/mo (billed yearly)" : plan.period;
+            return (
             <motion.div key={plan.name} variants={fadeUp} custom={i * 0.1}>
               <motion.div
                 className={cn(
@@ -202,8 +206,19 @@ export function PricingSection() {
                 {plan.isBeta && <div className="inline-flex self-start items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-profit/10 text-profit text-[11px] font-semibold mt-2 animate-pulse">Free During Beta</div>}
                 <div className="mt-4 mb-1 flex items-baseline gap-1 flex-wrap">
                   {plan.originalPrice && <span className="text-lg text-muted-foreground/50 line-through mr-1">{plan.originalPrice}</span>}
-                  <span className="text-5xl font-extrabold font-mono">{plan.price}</span>
-                  <span className="text-muted-foreground/70 text-sm">{plan.period}</span>
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={displayPrice}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.25 }}
+                      className="text-5xl font-extrabold font-mono"
+                    >
+                      {displayPrice}
+                    </motion.span>
+                  </AnimatePresence>
+                  <span className="text-muted-foreground/70 text-sm">{displayPeriod}</span>
                   {plan.saveBadge && <span className="ml-2 px-2 py-0.5 rounded-full bg-profit/10 text-profit text-[10px] font-bold">{plan.saveBadge}</span>}
                 </div>
                 <p className="text-[15px] text-muted-foreground mb-8">{plan.description}</p>
@@ -216,7 +231,8 @@ export function PricingSection() {
                 </motion.div>
               </motion.div>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
         <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4 mt-14">
           {[{ icon: Lock, text: "No credit card required" }, { icon: RefreshCw, text: "Cancel anytime" }, { icon: Shield, text: "14-day money-back guarantee" }].map((item) => (
