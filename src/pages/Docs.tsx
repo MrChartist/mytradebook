@@ -1538,8 +1538,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p>Your most costly mistake is usually not your most frequent one. Check the "Most Costly" column — a single mistake type might account for 40% of your total losses.</p>
               </ProTip>
               <MistakeTrendMockup />
-              <SubTopic title="Pattern Recognition" description="Identify repeat mistakes and track their frequency over time." />
-              <FeatureCard icon={Search} title="Mistake Pattern Analysis">
+              <SubTopic title="Pattern Recognition" description="Identify repeat mistakes and track their frequency over time." id="mk-patterns" />
                 <FeatureList items={[
                   "Repeat pattern analysis with occurrence counts",
                   "Total loss attributed to each mistake type",
