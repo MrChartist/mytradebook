@@ -163,7 +163,7 @@ export function PricingSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>Pricing</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Simple,{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>transparent</span>{" "}pricing</h2>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Simple,{" "}<span className="accent-script">transparent</span>{" "}pricing</h2>
           <p className="text-muted-foreground max-w-md mx-auto text-lg">One plan. All features. Pick your billing cycle.</p>
         </motion.div>
         <motion.div variants={fadeUp} className="flex justify-center mb-12">
