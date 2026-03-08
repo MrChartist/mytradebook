@@ -751,9 +751,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           ═══════════════════════════════════════════════════════════════ */}
       <header className="pt-14 lg:pt-16 relative overflow-hidden" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.5)' }}>
         <div className="absolute inset-0 opacity-[0.03]" style={{ background: 'radial-gradient(ellipse 60% 50% at 20% 50%, hsl(var(--docs-accent)), transparent)' }} />
-        <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 py-8 lg:py-10 relative">
+        <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 py-10 lg:py-14 relative">
           {/* Title row */}
-          <div className="flex flex-wrap items-center gap-3 mb-3">
+          <div className="flex flex-wrap items-center gap-3 mb-4">
             <h1 className="docs-title font-heading" style={{ fontSize: 'clamp(1.75rem, 3vw, 2.5rem)' }}>Documentation</h1>
             <button
               onClick={toggle}
@@ -771,12 +771,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </div>
 
           {/* Subtitle */}
-          <p className="docs-body max-w-xl" style={{ color: 'hsl(var(--docs-text-muted))' }}>
+          <p className="docs-body-lg max-w-2xl" style={{ color: 'hsl(var(--docs-text-secondary))' }}>
             Complete guide to every feature — trade logging, analytics, alerts, and integrations for Indian market traders.
           </p>
 
           {/* Meta row */}
-          <div className="flex items-center gap-3.5 mt-4 flex-wrap docs-caption" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>
+          <div className="flex items-center gap-3.5 mt-5 flex-wrap docs-caption" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>
             <span className="flex items-center gap-1.5">
               <Clock className="w-3 h-3" />
               ~35 min read
