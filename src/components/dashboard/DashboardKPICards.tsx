@@ -232,7 +232,7 @@ export function DashboardKPICards({ alerts }: Props) {
           )}
         </div>
         <div className="inner-panel mt-3">
-          <p className="text-[10px] text-muted-foreground">
+          <p className="kpi-sublabel">
             Price: {priceAlerts} | Technical: {techAlerts}
           </p>
         </div>
