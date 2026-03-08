@@ -77,7 +77,7 @@ export default function ProfileSettings() {
               <p className="text-[14px] font-medium">{formData.name || "Your Name"}</p>
               <p className="text-[12px] text-muted-foreground/60">{formData.email}</p>
             </div>
-            <Button variant="outline" size="sm" className="ml-auto h-9 text-[12px] rounded-lg">
+            <Button variant="outline" size="sm" className="ml-auto h-9 text-[12px] rounded-lg" disabled title="Coming soon">
               Change Photo
             </Button>
           </div>
