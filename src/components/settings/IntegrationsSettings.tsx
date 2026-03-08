@@ -427,7 +427,7 @@ export default function IntegrationsSettings() {
                     {showAiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[10px] text-muted-foreground/40">
                   Get your key from{" "}
                   {aiProvider === "gemini" ? (
                     <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
