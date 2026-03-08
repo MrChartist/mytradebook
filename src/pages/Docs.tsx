@@ -2250,6 +2250,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
                 {/* Roadmap */}
                 <div>
+                  <SubTopic title="Upcoming Roadmap" description="Features we're building next." id="cl-roadmap" />
                   <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-[hsl(var(--tb-accent))]" /> Upcoming Roadmap
                   </h3>
