@@ -752,6 +752,35 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><PostTradeReviewMockup /></div>
               </FeatureCard>
 
+              <FeatureCard icon={Share2} title="P&L & Trade Share Cards" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Generate beautiful, branded share cards for social media. Share your daily P&L summary, individual trade results, or winning streaks with customizable templates.
+                </p>
+                <FeatureList items={[
+                  "P&L Share Card — daily/weekly/monthly P&L summary with equity curve",
+                  "Trade Share Card — individual trade with entry, exit, P&L, and chart",
+                  "Streak Share Card — consecutive win/loss streak visualization",
+                  "Multiple templates: Dark Minimal, Gradient Pro, Neon, and more",
+                  "One-click download as PNG image",
+                  "Watermark with your username for attribution",
+                  "Accessible from trade detail modal and dashboard quick actions",
+                ]} />
+              </FeatureCard>
+
+              <FeatureCard icon={Award} title="Achievements & Badges" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Gamified milestones that celebrate your trading journey. Unlock badges as you hit key milestones.
+                </p>
+                <FeatureList items={[
+                  "First Trade, First Win, First 10 Trades milestones",
+                  "Streak badges: 3-day, 7-day, 14-day winning streaks",
+                  "Journal discipline badges for consistent daily journaling",
+                  "Analytics engagement badges",
+                  "Progress tracking with percentage completion",
+                  "Badge grid displayed on the dashboard",
+                ]} />
+              </FeatureCard>
+
               <FeatureCard icon={Download} title="CSV Import & Export">
                 <p className="text-sm text-muted-foreground">
                   Import trades from CSV files with column mapping. Export your entire trade history to CSV for backup or external analysis. The export includes all trade fields, tags, and review data.
