@@ -54,7 +54,7 @@ import {
   DocsColorModeProvider, useDocsColorMode
 } from "@/components/docs/DocsMockups";
 import {
-  ProTip, StepByStep, ExpandableDetail,
+  ProTip, StepByStep, ExpandableDetail, ComparisonTable,
   InteractiveMockup, PhaseHeader, QuickNav, KeyMetric, SubTopic
 } from "@/components/docs/DocsEnhancements";
 import {
@@ -2797,8 +2797,24 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="TradeBook is a fully installable Progressive Web App. Add it to your home screen for a native-like experience with offline capabilities."
                 icon={Smartphone}
               />
-              <SubTopic title="Installation & Offline" description="Install as a native-like app with offline trade queuing." id="pwa-install" />
-              <div className="grid md:grid-cols-2 gap-5">
+
+              <QuickNav items={[
+                { label: "Install on Phone", id: "pwa-install" },
+                { label: "Offline Queue", id: "pwa-offline" },
+                { label: "Mobile Navigation", id: "pwa-mobile" },
+                { label: "PWA vs Native", id: "pwa-vs-native" },
+              ]} />
+
+              <SubTopic title="Installing TradeBook" description="Get the full app experience on any device — no app store required." id="pwa-install" />
+
+              <StepByStep title="Installing TradeBook on Your Phone" steps={[
+                { title: "Open TradeBook in your mobile browser", description: "Navigate to the app URL in Chrome (Android) or Safari (iOS).", detail: "Make sure you're using the default browser — PWA install is not supported in in-app browsers." },
+                { title: "Tap the browser menu", description: "On Android, tap the three-dot menu. On iOS, tap the Share icon at the bottom.", detail: "Look for 'Add to Home Screen' or 'Install App' option." },
+                { title: "Select 'Add to Home Screen'", description: "Confirm the name and tap Add. The app icon appears on your home screen instantly." },
+                { title: "Launch from your home screen", description: "Open TradeBook like any native app — it runs full-screen without browser chrome.", detail: "Auto-updates happen seamlessly. You'll see a refresh prompt when a new version is available." },
+              ]} />
+
+              <div className="grid md:grid-cols-2 gap-5 mt-6">
                 <FeatureCard icon={Smartphone} title="Install as App">
                   <p className="text-sm text-muted-foreground mb-3">
                     TradeBook works as a PWA — install it on your phone or desktop for instant access without the browser chrome.
@@ -2825,6 +2841,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                 </FeatureCard>
               </div>
+
+              <SubTopic title="Offline Behaviour" description="How TradeBook handles connectivity loss gracefully." id="pwa-offline" />
+
+              <ProTip variant="info">
+                When you're offline, TradeBook saves new trades to your device's local storage. Once you're back online, they sync automatically — you'll see a confirmation toast for each trade synced. If any fail, they stay queued and retry on the next reconnection. The offline banner in the header shows how many trades are waiting.
+              </ProTip>
+
               <SubTopic title="Mobile Navigation & Onboarding" description="Touch-optimized navigation with guided onboarding for new users." id="pwa-mobile" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={LayoutDashboard} title="Mobile Navigation">
@@ -2851,6 +2874,22 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                 </FeatureCard>
               </div>
+
+              <ExpandableDetail title="PWA vs Native App — What's the Difference?" icon={Smartphone}>
+                <p>TradeBook is built as a <strong>Progressive Web App (PWA)</strong>, which means it installs directly from your browser — no app store needed. Here's how it compares to traditional native apps:</p>
+                <div className="mt-4">
+                  <ComparisonTable title="PWA vs Native Comparison" rows={[
+                    { feature: "Install from browser", free: true, pro: true },
+                    { feature: "App store submission required", free: false, pro: true },
+                    { feature: "Full-screen experience", free: true, pro: true },
+                    { feature: "Offline support", free: true, pro: true },
+                    { feature: "Auto-updates (no manual download)", free: true, pro: false },
+                    { feature: "Push notifications", free: "Android", pro: true },
+                    { feature: "Home screen icon", free: true, pro: true },
+                  ]} />
+                  <p className="text-[12px] text-muted-foreground/60 mt-3 italic">Free column = PWA (TradeBook). Pro column = Native App. TradeBook's PWA delivers a near-native experience without the overhead of app store distribution.</p>
+                </div>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
