@@ -671,7 +671,7 @@ export default function IntegrationsSettings() {
                     </div>
                   </div>
 
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-[10px] text-muted-foreground/40">
                     Generate API Key & Secret from{" "}
                     <a
                       href="https://web.dhan.co"
@@ -687,16 +687,16 @@ export default function IntegrationsSettings() {
                   <Button
                     onClick={handleConnectApiKey}
                     disabled={connectingApiKey || !dhanApiKey || !dhanApiSecret}
-                    className="w-full"
+                    className="w-full h-9 text-[13px] rounded-lg"
                   >
                     {connectingApiKey ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
                     ) : (
-                      <Key className="w-4 h-4 mr-2" />
+                      <Key className="w-3.5 h-3.5 mr-1.5" />
                     )}
                     Authorize with Dhan (one-time login)
                   </Button>
-                  <p className="text-xs text-center text-muted-foreground">
+                  <p className="text-[10px] text-center text-muted-foreground/30">
                     You'll be redirected to Dhan to log in once. After that, tokens auto-renew daily.
                   </p>
                 </div>
