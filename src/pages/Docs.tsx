@@ -325,8 +325,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
       {/* Hero */}
       <div className={cn("pt-20 border-b border-border/15 bg-gradient-to-b from-primary/[0.02] to-transparent", isInsideApp && "border-none")}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-12 lg:py-16">
-          <div className="flex items-center gap-2.5 mb-5">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-14 lg:py-20">
+          <div className="flex items-center gap-2.5 mb-6">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/8 text-primary text-[10px] font-bold tracking-wide">
               Documentation
             </span>
@@ -343,14 +343,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               {mode === "bw" ? "B&W" : "Color"}
             </button>
           </div>
-          <h1 className="text-3xl lg:text-4xl xl:text-5xl font-extrabold tracking-tight mb-4 leading-[1.08]">
+          <h1 className="text-3xl lg:text-4xl xl:text-5xl font-extrabold tracking-tight mb-5 leading-[1.08] max-w-2xl">
             Everything you need to know about{" "}
             <span className="accent-script text-primary">TradeBook</span>
           </h1>
-          <p className="text-[15px] text-muted-foreground/80 max-w-xl leading-relaxed">
+          <p className="text-[15px] lg:text-base text-muted-foreground/80 max-w-xl leading-[1.75]">
             A comprehensive guide to every feature, capability, and workflow — from your first trade log to advanced analytics.
           </p>
-          <div className="flex items-center gap-2.5 mt-3 text-[11px] text-muted-foreground/50">
+          <div className="flex items-center gap-2.5 mt-4 text-[11px] text-muted-foreground/50">
             <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~35 min read</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
             <span>Last updated: March 2026</span>
@@ -360,7 +360,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.35 }}
-            className="flex flex-wrap gap-2 mt-5"
+            className="flex flex-wrap gap-2 mt-6"
           >
             {[
               { label: "26 Sections", icon: FileText },
@@ -374,7 +374,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
             ))}
           </motion.div>
-          <BentoFeatureGrid />
+          <div className="mt-8">
+            <BentoFeatureGrid />
+          </div>
         </div>
       </div>
 
