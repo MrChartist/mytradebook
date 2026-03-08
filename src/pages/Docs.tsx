@@ -1907,7 +1907,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
 
               <SubTopic title="Streaks & Risk-Reward" description="Track momentum and analyze your planned vs actual risk-reward ratios." id="an-streaks" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Activity} title="Streak Tracker" badge="Pro">
                   <p className="text-sm text-muted-foreground mb-3">Track and visualize winning and losing streaks:</p>
                   <FeatureList items={[
