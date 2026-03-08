@@ -21,6 +21,7 @@ const testimonials = [
   { name: "Aditya K.", role: "F&O Trader, Delhi", style: "F&O", quote: "I tried 4 journals before TradeBook. None understood Indian markets — segments, lot sizes, MCX. Finally something built for how we actually trade.", highlight: "built for how we actually trade", stars: 5, avatar: "A", featured: false },
   { name: "Vikram T.", role: "Scalper, Hyderabad", style: "Scalping", quote: "The trading rules checklist changed everything. I used to revenge trade after losses — now the pre-trade checklist keeps me disciplined and my drawdowns are half of what they were.", highlight: "drawdowns are half", stars: 5, avatar: "V", featured: true },
   { name: "Sneha R.", role: "Positional Trader, Pune", style: "Positional", quote: "Getting EOD reports and morning briefings on Telegram means I never miss a setup. It's like having a trading assistant that actually understands my portfolio.", highlight: "EOD reports and morning briefings", stars: 5, avatar: "S", featured: false },
+  { name: "Karan D.", role: "Commodity Trader, Ahmedabad", style: "Commodity", quote: "The trailing stop loss engine saved me from a 3% drawdown on a gold trade last week. It auto-adjusted my SL as the price moved — I didn't have to touch anything.", highlight: "trailing stop loss engine", stars: 5, avatar: "K", featured: false },
 ];
 
 const shortFeatures = [
