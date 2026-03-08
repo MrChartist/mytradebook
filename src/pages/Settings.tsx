@@ -8,6 +8,7 @@ import TagManagementSettings from "@/components/settings/TagManagementSettings";
 import BillingSettings from "@/components/settings/BillingSettings";
 import { useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { PageHeader } from "@/components/ui/page-header";
 
 const settingsTabs = [
   { id: "profile", label: "Profile", icon: User },
