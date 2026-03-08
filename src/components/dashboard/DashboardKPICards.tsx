@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { calculatePnL } from "@/lib/calculations";
 import { formatCurrency } from "@/lib/formatting";
 import { TradeStatus } from "@/lib/constants";
+import { AnimatedNumber } from "@/components/ui/animated-number";
 
 interface Props {
   alerts: { id: string; last_triggered: string | null; condition_type: string }[];
@@ -60,7 +61,7 @@ export function DashboardKPICards({ alerts }: Props) {
   const priceAlerts = alerts.filter((a) => ["PRICE_GT", "PRICE_LT"].includes(a.condition_type)).length;
   const techAlerts = alerts.length - priceAlerts;
 
-  const cardBase = "premium-card-hover block cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98] transition-transform";
+  const cardBase = "premium-card-hover card-hover-lift block cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98] transition-transform";
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -89,9 +90,11 @@ export function DashboardKPICards({ alerts }: Props) {
             <Flame className={cn("w-4.5 h-4.5", totalTodayPnl >= 0 ? "text-profit" : "text-loss")} />
           </div>
         </div>
-        <p className={cn("text-[28px] font-bold font-mono leading-none", totalTodayPnl >= 0 ? "text-profit" : "text-loss")}>
-          {formatCurrency(totalTodayPnl)}
-        </p>
+        <AnimatedNumber
+          value={totalTodayPnl}
+          formatFn={(n) => formatCurrency(n)}
+          className={cn("text-[28px] font-bold font-mono leading-none", totalTodayPnl >= 0 ? "text-profit" : "text-loss")}
+        />
         <div className="flex gap-3 mt-3">
           <div className="inner-panel flex-1">
             <p className="text-[10px] text-muted-foreground">Realized</p>
