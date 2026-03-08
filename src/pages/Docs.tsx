@@ -331,9 +331,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               {mode === "bw" ? "B&W" : "Color"}
             </button>
           </div>
-          <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight mb-4">
+          <h1 className="text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight mb-4">
             Everything you need to know about{" "}
-            <span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', cursive" }}>
+            <span className="accent-script text-[hsl(var(--tb-accent))]">
               TradeBook
             </span>
           </h1>
