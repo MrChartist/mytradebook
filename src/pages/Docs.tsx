@@ -750,6 +750,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Add up to 4 individual trade legs under the parent",
                   "Combined P&L and net premium calculated automatically",
                   "Strategy-level notes and status tracking",
+                  "Option Chain Selector — dynamic strike selection with 50/25/10 increments based on underlying price, supports 185+ F&O underlyings",
                 ]} />
                 <div className="mt-4"><MultiLegStrategyDetailMockup /></div>
               </FeatureCard>
