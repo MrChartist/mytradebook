@@ -599,7 +599,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 py-8 lg:py-10 relative">
           {/* Title row */}
           <div className="flex flex-wrap items-center gap-3 mb-3">
-            <h1 className="docs-title" style={{ fontSize: 'clamp(1.75rem, 3vw, 2.5rem)' }}>Documentation</h1>
+            <h1 className="docs-title font-heading" style={{ fontSize: 'clamp(1.75rem, 3vw, 2.5rem)' }}>Documentation</h1>
             <button
               onClick={toggle}
               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-semibold transition-all"
