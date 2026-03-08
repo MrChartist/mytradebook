@@ -189,7 +189,7 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
             className="overflow-hidden"
           >
             <div className="px-4 pb-4 pt-0 border-t border-border/20">
-              <div className="pt-3 [&>p]:text-[15px] [&>p]:text-muted-foreground [&>p]:leading-[1.7]">{children}</div>
+              <div className="pt-3 [&>p]:text-[15px] [&>p]:text-muted-foreground/80 [&>p]:leading-[1.75]">{children}</div>
             </div>
           </motion.div>
         )}
