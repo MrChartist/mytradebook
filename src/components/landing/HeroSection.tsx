@@ -111,7 +111,7 @@ export function HeroSection() {
             <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
               <Button
                 size="lg"
-                className="h-14 px-10 text-base gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-wide"
+                className="h-16 px-12 text-lg gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-wide"
                 onClick={() => navigate("/login?mode=signup")}
               >
                 Start Free
