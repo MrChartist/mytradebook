@@ -1960,29 +1960,71 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Dedicated page for analyzing your trading mistakes. Identify repeat patterns, track loss severity, and monitor improvement trends over time."
                 icon={AlertTriangle}
               />
+              <QuickNav items={[
+                { label: "Categorizing", id: "mk-categorize" },
+                { label: "Pattern Recognition", id: "mk-patterns" },
+                { label: "Severity", id: "mk-severity" },
+                { label: "Common Mistakes", id: "mk-common" },
+              ]} />
+
               <ProTip variant="warning">
-                <p>Your most costly mistake is usually not your most frequent one. Check the "Most Costly" column — a single mistake type might account for 40% of your total losses.</p>
+                <p>Mistakes analysis is about <strong>patterns, not punishment</strong>. Every trader makes mistakes — the goal isn't zero errors, it's recognizing which errors are recurring and costing you real money. A single bad trade is noise; the same mistake 10 times is a habit worth fixing.</p>
               </ProTip>
-              <MistakeTrendMockup />
+
+              <InteractiveMockup label="Mistake Trends & Analysis">
+                <MistakeTrendMockup />
+              </InteractiveMockup>
+
+              <SubTopic title="Categorizing a Mistake" description="A step-by-step process for tagging and learning from trading errors." id="mk-categorize" />
+              <StepByStep title="Categorizing a Mistake" steps={[
+                { title: "Identify the error during trade review", description: "When closing a trade or during your daily review, ask: 'Did I deviate from my plan?' If yes, that's a mistake worth tagging.", detail: "Not every losing trade is a mistake. A well-planned trade that hit your stop loss is just part of the game. Only tag genuine process deviations." },
+                { title: "Select or create a mistake tag", description: "Choose from your existing mistake tags (e.g., 'Entered too early', 'No stop-loss', 'Oversized position') or create a new one in Settings → Tag Management.", detail: "Keep tags specific and actionable. 'Bad trade' is too vague — 'Moved SL further away' is specific enough to track and fix." },
+                { title: "Assign severity level", description: "Rate the mistake as Low, Medium, or High based on its financial impact and how preventable it was.", detail: "Severity should reflect both the loss amount and whether this is a known weakness. A first-time error might be 'Low' but should be escalated if it recurs." },
+                { title: "Review the pattern monthly", description: "Check the Mistakes page monthly. Look for tags that appear 3+ times — those are your habits, not one-offs, and deserve focused improvement effort.", detail: "Use the 6-month trend chart to verify improvement. If a mistake's frequency is dropping, your awareness is working." },
+              ]} />
+
               <SubTopic title="Pattern Recognition" description="Identify repeat mistakes and track their frequency over time." id="mk-patterns" />
               <FeatureCard icon={Search} title="Mistake Pattern Analysis">
+                <p className="text-sm text-muted-foreground mb-3">The Mistakes page surfaces behavioral patterns by analyzing your tagged mistakes across all closed trades:</p>
                 <FeatureList items={[
-                  "Repeat pattern analysis with occurrence counts",
-                  "Total loss attributed to each mistake type",
-                  "6-month mistake trend chart showing improvement",
-                  "Most common vs most costly mistakes comparison",
+                  "Repeat pattern analysis — frequency count for each mistake type",
+                  "Total loss attributed to each mistake type (your most expensive habits)",
+                  "6-month mistake trend chart showing improvement or deterioration over time",
+                  "Most common vs most costly mistakes comparison — these are often different",
                 ]} />
               </FeatureCard>
-              <SubTopic title="Severity Classification" description="Categorize mistakes by financial impact to prioritize fixes." id="mk-severity" />
+
+              <ProTip variant="info">
+                <p>Your most costly mistake is usually not your most frequent one. Check the "Most Costly" column — a single mistake type might account for 40% of your total losses even if it only happens occasionally.</p>
+              </ProTip>
+
+              <SubTopic title="Severity Classification" description="Categorize mistakes by financial impact to prioritize what to fix first." id="mk-severity" />
               <FeatureCard icon={AlertTriangle} title="Severity Breakdown">
+                <p className="text-sm text-muted-foreground mb-3">Three severity tiers help you prioritize which habits to address first:</p>
                 <FeatureList items={[
-                  "Low severity: losses under ₹500",
-                  "Medium severity: losses between ₹500 – ₹2,000",
-                  "High severity: losses above ₹2,000",
-                  "Manage mistake tags via Settings → Tag Management",
+                  "Low severity — minor process deviations with small financial impact (e.g., entering slightly early)",
+                  "Medium severity — noticeable losses from avoidable errors (e.g., oversizing a position once)",
+                  "High severity — significant losses from recurring behavioral issues (e.g., consistently moving stop losses)",
+                  "Manage and customize mistake tags via Settings → Tag Management",
                 ]} />
                 <div className="mt-4"><MistakeAnalysisToolsMockup /></div>
               </FeatureCard>
+
+              <SubTopic title="Common Mistakes Reference" description="A reference guide for the most common trading mistakes and concrete fixes." id="mk-common" />
+              <ExpandableDetail title="Common Mistake Categories and How to Fix Them" icon={AlertTriangle} badge="Reference">
+                <p>Based on common trading behavioral patterns, here are the most frequent mistake categories and actionable fixes:</p>
+                <FeatureList items={[
+                  "Entered Too Early — Fix: Wait for confirmation candle to close. Add a rule: 'No entry until candle closes above/below level.'",
+                  "No Stop-Loss Set — Fix: Make SL mandatory in your trading rules checklist. TradeBook flags trades without SL in analytics.",
+                  "Oversized Position — Fix: Use the Position Sizing Calculator before every trade. Set a max risk-per-trade rule (e.g., 1-2% of capital).",
+                  "Revenge Trading — Fix: Add a daily loss limit rule. After 2 consecutive losses, take a 30-minute break before the next trade.",
+                  "Moved Stop-Loss Further — Fix: Once SL is set, treat it as final. Use trailing SL instead if you want to give trades more room.",
+                  "FOMO Entry — Fix: If you missed the entry, skip the trade. There's always another setup. Tag emotion as 'FOMO' to track frequency.",
+                  "Ignored Trading Plan — Fix: Use the Pre-Trade Rules Checklist. If any rule isn't met, don't take the trade.",
+                  "Held Too Long — Fix: Set time-based exit rules for intraday trades. Use the holding period analytics to find your optimal exit timing.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Focus on fixing one mistake category at a time. Trying to eliminate all mistakes simultaneously leads to analysis paralysis. Pick your most costly mistake, work on it for 2-4 weeks, then move to the next one.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
