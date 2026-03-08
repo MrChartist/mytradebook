@@ -126,7 +126,7 @@ export default function Analytics() {
         </Popover>
       </PageHeader>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" aria-live="polite" aria-label="Key metrics">
         <StatCard title="Win Rate" value={`${summary.winRate.toFixed(1)}%`} change={`${closed.length} trades`} changeType={summary.winRate >= 50 ? "profit" : "loss"} icon={Target} subtitle="Closed" href="/trades?status=CLOSED" />
         <StatCard title="Total P&L" value={`₹${totalPnl.toLocaleString("en-IN")}`} change={`${wins.length}W / ${losses.length}L`} changeType={totalPnl >= 0 ? "profit" : "loss"} icon={BarChart3} subtitle="All time" href="/reports" />
         <StatCard title="Avg Win" value={`₹${avgWin.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`} change={`${wins.length} wins`} changeType="profit" icon={TrendingUp} subtitle="Per trade" href="/journal" />
