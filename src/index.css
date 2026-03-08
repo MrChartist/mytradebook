@@ -918,47 +918,52 @@
     margin-bottom: 0.25rem;
   }
 
-  /* ── Docs right rail ── */
+  /* ── Docs right rail (On this page) ── */
   .docs-page .docs-anchor-link {
     font-family: Inter, system-ui, sans-serif;
-    color: hsl(var(--docs-text-muted) / 0.75);
-    font-size: 0.75rem;
-    font-weight: 430;
-    line-height: 1.45;
-    transition: color 150ms ease-out, border-color 150ms ease-out;
-    border-left: 1.5px solid hsl(var(--docs-border-subtle));
-    padding-left: 0.75rem;
+    color: hsl(var(--docs-text-muted) / 0.7);
+    font-size: 0.8125rem;
+    font-weight: 420;
+    line-height: 1.5;
+    transition: color 150ms ease-out, border-color 150ms ease-out, background 150ms ease-out;
+    border-left: 2px solid hsl(var(--docs-border-subtle) / 0.6);
+    padding-left: 0.875rem;
+    border-radius: 0 0.25rem 0.25rem 0;
   }
   .docs-page .docs-anchor-link:hover {
     color: hsl(var(--docs-text-primary));
+    background: hsl(var(--docs-elevated) / 0.4);
   }
   .docs-page .docs-anchor-link.active {
     color: hsl(var(--docs-accent));
     border-left-color: hsl(var(--docs-accent));
-    font-weight: 550;
+    font-weight: 520;
+    background: hsl(var(--docs-accent-soft) / 0.05);
   }
 
   /* ── Mobile topic rail ── */
   .docs-mobile-tab {
     font-family: Inter, system-ui, sans-serif;
-    font-size: 0.8125rem;
-    font-weight: 480;
-    letter-spacing: 0.005em;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
     white-space: nowrap;
-    padding: 0.375rem 0.875rem;
+    padding: 0.4rem 0.75rem;
     border-radius: 9999px;
     transition: all 150ms ease-out;
     color: hsl(var(--docs-text-muted));
     border: 1px solid transparent;
+    background: transparent;
   }
   .docs-mobile-tab:hover {
     color: hsl(var(--docs-text-primary));
+    background: hsl(var(--docs-elevated) / 0.5);
   }
   .docs-mobile-tab.active {
     color: hsl(var(--docs-accent));
-    background: hsl(var(--docs-accent-soft) / 0.08);
-    border-color: hsl(var(--docs-accent-soft) / 0.18);
-    font-weight: 580;
+    background: hsl(var(--docs-accent-soft) / 0.1);
+    border-color: hsl(var(--docs-accent-soft) / 0.2);
+    font-weight: 600;
   }
 
   /* ── Docs feature card ── */
