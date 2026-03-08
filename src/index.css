@@ -1020,7 +1020,7 @@
     line-height: 1.45;
     letter-spacing: 0.005em;
     transition: color 150ms ease-out, border-color 150ms ease-out, background 150ms ease-out;
-    border-left: 2px solid hsl(var(--docs-border-subtle) / 0.5);
+    border-left: 2.5px solid hsl(var(--docs-border-subtle) / 0.5);
     padding-left: 0.875rem;
     border-radius: 0 0.25rem 0.25rem 0;
   }
