@@ -1858,7 +1858,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
 
               <SubTopic title="Equity Curve & Drawdown Analysis" description="Visualize your capital curve and understand recovery patterns." id="an-equity" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={TrendingDown} title="Equity Curve & Drawdown" badge="Pro">
                   <p className="text-sm text-muted-foreground mb-3">
                     Full equity curve showing cumulative P&L over time with drawdown overlay:
