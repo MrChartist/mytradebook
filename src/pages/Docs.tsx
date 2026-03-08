@@ -939,14 +939,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 3c. Trade Templates ─────────────────────── */}
+            {/* ── Phase 5. Trade Templates ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={5} total={26} />
               <SectionHeader
                 id="trade-templates"
                 title="Trade Templates & Smart Suggestions"
                 description="Save your frequently-used trade setups as reusable templates. Plus, get AI-suggested setups based on your trading patterns."
                 icon={FileText}
               />
+              <ProTip>
+                <p>Create a template for each of your top 3 setups. When you see a setup forming, use the template to log the trade in under 10 seconds — no more missed opportunities.</p>
+              </ProTip>
               <VideoPlaceholder title="Setting Up Trade Templates" duration="2 min" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Zap} title="Creating Templates">
