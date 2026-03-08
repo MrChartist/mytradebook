@@ -391,18 +391,37 @@
     @apply bg-card border-r border-border;
   }
 
+  .dark .glass-sidebar {
+    border-color: hsl(var(--border) / 0.6);
+  }
+
   .glass-topbar {
     @apply bg-card/90 backdrop-blur-lg border-b border-border/40;
     box-shadow: var(--shadow-xs);
+  }
+
+  .dark .glass-topbar {
+    @apply bg-card/80;
+    border-color: hsl(var(--border) / 0.35);
   }
 
   .glass-input {
     @apply bg-background border border-input rounded-[var(--radius-md)] transition-all duration-200;
   }
 
+  .dark .glass-input {
+    background: hsl(var(--input));
+    border-color: hsl(var(--border) / 0.5);
+  }
+
   .glass-input:focus {
     border-color: hsl(var(--primary) / 0.4);
     box-shadow: 0 0 0 3px hsl(var(--primary) / 0.08);
+  }
+
+  .dark .glass-input:focus {
+    border-color: hsl(var(--primary) / 0.5);
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.12);
   }
 
   /* ── Trading colors ─────────────────────────────────── */
