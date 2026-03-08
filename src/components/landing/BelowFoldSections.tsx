@@ -413,7 +413,7 @@ export function IndianMarketsSection() {
 export function DocsCTASection() {
   const navigate = useNavigate();
   const docTopics = [
-    { label: "26 Feature Guides", icon: BookOpen },
+    { label: "Comprehensive Guides", icon: BookOpen },
     { label: "Visual Mockups", icon: Layers },
     { label: "Step-by-Step Tutorials", icon: Sparkles },
     { label: "Analytics Deep-Dives", icon: BarChart3 },
