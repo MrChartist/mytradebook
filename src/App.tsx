@@ -1,10 +1,10 @@
 import { lazy, Suspense } from "react";
-import { MotionConfig } from "framer-motion";
+import { MotionConfig, AnimatePresence, motion } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
@@ -60,6 +60,70 @@ function PageLoader() {
   );
 }
 
+function AnimatedRoutes() {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.15, ease: "easeInOut" }}
+      >
+        <Routes location={location}>
+          <Route path="/" element={<Landing />} />
+          <Route path="/landing" element={<Landing />} />
+          <Route path="/docs" element={<Docs />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/dhan-callback" element={<DhanCallback />} />
+          <Route path="/trader/:userId" element={<PublicProfile />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Index />
+              </ProtectedRoute>
+            }
+          />
+          {[
+            { path: "/studies", element: <Studies />, skeleton: <StudiesSkeleton /> },
+            { path: "/alerts", element: <Alerts /> },
+            { path: "/trades", element: <Trades /> },
+            { path: "/journal", element: <Journal /> },
+            { path: "/reports", element: <Reports /> },
+            { path: "/settings", element: <Settings /> },
+            { path: "/calendar", element: <Calendar />, skeleton: <CalendarSkeleton /> },
+            { path: "/mistakes", element: <Mistakes /> },
+            { path: "/analytics", element: <Analytics />, skeleton: <AnalyticsSkeleton /> },
+            { path: "/watchlist", element: <Watchlist />, skeleton: <WatchlistSkeleton /> },
+            { path: "/fundamentals", element: <Fundamentals /> },
+          ].map(({ path, element, skeleton }) => (
+            <Route
+              key={path}
+              path={path}
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Suspense fallback={skeleton || <PageLoader />}>
+                      {element}
+                    </Suspense>
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+          ))}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 const App = () => (
   <ErrorBoundary>
     <MotionConfig reducedMotion="user">
@@ -76,54 +140,7 @@ const App = () => (
               <CommandPalette />
               <Suspense fallback={<PageLoader />}>
                 <main id="main-content">
-                <Routes>
-                  <Route path="/" element={<Landing />} />
-                  <Route path="/landing" element={<Landing />} />
-                  <Route path="/docs" element={<Docs />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />
-                  <Route path="/terms" element={<Terms />} />
-                  <Route path="/privacy" element={<Privacy />} />
-                  <Route path="/auth/callback" element={<AuthCallback />} />
-                  <Route path="/dhan-callback" element={<DhanCallback />} />
-                  <Route path="/trader/:userId" element={<PublicProfile />} />
-                  <Route
-                    path="/dashboard"
-                    element={
-                      <ProtectedRoute>
-                        <Index />
-                      </ProtectedRoute>
-                    }
-                  />
-                  {[
-                    { path: "/studies", element: <Studies />, skeleton: <StudiesSkeleton /> },
-                    { path: "/alerts", element: <Alerts /> },
-                    { path: "/trades", element: <Trades /> },
-                    { path: "/journal", element: <Journal /> },
-                    { path: "/reports", element: <Reports /> },
-                    { path: "/settings", element: <Settings /> },
-                    { path: "/calendar", element: <Calendar />, skeleton: <CalendarSkeleton /> },
-                    { path: "/mistakes", element: <Mistakes /> },
-                    { path: "/analytics", element: <Analytics />, skeleton: <AnalyticsSkeleton /> },
-                    { path: "/watchlist", element: <Watchlist />, skeleton: <WatchlistSkeleton /> },
-                    { path: "/fundamentals", element: <Fundamentals /> },
-                  ].map(({ path, element, skeleton }) => (
-                    <Route
-                      key={path}
-                      path={path}
-                      element={
-                        <ProtectedRoute>
-                          <MainLayout>
-                            <Suspense fallback={skeleton || <PageLoader />}>
-                              {element}
-                            </Suspense>
-                          </MainLayout>
-                        </ProtectedRoute>
-                      }
-                    />
-                  ))}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
+                  <AnimatedRoutes />
                 </main>
               </Suspense>
             </AuthProvider>

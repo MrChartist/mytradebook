@@ -83,42 +83,42 @@ export default function Terms() {
             </div>
 
             <div className="space-y-8 text-sm text-muted-foreground leading-relaxed">
-              <section id="acceptance" className="space-y-3 scroll-mt-28">
+              <section id="acceptance" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">1. Acceptance of Terms</h2>
                 <p>By accessing or using TradeBook ("the Service"), you agree to be bound by these Terms of Service. If you do not agree, do not use the Service.</p>
               </section>
 
-              <section id="description" className="space-y-3 scroll-mt-28">
+              <section id="description" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">2. Description of Service</h2>
                 <p>TradeBook is a trading journal and analytics platform designed for Indian market participants. It provides tools for trade logging, performance analysis, alerts, and broker integration. TradeBook does not provide investment advice, tips, or recommendations.</p>
               </section>
 
-              <section id="accounts" className="space-y-3 scroll-mt-28">
+              <section id="accounts" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">3. User Accounts</h2>
                 <p>You are responsible for maintaining the confidentiality of your account credentials. You agree to provide accurate information during registration and to keep your information up to date.</p>
               </section>
 
-              <section id="billing" className="space-y-3 scroll-mt-28">
+              <section id="billing" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">4. Subscription & Billing</h2>
                 <p>Paid plans are billed monthly. You may cancel at any time; access continues until the end of the billing period. Refunds are provided at our discretion within 7 days of purchase.</p>
               </section>
 
-              <section id="disclaimer" className="space-y-3 scroll-mt-28">
+              <section id="disclaimer" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">5. Disclaimer</h2>
                 <p>TradeBook is not SEBI registered and does not provide financial advice. All trading decisions are your own. Past performance displayed in the app does not guarantee future results. Use the Service at your own risk.</p>
               </section>
 
-              <section id="liability" className="space-y-3 scroll-mt-28">
+              <section id="liability" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">6. Limitation of Liability</h2>
                 <p>TradeBook shall not be liable for any direct, indirect, incidental, or consequential damages arising from the use of the Service, including but not limited to trading losses.</p>
               </section>
 
-              <section id="changes" className="space-y-3 scroll-mt-28">
+              <section id="changes" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">7. Changes to Terms</h2>
                 <p>We reserve the right to modify these terms at any time. Continued use of the Service after changes constitutes acceptance of the updated terms.</p>
               </section>
 
-              <section id="contact" className="space-y-3 scroll-mt-28">
+              <section id="contact" className="space-y-3 scroll-mt-28 pl-4 border-l-2 border-primary/20 hover:border-primary/40 transition-colors">
                 <h2 className="text-lg font-semibold text-foreground">8. Contact</h2>
                 <p>For questions about these Terms, contact us at support@tradebook.app.</p>
               </section>

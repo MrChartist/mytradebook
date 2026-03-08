@@ -296,21 +296,23 @@ export function IndianMarketsSection() {
             </p>
             <ul className="space-y-2 mb-10">
               {[
-                "NSE, BSE & MCX exchange support",
-                "INR formatting with Lakhs & Crores",
-                "Dhan broker auto-sync",
-                "Market hours & holiday awareness",
+                { text: "NSE, BSE & MCX exchange support", icon: Globe },
+                { text: "INR formatting with Lakhs & Crores", icon: CandlestickChart },
+                { text: "Dhan broker auto-sync", icon: Layers },
+                { text: "Market hours & holiday awareness", icon: Clock },
               ].map((item, i) => (
                 <motion.li
-                  key={item}
+                  key={item.text}
                   className="flex items-center gap-2.5 text-[15px] text-foreground/85 tracking-[-0.006em]"
                   initial={{ opacity: 0, x: -15 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08, duration: 0.4 }}
                 >
-                  <CheckCircle2 className="w-4 h-4 text-profit shrink-0" />
-                  <span>{item}</span>
+                  <div className="w-6 h-6 rounded-md bg-profit/10 flex items-center justify-center shrink-0">
+                    <item.icon className="w-3.5 h-3.5 text-profit" />
+                  </div>
+                  <span>{item.text}</span>
                 </motion.li>
               ))}
             </ul>
@@ -335,7 +337,7 @@ export function IndianMarketsSection() {
 
             <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.97 }} className="inline-block">
               <Button size="lg" className="rounded-full bg-foreground hover:bg-foreground/90 text-background font-semibold shadow-lg h-13 px-8" onClick={() => navigate("/login?mode=signup")}>
-                Start Journaling <ArrowRight className="w-4 h-4 ml-1.5" />
+                Try It Free <ArrowRight className="w-4 h-4 ml-1.5" />
               </Button>
             </motion.div>
           </motion.div>
@@ -523,7 +525,7 @@ export function FinalCTASection() {
             {/* Shine sweep */}
             <span className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-1000" />
             <span className="relative flex items-center gap-2.5">
-              Get Started — It's Free <ArrowRight className="w-4 h-4" />
+              Start Your Journal — It's Free <ArrowRight className="w-4 h-4" />
             </span>
           </Button>
         </motion.div>
