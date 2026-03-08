@@ -711,7 +711,7 @@ export default function Fundamentals() {
         )}
 
         {/* ── Pagination Footer ── */}
-        <div className="rounded-xl bg-card border border-border px-3 py-2.5 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="rounded-xl bg-card border border-border/20 px-3 py-2 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
             <Select value={String(pageSize)} onValueChange={(v) => { setPageSize(Number(v)); setPage(0); }}>
               <SelectTrigger className="h-7 w-14 text-[11px] border-0 bg-muted/40 px-2">

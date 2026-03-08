@@ -18,7 +18,6 @@ import { AIPatternDetection } from "@/components/analytics/AIPatternDetection";
 import { SectorRotationHeatmap } from "@/components/analytics/SectorRotationHeatmap";
 import { SetupWinRateMatrix } from "@/components/analytics/SetupWinRateMatrix";
 import { EmotionalPnlCorrelation } from "@/components/analytics/EmotionalPnlCorrelation";
-import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -78,62 +77,76 @@ export default function Analytics() {
   ];
 
   return (
-    <div className="space-y-6 animate-fade-in" role="region" aria-label="Trading analytics">
-      <PageHeader title="Analytics" subtitle="Deep dive into your trading performance.">
-        <div className="flex items-center gap-1 bg-muted rounded-full p-0.5">
-          {presets.map((p) => (
-            <button
-              key={p.value}
-              onClick={() => setDatePreset(p.value)}
-              className={cn(
-                "px-3 py-1.5 text-xs font-medium rounded-full transition-all",
-                datePreset === p.value
-                  ? "bg-background shadow-sm text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {p.label}
-            </button>
-          ))}
+    <div className="space-y-4 animate-fade-in" role="region" aria-label="Trading analytics">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="space-y-0.5">
+          <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Analytics</h1>
+          <p className="text-[13px] text-muted-foreground/70 leading-relaxed">Deep dive into your trading performance</p>
         </div>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className={cn("gap-2", datePreset === "custom" && "border-primary text-primary")}
-            >
-              <CalendarDays className="w-4 h-4" />
-              {datePreset === "custom" && customRange.from && customRange.to
-                ? `${format(customRange.from, "dd MMM")} – ${format(customRange.to, "dd MMM")}`
-                : "Custom"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="end">
-            <Calendar
-              mode="range"
-              selected={customRange.from && customRange.to ? { from: customRange.from, to: customRange.to } : undefined}
-              onSelect={(range) => {
-                if (range?.from && range?.to) {
-                  setCustomRange({ from: range.from, to: range.to });
-                  setDatePreset("custom");
-                }
-              }}
-              className="p-3 pointer-events-auto"
-              disabled={(date) => date > new Date()}
-            />
-          </PopoverContent>
-        </Popover>
-      </PageHeader>
+        <div className="flex items-center gap-2">
+          <div className="flex gap-0.5 bg-muted/40 rounded-lg p-0.5 border border-border/15">
+            {presets.map((p) => (
+              <button
+                key={p.value}
+                onClick={() => setDatePreset(p.value)}
+                className={cn(
+                  "px-3 py-1 text-[11px] font-medium rounded-md transition-all duration-200",
+                  datePreset === p.value
+                    ? "bg-card shadow-sm text-foreground"
+                    : "text-muted-foreground/60 hover:text-foreground"
+                )}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "gap-1.5 h-8 text-[11px] rounded-lg border-border/20",
+                  datePreset === "custom" && "border-primary/20 text-primary bg-primary/4"
+                )}
+              >
+                <CalendarDays className="w-3.5 h-3.5" />
+                {datePreset === "custom" && customRange.from && customRange.to
+                  ? `${format(customRange.from, "dd MMM")} – ${format(customRange.to, "dd MMM")}`
+                  : "Custom"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <Calendar
+                mode="range"
+                selected={customRange.from && customRange.to ? { from: customRange.from, to: customRange.to } : undefined}
+                onSelect={(range) => {
+                  if (range?.from && range?.to) {
+                    setCustomRange({ from: range.from, to: range.to });
+                    setDatePreset("custom");
+                  }
+                }}
+                className="p-3 pointer-events-auto"
+                disabled={(date) => date > new Date()}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" aria-live="polite" aria-label="Key metrics">
+      <div className="h-px bg-border/20" />
+
+      {/* KPI Cards — Row 1 */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5" aria-live="polite" aria-label="Key metrics">
         <StatCard title="Win Rate" value={`${summary.winRate.toFixed(1)}%`} change={`${closed.length} trades`} changeType={summary.winRate >= 50 ? "profit" : "loss"} icon={Target} subtitle="Closed" href="/trades?status=CLOSED" />
         <StatCard title="Total P&L" value={`₹${totalPnl.toLocaleString("en-IN")}`} change={`${wins.length}W / ${losses.length}L`} changeType={totalPnl >= 0 ? "profit" : "loss"} icon={BarChart3} subtitle="All time" href="/reports" />
         <StatCard title="Avg Win" value={`₹${avgWin.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`} change={`${wins.length} wins`} changeType="profit" icon={TrendingUp} subtitle="Per trade" href="/journal" />
         <StatCard title="Avg Loss" value={`₹${avgLoss.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`} change={`${losses.length} losses`} changeType="loss" icon={TrendingDown} subtitle="Per trade" href="/journal" />
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* KPI Cards — Row 2 */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         <StatCard title="Expectancy" value={`₹${expectancy.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`} change="Per trade" changeType={expectancy >= 0 ? "profit" : "loss"} icon={Activity} subtitle="Expected" href="/reports" />
         <StatCard title="Profit Factor" value={profitFactor.toFixed(2)} change={profitFactor >= 1.5 ? "Strong" : profitFactor >= 1 ? "Positive" : "Weak"} changeType={profitFactor >= 1 ? "profit" : "loss"} icon={BarChart3} subtitle="Ratio" href="/journal" />
         <StatCard title="Best Trade" value={`₹${bestTrade.toLocaleString("en-IN")}`} change="Single trade" changeType="profit" icon={TrendingUp} subtitle="Max profit" href="/trades?status=CLOSED" />
@@ -152,7 +165,7 @@ export default function Analytics() {
       <EquityCurveDrawdown trades={trades} startingCapital={startingCapital} capitalTransactions={capitalTransactions} />
 
       {/* Sector Rotation & Emotional Correlation */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
         <SectorRotationHeatmap trades={trades} />
         <EmotionalPnlCorrelation trades={trades} />
       </div>
@@ -162,24 +175,24 @@ export default function Analytics() {
         <SegmentPerformance trades={trades} />
 
         {/* Setup Win-Rate Matrix */}
-        <div className="mt-4">
+        <div className="mt-3.5">
           <SetupWinRateMatrix trades={trades} />
         </div>
 
         {/* Time & Day Heatmaps */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 mt-3.5">
           <TimeOfDayAnalysis trades={trades} />
           <DayOfWeekAnalysis trades={trades} />
         </div>
 
         {/* Streak & Tag Performance */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 mt-3.5">
           <StreakTracker trades={trades} />
           <SetupTagPerformance trades={trades} />
         </div>
 
         {/* Risk-Reward Analytics & Risk of Ruin */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 mt-3.5">
           <RiskRewardAnalytics trades={trades} />
           <RiskOfRuinCalculator
             winRate={summary.winRate}
