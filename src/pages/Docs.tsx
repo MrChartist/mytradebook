@@ -428,10 +428,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                       if (groupSections.length === 0) return null;
                       return (
                       <div key={group.label}>
-                         {gi > 0 && !sidebarCollapsed && <Separator className="my-1.5 mx-2" />}
-                         {gi > 0 && sidebarCollapsed && <Separator className="my-1.5" />}
+                         {gi > 0 && !sidebarCollapsed && <Separator className="my-2.5 mx-2" />}
+                         {gi > 0 && sidebarCollapsed && <Separator className="my-2" />}
                          {!sidebarCollapsed && (
-                           <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-muted-foreground/40 px-2.5 py-1">{group.label}</p>
+                           <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground/45 px-2.5 pt-1.5 pb-1">{group.label}</p>
                         )}
                         {groupSections.map((s) => {
                           const btn = (
