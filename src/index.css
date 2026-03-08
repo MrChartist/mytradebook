@@ -685,71 +685,95 @@
      DOCS PAGE — Premium Documentation Design System
      ================================================================ */
 
-  .docs-page {
-    --docs-bg: 222 47% 3%;
-    --docs-surface: 222 44% 6%;
-    --docs-elevated: 222 40% 10%;
-    --docs-border: 214 20% 22%;
-    --docs-border-subtle: 214 20% 14%;
-    --docs-text-strong: 210 40% 97%;
-    --docs-text-primary: 213 20% 78%;
-    --docs-text-secondary: 215 16% 62%;
-    --docs-text-muted: 217 12% 44%;
-    --docs-accent: 24 88% 58%;
-    --docs-accent-hover: 24 85% 48%;
-    --docs-accent-soft: 24 88% 58%;
-    --docs-link: 28 80% 66%;
-    --docs-info: 217 91% 68%;
-    --docs-success: 142 71% 45%;
-    --docs-warning: 38 92% 50%;
-    --docs-danger: 0 84% 60%;
-    --docs-active-bg: 24 88% 58%;
+  /* Light mode docs variables */
+  :root .docs-page {
+    --docs-bg: 35 25% 97%;
+    --docs-surface: 0 0% 100%;
+    --docs-elevated: 35 18% 96%;
+    --docs-border: 30 15% 85%;
+    --docs-border-subtle: 30 15% 90%;
+    --docs-text-strong: 20 18% 12%;
+    --docs-text-primary: 20 14% 22%;
+    --docs-text-secondary: 20 10% 42%;
+    --docs-text-muted: 20 8% 55%;
+    --docs-accent: 24 90% 52%;
+    --docs-accent-hover: 24 90% 45%;
+    --docs-accent-soft: 24 90% 52%;
+    --docs-link: 24 85% 48%;
+    --docs-info: 217 91% 55%;
+    --docs-success: 152 62% 38%;
+    --docs-warning: 38 92% 48%;
+    --docs-danger: 0 72% 52%;
+    --docs-active-bg: 24 90% 52%;
   }
 
-  /* Docs page dark bg override */
+  /* Dark mode docs variables */
+  .dark .docs-page {
+    --docs-bg: 222 47% 5%;
+    --docs-surface: 222 44% 8%;
+    --docs-elevated: 222 40% 12%;
+    --docs-border: 215 22% 24%;
+    --docs-border-subtle: 215 22% 16%;
+    --docs-text-strong: 210 30% 96%;
+    --docs-text-primary: 213 20% 80%;
+    --docs-text-secondary: 215 16% 60%;
+    --docs-text-muted: 217 12% 45%;
+    --docs-accent: 24 82% 58%;
+    --docs-accent-hover: 24 82% 50%;
+    --docs-accent-soft: 24 82% 58%;
+    --docs-link: 28 80% 66%;
+    --docs-info: 217 91% 68%;
+    --docs-success: 152 58% 45%;
+    --docs-warning: 38 88% 52%;
+    --docs-danger: 0 68% 58%;
+    --docs-active-bg: 24 82% 58%;
+  }
+
+  /* Docs page background */
   .docs-page {
     background: hsl(var(--docs-bg)) !important;
     color: hsl(var(--docs-text-primary));
   }
 
-  /* ── Docs Typography Scale ── */
+  /* ── Docs Typography Scale (updated to new font system) ── */
   .docs-title {
-    font-family: 'Libre Bodoni', Georgia, serif;
+    font-family: Manrope, system-ui, sans-serif;
     font-size: 3.25rem;
     line-height: 1.05;
-    font-weight: 600;
+    font-weight: 700;
+    color: hsl(var(--docs-text-strong));
+    letter-spacing: -0.025em;
+  }
+
+  .docs-section-title {
+    font-family: Manrope, system-ui, sans-serif;
+    font-size: 2.25rem;
+    line-height: 1.15;
+    font-weight: 700;
     color: hsl(var(--docs-text-strong));
     letter-spacing: -0.02em;
   }
 
-  .docs-section-title {
-    font-family: 'Libre Bodoni', Georgia, serif;
-    font-size: 2.25rem;
-    line-height: 1.15;
-    font-weight: 600;
+  .docs-topic-heading {
+    font-family: Manrope, system-ui, sans-serif;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    font-weight: 700;
     color: hsl(var(--docs-text-strong));
     letter-spacing: -0.015em;
   }
 
-  .docs-topic-heading {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
-    font-size: 1.75rem;
-    line-height: 1.2;
+  .docs-subtopic-heading {
+    font-family: Manrope, system-ui, sans-serif;
+    font-size: 1.375rem;
+    line-height: 1.25;
     font-weight: 700;
     color: hsl(var(--docs-text-strong));
     letter-spacing: -0.01em;
   }
 
-  .docs-subtopic-heading {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
-    font-size: 1.375rem;
-    line-height: 1.25;
-    font-weight: 700;
-    color: hsl(var(--docs-text-strong));
-  }
-
   .docs-card-title {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: Manrope, system-ui, sans-serif;
     font-size: 1.125rem;
     line-height: 1.3;
     font-weight: 600;
@@ -757,7 +781,7 @@
   }
 
   .docs-body-lg {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: Inter, system-ui, sans-serif;
     font-size: 1.125rem;
     line-height: 1.75;
     font-weight: 400;
@@ -765,7 +789,7 @@
   }
 
   .docs-body {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: Inter, system-ui, sans-serif;
     font-size: 1rem;
     line-height: 1.75;
     font-weight: 400;
@@ -773,14 +797,14 @@
   }
 
   .docs-sidebar-item {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: Inter, system-ui, sans-serif;
     font-size: 0.875rem;
     line-height: 1.45;
     font-weight: 500;
   }
 
   .docs-helper {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: Inter, system-ui, sans-serif;
     font-size: 0.8125rem;
     line-height: 1.4;
     font-weight: 400;
@@ -788,7 +812,7 @@
   }
 
   .docs-caption {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: Inter, system-ui, sans-serif;
     font-size: 0.75rem;
     line-height: 1.35;
     font-weight: 500;
@@ -847,6 +871,11 @@
     background: hsl(var(--docs-elevated));
   }
   .docs-page .docs-sidebar-link.active {
+    color: hsl(var(--docs-text-strong));
+    background: hsl(var(--docs-accent-soft) / 0.12);
+  }
+  
+  .dark .docs-page .docs-sidebar-link.active {
     color: hsl(0 0% 100%);
     background: hsl(var(--docs-accent-soft) / 0.14);
   }
@@ -871,10 +900,18 @@
     background: hsl(var(--docs-surface));
     border: 1px solid hsl(var(--docs-border-subtle));
     border-radius: 0.75rem;
-    transition: border-color 200ms;
+    transition: border-color 200ms, box-shadow 200ms;
   }
   .docs-page .docs-feature-card:hover {
-    border-color: hsl(var(--docs-border) / 0.6);
+    border-color: hsl(var(--docs-border));
+  }
+  
+  /* Light mode card shadow */
+  :root .docs-page .docs-feature-card {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04);
+  }
+  :root .docs-page .docs-feature-card:hover {
+    box-shadow: 0 4px 8px -2px rgb(0 0 0 / 0.06);
   }
 
   .docs-page .docs-callout {
@@ -883,13 +920,23 @@
   }
 
   /* ── Docs code blocks ── */
-  .docs-page .docs-code-block {
-    background: hsl(222 47% 5%);
+  :root .docs-page .docs-code-block {
+    background: hsl(35 18% 95%);
+    border: 1px solid hsl(var(--docs-border-subtle));
+  }
+  
+  .dark .docs-page .docs-code-block {
+    background: hsl(222 47% 6%);
     border: 1px solid hsl(var(--docs-border-subtle));
   }
 
-  .docs-page .docs-output-block {
-    background: hsl(222 47% 4%);
+  :root .docs-page .docs-output-block {
+    background: hsl(35 18% 96%);
+    border: 1px solid hsl(var(--docs-border-subtle) / 0.7);
+  }
+  
+  .dark .docs-page .docs-output-block {
+    background: hsl(222 47% 5%);
     border: 1px solid hsl(var(--docs-border-subtle) / 0.5);
   }
 
@@ -915,6 +962,17 @@
     height: 1px;
     background: linear-gradient(90deg, transparent 0%, hsl(var(--docs-border-subtle)) 30%, hsl(var(--docs-border-subtle)) 70%, transparent 100%);
     margin: 3.5rem 0;
+  }
+  
+  /* Light mode inline code */
+  :root .docs-page code:not(pre code) {
+    background: hsl(35 18% 92%);
+    color: hsl(20 18% 25%);
+  }
+  
+  .dark .docs-page code:not(pre code) {
+    background: hsl(222 40% 14%);
+    color: hsl(24 80% 70%);
   }
 }
 
