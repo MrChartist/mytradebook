@@ -156,12 +156,12 @@ export function Sidebar() {
         </nav>
 
         {/* Bottom Section */}
-        <div className="px-3 py-3 border-t border-border/50 space-y-0.5" style={{ background: "linear-gradient(to top, transparent, hsl(0 0% 0% / 0.02))" }}>
+        <div className="px-2.5 py-3 border-t border-border/40 space-y-0.5">
           {/* Theme toggle */}
           {!collapsed && (
-            <div className="flex items-center justify-between px-3 py-1.5 mb-1">
-              <span className="text-[11px] text-muted-foreground">Theme</span>
-              <div className="flex items-center gap-1">
+            <div className="flex items-center justify-between px-3 py-1.5 mb-1.5">
+              <span className="text-[11px] text-muted-foreground font-medium">Theme</span>
+              <div className="flex items-center gap-1.5">
                 <NotificationBell />
                 <ThemeToggle />
               </div>
@@ -169,7 +169,7 @@ export function Sidebar() {
           )}
           {/* Profile */}
           {!collapsed && profile && (
-            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/40 backdrop-blur-sm rounded-xl" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
+            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/30 rounded-xl border border-border/30">
               <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0 ring-2 ring-background">
                 <span className="text-primary-foreground font-semibold text-xs">
                   {profile.name?.charAt(0).toUpperCase() || "U"}
