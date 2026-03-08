@@ -2802,6 +2802,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">Pro tip: Screenshot your report insights and paste them into your Monday journal entry. This creates a permanent record of your weekly learnings that compounds over months.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Analytics", description: "Explore detailed performance metrics", targetId: "analytics" },
+                { label: "Journal", description: "Write weekly reflections", targetId: "journal" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
