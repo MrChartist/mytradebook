@@ -3399,7 +3399,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   <button
                     key={anchor.id}
                     onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                    className="block w-full text-left text-[13px] text-muted-foreground/50 hover:text-foreground py-1.5 transition-colors duration-150 leading-snug"
+                    className="block w-full text-left text-[13px] text-muted-foreground/60 hover:text-foreground py-1.5 transition-colors duration-150 leading-snug"
                   >
                     {anchor.label}
                   </button>
