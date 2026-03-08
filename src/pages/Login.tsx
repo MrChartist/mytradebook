@@ -283,22 +283,21 @@ export default function Login() {
                     </p>
                   </div>
 
-                  <form onSubmit={handleForgotPassword} className="space-y-4">
+                  <form onSubmit={handleForgotPassword} className="space-y-5">
                     <div>
-                      <label className="text-sm font-medium mb-2 block">Email Address</label>
+                      <label className="text-[13px] font-medium mb-2 block">Email Address</label>
                       <Input
                         type="email"
                         placeholder="Enter your email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="h-12 sm:h-11 text-base sm:text-sm"
                         autoComplete="email"
                         inputMode="email"
                         required
                       />
                     </div>
 
-                    <Button type="submit" className="w-full h-12 sm:h-11 text-base sm:text-sm" disabled={isBusy}>
+                    <Button type="submit" className="w-full h-11" disabled={isBusy}>
                       {isBusy ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
