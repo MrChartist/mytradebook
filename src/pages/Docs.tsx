@@ -685,20 +685,6 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="best-practice">
                 <p>Check your dashboard every morning before market opens. The segment filter lets you focus on today's active market — switch to "All" only during your weekly review.</p>
               </ProTip>
-              <ComparisonTable
-                title="Dashboard Features — Free vs Pro"
-                rows={[
-                  { feature: "Today's P&L card", free: true, pro: true },
-                  { feature: "KPI Cards (4 metrics)", free: true, pro: true },
-                  { feature: "Equity Curve widget", free: true, pro: true },
-                  { feature: "Calendar Heatmap", free: true, pro: true },
-                  { feature: "Risk Gauge & Goals", free: false, pro: true },
-                  { feature: "Widget drag-and-drop", free: false, pro: true },
-                  { feature: "Floating Trade Ticker", free: false, pro: true },
-                  { feature: "Portfolio Heat Map", free: false, pro: true },
-                  { feature: "Daily Review Wizard", free: false, pro: true },
-                ]}
-              />
             </motion.section>
 
             <SectionDivider />
