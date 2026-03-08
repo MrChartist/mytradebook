@@ -2650,6 +2650,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Templates", id: "sh-templates" },
               ]} />
 
+              <ProTip variant="best-practice">
+                <p><strong>Why this feature exists:</strong> Trading is often a solitary activity, and many traders operate without any external accountability. Sharing your results — wins <em>and</em> losses — creates a public commitment to your process. It also builds credibility if you run a channel or community. Share cards are designed to be privacy-safe (no account details, capital, or personal info), visually polished, and optimized for every major social platform so you can share with confidence.</p>
+              </ProTip>
+
+              <ProTip variant="info">
+                <p><strong>Where it's used:</strong> Share buttons appear on the <strong>Dashboard</strong> (P&L summary), <strong>Trade Detail modal</strong> (individual trade results), <strong>Journal</strong> (streak celebrations), and <strong>Reports</strong> page (weekly performance). You're always one click away from generating a shareable image.</p>
+              </ProTip>
+
               <InteractiveMockup label="Share Card Examples">
                 <ShareCardsMockup />
               </InteractiveMockup>
@@ -2940,6 +2948,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Troubleshooting", id: "int-troubleshoot" },
               ]} />
 
+              <ProTip variant="best-practice">
+                <p><strong>Why integrations matter:</strong> TradeBook is most powerful when connected to your broker and messaging platforms. Without Dhan, you manually enter all prices and positions. Without Telegram, you have to check the app constantly for alerts. Integrations automate the boring parts — data entry, price monitoring, notification delivery — so you can focus on the decision-making parts of trading that actually require your brain.</p>
+              </ProTip>
+
               <ProTip variant="warning">
                 <p>Never share your API keys or access tokens publicly. TradeBook stores all credentials securely server-side — they are <strong>never exposed to the browser</strong> and cannot be read back from the client. Treat your Dhan API key and Telegram bot token like passwords.</p>
               </ProTip>
@@ -3185,7 +3197,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               ]} />
 
               <ProTip variant="best-practice">
-                <p>Don't try to memorize everything at once. Learn <strong>3 shortcuts per week</strong>: start with <ShortcutKey>⌘K</ShortcutKey> (Command Palette), <ShortcutKey>N</ShortcutKey> (New Trade), and <ShortcutKey>1</ShortcutKey> (Dashboard). After a week, add 3 more. Within a month you'll navigate entirely by keyboard.</p>
+                <p><strong>Why this feature exists:</strong> Speed matters when markets are moving. Every second spent clicking through menus is a second you could spend analyzing a setup. Keyboard shortcuts let experienced users create trades, switch pages, and search their data without taking their hands off the keyboard. The Command Palette alone can replace 80% of mouse interactions — think of it as Spotlight for your trading journal.</p>
+              </ProTip>
+
+              <ProTip variant="info">
+                <p><strong>Getting started:</strong> Learn <strong>3 shortcuts per week</strong>: start with <ShortcutKey>⌘K</ShortcutKey> (Command Palette), <ShortcutKey>N</ShortcutKey> (New Trade), and <ShortcutKey>1</ShortcutKey> (Dashboard). After a week, add 3 more. Within a month you'll navigate entirely by keyboard. Shortcuts are disabled inside input fields to prevent accidental triggers.</p>
               </ProTip>
 
               <InteractiveMockup label="Keyboard Shortcuts & Command Palette">
@@ -3295,6 +3311,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "PWA vs Native", id: "pwa-vs-native" },
               ]} />
 
+              <ProTip variant="best-practice">
+                <p><strong>Why this feature exists:</strong> Most trading happens on the go — during commutes, between meetings, or while monitoring positions away from your desk. A PWA gives you the full TradeBook experience in an app-like wrapper without downloading anything from an app store. It launches instantly, works offline for trade logging, and auto-updates silently. The offline trade queue ensures you never lose a trade entry because of spotty mobile connectivity — especially useful in India's varied network conditions.</p>
+              </ProTip>
+
+              <ProTip variant="info">
+                <p><strong>Where it's used:</strong> Every feature in TradeBook works on mobile — trade creation, alerts, journal, watchlists, analytics. The bottom navigation bar replaces the sidebar, swipe gestures replace right-click menus, and the floating action button gives one-tap access to create trades, alerts, or journal entries.</p>
+              </ProTip>
+
               <SubTopic title="Installing TradeBook" description="Get the full app experience on any device — no app store required." id="pwa-install" />
 
               <StepByStep title="Installing TradeBook on Your Phone" steps={[
@@ -3400,6 +3424,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Capital Management", id: "set-capital" },
                 { label: "Security & Integrations", id: "set-security" },
               ]} />
+
+              <ProTip variant="best-practice">
+                <p><strong>Why this matters:</strong> Settings aren't just preferences — they're the foundation your entire analytics and risk management system runs on. If your starting capital is wrong, every return % is wrong. If your tags are poorly organized, your pattern analysis is meaningless. If your integrations aren't configured, you're missing live prices and automated notifications. Spend 10 minutes setting this up correctly on day one, and everything downstream works better.</p>
+              </ProTip>
 
               <SettingsPanelMockup />
 
@@ -3538,6 +3566,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Troubleshooting", id: "faq-troubleshooting" },
               ]} />
 
+              <ProTip variant="info">
+                <p><strong>How to use this section:</strong> Use the jump links above to go directly to your question category. Each answer is self-contained — you don't need to read them in order. For technical issues, start with the <strong>Troubleshooting</strong> section at the bottom, which covers the most common error scenarios with step-by-step fixes.</p>
+              </ProTip>
+
               {/* ── Account & Billing ── */}
               <SubTopic title="Account & Billing" id="faq-account" />
               <FAQGroup icon={Users} title="Account & Billing" items={[
@@ -3642,6 +3674,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Roadmap", id: "cl-roadmap" },
                 { label: "Versioning", id: "cl-versioning" },
               ]} />
+
+              <ProTip variant="info">
+                <p><strong>How to read this section:</strong> The changelog shows what's already shipped — sorted newest first. The roadmap shows what's coming next, grouped by development stage: <strong>Coming Soon</strong> (actively being built), <strong>In Progress</strong> (design/development underway), <strong>Planned</strong> (committed but not started), and <strong>Exploring</strong> (under consideration). Roadmap priorities are influenced by user feedback — reach out at <code>founder@mrchartist.com</code> to vote for features you want.</p>
+              </ProTip>
 
               <ProTip variant="best-practice">
                 <p>Check the changelog weekly to stay on top of new features. Many improvements — like new analytics widgets or shortcut enhancements — ship silently and can significantly improve your workflow if you know about them.</p>
