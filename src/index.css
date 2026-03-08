@@ -914,7 +914,7 @@
 
   /* ── Docs card content typography ── */
   .docs-card-content > p {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.96875rem;
     line-height: 1.72;
     color: hsl(var(--docs-text-secondary));
