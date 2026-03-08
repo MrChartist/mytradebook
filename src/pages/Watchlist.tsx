@@ -107,8 +107,8 @@ export default function WatchlistPage() {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
         <div className="space-y-0.5">
-          <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Watchlists</h1>
-          <p className="text-[13px] text-muted-foreground/70 leading-relaxed">Track instruments & create quick alerts</p>
+          <h1 className="text-[22px] lg:text-[26px] font-bold tracking-tight text-foreground font-heading">Watchlists</h1>
+          <p className="text-[14px] text-muted-foreground/80 leading-relaxed">Track instruments & create quick alerts</p>
         </div>
         <Button onClick={() => setCreateOpen(true)}>
           <Plus className="w-4 h-4 mr-2" /> New List

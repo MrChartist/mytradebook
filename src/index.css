@@ -240,11 +240,12 @@
     font-weight: 400;
   }
 
-  /* Legacy alias for accent-script (migration helper) */
+  /* Legacy alias for accent-script (migration helper) — same as accent-serif */
   .accent-script {
     font-family: 'Libre Bodoni', Georgia, serif;
     font-style: italic;
     font-weight: 400;
+    color: hsl(var(--tb-accent));
   }
 
   /* ── Standardized label for KPI/stat cards ───── */
@@ -642,11 +643,7 @@
     font-family: 'JetBrains Mono', monospace;
   }
 
-  .accent-script {
-    font-family: 'Dancing Script', 'Satisfy', cursive;
-    font-style: italic;
-    color: hsl(var(--tb-accent));
-  }
+  /* accent-script color is set in base layer above — no redefinition needed */
 
   /* ── Legacy code block theming (non-docs pages) ── */
   .docs-code-block pre,
@@ -1598,6 +1595,23 @@
   @keyframes liquid-shine {
     0% { transform: translateX(-100%) rotate(15deg); }
     100% { transform: translateX(200%) rotate(15deg); }
+  }
+
+  .liquid-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .liquid-shine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.12), transparent);
+    animation: liquid-shine 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
   }
   /* Shimmer skeleton animation */
   @keyframes shimmer-skeleton {

@@ -207,8 +207,8 @@ export default function Studies() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="space-y-0.5">
-          <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Studies</h1>
-          <p className="text-[13px] text-muted-foreground/70 leading-relaxed">Track setups, patterns, and market analysis</p>
+          <h1 className="text-[22px] lg:text-[26px] font-bold tracking-tight text-foreground font-heading">Studies</h1>
+          <p className="text-[14px] text-muted-foreground/80 leading-relaxed">Track setups, patterns, and market analysis</p>
         </div>
         <Button onClick={() => setCreateModalOpen(true)} className="rounded-xl px-5 shimmer-cta">
           <Plus className="w-4 h-4 mr-2" />

@@ -198,8 +198,8 @@ export default function Alerts() {
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
           <div className="space-y-0.5">
-            <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Alerts</h1>
-            <p className="text-[13px] text-muted-foreground/70 leading-relaxed">Monitor price & market conditions</p>
+            <h1 className="text-[22px] lg:text-[26px] font-bold tracking-tight text-foreground font-heading">Alerts</h1>
+            <p className="text-[14px] text-muted-foreground/80 leading-relaxed">Monitor price & market conditions</p>
           </div>
           <div className="flex gap-2">
             {activeCount > 0 && (
