@@ -3290,6 +3290,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   { q: "How do Achievements work?", a: "Achievements are earned automatically as you hit milestones — like logging your first trade, reaching a win streak, or completing a week of journaling. Check your badge grid on the Dashboard to track progress." },
                   { q: "What is the Position Sizing Calculator?", a: "It calculates your ideal position size based on your capital, risk percentage, and stop loss distance. Available inside the trade creation modal to help you size positions consistently." },
                   { q: "Where can I find documentation for a specific feature?", a: "Use the sidebar search on this Docs page to filter sections by keyword. You can also use the QuickNav links at the top of each section to jump to specific topics." },
+                  { q: "How do Quiet Hours and DND work?", a: "Quiet Hours automatically mute notifications outside market hours (e.g., after 3:30 PM). DND mode pauses all notifications for a set duration. Both are configurable in Settings → Preferences." },
+                  { q: "What is the Notification Digest?", a: "When enabled, similar notifications are batched and delivered as a single summary instead of individual messages. This reduces notification fatigue during volatile trading sessions." },
+                  { q: "How are weekly reports different from daily journals?", a: "Daily journals capture your thoughts and plans for each trading day. Weekly reports are auto-generated performance summaries with segment breakdowns, top setups, and actionable insights — delivered every Monday." },
                 ].map((faq) => (
                   <div key={faq.q} className="premium-card-hover p-5 group my-3">
                     <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
