@@ -524,7 +524,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               ]} />
               <OnboardingFlowMockup />
               <MobileAppMockup />
-              <SubTopic title="Platform Overview" description="Understand the key areas of TradeBook." />
+              <SubTopic title="Platform Overview" description="Understand the key areas of TradeBook." id="gs-platform-overview" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Users} title="Create Your Account">
                   <p className="text-sm text-muted-foreground mb-3">Sign up with email and verify your account. You'll get a 14-day Pro trial with full access to every feature — no credit card required.</p>
