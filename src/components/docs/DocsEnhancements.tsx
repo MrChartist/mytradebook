@@ -282,14 +282,14 @@ export function PhaseHeader({ phase, total = 21 }: { phase: number; total?: numb
    ────────────────────────────────────────────── */
 export function QuickNav({ items }: { items: { label: string; id: string }[] }) {
   return (
-    <div className="my-4 rounded-xl border border-border/15 bg-card/30 p-3.5">
-      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-2.5">In this section</p>
-      <div className="flex flex-wrap gap-1.5">
+    <div className="my-5 rounded-xl border border-border/15 bg-card/30 p-4">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/45 mb-3">In this section</p>
+      <div className="flex flex-wrap gap-2">
         {items.map((item) => (
           <button
             key={item.id}
             onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-muted/30 hover:bg-primary/8 text-[11px] font-medium text-muted-foreground hover:text-primary transition-all duration-200"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-muted/25 hover:bg-primary/8 text-[11px] font-medium text-muted-foreground hover:text-primary transition-all duration-200"
           >
             <ChevronRight className="w-3 h-3" />
             {item.label}
