@@ -2450,25 +2450,55 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Get instant AI-powered feedback on every closed trade. The coach analyzes your entry, exit, timing, and risk management — then gives actionable advice."
                 icon={Sparkles}
               />
-              <TradeCoachMockup />
+              <QuickNav items={[
+                { label: "Coaching Workflow", id: "tc-workflow" },
+                { label: "Analysis Dimensions", id: "tc-analysis" },
+                { label: "How It Evaluates", id: "tc-model" },
+              ]} />
+
+              <InteractiveMockup label="AI Trade Coach Feedback">
+                <TradeCoachMockup />
+              </InteractiveMockup>
+
               <SubTopic title="Coaching Workflow" description="Automatic 4-step analysis triggered after every closed trade." id="tc-workflow" />
               <StepByStep title="How the AI Trade Coach Works" steps={[
-                { title: "Close a trade", description: "When you close or exit a trade, the AI Coach is automatically triggered." },
-                { title: "AI analyzes your trade", description: "The coach examines entry timing, stop loss placement, exit strategy, and risk management." },
-                { title: "Get structured feedback", description: "Receive 'What Went Well', 'Room for Improvement', and an overall rating (1-5 stars)." },
-                { title: "Feedback is saved", description: "All coaching feedback is stored on the trade record for future reference and pattern tracking." },
+                { title: "Close a trade", description: "When you close or exit a trade, the AI Coach is automatically triggered. You can also enable auto-review in trade settings so every close gets analyzed.", detail: "Manual triggering is also available from the Trade Detail modal — useful for re-reviewing older trades." },
+                { title: "AI analyzes your trade", description: "The coach examines entry timing, stop loss placement, exit strategy, risk management, and emotional context using the Gemini model.", detail: "The more data your trade has (notes, targets, stop loss, emotion tag), the more specific the feedback will be." },
+                { title: "Get structured feedback", description: "Receive markdown-formatted feedback organized into 'What Went Well', 'Room for Improvement', and an overall rating (1-5 stars).", detail: "Feedback is actionable — not just 'good trade' but specific observations like 'SL was 3% away, consider tightening to 1.5% for this setup type.'" },
+                { title: "Feedback is saved on the trade", description: "All coaching feedback is cached on the trade record in the database. Review it anytime from the Trade Detail modal.", detail: "Feedback persists permanently. Over time, you build a library of AI-reviewed trades you can search and learn from." },
               ]} />
+
               <SubTopic title="Analysis Dimensions" description="Six areas the AI evaluates on every trade." id="tc-analysis" />
               <FeatureCard icon={Zap} title="What the Coach Analyzes" badge="Pro">
+                <p className="text-sm text-muted-foreground mb-3">The AI coach evaluates each trade across six dimensions:</p>
                 <FeatureList items={[
-                  "Entry timing — was the entry at an optimal price level?",
-                  "Stop loss placement — was the SL too tight or too wide?",
-                  "Exit strategy — did you take profits too early or hold too long?",
-                  "Risk management — was the position size appropriate for the setup?",
-                  "Pattern recognition — was the trade consistent with your best setups?",
-                  "Emotional assessment — signs of FOMO, revenge trading, or overconfidence",
+                  "Entry timing — was the entry at an optimal price level given the setup?",
+                  "Stop loss placement — was the SL too tight (stopped out prematurely) or too wide (excessive risk)?",
+                  "Exit strategy — did you take profits too early or hold too long past optimal exit?",
+                  "Risk management — was the position size appropriate relative to your capital and the setup's risk?",
+                  "Pattern recognition — was the trade consistent with your historically best-performing setups?",
+                  "Emotional assessment — signs of FOMO, revenge trading, or overconfidence based on trade context and emotion tags",
                 ]} />
               </FeatureCard>
+
+              <ProTip variant="info">
+                <p>The coach's feedback quality improves with more trade context. If you add <strong>notes, screenshots, or update your emotion tag</strong> after the initial review, click <strong>Regenerate Feedback</strong> in the Trade Detail modal to get a richer, more specific analysis.</p>
+              </ProTip>
+
+              <SubTopic title="How the AI Model Evaluates" description="Transparency into what the AI considers and how it forms its assessment." id="tc-model" />
+              <ExpandableDetail title="How the AI Model Evaluates Your Trade" icon={Sparkles} badge="Deep Dive">
+                <p>The AI Trade Coach uses Google's Gemini model via a dedicated backend function. Here's exactly what it considers and how it forms its assessment:</p>
+                <FeatureList items={[
+                  "Trade data — entry price, exit price, quantity, P&L, P&L%, segment, timeframe, and holding duration are all sent to the model as structured context.",
+                  "Risk parameters — stop loss level, targets (and which were hit), trailing SL settings, and the calculated risk-to-reward ratio.",
+                  "Qualitative context — your trade notes, emotion tag (if set), and any review notes you've written are included as free-text context.",
+                  "Historical patterns — the model doesn't access your full trade history, but it evaluates the current trade against general best practices for the segment and timeframe.",
+                  "Output format — the model returns structured markdown with specific sections: strengths, improvement areas, and an overall 1-5 rating. This is rendered directly in the Trade Detail modal.",
+                  "Caching — feedback is stored in the trade record's coaching_feedback field. It's generated once and cached permanently unless you explicitly regenerate it.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">The AI coach is a behavioral tool, not financial advice. It evaluates your execution against your own parameters (your SL, your targets, your plan) rather than making market predictions. Think of it as a structured self-review assistant that catches things you might overlook in the moment.</p>
+              </ExpandableDetail>
+
               <ProTip variant="best-practice">
                 <p>Read your AI Coach feedback before taking the next trade. If the coach flagged "exited too early" on 3 consecutive trades, it's a signal to work on your trailing stop strategy.</p>
               </ProTip>
