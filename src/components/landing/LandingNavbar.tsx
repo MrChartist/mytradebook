@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Menu, X, BookOpen, Zap, Tag, HelpCircle, ChevronRight } from "lucide-react";
+import { ArrowRight, Menu, X, BookOpen, Zap, Tag, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { BrandLogoInline } from "@/components/ui/brand-logo";
@@ -16,7 +16,6 @@ interface LandingNavbarProps {
 const NAV_LINKS = [
   { label: "Features", href: "/#features", page: "home", icon: Zap },
   { label: "Pricing", href: "/#pricing", page: "home", icon: Tag },
-  { label: "FAQ", href: "/#faq", page: "home", icon: HelpCircle },
   { label: "Docs", href: "/docs", page: "docs", icon: BookOpen },
 ];
 
