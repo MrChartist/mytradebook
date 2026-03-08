@@ -553,6 +553,107 @@ export default function Docs() {
   );
 }
 
+function DocsSearchModal({ open, onClose, scrollTo }: { open: boolean; onClose: () => void; scrollTo: (id: string) => void }) {
+  const [query, setQuery] = useState("");
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (open) {
+      setQuery("");
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  }, [open]);
+
+  // Also listen for Cmd+K / Ctrl+K
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        if (!open) {
+          // parent will handle opening
+        }
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [open]);
+
+  const allItems = SECTIONS.flatMap(s => {
+    const anchors = SECTION_ANCHORS[s.id] || [];
+    return [
+      { id: s.id, label: s.label, icon: s.icon, type: "section" as const },
+      ...anchors.map(a => ({ id: a.id, label: a.label, icon: s.icon, type: "anchor" as const, parent: s.label })),
+    ];
+  });
+
+  const filtered = query.trim()
+    ? allItems.filter(item => item.label.toLowerCase().includes(query.toLowerCase()) || ("parent" in item && item.parent?.toLowerCase().includes(query.toLowerCase())))
+    : allItems.filter(i => i.type === "section");
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[60]" role="dialog" aria-modal="true">
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed top-[10%] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md z-[61]">
+        <div
+          className="rounded-xl overflow-hidden shadow-2xl"
+          style={{
+            background: 'hsl(var(--docs-bg))',
+            border: '1px solid hsl(var(--docs-border-subtle))',
+          }}
+        >
+          <div className="flex items-center gap-2.5 px-4 py-3" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.5)' }}>
+            <Search className="w-4 h-4 shrink-0" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }} />
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Search docs…"
+              className="flex-1 bg-transparent text-sm outline-none"
+              style={{ color: 'hsl(var(--docs-text-primary))' }}
+              onKeyDown={e => {
+                if (e.key === "Escape") onClose();
+                if (e.key === "Enter" && filtered.length > 0) {
+                  scrollTo(filtered[0].id);
+                  onClose();
+                }
+              }}
+            />
+            <kbd
+              className="text-[10px] font-mono px-1.5 py-0.5 rounded"
+              style={{ background: 'hsl(var(--docs-elevated))', color: 'hsl(var(--docs-text-muted))' }}
+            >
+              ESC
+            </kbd>
+          </div>
+          <div className="max-h-[50vh] overflow-y-auto py-1">
+            {filtered.length === 0 && (
+              <p className="text-center text-sm py-8" style={{ color: 'hsl(var(--docs-text-muted))' }}>No results found</p>
+            )}
+            {filtered.slice(0, 20).map(item => (
+              <button
+                key={item.id}
+                onClick={() => { scrollTo(item.id); onClose(); }}
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-[hsl(var(--docs-elevated)/0.5)]"
+              >
+                <item.icon className="w-3.5 h-3.5 shrink-0" style={{ color: 'hsl(var(--docs-accent))' }} />
+                <div className="min-w-0">
+                  <span className="text-[13px] block truncate" style={{ color: 'hsl(var(--docs-text-primary))' }}>{item.label}</span>
+                  {"parent" in item && item.parent && (
+                    <span className="text-[11px] block truncate" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>{item.parent}</span>
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGroups }: {
   navigate: (path: string) => void;
   isInsideApp: boolean;
@@ -563,6 +664,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
   const { mode, toggle } = useDocsColorMode();
   const [sidebarSearch, setSidebarSearch] = useState("");
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     return localStorage.getItem("docs-sidebar-collapsed") === "true";
   });
@@ -582,14 +684,29 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Cmd+K to open search
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
   const filteredSections = sidebarSearch
     ? SECTIONS.filter((s) => s.label.toLowerCase().includes(sidebarSearch.toLowerCase()))
     : SECTIONS;
 
   return (
     <div className={cn("docs-page min-h-screen", isInsideApp && "pb-6", mode === "bw" && "docs-bw")} role="document">
+      {/* Search modal */}
+      <DocsSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} scrollTo={scrollTo} />
+
       {/* Docs-specific navbar */}
-      <DocsNavbar isInsideApp={isInsideApp} />
+      <DocsNavbar isInsideApp={isInsideApp} onSearchOpen={() => setSearchOpen(true)} />
 
       {/* ═══════════════════════════════════════════════════════════════
           DOCS HEADER — Compact, documentation-first
