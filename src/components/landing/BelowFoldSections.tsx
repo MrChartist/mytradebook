@@ -596,7 +596,7 @@ export function FinalCTASection() {
           <span className="accent-serif">undisciplined</span> trading
         </motion.h2>
 
-        <motion.p variants={fadeUp} className="text-lg text-muted-foreground mb-12 max-w-xl mx-auto leading-[1.65] tracking-[-0.008em]">
+        <motion.p variants={fadeUp} className="text-[1rem] lg:text-[1.125rem] text-muted-foreground mb-14 max-w-xl mx-auto leading-[1.7] tracking-[-0.006em]">
           Join traders who journal, analyze, and compound their edge — every single day.
         </motion.p>
 
