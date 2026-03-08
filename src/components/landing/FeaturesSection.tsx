@@ -4,21 +4,25 @@ import {
   BookOpen, BarChart3, Bell, Brain, List,
   MessageSquare, Calculator, TrendingUp,
   Lightbulb, ArrowUp, ArrowDown, Send, Filter, Search,
-  CheckCircle2, Shield,
+  CheckCircle2, Shield, Calendar, LineChart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fadeUp, staggerContainer, MotionSection, SectionBadge } from "./LandingShared";
 
-/* ─── Feature Data (trimmed to 8) ─────────────────────── */
+/* ─── Feature Data (11 features) ──────────────────────── */
 const features = [
   { icon: BookOpen, title: "Smart Journal", description: "Multi-segment trade logging with charts, tags, notes, and pattern recognition across Equity, F&O, and Commodities.", color: "hsl(24 90% 55%)", span: "large", previewKey: "journal" },
   { icon: TrendingUp, title: "Stock Screener", description: "Screen 500+ NSE stocks with live fundamentals — P/E, ROE, market cap, technicals. One-tap deep dives.", color: "hsl(152 60% 42%)", span: "large", previewKey: "screener" },
   { icon: BarChart3, title: "Deep Analytics", description: "Equity curves, drawdown analysis, win-rate heatmaps, and segment breakdowns.", color: "hsl(152 60% 42%)", span: "small", previewKey: "analytics" },
   { icon: Bell, title: "Real-Time Alerts", description: "Price alerts, scanner triggers, and instant Telegram notifications.", color: "hsl(210 80% 55%)", span: "small", previewKey: "alerts" },
   { icon: Brain, title: "AI Trade Insights", description: "AI-powered pattern analysis, timing blind-spots, and behavioral suggestions to sharpen your edge.", color: "hsl(270 65% 58%)", span: "large", previewKey: "ai" },
+  { icon: Shield, title: "Rules Engine", description: "Pre-trade checklists enforce discipline. Tag mistakes, track rule adherence, and build consistency.", color: "hsl(160 55% 42%)", span: "small", previewKey: "rules" },
   { icon: Filter, title: "Smart Scanner", description: "Pre-built scans for gainers, losers, 52W highs, undervalued gems. Save custom filter combos.", color: "hsl(340 75% 55%)", span: "small", previewKey: "scanner" },
+  { icon: Calendar, title: "Daily Journal & Calendar", description: "Daily mood tracking, pre/post market notes, and a P&L heatmap calendar to visualize your trading rhythm.", color: "hsl(45 85% 50%)", span: "large", previewKey: "calendar" },
+  { icon: Calculator, title: "Position Sizing", description: "Risk-based lot calculator with capital management, leverage warnings, and max-risk guardrails.", color: "hsl(190 70% 45%)", span: "small", previewKey: "sizing" },
   { icon: List, title: "Watchlist", description: "Multi-watchlist monitoring with live prices, change %, and custom groupings.", color: "hsl(190 75% 45%)", span: "small", previewKey: "watchlist" },
-  { icon: MessageSquare, title: "Telegram Bot", description: "Automated trade notifications, EOD reports, and morning briefings.", color: "hsl(200 85% 50%)", span: "small", previewKey: "telegram" },
+  { icon: LineChart, title: "Broker Integration", description: "Connect Dhan for live prices, portfolio auto-sync, and one-click execution from your journal.", color: "hsl(24 80% 50%)", span: "small", previewKey: "" },
+  { icon: MessageSquare, title: "Telegram Bot", description: "Automated trade notifications, EOD reports, and morning briefings straight to your phone.", color: "hsl(200 85% 50%)", span: "small", previewKey: "telegram" },
 ];
 
 /* ─── Mini Preview Components ─────────────────────────── */
@@ -116,6 +120,53 @@ function AIInsightsMiniPreview() {
   );
 }
 
+function RulesMiniPreview() {
+  return (
+    <div className="mt-5 space-y-2">
+      {[{ rule: "Check market trend", done: true }, { rule: "Set stop loss ≤ 2%", done: true }, { rule: "Max 3 trades/day", done: false }].map((r) => (
+        <div key={r.rule} className="flex items-center gap-2.5 rounded-lg border border-border/10 bg-muted/5 px-3 py-2">
+          <div className={cn("w-4 h-4 rounded border flex items-center justify-center", r.done ? "bg-profit/10 border-profit/30" : "border-border/30")}>
+            {r.done && <CheckCircle2 className="w-3 h-3 text-profit" />}
+          </div>
+          <span className={cn("text-[10px]", r.done ? "text-muted-foreground line-through" : "text-foreground")}>{r.rule}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function CalendarMiniPreview() {
+  const days = [
+    { day: "Mon", pnl: "+₹2.4k", mood: "😊", positive: true },
+    { day: "Tue", pnl: "-₹800", mood: "😤", positive: false },
+    { day: "Wed", pnl: "+₹5.1k", mood: "🔥", positive: true },
+    { day: "Thu", pnl: "+₹1.2k", mood: "😊", positive: true },
+    { day: "Fri", pnl: "—", mood: "📝", positive: null },
+  ];
+  return (
+    <div className="mt-6 space-y-3">
+      <div className="flex items-center justify-between">
+        <span className="text-[9px] text-muted-foreground uppercase tracking-wider">This Week</span>
+        <span className="text-[10px] font-bold text-profit font-mono">+₹7,900</span>
+      </div>
+      <div className="grid grid-cols-5 gap-1.5">
+        {days.map((d) => (
+          <div key={d.day} className={cn("rounded-lg border p-2 text-center", d.positive === true ? "border-profit/15 bg-profit/[0.03]" : d.positive === false ? "border-loss/15 bg-loss/[0.03]" : "border-border/10 bg-muted/5")}>
+            <p className="text-[8px] text-muted-foreground uppercase mb-1">{d.day}</p>
+            <p className="text-base mb-0.5">{d.mood}</p>
+            <p className={cn("text-[9px] font-mono font-semibold", d.positive === true ? "text-profit" : d.positive === false ? "text-loss" : "text-muted-foreground")}>{d.pnl}</p>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center gap-3 text-[8px] text-muted-foreground">
+        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-profit/20" /> Profit day</span>
+        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-loss/20" /> Loss day</span>
+        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-muted/30" /> No trades</span>
+      </div>
+    </div>
+  );
+}
+
 function ScannerMiniPreview() {
   return (
     <div className="mt-5 space-y-2.5">
@@ -127,6 +178,24 @@ function ScannerMiniPreview() {
       <div className="rounded-lg border border-border/10 bg-muted/5 px-3 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-profit animate-pulse" /><span className="text-[9px] text-muted-foreground">12 results matched</span></div>
         <span className="text-[8px] font-semibold text-primary">View all →</span>
+      </div>
+    </div>
+  );
+}
+
+function SizingMiniPreview() {
+  return (
+    <div className="mt-5 rounded-lg border border-border/10 bg-muted/5 p-3 space-y-2">
+      <div className="grid grid-cols-3 gap-2 text-center">
+        {[{ label: "Capital", value: "₹5L" }, { label: "Risk", value: "2%" }, { label: "Lot Size", value: "3 lots" }].map((m) => (
+          <div key={m.label} className="rounded-md bg-card/60 border border-border/10 py-1.5 px-1">
+            <p className="text-[7px] text-muted-foreground uppercase tracking-wider">{m.label}</p>
+            <p className="text-[11px] font-bold font-mono text-foreground">{m.value}</p>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center gap-1.5 text-[8px] text-muted-foreground">
+        <Shield className="w-2.5 h-2.5" />Max risk: ₹10,000 per trade
       </div>
     </div>
   );
@@ -163,7 +232,10 @@ const previewMap: Record<string, React.ReactNode> = {
   analytics: <AnalyticsMiniPreview />,
   alerts: <AlertMiniPreview />,
   ai: <AIInsightsMiniPreview />,
+  rules: <RulesMiniPreview />,
   scanner: <ScannerMiniPreview />,
+  calendar: <CalendarMiniPreview />,
+  sizing: <SizingMiniPreview />,
   watchlist: <WatchlistMiniPreview />,
   telegram: <TelegramMiniPreview />,
 };
@@ -185,7 +257,7 @@ export function FeaturesSection() {
           </p>
         </motion.div>
 
-        {/* Bento Grid — 8 features, alternating large/small */}
+        {/* Bento Grid — 12 features */}
         <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-12 gap-5">
           {features.map((f, i) => {
             const isLarge = f.span === "large";
@@ -194,7 +266,11 @@ export function FeaturesSection() {
                 key={f.title}
                 variants={fadeUp}
                 custom={i * 0.04}
-                className={cn(isLarge ? "md:col-span-7" : "md:col-span-5", i % 4 === 2 && isLarge && "md:col-start-6")}
+                className={cn(
+                  isLarge ? "md:col-span-7" : "md:col-span-5",
+                  /* Alternate large cards left/right */
+                  i % 4 === 2 && isLarge && "md:col-start-6"
+                )}
               >
                 <motion.div
                   className="group rounded-2xl border border-border/30 bg-card/70 backdrop-blur-sm p-7 sm:p-8 h-full relative overflow-hidden transition-colors duration-300"
