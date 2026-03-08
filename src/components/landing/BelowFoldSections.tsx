@@ -157,6 +157,7 @@ export function ComparisonSection() {
 
 export function PricingSection() {
   const navigate = useNavigate();
+  const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   return (
     <section id="pricing" className="py-24 lg:py-32 bg-muted/10 dot-pattern" aria-label="Pricing">
       <MotionSection className="max-w-5xl mx-auto px-6">
@@ -167,8 +168,18 @@ export function PricingSection() {
         </motion.div>
         <motion.div variants={fadeUp} className="flex justify-center mb-12">
           <div className="inline-flex items-center bg-muted/50 rounded-full p-1 gap-0.5">
-            <button className="px-5 py-2 rounded-full text-sm font-medium bg-card shadow-sm text-foreground transition-colors">Monthly</button>
-            <button className="px-5 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Annual</button>
+            <button
+              onClick={() => setBilling("monthly")}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${billing === "monthly" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBilling("annual")}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${billing === "annual" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              Annual {billing === "annual" && <span className="ml-1 text-[10px] text-profit font-bold">Save 37%</span>}
+            </button>
           </div>
         </motion.div>
         <div className="grid md:grid-cols-3 gap-7 items-start">
