@@ -27,6 +27,7 @@ const sidebarItems = [
 ];
 
 export function DashboardPreview() {
+  const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-60px" });
 
