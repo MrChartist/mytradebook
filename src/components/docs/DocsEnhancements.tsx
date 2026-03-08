@@ -267,12 +267,12 @@ export function InteractiveMockup({ children, label, className }: { children: Re
    ────────────────────────────────────────────── */
 export function PhaseHeader({ phase, total = 21 }: { phase: number; total?: number }) {
   return (
-    <div className="flex items-center gap-2 mb-4">
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/8 text-primary text-[10px] font-bold tracking-wide">
+    <div className="flex items-center gap-2.5 mb-5">
+      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/6 text-primary text-[10px] font-bold tracking-wider">
         Phase {phase}
-        <span className="text-primary/40">/ {total}</span>
+        <span className="text-primary/35">/ {total}</span>
       </span>
-      <div className="flex-1 h-px bg-gradient-to-r from-primary/15 to-transparent" />
+      <div className="flex-1 h-px bg-gradient-to-r from-primary/12 to-transparent" />
     </div>
   );
 }
