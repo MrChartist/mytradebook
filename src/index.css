@@ -667,23 +667,23 @@
      ================================================================
      
      Typography hierarchy (technical docs):
-       Page title:        48px desktop, 42px tablet, 32px mobile — Libre Bodoni
-       Section title:     30px desktop, 26px tablet, 22px mobile — Source Sans 3, 650
-       Topic heading:     24px desktop, 21px tablet, 19px mobile — Source Sans 3, 650
-       Sub-topic heading: 20px desktop, 18px tablet, 17px mobile — Source Sans 3, 600
-       Card title:        17px desktop                           — Source Sans 3, 600
-       Body large:        17px desktop, 16px tablet, 15px mobile — Source Sans 3, 400
-       Body standard:     15.5px desktop, 15px tablet/mobile     — Source Sans 3, 400
-       Label:             13px, 550 weight, slight tracking       — Source Sans 3
-       Sidebar/nav:       13px, 450 weight                       — Source Sans 3
-       Helper/meta:       12.5px, 420 weight                     — Source Sans 3
-       Caption:           11.5px, 500 weight                     — Source Sans 3
-       Note/callout body: 14.5px, 440 weight                     — Source Sans 3
+       Page title:        48px desktop, 42px tablet, 32px mobile — Sora
+       Section title:     30px desktop, 26px tablet, 22px mobile — Inter, 650
+       Topic heading:     24px desktop, 21px tablet, 19px mobile — Inter, 650
+       Sub-topic heading: 20px desktop, 18px tablet, 17px mobile — Inter, 600
+       Card title:        17px desktop                           — Inter, 600
+       Body large:        17px desktop, 16px tablet, 15px mobile — Inter, 400
+       Body standard:     15.5px desktop, 15px tablet/mobile     — Inter, 400
+       Label:             13px, 550 weight, slight tracking       — Inter
+       Sidebar/nav:       13px, 450 weight                       — Inter
+       Helper/meta:       12.5px, 420 weight                     — Inter
+       Caption:           11.5px, 500 weight                     — Inter
+       Note/callout body: 14.5px, 440 weight                     — Inter
        Code:              13.5px, JetBrains Mono
      
      Font assignment:
-       Libre Bodoni  — page title only (serif editorial anchor)
-       Source Sans 3 — everything else (professional, highly readable)
+       Sora          — page title only (modern geometric anchor)
+       Inter         — everything else (professional, highly readable)
        JetBrains M.  — code, kbd, API, tokens, commands
      
      Spacing rhythm:
