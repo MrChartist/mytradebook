@@ -28,18 +28,6 @@ const shortFeatures = [
   "Trailing stop loss engine", "Broker integration (Dhan)",
 ];
 
-const comparisonFeatures = [
-  { feature: "Multi-segment support", tradebook: true, others: false },
-  { feature: "Indian market focus (NSE/BSE/MCX)", tradebook: true, others: false },
-  { feature: "Trailing stop loss engine", tradebook: true, others: false },
-  { feature: "AI-powered trade insights", tradebook: true, others: false },
-  { feature: "Position sizing calculator", tradebook: true, others: "Basic" as string | boolean },
-  { feature: "Telegram notifications", tradebook: true, others: "Paid" as string | boolean },
-  { feature: "Broker integration", tradebook: true, others: "Limited" as string | boolean },
-  { feature: "Equity curve & drawdown", tradebook: true, others: true },
-  { feature: "Pattern & mistake tagging", tradebook: true, others: false },
-  { feature: "Free beta access", tradebook: true, others: "Limited" as string | boolean },
-];
 
 const faqs = [
   { q: "Is my data safe?", a: "Absolutely. All data is encrypted at rest and in transit with bank-grade security. We never share or sell your trading data to anyone." },
