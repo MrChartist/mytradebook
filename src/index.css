@@ -731,87 +731,87 @@
      Desktop → Tablet → Mobile responsive cascade
      ────────────────────────────────────────────────── */
 
-  /* Page title: 52px desktop */
+  /* Page title: 52px desktop — Bodoni for premium feel */
   .docs-title {
-    font-family: Manrope, system-ui, sans-serif;
+    font-family: 'Libre Bodoni', Georgia, serif;
     font-size: 3.25rem;
     line-height: 1.06;
-    font-weight: 750;
+    font-weight: 700;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
   }
 
-  /* Section title: 36px desktop */
+  /* Section title: 36px desktop — Source Sans Pro for professional readability */
   .docs-section-title {
-    font-family: Manrope, system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     font-size: 2.25rem;
     line-height: 1.12;
-    font-weight: 720;
+    font-weight: 700;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.022em;
+    letter-spacing: -0.015em;
   }
 
   /* Topic heading: 28px desktop */
   .docs-topic-heading {
-    font-family: Manrope, system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     font-size: 1.75rem;
     line-height: 1.2;
     font-weight: 700;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.018em;
+    letter-spacing: -0.012em;
   }
 
   /* Sub-topic heading: 22px desktop */
   .docs-subtopic-heading {
-    font-family: Manrope, system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     font-size: 1.375rem;
     line-height: 1.28;
-    font-weight: 660;
+    font-weight: 600;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.012em;
+    letter-spacing: -0.008em;
   }
 
   /* Card title: 18–20px */
   .docs-card-title {
-    font-family: Manrope, system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     font-size: 1.175rem;
     line-height: 1.32;
-    font-weight: 620;
+    font-weight: 600;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.008em;
+    letter-spacing: -0.006em;
   }
 
   /* Body large: 18px */
   .docs-body-lg {
-    font-family: Inter, system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     font-size: 1.125rem;
     line-height: 1.72;
     font-weight: 400;
     color: hsl(var(--docs-text-primary));
-    letter-spacing: -0.006em;
+    letter-spacing: -0.003em;
   }
 
   /* Body standard: 16px */
   .docs-body {
-    font-family: Inter, system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     font-size: 1rem;
     line-height: 1.75;
     font-weight: 400;
     color: hsl(var(--docs-text-primary));
-    letter-spacing: -0.008em;
+    letter-spacing: -0.005em;
   }
 
   /* Sidebar / navigation: 14px */
   .docs-sidebar-item {
-    font-family: Inter, system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     font-size: 0.875rem;
     line-height: 1.45;
-    font-weight: 480;
+    font-weight: 450;
   }
 
   /* Helper / meta: 13px */
   .docs-helper {
-    font-family: Inter, system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     font-size: 0.8125rem;
     line-height: 1.45;
     font-weight: 420;
@@ -820,10 +820,10 @@
 
   /* Caption: 12px */
   .docs-caption {
-    font-family: Inter, system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     font-size: 0.75rem;
     line-height: 1.4;
-    font-weight: 480;
+    font-weight: 500;
     color: hsl(var(--docs-text-muted));
   }
 
@@ -847,7 +847,7 @@
 
   /* ── Mobile scale (max-width: 767px) ── */
   @media (max-width: 767px) {
-    .docs-title { font-size: 2rem; line-height: 1.1; letter-spacing: -0.025em; }
+    .docs-title { font-size: 2rem; line-height: 1.1; letter-spacing: -0.02em; }
     .docs-section-title { font-size: 1.5rem; line-height: 1.16; }
     .docs-topic-heading { font-size: 1.3125rem; line-height: 1.22; }
     .docs-subtopic-heading { font-size: 1.0625rem; line-height: 1.3; }
