@@ -888,7 +888,7 @@
     color: hsl(var(--docs-text-muted));
     transition: color 150ms ease-out, background 150ms ease-out;
     border-radius: 0.5rem;
-    font-family: Inter, system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     font-size: 0.8125rem;
     font-weight: 450;
     letter-spacing: 0.003em;
@@ -908,7 +908,7 @@
 
   /* Sidebar group label */
   .docs-page .docs-sidebar-group-label {
-    font-family: Inter, system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.06em;
