@@ -566,37 +566,48 @@ export function FinalCTASection() {
   const navigate = useNavigate();
   return (
     <section className="py-28 lg:py-36 relative overflow-hidden" aria-label="Call to action">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.15)_0%,transparent_60%)]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.04)_0%,transparent_70%)]" />
-      </div>
+      {/* Single subtle glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.06)_0%,transparent_65%)] pointer-events-none" />
+
       <MotionSection className="relative max-w-3xl mx-auto px-6 text-center">
-        <motion.div variants={fadeUp} className="flex items-center justify-center gap-6 mb-8">
-          <div className="flex items-center gap-2">
-            <div className="flex -space-x-2">
-              {["bg-[hsl(var(--tb-accent))]", "bg-[hsl(var(--profit))]", "bg-[hsl(var(--ring))]"].map((bg, i) => (
-                <div key={i} className={`w-7 h-7 rounded-full ${bg} ring-2 ring-background`} />
-              ))}
-            </div>
-            <span className="text-sm font-semibold">1,200+ traders</span>
+        <motion.div variants={fadeUp} className="flex items-center justify-center gap-4 mb-8">
+          <div className="flex -space-x-2">
+            {["hsl(var(--primary))", "hsl(var(--profit))", "hsl(210 80% 55%)"].map((c, i) => (
+              <div key={i} className="w-7 h-7 rounded-full ring-2 ring-background" style={{ backgroundColor: c }} />
+            ))}
           </div>
-          <div className="flex items-center gap-1.5 text-sm font-semibold"><BarChart3 className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" />42,000+ trades logged</div>
+          <span className="text-sm font-medium text-muted-foreground">1,200+ traders · 42,000+ trades</span>
         </motion.div>
-        <motion.div variants={{ visible: { transition: { staggerChildren: 0.12 } } }} className="mb-8 space-y-2">
-          <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-[1.1]">Stop losing money to</motion.h2>
-          <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-[1.1]"><span className="accent-script">undisciplined</span>{" "}trading</motion.h2>
+
+        <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight mb-3">
+          Stop losing money to
+        </motion.h2>
+        <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight mb-8">
+          <span className="accent-script">undisciplined</span> trading
+        </motion.h2>
+
+        <motion.p variants={fadeUp} className="text-xl text-muted-foreground mb-12 max-w-xl mx-auto leading-relaxed">
+          Join traders who journal, analyze, and compound their edge — every single day.
+        </motion.p>
+
+        <motion.div variants={fadeUp} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
+          <Button
+            size="lg"
+            className="h-16 px-12 text-lg gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-wide"
+            onClick={() => navigate("/login?mode=signup")}
+          >
+            Get Started — It's Free <ArrowRight className="w-4 h-4" />
+          </Button>
         </motion.div>
-        <motion.p variants={fadeUp} className="text-xl text-muted-foreground mb-12 max-w-xl mx-auto leading-[1.7]">Join 1,200+ traders who journal, analyze, and compound their edge — every single day.</motion.p>
-        <motion.div variants={fadeUp} whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}>
-          <Button size="lg" className="shimmer-cta h-14 px-12 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_6px_24px_hsl(var(--tb-accent)/0.3)] font-semibold" onClick={() => navigate("/login?mode=signup")}>Get Started — It's Free <ArrowRight className="w-4 h-4" aria-hidden="true" /></Button>
-        </motion.div>
+
         <motion.div variants={fadeUp} className="mt-8 flex flex-wrap items-center justify-center gap-3">
           {[{ icon: Lock, text: "Bank-grade encryption" }, { icon: Shield, text: "No credit card required" }, { icon: Clock, text: "Setup in 2 minutes" }].map((item) => (
-            <span key={item.text} className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 rounded-full px-3 py-1.5" style={{ boxShadow: glassInner }}><item.icon className="w-3 h-3" /> {item.text}</span>
+            <span key={item.text} className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/30 rounded-full px-3 py-1.5">
+              <item.icon className="w-3 h-3" /> {item.text}
+            </span>
           ))}
         </motion.div>
       </MotionSection>
-      <div className="h-[1px] bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.3)] to-transparent max-w-md mx-auto mt-16" />
     </section>
   );
 }
