@@ -59,6 +59,10 @@ import {
   CodeBlock, OutputBlock
 } from "@/components/docs/DocsEnhancements";
 import {
+  AnnotatedMockup, MockupCaption, FeatureZoneGrid,
+  VisualWalkthrough, VisualSummaryRow
+} from "@/components/docs/DocsVisualBlocks";
+import {
   ShareCardsMockup, AchievementsMockup, PositionSizingCalcMockup,
   TradingRulesMockup, TradeCoachMockup, StreakShareMockup
 } from "@/components/docs/DocsNewMockups";
