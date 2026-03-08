@@ -129,7 +129,7 @@ export function ComparisonSection() {
       <MotionSection className="max-w-3xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>Comparison</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Why{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>TradeBook</span>?</h2>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Why{" "}<span className="accent-script">TradeBook</span>?</h2>
           <p className="text-muted-foreground max-w-md mx-auto text-lg">See how we compare to generic trading journals.</p>
         </motion.div>
         <motion.div variants={fadeUp} className="rounded-2xl border border-border/60 bg-card overflow-hidden" style={{ boxShadow: `${glassInner}, 0 4px 20px -6px rgba(0,0,0,0.06)` }}>
