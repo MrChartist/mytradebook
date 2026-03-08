@@ -140,79 +140,83 @@ export default function Analytics() {
 
       <div className="h-px bg-border/20" />
 
-      {/* KPI Cards — Row 1 */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5" aria-live="polite" aria-label="Key metrics">
-        <StatCard title="Win Rate" value={`${summary.winRate.toFixed(1)}%`} change={`${closed.length} trades`} changeType={summary.winRate >= 50 ? "profit" : "loss"} icon={Target} subtitle="Closed" href="/trades?status=CLOSED" />
-        <StatCard title="Total P&L" value={`₹${totalPnl.toLocaleString("en-IN")}`} change={`${wins.length}W / ${losses.length}L`} changeType={totalPnl >= 0 ? "profit" : "loss"} icon={BarChart3} subtitle="All time" href="/reports" />
-        <StatCard title="Avg Win" value={`₹${avgWin.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`} change={`${wins.length} wins`} changeType="profit" icon={TrendingUp} subtitle="Per trade" href="/journal" />
-        <StatCard title="Avg Loss" value={`₹${avgLoss.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`} change={`${losses.length} losses`} changeType="loss" icon={TrendingDown} subtitle="Per trade" href="/journal" />
-      </div>
-
-      {/* KPI Cards — Row 2 */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <StatCard title="Expectancy" value={`₹${expectancy.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`} change="Per trade" changeType={expectancy >= 0 ? "profit" : "loss"} icon={Activity} subtitle="Expected" href="/reports" />
-        <StatCard title="Profit Factor" value={profitFactor.toFixed(2)} change={profitFactor >= 1.5 ? "Strong" : profitFactor >= 1 ? "Positive" : "Weak"} changeType={profitFactor >= 1 ? "profit" : "loss"} icon={BarChart3} subtitle="Ratio" href="/journal" />
-        <StatCard title="Best Trade" value={`₹${bestTrade.toLocaleString("en-IN")}`} change="Single trade" changeType="profit" icon={TrendingUp} subtitle="Max profit" href="/trades?status=CLOSED" />
-        <StatCard title="Worst Trade" value={`₹${worstTrade.toLocaleString("en-IN")}`} change="Single trade" changeType="loss" icon={TrendingDown} subtitle="Max loss" href="/trades?status=CLOSED" />
-      </div>
-
-      {/* AI Trade Insights */}
-      <PlanGate plan="pro" feature="advancedAnalytics" message="Upgrade to Pro to unlock AI-powered trade insights.">
-        <AITradeInsights />
-      </PlanGate>
-
-      {/* AI Pattern Detection */}
-      <AIPatternDetection trades={trades} />
-
-      {/* Equity Curve & Drawdown */}
-      <EquityCurveDrawdown trades={trades} startingCapital={startingCapital} capitalTransactions={capitalTransactions} />
-
-      {/* Sector Rotation & Emotional Correlation */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
-        <SectorRotationHeatmap trades={trades} />
-        <EmotionalPnlCorrelation trades={trades} />
-      </div>
-
-      {/* Segment Performance Breakdown */}
-      <PlanGate plan="pro" feature="advancedAnalytics" message="Upgrade to Pro to unlock segment breakdown, time analysis, and more.">
-        <SegmentPerformance trades={trades} />
-
-        {/* Setup Win-Rate Matrix */}
-        <div className="mt-3.5">
-          <SetupWinRateMatrix trades={trades} />
-        </div>
-
-        {/* Time & Day Heatmaps */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 mt-3.5">
-          <TimeOfDayAnalysis trades={trades} />
-          <DayOfWeekAnalysis trades={trades} />
-        </div>
-
-        {/* Streak & Tag Performance */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 mt-3.5">
-          <StreakTracker trades={trades} />
-          <SetupTagPerformance trades={trades} />
-        </div>
-
-        {/* Risk-Reward Analytics & Risk of Ruin */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 mt-3.5">
-          <RiskRewardAnalytics trades={trades} />
-          <RiskOfRuinCalculator
-            winRate={summary.winRate}
-            avgWinAmount={avgWin}
-            avgLossAmount={avgLoss}
-            startingCapital={startingCapital}
-          />
-        </div>
-      </PlanGate>
-
-      {closed.length === 0 && (
+      {closed.length === 0 ? (
         <EmptyState
           icon={BarChart3}
-          title="No analytics yet"
-          description="Close some trades to see your performance analytics."
+          title={datePreset === "all" ? "No analytics yet" : `No trades in ${periodLabel}`}
+          description={datePreset === "all"
+            ? "Close some trades to see your performance analytics."
+            : "Try selecting a wider date range, or log more trades."}
           steps={["Log a trade", "Close with P&L", "View insights"]}
         />
+      ) : (
+        <>
+          {/* KPI Cards — Row 1 */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5" aria-live="polite" aria-label="Key metrics">
+            <StatCard title="Win Rate" value={`${winRate.toFixed(1)}%`} change={`${closed.length} trades`} changeType={winRate >= 50 ? "profit" : "loss"} icon={Target} subtitle={periodLabel} href="/trades?status=CLOSED" />
+            <StatCard title="Total P&L" value={`₹${totalPnl.toLocaleString("en-IN")}`} change={`${wins.length}W / ${losses.length}L`} changeType={totalPnl >= 0 ? "profit" : "loss"} icon={BarChart3} subtitle={periodLabel} href="/reports" />
+            <StatCard title="Avg Win" value={`₹${avgWin.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`} change={`${wins.length} wins`} changeType="profit" icon={TrendingUp} subtitle="Per trade" />
+            <StatCard title="Avg Loss" value={`₹${avgLoss.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`} change={`${losses.length} losses`} changeType="loss" icon={TrendingDown} subtitle="Per trade" />
+          </div>
+
+          {/* KPI Cards — Row 2 */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <StatCard title="Expectancy" value={`₹${expectancy.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`} change="Per trade" changeType={expectancy >= 0 ? "profit" : "loss"} icon={Activity} subtitle={periodLabel} />
+            <StatCard title="Profit Factor" value={profitFactor === Infinity ? "∞" : profitFactor.toFixed(2)} change={profitFactor === Infinity || profitFactor >= 1.5 ? "Strong" : profitFactor >= 1 ? "Positive" : "Weak"} changeType={profitFactor >= 1 ? "profit" : "loss"} icon={BarChart3} subtitle="Ratio" />
+            <StatCard title="Best Trade" value={`₹${bestTrade.toLocaleString("en-IN")}`} change="Single trade" changeType="profit" icon={TrendingUp} subtitle="Max profit" />
+            <StatCard title="Worst Trade" value={`₹${worstTrade.toLocaleString("en-IN")}`} change="Single trade" changeType="loss" icon={TrendingDown} subtitle="Max loss" />
+          </div>
+
+          {/* AI Trade Insights */}
+          <PlanGate plan="pro" feature="advancedAnalytics" message="Upgrade to Pro to unlock AI-powered trade insights.">
+            <AITradeInsights />
+          </PlanGate>
+
+          {/* AI Pattern Detection */}
+          <AIPatternDetection trades={closed} />
+
+          {/* Equity Curve & Drawdown */}
+          <EquityCurveDrawdown trades={closed} startingCapital={startingCapital} capitalTransactions={capitalTransactions} />
+
+          {/* Sector Rotation & Emotional Correlation */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+            <SectorRotationHeatmap trades={closed} />
+            <EmotionalPnlCorrelation trades={closed} />
+          </div>
+
+          {/* Segment Performance Breakdown */}
+          <PlanGate plan="pro" feature="advancedAnalytics" message="Upgrade to Pro to unlock segment breakdown, time analysis, and more.">
+            <SegmentPerformance trades={closed} />
+
+            {/* Setup Win-Rate Matrix */}
+            <div className="mt-3.5">
+              <SetupWinRateMatrix trades={closed} />
+            </div>
+
+            {/* Time & Day Heatmaps */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 mt-3.5">
+              <TimeOfDayAnalysis trades={closed} />
+              <DayOfWeekAnalysis trades={closed} />
+            </div>
+
+            {/* Streak & Tag Performance */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 mt-3.5">
+              <StreakTracker trades={closed} />
+              <SetupTagPerformance trades={closed} />
+            </div>
+
+            {/* Risk-Reward Analytics & Risk of Ruin */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 mt-3.5">
+              <RiskRewardAnalytics trades={closed} />
+              <RiskOfRuinCalculator
+                winRate={winRate}
+                avgWinAmount={avgWin}
+                avgLossAmount={avgLoss}
+                startingCapital={startingCapital}
+              />
+            </div>
+          </PlanGate>
+        </>
       )}
     </div>
   );
