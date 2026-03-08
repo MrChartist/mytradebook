@@ -236,8 +236,8 @@ export function DashboardKPICards({ alerts }: Props) {
             Price: {priceAlerts} | Technical: {techAlerts}
           </p>
         </div>
-        <span className="mt-2 inline-flex items-center gap-1 text-[10px] text-primary font-medium">
-          <Plus className="w-3 h-3" /> Create alert
+        <span className="mt-2 inline-flex items-center gap-1 text-2xs text-primary font-medium">
+          <Plus className="w-3.5 h-3.5" /> Create alert
         </span>
       </div>
     </div>

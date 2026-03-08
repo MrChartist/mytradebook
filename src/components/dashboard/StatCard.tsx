@@ -63,12 +63,11 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
           </div>
           <div
             className={cn(
-              "inner-panel !p-2.5 !rounded-xl",
-              changeType === "profit" && "!bg-profit/8 !border-profit/15",
-              changeType === "loss" && "!bg-loss/8 !border-loss/15",
-              changeType === "neutral" && "!bg-primary/8 !border-primary/15"
+              "icon-badge",
+              changeType === "profit" && "bg-profit/8",
+              changeType === "loss" && "bg-loss/8",
+              changeType === "neutral" && "bg-primary/8"
             )}
-            style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08)" }}
           >
             <Icon
               className={cn(
