@@ -831,7 +831,7 @@
 
   /* Sidebar / navigation: 13px — left rail items */
   .docs-sidebar-item {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.8125rem;
     line-height: 1.4;
     font-weight: 450;
