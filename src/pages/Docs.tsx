@@ -377,7 +377,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           >
             {[
               { label: "21 Sections", icon: FileText },
-              { label: "50+ Mockups", icon: Eye },
+              { label: "60+ Mockups", icon: Eye },
               { label: "Every Feature", icon: Zap },
               { label: "Free & Pro", icon: Star },
             ].map((stat) => (
@@ -604,15 +604,35 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><CalendarHeatmapWidgetMockup /></div>
               </FeatureCard>
 
-              <FeatureCard icon={Settings} title="Widget Customization">
-                <p className="text-sm text-muted-foreground mb-3">Personalize your dashboard by showing/hiding widgets and reordering them:</p>
+              <FeatureCard icon={Settings} title="Widget Customization" badge="Enhanced">
+                <p className="text-sm text-muted-foreground mb-3">Personalize your dashboard by showing/hiding widgets and drag-to-reorder them:</p>
                 <FeatureList items={[
                   "Toggle visibility of any widget (P&L, KPIs, equity curve, etc.)",
-                  "Reorder widgets by moving them up or down",
+                  "Drag-and-drop reordering with smooth animations (@dnd-kit)",
                   "Reset to default layout anytime",
                   "Layout persists across sessions",
                 ]} />
                 <div className="mt-4"><WidgetCustomizerMockup /></div>
+              </FeatureCard>
+
+              <FeatureCard icon={Activity} title="Floating Trade Ticker" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">
+                  A scrolling marquee at the top of the dashboard showing your open positions with real-time P&L. Gives you a quick glance at all active trades without scrolling.
+                </p>
+                <FeatureList items={[
+                  "Auto-scrolling ticker showing all open positions",
+                  "Displays symbol, quantity, entry price, current price, and P&L",
+                  "Color-coded: green for profit, red for loss",
+                  "Pauses on hover to read details",
+                  "Dismissible — hides when no open positions",
+                  "Updates with live price data when available",
+                ]} />
+              </FeatureCard>
+
+              <FeatureCard icon={Zap} title="Animated KPI Numbers" badge="New">
+                <p className="text-sm text-muted-foreground">
+                  All key metrics on the dashboard use smooth "tick-up" number animations when values change. P&L figures, win rates, and trade counts animate from their previous value to the new one using requestAnimationFrame for 60fps smoothness. Profit cards pulse with a green glow, and all cards have a subtle 3D lift on hover.
+                </p>
               </FeatureCard>
 
               <FeatureCard icon={Grid3X3} title="Portfolio Heat Map" badge="New">
@@ -730,6 +750,35 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Review data feeds into journal analytics",
                 ]} />
                 <div className="mt-4"><PostTradeReviewMockup /></div>
+              </FeatureCard>
+
+              <FeatureCard icon={Share2} title="P&L & Trade Share Cards" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Generate beautiful, branded share cards for social media. Share your daily P&L summary, individual trade results, or winning streaks with customizable templates.
+                </p>
+                <FeatureList items={[
+                  "P&L Share Card — daily/weekly/monthly P&L summary with equity curve",
+                  "Trade Share Card — individual trade with entry, exit, P&L, and chart",
+                  "Streak Share Card — consecutive win/loss streak visualization",
+                  "Multiple templates: Dark Minimal, Gradient Pro, Neon, and more",
+                  "One-click download as PNG image",
+                  "Watermark with your username for attribution",
+                  "Accessible from trade detail modal and dashboard quick actions",
+                ]} />
+              </FeatureCard>
+
+              <FeatureCard icon={Award} title="Achievements & Badges" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Gamified milestones that celebrate your trading journey. Unlock badges as you hit key milestones.
+                </p>
+                <FeatureList items={[
+                  "First Trade, First Win, First 10 Trades milestones",
+                  "Streak badges: 3-day, 7-day, 14-day winning streaks",
+                  "Journal discipline badges for consistent daily journaling",
+                  "Analytics engagement badges",
+                  "Progress tracking with percentage completion",
+                  "Badge grid displayed on the dashboard",
+                ]} />
               </FeatureCard>
 
               <FeatureCard icon={Download} title="CSV Import & Export">
@@ -1095,6 +1144,58 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "Risk of Ruin Calculator — statistical probability of account blowup",
                   ]} />
                 </FeatureCard>
+                <FeatureCard icon={Sparkles} title="AI Pattern Detection" badge="New">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    AI analyzes your entire trade history to surface hidden behavioral patterns — things you'd never spot manually. Powered by Gemini, it examines time-of-day performance, day-of-week tendencies, streak effects, and segment biases.
+                  </p>
+                  <FeatureList items={[
+                    "\"You lose 70% of trades taken after 2 PM\" — automatic time-of-day patterns",
+                    "Day-of-week performance analysis (e.g. Mondays are your worst day)",
+                    "Streak effects — do you overtrade after wins or freeze after losses?",
+                    "Segment bias detection — are you ignoring profitable segments?",
+                    "Severity levels: critical, warning, info — with actionable suggestions",
+                    "One-click refresh to re-run analysis with latest data",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Grid3X3} title="Sector Rotation Heatmap" badge="New">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    A 6-month heatmap grid showing how your trading allocation and P&L shifts across market segments over time. Spot trends in where you're focusing your capital.
+                  </p>
+                  <FeatureList items={[
+                    "Rows: Market segments (Options, Futures, Equity Intraday, etc.)",
+                    "Columns: Last 6 months of trading data",
+                    "Cell intensity based on trade volume — darker = more active",
+                    "Color coding: green cells for net profit, red for net loss",
+                    "Shows trade count and total P&L per cell on hover",
+                    "Helps identify segment rotation patterns and concentration risk",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Target} title="Setup Win-Rate Matrix" badge="New">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    A cross-tabulation of Segment × Timeframe showing win rates and trade counts. Instantly see which combinations of segment and timeframe give you the best edge.
+                  </p>
+                  <FeatureList items={[
+                    "Matrix grid: segments as rows, timeframes as columns",
+                    "Each cell shows win rate % and trade count",
+                    "Color-coded: green ≥ 60%, yellow 40-60%, red < 40%",
+                    "Identifies your best-performing segment/timeframe combos",
+                    "Highlights cells with statistical significance (5+ trades)",
+                    "Requires trades with timeframe and segment populated",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Activity} title="Emotional P&L Correlation" badge="New">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    A bar chart correlating your emotion tags (FOMO, Calm, Anxious, Confident, etc.) with trading outcomes. See which emotional states lead to profits vs losses.
+                  </p>
+                  <FeatureList items={[
+                    "Average P&L per emotion tag — bars colored by profit/loss",
+                    "Win rate percentage displayed for each emotion",
+                    "Trade count per emotion for statistical context",
+                    "Uses the emotion_tag field on your trades",
+                    "Helps identify which emotional states to cultivate or avoid",
+                    "Empty state guide if no emotion tags are used yet",
+                  ]} />
+                </FeatureCard>
               </div>
             </motion.section>
 
@@ -1453,6 +1554,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Search alerts by symbol — shows condition type and threshold",
                   "Search journal entries — matches text in plans, reviews, and lessons",
                   "Dynamic results appear after typing 2+ characters",
+                  "Quick Trade Entry — keyboard-only trade logging (Symbol → Type → Price → Qty → Confirm)",
                 ]} />
               </FeatureCard>
               <FeatureCard icon={Command} title="All Shortcuts">
@@ -1543,6 +1645,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "Touch-optimized with safe-area insets for modern devices",
                     "Responsive layouts across all pages",
                     "Floating Quick Actions button for fast trade/alert/review creation",
+                    "Swipe-to-act on trade rows — swipe left to reveal View/Close actions",
                   ]} />
                 </FeatureCard>
                 <FeatureCard icon={Play} title="Onboarding Checklist" badge="Enhanced">
@@ -1684,7 +1787,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   </h3>
                   <div className="space-y-3">
                     {[
-                      { version: "v2.8", date: "Mar 2026", items: ["Stock Screener with 47 presets", "Custom filter builder", "Stock insight cards"] },
+                      { version: "v3.0", date: "Mar 2026", items: ["AI Pattern Detection — behavioral insights", "Sector Rotation Heatmap", "Setup Win-Rate Matrix", "Emotional P&L Correlation"] },
+                      { version: "v2.9", date: "Mar 2026", items: ["Dashboard drag-and-drop reordering", "Floating Trade Ticker", "Animated KPI numbers", "Mobile swipe-to-act on trades", "Quick Trade Entry via Command Palette", "P&L & Trade Share Cards"] },
+                      { version: "v2.8", date: "Feb 2026", items: ["Stock Screener with 47 presets", "Custom filter builder", "Stock insight cards"] },
                       { version: "v2.7", date: "Feb 2026", items: ["Portfolio Heat Map widget", "Daily Review Wizard", "Enhanced onboarding"] },
                       { version: "v2.6", date: "Jan 2026", items: ["Multi-leg strategy support", "TSL profiles per segment", "AI Trade Insights"] },
                       { version: "v2.5", date: "Dec 2025", items: ["Trade Templates & Smart Suggestions", "CSV Import improvements", "Offline trade queue"] },
@@ -1717,7 +1822,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                       { label: "Option Chain Analyzer", desc: "Visual option chain with Greeks, IV surface, and strategy payoff diagrams", status: "Planned" },
                       { label: "Advanced Backtesting", desc: "Test your strategies against historical data with simulated P&L", status: "Planned" },
                       { label: "Zerodha Integration", desc: "Connect your Zerodha Kite account for live prices and auto-sync", status: "Exploring" },
-                      { label: "P&L Sharing Cards", desc: "Generate beautiful P&L summary cards for social media sharing", status: "Planned" },
+                      { label: "Trade Similarity Engine", desc: "AI finds similar past trades and shows your historical win rate for that pattern", status: "Planned" },
                       { label: "Multi-Currency Support", desc: "Support for USD, EUR and other currencies for NRI traders", status: "Exploring" },
                     ].map((item) => (
                       <div key={item.label} className="premium-card-hover p-4 flex items-start gap-3">
