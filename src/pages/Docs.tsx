@@ -1386,11 +1386,25 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p>Link your studies to trades when you execute them. This builds a powerful feedback loop — you can see which of your research ideas actually led to profitable trades.</p>
               </ProTip>
               <QuickNav items={[
+                { label: "Publishing a Study", id: "st-publish" },
                 { label: "Study Workflow", id: "st-workflow" },
                 { label: "Pattern Tagging", id: "st-patterns" },
                 { label: "Research Tools", id: "st-tools" },
+                { label: "Linking to Trades", id: "st-linking" },
               ]} />
-              <StudyCardMockup />
+
+              <InteractiveMockup label="Study Card">
+                <StudyCardMockup />
+              </InteractiveMockup>
+
+              <SubTopic title="Publishing a Study" description="Create and publish research ideas in a structured format." id="st-publish" />
+              <StepByStep title="Publishing a Study" steps={[
+                { title: "Create a new study", description: "Click '+ New Study' from the Studies page. Enter a title and select the symbol you're analyzing.", detail: "The symbol search works across NSE, BSE, and MCX — same as trade creation." },
+                { title: "Choose category & duration", description: "Select a category (Technical, Fundamental, News, Sentiment) and the expected pattern duration.", detail: "Duration options: < 6 months, 6M–2Y, 2–5Y, > 5Y. This helps you filter studies by time horizon later." },
+                { title: "Tag patterns & add notes", description: "Apply pattern tags (Classic, Candlestick, Setup) and write detailed analysis notes.", detail: "Attach chart images and external reference links for complete documentation." },
+                { title: "Set status & save", description: "Save as Draft if still developing, or set to Active when your thesis is confirmed.", detail: "Active studies show live LTP and day-change tracking so you can monitor your thesis in real time." },
+              ]} />
+
               <SubTopic title="Study Workflow" description="Organize studies by category and track their lifecycle." id="st-workflow" />
               <FeatureCard icon={Layers} title="Categories & Status Workflow">
                 <p className="text-sm text-muted-foreground mb-3">Organize studies by type and track their lifecycle:</p>
@@ -1411,23 +1425,39 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Candlestick Patterns: Engulfing, Pin Bar, Doji, Morning/Evening Star, Hammer, Shooting Star",
                   "Setup Tags: Breakout, Retest, Gap Up/Down, Pullback, Reversal",
                   "Custom tags for your own classifications",
-                  "Tag-based filtering with occurrence counts",
+                  "Tag-based filtering with dynamic occurrence counts (OR-logic)",
                 ]} />
                 <div className="mt-4"><PatternTaggingMockup /></div>
               </FeatureCard>
 
               <SubTopic title="Research Tools" description="Live prices, duration tracking, and linking studies to trades." id="st-tools" />
-              <FeatureCard icon={Clock} title="Additional Features">
+              <FeatureCard icon={Clock} title="Live Tracking & Attachments">
                 <FeatureList items={[
-                  "Live prices displayed for active/draft studies",
+                  "Live LTP and day-change displayed for active/draft studies",
                   "Duration tracking: < 6 months, 6M–2Y, 2–5Y, > 5Y",
-                  "Attach links and reference materials",
+                  "Attach chart images and external reference links",
                   "Free-form notes with rich context",
-                  "Link studies to alerts for automatic monitoring",
+                  "Link studies to alerts for automatic price monitoring",
                 ]} />
                 <div className="mt-4"><StudyAdditionalFeaturesMockup /></div>
               </FeatureCard>
-            </motion.section>
+
+              <ProTip variant="info">
+                <p>Use duration tracking to schedule study reviews. Set a calendar reminder to revisit <strong>short-duration (&lt;6M)</strong> studies monthly and <strong>long-duration (2Y+)</strong> studies quarterly. This prevents stale research from cluttering your active list.</p>
+              </ProTip>
+
+              <SubTopic title="Linking Studies to Trades" description="Close the loop between research and execution." id="st-linking" />
+              <ExpandableDetail title="Linking Studies to Trades for Feedback Loops" icon={Target} badge="Deep Dive">
+                <p>The real power of the Studies module emerges when you connect research to execution:</p>
+                <FeatureList items={[
+                  "When creating a trade, you can link it to an existing study via the 'Link Study' field.",
+                  "Linked trades appear on the study record, showing whether your research thesis played out profitably.",
+                  "After closing the trade, compare your study's predicted direction with the actual P&L outcome.",
+                  "Over time, you can filter studies by 'had linked trades' to see your research-to-execution hit rate.",
+                  "Studies linked to alerts auto-monitor your thesis — when the alert triggers, you know it's time to review and potentially execute.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">This feedback loop is one of the most powerful features for improving your edge. Traders who link studies to trades can objectively measure which types of research lead to profitable outcomes.</p>
+              </ExpandableDetail>
 
             <SectionDivider />
 
