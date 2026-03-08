@@ -942,7 +942,7 @@
     color: hsl(var(--docs-text-muted));
     transition: color 150ms ease-out, background 150ms ease-out;
     border-radius: 0.375rem;
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.8125rem;
     font-weight: 450;
     letter-spacing: 0.005em;
