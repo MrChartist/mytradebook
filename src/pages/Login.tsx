@@ -277,7 +277,7 @@ export default function Login() {
                     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
                       <Mail className="w-6 h-6 text-primary" />
                     </div>
-                    <h3 className="text-2xl sm:text-3xl font-bold mb-2">Reset Password</h3>
+                    <h3 className="text-2xl sm:text-3xl font-display font-bold mb-2 tracking-tight">Reset Password</h3>
                     <p className="text-muted-foreground text-sm sm:text-base">
                       Enter your email and we'll send you a reset link.
                     </p>
