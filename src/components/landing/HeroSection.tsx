@@ -247,6 +247,7 @@ export function HeroSection() {
                   custom={0.5 + i * 0.08}
                   ref={statRefs[i].ref}
                   className="px-4 sm:px-5 py-4 text-center"
+                  aria-label={`${formatStat(i, stat.end)} ${stat.label}`}
                 >
                   <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground tracking-[-0.02em] font-mono tabular-nums">
                     {formatStat(i, statRefs[i].count)}

@@ -24,7 +24,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="TradeBook" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="apple-touch-icon" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/pwa-192x192.png" />
     <!-- Security headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co https://*.lovable.dev https://fonts.googleapis.com https://fonts.gstatic.com; frame-src 'self'; base-uri 'self'; form-action 'self';" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
@@ -119,6 +119,14 @@
       <div id="root-loader" aria-label="Loading TradeBook">
         <div class="spinner"></div>
       </div>
+      <noscript>
+        <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0a0f1c;color:#e0e0e0;font-family:system-ui,sans-serif;text-align:center;padding:2rem">
+          <div>
+            <h1 style="font-size:1.5rem;margin-bottom:0.5rem">TradeBook</h1>
+            <p style="opacity:0.7">JavaScript is required to run this application. Please enable JavaScript in your browser settings.</p>
+          </div>
+        </div>
+      </noscript>
     </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
