@@ -217,7 +217,7 @@ export default function Mistakes() {
 
       {/* No mistake tags at all — show hint */}
       {analysis && analysis.topMistakes.length === 0 && (
-        <div className="glass-card p-6 text-center border border-dashed border-warning/30">
+        <div className="flex flex-col items-center justify-center py-8 rounded-xl border border-dashed border-warning/20 bg-muted/[0.03]">
           <AlertTriangle className="w-8 h-8 mx-auto text-warning mb-2" />
           <h3 className="font-semibold text-sm mb-1">No Mistake Tags Found</h3>
           <p className="text-muted-foreground text-xs">
