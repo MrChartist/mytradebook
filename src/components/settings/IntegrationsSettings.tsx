@@ -858,7 +858,7 @@ export default function IntegrationsSettings() {
               {(syncStatus.status === "completed" || syncStatus.status === "partial") ? (
                 <CheckCircle className="w-4 h-4 text-profit" />
               ) : syncStatus.status === "running" ? (
-                <Loader2 className="w-4 h-4 text-blue-400 animate-spin" />
+                <Loader2 className="w-3.5 h-3.5 text-[hsl(210_80%_55%)] animate-spin" />
               ) : (
                 <AlertTriangle className="w-4 h-4 text-loss" />
               )}
