@@ -1490,15 +1490,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Calendar}
               />
               <QuickNav items={[
-                { label: "Calendar View", id: "calendar" },
-                { label: "Journal Editor", id: "calendar" },
-                { label: "Daily Workflow", id: "calendar" },
+                { label: "Calendar View", id: "cal-view" },
+                { label: "Journal Editor", id: "cal-editor" },
               ]} />
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 <DailyJournalMockup />
                 <CalendarDayDetailMockup />
               </div>
-              <SubTopic title="Calendar View" description="A monthly heatmap grid showing your P&L performance at a glance." />
+              <SubTopic title="Calendar View" description="A monthly heatmap grid showing your P&L performance at a glance." id="cal-view" />
               <FeatureCard icon={Calendar} title="P&L Heatmap Calendar">
                 <FeatureList items={[
                   "Monthly grid with color-coded P&L per day",
