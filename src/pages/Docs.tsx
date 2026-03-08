@@ -487,14 +487,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             </button>
           </div>
           <p className="docs-body-lg max-w-xl" style={{ color: 'hsl(var(--docs-text-secondary))' }}>
-            Complete guide to every TradeBook feature — from trade logging to advanced analytics.
+            Complete guide to every TradeBook feature — from trade logging to advanced analytics for Indian market traders.
           </p>
-          <div className="flex items-center gap-3 mt-5 docs-caption">
+          <div className="flex items-center gap-3 mt-5 docs-caption flex-wrap">
             <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> ~35 min read</span>
             <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.4)' }} />
-            <span>Last updated: March 2026</span>
+            <span>Last updated: March 8, 2026</span>
             <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.4)' }} />
-            <span>26 sections</span>
+            <span>26 sections · 20+ interactive mockups</span>
           </div>
         </div>
       </div>
