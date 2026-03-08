@@ -355,20 +355,20 @@ export default function IntegrationsSettings() {
             <>
               <div className="p-2.5 rounded-lg bg-profit/6 border border-profit/15">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-profit" />
-                    <span className="text-sm font-medium">
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle className="w-3.5 h-3.5 text-profit" />
+                    <span className="text-[12px] font-medium">
                       {settings?.ai_provider === "gemini" ? "Google Gemini" : "OpenAI"} connected
                     </span>
                   </div>
-                  <Badge variant="outline" className="text-[10px]">BYOK</Badge>
+                  <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-md bg-muted/40 text-muted-foreground/50">BYOK</span>
                 </div>
               </div>
               <Button
                 variant="outline"
                 onClick={handleDisconnectAi}
                 disabled={savingAi}
-                className="text-loss hover:text-loss"
+                className="text-loss hover:text-loss h-8 text-[11px] rounded-lg border-border/20"
               >
                 {savingAi ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
                 Disconnect
