@@ -2,7 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-/* TradeBook Design System - Clean SaaS Light Theme */
+/* ================================================================
+   TradeBook Design System v2 — Unified Visual Language
+   ================================================================
+   
+   Typography Scale (semantic):
+     --text-2xs:  0.625rem (10px)  — micro labels, metadata
+     --text-xs:   0.6875rem (11px) — captions, helper text
+     --text-sm:   0.8125rem (13px) — body small, nav items, badge text
+     --text-base: 0.875rem (14px)  — body default, table cells
+     --text-lg:   1rem (16px)      — card titles, dialog titles
+     --text-xl:   1.25rem (20px)   — section headings
+     --text-2xl:  1.5rem (24px)    — page titles
+     --text-3xl:  1.875rem (30px)  — hero headings (app)
+     
+   Spacing Rhythm: 4px base (p-1 = 4px, p-2 = 8px, p-3 = 12px, p-4 = 16px, p-5 = 20px, p-6 = 24px)
+   
+   Radius Tiers:
+     --radius-sm: 0.5rem   (8px)  — chips, badges, inner panels
+     --radius-md: 0.75rem  (12px) — buttons, inputs, tabs, select
+     --radius-lg: 1.25rem  (20px) — cards, modals, sheets
+     --radius-full: 9999px        — pills, avatars
+     
+   Heights:
+     Input/Select/Button default: h-9 (36px)
+     Button sm: h-8 (32px)
+     Button lg: h-10 (40px)
+     Icon badge: w-9 h-9
+     Icon badge sm: w-7 h-7
+     
+   Icon Sizes:
+     Nav/sidebar: w-[18px] h-[18px]
+     Inline: w-4 h-4 (16px)
+     Small/badge: w-3.5 h-3.5 (14px)
+     
+   Transitions: 200ms ease-out (standard), 150ms (micro-interactions)
+   
+   Border Opacity:
+     Cards: border-border/60
+     Inputs: border-input (full)
+     Inner panels: border-border/30
+     Dividers: border-border/40
+   ================================================================ */
 
 @layer base {
   :root {
@@ -35,6 +76,9 @@
     --ring: 24 90% 55%;
 
     --radius: 1.25rem;
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1.25rem;
 
     /* TradeBook accent (orange) */
     --tb-accent: 24 90% 55%;
@@ -124,6 +168,31 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    font-size: 0.875rem; /* 14px base for app */
+    line-height: 1.5;
+  }
+
+  /* ── Semantic typography classes ───────────────── */
+  .text-2xs { font-size: 0.625rem; line-height: 1.4; }  /* 10px */
+  .text-caption { font-size: 0.6875rem; line-height: 1.45; } /* 11px */
+  .text-body-sm { font-size: 0.8125rem; line-height: 1.5; } /* 13px */
+  .text-body { font-size: 0.875rem; line-height: 1.5; }  /* 14px */
+  .text-heading-sm { font-size: 1rem; line-height: 1.4; }  /* 16px */
+  .text-heading { font-size: 1.25rem; line-height: 1.3; }  /* 20px */
+  .text-heading-lg { font-size: 1.5rem; line-height: 1.2; } /* 24px */
+  .text-display { font-size: 1.875rem; line-height: 1.1; }  /* 30px */
+
+  /* ── Standardized label for KPI/stat cards ───── */
+  .kpi-label {
+    @apply text-caption font-semibold text-muted-foreground uppercase tracking-[0.08em];
+  }
+
+  .kpi-value {
+    @apply text-[28px] font-bold font-mono leading-none tracking-tight;
+  }
+
+  .kpi-sublabel {
+    @apply text-2xs text-muted-foreground;
   }
 
   ::-webkit-scrollbar {
