@@ -325,8 +325,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
       {/* Hero */}
       <div className={cn("pt-20 border-b border-border/15 bg-gradient-to-b from-primary/[0.02] to-transparent", isInsideApp && "border-none")}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
-          <div className="flex items-center gap-2.5 mb-4">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-12 lg:py-16">
+          <div className="flex items-center gap-2.5 mb-5">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/8 text-primary text-[10px] font-bold tracking-wide">
               Documentation
             </span>
