@@ -1,57 +1,217 @@
+# TradeBook — 5-Phase Improvement Plan
 
+> Master roadmap covering website, docs, missing features, and polish.
+> Last updated: March 2026
 
-# Docs Page — UI/UX Issues & Improvements
+---
 
-## Issues Found
+## Phase 1: Landing Page & Conversion Optimization
+**Goal:** Make the first impression unforgettable and maximize sign-up conversions.
 
-### 1. Stale "FAQ" footer link
-The docs footer (line 4360) has `{ label: "FAQ", href: "#faq" }` which scrolls to the FAQ section. This section still exists in the docs page itself (it's a docs FAQ, separate from the landing FAQ we removed). This is fine — **no change needed here**.
+### Missing / To Improve
+- [ ] **Live Dashboard Preview** — replace static mockup with an animated, interactive mini-dashboard on the hero section (show real-looking equity curve, P&L ticking up, alerts firing)
+- [ ] **Feature comparison table** — detailed TradeBook vs Excel vs other journals (currently basic)
+- [ ] **Video walkthrough embed** — hero section "Watch Demo" button currently has no video; record and embed a 90-second Loom/YouTube
+- [ ] **Social proof counter** — "1,200+ traders" is hardcoded; connect to real user count from DB
+- [ ] **Trust badges** — add SSL, data encryption, "Made in India" trust strip below hero
+- [ ] **Pricing toggle** — add Monthly/Annual toggle with discount badge (currently static)
+- [ ] **Mobile landing navbar** — hamburger menu items need better spacing and CTA prominence
+- [ ] **Exit-intent popup** — show "Start free trial" modal when user is about to leave (desktop)
+- [ ] **Loading skeleton** — below-fold lazy sections show a spinner; replace with content skeletons
+- [ ] **OG image update** — current og-image.png may be outdated; regenerate with latest branding
 
-### 2. Mobile content hidden behind fixed topic rail
-The main content has `pt-[7rem]` (line 843) on mobile to clear both the navbar (3.25rem) and the fixed mobile topic rail. However, the mobile topic rail sits at `top-[3.25rem]` and adds ~44px. The `pt-[7rem]` (112px) should be sufficient, but on smaller phones this can clip. The `scroll-mt-28` on section headers (112px) may not fully clear both bars.
+### Files to Touch
+- `src/pages/Landing.tsx`
+- `src/components/landing/HeroSection.tsx`
+- `src/components/landing/BelowFoldSections.tsx`
+- `src/components/landing/DashboardPreview.tsx`
+- `public/og-image.png`
 
-### 3. 26 sections in mobile horizontal scroll is overwhelming
-The mobile topic rail shows all 26 sections as horizontal pills — users have to scroll extensively to find anything. This is a significant UX issue on mobile.
+---
 
-### 4. No search on mobile
-The docs sidebar search is desktop-only. Mobile users have no way to quickly find a section beyond scrolling the 26-pill topic rail. The navbar search button exists but it tries to focus a sidebar input that doesn't exist on mobile.
+## Phase 2: Documentation Completeness & Quality
+**Goal:** Every feature documented with visual mockups, zero gaps.
 
-### 5. Page is 4,389 lines — massive single file
-This causes slow initial render and poor code maintainability. Not a user-visible bug but impacts performance.
+### Missing Docs Sections (not yet in docs)
+- [ ] **Sharing & Social Cards** — P&L Share Modal, Trade Share Modal, Streak Share Card (components exist but no dedicated docs section)
+- [ ] **Achievements & Gamification** — Badge grid, unlock conditions, progress tracking (component exists: `AchievementsBadgeGrid.tsx`)
+- [ ] **Position Sizing Calculator** — risk-per-trade calculator built into trade creation (component exists: `PositionSizingCalculator.tsx`)
+- [ ] **Trading Rules Checklist** — pre-trade discipline checklist (component exists: `TradingRulesChecklist.tsx`)
+- [ ] **Trade Coach Panel** — AI-powered coaching per trade (component exists: `TradeCoachPanel.tsx`)
+- [ ] **Multi-Leg Strategies** — options strategy builder (component exists: `MultiLegStrategyModal.tsx`)
+- [ ] **Smart Alert Suggestions** — AI-suggested alerts based on portfolio (component exists: `SmartAlertSuggestions.tsx`)
+- [ ] **Drawdown Recovery Analysis** — how long to recover from max drawdown (mentioned in roadmap but not documented)
+- [ ] **Risk-Reward scatter charts** — actual R:R vs planned R:R visualization
+- [ ] **Day of Week Analysis** — separate detailed section (currently bundled in "Time-Based Heatmaps")
 
-### 6. Footer still shows "FAQ" in Resources — points to #faq which exists, so this is OK.
+### Docs UX Improvements
+- [ ] **Search across docs content** — current sidebar search only filters section names, not body text
+- [ ] **Deep-link anchors** — clicking a FeatureCard title should update URL hash for sharing
+- [ ] **Print/PDF export** — "Download as PDF" button for offline reading
+- [ ] **Reading time estimate** — show estimated reading time per section
+- [ ] **Interactive mockups** — some mockups should have hover states or click interactions
+- [ ] **Video placeholders** — all 3 video placeholders still say "Coming Soon"; record or remove
+- [ ] **Mobile docs sidebar** — horizontal scroll tabs are hard to use with 21 items; add a dropdown
 
-### 7. Back-to-top button overlaps mobile bottom nav
-The button is `bottom-20 lg:bottom-6` which is 80px on mobile. This should clear the mobile bottom nav but the docs page doesn't use MainLayout/MobileBottomNav, so this padding is unnecessary — not a bug but wasted space.
+### Files to Touch
+- `src/pages/Docs.tsx`
+- `src/components/docs/DocsMockups.tsx`
 
-### 8. Mobile topic rail lacks visual feedback for scroll position
-No indicator showing there are more items to the left/right beyond the edge fade gradients.
+---
 
-### 9. Content padding inconsistency
-Desktop content max-width is 720px inside a 1440px container with sidebar + right rail. On tablet (lg breakpoint), when sidebar is 250px + right rail 210px, the content area can get quite cramped.
+## Phase 3: Core Feature Gaps & Polish
+**Goal:** Ship missing functionality that users expect but doesn't exist yet.
 
-## Plan — Priority Fixes
+### Missing Features
+- [ ] **Drawdown Recovery Analysis widget** — chart showing recovery time from each drawdown period (analytics page)
+- [ ] **Trade Similarity Engine** — "This trade looks like 5 previous trades where you won 4/5" (requires vector embeddings or simple feature matching)
+- [ ] **Streak share from dashboard** — direct "Share Streak" button on the StreakDiscipline widget
+- [ ] **Bulk trade actions** — select multiple trades → bulk close, bulk tag, bulk delete
+- [ ] **Trade duplication** — "Clone this trade" for similar setups
+- [ ] **Alert → Trade conversion** — when an alert triggers, one-click to create a trade with pre-filled data
+- [ ] **Study → Trade linking improvements** — show linked trades inside study detail, not just the other way
+- [ ] **Journal streak tracking** — track consecutive days with journal entries written
+- [ ] **Custom dashboard widgets** — user-created KPI cards with custom formulas
+- [ ] **Instrument favorites** — star instruments across the app for quick access everywhere
+- [ ] **Option Greeks display** — show delta, gamma, theta, vega for F&O trades
+- [ ] **P&L by broker** — if multiple brokers connected, show performance per broker
+- [ ] **Trade notes markdown** — support basic markdown in trade notes (bold, lists, links)
+- [ ] **Data backup/restore** — one-click full account backup to JSON
 
-### Fix 1: Add mobile search modal (DocsNavbar)
-- Wire the `onSearchOpen` callback from DocsNavbar to open a simple search dialog on mobile
-- In `Docs.tsx`, add state for search modal open, pass `onSearchOpen` prop to `DocsNavbar`
-- Create a lightweight search modal that filters SECTIONS and scrolls to the selected one
+### UX Polish
+- [ ] **Instrument Picker UX** — implement the combobox pattern, keyboard nav, chip-style selection (from existing plan)
+- [ ] **Loading states consistency** — some pages use skeletons, others use spinners; standardize
+- [ ] **Empty states** — some pages lack good empty states (e.g., first visit to Analytics with no trades)
+- [ ] **Error boundary improvements** — current ErrorBoundary is basic; add retry button and error reporting
+- [ ] **Form validation feedback** — some forms show errors only on submit; add real-time validation
+- [ ] **Confirmation dialogs** — some destructive actions lack confirmation (e.g., deleting watchlist items)
 
-### Fix 2: Group mobile topic rail into categories
-- Instead of 26 flat pills, show the 6 group labels (Getting Started, Core Features, Advanced, Social & AI, Settings & Tools, Help) as primary pills
-- Tapping a group scrolls to its first section
-- Reduces cognitive load from 26 → 6 items
+### Files to Touch
+- `src/pages/Analytics.tsx` (drawdown recovery)
+- `src/components/trade/InstrumentPicker.tsx` (combobox refactor)
+- `src/pages/Trades.tsx` (bulk actions)
+- `src/components/dashboard/StreakDiscipline.tsx` (share button)
+- New components as needed
 
-### Fix 3: Fix scroll-mt on section headers for mobile
-- Change `scroll-mt-28` (112px) to `scroll-mt-32` (128px) on `SectionHeader` to properly clear navbar + topic rail on mobile
+---
 
-### Fix 4: Fix back-to-top positioning
-- Since docs page has no MobileBottomNav, change `bottom-20` to `bottom-6` for all breakpoints
+## Phase 4: Performance, SEO & Accessibility
+**Goal:** Fast load times, great SEO, and WCAG-compliant accessibility.
 
-### Fix 5: Footer — replace "FAQ" with "Support" linking to mailto
-- The FAQ section on docs is at the very bottom and not the most useful footer link. Replace with a more useful link.
+### Performance
+- [ ] **Bundle analysis** — audit bundle size; the app has 100+ components, many may be loaded eagerly
+- [ ] **Code splitting** — lazy-load analytics components (recharts is heavy), modal components, and settings tabs
+- [ ] **Image optimization** — convert PNGs to WebP, add width/height attributes, lazy-load below-fold images
+- [ ] **React Query optimization** — review stale times, add proper prefetching for likely navigations
+- [ ] **Virtualized lists** — trades list and watchlist items should use virtualization for 500+ items
+- [ ] **Service Worker caching** — PWA service worker should cache API responses for offline analytics viewing
+- [ ] **Font optimization** — preload critical fonts, use `font-display: swap`
 
-**Files:** `src/pages/Docs.tsx`, `src/components/docs/DocsNavbar.tsx`
+### SEO
+- [ ] **Structured data** — add FAQ schema to landing page FAQ section, BreadcrumbList to docs
+- [ ] **Sitemap update** — `public/sitemap.xml` may be missing newer pages (Docs, Fundamentals, etc.)
+- [ ] **Canonical URLs** — ensure all pages have proper canonical tags
+- [ ] **Meta descriptions** — audit all pages for unique, keyword-rich meta descriptions
+- [ ] **robots.txt review** — ensure crawl directives are correct
+- [ ] **Internal linking** — docs should link to relevant app pages, landing should deep-link to docs sections
+- [ ] **Alt text audit** — ensure all images have descriptive alt text
 
-**Impact:** Mobile usability significantly improved — searchable docs, simpler navigation, correct scroll offsets.
+### Accessibility
+- [ ] **ARIA labels** — audit all interactive elements for proper ARIA attributes
+- [ ] **Keyboard navigation** — ensure all modals, popovers, and dropdowns are fully keyboard-navigable
+- [ ] **Color contrast** — verify all text meets WCAG AA contrast ratios in both light and dark modes
+- [ ] **Focus indicators** — ensure visible focus rings on all interactive elements
+- [ ] **Screen reader testing** — test critical flows (create trade, set alert) with screen readers
+- [ ] **Skip navigation link** — add "Skip to main content" link for keyboard users
+- [ ] **Reduced motion** — respect `prefers-reduced-motion` for all animations
 
+### Files to Touch
+- `src/App.tsx` (lazy loading)
+- `src/main.tsx` (font preloading)
+- `public/sitemap.xml`
+- `public/robots.txt`
+- `index.html` (meta, preloads)
+- All component files (a11y audit)
+
+---
+
+## Phase 5: Growth, Monetization & Community
+**Goal:** Activate monetization, build community features, and enable viral growth.
+
+### Monetization
+- [ ] **Stripe/Razorpay integration** — connect payment provider for Pro plan subscriptions
+- [ ] **Plan enforcement** — actually gate features behind plan limits (currently all unlocked in beta)
+- [ ] **Usage tracking** — track trade count per month for plan limit enforcement
+- [ ] **Upgrade prompts** — contextual "Upgrade to Pro" prompts when users hit free limits
+- [ ] **Trial expiry flow** — email reminders at 3 days, 1 day before trial ends
+- [ ] **Referral program** — "Invite a trader, get 1 month free" referral system
+- [ ] **Annual billing discount** — 20% off for annual subscriptions
+
+### Community & Social
+- [ ] **Public trader profiles** — opt-in public journal with RA-compliant disclaimer
+- [ ] **Leaderboard** — anonymous win-rate / streak leaderboard (opt-in)
+- [ ] **Trade idea sharing** — share studies/trade ideas with the community
+- [ ] **Comment system** — allow comments on shared studies/trades
+- [ ] **Social login** — Google OAuth for faster signup (infrastructure exists in Supabase)
+
+### Notifications & Engagement
+- [ ] **Email notifications** — weekly summary email with P&L, win rate, and insights
+- [ ] **Push notifications** — PWA push notifications for alerts (requires service worker updates)
+- [ ] **In-app notification center** — bell icon with unread count, notification history
+- [ ] **Onboarding email drip** — 5-email sequence for new users (Day 1, 3, 5, 7, 14)
+
+### Integrations
+- [ ] **Zerodha Kite integration** — auto-sync trades and live prices from Zerodha
+- [ ] **Angel One integration** — third broker option for wider market coverage
+- [ ] **TradingView webhook** — receive TradingView alerts directly into TradeBook alerts
+- [ ] **Google Sheets export** — one-click sync trade data to a Google Sheet
+- [ ] **Webhook API** — public API for custom integrations (zapier, custom bots)
+
+### Files to Touch
+- New edge functions for payments, notifications
+- `src/hooks/useSubscription.ts` (plan enforcement)
+- `src/components/PlanGate.tsx` (gate improvements)
+- New pages: PublicProfile, Leaderboard, NotificationCenter
+- `supabase/functions/` (new functions for webhooks, emails)
+
+---
+
+## Priority Matrix
+
+| Priority | Phase | Impact | Effort |
+|----------|-------|--------|--------|
+| 🔴 P0 | Phase 3 | Instrument Picker UX refactor | Medium |
+| 🔴 P0 | Phase 2 | Document all missing features | Low |
+| 🟡 P1 | Phase 1 | Landing page video + social proof | Medium |
+| 🟡 P1 | Phase 4 | Bundle optimization + code splitting | Medium |
+| 🟡 P1 | Phase 3 | Bulk trade actions | Medium |
+| 🟢 P2 | Phase 5 | Payment integration | High |
+| 🟢 P2 | Phase 4 | Full a11y audit | Medium |
+| 🟢 P2 | Phase 5 | Zerodha integration | High |
+| 🔵 P3 | Phase 5 | Public profiles & leaderboard | High |
+| 🔵 P3 | Phase 3 | Trade Similarity Engine | Very High |
+
+---
+
+## Completed ✅
+- [x] AI Pattern Detection — behavioral insights (v3.0)
+- [x] Sector Rotation Heatmap (v3.0)
+- [x] Setup Win-Rate Matrix (v3.0)
+- [x] Emotional P&L Correlation (v3.0)
+- [x] Dashboard drag-and-drop reordering (v2.9)
+- [x] Floating Trade Ticker (v2.9)
+- [x] Animated KPI numbers (v2.9)
+- [x] Mobile swipe-to-act on trades (v2.9)
+- [x] Quick Trade Entry via Command Palette (v2.9)
+- [x] Stock Screener with 47 presets (v2.8)
+- [x] Portfolio Heat Map widget (v2.7)
+- [x] Daily Review Wizard (v2.7)
+- [x] Multi-leg strategy support (v2.6)
+- [x] TSL profiles per segment (v2.6)
+- [x] AI Trade Insights (v2.6)
+- [x] Trade Templates & Smart Suggestions (v2.5)
+- [x] CSV Import/Export (v2.5)
+- [x] Offline trade queue (v2.5)
+- [x] Docs: AI Pattern Detection, Sector Rotation, Win-Rate Matrix, Emotional P&L documented
+- [x] Docs: Share Cards, Achievements, Floating Ticker, Animated Numbers documented
+- [x] Docs: Changelog updated with v2.9 and v3.0
