@@ -127,10 +127,10 @@ export function HeroSection() {
           {/* Headline */}
           <motion.h1
             variants={fadeUp} initial="hidden" animate="visible" custom={0.1}
-            className="font-display text-[2.75rem] sm:text-[3.5rem] lg:text-[4.5rem] xl:text-[5.5rem] font-bold leading-[0.95] tracking-[-0.025em] text-foreground mb-7"
+            className="font-heading text-[2.75rem] sm:text-[3.5rem] lg:text-[4.5rem] xl:text-[5.5rem] font-bold leading-[0.95] tracking-[-0.025em] text-foreground mb-7"
           >
             Know Your{" "}
-            <span className="accent-script">Edge</span>.
+            <span className="accent-serif">Edge</span>.
             <br />
             <span className="text-foreground/75">Compound It Daily.</span>
           </motion.h1>

@@ -76,10 +76,10 @@ export default {
         sm: "var(--radius-sm)",
       },
       fontFamily: {
-        sans: ["'Source Sans 3'", "system-ui", "sans-serif"],
-        display: ["'Libre Bodoni'", "Georgia", "serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
+        heading: ["Manrope", "system-ui", "sans-serif"],
+        accent: ["'Instrument Serif'", "Georgia", "serif"],
         mono: ["'JetBrains Mono'", "monospace"],
-        logo: ["'Source Sans 3'", "system-ui", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {
