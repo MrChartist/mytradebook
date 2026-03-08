@@ -698,33 +698,33 @@ export default function IntegrationsSettings() {
                   </p>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  <div className="p-3 rounded-lg bg-muted/50 border border-border">
-                    <p className="text-xs text-muted-foreground">
-                      Access tokens expire in <strong>24 hours</strong>. You'll need to paste a new token daily from Dhan Web.
+                <div className="space-y-2.5">
+                  <div className="p-2.5 rounded-lg bg-warning/6 border border-warning/15">
+                    <p className="text-[10px] text-muted-foreground/50">
+                      Access tokens expire in <strong className="text-foreground/70">24 hours</strong>. You'll need to paste a new token daily from Dhan Web.
                     </p>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="dhan-client-id-tk">Client ID</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="dhan-client-id-tk" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Client ID</Label>
                     <Input
                       id="dhan-client-id-tk"
                       value={dhanClientId}
                       onChange={(e) => setDhanClientId(e.target.value)}
-                      className="bg-accent border-border"
+                      className="bg-muted/20 border-border/20 h-9 text-[13px] focus:border-primary/30"
                       placeholder="Your Dhan Client ID"
                     />
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="dhan-token">Access Token</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="dhan-token" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Access Token</Label>
                     <div className="relative">
                       <Input
                         id="dhan-token"
                         type={showDhanToken ? "text" : "password"}
                         value={dhanAccessToken}
                         onChange={(e) => setDhanAccessToken(e.target.value)}
-                        className="bg-accent border-border pr-10"
+                        className="bg-muted/20 border-border/20 pr-10 h-9 text-[13px] font-mono focus:border-primary/30"
                         placeholder="Your Dhan Access Token"
                       />
                       <Button
@@ -737,7 +737,7 @@ export default function IntegrationsSettings() {
                         {showDhanToken ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-[10px] text-muted-foreground/40">
                       Get your token from{" "}
                       <a 
                         href="https://login.dhan.co/register?brand=dhan&referral=AIQU0151" 
@@ -753,12 +753,12 @@ export default function IntegrationsSettings() {
                   <Button
                     onClick={handleVerifyDhan}
                     disabled={verifyingDhan || !dhanClientId || !dhanAccessToken}
-                    className="w-full"
+                    className="w-full h-9 text-[13px] rounded-lg"
                   >
                     {verifyingDhan ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
                     ) : (
-                      <Key className="w-4 h-4 mr-2" />
+                      <Key className="w-3.5 h-3.5 mr-1.5" />
                     )}
                     Verify & Connect
                   </Button>
