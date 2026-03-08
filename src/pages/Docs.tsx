@@ -1297,6 +1297,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <SegmentPerformanceMockup />
                 <RiskOfRuinMockup />
               </div>
+              <SubTopic title="Core Metrics & AI Insights" description="Fundamental performance statistics and AI-powered analysis." />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={BarChart3} title="Core Metrics" badge="Pro">
                   <FeatureList items={[
