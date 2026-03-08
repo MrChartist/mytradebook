@@ -119,7 +119,7 @@ export function JournalCalendarView({
   /* ─── Compact heatmap mode (dashboard widget) ─── */
   if (compact) {
     return (
-      <div className="glass-card p-5">
+      <div className="surface-card p-5">
         <div className="flex items-center justify-between mb-4">
           <div>
             {showLink ? (
