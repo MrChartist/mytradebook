@@ -1912,10 +1912,24 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               ]} />
 
               <ProTip variant="best-practice">
+                <p><strong>Why this feature exists:</strong> Trading without analytics is like driving without a dashboard — you might be going fast, but you have no idea if you're heading toward a cliff. Analytics transforms your raw trade data into actionable intelligence: which setups actually make you money, what times of day you should avoid, whether your risk management is working, and where your biggest behavioral leaks are. The difference between a struggling trader and a profitable one is often just awareness of these patterns.</p>
+              </ProTip>
+
+              <ProTip variant="info">
                 <p>Don't try to track everything at once. Start with just <strong>3 metrics</strong>: Win Rate, Expectancy, and Profit Factor. These three alone tell you whether you have an edge. Add more metrics only after you've consistently tracked these for 30+ trades.</p>
               </ProTip>
 
-              <InteractiveMockup label="Analytics Overview">
+              <VisualWalkthrough
+                title="Analytics Overview"
+                steps={[
+                  { marker: "1", label: "KPI Summary", detail: "Win rate, P&L, profit factor, and expectancy at a glance" },
+                  { marker: "2", label: "AI Insights", detail: "Behavioral patterns surfaced by machine learning" },
+                  { marker: "3", label: "Equity Curve", detail: "Cumulative P&L with drawdown overlay" },
+                  { marker: "4", label: "Heatmaps", detail: "Time-of-day and day-of-week performance grids" },
+                  { marker: "5", label: "Segment Breakdown", detail: "Per-segment win rate, P&L, and Sharpe ratio" },
+                  { marker: "6", label: "Risk of Ruin", detail: "Statistical probability of account blowup" },
+                ]}
+              >
                 <AnalyticsMetricCards />
                 <AIInsightsMockup />
                 <div className="grid md:grid-cols-2 gap-6 mt-4">
@@ -1926,20 +1940,17 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   <SegmentPerformanceMockup />
                   <RiskOfRuinMockup />
                 </div>
-              </InteractiveMockup>
+              </VisualWalkthrough>
 
-              <SubTopic title="Reading Your First Report" description="A guided walkthrough for making sense of your analytics dashboard." id="an-start" />
-              <StepByStep title="Reading Your First Analytics Report" steps={[
-                { title: "Check the KPI cards at the top", description: "Start with Win Rate, Total P&L, and Profit Factor. These are your headline numbers — they tell you at a glance whether you're profitable.", detail: "Win Rate above 50% is good, but only meaningful alongside Profit Factor above 1.0. A 40% win rate with a 2.5 profit factor is better than 60% with 0.8." },
-                { title: "Scan the Equity Curve", description: "Look at the overall shape: is it trending up, down, or sideways? Sharp drops indicate drawdown periods worth investigating.", detail: "Click on drawdown periods to see which trades caused them. Often it's a cluster of 2-3 bad trades, not a systemic issue." },
-                { title: "Review the Time Heatmaps", description: "Check which hours and days are most profitable. Many traders discover they lose money during the first 15 minutes or on Mondays.", detail: "If a time slot is consistently red across 30+ trades, consider avoiding it entirely. This single change can significantly improve your P&L." },
-                { title: "Read the AI Insights", description: "The AI pattern detection surfaces behavioral patterns you'd never spot manually — like overtrading after wins or freezing after losses.", detail: "Focus on 'Critical' and 'Warning' severity insights first. 'Info' level insights are interesting but not urgent." },
-                { title: "Pick 1-2 areas to improve", description: "Don't try to fix everything. Pick your single biggest leak (worst time slot, worst segment, or most expensive mistake) and focus on that for the next 2 weeks.", detail: "After fixing one leak, revisit analytics to measure the impact before moving to the next improvement area." },
-              ]} />
-
-              <ProTip variant="info">
-                <p>Analytics require at least <strong>20 closed trades</strong> to generate meaningful insights. The more trades you log, the more statistically significant your analytics become. Most AI behavioral patterns need 50+ trades to detect reliably.</p>
-              </ProTip>
+              <ExpandableDetail title="Common Analytics Misunderstandings" icon={AlertTriangle} badge="Watch Out">
+                <p>Before diving into your analytics, be aware of these common interpretation mistakes:</p>
+                <FeatureList items={[
+                  "\"My win rate is 55% so I'm profitable\" — Win rate means nothing without knowing the average win vs average loss size. A 55% win rate with R:R of 0.5:1 is a net loser. Always check Expectancy alongside Win Rate.",
+                  "\"My best hour is 10 AM\" — Only if you have 30+ trades in that hour. With 5 trades, one big winner can distort the average. The analytics show trade counts alongside P&L — check statistical significance before making schedule changes.",
+                  "\"I should stop trading Options because my win rate there is 40%\" — Options often have lower win rates but higher R:R. A 40% win rate with 3:1 average R:R is extremely profitable. Look at total P&L per segment, not just win rate.",
+                  "\"The AI says I overtrade on Mondays, so I should skip Mondays\" — AI insights are starting points, not final answers. Check the underlying data. If you take 8 trades on Mondays vs 3 on other days, reducing to 4 Monday trades might be better than skipping entirely.",
+                ]} />
+              </ExpandableDetail>
 
               <SubTopic title="Core Metrics & AI Insights" description="Fundamental performance statistics that define your trading edge." id="an-core" />
               <div className="space-y-5">
