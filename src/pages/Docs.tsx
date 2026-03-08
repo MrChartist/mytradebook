@@ -934,6 +934,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip>
                 <p>Create a template for each of your top 3 setups. When you see a setup forming, use the template to log the trade in under 10 seconds — no more missed opportunities.</p>
               </ProTip>
+              <SubTopic title="Template Setup" description="Create and manage reusable trade templates." />
               <VideoPlaceholder title="Setting Up Trade Templates" duration="2 min" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Zap} title="Creating Templates">
