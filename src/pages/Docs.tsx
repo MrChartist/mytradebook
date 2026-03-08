@@ -1938,6 +1938,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Quick Trade Entry — keyboard-only trade logging (Symbol → Type → Price → Qty → Confirm)",
                 ]} />
               </FeatureCard>
+              <SubTopic title="Shortcut Reference" description="Complete keyboard shortcut reference for quick actions and navigation." />
               <FeatureCard icon={Command} title="All Shortcuts">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
