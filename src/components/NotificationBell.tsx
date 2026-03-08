@@ -190,7 +190,7 @@ export function NotificationBell() {
                           {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
                         </p>
                       </div>
-                      <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
                         {!n.read && (
                           <button
                             onClick={(e) => {
