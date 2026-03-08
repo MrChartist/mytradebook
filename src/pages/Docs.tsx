@@ -1923,6 +1923,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Keyboard}
               />
               <ShortcutKeyboardMockup />
+              <SubTopic title="Command Palette" description="Global search and action launcher accessible from anywhere." />
               <FeatureCard icon={Command} title="Command Palette (⌘K)" badge="Enhanced">
                 <p className="text-sm text-muted-foreground mb-3">
                   A global search that goes beyond navigation. Press <ShortcutKey>⌘K</ShortcutKey> or <ShortcutKey>/</ShortcutKey> to open and search across everything:
