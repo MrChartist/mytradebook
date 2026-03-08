@@ -20,7 +20,7 @@ import {
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
   Wallet, Share2, MessageSquare, Command, Hash, Palette,
   PanelLeftClose, PanelLeftOpen, SlidersHorizontal,
-  Calculator, ClipboardCheck, Trophy, Info
+  Calculator, ClipboardCheck, Trophy, Info, Radio
 } from "lucide-react";
 import { LandingNavbar } from "@/components/landing/LandingNavbar";
 import {
@@ -891,6 +891,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
               </FeatureCard>
 
+              <ExpandableDetail title="Live Price Indicator — How Real-Time Data Works" icon={Radio} badge="Real Feature">
+                <p>When Dhan integration is active, the dashboard displays a live data indicator in the header showing:</p>
+                <FeatureList items={[
+                  "Streaming status — green dot with 'Live' text when prices are actively updating during market hours.",
+                  "Last updated timestamp — shows exact time of last price refresh (e.g., '2 seconds ago').",
+                  "Offline fallback — during market closed hours, displays 'Market Closed' with last available prices.",
+                  "Price polling — without Dhan, dashboard still shows your trade data but prices update only when you manually refresh.",
+                  "Widget updates — all dashboard widgets (P&L hero, KPIs, equity curve, positions table) update simultaneously when new prices arrive.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Live prices require an active Dhan Data API subscription. If you see 'API Error 806', you need to activate the Data API plan in your Dhan dashboard — it's separate from having API keys.</p>
+              </ExpandableDetail>
+
               <FeatureCard icon={Zap} title="Animated KPI Numbers" badge="New">
                 <p className="text-sm text-muted-foreground">
                   All key metrics on the dashboard use smooth "tick-up" number animations when values change. P&L figures, win rates, and trade counts animate from their previous value to the new one using requestAnimationFrame for 60fps smoothness. Profit cards pulse with a green glow, and all cards have a subtle 3D lift on hover.
@@ -988,6 +1000,28 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Link up to 5 chart images per trade (TradingView or direct URLs)",
                 ]} />
               </FeatureCard>
+
+              <ExpandableDetail title="Understanding Segment-Driven Defaults" icon={Layers} badge="Real Feature">
+                <p>When you select a segment, TradeBook auto-configures defaults to match that trading style:</p>
+                <FeatureList items={[
+                  "Equity Intraday — holding period defaults to 'Same Day', trailing SL enabled, Telegram posting on, auto-tracking enabled.",
+                  "Equity Positional — holding period defaults to '1-4 weeks', trailing SL off (manual management), Telegram on.",
+                  "Futures — holding period '1-5 days', trailing SL enabled for momentum management.",
+                  "Options — holding period 'Same Day' (theta decay), trailing SL off (options decay differently), Telegram enabled.",
+                  "Commodities — holding period '1-5 days', trailing SL enabled, Telegram enabled.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">These defaults save time and enforce best practices per segment. You can override any setting for individual trades. Templates let you create even more specific configurations.</p>
+              </ExpandableDetail>
+
+              <ExpandableDetail title="Notes Templates — Pre-Written Checklists" icon={FileText} badge="Power User">
+                <p>The trade form includes three built-in notes templates you can insert with one click:</p>
+                <FeatureList items={[
+                  "Trade Plan template — structured sections for Setup, Trigger, Entry, SL, Targets, Risk Plan, and Management notes. Forces you to articulate the full trade thesis before entering.",
+                  "Quick Notes template — lightweight version: Why this trade, Key levels, Invalidation, Exit plan. Good for rapid-fire trade logging.",
+                  "Post-Trade template — What worked, What failed, Lessons, Would I take this again. Use this when reviewing closed trades to capture learnings.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Click any template name above the notes field to auto-insert it. You can customize the text after insertion. Consistent note structure makes future trade reviews dramatically more useful.</p>
+              </ExpandableDetail>
               <AnnotatedMockup
                 caption="The trade form adapts based on your selected instrument — F&O trades show lot size and expiry, while equity trades focus on price and quantity."
                 highlights={["Instrument Search", "Stop Loss", "Targets", "Tags"]}
@@ -1037,6 +1071,17 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><TSLDetailMockup /></div>
               </FeatureCard>
 
+              <ExpandableDetail title="TSL Configuration Options Explained" icon={Target} badge="Deep Dive">
+                <p>The trade form offers four trailing SL methods with specific use cases:</p>
+                <FeatureList items={[
+                  "Fixed % Trail — TSL moves up as price rises, maintaining a fixed % distance. Example: 1.5% trail means SL stays 1.5% below the current high. Best for momentum trades.",
+                  "Fixed Points Trail — TSL moves up maintaining a fixed point distance. Example: 20 points trail on NIFTY means SL stays 20 points below the high. Good for index trading with consistent volatility.",
+                  "Step Trail — More sophisticated: when price moves +X%, move SL +Y%. Example: 'For every 1% gain, move SL up 0.5%'. Lets profits run while locking in gains.",
+                  "Move SL to Cost after T1 — Automatically moves SL to breakeven after hitting your first target. Popular risk-management approach that ensures you never lose on a winning trade.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">You can also configure activation rules: 'Start immediately', 'After price moves +X%', or 'After T1 hit'. This prevents the TSL from triggering prematurely before the trade has room to work.</p>
+              </ExpandableDetail>
+
               <FeatureCard icon={Grid3X3} title="Multi-Leg Strategies">
                 <p className="text-sm text-muted-foreground mb-3">Group related trades under a single strategy:</p>
                 <FeatureList items={[
@@ -1048,6 +1093,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <div className="mt-4"><MultiLegStrategyDetailMockup /></div>
               </FeatureCard>
+
+              <ExpandableDetail title="Option Chain Selector — How Strike Selection Works" icon={Grid3X3} badge="Real Feature">
+                <p>When creating Options trades, the Option Chain Selector provides a visual grid for quick contract selection:</p>
+                <FeatureList items={[
+                  "3-Step Flow — Select Underlying (NIFTY, BANKNIFTY, or 185+ other F&O stocks) → Choose Expiry → Click the CE/PE cell at your desired strike.",
+                  "ATM Auto-Scroll — The grid automatically centers on the At-The-Money strike based on live LTP, so you don't have to scroll through hundreds of strikes.",
+                  "Strike Range Filter — Toggle ±5, ±10, or ±20 strikes around ATM to reduce visual noise. Useful for scalping near-the-money vs positional far-OTM strategies.",
+                  "Strike Increments — Automatically uses the correct increment for the underlying: 50 for underlyings priced >₹5000, 25 for >₹2000, 10 for smaller stocks.",
+                  "Lot Size Display — Each contract shows the lot size inline so you can calculate position value instantly.",
+                  "Live Estimated LTP — For major indices, shows estimated contract LTP based on intrinsic + time value decay calculations.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">The chain pulls from the instrument_master database which syncs daily with exchange data. If a contract isn't appearing, it may be newly listed or expired — the 'Manual' mode lets you enter any trading symbol directly.</p>
+              </ExpandableDetail>
 
               <FeatureCard icon={Gauge} title="Position Sizing Calculator">
                 <p className="text-sm text-muted-foreground">
@@ -1563,6 +1621,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <div className="mt-4"><RecurrenceCooldownMockup /></div>
               </FeatureCard>
+
+              <ExpandableDetail title="LTP Quick-Set Buttons — Setting Alerts Fast" icon={Zap} badge="Real Feature">
+                <p>The alert creation form includes quick-set buttons that calculate threshold prices relative to the current LTP:</p>
+                <FeatureList items={[
+                  "LTP — Sets threshold to exact current price. Useful as a baseline.",
+                  "+0.5%, +1%, +2% — Sets threshold above current LTP by that percentage. Click '+1%' to set an alert 1% above current price.",
+                  "-0.5%, -1%, -2% — Sets threshold below current LTP. Perfect for support level alerts.",
+                  "Live recalculation — The button values update in real-time as LTP changes during market hours.",
+                  "Manual override — After clicking a quick-set button, you can still fine-tune the exact threshold value in the input field.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">This feature is especially useful for setting multiple alerts quickly. Example workflow: Search RELIANCE → Click '+2%' → Save → Search TATA STEEL → Click '-1.5%' → Save. You've created two targeted alerts in under 30 seconds.</p>
+              </ExpandableDetail>
 
               <ProTip variant="warning">
                 <p>Set a cooldown of at least <strong>15 minutes</strong> on continuous alerts to avoid notification spam. Without a cooldown, a stock hovering near your threshold can trigger dozens of alerts in rapid succession. For volatile F&O instruments, consider a 30-minute or 1-hour cooldown.</p>
@@ -2889,6 +2959,28 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Verify the connection", description: "Once connected, TradeBook shows a green 'Verified' status with the verification timestamp. Portfolio sync begins automatically.", detail: "Positions sync every 5 minutes during market hours (Mon–Fri, 9:15 AM – 3:30 PM IST). Live prices update for all open positions." },
                 { title: "Enable auto-sync (optional)", description: "Toggle 'Auto Sync Portfolio' in Dhan settings to automatically import executed orders and calculate P&L for closed positions.", detail: "Multiple API keys are supported with priority-based failover. If one key expires, the system falls back to the next active key." },
               ]} />
+
+              <ExpandableDetail title="Dhan Authentication Methods — Manual vs OAuth" icon={Shield} badge="Real Feature">
+                <p>Dhan offers two authentication methods, and TradeBook supports both. Choose based on your needs:</p>
+                <FeatureList items={[
+                  "Manual Access Token (24-hour) — Quick setup: paste a token from Dhan's API console. But tokens expire every 24 hours, requiring daily re-authentication. Good for testing or occasional use.",
+                  "OAuth Flow with API Key + Secret (12-month) — The recommended approach: enter your API Key and Secret, then complete the OAuth authorization flow. Tokens last 12 months and auto-refresh. Set-and-forget.",
+                  "Multiple API Keys — Pro users can configure multiple Dhan API keys with priority settings. If your primary key hits rate limits or expires, TradeBook automatically fails over to the backup.",
+                  "Token Expiry Detection — TradeBook monitors your token's validity and shows a warning in the header when expiry is approaching.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">For the OAuth flow, the /dhan-callback route uses a sessionless, popup-based flow to work around iframe and cross-tab session restrictions. If the popup doesn't appear, check your browser's popup blocker settings.</p>
+              </ExpandableDetail>
+
+              <ExpandableDetail title="What Dhan Integration Actually Syncs" icon={Layers} badge="Deep Dive">
+                <p>Here's exactly what data flows between TradeBook and your Dhan account:</p>
+                <FeatureList items={[
+                  "Live Prices — LTP, day high/low, volume, and change % for all instruments in your open positions, watchlists, and alerts.",
+                  "Portfolio Positions — Your current holdings sync automatically every 5 minutes. New positions appear without manual trade entry.",
+                  "Order Book (Read Only) — TradeBook reads your order book to match executed orders with logged trades. It does NOT place or cancel orders.",
+                  "What's NOT Synced — TradeBook never accesses your bank details, fund transfers, or personal KYC data.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Data sync is one-way for positions (Dhan → TradeBook). TradeBook analyzes and journals your trades but never modifies your broker account.</p>
+              </ExpandableDetail>
 
               <FeatureCard icon={LineChart} title="Dhan Broker Integration">
                 <p className="text-sm text-muted-foreground mb-3">Full-featured broker connection for seamless trading:</p>
