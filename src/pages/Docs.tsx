@@ -2214,7 +2214,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <ScreenerPresetsMockup />
               </InteractiveMockup>
 
-              <div className="grid md:grid-cols-2 gap-5 mt-6">
+              <div className="space-y-5 mt-6">
                 <FeatureCard icon={Filter} title="47 Built-in Scanner Presets" badge="Expanded">
                   <p className="text-sm text-muted-foreground mb-3">Five category groups with comprehensive coverage:</p>
                   <FeatureList items={[
