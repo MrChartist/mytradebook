@@ -177,7 +177,7 @@ export function Sidebar() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <p className="text-[13px] font-medium truncate">{profile.name || "User"}</p>
+                  <p className="text-body-sm font-medium truncate">{profile.name || "User"}</p>
                   <span className={cn(
                     "text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full shrink-0",
                     plan === "pro" || plan === "team"
