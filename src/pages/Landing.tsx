@@ -44,7 +44,7 @@ export default function Landing() {
           "@context": "https://schema.org", "@type": "SoftwareApplication", "name": "TradeBook",
           "applicationCategory": "FinanceApplication", "operatingSystem": "Web",
           "description": "Trading journal and analytics platform for Indian markets — NSE, BSE, MCX.",
-          "url": "https://mytradebook.lovable.app",
+          "url": "https://tradebook.mrchartist.com",
           "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
           "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "ratingCount": "1200", "bestRating": "5" }
         }}
