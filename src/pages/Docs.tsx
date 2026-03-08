@@ -1675,7 +1675,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={PieChart}
               />
               <WeeklyReportMockup />
-              <SubTopic title="Report Generation & Contents" description="Auto-generated weekly summaries with segment breakdowns and action items." />
+              <SubTopic title="Report Generation & Contents" description="Auto-generated weekly summaries with segment breakdowns and action items." id="rp-contents" />
               <FeatureCard icon={FileText} title="Report Features" badge="Pro">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
