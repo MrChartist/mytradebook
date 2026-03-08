@@ -308,47 +308,44 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       {/* Shared navbar */}
       <LandingNavbar activePage="docs" isInsideApp={isInsideApp} />
 
-      {/* Hero — extra top padding for fixed navbar */}
-      <div className={cn("pt-20 border-b border-border/20 bg-gradient-to-b from-[hsl(var(--tb-accent)/0.04)] to-transparent", isInsideApp && "border-none")}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-12 lg:py-16">
-          <div className="flex items-center gap-3 mb-5">
-            <Badge variant="secondary" className="bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] border-none">
+      {/* Hero */}
+      <div className={cn("pt-20 border-b border-border/15 bg-gradient-to-b from-primary/[0.02] to-transparent", isInsideApp && "border-none")}>
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
+          <div className="flex items-center gap-2.5 mb-4">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/8 text-primary text-[10px] font-bold tracking-wide">
               Documentation
-            </Badge>
-            {/* B&W Toggle */}
+            </span>
             <button
               onClick={toggle}
               className={cn(
-                "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold transition-all border",
+                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold transition-all border",
                 mode === "bw"
                   ? "bg-foreground text-background border-foreground"
-                  : "bg-muted/50 text-muted-foreground border-border/40 hover:border-foreground/30"
+                  : "bg-muted/30 text-muted-foreground/60 border-border/20 hover:border-border/40"
               )}
             >
-              <Palette className="w-3.5 h-3.5" />
+              <Palette className="w-3 h-3" />
               {mode === "bw" ? "B&W" : "Color"}
             </button>
           </div>
-          <h1 className="text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight mb-4">
+          <h1 className="text-3xl lg:text-4xl xl:text-5xl font-extrabold tracking-tight mb-3 leading-[1.1]">
             Everything you need to know about{" "}
-            <span className="accent-script text-[hsl(var(--tb-accent))]">
-              TradeBook
-            </span>
+            <span className="accent-script text-primary">TradeBook</span>
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-            A comprehensive guide to every feature, capability, and workflow in the platform — from your first trade log to advanced analytics.
+          <p className="text-base text-muted-foreground max-w-xl leading-relaxed">
+            A comprehensive guide to every feature, capability, and workflow — from your first trade log to advanced analytics.
           </p>
-          <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground/70">
+          <div className="flex items-center gap-2.5 mt-2.5 text-[11px] text-muted-foreground/50">
             <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~25 min read</span>
-            <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
             <span>Last updated: March 2026</span>
           </div>
-          {/* Hero stats strip */}
+          {/* Hero stat chips */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.4 }}
-            className="flex flex-wrap gap-3 mt-6"
+            transition={{ delay: 0.25, duration: 0.35 }}
+            className="flex flex-wrap gap-2 mt-5"
           >
             {[
               { label: "21 Sections", icon: FileText },
@@ -356,9 +353,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               { label: "Every Feature", icon: Zap },
               { label: "Free & Pro", icon: Star },
             ].map((stat) => (
-              <div key={stat.label} className="inner-panel flex items-center gap-2 !px-4 !py-2">
-                <stat.icon className="w-3.5 h-3.5 text-primary" />
-                <span className="text-xs font-semibold text-foreground">{stat.label}</span>
+              <div key={stat.label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/15 bg-card/40 text-[11px] font-semibold text-foreground/80">
+                <stat.icon className="w-3 h-3 text-primary" />
+                {stat.label}
               </div>
             ))}
           </motion.div>
