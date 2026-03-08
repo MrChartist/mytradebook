@@ -860,7 +860,7 @@
 
   /* ── Docs card content typography ── */
   .docs-card-content > p {
-    font-family: Inter, system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     font-size: 1rem;
     line-height: 1.75;
     color: hsl(var(--docs-text-secondary));
