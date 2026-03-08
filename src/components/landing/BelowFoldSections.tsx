@@ -153,7 +153,7 @@ export function HowItWorksSection() {
 }
 
 export function ComparisonSection() {
-  return null;
+  return null; // Comparison data is now inline in PricingSection
 }
 
 export function PricingSection() {
