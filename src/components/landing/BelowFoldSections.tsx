@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight, BookOpen, CheckCircle2, ChevronRight, Eye, Zap, Trophy,
-  Crown, Lock, Shield, RefreshCw, Star, Quote, Sparkles, Minus,
+  Crown, Lock, Shield, Star, Quote, Sparkles, Minus,
   TrendingUp, Layers, Globe, Clock, BarChart3, CandlestickChart,
 } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
@@ -296,7 +296,7 @@ export function PricingSection() {
 
         {/* Trust badges */}
         <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-3">
-          {[{ icon: Lock, text: "No credit card required" }, { icon: RefreshCw, text: "Cancel anytime" }, { icon: Shield, text: "14-day money-back guarantee" }].map((item) => (
+          {[{ icon: Lock, text: "No credit card required" }, { icon: Shield, text: "Your data stays private" }, { icon: Clock, text: "Set up in under 2 minutes" }].map((item) => (
             <div key={item.text} className="flex items-center gap-1.5 bg-muted/20 rounded-full px-3 py-1.5 text-[12px] text-muted-foreground/60">
               <item.icon className="w-3 h-3" /><span>{item.text}</span>
             </div>

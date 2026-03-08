@@ -103,7 +103,7 @@ export default function BillingSettings() {
             <div
               key={p.name}
               className={cn(
-                "surface-card p-5 space-y-3.5 relative overflow-hidden transition-all duration-200",
+                "surface-card p-5 space-y-3.5 relative transition-all duration-200",
                 p.popular && "ring-1 ring-primary/30 border-primary/15"
               )}
             >
@@ -113,11 +113,9 @@ export default function BillingSettings() {
               )}
 
               {p.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <Badge className="bg-primary text-primary-foreground text-[9px] px-2.5 py-0.5 font-bold tracking-wide">
-                    Recommended
-                  </Badge>
-                </div>
+                <Badge className="bg-primary text-primary-foreground text-[9px] px-2.5 py-0.5 font-bold tracking-wide">
+                  Recommended
+                </Badge>
               )}
 
               <div className="flex items-center gap-2.5 pt-1">
