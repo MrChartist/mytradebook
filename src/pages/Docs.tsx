@@ -1492,14 +1492,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 10. Mistakes Review ────────────────────── */}
+            {/* ── Phase 14. Mistakes Review ────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={14} total={26} />
               <SectionHeader
                 id="mistakes"
                 title="Mistakes Review"
                 description="Dedicated page for analyzing your trading mistakes. Identify repeat patterns, track loss severity, and monitor improvement trends over time."
                 icon={AlertTriangle}
               />
+              <ProTip variant="warning">
+                <p>Your most costly mistake is usually not your most frequent one. Check the "Most Costly" column — a single mistake type might account for 40% of your total losses.</p>
+              </ProTip>
               <MistakeTrendMockup />
               <FeatureCard icon={AlertTriangle} title="Mistake Analysis Tools">
                 <div className="grid md:grid-cols-2 gap-6">
