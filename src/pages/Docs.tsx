@@ -254,7 +254,7 @@ function FeatureList({ items }: { items: string[] }) {
     <ul className="space-y-2.5 mt-4">
       {items.map((item) => (
         <li key={item} className="flex items-start gap-2.5 text-[15px] text-muted-foreground leading-relaxed">
-          <ChevronRight className="w-3.5 h-3.5 text-primary mt-[2px] shrink-0" />
+          <ChevronRight className="w-3.5 h-3.5 text-primary mt-[3px] shrink-0" />
           <span>{item}</span>
         </li>
       ))}
@@ -266,10 +266,12 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
 }) {
   return (
-    <div className="group rounded-lg border border-border/40 bg-card relative overflow-hidden transition-colors duration-200 hover:border-border/60">
+    <div className="group rounded-xl border border-border/40 bg-card relative overflow-hidden transition-colors duration-200 hover:border-border/60 mt-5">
       <div className="p-5 pb-3">
         <div className="flex items-center gap-2.5">
-          <Icon className="w-4 h-4 text-primary shrink-0" />
+          <div className="w-7 h-7 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
+            <Icon className="w-3.5 h-3.5 text-primary" />
+          </div>
           <h4 className="text-[15px] font-semibold leading-tight">{title}</h4>
           {badge && (
             <span className="text-[10px] font-semibold tracking-wide uppercase px-1.5 py-0.5 rounded bg-primary/8 text-primary">
