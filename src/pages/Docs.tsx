@@ -547,21 +547,6 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="info">
                 <p>Press <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-[11px] font-mono font-semibold">⌘K</kbd> anywhere to open the Command Palette — search trades, create alerts, and navigate instantly without touching the mouse.</p>
               </ProTip>
-              <ComparisonTable
-                title="Free vs Pro — At a Glance"
-                rows={[
-                  { feature: "Trade logging", free: true, pro: true },
-                  { feature: "Watchlists & Alerts", free: true, pro: true },
-                  { feature: "Daily Journal", free: true, pro: true },
-                  { feature: "CSV Import/Export", free: true, pro: true },
-                  { feature: "Advanced Analytics", free: false, pro: true },
-                  { feature: "AI Pattern Detection", free: false, pro: true },
-                  { feature: "AI Trade Coach", free: false, pro: true },
-                  { feature: "Weekly Reports", free: false, pro: true },
-                  { feature: "Stock Screener", free: "Basic", pro: "Full" },
-                  { feature: "Trade Templates", free: "3 max", pro: "Unlimited" },
-                ]}
-              />
             </motion.section>
 
             <SectionDivider />
