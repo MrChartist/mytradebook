@@ -475,6 +475,78 @@ export function DocsCTASection() {
   );
 }
 
+/* ─── FAQ Section ─── */
+
+const faqs = [
+  { q: "Is TradeBook free?", a: "Yes, TradeBook is completely free during the beta period. All features — trade logging, AI analytics, alerts, broker integration — are included at no cost. No credit card required." },
+  { q: "Which Indian markets does TradeBook support?", a: "TradeBook supports NSE, BSE, and MCX markets covering Equity Cash, Equity Intraday, Futures, Options, Commodities, and Currency segments." },
+  { q: "Does TradeBook integrate with brokers?", a: "Yes, TradeBook integrates with Dhan for live portfolio sync, auto-trade import, and one-click execution. More broker integrations are on the roadmap." },
+  { q: "Can I use TradeBook on mobile?", a: "Absolutely. TradeBook is a Progressive Web App (PWA) that works on any device. Install it on your phone for a native app-like experience with offline support." },
+  { q: "How does the AI analytics work?", a: "TradeBook uses AI to detect trading patterns, provide trade coaching, generate performance insights, and suggest improvements based on your trading history — all without sharing your data externally." },
+  { q: "Is my data secure?", a: "Yes. TradeBook uses bank-grade encryption and your data is stored securely. We never share or sell your trading data to anyone." },
+];
+
+function FAQItem({ faq, index }: { faq: typeof faqs[0]; index: number }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <motion.div
+      variants={fadeUp}
+      custom={index * 0.05}
+      className="border border-border/30 rounded-xl overflow-hidden bg-card/50 backdrop-blur-sm"
+      style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}
+    >
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between p-5 md:p-6 text-left gap-4 hover:bg-muted/20 transition-colors"
+        aria-expanded={open}
+      >
+        <span className="text-[15px] md:text-base font-medium tracking-[-0.01em]">{faq.q}</span>
+        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
+          <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
+        </motion.div>
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <p className="px-5 md:px-6 pb-5 md:pb-6 text-[14px] md:text-[15px] text-muted-foreground leading-[1.7] tracking-[-0.006em]">
+              {faq.a}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+export function FAQSection() {
+  return (
+    <section id="faq" className="py-28 lg:py-36" aria-label="Frequently asked questions">
+      <MotionSection className="max-w-3xl mx-auto px-6">
+        <motion.div variants={fadeUp} className="text-center mb-16">
+          <SectionBadge>FAQ</SectionBadge>
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.06] tracking-[-0.03em]">
+            Frequently asked{" "}<span className="text-shimmer">questions</span>
+          </h2>
+          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-[1rem] leading-[1.7]">
+            Everything you need to know about TradeBook.
+          </p>
+        </motion.div>
+        <div className="space-y-3">
+          {faqs.map((faq, i) => (
+            <FAQItem key={i} faq={faq} index={i} />
+          ))}
+        </div>
+      </MotionSection>
+    </section>
+  );
+}
+
 export function FinalCTASection() {
   const navigate = useNavigate();
   return (
