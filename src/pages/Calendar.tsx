@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import { useTrades } from "@/hooks/useTrades";
 import { JournalCalendarView } from "@/components/journal/JournalCalendarView";
 import { DailyJournalEditor } from "@/components/journal/DailyJournalEditor";
