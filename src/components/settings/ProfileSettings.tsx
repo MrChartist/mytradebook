@@ -63,21 +63,21 @@ export default function ProfileSettings() {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Profile Card */}
-      <div className="premium-card-hover p-5">
-        <h2 className="text-[15px] font-semibold mb-5">Profile Information</h2>
+      <div className="premium-card p-6">
+        <h2 className="text-base font-semibold font-heading mb-5">Profile Information</h2>
         <div className="space-y-5">
           {/* Avatar Section */}
-          <div className="flex items-center gap-3.5">
+          <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-2xl bg-gradient-primary flex items-center justify-center text-primary-foreground text-lg font-bold">
               {getInitials()}
             </div>
             <div className="space-y-0.5">
-              <p className="text-[13px] font-medium">{formData.name || "Your Name"}</p>
-              <p className="text-[11px] text-muted-foreground/50">{formData.email}</p>
+              <p className="text-[14px] font-medium">{formData.name || "Your Name"}</p>
+              <p className="text-[12px] text-muted-foreground/60">{formData.email}</p>
             </div>
-            <Button variant="outline" size="sm" className="ml-auto h-8 text-[11px] rounded-lg border-border/20">
+            <Button variant="outline" size="sm" className="ml-auto h-9 text-[12px] rounded-lg">
               Change Photo
             </Button>
           </div>
