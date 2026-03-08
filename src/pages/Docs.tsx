@@ -596,6 +596,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><RiskGaugeDetailMockup /></div>
               </FeatureCard>
 
+              <SubTopic title="Charts & Visualizations" description="Visual tools to track your equity, streaks, and daily performance." />
               <FeatureCard icon={TrendingUp} title="Equity Curve Widget">
                 <p className="text-sm text-muted-foreground">
                   A compact equity curve chart showing your cumulative P&L over the selected month with gradient fill. Shows peak equity, max drawdown, and date labels. Hover over data points to see exact values. The curve updates automatically as you close trades.
