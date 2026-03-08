@@ -650,6 +650,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </p>
               </FeatureCard>
 
+              <SubTopic title="Advanced Widgets" description="Power-user widgets for portfolio visualization and daily reviews." />
               <FeatureCard icon={Grid3X3} title="Portfolio Heat Map" badge="New">
                 <p className="text-sm text-muted-foreground mb-3">
                   A treemap-style visualization of your open positions. Each tile represents a position, sized by its value and color-coded by unrealized P&L — deep green for profits, deep red for losses.
