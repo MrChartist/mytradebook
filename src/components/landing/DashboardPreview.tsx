@@ -48,9 +48,9 @@ export function DashboardPreview() {
         <div className="absolute inset-x-4 sm:inset-x-6 -bottom-1.5 h-4 rounded-3xl bg-foreground/[0.04] blur-md" />
 
         <motion.div
-          className="relative rounded-xl sm:rounded-2xl border border-border/30 bg-card overflow-hidden"
+          className="relative rounded-xl sm:rounded-2xl border border-border/20 bg-card overflow-hidden max-h-[420px] sm:max-h-[520px]"
           style={{
-            boxShadow: "0 20px 50px -15px rgba(0,0,0,0.06), 0 0 0 1px hsl(var(--border)/0.2), inset 0 1px 0 0 hsl(0 0% 100% / 0.05)",
+            boxShadow: "0 25px 60px -15px rgba(0,0,0,0.1), 0 12px 30px -10px rgba(0,0,0,0.06), 0 0 0 1px hsl(var(--border)/0.15), 0 0 80px -20px hsl(var(--primary)/0.08), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)",
           }}
         >
           {/* Window chrome */}
