@@ -1,19 +1,51 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fadeUp } from "./LandingShared";
 import { DashboardPreview } from "./DashboardPreview";
 import { VideoModal } from "./VideoModal";
 import heroLifestyle from "@/assets/hero-lifestyle.jpg";
 
-const stats = [
-  { value: "1,200+", label: "Traders Joined" },
-  { value: "₹12Cr+", label: "Trades Tracked" },
-  { value: "50+", label: "Analytics Metrics" },
-  { value: "3", label: "Market Segments" },
+const statsConfig = [
+  { end: 1200, suffix: "+", label: "Traders Joined" },
+  { end: 12, prefix: "₹", suffix: "Cr+", label: "Trades Tracked" },
+  { end: 50, suffix: "+", label: "Analytics Metrics" },
+  { end: 3, suffix: "", label: "Market Segments" },
 ];
+
+function useCountUpOnView(end: number, duration = 1800) {
+  const [count, setCount] = useState(0);
+  const [hasStarted, setHasStarted] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasStarted) {
+          setHasStarted(true);
+          const start = performance.now();
+          const tick = (now: number) => {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setCount(Math.round(eased * end));
+            if (progress < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [end, duration, hasStarted]);
+
+  return { count, ref };
+}
 
 const avatarColors = [
   "hsl(var(--tb-accent))",
@@ -31,7 +63,17 @@ export function HeroSection() {
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const imgScale = useTransform(scrollYProgress, [0, 1], [1, 1.06]);
   const contentY = useTransform(scrollYProgress, [0, 1], [0, 50]);
-  const blurAmount = useTransform(scrollYProgress, [0, 0.5], [20, 30]);
+
+  const stat0 = useCountUpOnView(statsConfig[0].end, 1800);
+  const stat1 = useCountUpOnView(statsConfig[1].end, 1400);
+  const stat2 = useCountUpOnView(statsConfig[2].end, 1600);
+  const stat3 = useCountUpOnView(statsConfig[3].end, 1000);
+  const statRefs = [stat0, stat1, stat2, stat3];
+
+  const formatStat = (i: number, count: number) => {
+    const cfg = statsConfig[i];
+    return `${cfg.prefix || ""}${count.toLocaleString("en-IN")}${cfg.suffix}`;
+  };
 
   return (
     <>
@@ -51,7 +93,7 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-background/80 dark:bg-background/85" />
         <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/30 to-background dark:from-background/60 dark:via-background/20 dark:to-background/95" />
 
-        {/* Subtle warm accent glow — reduced for light mode cleanliness */}
+        {/* Subtle warm accent glow */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-[hsl(var(--tb-accent)/0.04)] dark:bg-[hsl(var(--tb-accent)/0.04)] blur-[140px] pointer-events-none" />
 
         {/* Content */}
@@ -87,10 +129,7 @@ export function HeroSection() {
             className="text-6xl sm:text-7xl lg:text-8xl xl:text-[7rem] font-extrabold leading-[0.95] tracking-[-0.04em] text-foreground mb-8"
           >
             Know Your{" "}
-            <span className="accent-script">
-              Edge
-            </span>
-            .
+            <span className="accent-script">Edge</span>.
             <br />
             Compound It Daily.
           </motion.h1>
@@ -130,16 +169,16 @@ export function HeroSection() {
           </motion.div>
         </motion.div>
 
-        {/* Stats bar */}
+        {/* Stats bar with animated count-up */}
         <motion.div
           variants={fadeUp} initial="hidden" animate="visible" custom={0.5}
           className="relative z-10 mx-4 sm:mx-8 lg:mx-auto lg:max-w-3xl mb-8 rounded-2xl bg-card/60 dark:bg-card/40 backdrop-blur-xl border border-border/40 dark:border-border/30 shadow-sm"
         >
           <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-border/30">
-            {stats.map((stat) => (
-              <div key={stat.label} className="px-4 sm:px-6 py-5 text-center">
-                <p className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-foreground tracking-tight">
-                  {stat.value}
+            {statsConfig.map((stat, i) => (
+              <div key={stat.label} ref={statRefs[i].ref} className="px-4 sm:px-6 py-5 text-center">
+                <p className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-foreground tracking-tight font-mono tabular-nums">
+                  {formatStat(i, statRefs[i].count)}
                 </p>
                 <p className="text-[10px] sm:text-[11px] text-muted-foreground uppercase tracking-[0.14em] mt-1.5 font-medium">
                   {stat.label}
@@ -150,9 +189,10 @@ export function HeroSection() {
         </motion.div>
       </section>
 
-      {/* Dashboard Preview — on normal background */}
-      <div className="bg-background">
-        <div className="pt-16 sm:pt-24">
+      {/* Dashboard Preview — smooth transition from hero */}
+      <div className="relative bg-background">
+        <div className="absolute inset-x-0 -top-24 h-24 bg-gradient-to-b from-transparent to-background pointer-events-none" />
+        <div className="pt-8 sm:pt-16">
           <DashboardPreview />
         </div>
       </div>
