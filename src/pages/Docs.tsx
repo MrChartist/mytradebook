@@ -1399,6 +1399,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "One-click refresh to re-run analysis with latest data",
                   ]} />
                 </FeatureCard>
+                <FeatureCard icon={Grid3X3} title="Sector Rotation Heatmap" badge="New">
                   <p className="text-sm text-muted-foreground mb-3">
                     A 6-month heatmap grid showing how your trading allocation and P&L shifts across market segments over time. Spot trends in where you're focusing your capital.
                   </p>
