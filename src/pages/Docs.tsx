@@ -2650,6 +2650,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Templates", id: "sh-templates" },
               ]} />
 
+              <ProTip variant="best-practice">
+                <p><strong>Why this feature exists:</strong> Trading is often a solitary activity, and many traders operate without any external accountability. Sharing your results — wins <em>and</em> losses — creates a public commitment to your process. It also builds credibility if you run a channel or community. Share cards are designed to be privacy-safe (no account details, capital, or personal info), visually polished, and optimized for every major social platform so you can share with confidence.</p>
+              </ProTip>
+
+              <ProTip variant="info">
+                <p><strong>Where it's used:</strong> Share buttons appear on the <strong>Dashboard</strong> (P&L summary), <strong>Trade Detail modal</strong> (individual trade results), <strong>Journal</strong> (streak celebrations), and <strong>Reports</strong> page (weekly performance). You're always one click away from generating a shareable image.</p>
+              </ProTip>
+
               <InteractiveMockup label="Share Card Examples">
                 <ShareCardsMockup />
               </InteractiveMockup>
