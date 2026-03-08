@@ -1138,7 +1138,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p>Link your studies to trades when you execute them. This builds a powerful feedback loop — you can see which of your research ideas actually led to profitable trades.</p>
               </ProTip>
               <StudyCardMockup />
-
+              <SubTopic title="Study Workflow" description="Organize studies by category and track their lifecycle." />
               <FeatureCard icon={Layers} title="Categories & Status Workflow">
                 <p className="text-sm text-muted-foreground mb-3">Organize studies by type and track their lifecycle:</p>
                 <FeatureList items={[
