@@ -91,6 +91,7 @@ export default function Trades() {
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [sortBy, setSortBy] = useState("latest");
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [duplicateData, setDuplicateData] = useState<Partial<Trade> | null>(null);
   const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
   const [strategyModalOpen, setStrategyModalOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -622,8 +623,23 @@ export default function Trades() {
         />
       )}
 
-      <CreateTradeModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
-      <TradeDetailModal trade={selectedTrade} open={!!selectedTrade} onOpenChange={(open) => !open && setSelectedTrade(null)} />
+      <CreateTradeModal
+        open={createModalOpen}
+        onOpenChange={(open) => {
+          setCreateModalOpen(open);
+          if (!open) setDuplicateData(null);
+        }}
+        initialData={duplicateData}
+      />
+      <TradeDetailModal
+        trade={selectedTrade}
+        open={!!selectedTrade}
+        onOpenChange={(open) => !open && setSelectedTrade(null)}
+        onDuplicate={(data) => {
+          setDuplicateData(data);
+          setCreateModalOpen(true);
+        }}
+      />
       <MultiLegStrategyModal open={strategyModalOpen} onOpenChange={setStrategyModalOpen} />
       <ConfirmDeleteModal
         open={deleteModalOpen}

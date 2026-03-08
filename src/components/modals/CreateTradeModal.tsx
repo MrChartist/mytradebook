@@ -31,6 +31,18 @@ import { useTradeTemplates } from "@/hooks/useTradeTemplates";
 interface CreateTradeModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialData?: Partial<{
+    symbol: string;
+    segment: string;
+    trade_type: string;
+    quantity: number;
+    stop_loss: number | null;
+    targets: any;
+    timeframe: string;
+    holding_period: string;
+    notes: string | null;
+    chart_link: string | null;
+  }> | null;
 }
 
 const segmentLabels: Record<string, string> = {
@@ -101,7 +113,7 @@ function getSegmentDefaults(segment: string) {
   }
 }
 
-export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) {
+export function CreateTradeModal({ open, onOpenChange, initialData }: CreateTradeModalProps) {
   const { createTrade, trades: allTrades } = useTrades();
   const { settings } = useUserSettings();
   const startingCapital = (settings as any)?.starting_capital ?? 500000;
@@ -164,6 +176,24 @@ export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) 
     setTelegramPostEnabled(defaults.telegramEnabled);
     setAutoTrackEnabled(defaults.autoTrack);
   }, [segment, setValue]);
+
+  // Pre-fill from initialData (trade duplication)
+  useEffect(() => {
+    if (!initialData || !open) return;
+    if (initialData.symbol) setValue("symbol", initialData.symbol, { shouldValidate: true });
+    if (initialData.segment) setValue("segment", initialData.segment as any, { shouldValidate: true });
+    if (initialData.trade_type) setValue("trade_type", initialData.trade_type as any, { shouldValidate: true });
+    if (initialData.quantity) setValue("quantity", initialData.quantity);
+    if (initialData.stop_loss) setValue("stop_loss", initialData.stop_loss);
+    if (initialData.timeframe) setValue("timeframe", initialData.timeframe as any);
+    if (initialData.holding_period) setValue("holding_period", initialData.holding_period);
+    if (initialData.notes) setValue("notes", initialData.notes);
+    if (initialData.chart_link) setChartLink(initialData.chart_link);
+    if (initialData.targets) {
+      const t = Array.isArray(initialData.targets) ? initialData.targets : [];
+      setTargets(t);
+    }
+  }, [initialData, open, setValue]);
 
   // Risk calculations
   const riskCalc = (() => {

@@ -3,7 +3,7 @@ import {
   Bell, Plus, Search, TrendingUp, TrendingDown, Percent,
   ToggleLeft, ToggleRight, Trash2, Edit2, Loader2, Zap,
   Send, Clock, CalendarClock, PauseCircle,
-  BellOff, Timer, History, MoreHorizontal,
+  BellOff, Timer, History, MoreHorizontal, ArrowRightCircle,
 } from "lucide-react";
 import { useLivePrices, type InstrumentInput } from "@/hooks/useLivePrices";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAlerts } from "@/hooks/useAlerts";
 import { CreateAlertModal } from "@/components/modals/CreateAlertModal";
+import { CreateTradeModal } from "@/components/modals/CreateTradeModal";
 import { EditAlertModal } from "@/components/modals/EditAlertModal";
 import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 import { InsightCard, type InsightCardAction } from "@/components/ui/insight-card";
@@ -84,6 +85,7 @@ export default function Alerts() {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [selectedAlertId, setSelectedAlertId] = useState<string | null>(null);
   const [bulkPausing, setBulkPausing] = useState(false);
+  const [createTradeFromAlert, setCreateTradeFromAlert] = useState<Alert | null>(null);
 
   const { alerts, isLoading, toggleAlert, deleteAlert, updateAlert } = useAlerts();
 
@@ -322,6 +324,10 @@ export default function Alerts() {
 
               const menuActions: InsightCardAction[] = [
                 { label: "Edit", icon: Edit2, onClick: () => handleEditClick(alert) },
+                { label: "Create Trade", icon: ArrowRightCircle, onClick: () => {
+                  setCreateTradeFromAlert(alert);
+                  setCreateModalOpen(true);
+                }},
                 { label: alert.active ? "Pause" : "Resume", icon: alert.active ? PauseCircle : Zap, onClick: () => handleToggleAlert(alert.id, !!alert.active) },
                 { label: "Snooze 1h", icon: BellOff, onClick: () => handleSnooze(alert, 1) },
                 { label: "Snooze rest of day", icon: BellOff, onClick: () => handleSnoozeRestOfDay(alert) },
@@ -381,7 +387,16 @@ export default function Alerts() {
           />
         )}
 
-        <CreateAlertModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
+        <CreateAlertModal open={createModalOpen && !createTradeFromAlert} onOpenChange={setCreateModalOpen} />
+        <CreateTradeModal
+          open={createModalOpen && !!createTradeFromAlert}
+          onOpenChange={(open) => {
+            if (!open) { setCreateModalOpen(false); setCreateTradeFromAlert(null); }
+          }}
+          initialData={createTradeFromAlert ? {
+            symbol: createTradeFromAlert.symbol,
+          } : null}
+        />
         <EditAlertModal open={editModalOpen} onOpenChange={setEditModalOpen} alert={selectedAlert} />
         <ConfirmDeleteModal
           open={deleteModalOpen}

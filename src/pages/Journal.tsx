@@ -86,11 +86,18 @@ export default function Journal() {
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold">Trade Journal</h1>
-          <p className="text-muted-foreground">
-            Analyze your trading performance and patterns
-          </p>
+        <div className="flex items-center gap-3">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold">Trade Journal</h1>
+            <p className="text-muted-foreground">
+              Analyze your trading performance and patterns
+            </p>
+          </div>
+          {analytics.journalStreak > 0 && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-warning/10 border border-warning/20 text-warning text-sm font-semibold">
+              🔥 {analytics.journalStreak} day streak
+            </span>
+          )}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {/* Segment Filter */}

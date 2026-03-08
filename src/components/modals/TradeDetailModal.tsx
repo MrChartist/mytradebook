@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import {
   Activity, Send, Calendar, ExternalLink, Loader2,
 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import type { Trade } from "@/hooks/useTrades";
 import { useTrades } from "@/hooks/useTrades";
 import { useTradeEvents } from "@/hooks/useTradeEvents";
@@ -35,6 +36,7 @@ interface TradeDetailModalProps {
   trade: Trade | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onDuplicate?: (data: Partial<Trade>) => void;
 }
 
 const segmentLabels: Record<string, string> = {
@@ -50,7 +52,7 @@ const timeframeLabels: Record<string, string> = {
   "1H": "1 Hour", "4H": "4 Hour", "1D": "Daily", "1W": "Weekly",
 };
 
-export function TradeDetailModal({ trade, open, onOpenChange }: TradeDetailModalProps) {
+export function TradeDetailModal({ trade, open, onOpenChange, onDuplicate }: TradeDetailModalProps) {
   const { closeTrade, updateTrade, deleteTrade } = useTrades();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const { events, addEvent } = useTradeEvents(trade?.id || null);
@@ -202,13 +204,15 @@ export function TradeDetailModal({ trade, open, onOpenChange }: TradeDetailModal
               </>
             )}
 
-            {/* Notes */}
+            {/* Notes — rendered as Markdown */}
             {trade.notes && (
               <>
                 <Separator />
                 <div className="space-y-2">
                   <h4 className="font-medium">Notes</h4>
-                  <p className="text-sm text-muted-foreground p-3 rounded-lg bg-accent/50">{trade.notes}</p>
+                  <div className="text-sm text-muted-foreground p-3 rounded-lg bg-accent/50 prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-headings:my-2">
+                    <ReactMarkdown>{trade.notes}</ReactMarkdown>
+                  </div>
                 </div>
               </>
             )}
@@ -255,6 +259,22 @@ export function TradeDetailModal({ trade, open, onOpenChange }: TradeDetailModal
               isClosing={closeTrade.isPending}
               onShowReview={() => setShowReview(true)}
               onDeleteClick={() => setDeleteModalOpen(true)}
+              onDuplicate={onDuplicate ? () => {
+                const dupeData: Partial<Trade> = {
+                  symbol: trade.symbol,
+                  segment: trade.segment,
+                  trade_type: trade.trade_type,
+                  quantity: trade.quantity,
+                  stop_loss: trade.stop_loss,
+                  targets: trade.targets,
+                  timeframe: (trade as any).timeframe,
+                  holding_period: (trade as any).holding_period,
+                  notes: trade.notes,
+                  chart_link: (trade as any).chart_link,
+                };
+                onOpenChange(false);
+                onDuplicate(dupeData);
+              } : undefined}
             />
 
             <Separator />

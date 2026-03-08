@@ -351,6 +351,21 @@ export function useJournalAnalytics(filters?: JournalFilters) {
     // Top mistake
     const topMistake = mistakeImpact.length > 0 ? mistakeImpact[0].name : null;
 
+    // Journal streak (consecutive days with entries from today backwards)
+    const tradeDates = new Set(Array.from(dateMap.keys()));
+    let journalStreak = 0;
+    const today = new Date();
+    for (let i = 0; i < 365; i++) {
+      const checkDate = new Date(today);
+      checkDate.setDate(today.getDate() - i);
+      const dateStr = format(checkDate, "yyyy-MM-dd");
+      if (tradeDates.has(dateStr)) {
+        journalStreak++;
+      } else if (i > 0) {
+        break; // skip today if no trades yet
+      }
+    }
+
     return {
       totalTrades: trades.length,
       totalPnl,
@@ -366,6 +381,7 @@ export function useJournalAnalytics(filters?: JournalFilters) {
       calendarData,
       bestPattern,
       topMistake,
+      journalStreak,
     };
   }, [trades, tradePatterns, tradeMistakes]);
 

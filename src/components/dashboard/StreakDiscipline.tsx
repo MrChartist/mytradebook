@@ -1,10 +1,16 @@
 import { useTrades } from "@/hooks/useTrades";
 import { cn } from "@/lib/utils";
-import { Trophy, TrendingDown, Zap, Flame } from "lucide-react";
-import { useMemo } from "react";
+import { Trophy, TrendingDown, Zap, Flame, Share2 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { StreakShareCard, type StreakCardData } from "@/components/sharing/StreakShareCard";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { toPng } from "html-to-image";
+import { toast } from "sonner";
 
 export function StreakDiscipline() {
   const { trades } = useTrades();
+  const [shareOpen, setShareOpen] = useState(false);
 
   const stats = useMemo(() => {
     const closed = trades
@@ -41,16 +47,39 @@ export function StreakDiscipline() {
     return { currentStreak: streak, streakType, avgRR, bestTrade, worstTrade, disciplineScore };
   }, [trades]);
 
+  // Build streak share data
+  const streakShareData: StreakCardData = useMemo(() => {
+    const closed = trades.filter(t => t.status === "CLOSED" && t.pnl !== null);
+    const sorted = [...closed].sort((a, b) => new Date(b.closed_at || 0).getTime() - new Date(a.closed_at || 0).getTime());
+    const streakTrades = sorted.slice(0, stats.currentStreak).map(t => ({ symbol: t.symbol, pnl: t.pnl || 0 }));
+    const totalStreakPnl = streakTrades.reduce((a, t) => a + t.pnl, 0);
+    return {
+      streakCount: stats.currentStreak,
+      streakType: stats.streakType,
+      totalPnl: totalStreakPnl,
+      trades: streakTrades,
+    };
+  }, [trades, stats]);
+
   return (
     <div className={cn("dashboard-card h-full", stats.streakType === "win" ? "card-glow-profit" : "card-glow-loss")}>
       <div className="flex items-center gap-3 mb-4">
         <div className="icon-badge-sm bg-primary/10">
           <Trophy className="w-4 h-4 text-primary" />
         </div>
-        <div>
+        <div className="flex-1">
           <h3 className="font-semibold">Streak & Discipline</h3>
           <p className="text-xs text-muted-foreground mt-0.5">Trading consistency</p>
         </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={() => setShareOpen(true)}
+          title="Share streak"
+        >
+          <Share2 className="w-3.5 h-3.5" />
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -126,6 +155,34 @@ export function StreakDiscipline() {
           </div>
         </div>
       </div>
+
+      {/* Streak Share Modal */}
+      <Dialog open={shareOpen} onOpenChange={setShareOpen}>
+        <DialogContent className="max-w-fit p-6">
+          <div id="streak-share-card">
+            <StreakShareCard data={streakShareData} />
+          </div>
+          <Button
+            className="mt-4 w-full"
+            onClick={async () => {
+              const el = document.getElementById("streak-share-card");
+              if (!el) return;
+              try {
+                const dataUrl = await toPng(el, { pixelRatio: 2 });
+                const link = document.createElement("a");
+                link.download = `streak-${stats.currentStreak}${stats.streakType}.png`;
+                link.href = dataUrl;
+                link.click();
+                toast.success("Streak card downloaded!");
+              } catch {
+                toast.error("Failed to generate image");
+              }
+            }}
+          >
+            Download Image
+          </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star, CheckCircle2, Loader2, Trash2, Share2 } from "lucide-react";
+import { Star, CheckCircle2, Loader2, Trash2, Share2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,9 +14,10 @@ interface Props {
   isClosing: boolean;
   onShowReview: () => void;
   onDeleteClick: () => void;
+  onDuplicate?: () => void;
 }
 
-export function TradeDetailActions({ trade, onClose, isClosing, onShowReview, onDeleteClick }: Props) {
+export function TradeDetailActions({ trade, onClose, isClosing, onShowReview, onDeleteClick, onDuplicate }: Props) {
   const [closingMode, setClosingMode] = useState(false);
   const [exitPrice, setExitPrice] = useState("");
   const [shareOpen, setShareOpen] = useState(false);
@@ -105,6 +106,14 @@ export function TradeDetailActions({ trade, onClose, isClosing, onShowReview, on
             <Share2 className="w-4 h-4 mr-2" /> Share Trade Card
           </Button>
           <TradeShareModal trade={trade} open={shareOpen} onOpenChange={setShareOpen} />
+        </>
+      )}
+
+      {onDuplicate && (
+        <>
+          <Button variant="outline" className="w-full" onClick={onDuplicate}>
+            <Copy className="w-4 h-4 mr-2" /> Clone / Duplicate Trade
+          </Button>
         </>
       )}
 

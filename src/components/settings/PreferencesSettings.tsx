@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
-import { Save, Loader2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Save, Loader2, Download, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function PreferencesSettings() {
   const { settings, isLoading, updateSettings } = useUserSettings();
@@ -146,24 +147,41 @@ export default function PreferencesSettings() {
           </select>
         </div>
 
-        {/* Re-show Onboarding Checklist */}
+        {/* Data Backup */}
         <div className="flex items-center justify-between p-4 rounded-lg bg-accent/50">
           <div>
-            <p className="font-medium">Onboarding Checklist</p>
+            <p className="font-medium">Full Data Backup</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Re-show the setup checklist on your dashboard
+              Export all your trades, journal, alerts, and settings as JSON
             </p>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              localStorage.removeItem("tradebook_onboarding_dismissed");
-              toast.success("Onboarding checklist will appear on your dashboard");
-            }}
-          >
-            Show Again
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                try {
+                  toast.loading("Generating backup...", { id: "backup" });
+                  const { data, error } = await supabase.functions.invoke("export-data");
+                  if (error) throw error;
+                  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `tradebook-backup-${new Date().toISOString().slice(0, 10)}.json`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                  toast.success("Backup downloaded!", { id: "backup" });
+                } catch (err) {
+                  console.error(err);
+                  toast.error("Backup failed", { id: "backup" });
+                }
+              }}
+            >
+              <Download className="w-4 h-4 mr-1.5" />
+              Export
+            </Button>
+          </div>
         </div>
 
         <Button
