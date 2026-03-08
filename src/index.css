@@ -280,8 +280,13 @@
 
   /* ── Premium Card (rich, layered) ──────────────────── */
   .premium-card {
-    @apply bg-card rounded-[1.25rem] border border-border/80 p-6 relative overflow-hidden;
+    @apply bg-card rounded-[1.25rem] border border-border/70 p-6 relative overflow-hidden;
     box-shadow: var(--shadow-sm);
+  }
+
+  .dark .premium-card {
+    border-color: hsl(var(--border) / 0.6);
+    box-shadow: var(--shadow-sm), inset 0 1px 0 0 hsl(0 0% 100% / 0.03);
   }
 
   .premium-card::after {
@@ -293,6 +298,10 @@
     height: 1px;
     background: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.08) 30%, hsl(0 0% 100% / 0.08) 70%, transparent 100%);
     pointer-events: none;
+  }
+
+  .dark .premium-card::after {
+    background: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.04) 30%, hsl(0 0% 100% / 0.04) 70%, transparent 100%);
   }
 
   .premium-card-hover {
