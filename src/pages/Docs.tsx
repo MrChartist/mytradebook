@@ -754,6 +754,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">Internet Explorer is not supported. For real-time price updates, a stable broadband connection is recommended.</p>
               </ExpandableDetail>
+
+              <ExpandableDetail title="What TradeBook Does NOT Do — Setting Expectations" icon={AlertTriangle} badge="Clarity">
+                <p>Understanding what TradeBook isn't will help you use it correctly:</p>
+                <FeatureList items={[
+                  "Not a broker — TradeBook is a journaling and analytics platform, not a place to execute trades. You still need a broker (Dhan, Zerodha, etc.) to actually trade. We integrate with Dhan for live prices and order sync.",
+                  "Not real-time charting — We don't provide TradingView-style charting. Attach chart links/screenshots to your trades for visual reference. Use your broker or TradingView for charting.",
+                  "Not financial advice — AI insights, coach feedback, and analytics are educational tools based on YOUR data. They're not buy/sell recommendations. Always do your own research.",
+                  "Not a screener replacement — The Stock Screener is a discovery tool using NSE data via TradingView. For institutional-grade screening with live tick data, use specialized platforms.",
+                  "Not automatic trade execution — Even with Dhan connected, TradeBook doesn't auto-execute trades. The integration syncs data, not orders. You remain in full control.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">TradeBook excels at post-trade analysis, discipline enforcement, and behavioral improvement. It's the tool you use after your trading platform, not instead of it.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
@@ -1759,6 +1771,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p>Organize watchlists by purpose, not just by name. Create separate lists for <strong>active setups</strong> (stocks you're about to trade), <strong>sector tracking</strong> (banking, IT, pharma), and <strong>post-trade monitoring</strong> (recently closed positions). This keeps each list focused and actionable.</p>
               </ProTip>
 
+              <ExpandableDetail title="Watchlist Workflow Ideas for Different Trading Styles" icon={Eye} badge="Workflow">
+                <p>How you organize watchlists depends on your trading style. Here are proven setups:</p>
+                <FeatureList items={[
+                  "Intraday Scalpers — Create a daily 'Hot Today' list with 10-15 stocks from your morning scan. Clear and rebuild it each day. Focus on volume and momentum.",
+                  "Swing Traders — Maintain 3 lists: 'Pullback Zone' (waiting for entry), 'In Position' (current holds), and 'Graduated' (recently exited for cool-off). Move stocks between them as your thesis evolves.",
+                  "Options Traders — Organize by expiry: 'This Week Expiry', 'Next Week', 'Monthly'. Add the underlying + the specific contracts you're watching. Notes field for strike rationale.",
+                  "Positional/Investors — Sector-based lists work best: 'Banking', 'IT', 'FMCG', 'Small Caps'. Review each sector weekly and rotate focus based on market regime.",
+                  "Research Mode — A dedicated 'Study Queue' list for symbols you want to research but haven't committed to yet. Review weekly and either promote to active watchlists or delete.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">The notes field on each watchlist item is underutilized by most traders. Use it to record why you added the symbol, key levels to watch, and your planned action. When the alert triggers weeks later, you'll remember your thesis instantly.</p>
+              </ExpandableDetail>
+
               <SubTopic title="Organization" description="Create and manage multiple watchlists with visual distinction." id="wl-org" />
               <FeatureCard icon={List} title="Watchlist Organization">
                 <p className="text-sm text-muted-foreground mb-3">Flexible tools to keep your watchlists clean and useful:</p>
@@ -2520,9 +2544,20 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "In-App — Reports are always available on the Reports page. Navigate there anytime to see current and past weekly reports.",
                   "Telegram — If you've configured Telegram integration (Settings → Telegram), reports are automatically sent to your linked Telegram chat or channel every Monday at 6 AM IST. Great for reviewing on mobile before market opens.",
                   "PDF Download — Click the download button on any report to save it as a PDF. Useful for maintaining offline records or sharing with a mentor.",
-                  "Manual Generation — Don't want to wait until Monday? Generate a report for any completed week from the Reports page. Useful for mid-week check-ins during volatile markets.",
                 ]} />
-                <p className="text-[12px] text-muted-foreground/60 mt-3">Telegram delivery requires a verified Telegram bot connection. See the Integrations section for setup instructions. Reports cover Monday–Friday of the selected week and require at least 1 closed trade to generate.</p>
+              </ExpandableDetail>
+
+              <ExpandableDetail title="How to Actually Use Your Weekly Report — Interpretation Guide" icon={Target} badge="Workflow">
+                <p>A weekly report is only valuable if you act on it. Here's how to interpret each section:</p>
+                <FeatureList items={[
+                  "Total P&L — This is your headline number. But don't stop here. A ₹50,000 profit week with one lucky trade is less meaningful than a ₹20,000 week with consistent execution across 15 trades.",
+                  "Win Rate by Segment — Compare segments. If Options shows 35% win rate but highest total P&L, your Options R:R is working. If Intraday shows 70% win rate but negative P&L, your position sizing or exit timing is broken.",
+                  "Best Trade vs Worst Trade — These extremes reveal your range. If your best trade made ₹25,000 but your worst lost ₹40,000, risk management is your priority. Ideal ratio: worst loss < 50% of best win.",
+                  "Top Setup Tags — These are your edge. If 'Breakout' and 'Morning Gap' consistently top the list, allocate more capital and attention there. If a setup rarely appears as 'top', it's not actually your strength.",
+                  "Top Mistake Tags — The real gold. One mistake appearing 5+ times in a week is a habit, not an accident. This is next week's #1 focus area. Write it in Monday's journal.",
+                  "Week-over-Week Trend — Are you improving? Compare this week's win rate and profit factor to last week. Two consecutive declining weeks warrant a strategy review or trading pause.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Pro tip: Screenshot your report insights and paste them into your Monday journal entry. This creates a permanent record of your weekly learnings that compounds over months.</p>
               </ExpandableDetail>
             </motion.section>
 
@@ -2634,14 +2669,32 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Trophy}
               />
               <QuickNav items={[
+                { label: "Why Gamification", id: "ach-why" },
                 { label: "Progress Tracking", id: "ach-progress" },
                 { label: "Badge Categories", id: "ach-categories" },
                 { label: "Full Catalog", id: "ach-catalog" },
               ]} />
 
+              <ProTip variant="best-practice">
+                <p><strong>Why achievements matter:</strong> Trading is a long game, and progress is often invisible. You don't "level up" visibly — you just slowly get better at reading charts and managing risk. Achievements create visible milestones that mark your journey. The psychological boost from unlocking a "50 Trades" badge keeps you motivated during drawdown periods when P&L isn't rewarding you. They reward process, not just profits.</p>
+              </ProTip>
+
               <InteractiveMockup label="Achievement Badges Grid">
                 <AchievementsMockup />
               </InteractiveMockup>
+
+              <SubTopic title="Why Gamification Works for Traders" description="The psychology behind achievements and how they improve your trading." id="ach-why" />
+              <ExpandableDetail title="The Science Behind Trading Gamification" icon={Trophy} badge="Psychology">
+                <p>Gamification in trading isn't about making trading "fun" — it's about leveraging behavioral psychology to build better habits:</p>
+                <FeatureList items={[
+                  "Variable Reward Schedules — Badges unlock at unexpected times (after your 47th trade, not your 50th attempt), which keeps the dopamine loop engaged. This is the same psychology that makes games addictive, but pointed at productive behavior.",
+                  "Loss Aversion Counter — Achievements provide wins during losing streaks. Even if you're down ₹10,000 this week, unlocking the 'Journal Keeper' badge gives your brain a small victory to hold onto.",
+                  "Identity Reinforcement — Badges help you see yourself as a 'serious trader'. The more badges you unlock, the more your self-image aligns with 'disciplined trader who journals and follows rules' rather than 'gambler who wings it'.",
+                  "Process Over Outcome — Notice how discipline badges (setting SL, using templates, journaling) exist alongside profit badges. This teaches your brain that the process matters, not just the P&L outcome.",
+                  "Social Proof — Sharing badges creates external accountability. When you tweet your '7-Day Streak' badge, you're publicly committing to your trading identity. Breaking that streak now has social cost.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">The most effective traders we've observed treat badges as secondary feedback loops. They don't trade FOR badges — they notice badges as confirmation that their process is working. If you're not unlocking badges, it's a signal to audit your consistency.</p>
+              </ExpandableDetail>
 
               <SubTopic title="Tracking Your Progress" description="How to monitor your journey toward unlocking badges." id="ach-progress" />
               <StepByStep title="Tracking Your Progress Toward Badges" steps={[
@@ -3354,6 +3407,20 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   <div className="mt-4"><SettingsIntegrationsMockup /></div>
                 </FeatureCard>
               </div>
+
+              <ExpandableDetail title="Common Settings Issues & Troubleshooting" icon={AlertTriangle} badge="Troubleshooting">
+                <p>Quick fixes for the most common settings-related problems:</p>
+                <FeatureList items={[
+                  "Starting capital shows ₹0 — Go to Settings → Preferences and enter your actual trading capital. This is required for risk % calculations and return metrics to work correctly.",
+                  "Tags not appearing in trade form — Tags are segment-specific. Ensure you've created tags in Settings → Tags that match the segment you're trading (e.g., Options tags only appear for Options trades).",
+                  "Dhan connection expired — Dhan access tokens expire after 24 hours. Go to Settings → Integrations → Dhan and re-authenticate. This is a Dhan security requirement.",
+                  "Telegram not receiving alerts — Check: (1) Is the Telegram chat verified? (2) Is 'Telegram enabled' toggled on for that notification type? (3) Did you send /start to your bot? The delivery log shows failure reasons.",
+                  "Theme not saving — Theme preference is stored locally. If you cleared browser data or switched devices, you'll need to re-select your theme in Settings → Preferences.",
+                  "Risk gauge always shows 0% — Risk gauge requires open trades with stop losses set. If your trades have no SL, risk can't be calculated. Also check that starting capital is set.",
+                  "Analytics showing wrong data — Check the segment filter and date range at the top. Also verify you have closed trades — open trades don't contribute to most analytics calculations.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">For issues not covered here, check the FAQ section below or reach out via the in-app feedback button.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
