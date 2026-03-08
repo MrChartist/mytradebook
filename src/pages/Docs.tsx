@@ -1531,6 +1531,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p className="text-[12px] text-muted-foreground/60 mt-3">Cross-detection alerts are generally more useful than simple price alerts because they avoid firing on stocks that already opened above/below your level.</p>
               </ExpandableDetail>
 
+              <ProTip variant="info">
+                <p><strong>Beginner tip:</strong> Start with 3–5 simple "Price Above" or "Price Below" alerts on stocks you're watching. Set them as one-time triggers. Once you're comfortable, graduate to "Crosses Above" alerts with daily recurrence and Telegram delivery — this is the setup most active traders use.</p>
+              </ProTip>
+              <ProTip>
+                <p><strong>Advanced tip:</strong> Combine alerts with studies. Create a study for a pattern you're tracking, link an alert to the study, and set the alert at your planned entry level. When the alert triggers, your full research context is one click away — you go from notification to informed trade execution in seconds.</p>
+              </ProTip>
+
               <SubTopic title="Trigger Logic & Cooldown" description="Control when and how often alerts fire." id="al-trigger" />
               <FeatureCard icon={RefreshCw} title="Recurrence & Cooldowns">
                 <FeatureList items={[
