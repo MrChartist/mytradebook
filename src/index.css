@@ -164,7 +164,7 @@
     
     /* Muted tones - readable but not glaring */
     --muted: 222 35% 12%;
-    --muted-foreground: 215 18% 58%;
+    --muted-foreground: 215 18% 62%;
     
     /* Accent for hover states */
     --accent: 222 38% 15%;
