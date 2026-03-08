@@ -862,9 +862,9 @@ export default function IntegrationsSettings() {
               ) : (
                 <AlertTriangle className="w-4 h-4 text-loss" />
               )}
-              <span className={`text-sm font-medium ${
+              <span className={`text-[12px] font-medium ${
                 (syncStatus.status === "completed" || syncStatus.status === "partial") ? "text-profit" 
-                : syncStatus.status === "running" ? "text-blue-400"
+                : syncStatus.status === "running" ? "text-[hsl(210_80%_55%)]"
                 : "text-loss"
               }`}>
                 {syncStatus.status === "completed" ? "Sync successful" 
