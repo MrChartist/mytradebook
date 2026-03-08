@@ -101,7 +101,7 @@ export function FeaturesSection() {
                   f.span === "hero" ? "p-6 sm:p-8" : "p-5 sm:p-6",
                 )}
                 style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}
-                whileHover={{ y: -3, borderColor: "hsl(var(--border) / 0.45)" }}
+                whileHover={{ y: -3, borderColor: "hsl(var(--border) / 0.45)", boxShadow: `inset 0 1px 0 0 hsl(0 0% 100% / 0.03), 0 0 30px -10px ${f.color.replace(")", " / 0.15)")}` }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
               >
                 {/* Colored top accent line */}
