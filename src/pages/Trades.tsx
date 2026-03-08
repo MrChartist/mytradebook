@@ -623,8 +623,23 @@ export default function Trades() {
         />
       )}
 
-      <CreateTradeModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
-      <TradeDetailModal trade={selectedTrade} open={!!selectedTrade} onOpenChange={(open) => !open && setSelectedTrade(null)} />
+      <CreateTradeModal
+        open={createModalOpen}
+        onOpenChange={(open) => {
+          setCreateModalOpen(open);
+          if (!open) setDuplicateData(null);
+        }}
+        initialData={duplicateData}
+      />
+      <TradeDetailModal
+        trade={selectedTrade}
+        open={!!selectedTrade}
+        onOpenChange={(open) => !open && setSelectedTrade(null)}
+        onDuplicate={(data) => {
+          setDuplicateData(data);
+          setCreateModalOpen(true);
+        }}
+      />
       <MultiLegStrategyModal open={strategyModalOpen} onOpenChange={setStrategyModalOpen} />
       <ConfirmDeleteModal
         open={deleteModalOpen}

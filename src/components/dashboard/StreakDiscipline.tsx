@@ -155,6 +155,34 @@ export function StreakDiscipline() {
           </div>
         </div>
       </div>
+
+      {/* Streak Share Modal */}
+      <Dialog open={shareOpen} onOpenChange={setShareOpen}>
+        <DialogContent className="max-w-fit p-6">
+          <div id="streak-share-card">
+            <StreakShareCard data={streakShareData} />
+          </div>
+          <Button
+            className="mt-4 w-full"
+            onClick={async () => {
+              const el = document.getElementById("streak-share-card");
+              if (!el) return;
+              try {
+                const dataUrl = await toPng(el, { pixelRatio: 2 });
+                const link = document.createElement("a");
+                link.download = `streak-${stats.currentStreak}${stats.streakType}.png`;
+                link.href = dataUrl;
+                link.click();
+                toast.success("Streak card downloaded!");
+              } catch {
+                toast.error("Failed to generate image");
+              }
+            }}
+          >
+            Download Image
+          </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

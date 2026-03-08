@@ -323,6 +323,10 @@ export default function Alerts() {
 
               const menuActions: InsightCardAction[] = [
                 { label: "Edit", icon: Edit2, onClick: () => handleEditClick(alert) },
+                { label: "Create Trade", icon: ArrowRightCircle, onClick: () => {
+                  setCreateTradeFromAlert(alert);
+                  setCreateModalOpen(true);
+                }},
                 { label: alert.active ? "Pause" : "Resume", icon: alert.active ? PauseCircle : Zap, onClick: () => handleToggleAlert(alert.id, !!alert.active) },
                 { label: "Snooze 1h", icon: BellOff, onClick: () => handleSnooze(alert, 1) },
                 { label: "Snooze rest of day", icon: BellOff, onClick: () => handleSnoozeRestOfDay(alert) },

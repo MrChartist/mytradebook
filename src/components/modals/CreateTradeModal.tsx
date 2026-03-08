@@ -177,6 +177,24 @@ export function CreateTradeModal({ open, onOpenChange, initialData }: CreateTrad
     setAutoTrackEnabled(defaults.autoTrack);
   }, [segment, setValue]);
 
+  // Pre-fill from initialData (trade duplication)
+  useEffect(() => {
+    if (!initialData || !open) return;
+    if (initialData.symbol) setValue("symbol", initialData.symbol, { shouldValidate: true });
+    if (initialData.segment) setValue("segment", initialData.segment as any, { shouldValidate: true });
+    if (initialData.trade_type) setValue("trade_type", initialData.trade_type as any, { shouldValidate: true });
+    if (initialData.quantity) setValue("quantity", initialData.quantity);
+    if (initialData.stop_loss) setValue("stop_loss", initialData.stop_loss);
+    if (initialData.timeframe) setValue("timeframe", initialData.timeframe as any);
+    if (initialData.holding_period) setValue("holding_period", initialData.holding_period);
+    if (initialData.notes) setValue("notes", initialData.notes);
+    if (initialData.chart_link) setChartLink(initialData.chart_link);
+    if (initialData.targets) {
+      const t = Array.isArray(initialData.targets) ? initialData.targets : [];
+      setTargets(t);
+    }
+  }, [initialData, open, setValue]);
+
   // Risk calculations
   const riskCalc = (() => {
     const entry = Number(entryPrice);
