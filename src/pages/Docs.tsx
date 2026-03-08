@@ -3398,31 +3398,30 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       <AnimatePresence>
         {showBackToTop && (
           <motion.button
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
+            exit={{ opacity: 0, y: 10 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-card/80 backdrop-blur-xl border border-border/40 shadow-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-card transition-all"
+            className="fixed bottom-6 right-6 z-50 w-9 h-9 rounded-lg bg-card border border-border/50 shadow-sm flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Back to top"
-            style={{ boxShadow: "0 4px 20px -6px rgba(0,0,0,0.1), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}
           >
-            <ArrowUpRight className="w-4 h-4 -rotate-45" />
+            <ArrowUpRight className="w-3.5 h-3.5 -rotate-45" />
           </motion.button>
         )}
       </AnimatePresence>
 
       {/* Footer — only on standalone */}
       {!isInsideApp && (
-        <footer className="border-t border-border/30 bg-card/50 backdrop-blur-sm dot-pattern py-16" role="contentinfo" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
-          <div className="max-w-7xl mx-auto px-6 lg:px-10">
-            <div className="grid md:grid-cols-4 gap-10 mb-10">
+        <footer className="border-t border-border/30 py-12" role="contentinfo">
+          <div className="max-w-[1440px] mx-auto px-6 lg:px-8">
+            <div className="grid md:grid-cols-4 gap-8 mb-8">
               <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <img src="/favicon-32x32.png" alt="TradeBook" className="h-7 object-contain" loading="lazy" />
-                  <span className="text-sm font-bold text-foreground">TradeBook</span>
+                <div className="flex items-center gap-2 mb-3">
+                  <img src="/favicon-32x32.png" alt="TradeBook" className="h-6 object-contain" loading="lazy" />
+                  <span className="text-sm font-semibold text-foreground">TradeBook</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed mb-4">The trading journal built for Indian markets.</p>
-                <Button size="sm" onClick={() => navigate("/login?mode=signup")} className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 text-[12px] h-8 shadow-[0_6px_16px_hsl(var(--tb-accent)/0.35)]">
+                <Button size="sm" onClick={() => navigate("/login?mode=signup")} className="rounded-lg px-4 text-[12px] h-8">
                   Get Started <ArrowRight className="w-3 h-3" />
                 </Button>
               </div>
@@ -3432,11 +3431,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }, { label: "Contact", href: "mailto:founder@mrchartist.com" }] },
               ].map((col) => (
                 <div key={col.title}>
-                  <h4 className="text-xs uppercase tracking-[0.1em] font-bold text-muted-foreground/60 mb-4 border-l-2 border-[hsl(var(--tb-accent))] pl-2">{col.title}</h4>
+                  <h4 className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground/50 mb-3">{col.title}</h4>
                   <ul className="space-y-1.5">
                     {col.links.map((l) => (
                       <li key={l.label}>
-                        <button onClick={() => l.href.startsWith("mailto") ? window.open(l.href) : l.href.startsWith("#") ? document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: "smooth" }) : navigate(l.href)} className="text-sm text-muted-foreground hover:text-foreground hover:translate-x-0.5 transition-all duration-200 inline-block">
+                        <button onClick={() => l.href.startsWith("mailto") ? window.open(l.href) : l.href.startsWith("#") ? document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: "smooth" }) : navigate(l.href)} className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
                           {l.label}
                         </button>
                       </li>
@@ -3445,13 +3444,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
               ))}
             </div>
-            <div className="h-[1px] bg-gradient-to-r from-transparent via-[hsl(var(--tb-accent)/0.25)] to-transparent mb-6" />
-            <div className="bg-muted/20 rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-3">
-              <p className="text-xs text-muted-foreground/80 flex items-center gap-1.5">
+            <div className="h-px bg-border/30 mb-4" />
+            <div className="flex flex-col md:flex-row items-center justify-between gap-2">
+              <p className="text-[11px] text-muted-foreground/60">
                 © {new Date().getFullYear()} TradeBook. All rights reserved.
-                <span className="inline-flex items-center gap-1">Made with ❤️ in <span className="inline-flex gap-[2px]"><span className="w-2 h-2 rounded-full bg-[#FF9933]" /><span className="w-2 h-2 rounded-full bg-white border border-border/40" /><span className="w-2 h-2 rounded-full bg-[#138808]" /></span> India</span>
               </p>
-              <span className="text-[10px] text-muted-foreground/60 bg-muted/30 border border-border/30 rounded-full px-3 py-1">Not SEBI registered · For educational purposes only</span>
+              <span className="text-[10px] text-muted-foreground/40">Not SEBI registered · For educational purposes only</span>
             </div>
           </div>
         </footer>
