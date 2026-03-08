@@ -890,7 +890,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Bulk import trades from CSV files with intelligent column mapping, or export your entire trade history for backup and external analysis."
                 icon={Upload}
               />
-              <SubTopic title="Import Workflow" description="Step-by-step process to bring your existing trades into TradeBook." />
+              <QuickNav items={[
+                { label: "Import Workflow", id: "csv-import-workflow" },
+                { label: "Import & Export Details", id: "csv-details" },
+              ]} />
+              <SubTopic title="Import Workflow" description="Step-by-step process to bring your existing trades into TradeBook." id="csv-import-workflow" />
               <StepByStep title="How to Import" steps={[
                 { title: "Export from your broker", description: "Download your trade history as CSV from your broker's platform." },
                 { title: "Upload to TradeBook", description: "Go to Trades → Import CSV and select your file." },
@@ -898,7 +902,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Preview & confirm", description: "Review mapped data, fix any validation errors, then confirm the import." },
               ]} />
               <VideoPlaceholder title="How to Import Trades from CSV" duration="3 min" />
-              <SubTopic title="Import & Export Details" description="Detailed capabilities for importing and exporting trade data." />
+              <SubTopic title="Import & Export Details" description="Detailed capabilities for importing and exporting trade data." id="csv-details" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Upload} title="Importing Trades">
                   <p className="text-sm text-muted-foreground mb-3">Step-by-step CSV import with validation:</p>
