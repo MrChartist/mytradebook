@@ -3163,7 +3163,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </ProTip>
 
               <SubTopic title="Capital Management" description="Track deposits, withdrawals, and net deployed capital." id="set-capital" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Wallet} title="Capital Management">
                   <FeatureList items={[
                     "Track deposits and withdrawals from your trading capital",
