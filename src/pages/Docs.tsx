@@ -361,7 +361,7 @@ const SectionHeader = React.forwardRef<HTMLDivElement, {
   }, [id]);
 
   return (
-    <div ref={ref} id={id} className="scroll-mt-28 mb-10 pt-2 group">
+    <div ref={ref} id={id} className="scroll-mt-32 mb-10 pt-2 group">
       <div className="flex items-center gap-3.5 mb-4">
         <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ring-1 ring-[hsl(var(--docs-accent-soft)/0.15)]" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
           <Icon className="w-5 h-5" style={{ color: 'hsl(var(--docs-accent))' }} />
