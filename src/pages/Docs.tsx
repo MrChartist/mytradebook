@@ -252,10 +252,10 @@ const SECTION_ANCHORS: Record<string, { label: string; id: string }[]> = {
 
 function FeatureList({ items }: { items: string[] }) {
   return (
-    <ul className="space-y-2.5 mt-4">
+    <ul className="space-y-3 mt-4">
       {items.map((item) => (
-        <li key={item} className="flex items-start gap-2.5 text-[15px] text-muted-foreground/80 leading-relaxed">
-          <ChevronRight className="w-3.5 h-3.5 text-primary mt-[3px] shrink-0" />
+        <li key={item} className="flex items-start gap-3 docs-body leading-relaxed" style={{ color: 'hsl(var(--docs-text-primary))' }}>
+          <ChevronRight className="w-3.5 h-3.5 mt-[5px] shrink-0" style={{ color: 'hsl(var(--docs-accent))' }} />
           <span>{item}</span>
         </li>
       ))}
@@ -267,21 +267,21 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
 }) {
   return (
-    <div className="group rounded-xl border border-border/30 bg-card relative overflow-hidden transition-colors duration-200 hover:border-border/40 mt-6">
-      <div className="px-5 pt-5 pb-3">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
-            <Icon className="w-3.5 h-3.5 text-primary" />
+    <div className="docs-feature-card group mt-6 overflow-hidden">
+      <div className="px-6 pt-5 pb-3">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
+            <Icon className="w-4 h-4" style={{ color: 'hsl(var(--docs-accent))' }} />
           </div>
-          <h4 className="text-[15px] font-semibold leading-tight">{title}</h4>
+          <h4 className="docs-card-title">{title}</h4>
           {badge && (
-            <span className="text-[10px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-md bg-primary/8 text-primary">
+            <span className="text-[11px] font-bold tracking-wide uppercase px-2.5 py-0.5 rounded-md" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)', color: 'hsl(var(--docs-accent))' }}>
               {badge}
             </span>
           )}
         </div>
       </div>
-      <div className="px-5 pb-5">
+      <div className="px-6 pb-6">
         <div className="docs-card-content">{children}</div>
       </div>
     </div>
@@ -290,14 +290,14 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
 
 function VideoPlaceholder({ title, duration }: { title: string; duration: string }) {
   return (
-    <div className="my-6 rounded-xl border border-border/30 overflow-hidden group cursor-pointer hover:border-border/40 transition-colors duration-200">
-      <div className="flex items-center gap-4 px-5 py-5">
-        <div className="w-10 h-10 rounded-full bg-primary/8 border border-primary/15 flex items-center justify-center shrink-0 group-hover:bg-primary/12 transition-colors">
-          <Play className="w-4 h-4 text-primary ml-0.5" />
+    <div className="my-6 docs-feature-card overflow-hidden group cursor-pointer">
+      <div className="flex items-center gap-4 px-6 py-5">
+        <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-colors" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)', border: '1px solid hsl(var(--docs-accent-soft) / 0.15)' }}>
+          <Play className="w-4 h-4 ml-0.5" style={{ color: 'hsl(var(--docs-accent))' }} />
         </div>
         <div>
-          <p className="text-[15px] font-medium text-foreground">{title}</p>
-          <span className="text-[12px] text-muted-foreground/55">{duration} · Coming Soon</span>
+          <p className="docs-card-title">{title}</p>
+          <span className="docs-caption mt-1 block">{duration} · Coming Soon</span>
         </div>
       </div>
     </div>
@@ -305,7 +305,7 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
 }
 
 function SectionDivider() {
-  return <div className="h-px bg-gradient-to-r from-transparent via-border/20 to-transparent my-8" />;
+  return <div className="docs-divider" />;
 }
 
 function SectionHeader({ id, title, description, icon: Icon }: {
@@ -320,29 +320,30 @@ function SectionHeader({ id, title, description, icon: Icon }: {
   }, [id]);
 
   return (
-    <div id={id} className="scroll-mt-24 mb-8 group">
-      <div className="flex items-center gap-2.5 mb-3">
-        <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
-          <Icon className="w-4 h-4 text-primary" />
+    <div id={id} className="scroll-mt-24 mb-10 group">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
+          <Icon className="w-5 h-5" style={{ color: 'hsl(var(--docs-accent))' }} />
         </div>
-        <h2 className="font-display text-[1.35rem] font-bold tracking-tight leading-tight">{title}</h2>
+        <h2 className="docs-section-title">{title}</h2>
         <button
           onClick={copyLink}
-          className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 p-1 rounded text-muted-foreground/40 hover:text-primary transition-all text-[12px] font-mono"
+          className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 p-1 rounded transition-all text-[13px] font-mono"
+          style={{ color: 'hsl(var(--docs-text-muted))' }}
           aria-label={`Copy link to ${title}`}
           title="Copy section link"
         >
           <span id={`copy-${id}`}>#</span>
         </button>
       </div>
-      <p className="text-[15px] text-muted-foreground/75 leading-[1.75] max-w-2xl lg:pl-[42px]">{description}</p>
+      <p className="docs-body-lg max-w-2xl lg:pl-[52px]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>{description}</p>
     </div>
   );
 }
 
 function ShortcutKey({ children }: { children: string }) {
   return (
-    <kbd className="px-2 py-1 rounded-md bg-muted border border-border text-[12px] font-mono font-semibold text-foreground">
+    <kbd className="px-2.5 py-1 rounded-md text-[12px] font-mono font-semibold" style={{ background: 'hsl(var(--docs-elevated))', border: '1px solid hsl(var(--docs-border-subtle))', color: 'hsl(var(--docs-text-strong))' }}>
       {children}
     </kbd>
   );
@@ -453,41 +454,46 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
     : SECTIONS;
 
   return (
-    <div className={cn("min-h-screen bg-background text-foreground", isInsideApp && "pb-6", mode === "bw" && "docs-bw")} role="document">
+    <div className={cn("docs-page min-h-screen", isInsideApp && "pb-6", mode === "bw" && "docs-bw")} role="document">
       {/* Shared navbar */}
       <LandingNavbar activePage="docs" isInsideApp={isInsideApp} />
 
       {/* Docs Header */}
-      <div className={cn("pt-20 border-b border-border/30", isInsideApp && "border-border/20")}>
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-8 py-10 lg:py-12">
-          <div className="flex items-center gap-2 mb-1">
-            <p className="text-[12px] font-medium text-muted-foreground/50 uppercase tracking-[0.08em]">TradeBook</p>
-            <ChevronRight className="w-3 h-3 text-muted-foreground/30" />
-            <p className="text-[12px] font-medium text-foreground/70 uppercase tracking-[0.08em]">Docs</p>
+      <div className="pt-20" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle))' }}>
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-8 py-12 lg:py-16">
+          <div className="flex items-center gap-2 mb-2">
+            <p className="docs-caption uppercase tracking-[0.1em]">TradeBook</p>
+            <ChevronRight className="w-3 h-3" style={{ color: 'hsl(var(--docs-text-muted))' }} />
+            <p className="docs-caption uppercase tracking-[0.1em]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>Documentation</p>
           </div>
-          <div className="flex items-center gap-3 mt-3 mb-3">
-            <h1 className="font-display text-[1.75rem] lg:text-[2rem] font-bold tracking-tight">Documentation</h1>
+          <div className="flex items-center gap-4 mt-4 mb-4">
+            <h1 className="docs-title">Documentation</h1>
             <button
               onClick={toggle}
               className={cn(
-                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all border",
+                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all",
                 mode === "bw"
-                  ? "bg-foreground text-background border-foreground"
-                  : "bg-muted/40 text-muted-foreground/60 border-border/30 hover:border-border/50"
+                  ? "text-background"
+                  : ""
               )}
+              style={{
+                background: mode === "bw" ? 'hsl(var(--docs-text-strong))' : 'hsl(var(--docs-elevated))',
+                border: `1px solid ${mode === "bw" ? 'hsl(var(--docs-text-strong))' : 'hsl(var(--docs-border-subtle))'}`,
+                color: mode === "bw" ? 'hsl(var(--docs-bg))' : 'hsl(var(--docs-text-muted))',
+              }}
             >
               <Palette className="w-3 h-3" />
               {mode === "bw" ? "B&W" : "Color"}
             </button>
           </div>
-          <p className="text-[15px] text-muted-foreground/75 leading-relaxed max-w-xl">
+          <p className="docs-body-lg max-w-xl" style={{ color: 'hsl(var(--docs-text-secondary))' }}>
             Complete guide to every TradeBook feature — from trade logging to advanced analytics.
           </p>
-          <div className="flex items-center gap-3 mt-4 text-[12px] text-muted-foreground/50">
-            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~35 min read</span>
-            <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
+          <div className="flex items-center gap-3 mt-5 docs-caption">
+            <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> ~35 min read</span>
+            <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.4)' }} />
             <span>Last updated: March 2026</span>
-            <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
+            <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.4)' }} />
             <span>26 sections</span>
           </div>
         </div>
@@ -498,18 +504,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           {/* Left Sidebar — desktop */}
           <TooltipProvider delayDuration={200}>
             <aside className={cn(
-              "hidden lg:block shrink-0 transition-all duration-300 border-r border-border/20",
-              sidebarCollapsed ? "w-14" : "w-[240px]"
-            )}>
+              "hidden lg:block shrink-0 transition-all duration-300",
+              sidebarCollapsed ? "w-14" : "w-[250px]"
+            )} style={{ borderRight: '1px solid hsl(var(--docs-border-subtle))' }}>
               <div className="sticky top-20 py-6 pr-5 pl-5">
                 {/* Header with collapse toggle */}
-                <div className={cn("flex items-center mb-4", sidebarCollapsed ? "justify-center" : "justify-between")}>
+                <div className={cn("flex items-center mb-5", sidebarCollapsed ? "justify-center" : "justify-between")}>
                   {!sidebarCollapsed && (
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/50">Navigation</p>
+                    <p className="docs-caption uppercase tracking-[0.12em]">Navigation</p>
                   )}
                   <button
                     onClick={toggleSidebar}
-                    className="p-1.5 rounded-md text-muted-foreground/40 hover:text-foreground hover:bg-muted/40 transition-colors"
+                    className="p-1.5 rounded-md transition-colors"
+                    style={{ color: 'hsl(var(--docs-text-muted))' }}
                     aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
                   >
                     {sidebarCollapsed ? <PanelLeftOpen className="w-3.5 h-3.5" /> : <PanelLeftClose className="w-3.5 h-3.5" />}
@@ -517,29 +524,34 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
                 {/* Search filter */}
                 {!sidebarCollapsed && (
-                  <div className="mb-4">
+                  <div className="mb-5">
                     <div className="relative">
-                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/30" />
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: 'hsl(var(--docs-text-muted))' }} />
                       <input
                         type="text"
                         value={sidebarSearch}
                         onChange={(e) => setSidebarSearch(e.target.value)}
                         placeholder="Search docs…"
-                        className="w-full h-8 pl-8 pr-3 rounded-lg bg-muted/20 border border-border/20 text-[13px] text-foreground placeholder:text-muted-foreground/35 focus:outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary/20 transition-all"
+                        className="w-full h-9 pl-9 pr-3 rounded-lg docs-sidebar-item focus:outline-none transition-all"
+                        style={{
+                          background: 'hsl(var(--docs-elevated))',
+                          border: '1px solid hsl(var(--docs-border-subtle))',
+                          color: 'hsl(var(--docs-text-primary))',
+                        }}
                       />
                     </div>
                   </div>
                 )}
-                <ScrollArea className="h-[calc(100vh-11rem)]">
+                <ScrollArea className="h-[calc(100vh-12rem)]">
                   <nav>
                     {sidebarGroups.map((group, gi) => {
                       const groupSections = filteredSections.filter((s) => group.ids.includes(s.id));
                       if (groupSections.length === 0) return null;
                       return (
                       <div key={group.label}>
-                         {gi > 0 && <div className="h-px bg-border/15 my-3" />}
+                         {gi > 0 && <div className="h-px my-3" style={{ background: 'hsl(var(--docs-border-subtle))' }} />}
                          {!sidebarCollapsed && (
-                           <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground/45 px-2.5 pt-2 pb-1.5">{group.label}</p>
+                           <p className="text-[10px] font-bold uppercase tracking-[0.12em] px-3 pt-2 pb-2" style={{ color: 'hsl(var(--docs-text-muted))' }}>{group.label}</p>
                         )}
                         {groupSections.map((s) => {
                           const isActive = activeSection === s.id;
@@ -548,21 +560,20 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                                key={s.id}
                                onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
                                className={cn(
-                                 "w-full flex items-center rounded-lg text-[13px] transition-all duration-150 text-left relative",
-                                  sidebarCollapsed ? "justify-center p-2" : "gap-2.5 px-2.5 py-[7px]",
-                                  isActive
-                                    ? "text-foreground font-medium bg-muted/50"
-                                    : "text-muted-foreground/65 hover:text-foreground hover:bg-muted/25"
+                                 "docs-sidebar-link w-full flex items-center text-left relative docs-sidebar-item",
+                                  sidebarCollapsed ? "justify-center p-2" : "gap-3 px-3 py-[8px]",
+                                  isActive && "active"
                                )}
                              >
                                {isActive && !sidebarCollapsed && (
                                  <motion.div
                                    layoutId="docs-active-pill"
-                                   className="absolute left-0 top-1/2 -translate-y-1/2 w-[2.5px] h-5 rounded-full bg-primary"
+                                   className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-full"
+                                   style={{ background: 'hsl(var(--docs-accent))' }}
                                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
                                  />
                                )}
-                               <s.icon className={cn("w-4 h-4 shrink-0", isActive ? "text-primary" : "")} />
+                               <s.icon className={cn("w-4 h-4 shrink-0")} style={{ color: isActive ? 'hsl(var(--docs-accent))' : 'hsl(var(--docs-text-muted))' }} />
                                {!sidebarCollapsed && <span className="truncate">{s.label}</span>}
                              </button>
                           );
@@ -587,13 +598,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </TooltipProvider>
 
           {/* Mobile tabs */}
-          <nav className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border/20" aria-label="Section navigation">
+          <nav className="lg:hidden fixed top-14 left-0 right-0 z-40 backdrop-blur-xl" style={{ background: 'hsl(var(--docs-bg) / 0.95)', borderBottom: '1px solid hsl(var(--docs-border-subtle))' }} aria-label="Section navigation">
             <div className="relative">
               {/* Fade edges */}
-              <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-4 z-10 bg-gradient-to-r from-background/95 to-transparent" />
-              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-4 z-10 bg-gradient-to-l from-background/95 to-transparent" />
+              <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-5 z-10" style={{ background: 'linear-gradient(to right, hsl(var(--docs-bg) / 0.95), transparent)' }} />
+              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-5 z-10" style={{ background: 'linear-gradient(to left, hsl(var(--docs-bg) / 0.95), transparent)' }} />
               <div
-                className="flex gap-1.5 overflow-x-auto overscroll-x-contain px-4 py-2.5 no-scrollbar"
+                className="flex gap-1.5 overflow-x-auto overscroll-x-contain px-5 py-3 no-scrollbar"
                 style={{ WebkitOverflowScrolling: "touch" }}
               >
                 {SECTIONS.map((s) => (
@@ -601,23 +612,27 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     key={s.id}
                     onClick={() => scrollTo(s.id)}
                     className={cn(
-                      "shrink-0 px-3 py-1.5 rounded-lg text-[12px] font-medium transition-colors whitespace-nowrap",
+                      "shrink-0 px-3.5 py-1.5 rounded-lg docs-sidebar-item transition-colors whitespace-nowrap",
                       activeSection === s.id
-                        ? "bg-foreground text-background"
-                        : "text-muted-foreground/60 hover:text-foreground hover:bg-muted/30"
+                        ? "font-semibold"
+                        : ""
                     )}
+                    style={{
+                      background: activeSection === s.id ? 'hsl(var(--docs-accent-soft) / 0.14)' : 'transparent',
+                      color: activeSection === s.id ? 'hsl(0 0% 100%)' : 'hsl(var(--docs-text-muted))',
+                    }}
                   >
                     {s.label}
                   </button>
                 ))}
                 {/* Spacer so last item isn't clipped by fade */}
-                <div className="shrink-0 w-2" aria-hidden="true" />
+                <div className="shrink-0 w-3" aria-hidden="true" />
               </div>
             </div>
           </nav>
 
           {/* Main content */}
-          <main className="flex-1 min-w-0 max-w-[740px] px-6 lg:px-12 py-10 lg:py-12 space-y-24 pt-[6.5rem] lg:pt-10">
+          <main className="flex-1 min-w-0 max-w-[760px] px-6 lg:px-14 py-10 lg:py-14 space-y-16 pt-[7rem] lg:pt-12">
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
@@ -3419,15 +3434,15 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </main>
 
           {/* Right sidebar — On this page */}
-          <aside className="hidden xl:block w-[190px] shrink-0 border-l border-border/15">
-            <div className="sticky top-20 py-8 pl-6">
-              <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground/50 mb-4">On this page</p>
-              <nav className="space-y-0.5 border-l border-border/20 pl-3">
+          <aside className="hidden xl:block w-[200px] shrink-0" style={{ borderLeft: '1px solid hsl(var(--docs-border-subtle))' }}>
+            <div className="sticky top-20 py-8 pl-6 pr-4">
+              <p className="docs-caption uppercase tracking-[0.12em] mb-5">On this page</p>
+              <nav className="space-y-0.5">
                 {(SECTION_ANCHORS[activeSection] || []).map((anchor) => (
                   <button
                     key={anchor.id}
                     onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                    className="block w-full text-left text-[13px] text-muted-foreground/60 hover:text-foreground py-1.5 transition-colors duration-150 leading-snug"
+                    className="docs-anchor-link block w-full text-left docs-sidebar-item py-2 transition-colors duration-150 leading-snug"
                   >
                     {anchor.label}
                   </button>
@@ -3446,7 +3461,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-xl bg-card border border-border/40 shadow-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-border/60 transition-all"
+            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-xl shadow-lg flex items-center justify-center transition-all"
+            style={{ background: 'hsl(var(--docs-elevated))', border: '1px solid hsl(var(--docs-border))', color: 'hsl(var(--docs-text-secondary))' }}
             aria-label="Back to top"
           >
             <ArrowUpRight className="w-4 h-4 -rotate-45" />
@@ -3456,15 +3472,15 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
       {/* Footer — only on standalone */}
       {!isInsideApp && (
-        <footer className="border-t border-border/30 py-12" role="contentinfo">
+        <footer style={{ borderTop: '1px solid hsl(var(--docs-border-subtle))' }} className="py-14" role="contentinfo">
           <div className="max-w-[1440px] mx-auto px-6 lg:px-8">
             <div className="grid md:grid-cols-4 gap-8 mb-8">
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <img src="/favicon-32x32.png" alt="TradeBook" className="h-6 object-contain" loading="lazy" />
-                  <span className="text-sm font-semibold text-foreground">TradeBook</span>
+                  <span className="docs-card-title" style={{ fontSize: '0.9375rem' }}>TradeBook</span>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed mb-4">The trading journal built for Indian markets.</p>
+                <p className="docs-helper leading-relaxed mb-4">The trading journal built for Indian markets.</p>
                 <Button size="sm" onClick={() => navigate("/login?mode=signup")} className="rounded-lg px-4 text-[12px] h-8">
                   Get Started <ArrowRight className="w-3 h-3" />
                 </Button>
@@ -3475,11 +3491,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }, { label: "Contact", href: "mailto:founder@mrchartist.com" }] },
               ].map((col) => (
                 <div key={col.title}>
-                  <h4 className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/50 mb-3">{col.title}</h4>
-                  <ul className="space-y-1.5">
+                  <h4 className="docs-caption uppercase tracking-[0.12em] mb-4">{col.title}</h4>
+                  <ul className="space-y-2">
                     {col.links.map((l) => (
                       <li key={l.label}>
-                        <button onClick={() => l.href.startsWith("mailto") ? window.open(l.href) : l.href.startsWith("#") ? document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: "smooth" }) : navigate(l.href)} className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
+                        <button onClick={() => l.href.startsWith("mailto") ? window.open(l.href) : l.href.startsWith("#") ? document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: "smooth" }) : navigate(l.href)} className="docs-sidebar-item transition-colors" style={{ color: 'hsl(var(--docs-text-secondary))' }}>
                           {l.label}
                         </button>
                       </li>
@@ -3488,12 +3504,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
               ))}
             </div>
-            <div className="h-px bg-border/30 mb-4" />
+            <div className="h-px mb-5" style={{ background: 'hsl(var(--docs-border-subtle))' }} />
             <div className="flex flex-col md:flex-row items-center justify-between gap-2">
-              <p className="text-[11px] text-muted-foreground/60">
+              <p className="docs-caption">
                 © {new Date().getFullYear()} TradeBook. All rights reserved.
               </p>
-              <span className="text-[10px] text-muted-foreground/40">Not SEBI registered · For educational purposes only</span>
+              <span className="docs-caption" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>Not SEBI registered · For educational purposes only</span>
             </div>
           </div>
         </footer>
