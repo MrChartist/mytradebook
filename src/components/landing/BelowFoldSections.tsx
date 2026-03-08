@@ -268,9 +268,9 @@ export function PricingSection() {
                   "Team & shared workspaces",
                   "Custom report exports",
                 ].map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-[13px] leading-relaxed text-muted-foreground/60">
+                  <li key={f} className="flex items-start gap-2 text-[13px] leading-[1.6] text-muted-foreground/60">
                     <Lock className="w-4 h-4 text-muted-foreground/20 shrink-0 mt-[1px]" />
-                    <span>{f}</span>
+                    <span className="tracking-[-0.006em]">{f}</span>
                   </li>
                 ))}
               </ul>
