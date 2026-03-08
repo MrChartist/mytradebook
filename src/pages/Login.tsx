@@ -232,7 +232,12 @@ export default function Login() {
               markets. Log trades, track performance, and build lasting discipline.
             </p>
 
-            <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+            <motion.div
+              className="grid grid-cols-2 gap-x-6 gap-y-3"
+              initial="hidden"
+              animate="visible"
+              variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07, delayChildren: 0.3 } } }}
+            >
               {[
                 { color: "bg-profit", label: "Trailing Stop Loss" },
                 { color: "bg-primary", label: "AI Insights" },
@@ -245,12 +250,17 @@ export default function Login() {
                 { color: "bg-[hsl(var(--tb-accent))]", label: "Daily Journal" },
                 { color: "bg-profit", label: "Position Sizing" },
               ].map((f) => (
-                <div key={f.label} className="flex items-center gap-2">
+                <motion.div
+                  key={f.label}
+                  className="flex items-center gap-2"
+                  variants={{ hidden: { opacity: 0, x: -12 }, visible: { opacity: 1, x: 0 } }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                >
                   <div className={cn("w-2 h-2 rounded-full shrink-0", f.color)} />
                   <span className="text-sm text-muted-foreground">{f.label}</span>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
 
