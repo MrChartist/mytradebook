@@ -22,34 +22,34 @@ const BODY_TEXT = "docs-body";
 export function ProTip({ children, variant = "tip" }: { children: ReactNode; variant?: "tip" | "warning" | "info" | "best-practice" }) {
   const styles = {
     tip: {
-      border: "border-primary/20",
-      bg: "bg-primary/[0.04]",
-      accent: "bg-primary",
-      iconColor: "text-primary",
+      border: "border-[hsl(24_88%_58%/0.2)]",
+      bg: "bg-[hsl(24_88%_58%/0.05)]",
+      accent: "bg-[hsl(24_88%_58%)]",
+      iconColor: "text-[hsl(24_88%_58%)]",
       icon: Lightbulb,
       label: "Pro Tip",
     },
     warning: {
-      border: "border-[hsl(var(--warning))]/20",
-      bg: "bg-[hsl(var(--warning))]/[0.04]",
-      accent: "bg-[hsl(var(--warning))]",
-      iconColor: "text-[hsl(var(--warning))]",
+      border: "border-[hsl(38_92%_50%/0.2)]",
+      bg: "bg-[hsl(38_92%_50%/0.04)]",
+      accent: "bg-[hsl(38_92%_50%)]",
+      iconColor: "text-[hsl(38_92%_50%)]",
       icon: AlertTriangle,
       label: "Watch Out",
     },
     info: {
-      border: "border-[hsl(var(--tb-accent))]/20",
-      bg: "bg-[hsl(var(--tb-accent))]/[0.04]",
-      accent: "bg-[hsl(var(--tb-accent))]",
-      iconColor: "text-[hsl(var(--tb-accent))]",
+      border: "border-[hsl(217_91%_68%/0.2)]",
+      bg: "bg-[hsl(217_91%_68%/0.04)]",
+      accent: "bg-[hsl(217_91%_68%)]",
+      iconColor: "text-[hsl(217_91%_68%)]",
       icon: Info,
       label: "Note",
     },
     "best-practice": {
-      border: "border-profit/20",
-      bg: "bg-profit/[0.04]",
-      accent: "bg-profit",
-      iconColor: "text-profit",
+      border: "border-[hsl(142_71%_45%/0.2)]",
+      bg: "bg-[hsl(142_71%_45%/0.04)]",
+      accent: "bg-[hsl(142_71%_45%)]",
+      iconColor: "text-[hsl(142_71%_45%)]",
       icon: Star,
       label: "Best Practice",
     },
@@ -58,14 +58,14 @@ export function ProTip({ children, variant = "tip" }: { children: ReactNode; var
   const Icon = s.icon;
 
   return (
-    <div className={cn(CARD_RADIUS, "border relative overflow-hidden", CARD_SPACING, s.border, s.bg)}>
+    <div className={cn(CARD_RADIUS, "border relative overflow-hidden", CARD_SPACING, s.border, s.bg, "docs-callout")}>
       {/* Left accent bar */}
       <div className={cn("absolute left-0 top-0 bottom-0 w-[3px]", s.accent)} />
-      <div className="flex items-start gap-3 px-5 py-4 pl-6">
+      <div className="flex items-start gap-3.5 px-6 py-5 pl-7">
         <Icon className={cn("w-4 h-4 shrink-0 mt-0.5", s.iconColor)} />
         <div className="flex-1 min-w-0">
-          <p className={cn("text-[11px] font-bold uppercase tracking-wider mb-1.5", s.iconColor)}>{s.label}</p>
-          <div className={cn(BODY_TEXT, "[&>p]:mb-0")}>{children}</div>
+          <p className={cn("text-[11px] font-bold uppercase tracking-wider mb-2", s.iconColor)}>{s.label}</p>
+          <div className="docs-body [&>p]:mb-0">{children}</div>
         </div>
       </div>
     </div>
