@@ -220,7 +220,7 @@ export default function Login() {
           <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-profit/10 rounded-full blur-[100px] animate-pulse-slow" />
 
           <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20">
-            <h2 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
+            <h2 className="text-4xl xl:text-5xl font-display font-bold leading-tight mb-6 tracking-tight">
               Know Your{" "}
               <span className="font-dancing italic text-[hsl(var(--tb-accent))]">Edge</span>.
               <br />
@@ -277,7 +277,7 @@ export default function Login() {
                     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
                       <Mail className="w-6 h-6 text-primary" />
                     </div>
-                    <h3 className="text-2xl sm:text-3xl font-bold mb-2">Reset Password</h3>
+                    <h3 className="text-2xl sm:text-3xl font-display font-bold mb-2 tracking-tight">Reset Password</h3>
                     <p className="text-muted-foreground text-sm sm:text-base">
                       Enter your email and we'll send you a reset link.
                     </p>
@@ -318,7 +318,7 @@ export default function Login() {
               ) : (
                 <>
                   <div className="text-center mb-6 sm:mb-8">
-                    <h3 className="text-2xl sm:text-3xl font-bold mb-2">
+                    <h3 className="text-2xl sm:text-3xl font-display font-bold mb-2 tracking-tight">
                       {authMode === "login" ? "Welcome Back" : "Create Account"}
                     </h3>
                     <p className="text-muted-foreground text-sm sm:text-base">
