@@ -3499,6 +3499,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </ExpandableDetail>
 
               <div className="mt-4"><KeyboardShortcutsDetailMockup /></div>
+
+              <NextStepBlock steps={[
+                { label: "Mobile & PWA", description: "Install TradeBook on your phone", targetId: "pwa" },
+                { label: "Settings", description: "Customize your workspace", targetId: "settings" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
