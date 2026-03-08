@@ -696,21 +696,21 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       <div className="max-w-[1360px] mx-auto flex">
         
         {/* ─────────────────────────────────────────────────────────────
-            LEFT SIDEBAR — Desktop only, collapsible
+            LEFT SIDEBAR — Desktop only, collapsible, with nested sub-topics
             ───────────────────────────────────────────────────────────── */}
         <TooltipProvider delayDuration={200}>
           <aside 
             className={cn(
               "hidden lg:block shrink-0 transition-all duration-300 ease-out",
-              sidebarCollapsed ? "w-[56px]" : "w-[220px]"
+              sidebarCollapsed ? "w-[56px]" : "w-[240px]"
             )} 
-            style={{ borderRight: '1px solid hsl(var(--docs-border-subtle) / 0.6)' }}
+            style={{ borderRight: '1px solid hsl(var(--docs-border-subtle) / 0.5)' }}
           >
-            <div className="sticky top-20 h-[calc(100vh-5rem)] flex flex-col py-6">
+            <div className="sticky top-20 h-[calc(100vh-5rem)] flex flex-col py-5">
               {/* Header */}
-              <div className={cn("flex items-center mb-5 px-4", sidebarCollapsed ? "justify-center" : "justify-between")}>
+              <div className={cn("flex items-center mb-4 px-4", sidebarCollapsed ? "justify-center" : "justify-between")}>
                 {!sidebarCollapsed && (
-                  <span className="docs-caption uppercase tracking-[0.08em]" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }}>Navigation</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.1em]" style={{ color: 'hsl(var(--docs-text-muted) / 0.4)' }}>Navigation</span>
                 )}
                 <button
                   onClick={toggleSidebar}
@@ -726,18 +726,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
               {/* Search */}
               {!sidebarCollapsed && (
-                <div className="px-3 mb-5">
+                <div className="px-3 mb-4">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }} />
+                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: 'hsl(var(--docs-text-muted) / 0.4)' }} />
                     <input
                       type="text"
                       value={sidebarSearch}
                       onChange={(e) => setSidebarSearch(e.target.value)}
                       placeholder="Filter sections…"
-                      className="w-full h-9 pl-9 pr-3 rounded-lg text-[13px] transition-all focus:outline-none"
+                      className="w-full h-8 pl-8 pr-3 rounded-md text-[12px] transition-all focus:outline-none focus:ring-1"
                       style={{
-                        background: 'hsl(var(--docs-elevated) / 0.5)',
-                        border: '1px solid hsl(var(--docs-border-subtle))',
+                        background: 'hsl(var(--docs-elevated) / 0.4)',
+                        border: '1px solid hsl(var(--docs-border-subtle) / 0.7)',
                         color: 'hsl(var(--docs-text-primary))',
                       }}
                     />
@@ -745,44 +745,47 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
               )}
 
-              {/* Nav items */}
-              <ScrollArea className="flex-1 px-2">
-                <nav className="space-y-0.5 pb-6">
+              {/* Nav items with nested sub-topics */}
+              <ScrollArea className="flex-1 docs-sidebar-scroll">
+                <nav className="pb-6 px-2">
                   {sidebarGroups.map((group, gi) => {
                     const groupSections = filteredSections.filter((s) => group.ids.includes(s.id));
                     if (groupSections.length === 0) return null;
                     return (
-                      <div key={group.label} className={cn(gi > 0 && "mt-3")}>
+                      <div key={group.label} className={cn(gi > 0 && "mt-4")}>
                         {gi > 0 && !sidebarCollapsed && (
-                          <div className="h-px mx-2 mb-3" style={{ background: 'hsl(var(--docs-border-subtle) / 0.5)' }} />
+                          <div className="h-px mx-2 mb-4" style={{ background: 'linear-gradient(90deg, hsl(var(--docs-border-subtle) / 0.5), transparent 80%)' }} />
                         )}
                         {!sidebarCollapsed && (
-                          <p className="docs-sidebar-group-label mb-1">{group.label}</p>
+                          <p className="docs-sidebar-group-label">{group.label}</p>
                         )}
-                        <div className="space-y-0.5">
+                        <div className="space-y-px">
                           {groupSections.map((s) => {
                             const isActive = activeSection === s.id;
+                            const subAnchors = SECTION_ANCHORS[s.id] || [];
+                            const showSubs = isActive && subAnchors.length > 0 && !sidebarCollapsed;
+
                             const btn = (
                               <button
                                 key={s.id}
                                 onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
                                 className={cn(
                                   "docs-sidebar-link w-full flex items-center text-left relative",
-                                  sidebarCollapsed ? "justify-center p-2.5" : "gap-2.5 px-3 py-[7px]",
+                                  sidebarCollapsed ? "justify-center p-2.5" : "gap-2.5 px-3 py-[6px]",
                                   isActive && "active"
                                 )}
                               >
                                 {isActive && !sidebarCollapsed && (
                                   <motion.div
                                     layoutId="docs-active-indicator"
-                                    className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full"
+                                    className="absolute left-0 top-0 bottom-0 w-[2.5px] rounded-r-full"
                                     style={{ background: 'hsl(var(--docs-accent))' }}
-                                    transition={{ type: "spring", stiffness: 380, damping: 26 }}
+                                    transition={{ type: "spring", stiffness: 400, damping: 28 }}
                                   />
                                 )}
                                 <s.icon 
-                                  className="w-4 h-4 shrink-0 transition-colors duration-150" 
-                                  style={{ color: isActive ? 'hsl(var(--docs-accent))' : 'hsl(var(--docs-text-muted) / 0.55)' }} 
+                                  className="w-[15px] h-[15px] shrink-0 transition-colors duration-150" 
+                                  style={{ color: isActive ? 'hsl(var(--docs-accent))' : 'hsl(var(--docs-text-muted) / 0.5)' }} 
                                 />
                                 {!sidebarCollapsed && (
                                   <span className="truncate">{s.label}</span>
@@ -790,17 +793,44 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                               </button>
                             );
 
-                            if (sidebarCollapsed) {
-                              return (
-                                <Tooltip key={s.id}>
-                                  <TooltipTrigger asChild>{btn}</TooltipTrigger>
-                                  <TooltipContent side="right" sideOffset={10} className="text-xs font-medium">
-                                    {s.label}
-                                  </TooltipContent>
-                                </Tooltip>
-                              );
-                            }
-                            return <React.Fragment key={s.id}>{btn}</React.Fragment>;
+                            const itemContent = (
+                              <React.Fragment key={s.id}>
+                                {sidebarCollapsed ? (
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>{btn}</TooltipTrigger>
+                                    <TooltipContent side="right" sideOffset={10} className="text-xs font-medium">
+                                      {s.label}
+                                    </TooltipContent>
+                                  </Tooltip>
+                                ) : btn}
+
+                                {/* Nested sub-topic anchors */}
+                                <AnimatePresence>
+                                  {showSubs && (
+                                    <motion.div
+                                      initial={{ height: 0, opacity: 0 }}
+                                      animate={{ height: "auto", opacity: 1 }}
+                                      exit={{ height: 0, opacity: 0 }}
+                                      transition={{ duration: 0.18, ease: "easeOut" }}
+                                      className="overflow-hidden"
+                                    >
+                                      <div className="ml-[26px] pl-3 py-1 space-y-px" style={{ borderLeft: '1px solid hsl(var(--docs-border-subtle) / 0.5)' }}>
+                                        {subAnchors.map((anchor) => (
+                                          <button
+                                            key={anchor.id}
+                                            onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                                            className="docs-sidebar-sub-link block w-full text-left px-2 py-[4px] rounded-md transition-all duration-150"
+                                          >
+                                            {anchor.label}
+                                          </button>
+                                        ))}
+                                      </div>
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                              </React.Fragment>
+                            );
+                            return itemContent;
                           })}
                         </div>
                       </div>

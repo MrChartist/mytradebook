@@ -932,31 +932,65 @@
     font-size: 0.8125rem;
     font-weight: 450;
     letter-spacing: 0.005em;
-    line-height: 1.4;
+    line-height: 1.35;
   }
   .docs-page .docs-sidebar-link:hover {
     color: hsl(var(--docs-text-primary));
-    background: hsl(var(--docs-elevated) / 0.6);
+    background: hsl(var(--docs-elevated) / 0.5);
   }
   .docs-page .docs-sidebar-link.active {
     color: hsl(var(--docs-accent));
     background: hsl(var(--docs-accent-soft) / 0.06);
-    font-weight: 540;
+    font-weight: 550;
   }
   .dark .docs-page .docs-sidebar-link.active {
     background: hsl(var(--docs-accent-soft) / 0.08);
   }
 
+  /* Sidebar sub-topic link (nested under active section) */
+  .docs-page .docs-sidebar-sub-link {
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 420;
+    line-height: 1.35;
+    letter-spacing: 0.005em;
+    color: hsl(var(--docs-text-muted) / 0.7);
+    transition: color 150ms ease-out, background 150ms ease-out;
+  }
+  .docs-page .docs-sidebar-sub-link:hover {
+    color: hsl(var(--docs-text-primary));
+    background: hsl(var(--docs-elevated) / 0.4);
+  }
+
   /* Sidebar group label — quieter, structured */
   .docs-page .docs-sidebar-group-label {
     font-family: 'Source Sans 3', system-ui, sans-serif;
-    font-size: 0.6875rem;
-    font-weight: 620;
-    letter-spacing: 0.07em;
+    font-size: 0.65rem;
+    font-weight: 650;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: hsl(var(--docs-text-muted) / 0.5);
-    padding: 0.375rem 0.75rem 0.125rem;
+    color: hsl(var(--docs-text-muted) / 0.4);
+    padding: 0.5rem 0.75rem 0.25rem;
     margin-bottom: 0.125rem;
+  }
+
+  /* Sidebar scrollbar styling */
+  .docs-sidebar-scroll [data-radix-scroll-area-viewport] {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--docs-border-subtle) / 0.3) transparent;
+  }
+  .docs-sidebar-scroll [data-radix-scroll-area-viewport]::-webkit-scrollbar {
+    width: 4px;
+  }
+  .docs-sidebar-scroll [data-radix-scroll-area-viewport]::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .docs-sidebar-scroll [data-radix-scroll-area-viewport]::-webkit-scrollbar-thumb {
+    background: hsl(var(--docs-border-subtle) / 0.3);
+    border-radius: 9999px;
+  }
+  .docs-sidebar-scroll [data-radix-scroll-area-viewport]::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--docs-border-subtle) / 0.5);
   }
 
   /* ── Docs right rail (On this page) ── */
