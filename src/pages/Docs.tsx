@@ -2049,8 +2049,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 15. Settings ───────────────────────────── */}
+            {/* ── Phase 23. Settings ───────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={23} total={26} />
               <SectionHeader
                 id="settings"
                 title="Settings"
