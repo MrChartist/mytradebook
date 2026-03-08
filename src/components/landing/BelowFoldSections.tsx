@@ -296,21 +296,23 @@ export function IndianMarketsSection() {
             </p>
             <ul className="space-y-2 mb-10">
               {[
-                "NSE, BSE & MCX exchange support",
-                "INR formatting with Lakhs & Crores",
-                "Dhan broker auto-sync",
-                "Market hours & holiday awareness",
+                { text: "NSE, BSE & MCX exchange support", icon: Globe },
+                { text: "INR formatting with Lakhs & Crores", icon: CandlestickChart },
+                { text: "Dhan broker auto-sync", icon: Layers },
+                { text: "Market hours & holiday awareness", icon: Clock },
               ].map((item, i) => (
                 <motion.li
-                  key={item}
+                  key={item.text}
                   className="flex items-center gap-2.5 text-[15px] text-foreground/85 tracking-[-0.006em]"
                   initial={{ opacity: 0, x: -15 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08, duration: 0.4 }}
                 >
-                  <CheckCircle2 className="w-4 h-4 text-profit shrink-0" />
-                  <span>{item}</span>
+                  <div className="w-6 h-6 rounded-md bg-profit/10 flex items-center justify-center shrink-0">
+                    <item.icon className="w-3.5 h-3.5 text-profit" />
+                  </div>
+                  <span>{item.text}</span>
                 </motion.li>
               ))}
             </ul>
