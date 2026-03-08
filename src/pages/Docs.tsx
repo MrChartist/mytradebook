@@ -514,7 +514,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                         value={sidebarSearch}
                         onChange={(e) => setSidebarSearch(e.target.value)}
                         placeholder="Filter…"
-                        className="w-full h-7 pl-7 pr-2 rounded bg-muted/30 border border-border/30 text-[11px] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+                        className="w-full h-7 pl-7 pr-2 rounded bg-muted/30 border border-border/30 text-[12px] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
                       />
                     </div>
                   </div>
