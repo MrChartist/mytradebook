@@ -3436,7 +3436,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                             </div>
                           )}
 
-                          {release.improvements && release.improvements.length > 0 && (
+                          {"improvements" in release && release.improvements && release.improvements.length > 0 && (
                             <div>
                               <div className="flex items-center gap-1.5 mb-1.5">
                                 <TrendingUp className="w-3 h-3 text-primary" />
