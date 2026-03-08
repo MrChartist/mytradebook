@@ -943,8 +943,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip>
                 <p>Create a template for each of your top 3 setups. When you see a setup forming, use the template to log the trade in under 10 seconds — no more missed opportunities.</p>
               </ProTip>
-              <SubTopic title="Template Setup" description="Create and manage reusable trade templates." />
-              <VideoPlaceholder title="Setting Up Trade Templates" duration="2 min" />
+              <SubTopic title="Template Setup" description="Create and manage reusable trade templates." id="tpl-setup" />
+              <QuickNav items={[
+                { label: "Creating Templates", id: "tpl-setup" },
+                { label: "Smart Suggestions", id: "tpl-setup" },
+              ]} />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Zap} title="Creating Templates">
                   <p className="text-sm text-muted-foreground mb-3">Build templates for your most common trade setups:</p>
