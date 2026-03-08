@@ -353,23 +353,22 @@ export default function Login() {
                     </button>
                   </div>
 
-                  <form onSubmit={handleEmailAuth} className="space-y-4">
+                  <form onSubmit={handleEmailAuth} className="space-y-5">
                     {authMode === "signup" && (
                       <div>
-                        <label className="text-sm font-medium mb-2 block">Full Name</label>
+                        <label className="text-[13px] font-medium mb-2 block">Full Name</label>
                         <Input
                           type="text"
                           placeholder="Enter your name"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="h-12 sm:h-11 text-base sm:text-sm"
                           autoComplete="name"
                         />
                       </div>
                     )}
 
                     <div>
-                      <label className="text-sm font-medium mb-2 block">Email Address</label>
+                      <label className="text-[13px] font-medium mb-2 block">Email Address</label>
                       <Input
                         type="email"
                         placeholder="Enter your email"
@@ -377,7 +376,6 @@ export default function Login() {
                         onChange={(e) => setEmail(e.target.value)}
                         onBlur={() => setEmailTouched(true)}
                         className={cn(
-                          "h-12 sm:h-11 text-base sm:text-sm",
                           emailError && "border-destructive focus-visible:ring-destructive"
                         )}
                         autoComplete="email"
@@ -385,18 +383,18 @@ export default function Login() {
                         required
                       />
                       {emailError && (
-                        <p className="text-xs text-destructive mt-1.5">Please enter a valid email address</p>
+                        <p className="text-[11px] text-destructive mt-1.5">Please enter a valid email address</p>
                       )}
                     </div>
 
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <label className="text-sm font-medium">Password</label>
+                        <label className="text-[13px] font-medium">Password</label>
                         {authMode === "login" && (
                           <button
                             type="button"
                             onClick={() => setAuthMode("forgot")}
-                            className="text-xs text-primary hover:text-primary/80 font-medium py-1"
+                            className="text-[12px] text-primary hover:text-primary/80 font-medium py-1"
                           >
                             Forgot password?
                           </button>
@@ -408,7 +406,7 @@ export default function Login() {
                           placeholder="Enter your password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="h-12 sm:h-11 pr-10 text-base sm:text-sm"
+                          className="pr-10"
                           autoComplete={authMode === "login" ? "current-password" : "new-password"}
                           required
                           minLength={6}
