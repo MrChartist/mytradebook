@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useUserSettings } from "./useUserSettings";
+import { arrayMove } from "@dnd-kit/sortable";
 
 export interface WidgetConfig {
   id: string;
@@ -8,7 +9,6 @@ export interface WidgetConfig {
   order: number;
 }
 
-// Type for user settings with dashboard_layout
 interface UserSettingsWithLayout {
   dashboard_layout?: WidgetConfig[] | null;
 }
@@ -37,7 +37,6 @@ export function useDashboardLayout() {
     const saved = settingsWithLayout?.dashboard_layout;
 
     if (saved && Array.isArray(saved)) {
-      // Merge saved with defaults to handle new widgets + removed widgets
       const merged = DEFAULT_WIDGETS.map((dw) => {
         const found = saved.find((s) => s.id === dw.id);
         return found ? { ...dw, visible: found.visible, order: found.order } : dw;
@@ -47,13 +46,17 @@ export function useDashboardLayout() {
     }
   }, [settings]);
 
+  const persistWidgets = useCallback((next: WidgetConfig[]) => {
+    updateSettings.mutate({ dashboard_layout: next } as any);
+  }, [updateSettings]);
+
   const toggleWidget = useCallback((id: string) => {
     setWidgets((prev) => {
       const next = prev.map((w) => (w.id === id ? { ...w, visible: !w.visible } : w));
-      updateSettings.mutate({ dashboard_layout: next } as any);
+      persistWidgets(next);
       return next;
     });
-  }, [updateSettings]);
+  }, [persistWidgets]);
 
   const moveWidget = useCallback((id: string, direction: "up" | "down") => {
     setWidgets((prev) => {
@@ -64,15 +67,23 @@ export function useDashboardLayout() {
       const next = [...prev];
       [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
       const reordered = next.map((w, i) => ({ ...w, order: i }));
-      updateSettings.mutate({ dashboard_layout: reordered } as any);
+      persistWidgets(reordered);
       return reordered;
     });
-  }, [updateSettings]);
+  }, [persistWidgets]);
+
+  const reorderWidgets = useCallback((oldIndex: number, newIndex: number) => {
+    setWidgets((prev) => {
+      const next = arrayMove(prev, oldIndex, newIndex).map((w, i) => ({ ...w, order: i }));
+      persistWidgets(next);
+      return next;
+    });
+  }, [persistWidgets]);
 
   const resetLayout = useCallback(() => {
     setWidgets(DEFAULT_WIDGETS);
     updateSettings.mutate({ dashboard_layout: null } as any);
   }, [updateSettings]);
 
-  return { widgets, toggleWidget, moveWidget, resetLayout };
+  return { widgets, toggleWidget, moveWidget, reorderWidgets, resetLayout };
 }

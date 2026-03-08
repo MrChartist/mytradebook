@@ -590,3 +590,35 @@
 /* Hide scrollbar utility */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Ticker scroll animation ────────────────── */
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.ticker-scroll {
+  animation: ticker-scroll 30s linear infinite;
+}
+
+.ticker-scroll:hover {
+  animation-play-state: paused;
+}
+
+/* ── Card flip on hover ─────────────────────── */
+.card-hover-lift {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+.card-hover-lift:hover {
+  transform: translateY(-4px) rotateX(2deg);
+}
+
+/* ── Profit pulse glow ──────────────────────── */
+@keyframes profit-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--profit) / 0.2); }
+  50% { box-shadow: 0 0 12px 4px hsl(var(--profit) / 0.15); }
+}
+
+.profit-pulse-glow {
+  animation: profit-pulse 2s ease-in-out infinite;
+}
