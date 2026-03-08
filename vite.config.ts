@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => ({
         background_color: "#0a0f1c",
         display: "standalone",
         orientation: "portrait",
-        start_url: "/",
+        start_url: "/dashboard",
         categories: ["finance", "productivity"],
         icons: [
           {
@@ -73,7 +73,6 @@ export default defineConfig(({ mode }) => ({
           "vendor-motion": ["framer-motion"],
           "vendor-charts": ["recharts"],
           "vendor-supabase": ["@supabase/supabase-js"],
-          "vendor-canvas": ["konva", "react-konva"],
           "vendor-date": ["date-fns"],
           "vendor-dnd": ["@dnd-kit/core", "@dnd-kit/sortable", "@dnd-kit/utilities"],
         },

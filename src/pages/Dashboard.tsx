@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, createContext, useContext } from "react";
+import { useState, useMemo, useCallback, createContext, useContext, lazy, Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
 import { OnboardingWelcome } from "@/components/dashboard/OnboardingWelcome";
@@ -11,13 +11,15 @@ import { DashboardMonthlyMetrics } from "@/components/dashboard/DashboardMonthly
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { EquityCurve } from "@/components/dashboard/EquityCurve";
 import { StreakDiscipline } from "@/components/dashboard/StreakDiscipline";
-import { JournalCalendarView } from "@/components/journal/JournalCalendarView";
 import { RiskGoalWidget } from "@/components/dashboard/RiskGoalWidget";
-import { AITradeInsights } from "@/components/analytics/AITradeInsights";
-import { PortfolioHeatMap } from "@/components/dashboard/PortfolioHeatMap";
-import { AchievementsBadgeGrid } from "@/components/dashboard/AchievementsBadgeGrid";
 import { FloatingTradeTicker } from "@/components/dashboard/FloatingTradeTicker";
 import { SortableWidgetItem } from "@/components/dashboard/DashboardWidgetSortable";
+
+// Lazy-loaded heavy widgets
+const JournalCalendarView = lazy(() => import("@/components/journal/JournalCalendarView").then(m => ({ default: m.JournalCalendarView })));
+const AITradeInsights = lazy(() => import("@/components/analytics/AITradeInsights").then(m => ({ default: m.AITradeInsights })));
+const PortfolioHeatMap = lazy(() => import("@/components/dashboard/PortfolioHeatMap").then(m => ({ default: m.PortfolioHeatMap })));
+const AchievementsBadgeGrid = lazy(() => import("@/components/dashboard/AchievementsBadgeGrid").then(m => ({ default: m.AchievementsBadgeGrid })));
 import { useAchievements } from "@/hooks/useAchievements";
 import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
@@ -135,7 +137,7 @@ export default function Dashboard() {
   }, [trades]);
 
   const handleCalendarDayClick = useCallback((dateStr: string) => {
-    navigate("/calendar");
+    navigate(`/calendar?date=${dateStr}`);
   }, [navigate]);
 
   const alertsVisible = widgets.find((w) => w.id === "alerts")?.visible ?? true;
@@ -164,7 +166,7 @@ export default function Dashboard() {
       case "riskGoal":
         return <RiskGoalWidget key={w.id} />;
       case "heatMap":
-        return <PortfolioHeatMap key={w.id} />;
+        return <Suspense fallback={<Skeleton className="h-64 w-full rounded-xl" />}><PortfolioHeatMap key={w.id} /></Suspense>;
       case "chart":
         return (
           <div key={w.id} className={cn("grid grid-cols-1 gap-4", alertsVisible ? "lg:grid-cols-3" : "")}>
@@ -183,14 +185,16 @@ export default function Dashboard() {
           <div key={w.id} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div className="min-h-[340px]"><StreakDiscipline /></div>
             <div className="min-h-[340px]">
-              <JournalCalendarView
-                calendarData={calendarData}
-                isLoading={tradesLoading}
-                onTradeClick={() => {}}
-                compact
-                showLink
-                onDayClick={handleCalendarDayClick}
-              />
+              <Suspense fallback={<Skeleton className="h-[340px] w-full rounded-xl" />}>
+                <JournalCalendarView
+                  calendarData={calendarData}
+                  isLoading={tradesLoading}
+                  onTradeClick={() => {}}
+                  compact
+                  showLink
+                  onDayClick={handleCalendarDayClick}
+                />
+              </Suspense>
             </div>
           </div>
         );
@@ -199,9 +203,9 @@ export default function Dashboard() {
       case "actions":
         return <QuickActions key={w.id} />;
       case "aiInsights":
-        return <AITradeInsights key={w.id} compact maxInsights={2} />;
+        return <Suspense fallback={<Skeleton className="h-48 w-full rounded-xl" />}><AITradeInsights key={w.id} compact maxInsights={2} /></Suspense>;
       case "achievements":
-        return <AchievementsBadgeGrid key={w.id} />;
+        return <Suspense fallback={<Skeleton className="h-48 w-full rounded-xl" />}><AchievementsBadgeGrid key={w.id} /></Suspense>;
       default:
         return null;
     }

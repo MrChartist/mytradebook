@@ -5,11 +5,13 @@ import {
   ArrowRight, BookOpen, CheckCircle2, ChevronRight, Zap,
   Crown, Lock, Shield, Star, Quote, Sparkles,
   TrendingUp, Layers, Globe, Clock, BarChart3, CandlestickChart,
+  ChevronDown,
 } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 import { fadeUp, blurIn, slideFromLeft, slideFromRight, popIn, MotionSection, SectionBadge, GradientDivider } from "./LandingShared";
 
@@ -191,7 +193,7 @@ export function TestimonialsSection() {
   const secondary = [testimonials[1], testimonials[2], testimonials[5]];
 
   return (
-    <section className="py-28 lg:py-36" aria-label="Testimonials">
+    <section id="testimonials" className="py-28 lg:py-36" aria-label="Testimonials">
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>Testimonials</SectionBadge>
@@ -473,6 +475,78 @@ export function DocsCTASection() {
   );
 }
 
+/* ─── FAQ Section ─── */
+
+const faqs = [
+  { q: "Is TradeBook free?", a: "Yes, TradeBook is completely free during the beta period. All features — trade logging, AI analytics, alerts, broker integration — are included at no cost. No credit card required." },
+  { q: "Which Indian markets does TradeBook support?", a: "TradeBook supports NSE, BSE, and MCX markets covering Equity Cash, Equity Intraday, Futures, Options, Commodities, and Currency segments." },
+  { q: "Does TradeBook integrate with brokers?", a: "Yes, TradeBook integrates with Dhan for live portfolio sync, auto-trade import, and one-click execution. More broker integrations are on the roadmap." },
+  { q: "Can I use TradeBook on mobile?", a: "Absolutely. TradeBook is a Progressive Web App (PWA) that works on any device. Install it on your phone for a native app-like experience with offline support." },
+  { q: "How does the AI analytics work?", a: "TradeBook uses AI to detect trading patterns, provide trade coaching, generate performance insights, and suggest improvements based on your trading history — all without sharing your data externally." },
+  { q: "Is my data secure?", a: "Yes. TradeBook uses bank-grade encryption and your data is stored securely. We never share or sell your trading data to anyone." },
+];
+
+function FAQItem({ faq, index }: { faq: typeof faqs[0]; index: number }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <motion.div
+      variants={fadeUp}
+      custom={index * 0.05}
+      className="border border-border/30 rounded-xl overflow-hidden bg-card/50 backdrop-blur-sm"
+      style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}
+    >
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between p-5 md:p-6 text-left gap-4 hover:bg-muted/20 transition-colors"
+        aria-expanded={open}
+      >
+        <span className="text-[15px] md:text-base font-medium tracking-[-0.01em]">{faq.q}</span>
+        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
+          <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
+        </motion.div>
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <p className="px-5 md:px-6 pb-5 md:pb-6 text-[14px] md:text-[15px] text-muted-foreground leading-[1.7] tracking-[-0.006em]">
+              {faq.a}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+export function FAQSection() {
+  return (
+    <section id="faq" className="py-28 lg:py-36" aria-label="Frequently asked questions">
+      <MotionSection className="max-w-3xl mx-auto px-6">
+        <motion.div variants={fadeUp} className="text-center mb-16">
+          <SectionBadge>FAQ</SectionBadge>
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.06] tracking-[-0.03em]">
+            Frequently asked{" "}<span className="text-shimmer">questions</span>
+          </h2>
+          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-[1rem] leading-[1.7]">
+            Everything you need to know about TradeBook.
+          </p>
+        </motion.div>
+        <div className="space-y-3">
+          {faqs.map((faq, i) => (
+            <FAQItem key={i} faq={faq} index={i} />
+          ))}
+        </div>
+      </MotionSection>
+    </section>
+  );
+}
+
 export function FinalCTASection() {
   const navigate = useNavigate();
   return (
@@ -554,9 +628,21 @@ export function FooterSection() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
   const [email, setEmail] = useState("");
 
-  const handleNewsletter = (e: React.FormEvent) => {
+  const handleNewsletter = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
+    try {
+      const { error } = await supabase
+        .from("newsletter_subscribers")
+        .insert({ email: email.trim().toLowerCase() });
+      if (error && error.code === "23505") {
+        // duplicate — still show success
+      } else if (error) {
+        throw error;
+      }
+    } catch {
+      // Silently fail — still show confirmation
+    }
     setEmail("");
     const el = document.createElement("div");
     el.textContent = "✓ Thanks! We'll keep you posted.";
@@ -600,6 +686,8 @@ export function FooterSection() {
             <div className="flex items-center gap-2">
               {[
                 { href: "mailto:founder@mrchartist.com", icon: "✉", label: "Email" },
+                { href: "https://x.com/mrchartist_in", icon: "𝕏", label: "X / Twitter" },
+                { href: "https://youtube.com/@mrchartist", icon: "▶", label: "YouTube" },
               ].map((s) => (
                 <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="w-8 h-8 rounded-full bg-muted/30 border border-border/20 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all text-xs">
                   {s.icon}
@@ -629,8 +717,9 @@ export function FooterSection() {
             <h4 className="text-xs uppercase tracking-[0.12em] font-bold text-muted-foreground/50 mb-4">Resources</h4>
             <ul className="space-y-1.5 text-[14px] text-muted-foreground">
               {[
-                { label: "Documentation", action: () => navigate("/docs") },
+                { label: "Changelog", action: () => navigate("/docs#changelog") },
                 { label: "Contact Us", action: () => window.open("mailto:founder@mrchartist.com", "_blank") },
+                { label: "FAQ", action: () => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }) },
               ].map((l) => (
                 <li key={l.label}>
                   <button onClick={l.action} className="inline-block py-0.5 hover:text-foreground transition-colors">{l.label}</button>
