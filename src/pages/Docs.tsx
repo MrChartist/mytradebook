@@ -287,14 +287,14 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
 
 function VideoPlaceholder({ title, duration }: { title: string; duration: string }) {
   return (
-    <div className="my-5 rounded-xl border border-border/20 bg-card/40 overflow-hidden group cursor-pointer hover:border-border/35 transition-all duration-200">
-      <div className="relative bg-gradient-to-br from-muted/30 to-muted/10 flex items-center justify-center py-12">
-        <div className="relative flex flex-col items-center gap-2.5">
-          <div className="w-12 h-12 rounded-full bg-primary/8 border border-primary/15 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-            <Play className="w-5 h-5 text-primary ml-0.5" />
-          </div>
-          <p className="text-[13px] font-semibold text-foreground">{title}</p>
-          <span className="text-[9px] text-muted-foreground/60 bg-muted/30 rounded-full px-2.5 py-0.5 font-medium">{duration} · Coming Soon</span>
+    <div className="my-5 rounded-lg border border-border/40 bg-muted/20 overflow-hidden group cursor-pointer hover:border-border/60 transition-colors duration-200">
+      <div className="flex items-center gap-3 px-4 py-6">
+        <div className="w-10 h-10 rounded-full bg-primary/8 border border-primary/15 flex items-center justify-center shrink-0">
+          <Play className="w-4 h-4 text-primary ml-0.5" />
+        </div>
+        <div>
+          <p className="text-[13px] font-medium text-foreground">{title}</p>
+          <span className="text-[11px] text-muted-foreground/60">{duration} · Coming Soon</span>
         </div>
       </div>
     </div>
@@ -302,13 +302,7 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
 }
 
 function SectionDivider() {
-  return (
-    <div className="flex items-center gap-4 py-4">
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/25 to-transparent" />
-      <div className="w-1 h-1 rounded-full bg-primary/15" />
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/25 to-transparent" />
-    </div>
-  );
+  return <div className="h-px bg-border/30 my-2" />;
 }
 
 function SectionHeader({ id, title, description, icon: Icon }: {
