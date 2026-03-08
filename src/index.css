@@ -983,11 +983,11 @@
   /* Sidebar group label — quieter, structured */
   .docs-page .docs-sidebar-group-label {
     font-family: 'Inter', system-ui, sans-serif;
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
     font-weight: 650;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: hsl(var(--docs-text-muted) / 0.4);
+    color: hsl(var(--docs-text-muted) / 0.5);
     padding: 0.5rem 0.75rem 0.25rem;
     margin-bottom: 0.125rem;
   }
