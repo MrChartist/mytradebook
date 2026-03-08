@@ -415,16 +415,16 @@ export function TestimonialsSection() {
 export function IndianMarketsSection() {
   const navigate = useNavigate();
   return (
-    <section className="py-24 lg:py-32" aria-label="Built for Indian markets">
+    <section className="py-28 lg:py-36" aria-label="Built for Indian markets">
       <MotionSection className="max-w-5xl mx-auto px-6">
-        <div className="grid md:grid-cols-2 gap-14 items-center">
+        <div className="grid md:grid-cols-2 gap-16 items-center">
           {/* Text side */}
           <motion.div variants={fadeUp}>
             <SectionBadge>Made in India</SectionBadge>
-            <h2 className="font-heading text-[2rem] lg:text-[2.75rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">
+            <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-6 leading-[1.08] tracking-[-0.018em]">
               Built for{" "}<span className="accent-serif">Indian</span>{" "}markets
             </h2>
-            <p className="text-muted-foreground text-[15px] leading-[1.7] mb-8 tracking-[-0.006em]">
+            <p className="text-muted-foreground text-[15px] lg:text-[1rem] leading-[1.7] mb-8 tracking-[-0.006em]">
               Unlike generic journals, TradeBook understands Indian market structure — segments, lot sizes, INR formatting, and trading hours.
             </p>
             <ul className="space-y-2 mb-10">
