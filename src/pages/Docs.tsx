@@ -1506,7 +1506,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Click any date to open the journal editor",
                 ]} />
               </FeatureCard>
-              <SubTopic title="Journal Editor" description="Write structured daily reflections to track your trading mindset." />
+              <SubTopic title="Journal Editor" description="Write structured daily reflections to track your trading mindset." id="cal-editor" />
               <FeatureCard icon={FileText} title="Daily Journal Entry">
                 <FeatureList items={[
                   "Pre-market plan — write your plan before market opens",
