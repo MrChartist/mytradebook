@@ -1525,6 +1525,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Search alerts by symbol — shows condition type and threshold",
                   "Search journal entries — matches text in plans, reviews, and lessons",
                   "Dynamic results appear after typing 2+ characters",
+                  "Quick Trade Entry — keyboard-only trade logging (Symbol → Type → Price → Qty → Confirm)",
                 ]} />
               </FeatureCard>
               <FeatureCard icon={Command} title="All Shortcuts">
