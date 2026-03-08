@@ -804,6 +804,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Active Alerts — triggered today count with price/technical split → Alerts",
                 ]} />
                 <div className="mt-4"><KPICardsDetailMockup /></div>
+                <MockupCaption>Each KPI card is clickable — tap to navigate directly to the relevant detail page (Reports, Trades, Analytics, or Alerts).</MockupCaption>
               </FeatureCard>
 
               <FeatureCard icon={Gauge} title="Risk Gauge & Goal Tracker">
