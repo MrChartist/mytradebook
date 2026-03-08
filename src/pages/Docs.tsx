@@ -728,7 +728,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
   }, [activeSection, sidebarGroups]);
 
   return (
-    <div className={cn("docs-page min-h-screen", isInsideApp && "pb-6", mode === "bw" && "docs-bw")} role="document">
+    <div className={cn("docs-page min-h-screen", isInsideApp && "pb-6", mode === "bw" && "docs-bw")} role="document" style={{ scrollBehavior: 'smooth' }}>
       {/* Reading progress bar */}
       <div className="fixed top-0 left-0 right-0 z-[60] h-[2px]" style={{ background: 'hsl(var(--docs-border-subtle) / 0.2)' }}>
         <div
