@@ -118,7 +118,6 @@ export function HeroSection() {
               <Button
                 size="lg"
                 className="h-14 px-10 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_8px_32px_hsl(var(--tb-accent)/0.45)] font-semibold shimmer-cta tracking-wide"
-                style={{ fontFamily: "'Sora', 'Inter', sans-serif" }}
                 onClick={() => navigate("/login?mode=signup")}
               >
                 Start Free
