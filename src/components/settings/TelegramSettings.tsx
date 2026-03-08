@@ -91,7 +91,7 @@ function ChatIdHelpGuide() {
           <ol className="list-decimal list-inside space-y-0.5 ml-1">
             <li>Add your bot to the group</li>
             <li>Send any message in the group</li>
-            <li>Forward any group message to <a href="https://t.me/userinfobot" target="_blank" rel="noopener" className="text-primary hover:underline">@userinfobot</a> — it will reply with the group Chat ID</li>
+            <li>Forward any group message to <a href="https://t.me/userinfobot" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">@userinfobot</a> — it will reply with the group Chat ID</li>
             <li>Group IDs start with <code className="bg-accent px-1 rounded">-</code> (e.g. <code className="bg-accent px-1 rounded">-987654321</code>)</li>
           </ol>
         </div>
