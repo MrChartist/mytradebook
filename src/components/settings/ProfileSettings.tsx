@@ -265,24 +265,24 @@ function DataExportCard() {
   };
 
   return (
-    <div className="premium-card-hover p-5">
-      <div className="flex items-center gap-2.5 mb-3">
+    <div className="premium-card p-6">
+      <div className="flex items-center gap-3 mb-4">
         <div className="icon-badge-sm bg-primary/8">
           <Download className="w-4 h-4 text-primary" />
         </div>
         <div>
-          <h2 className="text-[15px] font-semibold">Data Export</h2>
-          <p className="text-[11px] text-muted-foreground/50">Download a complete backup as JSON</p>
+          <h2 className="text-base font-semibold font-heading">Data Export</h2>
+          <p className="text-[12px] text-muted-foreground/60">Download a complete backup as JSON</p>
         </div>
       </div>
-      <p className="text-[12px] text-muted-foreground/40 mb-3.5 leading-relaxed">
+      <p className="text-[13px] text-muted-foreground/50 mb-4 leading-relaxed">
         Trades, journal entries, alerts, studies, watchlists, templates, and settings.
       </p>
-      <Button variant="outline" onClick={handleExport} disabled={exporting} className="h-8 text-[11px] rounded-lg border-border/20">
+      <Button variant="outline" onClick={handleExport} disabled={exporting} className="h-9 text-[12px] rounded-lg">
         {exporting ? (
-          <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
         ) : (
-          <Download className="w-3.5 h-3.5 mr-1.5" />
+          <Download className="w-4 h-4 mr-2" />
         )}
         {exporting ? "Exporting…" : "Download Full Backup"}
       </Button>
