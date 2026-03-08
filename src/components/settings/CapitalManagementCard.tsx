@@ -135,6 +135,9 @@ export default function CapitalManagementCard() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-base">{txType === "DEPOSIT" ? "Add Funds" : "Withdraw Funds"}</DialogTitle>
+            <p className="text-[12px] text-muted-foreground/50">
+              {txType === "DEPOSIT" ? "Record a capital deposit to your trading account." : "Record a capital withdrawal from your trading account."}
+            </p>
           </DialogHeader>
           <div className="space-y-3.5 pt-1">
             <div className="space-y-1.5">

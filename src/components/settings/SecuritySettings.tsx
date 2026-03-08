@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export default function SecuritySettings() {
   const [changingPassword, setChangingPassword] = useState(false);
@@ -93,8 +94,11 @@ export default function SecuritySettings() {
                   setPasswordForm({ ...passwordForm, newPassword: e.target.value })
                 }
                 className="bg-muted/20 border-border/20 h-9 text-[13px] focus:border-primary/30"
-                placeholder="Enter new password"
+                placeholder="Min 8 characters"
               />
+              {passwordForm.newPassword.length > 0 && passwordForm.newPassword.length < 8 && (
+                <p className="text-[10px] text-warning">Must be at least 8 characters</p>
+              )}
             </div>
 
             <div className="space-y-1.5">
@@ -106,16 +110,22 @@ export default function SecuritySettings() {
                 onChange={(e) =>
                   setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })
                 }
-                className="bg-muted/20 border-border/20 h-9 text-[13px] focus:border-primary/30"
+                className={cn(
+                  "bg-muted/20 border-border/20 h-9 text-[13px] focus:border-primary/30",
+                  passwordForm.confirmPassword.length > 0 && passwordForm.newPassword !== passwordForm.confirmPassword && "border-destructive focus-visible:ring-destructive"
+                )}
                 placeholder="Confirm new password"
               />
+              {passwordForm.confirmPassword.length > 0 && passwordForm.newPassword !== passwordForm.confirmPassword && (
+                <p className="text-[10px] text-destructive">Passwords don't match</p>
+              )}
             </div>
           </div>
 
           <Button
             variant="outline"
             onClick={handleChangePassword}
-            disabled={changingPassword || !passwordForm.newPassword}
+            disabled={changingPassword || !passwordForm.newPassword || passwordForm.newPassword.length < 8 || passwordForm.newPassword !== passwordForm.confirmPassword}
             className="h-8 text-[11px] rounded-lg border-border/20"
           >
             {changingPassword ? (
