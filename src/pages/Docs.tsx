@@ -738,7 +738,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><TradeStatusLifecycleMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Risk Management Tools" description="Automated stop loss, position sizing, and multi-leg strategies." />
+              <SubTopic title="Risk Management Tools" description="Automated stop loss, position sizing, and multi-leg strategies." id="tm-risk" />
               <FeatureCard icon={Target} title="Trailing Stop Loss (TSL)">
                 <p className="text-sm text-muted-foreground mb-3">Automated stop loss management for open positions:</p>
                 <FeatureList items={[
