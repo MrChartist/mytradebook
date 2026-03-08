@@ -427,7 +427,7 @@ function RightRail({ activeSection }: { activeSection: string }) {
       <div className="sticky top-[3.25rem] h-[calc(100vh-3.25rem)] py-7 pl-5 pr-3 overflow-y-auto">
         <p
           className="text-[10.5px] font-semibold uppercase tracking-[0.1em] mb-5"
-          style={{ color: 'hsl(var(--docs-text-muted) / 0.45)' }}
+          style={{ color: 'hsl(var(--docs-text-muted) / 0.55)' }}
         >
           On this page
         </p>
