@@ -46,6 +46,7 @@ export function MobileBottomNav() {
           })}
           <button
             onClick={() => setDrawerOpen(true)}
+            aria-label="More navigation options"
             className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-muted-foreground"
           >
             <MoreHorizontal className="w-[18px] h-[18px]" />

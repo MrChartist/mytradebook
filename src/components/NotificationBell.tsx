@@ -93,7 +93,7 @@ export function NotificationBell() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-lg">
+        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-lg" aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}>
           <Bell className="w-[18px] h-[18px]" />
           {unreadCount > 0 && (
             <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center px-1">
@@ -124,6 +124,7 @@ export function NotificationBell() {
                 size="sm"
                 className="h-7 text-xs text-muted-foreground hover:text-destructive"
                 onClick={() => clearAll?.()}
+                aria-label="Clear all notifications"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </Button>
@@ -190,7 +191,7 @@ export function NotificationBell() {
                           {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
                         </p>
                       </div>
-                      <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
                         {!n.read && (
                           <button
                             onClick={(e) => {

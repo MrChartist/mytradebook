@@ -27,7 +27,7 @@ export function ThemeToggle() {
       size="icon"
       className="h-8 w-8 rounded-lg"
       onClick={() => setDark(!dark)}
-      title={dark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
     >
       {dark ? (
         <Sun className="w-4 h-4 text-muted-foreground" />
