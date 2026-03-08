@@ -18,6 +18,7 @@ const PricingSection = lazy(() => import("@/components/landing/BelowFoldSections
 const TestimonialsSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.TestimonialsSection })));
 const IndianMarketsSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.IndianMarketsSection })));
 const DocsCTASection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.DocsCTASection })));
+const FAQSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.FAQSection })));
 const FinalCTASection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.FinalCTASection })));
 const FooterSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.FooterSection })));
 
