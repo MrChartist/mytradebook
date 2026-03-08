@@ -635,7 +635,7 @@ export function FooterSection() {
   };
 
   return (
-    <footer className="border-t border-border/20 bg-card/40 backdrop-blur-sm py-20" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
+    <footer className="border-t border-border/15 bg-card/30 py-20 lg:py-24" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}>
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="grid md:grid-cols-12 gap-10 mb-14">
           {/* Brand column */}
