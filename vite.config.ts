@@ -77,6 +77,13 @@ export default defineConfig(({ mode }) => ({
           "vendor-date": ["date-fns"],
           "vendor-dnd": ["@dnd-kit/core", "@dnd-kit/sortable", "@dnd-kit/utilities"],
         },
+        chunkFileNames: (chunkInfo) => {
+          // Group docs mockup modules into a dedicated chunk
+          if (chunkInfo.facadeModuleId?.includes("/docs/Docs")) {
+            return "assets/docs-mockups-[hash].js";
+          }
+          return "assets/[name]-[hash].js";
+        },
       },
     },
   },

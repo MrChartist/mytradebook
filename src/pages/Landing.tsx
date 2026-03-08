@@ -40,14 +40,38 @@ export default function Landing() {
         title="Trading Journal for Indian Markets — NSE, MCX, F&O"
         description="Track, analyze, and improve your trades with TradeBook. Real-time alerts, broker integration, and segment-based analytics built for Equity, F&O, and Commodity traders in India."
         path="/"
-        jsonLd={{
-          "@context": "https://schema.org", "@type": "SoftwareApplication", "name": "TradeBook",
-          "applicationCategory": "FinanceApplication", "operatingSystem": "Web",
-          "description": "Trading journal and analytics platform for Indian markets — NSE, BSE, MCX.",
-          "url": "https://tradebook.mrchartist.com",
-          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
-          "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "ratingCount": "1200", "bestRating": "5" }
-        }}
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "TradeBook",
+            "applicationCategory": "FinanceApplication",
+            "operatingSystem": "Web",
+            "description": "Trading journal and analytics platform for Indian markets — NSE, BSE, MCX.",
+            "url": "https://tradebook.mrchartist.com",
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+            "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "ratingCount": "1200", "bestRating": "5" }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "TradeBook",
+            "url": "https://tradebook.mrchartist.com",
+            "logo": "https://tradebook.mrchartist.com/assets/logo.png",
+            "description": "Trading journal and analytics platform for Indian markets.",
+            "contactPoint": { "@type": "ContactPoint", "email": "founder@mrchartist.com", "contactType": "customer support" }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              { "@type": "Question", "name": "Is TradeBook free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, TradeBook is completely free during the beta period. No credit card required." } },
+              { "@type": "Question", "name": "Which Indian markets does TradeBook support?", "acceptedAnswer": { "@type": "Answer", "text": "TradeBook supports NSE, BSE, and MCX including Equity Cash, Equity Intraday, Futures, Options, and Commodity segments." } },
+              { "@type": "Question", "name": "Does TradeBook integrate with brokers?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, TradeBook integrates with Dhan for live portfolio sync, auto-trade import, and one-click execution." } },
+              { "@type": "Question", "name": "Can I use TradeBook on mobile?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, TradeBook is a PWA (Progressive Web App) that works on any device. Install it on your phone for a native app-like experience with offline support." } }
+            ]
+          }
+        ]}
       />
 
       <LandingNavbar activePage="home" />
