@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { SEOHead } from "@/components/SEOHead";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import logo from "@/assets/logo.png";
+import { BrandLogo } from "@/components/ui/brand-logo";
 
 const popularLinks = [
   { label: "Dashboard", href: "/dashboard", icon: Home },
