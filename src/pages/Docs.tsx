@@ -1389,6 +1389,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">If your broker's format isn't auto-detected, you can still import — just manually map the columns in Step 3. Any CSV with symbol, date, price, and quantity columns will work.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Trade Templates", description: "Save frequent trade setups", targetId: "trade-templates" },
+                { label: "Trade Management", description: "Full trade lifecycle guide", targetId: "trade-management" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
