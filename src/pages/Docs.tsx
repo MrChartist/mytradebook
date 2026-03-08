@@ -603,7 +603,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                       "shrink-0 px-3 py-1.5 rounded-lg text-[12px] font-medium transition-colors whitespace-nowrap",
                       activeSection === s.id
                         ? "bg-foreground text-background"
-                        : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/30"
+                        : "text-muted-foreground/60 hover:text-foreground hover:bg-muted/30"
                     )}
                   >
                     {s.label}
