@@ -54,7 +54,7 @@ import {
   DocsColorModeProvider, useDocsColorMode
 } from "@/components/docs/DocsMockups";
 import {
-  ProTip, StepByStep, ComparisonTable, ExpandableDetail,
+  ProTip, StepByStep, ExpandableDetail,
   InteractiveMockup, PhaseHeader, QuickNav, KeyMetric
 } from "@/components/docs/DocsEnhancements";
 import {
@@ -547,21 +547,6 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="info">
                 <p>Press <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-[11px] font-mono font-semibold">⌘K</kbd> anywhere to open the Command Palette — search trades, create alerts, and navigate instantly without touching the mouse.</p>
               </ProTip>
-              <ComparisonTable
-                title="Free vs Pro — At a Glance"
-                rows={[
-                  { feature: "Trade logging", free: true, pro: true },
-                  { feature: "Watchlists & Alerts", free: true, pro: true },
-                  { feature: "Daily Journal", free: true, pro: true },
-                  { feature: "CSV Import/Export", free: true, pro: true },
-                  { feature: "Advanced Analytics", free: false, pro: true },
-                  { feature: "AI Pattern Detection", free: false, pro: true },
-                  { feature: "AI Trade Coach", free: false, pro: true },
-                  { feature: "Weekly Reports", free: false, pro: true },
-                  { feature: "Stock Screener", free: "Basic", pro: "Full" },
-                  { feature: "Trade Templates", free: "3 max", pro: "Unlimited" },
-                ]}
-              />
             </motion.section>
 
             <SectionDivider />
@@ -700,20 +685,6 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="best-practice">
                 <p>Check your dashboard every morning before market opens. The segment filter lets you focus on today's active market — switch to "All" only during your weekly review.</p>
               </ProTip>
-              <ComparisonTable
-                title="Dashboard Features — Free vs Pro"
-                rows={[
-                  { feature: "Today's P&L card", free: true, pro: true },
-                  { feature: "KPI Cards (4 metrics)", free: true, pro: true },
-                  { feature: "Equity Curve widget", free: true, pro: true },
-                  { feature: "Calendar Heatmap", free: true, pro: true },
-                  { feature: "Risk Gauge & Goals", free: false, pro: true },
-                  { feature: "Widget drag-and-drop", free: false, pro: true },
-                  { feature: "Floating Trade Ticker", free: false, pro: true },
-                  { feature: "Portfolio Heat Map", free: false, pro: true },
-                  { feature: "Daily Review Wizard", free: false, pro: true },
-                ]}
-              />
             </motion.section>
 
             <SectionDivider />
@@ -1001,15 +972,6 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="warning">
                 <p>Never risk more than 2% of your capital on a single trade. The calculator will flag oversized positions with a red warning if you exceed this threshold.</p>
               </ProTip>
-              <ComparisonTable
-                title="Position Sizing — Free vs Pro"
-                rows={[
-                  { feature: "Basic calculator", free: true, pro: true },
-                  { feature: "Kelly Criterion", free: false, pro: true },
-                  { feature: "Auto-fill from trade form", free: true, pro: true },
-                  { feature: "Risk % presets", free: false, pro: true },
-                ]}
-              />
             </motion.section>
 
             <SectionDivider />
@@ -1775,16 +1737,6 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="best-practice">
                 <p>Read your AI Coach feedback before taking the next trade. If the coach flagged "exited too early" on 3 consecutive trades, it's a signal to work on your trailing stop strategy.</p>
               </ProTip>
-              <ComparisonTable
-                title="AI Trade Coach — Free vs Pro"
-                rows={[
-                  { feature: "Basic post-trade feedback", free: false, pro: true },
-                  { feature: "Detailed 3-part analysis", free: false, pro: true },
-                  { feature: "Star rating per trade", free: false, pro: true },
-                  { feature: "Saved coaching history", free: false, pro: true },
-                  { feature: "Pattern-based insights", free: false, pro: true },
-                ]}
-              />
             </motion.section>
 
             <SectionDivider />
