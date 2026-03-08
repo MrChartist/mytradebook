@@ -79,10 +79,10 @@ const SECTIONS = [
 
 function FeatureList({ items }: { items: string[] }) {
   return (
-    <ul className="space-y-2.5 mt-4">
+    <ul className="space-y-2 mt-4">
       {items.map((item) => (
-        <li key={item} className="flex items-start gap-2.5 text-sm text-muted-foreground leading-relaxed">
-          <ChevronRight className="w-[18px] h-[18px] text-[hsl(var(--tb-accent))] mt-0.5 shrink-0" />
+        <li key={item} className="flex items-start gap-2 text-[13px] text-muted-foreground leading-relaxed">
+          <ChevronRight className="w-4 h-4 text-primary mt-[1px] shrink-0" />
           <span>{item}</span>
         </li>
       ))}
@@ -94,28 +94,26 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
 }) {
   return (
-    <div className="premium-card-hover group hover:scale-[1.005] transition-all duration-200 relative overflow-hidden bg-gradient-to-br from-card to-card/80">
-      {/* Decorative dot-pattern corner */}
-      <div className="absolute top-0 right-0 w-20 h-20 dot-pattern opacity-30 rounded-bl-2xl" />
-      {/* Left accent bar on hover */}
-      <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-      <div className="pb-3 flex flex-col space-y-1.5 p-7">
-        <div className="flex items-center gap-3">
-          <div className="inner-panel !p-2.5 !rounded-xl !bg-primary/8 !border-primary/15 shadow-sm">
-            <Icon className="w-5 h-5 text-primary" />
+    <div className="group rounded-xl border border-border/20 bg-card/60 backdrop-blur-sm relative overflow-hidden transition-all duration-200 hover:border-border/35">
+      {/* Top accent on hover */}
+      <div className="absolute top-0 left-0 right-0 h-[1.5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-transparent via-primary to-transparent" />
+      <div className="p-5 lg:p-6 pb-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
+            <Icon className="w-[18px] h-[18px] text-primary" />
           </div>
           <div className="flex items-center gap-2">
-            <h3 className="text-lg font-bold leading-none tracking-tight">{title}</h3>
+            <h3 className="text-[15px] font-bold leading-tight tracking-tight">{title}</h3>
             {badge && (
-              <Badge variant="secondary" className="text-[11px] px-2 py-0 bg-primary/10 text-primary border-none">
+              <span className="text-[9px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-full bg-primary/8 text-primary">
                 {badge}
-              </Badge>
+              </span>
             )}
           </div>
         </div>
       </div>
-      <div className="p-7 pt-0">
-        <div className="[&>p]:text-[14px] [&>p]:leading-relaxed [&>p]:max-w-prose">{children}</div>
+      <div className="px-5 lg:px-6 pb-5 lg:pb-6">
+        <div className="[&>p]:text-[13px] [&>p]:leading-relaxed [&>p]:text-muted-foreground">{children}</div>
       </div>
     </div>
   );
@@ -123,15 +121,14 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
 
 function VideoPlaceholder({ title, duration }: { title: string; duration: string }) {
   return (
-    <div className="my-6 rounded-2xl border border-border/40 bg-card overflow-hidden group cursor-pointer hover:border-primary/40 transition-all">
-      <div className="relative bg-gradient-to-br from-muted/50 to-muted/20 flex items-center justify-center py-16">
-        <div className="absolute inset-0 dot-pattern opacity-20" />
-        <div className="relative flex flex-col items-center gap-3">
-          <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-            <Play className="w-7 h-7 text-primary ml-1" />
+    <div className="my-5 rounded-xl border border-border/20 bg-card/40 overflow-hidden group cursor-pointer hover:border-border/35 transition-all duration-200">
+      <div className="relative bg-gradient-to-br from-muted/30 to-muted/10 flex items-center justify-center py-12">
+        <div className="relative flex flex-col items-center gap-2.5">
+          <div className="w-12 h-12 rounded-full bg-primary/8 border border-primary/15 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+            <Play className="w-5 h-5 text-primary ml-0.5" />
           </div>
-          <p className="text-sm font-semibold text-foreground">{title}</p>
-          <span className="text-[10px] text-muted-foreground bg-muted/50 rounded-full px-3 py-1">{duration} · Coming Soon</span>
+          <p className="text-[13px] font-semibold text-foreground">{title}</p>
+          <span className="text-[9px] text-muted-foreground/60 bg-muted/30 rounded-full px-2.5 py-0.5 font-medium">{duration} · Coming Soon</span>
         </div>
       </div>
     </div>
@@ -140,10 +137,10 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
 
 function SectionDivider() {
   return (
-    <div className="flex items-center gap-4 py-2">
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-      <div className="w-1.5 h-1.5 rounded-full bg-primary/30" />
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+    <div className="flex items-center gap-4 py-1.5">
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/30 to-transparent" />
+      <div className="w-1 h-1 rounded-full bg-primary/20" />
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/30 to-transparent" />
     </div>
   );
 }
