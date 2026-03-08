@@ -1308,7 +1308,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <SectionHeader
                 id="position-sizing"
                 title="Position Sizing Calculator"
-                description="Built-in risk calculator that tells you exactly how many shares to buy based on your capital, risk tolerance, and stop loss distance."
+                description="Built-in risk calculator that tells you exactly how many shares to buy based on your capital, risk tolerance, and stop loss distance. This is the single most important tool for account survival."
                 icon={Calculator}
               />
               <QuickNav items={[
@@ -1316,6 +1316,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Advanced Sizing", id: "ps-advanced" },
                 { label: "Risk Guidelines", id: "ps-guidelines" },
               ]} />
+
+              <ProTip variant="best-practice">
+                <p><strong>Why this feature exists:</strong> Most retail traders blow up not from bad entries, but from oversized positions. A single 5% risk trade that hits SL wipes out 5 winning trades at 1% each. The Position Sizing Calculator enforces mathematical discipline — it removes emotion from the "how much?" decision and replaces it with a formula tied to your actual risk tolerance. If you use nothing else in TradeBook, use this.</p>
+              </ProTip>
 
               <InteractiveMockup label="Position Sizing Calculator">
                 <PositionSizingCalcMockup />
@@ -1334,21 +1338,31 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p>For experienced traders, the Position Sizing Calculator can suggest position sizes based on the Kelly Criterion — factoring in your historical win rate and average win/loss ratio to optimize long-term capital growth.</p>
               </ExpandableDetail>
 
-              <ProTip variant="warning">
-                <p>Never risk more than 2% of your capital on a single trade. The calculator will flag oversized positions with a red warning if you exceed this threshold.</p>
-              </ProTip>
+              <ExpandableDetail title="Common Misunderstandings About Position Sizing" icon={AlertTriangle} badge="Watch Out">
+                <p>These are the mistakes traders most commonly make with position sizing — even experienced ones:</p>
+                <FeatureList items={[
+                  "\"I risk 2% so I'm safe\" — 2% per trade is only safe if you don't have 10 correlated positions open simultaneously. 10 × 2% = 20% portfolio risk if they all hit SL. Track total open risk, not just per-trade risk.",
+                  "\"My stop loss is tight so I can buy more shares\" — Tighter SL means bigger position, which means bigger gap risk if the stock opens past your SL. Always verify the max loss amount in rupees, not just the percentage.",
+                  "\"I'll add to a winning position\" — Adding to winners changes your average entry and risk profile. Recalculate position size for the new entry, not the original one.",
+                  "\"F&O lot sizes override position sizing\" — Futures and options have fixed lot sizes, but you still control how many lots. Use the calculator with lot-adjusted quantities to keep risk within bounds.",
+                ]} />
+              </ExpandableDetail>
 
               <SubTopic title="Risk Per Trade Guidelines" description="Recommended risk levels based on trading experience." id="ps-guidelines" />
               <ExpandableDetail title="Risk Per Trade Guidelines by Experience Level" icon={Shield} badge="Reference">
                 <p>Position sizing is the single biggest factor in long-term survival. Here are recommended risk-per-trade limits:</p>
                 <FeatureList items={[
-                  "Beginner (0–6 months) — Risk 0.5% per trade. Focus on process, not profits. Smaller sizes reduce emotional pressure.",
-                  "Intermediate (6–18 months) — Risk 1% per trade. You have a tested edge and consistent journaling habit.",
-                  "Advanced (18+ months) — Risk 1–2% per trade. You have a proven win rate and understand drawdown recovery math.",
-                  "Aggressive/Scalping — Risk up to 2–3% only with very tight stop losses and high-frequency setups.",
+                  "Beginner (0–6 months) — Risk 0.5% per trade. Focus on process, not profits. Smaller sizes reduce emotional pressure and give you room to make mistakes without catastrophic drawdowns.",
+                  "Intermediate (6–18 months) — Risk 1% per trade. You have a tested edge and consistent journaling habit. At this level, a 10-trade losing streak costs 10% — painful but recoverable.",
+                  "Advanced (18+ months) — Risk 1–2% per trade. You have a proven win rate and understand drawdown recovery math. You know your strategy's maximum consecutive losses.",
+                  "Aggressive/Scalping — Risk up to 2–3% only with very tight stop losses and high-frequency setups. This level requires significant experience and extremely disciplined exits.",
                 ]} />
-                <p className="text-[12px] text-muted-foreground/60 mt-3">Remember: a 50% drawdown requires a 100% gain to recover. Conservative sizing protects your capital during inevitable losing streaks.</p>
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Remember: a 50% drawdown requires a 100% gain to recover. Conservative sizing protects your capital during inevitable losing streaks. The calculator exists to make these numbers automatic — trust the math, not your gut.</p>
               </ExpandableDetail>
+
+              <ProTip variant="info">
+                <p><strong>Beginner tip:</strong> Start by setting risk at 0.5% and use the calculator on every single trade for at least 30 trades. Don't adjust the risk % based on "how good" a setup looks — the whole point is consistency. After 30 trades, review your analytics to see if you can gradually increase to 1%.</p>
+              </ProTip>
             </motion.section>
 
             <SectionDivider />
@@ -1359,7 +1373,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <SectionHeader
                 id="trading-rules"
                 title="Trading Rules Checklist"
-                description="Define your personal pre-trade rules and enforce discipline. Every rule must be checked before a trade can be submitted."
+                description="Define your personal pre-trade rules and enforce discipline. Every rule must be checked before a trade can be submitted — turning your best intentions into consistent behavior."
                 icon={ClipboardCheck}
               />
               <QuickNav items={[
@@ -1367,6 +1381,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Core vs Optional", id: "tr-core" },
                 { label: "Rule Examples", id: "tr-examples" },
               ]} />
+
+              <ProTip variant="best-practice">
+                <p><strong>Why this feature exists:</strong> Every trader has rules they know they should follow. The problem isn't knowledge — it's execution under pressure. When a setup looks exciting and the market is moving fast, discipline evaporates. The Trading Rules Checklist makes your rules <em>mandatory</em> — you physically can't submit a trade until every box is checked. This transforms "I should check the trend" from a suggestion into a gate that prevents impulsive entries.</p>
+              </ProTip>
 
               <InteractiveMockup label="Trading Rules Checklist">
                 <TradingRulesMockup />
@@ -1447,9 +1465,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <SectionHeader
                 id="alerts"
                 title="Alerts System"
-                description="Set price alerts, percentage change triggers, volume spike detectors, and custom conditions. Get notified instantly via in-app notifications or Telegram."
+                description="Set price alerts, percentage change triggers, volume spike detectors, and custom conditions. Get notified instantly via in-app notifications or Telegram — so you never miss a setup while away from the screen."
                 icon={Bell}
               />
+
+              <ProTip variant="info">
+                <p><strong>Why this feature exists:</strong> You can't watch 50 stocks simultaneously, but you can set 50 alerts. Alerts free you from staring at screens and replace reactive trading ("I just happened to see RELIANCE spike") with intentional trading ("My alert triggered at ₹2,450 because that's my planned entry level"). The best traders spend more time planning than watching — alerts make that possible.</p>
+              </ProTip>
+
               <QuickNav items={[
                 { label: "First Alert", id: "al-first" },
                 { label: "Alert Types", id: "al-types" },
@@ -1507,6 +1530,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">Cross-detection alerts are generally more useful than simple price alerts because they avoid firing on stocks that already opened above/below your level.</p>
               </ExpandableDetail>
+
+              <ProTip variant="info">
+                <p><strong>Beginner tip:</strong> Start with 3–5 simple "Price Above" or "Price Below" alerts on stocks you're watching. Set them as one-time triggers. Once you're comfortable, graduate to "Crosses Above" alerts with daily recurrence and Telegram delivery — this is the setup most active traders use.</p>
+              </ProTip>
+              <ProTip>
+                <p><strong>Advanced tip:</strong> Combine alerts with studies. Create a study for a pattern you're tracking, link an alert to the study, and set the alert at your planned entry level. When the alert triggers, your full research context is one click away — you go from notification to informed trade execution in seconds.</p>
+              </ProTip>
 
               <SubTopic title="Trigger Logic & Cooldown" description="Control when and how often alerts fire." id="al-trigger" />
               <FeatureCard icon={RefreshCw} title="Recurrence & Cooldowns">
@@ -1615,13 +1645,22 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Research Tools", id: "st-tools" },
                 { label: "Linking to Trades", id: "st-linking" },
               ]} />
+
+              <ProTip variant="best-practice">
+                <p><strong>Why this feature exists:</strong> Most traders research a stock, convince themselves to trade it, and then forget why they entered when it starts going against them. Studies create a paper trail of your thesis <em>before</em> you risk money. When you link a study to a trade, you can objectively compare "what I expected" with "what actually happened" — this feedback loop is how edges are built and refined over time.</p>
+              </ProTip>
+
               <ProTip>
                 <p>Link your studies to trades when you execute them. This builds a powerful feedback loop — you can see which of your research ideas actually led to profitable trades.</p>
               </ProTip>
 
-              <InteractiveMockup label="Study Card">
+              <AnnotatedMockup
+                label="Study Card"
+                caption="Each study shows its symbol, category, status, pattern tags, and live LTP. Active studies track your thesis in real-time so you know when conditions align with your research."
+                highlights={["Status Flow", "Pattern Tags", "Live Price"]}
+              >
                 <StudyCardMockup />
-              </InteractiveMockup>
+              </AnnotatedMockup>
 
               <SubTopic title="Publishing a Study" description="Create and publish research ideas in a structured format." id="st-publish" />
               <StepByStep title="Publishing a Study" steps={[
@@ -1880,10 +1919,24 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               ]} />
 
               <ProTip variant="best-practice">
+                <p><strong>Why this feature exists:</strong> Trading without analytics is like driving without a dashboard — you might be going fast, but you have no idea if you're heading toward a cliff. Analytics transforms your raw trade data into actionable intelligence: which setups actually make you money, what times of day you should avoid, whether your risk management is working, and where your biggest behavioral leaks are. The difference between a struggling trader and a profitable one is often just awareness of these patterns.</p>
+              </ProTip>
+
+              <ProTip variant="info">
                 <p>Don't try to track everything at once. Start with just <strong>3 metrics</strong>: Win Rate, Expectancy, and Profit Factor. These three alone tell you whether you have an edge. Add more metrics only after you've consistently tracked these for 30+ trades.</p>
               </ProTip>
 
-              <InteractiveMockup label="Analytics Overview">
+              <VisualWalkthrough
+                title="Analytics Overview"
+                steps={[
+                  { marker: "1", label: "KPI Summary", detail: "Win rate, P&L, profit factor, and expectancy at a glance" },
+                  { marker: "2", label: "AI Insights", detail: "Behavioral patterns surfaced by machine learning" },
+                  { marker: "3", label: "Equity Curve", detail: "Cumulative P&L with drawdown overlay" },
+                  { marker: "4", label: "Heatmaps", detail: "Time-of-day and day-of-week performance grids" },
+                  { marker: "5", label: "Segment Breakdown", detail: "Per-segment win rate, P&L, and Sharpe ratio" },
+                  { marker: "6", label: "Risk of Ruin", detail: "Statistical probability of account blowup" },
+                ]}
+              >
                 <AnalyticsMetricCards />
                 <AIInsightsMockup />
                 <div className="grid md:grid-cols-2 gap-6 mt-4">
@@ -1894,20 +1947,17 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   <SegmentPerformanceMockup />
                   <RiskOfRuinMockup />
                 </div>
-              </InteractiveMockup>
+              </VisualWalkthrough>
 
-              <SubTopic title="Reading Your First Report" description="A guided walkthrough for making sense of your analytics dashboard." id="an-start" />
-              <StepByStep title="Reading Your First Analytics Report" steps={[
-                { title: "Check the KPI cards at the top", description: "Start with Win Rate, Total P&L, and Profit Factor. These are your headline numbers — they tell you at a glance whether you're profitable.", detail: "Win Rate above 50% is good, but only meaningful alongside Profit Factor above 1.0. A 40% win rate with a 2.5 profit factor is better than 60% with 0.8." },
-                { title: "Scan the Equity Curve", description: "Look at the overall shape: is it trending up, down, or sideways? Sharp drops indicate drawdown periods worth investigating.", detail: "Click on drawdown periods to see which trades caused them. Often it's a cluster of 2-3 bad trades, not a systemic issue." },
-                { title: "Review the Time Heatmaps", description: "Check which hours and days are most profitable. Many traders discover they lose money during the first 15 minutes or on Mondays.", detail: "If a time slot is consistently red across 30+ trades, consider avoiding it entirely. This single change can significantly improve your P&L." },
-                { title: "Read the AI Insights", description: "The AI pattern detection surfaces behavioral patterns you'd never spot manually — like overtrading after wins or freezing after losses.", detail: "Focus on 'Critical' and 'Warning' severity insights first. 'Info' level insights are interesting but not urgent." },
-                { title: "Pick 1-2 areas to improve", description: "Don't try to fix everything. Pick your single biggest leak (worst time slot, worst segment, or most expensive mistake) and focus on that for the next 2 weeks.", detail: "After fixing one leak, revisit analytics to measure the impact before moving to the next improvement area." },
-              ]} />
-
-              <ProTip variant="info">
-                <p>Analytics require at least <strong>20 closed trades</strong> to generate meaningful insights. The more trades you log, the more statistically significant your analytics become. Most AI behavioral patterns need 50+ trades to detect reliably.</p>
-              </ProTip>
+              <ExpandableDetail title="Common Analytics Misunderstandings" icon={AlertTriangle} badge="Watch Out">
+                <p>Before diving into your analytics, be aware of these common interpretation mistakes:</p>
+                <FeatureList items={[
+                  "\"My win rate is 55% so I'm profitable\" — Win rate means nothing without knowing the average win vs average loss size. A 55% win rate with R:R of 0.5:1 is a net loser. Always check Expectancy alongside Win Rate.",
+                  "\"My best hour is 10 AM\" — Only if you have 30+ trades in that hour. With 5 trades, one big winner can distort the average. The analytics show trade counts alongside P&L — check statistical significance before making schedule changes.",
+                  "\"I should stop trading Options because my win rate there is 40%\" — Options often have lower win rates but higher R:R. A 40% win rate with 3:1 average R:R is extremely profitable. Look at total P&L per segment, not just win rate.",
+                  "\"The AI says I overtrade on Mondays, so I should skip Mondays\" — AI insights are starting points, not final answers. Check the underlying data. If you take 8 trades on Mondays vs 3 on other days, reducing to 4 Monday trades might be better than skipping entirely.",
+                ]} />
+              </ExpandableDetail>
 
               <SubTopic title="Core Metrics & AI Insights" description="Fundamental performance statistics that define your trading edge." id="an-core" />
               <div className="space-y-5">
@@ -2673,7 +2723,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <SectionHeader
                 id="trade-coach"
                 title="AI Trade Coach"
-                description="Get instant AI-powered feedback on every closed trade. The coach analyzes your entry, exit, timing, and risk management — then gives actionable advice."
+                description="Get instant AI-powered feedback on every closed trade. The coach analyzes your entry, exit, timing, and risk management — then gives actionable advice you can apply to your next trade."
                 icon={Sparkles}
               />
               <QuickNav items={[
@@ -2682,9 +2732,17 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "How It Evaluates", id: "tc-model" },
               ]} />
 
-              <InteractiveMockup label="AI Trade Coach Feedback">
+              <ProTip variant="best-practice">
+                <p><strong>Why this feature exists:</strong> Professional traders have mentors, accountability partners, or structured review processes. Most retail traders close a trade and immediately move on to the next one — never processing what happened. The AI Trade Coach forces a structured pause after every close, analyzing your execution against your own plan. It's not replacing human mentorship, but it's the next best thing for traders who trade alone. Over 50+ reviewed trades, patterns in the feedback become unmistakable: "You keep exiting too early on Options trades" or "Your SL placement on Intraday is consistently too tight."</p>
+              </ProTip>
+
+              <AnnotatedMockup
+                label="AI Trade Coach Feedback"
+                caption="The coach provides structured markdown feedback with specific observations about your entry timing, exit quality, and risk management. Feedback is saved permanently on each trade record."
+                highlights={["Strengths", "Improvements", "Rating"]}
+              >
                 <TradeCoachMockup />
-              </InteractiveMockup>
+              </AnnotatedMockup>
 
               <SubTopic title="Coaching Workflow" description="Automatic 4-step analysis triggered after every closed trade." id="tc-workflow" />
               <StepByStep title="How the AI Trade Coach Works" steps={[
@@ -2728,6 +2786,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="best-practice">
                 <p>Read your AI Coach feedback before taking the next trade. If the coach flagged "exited too early" on 3 consecutive trades, it's a signal to work on your trailing stop strategy.</p>
               </ProTip>
+
+              <ExpandableDetail title="How Trade Coach Connects with Other Features" icon={Layers} badge="Workflow">
+                <p>The AI Trade Coach integrates with several other TradeBook features to create a comprehensive review system:</p>
+                <FeatureList items={[
+                  "Post-Trade Review Modal → Coach feedback is displayed alongside your manual review notes. Both perspectives together give you a complete picture.",
+                  "Mistake Tags → If the coach identifies a pattern (e.g., 'SL too tight'), you can create a corresponding mistake tag and track its frequency in the Mistakes Review page.",
+                  "Analytics AI Insights → Coach feedback on individual trades feeds into the aggregate behavioral patterns surfaced in Analytics. If the coach says 'exited too early' on 10 trades, Analytics will detect the pattern and flag it.",
+                  "Journal → When you write your daily journal, reference your recent coach feedback. The best journal entries connect coach observations to specific rule changes.",
+                  "Trading Rules → If coach feedback keeps flagging the same issue, add a new Trading Rule to address it. 'Don't move SL until trade is +1R' becomes an enforceable checkpoint.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">The coach is most powerful when you treat its feedback as input to your overall improvement system — not as isolated comments on individual trades.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
