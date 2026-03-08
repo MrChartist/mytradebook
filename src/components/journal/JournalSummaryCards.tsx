@@ -30,9 +30,9 @@ export function JournalSummaryCards({
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="glass-card p-4">
+          <div key={i} className="surface-card p-4">
             <Skeleton className="h-4 w-20 mb-2" />
             <Skeleton className="h-8 w-24" />
           </div>
