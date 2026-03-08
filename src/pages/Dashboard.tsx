@@ -166,7 +166,7 @@ export default function Dashboard() {
       case "riskGoal":
         return <RiskGoalWidget key={w.id} />;
       case "heatMap":
-        return <PortfolioHeatMap key={w.id} />;
+        return <Suspense fallback={<Skeleton className="h-64 w-full rounded-xl" />}><PortfolioHeatMap key={w.id} /></Suspense>;
       case "chart":
         return (
           <div key={w.id} className={cn("grid grid-cols-1 gap-4", alertsVisible ? "lg:grid-cols-3" : "")}>
