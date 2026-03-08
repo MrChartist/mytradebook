@@ -1875,33 +1875,22 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Live Price Requirements", id: "wl-prices" },
               ]} />
 
+              <WhatWhyWhenBlock data={{
+                what: "Create multiple named watchlists with live prices, sparklines, % change sorting, and quick actions (create trade, set alert) directly from any item.",
+                why: "Without organized watchlists, you trade whatever catches your eye. Organized lists keep you focused on researched setups.",
+                when: "Update daily before market open. Clear stale symbols weekly. Use separate lists for different workflows.",
+              }} />
+
               <InteractiveMockup label="Watchlist Overview">
                 <WatchlistMockup />
               </InteractiveMockup>
 
-              <SubTopic title="Building Your First Watchlist" description="Get started tracking instruments in under a minute." id="wl-first" />
-              <StepByStep title="Building Your First Watchlist" steps={[
-                { title: "Create a new watchlist", description: "Go to Watchlists and click '+ New Watchlist'. Give it a name and optionally assign a color.", detail: "Use descriptive names like 'Nifty 50 Breakouts' or 'F&O Weekly Expiry' for quick identification." },
-                { title: "Add instruments", description: "Use the symbol search to find stocks, futures, or options. Click to add them to the list.", detail: "The search covers NSE, BSE, and MCX — same unified search used across the platform." },
-                { title: "Organize & reorder", description: "Drag instruments to reorder by priority. Your most-watched symbols stay at the top.", detail: "You can move instruments between watchlists or add the same symbol to multiple lists." },
-                { title: "Monitor & act", description: "View live prices during market hours. Click any instrument to create an alert or log a trade directly.", detail: "Sort by % change to spot the day's biggest movers at a glance." },
+              <UseCaseCards title="Watchlist Workflows by Trading Style" cases={[
+                { emoji: "⚡", title: "Intraday Scalper", description: "Daily 'Hot Today' list with 10-15 stocks from morning scan. Rebuild each day." },
+                { emoji: "📈", title: "Swing Trader", description: "3 lists: 'Pullback Zone', 'In Position', 'Graduated'. Move stocks between them." },
+                { emoji: "🎯", title: "Options Trader", description: "Organize by expiry: 'This Week', 'Next Week', 'Monthly'. Add contracts you're watching." },
+                { emoji: "🏗️", title: "Positional", description: "Sector-based: 'Banking', 'IT', 'FMCG'. Review each sector weekly." },
               ]} />
-
-              <ProTip variant="best-practice">
-                <p>Organize watchlists by purpose, not just by name. Create separate lists for <strong>active setups</strong> (stocks you're about to trade), <strong>sector tracking</strong> (banking, IT, pharma), and <strong>post-trade monitoring</strong> (recently closed positions). This keeps each list focused and actionable.</p>
-              </ProTip>
-
-              <ExpandableDetail title="Watchlist Workflow Ideas for Different Trading Styles" icon={Eye} badge="Workflow">
-                <p>How you organize watchlists depends on your trading style. Here are proven setups:</p>
-                <FeatureList items={[
-                  "Intraday Scalpers — Create a daily 'Hot Today' list with 10-15 stocks from your morning scan. Clear and rebuild it each day. Focus on volume and momentum.",
-                  "Swing Traders — Maintain 3 lists: 'Pullback Zone' (waiting for entry), 'In Position' (current holds), and 'Graduated' (recently exited for cool-off). Move stocks between them as your thesis evolves.",
-                  "Options Traders — Organize by expiry: 'This Week Expiry', 'Next Week', 'Monthly'. Add the underlying + the specific contracts you're watching. Notes field for strike rationale.",
-                  "Positional/Investors — Sector-based lists work best: 'Banking', 'IT', 'FMCG', 'Small Caps'. Review each sector weekly and rotate focus based on market regime.",
-                  "Research Mode — A dedicated 'Study Queue' list for symbols you want to research but haven't committed to yet. Review weekly and either promote to active watchlists or delete.",
-                ]} />
-                <p className="text-[12px] text-muted-foreground/60 mt-3">The notes field on each watchlist item is underutilized by most traders. Use it to record why you added the symbol, key levels to watch, and your planned action. When the alert triggers weeks later, you'll remember your thesis instantly.</p>
-              </ExpandableDetail>
 
               <SubTopic title="Organization" description="Create and manage multiple watchlists with visual distinction." id="wl-org" />
               <FeatureCard icon={List} title="Watchlist Organization">
