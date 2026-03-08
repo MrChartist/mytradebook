@@ -102,7 +102,7 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-gradient-to-b from-card/95 to-card/85 backdrop-blur-xl border-b border-border/40 flex items-center justify-between px-4" style={{ boxShadow: "inset 0 -1px 0 0 hsl(0 0% 100% / 0.04), 0 4px 12px -4px rgba(0,0,0,0.06)" }}>
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-card/95 backdrop-blur-xl border-b border-border/40 flex items-center justify-between px-4" style={{ boxShadow: "var(--shadow-xs)" }}>
         <img src={logo} alt="TradeBook" className="h-8 object-contain drop-shadow-sm" />
         <div className="flex items-center gap-2">
           <ThemeToggle />
