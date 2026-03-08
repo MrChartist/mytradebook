@@ -2274,7 +2274,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
 
               <SubTopic title="Data-Rich Results" description="Sort, filter, and explore screening results with sparklines and inline search." id="sc-results" />
-              <div className="grid md:grid-cols-2 gap-5 mt-6">
+              <div className="space-y-5 mt-6">
                 <FeatureCard icon={BarChart3} title="Data-Rich Results Table">
                   <FeatureList items={[
                     "Sort by any column — market cap, P/E, ROE, price, volume, RSI",
