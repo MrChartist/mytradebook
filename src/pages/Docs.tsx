@@ -1096,7 +1096,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><AlertConditionTypesMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Trigger Logic & Delivery" description="Control when and how alerts fire and reach you." />
+              <SubTopic title="Trigger Logic & Delivery" description="Control when and how alerts fire and reach you." id="al-trigger" />
               <FeatureCard icon={RefreshCw} title="Recurrence & Cooldowns">
                 <FeatureList items={[
                   "Once — fires once and auto-deactivates",
