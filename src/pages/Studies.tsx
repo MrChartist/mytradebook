@@ -190,70 +190,84 @@ export default function Studies() {
   };
 
   return (
-    <div className="space-y-5 animate-fade-in">
+    <div className="space-y-4 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold">Studies</h1>
-          <p className="text-sm text-muted-foreground">Track setups, patterns, and market analysis</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="space-y-0.5">
+          <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Studies</h1>
+          <p className="text-[13px] text-muted-foreground/70 leading-relaxed">Track setups, patterns, and market analysis</p>
         </div>
-        <Button onClick={() => setCreateModalOpen(true)}>
+        <Button onClick={() => setCreateModalOpen(true)} className="rounded-xl px-5 shimmer-cta">
           <Plus className="w-4 h-4 mr-2" />
           New Study
         </Button>
       </div>
 
       {/* Status strip */}
-      <div className="flex gap-1.5 overflow-x-auto pb-1">
-        <Badge
-          variant={selectedStatus === null ? "default" : "outline"}
-          className="cursor-pointer shrink-0 text-xs"
+      <div className="flex gap-1 overflow-x-auto pb-0.5 scrollbar-none">
+        <button
+          className={cn(
+            "px-3 py-1 text-[11px] font-medium rounded-md border transition-all duration-200 shrink-0",
+            selectedStatus === null
+              ? "border-primary/15 bg-primary/6 text-primary"
+              : "border-border/15 text-muted-foreground/50 hover:text-foreground hover:border-border/30"
+          )}
           onClick={() => setSelectedStatus(null)}
         >
           All ({studies.length})
-        </Badge>
+        </button>
         {Object.entries(statusColors).map(([key, color]) => {
           const count = statusCounts[key] || 0;
           if (count === 0 && key !== "Draft" && key !== "Active") return null;
           return (
-            <Badge
+            <button
               key={key}
-              variant={selectedStatus === key ? "default" : "outline"}
-              className={cn("cursor-pointer shrink-0 text-xs", selectedStatus === key && color)}
+              className={cn(
+                "px-3 py-1 text-[11px] font-medium rounded-md border transition-all duration-200 shrink-0",
+                selectedStatus === key
+                  ? "border-primary/15 bg-primary/6 text-primary"
+                  : "border-border/15 text-muted-foreground/50 hover:text-foreground hover:border-border/30"
+              )}
               onClick={() => setSelectedStatus(selectedStatus === key ? null : key)}
             >
               {key} ({count})
-            </Badge>
+            </button>
           );
         })}
       </div>
 
       {/* Filters + View Toggle + Sort */}
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+      <div className="flex flex-col sm:flex-row gap-2.5 items-start sm:items-center">
+        <div className="relative flex-1 w-full sm:w-auto">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
           <Input
             placeholder="Search studies..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-card border-border"
+            className="pl-9 h-9 text-[13px] bg-muted/20 border-border/20 focus:border-primary/30"
           />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2">
+              <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
+            </button>
+          )}
         </div>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-1.5 items-center flex-wrap">
           {["Technical", "Fundamental", "News"].map((cat) => (
-            <Button
+            <button
               key={cat}
-              variant="outline"
-              size="sm"
               onClick={() => setSelectedCategory(selectedCategory === cat ? null : cat)}
               className={cn(
-                "border-border text-xs h-8",
-                selectedCategory === cat && "bg-primary/10 border-primary/20 text-primary"
+                "px-3 py-1 text-[11px] font-medium rounded-md border transition-all duration-200",
+                selectedCategory === cat
+                  ? "border-primary/15 bg-primary/6 text-primary"
+                  : "border-border/15 text-muted-foreground/50 hover:text-foreground hover:border-border/30"
               )}
             >
               {cat}
-            </Button>
+            </button>
           ))}
+          <div className="w-px h-4 bg-border/20" />
           <SortSelect value={sortBy} onValueChange={setSortBy} options={sortOptions} />
           <ViewToggle view={viewMode} onViewChange={setViewMode} />
         </div>
@@ -263,72 +277,72 @@ export default function Studies() {
       <Collapsible open={tagFilterOpen} onOpenChange={setTagFilterOpen}>
         <div className="flex items-center gap-2">
           <CollapsibleTrigger asChild>
-            <Button variant="outline" size="sm" className={cn(
-              "text-xs h-8 gap-1.5",
-              selectedTags.length > 0 && "bg-primary/10 border-primary/20 text-primary"
+            <button className={cn(
+              "flex items-center gap-1.5 px-3 py-1 text-[11px] font-medium rounded-md border transition-all duration-200",
+              selectedTags.length > 0
+                ? "border-primary/15 bg-primary/6 text-primary"
+                : "border-border/15 text-muted-foreground/50 hover:text-foreground hover:border-border/30"
             )}>
-              <Filter className="w-3.5 h-3.5" />
+              <Filter className="w-3 h-3" />
               Filter by Tags
               {selectedTags.length > 0 && (
-                <Badge variant="secondary" className="ml-1 px-1.5 py-0 h-4 text-[10px]">
+                <span className="ml-0.5 inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary text-primary-foreground text-[8px] font-bold">
                   {selectedTags.length}
-                </Badge>
+                </span>
               )}
-              <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", tagFilterOpen && "rotate-180")} />
-            </Button>
+              <ChevronDown className={cn("w-3 h-3 transition-transform", tagFilterOpen && "rotate-180")} />
+            </button>
           </CollapsibleTrigger>
           {selectedTags.length > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-xs h-8 text-muted-foreground"
+            <button
+              className="text-[10px] text-muted-foreground/50 hover:text-foreground underline underline-offset-2"
               onClick={() => setSelectedTags([])}
             >
               Clear all
-            </Button>
+            </button>
           )}
         </div>
 
         {/* Selected tags display */}
         {selectedTags.length > 0 && !tagFilterOpen && (
-          <div className="flex flex-wrap gap-1.5 mt-2">
+          <div className="flex flex-wrap gap-1 mt-2">
             {selectedTags.map((tag) => (
-              <Badge
+              <span
                 key={tag}
-                variant="secondary"
-                className="text-xs cursor-pointer hover:opacity-80"
+                className="text-[10px] px-2 py-0.5 rounded-md bg-primary/8 text-primary font-medium cursor-pointer hover:bg-primary/12 transition-colors inline-flex items-center gap-1"
                 onClick={() => toggleTag(tag)}
               >
                 {tag}
-                <X className="w-3 h-3 ml-1" />
-              </Badge>
+                <X className="w-2.5 h-2.5" />
+              </span>
             ))}
           </div>
         )}
 
-        <CollapsibleContent className="mt-3 space-y-3 rounded-lg border border-border bg-card/50 p-3">
+        <CollapsibleContent className="mt-2.5 space-y-2.5 rounded-xl border border-border/20 bg-card/50 p-3">
           {tagGroups.map((group) => {
             const tagsWithCount = group.tags.filter((t) => tagCounts[t]);
             if (tagsWithCount.length === 0) return null;
             return (
               <div key={group.label}>
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1.5">
+                <p className="text-[9px] uppercase tracking-wider text-muted-foreground/50 font-semibold mb-1.5">
                   {group.label}
                 </p>
                 <div className="flex flex-wrap gap-1">
                   {tagsWithCount.map((tag) => (
-                    <Badge
+                    <button
                       key={tag}
-                      variant={selectedTags.includes(tag) ? "default" : "outline"}
                       className={cn(
-                        "text-[10px] cursor-pointer transition-colors",
-                        selectedTags.includes(tag) && group.color
+                        "text-[10px] px-2 py-0.5 rounded-md border transition-all duration-200 font-medium",
+                        selectedTags.includes(tag)
+                          ? "border-primary/20 bg-primary/8 text-primary"
+                          : "border-border/15 text-muted-foreground/60 hover:text-foreground hover:border-border/30"
                       )}
                       onClick={() => toggleTag(tag)}
                     >
                       {tag}
-                      <span className="ml-1 opacity-60">({tagCounts[tag]})</span>
-                    </Badge>
+                      <span className="ml-1 opacity-50">({tagCounts[tag]})</span>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -338,27 +352,31 @@ export default function Studies() {
           {/* Custom / user tags */}
           {customTags.length > 0 && (
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1.5">
+              <p className="text-[9px] uppercase tracking-wider text-muted-foreground/50 font-semibold mb-1.5">
                 Custom
               </p>
               <div className="flex flex-wrap gap-1">
                 {customTags.map((tag) => (
-                  <Badge
+                  <button
                     key={tag}
-                    variant={selectedTags.includes(tag) ? "default" : "outline"}
-                    className="text-[10px] cursor-pointer transition-colors"
+                    className={cn(
+                      "text-[10px] px-2 py-0.5 rounded-md border transition-all duration-200 font-medium",
+                      selectedTags.includes(tag)
+                        ? "border-primary/20 bg-primary/8 text-primary"
+                        : "border-border/15 text-muted-foreground/60 hover:text-foreground hover:border-border/30"
+                    )}
                     onClick={() => toggleTag(tag)}
                   >
                     {tag}
-                    <span className="ml-1 opacity-60">({tagCounts[tag]})</span>
-                  </Badge>
+                    <span className="ml-1 opacity-50">({tagCounts[tag]})</span>
+                  </button>
                 ))}
               </div>
             </div>
           )}
 
           {Object.keys(tagCounts).length === 0 && (
-            <p className="text-xs text-muted-foreground text-center py-2">
+            <p className="text-[11px] text-muted-foreground/40 text-center py-3">
               No tags found. Add tags when creating studies to enable filtering.
             </p>
           )}
@@ -368,13 +386,13 @@ export default function Studies() {
       {/* Studies Grid/List */}
       {isLoading ? (
         <div className={cn(
-          viewMode === "grid" ? "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4" : "space-y-2"
+          viewMode === "grid" ? "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3.5" : "space-y-2"
         )}>
-          {[...Array(6)].map((_, i) => <Skeleton key={i} className={viewMode === "grid" ? "h-52" : "h-16"} />)}
+          {[...Array(6)].map((_, i) => <Skeleton key={i} className={cn("shimmer-skeleton", viewMode === "grid" ? "h-52 rounded-[1.25rem]" : "h-16 rounded-xl")} />)}
         </div>
       ) : filteredStudies.length > 0 ? (
         <div className={cn(
-          viewMode === "grid" ? "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4" : "space-y-2"
+          viewMode === "grid" ? "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3.5" : "space-y-2"
         )}>
           {filteredStudies.map((study) => {
             const tags = study.tags || [];
