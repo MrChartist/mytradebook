@@ -1728,6 +1728,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Trophy}
               />
               <AchievementsMockup />
+              <SubTopic title="Badge Categories" description="Five achievement groups covering milestones, streaks, discipline, analytics, and social." />
               <FeatureCard icon={Trophy} title="Badge Categories">
                 <p className="text-sm text-muted-foreground mb-3">Achievements are grouped into categories:</p>
                 <FeatureList items={[
