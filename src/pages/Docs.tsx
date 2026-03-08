@@ -1367,7 +1367,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                 </FeatureCard>
               </div>
-              <SubTopic title="Time & Streak Analysis" description="Discover your best trading times and track momentum." />
+              <SubTopic title="Time & Streak Analysis" description="Discover your best trading times and track momentum." id="an-time" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Clock} title="Time-Based Heatmaps" badge="Pro">
                   <FeatureList items={[
