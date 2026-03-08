@@ -803,7 +803,7 @@
   .docs-body-lg {
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 1.0625rem;
-    line-height: 1.7;
+    line-height: 1.76;
     font-weight: 400;
     color: hsl(var(--docs-text-primary));
     letter-spacing: -0.003em;
