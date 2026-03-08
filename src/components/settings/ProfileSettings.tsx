@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
-import { Save, Loader2, CheckCircle, Download } from "lucide-react";
+import { Save, Loader2, CheckCircle, Download, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import CapitalManagementCard from "@/components/settings/CapitalManagementCard";
+import { usePublicProfile } from "@/hooks/usePublicProfile";
 
 export default function ProfileSettings() {
   const { profile, user } = useAuth();
