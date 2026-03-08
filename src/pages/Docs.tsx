@@ -250,18 +250,17 @@ const SECTION_ANCHORS: Record<string, { label: string; id: string }[]> = {
   ],
 };
 
-function FeatureList({ items }: { items: string[] }) {
-  return (
-    <ul className="space-y-3 mt-4">
-      {items.map((item) => (
-        <li key={item} className="flex items-start gap-3 docs-body leading-relaxed" style={{ color: 'hsl(var(--docs-text-primary))' }}>
-          <ChevronRight className="w-3.5 h-3.5 mt-[5px] shrink-0" style={{ color: 'hsl(var(--docs-accent))' }} />
-          <span>{item}</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
+const FeatureList = React.forwardRef<HTMLUListElement, { items: string[] }>(({ items }, ref) => (
+  <ul ref={ref} className="space-y-3 mt-4">
+    {items.map((item) => (
+      <li key={item} className="flex items-start gap-3 docs-body leading-relaxed" style={{ color: 'hsl(var(--docs-text-primary))' }}>
+        <ChevronRight className="w-3.5 h-3.5 mt-[5px] shrink-0" style={{ color: 'hsl(var(--docs-accent))' }} />
+        <span>{item}</span>
+      </li>
+    ))}
+  </ul>
+));
+FeatureList.displayName = "FeatureList";
 
 const FeatureCard = React.forwardRef<HTMLDivElement, {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
