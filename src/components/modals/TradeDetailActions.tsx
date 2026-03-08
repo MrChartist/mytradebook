@@ -17,7 +17,7 @@ interface Props {
   onDuplicate?: () => void;
 }
 
-export function TradeDetailActions({ trade, onClose, isClosing, onShowReview, onDeleteClick }: Props) {
+export function TradeDetailActions({ trade, onClose, isClosing, onShowReview, onDeleteClick, onDuplicate }: Props) {
   const [closingMode, setClosingMode] = useState(false);
   const [exitPrice, setExitPrice] = useState("");
   const [shareOpen, setShareOpen] = useState(false);
