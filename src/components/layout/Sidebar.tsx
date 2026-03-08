@@ -106,6 +106,7 @@ export function Sidebar() {
         <img src={logo} alt="TradeBook" className="h-8 object-contain drop-shadow-sm" />
         <div className="flex items-center gap-2">
           <ThemeToggle />
+          <NotificationBell />
           <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl">
             <Search className="w-4 h-4" />
           </Button>
