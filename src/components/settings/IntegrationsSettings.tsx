@@ -876,8 +876,8 @@ export default function IntegrationsSettings() {
           )}
           
           {syncStatus.errorMessage && (
-            <div className="p-2 rounded bg-loss/10 border border-loss/20">
-              <p className="text-xs text-loss">{syncStatus.errorMessage}</p>
+            <div className="p-2 rounded-lg bg-loss/6 border border-loss/15">
+              <p className="text-[10px] text-loss">{syncStatus.errorMessage}</p>
             </div>
           )}
           
