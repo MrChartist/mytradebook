@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { fadeUp, scaleIn } from "./LandingShared";
+import { fadeUp } from "./LandingShared";
 import { FloatingElements } from "./FloatingElements";
 import { DashboardPreview } from "./DashboardPreview";
 import { VideoModal } from "./VideoModal";
@@ -17,25 +17,26 @@ export function HeroSection() {
   const [videoOpen, setVideoOpen] = useState(false);
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 100]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
     <section ref={heroRef} className="relative overflow-hidden" aria-label="Hero">
-      <FloatingElements />
-
-      {/* Multi-color pastel gradient wash */}
+      {/* Subtle radial gradient wash */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[radial-gradient(ellipse_at_center,hsl(340_80%_85%/0.15)_0%,transparent_70%)]" />
-        <div className="absolute top-10 right-1/4 w-[500px] h-[500px] bg-[radial-gradient(ellipse_at_center,hsl(24_90%_80%/0.12)_0%,transparent_70%)]" />
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-[radial-gradient(ellipse_at_center,hsl(280_60%_88%/0.08)_0%,transparent_70%)]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[700px] bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.04)_0%,transparent_70%)]" />
       </div>
 
-      <motion.div style={{ y: heroY, opacity: heroOpacity }} className="relative max-w-5xl mx-auto px-6 pt-28 pb-10 lg:pt-40 lg:pb-20 text-center">
+      {/* Floating elements with connections — GitHub Discussions style */}
+      <div className="absolute inset-0 top-16 bottom-0" style={{ minHeight: "700px" }}>
+        <FloatingElements />
+      </div>
+
+      <motion.div style={{ y: heroY, opacity: heroOpacity }} className="relative max-w-3xl mx-auto px-6 pt-32 pb-10 lg:pt-44 lg:pb-20 text-center z-10">
         {/* Badge */}
-        <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0} className="flex justify-center mb-10">
+        <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0} className="flex justify-center mb-8">
           <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full liquid-glass-sm !rounded-full text-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[hsl(var(--tb-accent)/0.25)] bg-[hsl(var(--tb-accent)/0.04)] text-sm"
             whileHover={{ scale: 1.03 }}
           >
             <motion.span
@@ -43,7 +44,7 @@ export function HeroSection() {
               animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
-            <span className="text-muted-foreground font-medium text-xs tracking-wide">
+            <span className="text-[hsl(var(--tb-accent))] font-semibold text-xs tracking-wide">
               Built for Indian Markets · NSE · BSE · MCX
             </span>
           </motion.div>
@@ -52,7 +53,7 @@ export function HeroSection() {
         {/* Heading */}
         <motion.h1
           variants={fadeUp} initial="hidden" animate="visible" custom={0.1}
-          className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.05] tracking-tight mb-8"
+          className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.08] tracking-tight mb-7"
         >
           Know Your{" "}
           <span
@@ -69,14 +70,14 @@ export function HeroSection() {
         {/* Subtitle */}
         <motion.p
           variants={fadeUp} initial="hidden" animate="visible" custom={0.2}
-          className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto mb-14 leading-[1.7] px-2"
+          className="text-lg lg:text-xl text-muted-foreground max-w-xl mx-auto mb-12 leading-[1.7]"
         >
           The only trading journal that shows you <strong className="text-foreground font-semibold">why</strong> you win and{" "}
           <strong className="text-foreground font-semibold">why</strong> you lose — with segment-level analytics for Equity, F&O, and Commodities.
         </motion.p>
 
         {/* Email CTA + Watch Demo */}
-        <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.3} className="flex flex-col items-center gap-4 max-w-lg mx-auto mb-10 px-2">
+        <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.3} className="flex flex-col items-center gap-4 max-w-lg mx-auto mb-8">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full">
             <Input
               type="email"
@@ -112,8 +113,8 @@ export function HeroSection() {
           </motion.button>
         </motion.div>
 
-        {/* Trust badges — enhanced visual cards */}
-        <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.4} className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-20">
+        {/* Trust badges */}
+        <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.4} className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-16">
           {[
             { icon: CheckCircle2, label: "Free during beta", iconClass: "text-profit" },
             { icon: ShieldCheck, label: "256-bit SSL", iconClass: "text-[hsl(var(--tb-accent))]" },
@@ -124,7 +125,6 @@ export function HeroSection() {
             <motion.span
               key={badge.label}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border/30 bg-card/50 backdrop-blur-sm text-[12px] sm:text-[13px] text-muted-foreground font-medium"
-              style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.05)" }}
               whileHover={{ scale: 1.04, borderColor: "hsl(var(--tb-accent) / 0.3)" }}
             >
               <badge.icon className={`w-3.5 h-3.5 ${badge.iconClass}`} />
@@ -134,7 +134,7 @@ export function HeroSection() {
         </motion.div>
       </motion.div>
 
-      {/* Dashboard Preview */}
+      {/* Dashboard Preview — below hero content */}
       <DashboardPreview />
 
       {/* Video Modal */}
