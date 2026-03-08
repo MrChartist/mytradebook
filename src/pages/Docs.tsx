@@ -1195,7 +1195,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><PatternTaggingMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Research Tools" description="Live prices, duration tracking, and linking studies to trades." />
+              <SubTopic title="Research Tools" description="Live prices, duration tracking, and linking studies to trades." id="st-tools" />
               <FeatureCard icon={Clock} title="Additional Features">
                 <FeatureList items={[
                   "Live prices displayed for active/draft studies",
