@@ -263,30 +263,29 @@ function FeatureList({ items }: { items: string[] }) {
   );
 }
 
-function FeatureCard({ icon: Icon, title, children, badge }: {
+const FeatureCard = React.forwardRef<HTMLDivElement, {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
-}) {
-  return (
-    <div className="docs-feature-card group mt-6 overflow-hidden">
-      <div className="px-6 pt-5 pb-3">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
-            <Icon className="w-4 h-4" style={{ color: 'hsl(var(--docs-accent))' }} />
-          </div>
-          <h4 className="docs-card-title">{title}</h4>
-          {badge && (
-            <span className="text-[11px] font-bold tracking-wide uppercase px-2.5 py-0.5 rounded-md" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)', color: 'hsl(var(--docs-accent))' }}>
-              {badge}
-            </span>
-          )}
+}>(({ icon: Icon, title, children, badge }, ref) => (
+  <div ref={ref} className="docs-feature-card group mt-6 overflow-hidden">
+    <div className="px-6 pt-5 pb-3">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
+          <Icon className="w-4 h-4" style={{ color: 'hsl(var(--docs-accent))' }} />
         </div>
-      </div>
-      <div className="px-6 pb-6">
-        <div className="docs-card-content">{children}</div>
+        <h4 className="docs-card-title">{title}</h4>
+        {badge && (
+          <span className="text-[11px] font-bold tracking-wide uppercase px-2.5 py-0.5 rounded-md" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)', color: 'hsl(var(--docs-accent))' }}>
+            {badge}
+          </span>
+        )}
       </div>
     </div>
-  );
-}
+    <div className="px-6 pb-6">
+      <div className="docs-card-content">{children}</div>
+    </div>
+  </div>
+));
+FeatureCard.displayName = "FeatureCard";
 
 function VideoPlaceholder({ title, duration }: { title: string; duration: string }) {
   return (
