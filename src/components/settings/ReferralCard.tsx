@@ -43,7 +43,7 @@ export default function ReferralCard() {
           <span className="text-muted-foreground">referred</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
-          <span className="font-medium text-gain">{successfulReferrals}</span>
+          <span className="font-medium text-profit">{successfulReferrals}</span>
           <span className="text-muted-foreground">signed up</span>
         </div>
       </div>
