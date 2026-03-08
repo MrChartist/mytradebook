@@ -70,21 +70,21 @@ export function EquityCurve() {
 
   return (
     <div className="dashboard-card">
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-3">
-          <div className="icon-badge-sm bg-primary/10">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2.5">
+          <div className="icon-badge-sm bg-primary/8">
             <TrendingUp className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h3 className="font-semibold">Equity Curve</h3>
-            <p className="text-xs text-muted-foreground mt-0.5">Portfolio performance</p>
+            <h3 className="text-[15px] font-semibold">Equity Curve</h3>
+            <p className="text-[10px] text-muted-foreground/50 mt-0.5">Portfolio performance</p>
           </div>
         </div>
-        <Link to="/analytics" className="flex items-center gap-1 text-xs text-primary hover:underline">
-          View Analytics <ArrowUpRight className="w-3 h-3" />
+        <Link to="/analytics" className="flex items-center gap-1 text-[11px] text-primary hover:underline font-medium">
+          Analytics <ArrowUpRight className="w-3 h-3" />
         </Link>
       </div>
-      <div className="h-[260px]">
+      <div className="h-[240px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
             <defs>

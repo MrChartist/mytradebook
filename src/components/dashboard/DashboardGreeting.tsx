@@ -41,16 +41,16 @@ export function DashboardGreeting() {
   }, [user]);
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <h1 className="text-2xl font-bold tracking-tight">
+    <div className="flex flex-col gap-1">
+      <h1 className="text-xl font-bold tracking-tight">
         {greeting}, <span className="text-primary">{displayName}</span>
       </h1>
-      <div className="flex items-center gap-2.5">
-        <span className="text-xs text-muted-foreground">{dateStr}</span>
-        <span className="text-border">·</span>
-        <div className="flex items-center gap-1.5 bg-muted/40 rounded-full px-2.5 py-1 border border-border/30">
-          <span className={`w-1.5 h-1.5 rounded-full ${market.isOpen ? "bg-profit pulse-dot" : "bg-muted-foreground/50"}`} />
-          <span className="text-[11px] text-muted-foreground font-medium">{market.label}</span>
+      <div className="flex items-center gap-2">
+        <span className="text-[11px] text-muted-foreground/60">{dateStr}</span>
+        <span className="w-px h-3 bg-border/30" />
+        <div className="flex items-center gap-1.5 bg-muted/30 rounded-md px-2 py-0.5 border border-border/15">
+          <span className={`w-1.5 h-1.5 rounded-full ${market.isOpen ? "bg-profit pulse-dot" : "bg-muted-foreground/40"}`} />
+          <span className="text-[10px] text-muted-foreground/70 font-medium">{market.label}</span>
         </div>
       </div>
     </div>

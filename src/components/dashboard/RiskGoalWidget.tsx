@@ -45,27 +45,27 @@ export function RiskGoalWidget() {
   const riskBarWidth = Math.min(riskPercent / maxRiskPercent * 100, 100);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
       {/* Risk Gauge */}
       <div className={cn("premium-card-hover", riskLevel === "danger" ? "card-glow-loss" : riskLevel === "warn" ? "card-glow-primary" : "card-glow-profit")}>
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-2.5 mb-3">
           <div className={cn(
-            "icon-badge",
-            riskLevel === "danger" ? "bg-loss/10" : riskLevel === "warn" ? "bg-warning/10" : "bg-profit/10"
+            "icon-badge-sm",
+            riskLevel === "danger" ? "bg-loss/8" : riskLevel === "warn" ? "bg-warning/8" : "bg-profit/8"
           )}>
-            <Shield className={cn("w-4.5 h-4.5", riskLevel === "danger" ? "text-loss" : riskLevel === "warn" ? "text-warning" : "text-profit")} />
+            <Shield className={cn("w-4 h-4", riskLevel === "danger" ? "text-loss" : riskLevel === "warn" ? "text-warning" : "text-profit")} />
           </div>
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Capital at Risk</span>
+          <span className="kpi-label">Capital at Risk</span>
         </div>
 
-        <div className="flex items-baseline gap-2 mb-3">
-          <p className={cn("text-[28px] font-bold font-mono leading-none", riskLevel === "danger" ? "text-loss" : riskLevel === "warn" ? "text-warning" : "text-profit")}>
+        <div className="flex items-baseline gap-2 mb-2.5">
+          <p className={cn("text-2xl font-bold font-mono leading-none", riskLevel === "danger" ? "text-loss" : riskLevel === "warn" ? "text-warning" : "text-profit")}>
             {riskPercent.toFixed(1)}%
           </p>
-          <span className="text-xs text-muted-foreground">of {formatCurrency(startingCapital, 0)}</span>
+          <span className="text-[11px] text-muted-foreground/60">of {formatCurrency(startingCapital, 0)}</span>
         </div>
 
-        <div className="relative h-3 bg-muted rounded-full overflow-hidden">
+        <div className="relative h-2.5 bg-muted/60 rounded-full overflow-hidden">
           <div
             className={cn(
               "h-full rounded-full transition-all duration-500 relative bar-shine",
@@ -77,38 +77,37 @@ export function RiskGoalWidget() {
             )}
             style={{ width: `${riskBarWidth}%` }}
           />
-          {/* Danger zone marker */}
           <div className="absolute top-0 bottom-0 flex flex-col items-center" style={{ left: "100%" }}>
-            <div className="w-px h-full border-l border-dashed border-loss/50" />
+            <div className="w-px h-full border-l border-dashed border-loss/40" />
           </div>
         </div>
         <div className="flex justify-between mt-1.5">
-          <span className="text-[10px] text-muted-foreground">{formatCurrency(riskAtSL, 0)} at SL</span>
-          <span className="text-[10px] text-loss/70 font-medium">Max: {maxRiskPercent}%</span>
+          <span className="text-[9px] text-muted-foreground/60">{formatCurrency(riskAtSL, 0)} at SL</span>
+          <span className="text-[9px] text-loss/60 font-medium">Max: {maxRiskPercent}%</span>
         </div>
       </div>
 
       {/* Goal Tracker */}
       <div className="premium-card-hover card-glow-primary">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="icon-badge bg-primary/10">
-            <Target className="w-4.5 h-4.5 text-primary" />
+        <div className="flex items-center gap-2.5 mb-3">
+          <div className="icon-badge-sm bg-primary/8">
+            <Target className="w-4 h-4 text-primary" />
           </div>
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">P&L Goals</span>
+          <span className="kpi-label">P&L Goals</span>
         </div>
 
         {/* Daily goal */}
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-1.5">
+        <div className="mb-3.5">
+          <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground">Daily (1%)</span>
-              {dailyProgress >= 100 && <CheckCircle2 className="w-3.5 h-3.5 text-profit" />}
+              <span className="text-[11px] text-muted-foreground/70">Daily (1%)</span>
+              {dailyProgress >= 100 && <CheckCircle2 className="w-3 h-3 text-profit" />}
             </div>
-            <span className={cn("text-xs font-bold font-mono", todayPnl >= 0 ? "text-profit" : "text-loss")}>
+            <span className={cn("text-[11px] font-bold font-mono", todayPnl >= 0 ? "text-profit" : "text-loss")}>
               {formatCurrency(todayPnl, 0)} / {formatCurrency(dailyGoal, 0)}
             </span>
           </div>
-          <div className="h-3 bg-muted rounded-full overflow-hidden relative">
+          <div className="h-2.5 bg-muted/60 rounded-full overflow-hidden relative">
             <div
               className={cn("h-full rounded-full transition-all duration-500 relative bar-shine", todayPnl >= 0 ? "bg-gradient-to-r from-profit to-profit/80" : "bg-gradient-to-r from-loss to-loss/80")}
               style={{ width: `${Math.max(dailyProgress, 0)}%` }}
@@ -118,16 +117,16 @@ export function RiskGoalWidget() {
 
         {/* Monthly goal */}
         <div>
-          <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground">Monthly (5%)</span>
-              {monthlyProgress >= 100 && <CheckCircle2 className="w-3.5 h-3.5 text-profit" />}
+              <span className="text-[11px] text-muted-foreground/70">Monthly (5%)</span>
+              {monthlyProgress >= 100 && <CheckCircle2 className="w-3 h-3 text-profit" />}
             </div>
-            <span className={cn("text-xs font-bold font-mono", mtdPnl >= 0 ? "text-profit" : "text-loss")}>
+            <span className={cn("text-[11px] font-bold font-mono", mtdPnl >= 0 ? "text-profit" : "text-loss")}>
               {formatCurrency(mtdPnl, 0)} / {formatCurrency(monthlyGoal, 0)}
             </span>
           </div>
-          <div className="h-3 bg-muted rounded-full overflow-hidden relative">
+          <div className="h-2.5 bg-muted/60 rounded-full overflow-hidden relative">
             <div
               className={cn("h-full rounded-full transition-all duration-500 relative bar-shine", mtdPnl >= 0 ? "bg-gradient-to-r from-profit to-profit/80" : "bg-gradient-to-r from-loss to-loss/80")}
               style={{ width: `${Math.max(monthlyProgress, 0)}%` }}

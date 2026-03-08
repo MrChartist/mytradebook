@@ -167,7 +167,7 @@ export default function Dashboard() {
         return <PortfolioHeatMap key={w.id} />;
       case "chart":
         return (
-          <div key={w.id} className={cn("grid grid-cols-1 gap-5", alertsVisible ? "lg:grid-cols-3" : "")}>
+          <div key={w.id} className={cn("grid grid-cols-1 gap-4", alertsVisible ? "lg:grid-cols-3" : "")}>
             <div className={alertsVisible ? "lg:col-span-2" : ""}><DailySectorChart /></div>
             {alertsVisible && <DashboardAlertsPanel alerts={alerts} />}
           </div>
@@ -180,9 +180,9 @@ export default function Dashboard() {
         return <DashboardPositionsTable key={w.id} />;
       case "streakCalendar":
         return (
-          <div key={w.id} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <div className="min-h-[360px]"><StreakDiscipline /></div>
-            <div className="min-h-[360px]">
+          <div key={w.id} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="min-h-[340px]"><StreakDiscipline /></div>
+            <div className="min-h-[340px]">
               <JournalCalendarView
                 calendarData={calendarData}
                 isLoading={tradesLoading}
@@ -209,43 +209,42 @@ export default function Dashboard() {
 
   return (
     <DashboardContext.Provider value={ctx}>
-      <div className="space-y-5 animate-fade-in">
+      <div className="space-y-4 animate-fade-in">
         <OnboardingWelcome />
 
         {/* Floating Trade Ticker */}
         <FloatingTradeTicker />
 
         {/* Row 1: Greeting + Live status + Settings */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
           <DashboardGreeting />
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 text-xs bg-muted/50 rounded-full px-3 py-1.5">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 text-[11px] bg-muted/30 rounded-md px-2.5 py-1 border border-border/15">
               {isPolling && openInstruments.length > 0 ? (
                 <>
                   <Radio className="w-3 h-3 text-profit animate-pulse" />
                   <span className="text-profit font-medium">Live</span>
-                  {lastUpdated && <span className="text-muted-foreground">• {format(lastUpdated, "h:mm a")}</span>}
+                  {lastUpdated && <span className="text-muted-foreground/50">• {format(lastUpdated, "h:mm a")}</span>}
                 </>
               ) : (
                 <>
-                  <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
-                  <span className="text-muted-foreground">Offline</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
+                  <span className="text-muted-foreground/50">Offline</span>
                 </>
               )}
             </div>
 
-            {/* Widget customization with drag-and-drop */}
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <Settings2 className="w-4 h-4" />
+                <Button variant="ghost" size="icon" className="h-7 w-7">
+                  <Settings2 className="w-3.5 h-3.5" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-64 p-3" align="end">
+              <PopoverContent className="w-60 p-2.5" align="end">
                 <div className="space-y-1">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs font-medium">Dashboard Widgets</p>
-                    <Button variant="ghost" size="sm" className="h-6 text-[10px]" onClick={resetLayout}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <p className="text-[11px] font-medium">Dashboard Widgets</p>
+                    <Button variant="ghost" size="sm" className="h-6 text-[9px]" onClick={resetLayout}>
                       <RotateCcw className="w-3 h-3 mr-1" /> Reset
                     </Button>
                   </div>
@@ -275,11 +274,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="h-px bg-border/40" />
+        <div className="h-px bg-border/20" />
 
         {/* Row 2: Month selector + Segment filter */}
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex gap-1 bg-muted/60 rounded-full p-0.5 border border-border/30">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="flex gap-0.5 bg-muted/40 rounded-lg p-0.5 border border-border/15">
             {[
               { label: "All", value: "all" },
               ...([subMonths(new Date(), 2), subMonths(new Date(), 1), new Date()].map((m) => ({
@@ -298,11 +297,11 @@ export default function Dashboard() {
                   }
                 }}
                 className={cn(
-                  "px-3.5 py-1.5 text-xs font-medium rounded-full transition-all duration-200",
+                  "px-3 py-1 text-[11px] font-medium rounded-md transition-all duration-200",
                   (m.value === "all" && selectedMonth === null)
                     || (selectedMonth && m.value === format(selectedMonth, "MMM yy"))
-                    ? "bg-card shadow-sm text-foreground scale-[1.02]"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-card shadow-sm text-foreground"
+                    : "text-muted-foreground/60 hover:text-foreground"
                 )}
               >
                 {m.label}
@@ -310,17 +309,17 @@ export default function Dashboard() {
             ))}
           </div>
 
-          <div className="w-px h-5 bg-border/40" />
+          <div className="w-px h-4 bg-border/20" />
 
           {SEGMENT_OPTIONS.map((opt) => (
             <button
               key={opt.value}
               onClick={() => setSegment(opt.value)}
               className={cn(
-                "px-4 py-1.5 text-xs font-medium rounded-full border transition-all duration-200",
+                "px-3 py-1 text-[11px] font-medium rounded-md border transition-all duration-200",
                 segment === opt.value
-                  ? "inner-panel border-primary/15 bg-primary/6 text-primary shadow-sm"
-                  : "border-border/50 text-muted-foreground hover:text-foreground hover:border-foreground/20"
+                  ? "border-primary/15 bg-primary/6 text-primary"
+                  : "border-border/15 text-muted-foreground/50 hover:text-foreground hover:border-border/30"
               )}
             >
               {opt.label}
@@ -330,18 +329,17 @@ export default function Dashboard() {
 
         {/* Dynamic Widgets */}
         {tradesLoading ? (
-          <div className="space-y-5">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
               {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} className="h-[140px] rounded-[1.25rem] shimmer-skeleton" />
+                <Skeleton key={i} className="h-[130px] rounded-[1.25rem] shimmer-skeleton" />
               ))}
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-              <Skeleton className="h-[300px] rounded-[1.25rem] lg:col-span-2 shimmer-skeleton" />
-              <Skeleton className="h-[300px] rounded-[1.25rem] shimmer-skeleton" />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <Skeleton className="h-[280px] rounded-[1.25rem] lg:col-span-2 shimmer-skeleton" />
+              <Skeleton className="h-[280px] rounded-[1.25rem] shimmer-skeleton" />
             </div>
-            <Skeleton className="h-[250px] rounded-[1.25rem] shimmer-skeleton" />
-            <Skeleton className="h-[200px] rounded-[1.25rem] shimmer-skeleton" />
+            <Skeleton className="h-[220px] rounded-[1.25rem] shimmer-skeleton" />
           </div>
         ) : (
           widgets.map((w) => renderWidget(w))

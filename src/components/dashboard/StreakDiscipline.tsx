@@ -63,26 +63,26 @@ export function StreakDiscipline() {
 
   return (
     <div className={cn("dashboard-card h-full", stats.streakType === "win" ? "card-glow-profit" : "card-glow-loss")}>
-      <div className="flex items-center gap-3 mb-4">
-        <div className="icon-badge-sm bg-primary/10">
+      <div className="flex items-center gap-2.5 mb-3.5">
+        <div className="icon-badge-sm bg-primary/8">
           <Trophy className="w-4 h-4 text-primary" />
         </div>
         <div className="flex-1">
-          <h3 className="font-semibold">Streak & Discipline</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">Trading consistency</p>
+          <h3 className="text-[15px] font-semibold">Streak & Discipline</h3>
+          <p className="text-[10px] text-muted-foreground/50 mt-0.5">Trading consistency</p>
         </div>
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7"
+          className="h-6 w-6"
           onClick={() => setShareOpen(true)}
           title="Share streak"
         >
-          <Share2 className="w-3.5 h-3.5" />
+          <Share2 className="w-3 h-3" />
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2.5">
         {/* Current Streak */}
         <div className={cn(
           "inner-panel",
@@ -97,45 +97,45 @@ export function StreakDiscipline() {
             ) : (
               <TrendingDown className="w-3.5 h-3.5 text-loss" />
             )}
-            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Streak</p>
+            <p className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-wider">Streak</p>
           </div>
-          <p className={cn("text-xl font-bold font-mono", stats.streakType === "win" ? "text-profit" : "text-loss")}>
+          <p className={cn("text-lg font-bold font-mono", stats.streakType === "win" ? "text-profit" : "text-loss")}>
             {stats.currentStreak} {stats.streakType === "win" ? "W" : "L"}
           </p>
         </div>
 
         {/* Avg RR */}
-        <div className="inner-panel">
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Avg R:R</p>
-          <p className={cn("text-xl font-bold font-mono mt-1", stats.avgRR >= 1.5 ? "text-profit" : stats.avgRR >= 1 ? "text-foreground" : "text-loss")}>
+        <div className="inner-panel !p-2.5">
+          <p className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-wider">Avg R:R</p>
+          <p className={cn("text-lg font-bold font-mono mt-0.5", stats.avgRR >= 1.5 ? "text-profit" : stats.avgRR >= 1 ? "text-foreground" : "text-loss")}>
             1:{stats.avgRR.toFixed(1)}
           </p>
         </div>
 
         {/* Best Trade */}
-        <div className="inner-panel">
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Best Trade</p>
-          <p className="text-lg font-bold mt-1 text-profit font-mono">
+        <div className="inner-panel !p-2.5">
+          <p className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-wider">Best Trade</p>
+          <p className="text-base font-bold mt-0.5 text-profit font-mono">
             +₹{stats.bestTrade.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
           </p>
         </div>
 
         {/* Worst Trade */}
-        <div className="inner-panel">
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Worst Trade</p>
-          <p className="text-lg font-bold mt-1 text-loss font-mono">
+        <div className="inner-panel !p-2.5">
+          <p className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-wider">Worst Trade</p>
+          <p className="text-base font-bold mt-0.5 text-loss font-mono">
             -₹{Math.abs(stats.worstTrade).toLocaleString("en-IN", { maximumFractionDigits: 0 })}
           </p>
         </div>
       </div>
 
       {/* Discipline bar */}
-      <div className="mt-3 inner-panel">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">SL Discipline</p>
-          <p className="text-xs font-semibold font-mono">{stats.disciplineScore}%</p>
+      <div className="mt-2.5 inner-panel !p-2.5">
+        <div className="flex items-center justify-between mb-1.5">
+          <p className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-wider">SL Discipline</p>
+          <p className="text-[11px] font-semibold font-mono">{stats.disciplineScore}%</p>
         </div>
-        <div className="h-2.5 bg-muted rounded-full overflow-hidden relative">
+        <div className="h-2 bg-muted/50 rounded-full overflow-hidden relative">
           <div
             className={cn(
               "h-full rounded-full transition-all relative bar-shine",
