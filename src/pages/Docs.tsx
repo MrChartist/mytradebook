@@ -3123,6 +3123,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">The coach is most powerful when you treat its feedback as input to your overall improvement system — not as isolated comments on individual trades.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "AI Insights Setup", description: "Configure your AI provider", targetId: "ai-integration" },
+                { label: "Journal", description: "Reference coach feedback in reviews", targetId: "journal" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
