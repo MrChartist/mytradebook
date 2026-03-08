@@ -525,7 +525,7 @@ export function FinalCTASection() {
             {/* Shine sweep */}
             <span className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-1000" />
             <span className="relative flex items-center gap-2.5">
-              Get Started — It's Free <ArrowRight className="w-4 h-4" />
+              Start Your Journal — It's Free <ArrowRight className="w-4 h-4" />
             </span>
           </Button>
         </motion.div>
