@@ -418,27 +418,27 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                         )}
                         {groupSections.map((s) => {
                           const btn = (
-                            <button
-                              key={s.id}
-                              onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
-                              className={cn(
-                                "w-full flex items-center rounded-lg text-sm transition-all duration-200 text-left relative hover:translate-x-0.5",
-                                sidebarCollapsed ? "justify-center p-2.5" : "gap-2.5 px-3 py-2.5",
-                                activeSection === s.id
-                                  ? "bg-primary/8 text-primary font-semibold"
-                                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                              )}
-                            >
-                              {activeSection === s.id && (
-                                <motion.div
-                                  layoutId="docs-active-pill"
-                                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-full bg-primary"
-                                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                                />
-                              )}
-                              <s.icon className="w-4 h-4 shrink-0" />
-                              {!sidebarCollapsed && s.label}
-                            </button>
+                             <button
+                               key={s.id}
+                               onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
+                               className={cn(
+                                 "w-full flex items-center rounded-md text-[12px] transition-all duration-200 text-left relative",
+                                 sidebarCollapsed ? "justify-center p-2" : "gap-2 px-2.5 py-[6px]",
+                                 activeSection === s.id
+                                   ? "bg-primary/8 text-primary font-semibold"
+                                   : "text-muted-foreground/70 hover:text-foreground hover:bg-muted/30"
+                               )}
+                             >
+                               {activeSection === s.id && (
+                                 <motion.div
+                                   layoutId="docs-active-pill"
+                                   className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 rounded-full bg-primary"
+                                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                                 />
+                               )}
+                               <s.icon className="w-3.5 h-3.5 shrink-0" />
+                               {!sidebarCollapsed && <span className="truncate">{s.label}</span>}
+                             </button>
                           );
 
                           if (sidebarCollapsed) {
