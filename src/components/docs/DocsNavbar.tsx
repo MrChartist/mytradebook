@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { BookOpen, Search, ArrowLeft, ExternalLink, Moon, Sun, Command } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
-import landingLogo from "@/assets/logo.png";
+import { BrandLogoInline } from "@/components/ui/brand-logo";
 
 interface DocsNavbarProps {
   isInsideApp?: boolean;
