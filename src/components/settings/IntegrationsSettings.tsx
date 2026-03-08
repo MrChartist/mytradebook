@@ -461,19 +461,19 @@ export default function IntegrationsSettings() {
 
       {/* Dhan API Integration */}
       <PlanGate plan="pro" feature="brokerIntegration" message="Upgrade to Pro to connect your Dhan broker account.">
-      <div className="glass-card p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-            <Smartphone className="w-5 h-5 text-blue-400" />
+      <div className="premium-card-hover p-5">
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="icon-badge-sm bg-[hsl(210_80%_55%)]/8">
+            <Smartphone className="w-4 h-4 text-[hsl(210_80%_55%)]" />
           </div>
-          <div>
-            <h3 className="font-semibold">Dhan Trading API</h3>
-            <p className="text-sm text-muted-foreground">Connect for live prices and order execution</p>
+          <div className="flex-1">
+            <h3 className="text-[15px] font-semibold">Dhan Trading API</h3>
+            <p className="text-[11px] text-muted-foreground/50">Live prices and order execution</p>
           </div>
           {isDhanConnected && (
-            <div className="ml-auto flex items-center gap-2 text-profit">
-              <CheckCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">{settings?.dhan_account_name || "Connected"}</span>
+            <div className="flex items-center gap-1.5 text-profit">
+              <CheckCircle className="w-3.5 h-3.5" />
+              <span className="text-[11px] font-medium">{settings?.dhan_account_name || "Connected"}</span>
             </div>
           )}
         </div>
