@@ -127,43 +127,71 @@
   }
 
   .dark {
-    --background: 222 47% 5%;
-    --card-inner: 222 47% 10%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 10%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 24 85% 60%;
+    /* Deep, premium background tones with proper layering */
+    --background: 222 47% 6%;
+    --card-inner: 222 47% 9%;
+    --foreground: 210 25% 93%;
+    
+    /* Card surfaces with clear elevation distinction */
+    --card: 222 45% 9%;
+    --card-foreground: 210 25% 93%;
+    
+    /* Popover/dropdown surfaces slightly elevated */
+    --popover: 222 42% 11%;
+    --popover-foreground: 210 25% 93%;
+    
+    /* Primary accent - warm orange, slightly softer for dark */
+    --primary: 24 82% 58%;
     --primary-foreground: 20 15% 5%;
-    --secondary: 222 47% 14%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 222 47% 12%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 222 47% 16%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 215 25% 18%;
-    --input: 222 47% 14%;
-    --ring: 24 85% 60%;
+    
+    /* Secondary surfaces for subtle distinction */
+    --secondary: 222 40% 13%;
+    --secondary-foreground: 210 25% 90%;
+    
+    /* Muted tones - readable but not glaring */
+    --muted: 222 35% 12%;
+    --muted-foreground: 215 18% 58%;
+    
+    /* Accent for hover states */
+    --accent: 222 38% 15%;
+    --accent-foreground: 210 25% 93%;
+    
+    /* Status colors */
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 210 25% 95%;
+    
+    /* Borders - subtle but visible structure */
+    --border: 215 22% 20%;
+    --input: 222 38% 14%;
+    --ring: 24 82% 58%;
 
-    --tb-accent: 24 85% 60%;
-    --tb-accent-hover: 24 85% 52%;
+    /* TradeBook accent tuned for dark */
+    --tb-accent: 24 82% 58%;
+    --tb-accent-hover: 24 82% 50%;
 
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
-    --shadow-glow: 0 0 20px hsl(24 85% 60% / 0.25);
+    /* Trading colors - vivid but not neon */
+    --profit: 152 58% 45%;
+    --loss: 0 68% 58%;
+    --warning: 38 88% 52%;
 
-    --sidebar-background: 222 47% 5%;
-    --sidebar-foreground: 210 40% 90%;
-    --sidebar-primary: 24 85% 60%;
+    /* Shadows for dark mode depth */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.35), 0 1px 2px -1px rgb(0 0 0 / 0.25);
+    --shadow-md: 0 4px 8px -1px rgb(0 0 0 / 0.45), 0 2px 4px -2px rgb(0 0 0 / 0.35);
+    --shadow-lg: 0 12px 20px -4px rgb(0 0 0 / 0.55), 0 6px 8px -4px rgb(0 0 0 / 0.4);
+    --shadow-glow: 0 0 24px hsl(24 82% 58% / 0.2);
+    --shadow-profit-glow: 0 0 20px hsl(152 58% 45% / 0.18);
+    --shadow-loss-glow: 0 0 20px hsl(0 68% 58% / 0.18);
+
+    /* Sidebar - slightly elevated from page */
+    --sidebar-background: 222 47% 7%;
+    --sidebar-foreground: 210 22% 85%;
+    --sidebar-primary: 24 82% 58%;
     --sidebar-primary-foreground: 20 15% 5%;
-    --sidebar-accent: 222 47% 12%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 215 25% 14%;
-    --sidebar-ring: 24 85% 60%;
+    --sidebar-accent: 222 40% 13%;
+    --sidebar-accent-foreground: 210 25% 93%;
+    --sidebar-border: 215 22% 16%;
+    --sidebar-ring: 24 82% 58%;
   }
 }
 
