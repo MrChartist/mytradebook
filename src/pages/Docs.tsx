@@ -3384,12 +3384,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           <aside className="hidden xl:block w-[190px] shrink-0 border-l border-border/15">
             <div className="sticky top-20 py-8 pl-6">
               <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground/40 mb-4">On this page</p>
-              <nav className="space-y-1 border-l border-border/20 pl-3">
+              <nav className="space-y-0.5 border-l border-border/20 pl-3">
                 {(SECTION_ANCHORS[activeSection] || []).map((anchor) => (
                   <button
                     key={anchor.id}
                     onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                    className="block w-full text-left text-[13px] text-muted-foreground/50 hover:text-foreground py-1.5 transition-colors duration-150 leading-snug hover:border-l-2 hover:border-primary hover:-ml-[13px] hover:pl-[11px]"
+                    className="block w-full text-left text-[13px] text-muted-foreground/50 hover:text-foreground py-1.5 transition-colors duration-150 leading-snug"
                   >
                     {anchor.label}
                   </button>
