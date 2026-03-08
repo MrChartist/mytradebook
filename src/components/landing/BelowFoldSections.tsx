@@ -557,10 +557,10 @@ export function FAQSection() {
         <motion.div variants={fadeUp} className="mt-14">
           <div className="rounded-2xl border border-border/30 bg-card/70 p-8 flex flex-col sm:flex-row items-center justify-between gap-5" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
             <div>
-              <h3 className="text-base font-bold mb-1 flex items-center gap-2">
+              <h3 className="text-base font-semibold mb-1 flex items-center gap-2 tracking-[-0.015em]">
                 <BookOpen className="w-4 h-4 text-primary" />Want to dive deeper?
               </h3>
-              <p className="text-sm text-muted-foreground">Explore our docs with visual guides and tutorials.</p>
+              <p className="text-sm text-muted-foreground leading-[1.6]">Explore our docs with visual guides and tutorials.</p>
             </div>
             <Button variant="outline" onClick={() => navigate("/docs")} className="gap-2 shrink-0 rounded-full">
               <BookOpen className="w-4 h-4" />Browse Docs
