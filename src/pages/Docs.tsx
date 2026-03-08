@@ -55,7 +55,7 @@ import {
 } from "@/components/docs/DocsMockups";
 import {
   ProTip, StepByStep, ExpandableDetail,
-  InteractiveMockup, PhaseHeader, QuickNav, KeyMetric
+  InteractiveMockup, PhaseHeader, QuickNav, KeyMetric, SubTopic
 } from "@/components/docs/DocsEnhancements";
 import {
   ShareCardsMockup, AchievementsMockup, PositionSizingCalcMockup,
