@@ -173,7 +173,7 @@ export function DashboardKPICards({ alerts }: Props) {
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/analytics"); }}
       >
         <div className="flex items-center justify-between mb-4">
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Win Rate</span>
+          <span className="kpi-label">Win Rate</span>
           <div className={cn("icon-badge", winRate >= 50 ? "bg-profit/10" : "bg-loss/10")}>
             <TrendingUp className={cn("w-4.5 h-4.5", winRate >= 50 ? "text-profit" : "text-loss")} />
           </div>
