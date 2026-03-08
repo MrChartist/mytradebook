@@ -239,7 +239,7 @@ export default function Reports() {
 
   return (
     <PlanGate plan="pro" feature="weeklyReports" message="Upgrade to Pro to access weekly performance reports.">
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-4 animate-fade-in">
       <PageHeader title="Weekly Reports" subtitle="Auto-generated performance summaries">
         <PnlShareModal
           defaultPeriod="this_week"
