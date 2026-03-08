@@ -239,9 +239,13 @@ const SECTION_ANCHORS: Record<string, { label: string; id: string }[]> = {
   ],
   "faq": [
     { label: "Account & Billing", id: "faq-account" },
-    { label: "Data & Privacy", id: "faq-data" },
+    { label: "Trades & Import", id: "faq-trades" },
+    { label: "Alerts & Notifications", id: "faq-alerts" },
+    { label: "Analytics & Reports", id: "faq-analytics" },
     { label: "Integrations", id: "faq-integrations" },
+    { label: "Mobile & Offline", id: "faq-mobile" },
     { label: "Features", id: "faq-features" },
+    { label: "Troubleshooting", id: "faq-troubleshooting" },
   ],
   "changelog": [
     { label: "Latest Updates", id: "cl-updates" },
@@ -261,6 +265,37 @@ const FeatureList = React.forwardRef<HTMLUListElement, { items: string[] }>(({ i
   </ul>
 ));
 FeatureList.displayName = "FeatureList";
+
+const FAQGroup = ({ icon: Icon, title, items }: { 
+  icon: React.ElementType; 
+  title: string; 
+  items: { q: string; a: string }[] 
+}) => (
+  <div className="mb-6">
+    <div className="flex items-center gap-2.5 mb-4">
+      <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
+        <Icon className="w-3.5 h-3.5" style={{ color: 'hsl(var(--docs-accent))' }} />
+      </div>
+      <h3 className="text-[13px] font-bold" style={{ color: 'hsl(var(--docs-text-strong))' }}>{title}</h3>
+      <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: 'hsl(var(--docs-elevated))', color: 'hsl(var(--docs-text-muted))' }}>{items.length} questions</span>
+    </div>
+    <div className="space-y-2">
+      {items.map((faq) => (
+        <details key={faq.q} className="group premium-card-hover">
+          <summary className="cursor-pointer p-4 flex items-start gap-3 list-none [&::-webkit-details-marker]:hidden">
+            <div className="w-5 h-5 rounded-md flex items-center justify-center mt-0.5 shrink-0 transition-colors" style={{ background: 'hsl(var(--docs-elevated))' }}>
+              <ChevronRight className="w-3 h-3 transition-transform group-open:rotate-90" style={{ color: 'hsl(var(--docs-accent))' }} />
+            </div>
+            <span className="text-[13px] font-medium leading-snug" style={{ color: 'hsl(var(--docs-text-primary))' }}>{faq.q}</span>
+          </summary>
+          <div className="px-4 pb-4 pt-0 pl-12">
+            <p className="text-[13px] leading-relaxed" style={{ color: 'hsl(var(--docs-text-secondary))' }}>{faq.a}</p>
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+);
 
 const FeatureCard = React.forwardRef<HTMLDivElement, {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
@@ -3219,95 +3254,106 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <SectionHeader
                 id="faq"
                 title="FAQ & Troubleshooting"
-                description="Answers to frequently asked questions and solutions to common issues, organized by category."
+                description="Answers to common questions and solutions to known issues — organized by category for quick lookup."
                 icon={MessageSquare}
               />
 
               <QuickNav items={[
                 { label: "Account & Billing", id: "faq-account" },
-                { label: "Data & Privacy", id: "faq-data" },
+                { label: "Trades & Import", id: "faq-trades" },
+                { label: "Alerts & Notifications", id: "faq-alerts" },
+                { label: "Analytics & Reports", id: "faq-analytics" },
                 { label: "Integrations", id: "faq-integrations" },
+                { label: "Mobile & Offline", id: "faq-mobile" },
                 { label: "Features", id: "faq-features" },
+                { label: "Troubleshooting", id: "faq-troubleshooting" },
               ]} />
 
+              {/* ── Account & Billing ── */}
               <SubTopic title="Account & Billing" id="faq-account" />
-              <ExpandableDetail title="Account & Billing Questions" icon={Users} defaultOpen>
-                {[
-                  { q: "Is TradeBook free to use?", a: "Yes! The Free plan includes trade logging, watchlists, alerts, and basic analytics. The Pro plan unlocks advanced analytics, AI insights, weekly reports, and more." },
-                  { q: "How does the 14-day Pro trial work?", a: "New accounts automatically get a 14-day Pro trial with full access to all features. No credit card required. After the trial, you can continue on the Free plan or upgrade to Pro." },
-                  { q: "Can I import trades from my existing broker?", a: "Yes. Use the CSV Import feature to bulk import trades from any broker. Column mapping supports most common export formats." },
-                ].map((faq) => (
-                  <div key={faq.q} className="premium-card-hover p-5 group my-3">
-                    <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4 text-primary shrink-0" />
-                      {faq.q}
-                    </h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed pl-6">{faq.a}</p>
-                  </div>
-                ))}
-              </ExpandableDetail>
+              <FAQGroup icon={Users} title="Account & Billing" items={[
+                { q: "Is TradeBook free to use?", a: "Yes! The Free plan includes trade logging, watchlists, alerts, and basic analytics. The Pro plan unlocks advanced analytics, AI insights, weekly reports, multi-leg strategies, and more. All new accounts start with a 14-day Pro trial." },
+                { q: "How does the 14-day Pro trial work?", a: "New accounts automatically get full Pro access for 14 days — no credit card required. You can see your remaining trial days in the sidebar badge. After the trial, you keep all your data and continue on the Free plan, or upgrade to Pro." },
+                { q: "What payment methods are supported?", a: "We support UPI, credit/debit cards, and net banking via our payment partner. All plans are billed in INR (₹). Quarterly and Yearly plans include significant discounts (up to 37% off)." },
+                { q: "Can I cancel my subscription anytime?", a: "Yes. Cancel anytime from Settings → Billing. You'll retain Pro access until the end of your current billing period. No data is deleted when you downgrade." },
+                { q: "How do I export or backup my data?", a: "Go to Settings → Preferences → Full Data Backup. This exports all your trades, journal entries, alerts, and settings as a JSON file. You can also export trades as CSV from the Trades page." },
+              ]} />
 
-              <SubTopic title="Data & Privacy" id="faq-data" />
-              <ExpandableDetail title="Data & Privacy Questions" icon={Shield} defaultOpen>
-                {[
-                  { q: "Is my data secure?", a: "Absolutely. All data is encrypted at rest and in transit. Your API keys are stored securely server-side and never exposed to the browser. We use industry-standard authentication." },
-                  { q: "My dashboard shows no data — what's wrong?", a: "Ensure you have trades logged. Check the segment filter and month selector — they may be filtering out your data. Try selecting 'All Segments' and expanding the date range." },
-                  { q: "Can I use TradeBook on mobile?", a: "Yes! TradeBook is a Progressive Web App (PWA). Add it to your home screen for a native-like experience with offline trade queuing." },
-                ].map((faq) => (
-                  <div key={faq.q} className="premium-card-hover p-5 group my-3">
-                    <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4 text-primary shrink-0" />
-                      {faq.q}
-                    </h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed pl-6">{faq.a}</p>
-                  </div>
-                ))}
-              </ExpandableDetail>
+              {/* ── Trades & Import ── */}
+              <SubTopic title="Trades & CSV Import" id="faq-trades" />
+              <FAQGroup icon={CandlestickChart} title="Trades & CSV Import" items={[
+                { q: "How do I import trades from my broker?", a: "Go to Trades → Import CSV. Upload your broker's trade export file. TradeBook auto-detects columns (symbol, price, quantity, date) and lets you review mappings before importing. Supports Zerodha, Angel One, Dhan, and custom CSVs." },
+                { q: "What CSV format does TradeBook expect?", a: "Any CSV with columns for symbol, entry price, quantity, and date works. The importer auto-maps common headers like 'ticker', 'qty', 'trade_date'. You can manually adjust mappings in the preview step if needed." },
+                { q: "Can I edit a trade after creating it?", a: "Yes. Click any trade to open the detail modal, then use the edit actions. You can update prices, notes, tags, chart images, and status. Changes are saved instantly." },
+                { q: "What's the difference between Open, Closed, and Cancelled trades?", a: "Open = active position you're still holding. Closed = position fully exited with final P&L calculated. Cancelled = trade you decided not to take. Only Closed trades count in your analytics and P&L calculations." },
+                { q: "How does Position Sizing work?", a: "In the trade creation modal, the Position Sizing Calculator uses your starting capital, risk percentage, and stop loss distance to calculate the ideal quantity. It ensures you never risk more than your defined percentage on any single trade." },
+                { q: "What are Trade Templates?", a: "Templates save your common trade configurations — segment, trade type, default SL%, tags, and notes template. When creating a new trade, select a template to auto-fill these fields. Smart Suggestions recommend templates based on the symbol you're trading." },
+              ]} />
 
+              {/* ── Alerts & Notifications ── */}
+              <SubTopic title="Alerts & Notifications" id="faq-alerts" />
+              <FAQGroup icon={Bell} title="Alerts & Notifications" items={[
+                { q: "How often are alerts checked?", a: "By default, alerts are evaluated every 5 minutes during market hours (9:15 AM – 3:30 PM IST). You can change the frequency to 1 min or 15 min in Settings → Preferences. High-priority alerts can be checked more frequently." },
+                { q: "What alert condition types are available?", a: "Price Above, Price Below, Price Cross (triggers when price crosses a level in either direction), and Percentage Change. Each can be set as one-time or recurring with configurable cooldown periods (5 min to 1 day)." },
+                { q: "Can I get AI-suggested alerts?", a: "Yes! Smart Alert Suggestions analyzes your frequently traded symbols and recent trade levels to recommend relevant price alerts. Each suggestion includes AI-generated reasoning. One-click to create any suggestion as an active alert." },
+                { q: "How do Quiet Hours and DND work?", a: "Quiet Hours automatically mute notifications outside your configured hours (e.g., after 3:30 PM). DND mode pauses all notifications for a set duration and auto-resumes. Both are configurable in Settings → Preferences." },
+                { q: "What is the Notification Digest?", a: "When enabled, similar notifications are batched and delivered as a single summary instead of individual pings. This reduces notification fatigue during volatile sessions while ensuring you don't miss anything important." },
+                { q: "Why didn't my alert trigger?", a: "Check: (1) Is the alert active and not snoozed? (2) Is it within market hours if 'active hours only' is enabled? (3) Has the cooldown period elapsed since last trigger? (4) Is the alert expired? Check the alert's evaluation metrics in the detail view for diagnostics." },
+              ]} />
+
+              {/* ── Analytics & Reports ── */}
+              <SubTopic title="Analytics & Reports" id="faq-analytics" />
+              <FAQGroup icon={BarChart3} title="Analytics & Reports" items={[
+                { q: "Why does my dashboard show no data?", a: "Check the segment filter (top of dashboard) and month selector — they may be filtering out your data. Select 'All Segments' and expand the date range. Also ensure you have closed trades, as open trades don't contribute to most analytics." },
+                { q: "How are weekly reports generated?", a: "Weekly reports are auto-generated every Monday based on your previous week's trading data. They include P&L breakdown by segment, top setups, win rate trends, and actionable insights. Reports are delivered via Telegram if configured." },
+                { q: "What's the difference between weekly reports and daily journals?", a: "Daily journals are your personal notes — pre-market plan, mood, lessons learned. Weekly reports are system-generated analytics summaries with metrics, charts, and AI-powered insights. Both serve different purposes and complement each other." },
+                { q: "How does the Equity Curve handle deposits/withdrawals?", a: "Capital transactions (deposits, withdrawals) are tracked separately in Settings → Capital Management. The equity curve adjusts for these, so adding funds doesn't artificially inflate your performance metrics." },
+              ]} />
+
+              {/* ── Integrations ── */}
               <SubTopic title="Integrations" id="faq-integrations" />
-              <ExpandableDetail title="Integration & Connection Questions" icon={Layers} defaultOpen>
-                {[
-                  { q: "Do I need a Dhan account to use TradeBook?", a: "No. Dhan integration is optional — it enables live prices, auto-sync, and one-click execution. You can use TradeBook fully without any broker connection." },
-                  { q: "Why are my live prices not updating?", a: "Check that your Dhan integration is connected and verified in Settings → Integrations. Prices only stream during market hours (9:15 AM – 3:30 PM IST)." },
-                  { q: "How do I fix Telegram notifications not sending?", a: "Verify your bot token and chat ID in Settings → Integrations → Telegram. Use the 'Send Test' button to confirm delivery. Check the Delivery Log for error details." },
-                  { q: "How do I set up AI Trade Insights?", a: "Go to Settings → Integrations → AI Trade Insights. Choose Google Gemini (free) or OpenAI, generate an API key from the provider, paste it in, and save. Analysis starts automatically on your next closed trade." },
-                ].map((faq) => (
-                  <div key={faq.q} className="premium-card-hover p-5 group my-3">
-                    <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4 text-primary shrink-0" />
-                      {faq.q}
-                    </h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed pl-6">{faq.a}</p>
-                  </div>
-                ))}
-              </ExpandableDetail>
+              <FAQGroup icon={Layers} title="Integrations" items={[
+                { q: "Do I need a Dhan account to use TradeBook?", a: "No. Dhan is optional — it enables live prices, auto-sync of positions, and one-click execution. You can use TradeBook fully as a manual trade journal without any broker connection." },
+                { q: "Why are my live prices not updating?", a: "Check: (1) Dhan integration is connected and verified in Settings → Integrations. (2) Your Dhan token hasn't expired (check the warning banner). (3) Prices only stream during market hours (9:15 AM – 3:30 PM IST). (4) The instrument has a valid security_id mapped." },
+                { q: "How do I fix Telegram not sending messages?", a: "Verify your bot token and chat ID in Settings → Integrations → Telegram. Use the 'Send Test' button to confirm delivery. Check the Delivery Log panel for specific error messages. Common issue: bot not added to the chat or chat ID mismatch." },
+                { q: "How do I set up AI Trade Insights?", a: "TradeBook uses built-in AI models (no API key needed for basic features). For advanced AI, go to Settings → Integrations → AI Insights, choose a provider (Gemini or OpenAI), enter your API key, and save. AI analysis runs automatically on closed trades." },
+                { q: "Can I connect multiple Telegram channels?", a: "Yes! You can add multiple Telegram destinations (channels, groups, or DMs) in Settings → Integrations → Telegram. Each channel can be configured to receive specific notification types and market segments independently." },
+              ]} />
 
+              {/* ── Mobile & Offline ── */}
+              <SubTopic title="Mobile & Offline" id="faq-mobile" />
+              <FAQGroup icon={Smartphone} title="Mobile, PWA & Offline" items={[
+                { q: "Can I use TradeBook on my phone?", a: "Yes! TradeBook is a Progressive Web App (PWA). On Chrome/Safari, tap 'Add to Home Screen' for a full-screen, app-like experience with offline support. No app store download needed." },
+                { q: "What happens when I'm offline?", a: "TradeBook detects when you lose connectivity and shows an offline indicator. Any trades you create while offline are queued locally and auto-synced when you reconnect. The queue count is displayed in the status bar." },
+                { q: "Does the PWA work on iPad/tablet?", a: "Yes. The interface is fully responsive and optimized for tablet-sized screens. The sidebar collapses to give more content space, and all touch interactions (swipe-to-act, drag-and-drop) work on touch devices." },
+                { q: "How do I install the PWA?", a: "Chrome (Android): Tap the 3-dot menu → 'Install app' or 'Add to Home screen'. Safari (iOS): Tap the Share button → 'Add to Home Screen'. Edge: Click the install icon in the address bar. The app will appear as a standalone icon on your device." },
+              ]} />
+
+              {/* ── Features ── */}
               <SubTopic title="Features" id="faq-features" />
-              <ExpandableDetail title="Feature & Usage Questions" icon={Sparkles} defaultOpen>
-                {[
-                  { q: "What is the AI Trade Coach?", a: "The AI Trade Coach provides instant feedback on your closed trades — analyzing entry, exit, timing, and risk management. It auto-triggers when you close a trade and the feedback is saved for future reference." },
-                  { q: "How do Trading Rules work?", a: "Trading Rules are a customizable checklist that appears before you submit a new trade. Add your personal rules (e.g., 'Check trend on higher timeframe'), and the system enforces checking them all before entry." },
-                  { q: "Can I get AI-suggested alerts?", a: "Yes! Smart Alert Suggestions analyzes your frequently traded symbols and recommends price alerts with AI-generated reasoning. One-click to create any suggestion as an active alert." },
-                  { q: "How does the Command Palette work?", a: "Press ⌘K or / to open the Command Palette. It searches across pages, trades, alerts, and journal entries. You can also create new trades, alerts, and studies directly from it." },
-                  { q: "How do Achievements work?", a: "Achievements are earned automatically as you hit milestones — like logging your first trade, reaching a win streak, or completing a week of journaling. Check your badge grid on the Dashboard to track progress." },
-                  { q: "What is the Position Sizing Calculator?", a: "It calculates your ideal position size based on your capital, risk percentage, and stop loss distance. Available inside the trade creation modal to help you size positions consistently." },
-                  { q: "Where can I find documentation for a specific feature?", a: "Use the sidebar search on this Docs page to filter sections by keyword. You can also use the QuickNav links at the top of each section to jump to specific topics." },
-                  { q: "How do Quiet Hours and DND work?", a: "Quiet Hours automatically mute notifications outside market hours (e.g., after 3:30 PM). DND mode pauses all notifications for a set duration. Both are configurable in Settings → Preferences." },
-                  { q: "What is the Notification Digest?", a: "When enabled, similar notifications are batched and delivered as a single summary instead of individual messages. This reduces notification fatigue during volatile trading sessions." },
-                  { q: "How are weekly reports different from daily journals?", a: "Daily journals capture your thoughts and plans for each trading day. Weekly reports are auto-generated performance summaries with segment breakdowns, top setups, and actionable insights — delivered every Monday." },
-                ].map((faq) => (
-                  <div key={faq.q} className="premium-card-hover p-5 group my-3">
-                    <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4 text-primary shrink-0" />
-                      {faq.q}
-                    </h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed pl-6">{faq.a}</p>
-                  </div>
-                ))}
-              </ExpandableDetail>
+              <FAQGroup icon={Sparkles} title="Features & Usage" items={[
+                { q: "What is the AI Trade Coach?", a: "The AI Trade Coach provides instant, personalized feedback on your closed trades — analyzing entry timing, exit quality, risk management, and emotional discipline. It auto-triggers when you close a trade and feedback is saved to the trade record." },
+                { q: "How do Trading Rules work?", a: "Trading Rules are a customizable pre-trade checklist. Add your personal rules (e.g., 'Check trend on higher timeframe', 'Confirm volume breakout'). The system requires you to check every rule before submitting a new trade, enforcing discipline." },
+                { q: "How does the Command Palette work?", a: "Press ⌘K (Mac) or Ctrl+K (Windows) to open the Command Palette. Search across all pages, trades, alerts, studies, and journal entries. You can also create new items and navigate anywhere instantly — it's the fastest way to use TradeBook." },
+                { q: "How do Achievements work?", a: "Achievements are earned automatically as you hit milestones — first trade logged, 5-day win streak, 30 journal entries, etc. Check your badge grid on the Dashboard. Achievements cannot be lost once earned and serve as motivation markers." },
+                { q: "What are Studies and how are they different from trades?", a: "Studies are your research notes for potential trades — tracking a pattern, analyzing a setup, or monitoring a stock. They don't have P&L. When a study leads to an actual trade, you can link them together to track your research-to-execution pipeline." },
+                { q: "How do I use the Stock Screener effectively?", a: "Start with one of the 47 built-in presets (e.g., 'Bullish Breakout', '52-Week High') or build custom filters. Save your filters as presets for one-click reuse. Click any result to see the stock insight card with key fundamentals and recent price action." },
+                { q: "What is the Mistake Tracker?", a: "The Mistakes page aggregates all mistake tags from your trades into a visual analysis — showing frequency, P&L impact, and trends over time. It helps you identify your most costly behavioral patterns and track improvement." },
+              ]} />
+
+              {/* ── Troubleshooting ── */}
+              <SubTopic title="Troubleshooting" id="faq-troubleshooting" />
+              <FAQGroup icon={AlertTriangle} title="Common Issues & Fixes" items={[
+                { q: "The app is loading slowly or feels laggy", a: "Try: (1) Clear browser cache and reload. (2) Reduce the date range on analytics pages — large datasets take longer to render. (3) Close other heavy browser tabs. (4) If on mobile, ensure you're using the PWA version, not a browser tab." },
+                { q: "My CSV import failed or shows wrong data", a: "Check: (1) File is valid UTF-8 CSV (not Excel .xlsx). (2) Date format matches DD/MM/YYYY or YYYY-MM-DD. (3) Numeric columns don't have currency symbols (₹, $). (4) Review the column mapping step carefully before confirming import." },
+                { q: "Charts or analytics are showing incorrect P&L", a: "Verify: (1) Entry price and exit price are correct on the trade. (2) Quantity includes lot size for F&O trades. (3) The trade status is 'Closed' (open trades show unrealized P&L based on current price). (4) Check if segment filter is excluding some trades." },
+                { q: "I can't log in or my session keeps expiring", a: "Try: (1) Clear cookies and browser data for the site. (2) Ensure you're using the email you registered with. (3) Use 'Forgot Password' to reset. (4) If using PWA, try uninstalling and reinstalling the app. Sessions expire after extended inactivity for security." },
+                { q: "Dhan sync is not importing all my positions", a: "Dhan API has a limit on the number of positions returned per request. If you have many positions across segments, some may not sync in a single batch. Try syncing individual segments or contact support if the issue persists." },
+                { q: "My trade tags or patterns are missing after reload", a: "Tags are saved per-trade. If you created custom tags in Settings → Tag Management but didn't assign them to trades, they won't appear on the Trades page. Go to any trade's detail modal to add tags." },
+              ]} />
 
               <ProTip variant="info">
-                <p>Can't find what you're looking for? If you're experiencing a bug, data issue, or something that isn't covered here, reach out to support. Include your browser, device type, and a screenshot if possible — it helps us resolve things much faster.</p>
+                <p><strong>Still stuck?</strong> If your issue isn't covered here, reach out to support at <code>founder@mrchartist.com</code>. Include your browser name, device type, a screenshot of the issue, and any error messages from the browser console (F12 → Console tab) — it helps us resolve things much faster.</p>
               </ProTip>
             </motion.section>
 
