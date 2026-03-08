@@ -139,7 +139,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate("/login")}
-                className="hidden sm:inline-flex text-muted-foreground hover:text-foreground text-[13px] h-8 px-3 rounded-full"
+                className="hidden sm:inline-flex text-muted-foreground hover:text-foreground text-[13px] h-8 px-3 rounded-[var(--radius-md)]"
               >
                 Sign In
               </Button>
