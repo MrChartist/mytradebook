@@ -1015,7 +1015,7 @@
   .docs-page .docs-anchor-link {
     font-family: 'Inter', system-ui, sans-serif;
     color: hsl(var(--docs-text-muted) / 0.7);
-    font-size: 0.78125rem;
+    font-size: 0.8125rem;
     font-weight: 430;
     line-height: 1.45;
     letter-spacing: 0.005em;
