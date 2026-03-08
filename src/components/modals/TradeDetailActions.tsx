@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star, CheckCircle2, Loader2, Trash2, Share2 } from "lucide-react";
+import { Star, CheckCircle2, Loader2, Trash2, Share2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,7 @@ interface Props {
   isClosing: boolean;
   onShowReview: () => void;
   onDeleteClick: () => void;
+  onDuplicate?: () => void;
 }
 
 export function TradeDetailActions({ trade, onClose, isClosing, onShowReview, onDeleteClick }: Props) {
