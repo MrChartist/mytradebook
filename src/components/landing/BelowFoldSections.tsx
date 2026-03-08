@@ -174,45 +174,6 @@ export function PricingSection() {
           </motion.div>
         </div>
 
-        {/* Comparison table with staggered row reveals */}
-        <motion.div variants={fadeUp} className="max-w-3xl mx-auto mb-12">
-          <h3 className="text-base font-semibold text-center mb-5 tracking-[-0.015em]">How we compare</h3>
-          <div className="rounded-xl border border-border/20 bg-card/50 overflow-hidden" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}>
-            <div className="grid grid-cols-3 gap-0 border-b border-border/15 px-5 py-3 bg-muted/15">
-              <span className="text-[13px] font-bold text-foreground">Feature</span>
-              <span className="text-[13px] font-bold text-center text-primary flex items-center justify-center gap-1.5"><Trophy className="w-3.5 h-3.5" />TradeBook</span>
-              <span className="text-[13px] font-medium text-center text-muted-foreground/50">Others</span>
-            </div>
-            {comparisonFeatures.map((row, i) => (
-              <motion.div
-                key={row.feature}
-                className={cn("grid grid-cols-3 gap-0 border-b border-border/8 last:border-0 px-5 py-3", i % 2 === 0 ? "bg-muted/[0.03]" : "")}
-                initial={{ opacity: 0, y: 8 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.04, duration: 0.3 }}
-              >
-                <span className="text-[13px] text-foreground/80">{row.feature}</span>
-                <div className="flex justify-center">
-                  {row.tradebook === true ? (
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      whileInView={{ scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20, delay: i * 0.05 }}
-                    >
-                      <CheckCircle2 className="w-4 h-4 text-profit" />
-                    </motion.div>
-                  ) : (
-                    <span className="text-[13px] text-muted-foreground">{String(row.tradebook)}</span>
-                  )}
-                </div>
-                <div className="flex justify-center">{row.others === true ? <CheckCircle2 className="w-4 h-4 text-muted-foreground/25" /> : row.others === false ? <Minus className="w-4 h-4 text-muted-foreground/15" /> : <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted/30 text-muted-foreground/50">{String(row.others)}</span>}</div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
         {/* Trust badges */}
         <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-3">
           {[{ icon: Lock, text: "No credit card required" }, { icon: Shield, text: "Your data stays private" }, { icon: Clock, text: "Set up in under 2 minutes" }].map((item, i) => (
