@@ -2525,7 +2525,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               ]} />
 
               <SubTopic title="Badge Categories" description="Four achievement groups covering milestones, streaks, profit, and discipline." id="ach-categories" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Trophy} title="Milestones & Streaks">
                   <p className="text-sm text-muted-foreground mb-3">Track your trading volume and consistency:</p>
                   <FeatureList items={[
