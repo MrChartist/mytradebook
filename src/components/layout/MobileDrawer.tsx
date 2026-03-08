@@ -61,90 +61,95 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
         to={item.path}
         onClick={() => onOpenChange(false)}
         className={cn(
-          "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+          "flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius-sm)] transition-colors duration-200 relative",
           isActive
-            ? "glass-nav-active text-primary font-medium border-l-[3px] border-l-primary"
-            : "text-muted-foreground hover:text-foreground hover:bg-accent border-l-[3px] border-l-transparent"
+            ? "bg-primary/8 text-primary font-medium"
+            : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
         )}
       >
-        <item.icon className={cn("w-5 h-5", isActive && "text-primary")} />
-        <span className="text-sm">{item.label}</span>
+        <item.icon className={cn("w-[17px] h-[17px]", isActive && "text-primary")} />
+        <span className="text-[13px]">{item.label}</span>
+        {isActive && (
+          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded-r-full bg-primary" />
+        )}
       </NavLink>
     );
   };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="left" className="w-72 p-0 bg-card border-border" style={{ boxShadow: "inset -1px 0 0 0 hsl(0 0% 100% / 0.04)" }}>
-        <SheetHeader className="p-4 border-b border-border">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="TradeBook" className="h-9 object-contain" />
+      <SheetContent side="left" className="w-[260px] p-0 bg-card border-border/40">
+        <SheetHeader className="px-3 h-14 flex items-center border-b border-border/30">
+          <div className="flex items-center gap-2">
+            <img src={logo} alt="TradeBook" className="h-8 object-contain" />
             <SheetTitle className="sr-only">TradeBook</SheetTitle>
           </div>
         </SheetHeader>
 
         {/* User Info */}
         {profile && (
-          <div className="p-4 border-b border-border/30">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-gradient-primary flex items-center justify-center ring-2 ring-background">
-                <span className="text-primary-foreground font-semibold text-sm">
+          <div className="px-3 py-3 border-b border-border/20">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <span className="text-primary font-semibold text-[11px]">
                   {profile.name?.charAt(0).toUpperCase() || "U"}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm truncate">{profile.name || "User"}</p>
-                <p className="text-xs text-muted-foreground truncate">{profile.email}</p>
+                <p className="text-[13px] font-medium truncate">{profile.name || "User"}</p>
+                <p className="text-[11px] text-muted-foreground truncate">{profile.email}</p>
               </div>
             </div>
           </div>
         )}
 
         {/* Navigation */}
-        <nav className="flex-1 p-3 space-y-0.5">
+        <nav className="flex-1 px-2 py-2.5 space-y-px">
           {mainNavItems.map(renderNavItem)}
 
-          <div className="sidebar-section-label mt-4 mb-1 font-bold">Analytics</div>
+          <div className="px-3 pb-1 pt-3.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/50">
+            Analytics
+          </div>
           {analyticsNavItems.map(renderNavItem)}
 
-          <div className="mt-3 pt-3 border-t border-border/30 space-y-0.5">
+          <div className="mt-2 pt-2 border-t border-border/20 space-y-px">
             <NavLink
               to="/docs"
               onClick={() => onOpenChange(false)}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+                "flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius-sm)] transition-colors duration-200",
                 location.pathname === "/docs"
-                  ? "glass-nav-active text-primary font-medium"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                  ? "bg-primary/8 text-primary font-medium"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
               )}
             >
-              <HelpCircle className="w-5 h-5" />
-              <span className="text-sm">Docs & FAQs</span>
+              <HelpCircle className="w-[17px] h-[17px]" />
+              <span className="text-[13px]">Docs & FAQs</span>
             </NavLink>
             <NavLink
               to="/settings"
               onClick={() => onOpenChange(false)}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+                "flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius-sm)] transition-colors duration-200",
                 location.pathname === "/settings"
-                  ? "glass-nav-active text-primary font-medium"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                  ? "bg-primary/8 text-primary font-medium"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
               )}
             >
-              <Settings className="w-5 h-5" />
-              <span className="text-sm">Settings</span>
+              <Settings className="w-[17px] h-[17px]" />
+              <span className="text-[13px]">Settings</span>
             </NavLink>
           </div>
         </nav>
 
         {/* Logout */}
-        <div className="p-3 border-t border-border mt-auto">
+        <div className="px-2 py-2.5 border-t border-border/20">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:text-loss hover:bg-loss/10 transition-all duration-200 w-full"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius-sm)] text-muted-foreground hover:text-loss hover:bg-loss/8 transition-colors duration-200 w-full"
           >
-            <LogOut className="w-5 h-5" />
-            <span className="text-sm">Logout</span>
+            <LogOut className="w-[17px] h-[17px]" />
+            <span className="text-[13px]">Logout</span>
           </button>
         </div>
       </SheetContent>
