@@ -28,18 +28,28 @@ export function DashboardPreview() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-60px" });
 
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const rotateX = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [3, 0, 0, -2]);
+  const scale = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.97, 1, 1, 0.98]);
+  const glowOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.02, 0.08, 0.02]);
+
   return (
-    <div ref={containerRef} className="relative max-w-7xl mx-auto px-2 sm:px-6 pb-16 sm:pb-24 overflow-hidden">
+    <div ref={containerRef} className="relative max-w-7xl mx-auto px-2 sm:px-6 pb-16 sm:pb-24 overflow-hidden" style={{ perspective: "1200px" }}>
       {/* Background watermark */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+      <motion.div style={{ y: useTransform(scrollYProgress, [0, 1], [20, -20]) }} className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
         <span className="text-[6rem] sm:text-[8rem] lg:text-[12rem] font-black text-muted-foreground/[0.03] uppercase tracking-widest">
           Preview
         </span>
-      </div>
+      </motion.div>
 
-      <motion.div variants={scaleIn} initial="hidden" animate={isInView ? "visible" : "hidden"} className="relative">
+      <motion.div variants={scaleIn} initial="hidden" animate={isInView ? "visible" : "hidden"} className="relative" style={{ y, rotateX, scale, transformStyle: "preserve-3d" }}>
         {/* Glow */}
-        <div className="absolute -inset-8 sm:-inset-16 bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent)/0.06)_0%,transparent_70%)] pointer-events-none" />
+        <motion.div style={{ opacity: glowOpacity }} className="absolute -inset-8 sm:-inset-16 bg-[radial-gradient(ellipse_at_center,hsl(var(--tb-accent))_0%,transparent_70%)] pointer-events-none" />
         <div className="absolute inset-x-4 sm:inset-x-8 -bottom-4 h-8 rounded-3xl bg-foreground/[0.03] blur-xl" />
         <div className="absolute inset-x-2 sm:inset-x-4 -bottom-2 h-6 rounded-3xl bg-foreground/[0.04] blur-md" />
 
