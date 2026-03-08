@@ -545,7 +545,7 @@ export function FAQSection() {
                     {faq.q}
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="text-[15px] text-muted-foreground leading-[1.7] pl-8 pb-5">
+                <AccordionContent className="text-[15px] text-muted-foreground leading-[1.7] pl-8 pb-5 tracking-[-0.006em]">
                   {faq.a}
                 </AccordionContent>
               </AccordionItem>
