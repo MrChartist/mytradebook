@@ -80,7 +80,7 @@ export function Sidebar() {
           )}
         />
         {!collapsed && (
-          <span className="text-[13px]">{item.label}</span>
+          <span className="text-body-sm">{item.label}</span>
         )}
       </NavLink>
     );
