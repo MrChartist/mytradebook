@@ -508,50 +508,53 @@ export function IndianMarketsSection() {
 
 export function FAQSection() {
   const navigate = useNavigate();
-  const left = faqs.slice(0, 5);
-  const right = faqs.slice(5);
   return (
-    <section id="faq" className="py-24 lg:py-32 bg-muted/10 dot-pattern" aria-label="Frequently asked questions">
-      <MotionSection className="max-w-4xl mx-auto px-6">
+    <section id="faq" className="py-24 lg:py-32" aria-label="Frequently asked questions">
+      <MotionSection className="max-w-2xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>FAQ</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-[1.1]">Got{" "}<span className="accent-script">questions</span>?</h2>
-          <p className="text-muted-foreground text-lg">Everything you need to know about TradeBook</p>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-[1.1] tracking-tight">
+            Got{" "}<span className="accent-script">questions</span>?
+          </h2>
+          <p className="text-muted-foreground text-lg">Everything you need to know about TradeBook.</p>
         </motion.div>
+
         <motion.div variants={fadeUp}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-0">
-            <Accordion type="single" collapsible className="space-y-3">
-              {left.map((faq, i) => (
-                <AccordionItem key={i} value={`faq-l-${i}`} className="rounded-xl border border-border/40 bg-card/80 px-6 data-[state=open]:border-l-2 data-[state=open]:border-l-[hsl(var(--tb-accent))] data-[state=open]:border-[hsl(var(--tb-accent)/0.25)] data-[state=open]:shadow-sm">
-                  <AccordionTrigger className="text-left text-[15px] font-semibold hover:no-underline py-4"><span className="flex items-center gap-3"><span className="text-[10px] font-mono text-muted-foreground/60 bg-muted/30 rounded-md px-1.5 py-0.5">{String(i + 1).padStart(2, "0")}</span>{faq.q}</span></AccordionTrigger>
-                  <AccordionContent className="text-[15px] text-muted-foreground leading-[1.7] pl-8">{faq.a}</AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-            <Accordion type="single" collapsible className="space-y-3">
-              {right.map((faq, i) => (
-                <AccordionItem key={i} value={`faq-r-${i}`} className="rounded-xl border border-border/40 bg-card/80 px-6 data-[state=open]:border-l-2 data-[state=open]:border-l-[hsl(var(--tb-accent))] data-[state=open]:border-[hsl(var(--tb-accent)/0.25)] data-[state=open]:shadow-sm">
-                  <AccordionTrigger className="text-left text-[15px] font-semibold hover:no-underline py-4"><span className="flex items-center gap-3"><span className="text-[10px] font-mono text-muted-foreground/60 bg-muted/30 rounded-md px-1.5 py-0.5">{String(i + 6).padStart(2, "0")}</span>{faq.q}</span></AccordionTrigger>
-                  <AccordionContent className="text-[15px] text-muted-foreground leading-[1.7] pl-8">{faq.a}</AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
+          <Accordion type="single" collapsible className="space-y-3">
+            {faqs.map((faq, i) => (
+              <AccordionItem
+                key={i}
+                value={`faq-${i}`}
+                className="rounded-xl border border-border/30 bg-card/70 px-6 data-[state=open]:border-primary/20 data-[state=open]:shadow-sm transition-colors"
+              >
+                <AccordionTrigger className="text-left text-[15px] font-semibold hover:no-underline py-4">
+                  <span className="flex items-center gap-3">
+                    <span className="text-[10px] font-mono text-muted-foreground/50 bg-muted/20 rounded-md px-1.5 py-0.5">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    {faq.q}
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="text-[15px] text-muted-foreground leading-[1.7] pl-8 pb-5">
+                  {faq.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </motion.div>
+
+        {/* Docs CTA — simplified */}
         <motion.div variants={fadeUp} className="mt-14">
-          <div className="relative p-[1px] rounded-2xl bg-gradient-to-r from-[hsl(var(--tb-accent)/0.4)] via-border/30 to-[hsl(var(--tb-accent)/0.4)]">
-            <div className="rounded-2xl bg-card p-9 flex flex-col md:flex-row items-center justify-between gap-6" style={{ boxShadow: glassInner }}>
-              <div>
-                <h3 className="text-lg font-bold mb-2 flex items-center gap-2"><BookOpen className="w-5 h-5 text-[hsl(var(--tb-accent))]" />Want to dive deeper?</h3>
-                <p className="text-sm text-muted-foreground mb-3">Explore our comprehensive documentation with visual guides</p>
-                <div className="flex flex-wrap gap-2">
-                  {["Getting Started", "Trade Management", "Analytics", "AI Insights", "Alerts & Notifications"].map(tag => (
-                    <span key={tag} className="text-[10px] uppercase tracking-wider font-medium bg-muted px-2.5 py-1 rounded-full text-muted-foreground">{tag}</span>
-                  ))}
-                </div>
-              </div>
-              <Button onClick={() => navigate("/docs")} className="gap-2 shrink-0"><BookOpen className="w-4 h-4" />Browse Documentation</Button>
+          <div className="rounded-2xl border border-border/30 bg-card/70 p-8 flex flex-col sm:flex-row items-center justify-between gap-5" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
+            <div>
+              <h3 className="text-base font-bold mb-1 flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-primary" />Want to dive deeper?
+              </h3>
+              <p className="text-sm text-muted-foreground">Explore our docs with visual guides and tutorials.</p>
             </div>
+            <Button variant="outline" onClick={() => navigate("/docs")} className="gap-2 shrink-0 rounded-full">
+              <BookOpen className="w-4 h-4" />Browse Docs
+            </Button>
           </div>
         </motion.div>
       </MotionSection>
