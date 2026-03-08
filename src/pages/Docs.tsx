@@ -281,7 +281,7 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
         </div>
       </div>
       <div className="px-5 pb-5">
-        <div className="[&>p]:text-[15px] [&>p]:leading-[1.7] [&>p]:text-muted-foreground">{children}</div>
+        <div className="[&>p]:text-[15px] [&>p]:leading-[1.7] [&>p]:text-muted-foreground [&>.text-sm]:!text-[15px]">{children}</div>
       </div>
     </div>
   );
