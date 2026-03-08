@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Menu, X, BookOpen, Zap, Tag, HelpCircle, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import landingLogo from "@/assets/logo.png";
+import { BrandLogoInline } from "@/components/ui/brand-logo";
 import { cn } from "@/lib/utils";
 
 interface LandingNavbarProps {
