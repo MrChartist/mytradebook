@@ -178,10 +178,10 @@ export function HeroSection() {
             <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-border/20">
               {statsConfig.map((stat, i) => (
                 <div key={stat.label} ref={statRefs[i].ref} className="px-4 sm:px-5 py-4 text-center">
-                  <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground tracking-tight font-mono tabular-nums">
+                  <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground tracking-[-0.02em] font-mono tabular-nums">
                     {formatStat(i, statRefs[i].count)}
                   </p>
-                  <p className="text-[10px] text-muted-foreground/60 uppercase tracking-[0.14em] mt-1 font-medium">
+                  <p className="text-[10px] text-muted-foreground/60 uppercase tracking-[0.12em] mt-1.5 font-semibold">
                     {stat.label}
                   </p>
                 </div>

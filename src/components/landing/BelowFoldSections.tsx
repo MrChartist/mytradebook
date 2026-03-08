@@ -644,7 +644,7 @@ export function FooterSection() {
               <img src="/favicon-32x32.png" alt="TradeBook" className="h-7 object-contain" loading="lazy" />
               <span className="text-lg font-bold tracking-tight text-foreground">TradeBook</span>
             </div>
-            <p className="text-[14px] text-muted-foreground leading-relaxed mb-6 max-w-xs">
+            <p className="text-[14px] text-muted-foreground leading-[1.65] mb-6 max-w-xs tracking-[-0.006em]">
               The trading journal built for Indian markets. Track, analyze, and improve your edge.
             </p>
 

@@ -124,8 +124,8 @@ export function FeaturesSection() {
                     </span>
                   </div>
 
-                  <h3 className={cn("font-bold tracking-tight mb-1.5", f.span === "hero" ? "text-lg lg:text-xl" : "text-[15px] lg:text-base")}>{f.title}</h3>
-                  <p className={cn("text-muted-foreground leading-relaxed", f.span === "hero" ? "text-[15px]" : "text-[13px]")}>{f.description}</p>
+                  <h3 className={cn("font-semibold tracking-[-0.015em] mb-1.5", f.span === "hero" ? "text-lg lg:text-xl" : "text-[15px] lg:text-base")}>{f.title}</h3>
+                  <p className={cn("text-muted-foreground leading-[1.6]", f.span === "hero" ? "text-[15px]" : "text-[13px]")}>{f.description}</p>
 
                   {f.previewKey && previewMap[f.previewKey]}
                 </div>
