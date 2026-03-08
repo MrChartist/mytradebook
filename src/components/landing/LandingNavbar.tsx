@@ -59,7 +59,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
       )}
       aria-label="Main navigation"
     >
-      <div className="mx-auto max-w-7xl flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
+      <div className="mx-auto max-w-7xl flex items-center justify-between px-4 sm:px-6 lg:px-8 h-14">
         {/* Logo + breadcrumb */}
         <div className="flex items-center gap-2 shrink-0">
           <motion.button
