@@ -568,12 +568,20 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── 2. Dashboard ───────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4, delay: 0.05 }}>
+              <PhaseHeader phase={2} total={26} />
               <SectionHeader
                 id="dashboard"
                 title="Dashboard"
                 description="Your trading cockpit. A single screen that shows your P&L, risk exposure, open positions, and trading discipline — all updated in real-time during market hours."
                 icon={LayoutDashboard}
               />
+              <QuickNav items={[
+                { label: "Today's P&L", id: "dashboard" },
+                { label: "KPI Cards", id: "dashboard" },
+                { label: "Risk Gauge", id: "dashboard" },
+                { label: "Equity Curve", id: "dashboard" },
+                { label: "Widget Customization", id: "dashboard" },
+              ]} />
               <DashboardMockup />
 
               <FeatureCard icon={Activity} title="Today's P&L Hero Card">
