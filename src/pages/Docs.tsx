@@ -1308,7 +1308,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <SectionHeader
                 id="position-sizing"
                 title="Position Sizing Calculator"
-                description="Built-in risk calculator that tells you exactly how many shares to buy based on your capital, risk tolerance, and stop loss distance."
+                description="Built-in risk calculator that tells you exactly how many shares to buy based on your capital, risk tolerance, and stop loss distance. This is the single most important tool for account survival."
                 icon={Calculator}
               />
               <QuickNav items={[
@@ -1316,6 +1316,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Advanced Sizing", id: "ps-advanced" },
                 { label: "Risk Guidelines", id: "ps-guidelines" },
               ]} />
+
+              <ProTip variant="best-practice">
+                <p><strong>Why this feature exists:</strong> Most retail traders blow up not from bad entries, but from oversized positions. A single 5% risk trade that hits SL wipes out 5 winning trades at 1% each. The Position Sizing Calculator enforces mathematical discipline — it removes emotion from the "how much?" decision and replaces it with a formula tied to your actual risk tolerance. If you use nothing else in TradeBook, use this.</p>
+              </ProTip>
 
               <InteractiveMockup label="Position Sizing Calculator">
                 <PositionSizingCalcMockup />
