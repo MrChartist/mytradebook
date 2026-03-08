@@ -61,6 +61,7 @@ function PageLoader() {
 
 const App = () => (
   <ErrorBoundary>
+    <MotionConfig reducedMotion="user">
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
