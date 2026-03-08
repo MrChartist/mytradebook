@@ -501,13 +501,13 @@ export default function IntegrationsSettings() {
               <TokenValidityCard settings={settings} userId={user?.id} />
 
               {/* Auto-Sync Toggle */}
-              <div className="p-3 rounded-lg border border-border bg-accent/30 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <RefreshCw className="w-4 h-4 text-primary" />
+              <div className="p-2.5 rounded-lg border border-border/15 bg-muted/20 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <RefreshCw className="w-3.5 h-3.5 text-primary" />
                   <div>
-                    <p className="text-sm font-medium">Auto-Sync Orders</p>
-                    <p className="text-xs text-muted-foreground">
-                      Import executed orders every 5 min during market hours
+                    <p className="text-[12px] font-medium">Auto-Sync Orders</p>
+                    <p className="text-[10px] text-muted-foreground/40">
+                      Import executed orders every 5 min
                     </p>
                   </div>
                 </div>
