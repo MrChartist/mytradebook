@@ -22,7 +22,7 @@ import {
   PanelLeftClose, PanelLeftOpen, SlidersHorizontal,
   Calculator, ClipboardCheck, Trophy, Info, Radio
 } from "lucide-react";
-import { LandingNavbar } from "@/components/landing/LandingNavbar";
+// DocsNavbar is used instead of LandingNavbar on this page
 import { DocsNavbar } from "@/components/docs/DocsNavbar";
 import {
   OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
@@ -727,6 +727,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
     if (group) setExpandedGroup(group.label);
   }, [activeSection, sidebarGroups]);
 
+  const currentSectionObj = SECTIONS.find(s => s.id === activeSection);
+  const currentGroupObj = sidebarGroups.find(g => g.ids.includes(activeSection));
+  const [mobileTocOpen, setMobileTocOpen] = useState(false);
+
   return (
     <div className={cn("docs-page min-h-screen", isInsideApp && "pb-6", mode === "bw" && "docs-bw")} role="document" style={{ scrollBehavior: 'smooth' }}>
       {/* Reading progress bar */}
@@ -746,28 +750,139 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       {/* Docs-specific navbar */}
       <DocsNavbar isInsideApp={isInsideApp} onSearchOpen={() => setSearchOpen(true)} />
 
-      {/* ═══════════════════════════════════════════════════════════════
-          DOCS HEADER — Compact, documentation-first
-          ═══════════════════════════════════════════════════════════════ */}
+      {/* Sticky breadcrumb (desktop) - appears after scrolling */}
+      <AnimatePresence>
+        {showBackToTop && currentSectionObj && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+            className="fixed top-[3.25rem] left-0 right-0 z-[38] hidden lg:block"
+            style={{ background: 'hsl(var(--docs-bg) / 0.85)', backdropFilter: 'blur(12px)', borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.3)' }}
+          >
+            <div className="max-w-[1480px] mx-auto px-5 sm:px-8 lg:px-12 py-1.5 flex items-center gap-2 text-[11px]" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>
+              <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:underline" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }}>Docs</button>
+              <ChevronRight className="w-2.5 h-2.5" style={{ color: 'hsl(var(--docs-text-muted) / 0.3)' }} />
+              {currentGroupObj && (
+                <>
+                  <span style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }}>{currentGroupObj.label}</span>
+                  <ChevronRight className="w-2.5 h-2.5" style={{ color: 'hsl(var(--docs-text-muted) / 0.3)' }} />
+                </>
+              )}
+              <span className="font-medium" style={{ color: 'hsl(var(--docs-accent))' }}>{currentSectionObj.label}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile TOC FAB */}
+      <AnimatePresence>
+        {!mobileTocOpen && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            onClick={() => setMobileTocOpen(true)}
+            className="fixed bottom-20 left-4 z-50 lg:hidden w-11 h-11 rounded-xl shadow-lg flex items-center justify-center"
+            style={{
+              background: 'hsl(var(--docs-surface))',
+              border: '1px solid hsl(var(--docs-border))',
+              color: 'hsl(var(--docs-text-secondary))',
+              boxShadow: '0 4px 12px -2px hsl(var(--docs-bg) / 0.3)',
+            }}
+            aria-label="Open table of contents"
+          >
+            <List className="w-4 h-4" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile TOC drawer */}
+      <AnimatePresence>
+        {mobileTocOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 lg:hidden bg-black/30 backdrop-blur-[2px]"
+              onClick={() => setMobileTocOpen(false)}
+            />
+            <motion.div
+              initial={{ x: -280 }}
+              animate={{ x: 0 }}
+              exit={{ x: -280 }}
+              transition={{ type: "spring", stiffness: 350, damping: 35 }}
+              className="fixed left-0 top-0 bottom-0 z-50 lg:hidden w-[280px] overflow-y-auto"
+              style={{
+                background: 'hsl(var(--docs-bg))',
+                borderRight: '1px solid hsl(var(--docs-border-subtle) / 0.5)',
+              }}
+            >
+              <div className="px-4 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.3)' }}>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.1em]" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }}>Table of Contents</span>
+                <button onClick={() => setMobileTocOpen(false)} className="w-7 h-7 flex items-center justify-center rounded-md" style={{ color: 'hsl(var(--docs-text-muted))' }} aria-label="Close TOC">
+                  <span className="text-sm">&times;</span>
+                </button>
+              </div>
+              <nav className="px-3 py-2 space-y-0.5">
+                {sidebarGroups.map(group => (
+                  <div key={group.label}>
+                    <span className="block px-2 pt-3 pb-1 text-[9px] font-bold uppercase tracking-[0.12em]" style={{ color: 'hsl(var(--docs-text-muted) / 0.4)' }}>{group.label}</span>
+                    {SECTIONS.filter(s => group.ids.includes(s.id)).map(s => {
+                      const isActive = activeSection === s.id;
+                      return (
+                        <button
+                          key={s.id}
+                          onClick={() => { scrollTo(s.id); setMobileTocOpen(false); }}
+                          className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-[12px] transition-all text-left"
+                          style={{
+                            color: isActive ? 'hsl(var(--docs-accent))' : 'hsl(var(--docs-text-secondary))',
+                            background: isActive ? 'hsl(var(--docs-accent) / 0.08)' : 'transparent',
+                            fontWeight: isActive ? 600 : 400,
+                          }}
+                        >
+                          <s.icon className="w-3 h-3 shrink-0" />
+                          {s.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
+              </nav>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* DOCS HEADER */}
       <header className="pt-14 lg:pt-16 relative overflow-hidden" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.5)' }}>
         <div className="absolute inset-0 opacity-[0.03]" style={{ background: 'radial-gradient(ellipse 60% 50% at 20% 50%, hsl(var(--docs-accent)), transparent)' }} />
         <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 py-10 lg:py-14 relative">
           {/* Title row */}
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <h1 className="docs-title font-heading" style={{ fontSize: 'clamp(1.75rem, 3vw, 2.5rem)' }}>Documentation</h1>
-            <button
-              onClick={toggle}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-semibold transition-all"
-              style={{
-                background: mode === "bw" ? 'hsl(var(--docs-text-strong))' : 'hsl(var(--docs-elevated))',
-                border: `1px solid ${mode === "bw" ? 'hsl(var(--docs-text-strong))' : 'hsl(var(--docs-border-subtle))'}`,
-                color: mode === "bw" ? 'hsl(var(--docs-bg))' : 'hsl(var(--docs-text-muted))',
-              }}
-              aria-label="Toggle color mode"
-            >
-              <Palette className="w-3 h-3" />
-              {mode === "bw" ? "B&W" : "Color"}
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={toggle}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-semibold transition-all"
+                  style={{
+                    background: mode === "bw" ? 'hsl(var(--docs-text-strong))' : 'hsl(var(--docs-elevated))',
+                    border: `1px solid ${mode === "bw" ? 'hsl(var(--docs-text-strong))' : 'hsl(var(--docs-border-subtle))'}`,
+                    color: mode === "bw" ? 'hsl(var(--docs-bg))' : 'hsl(var(--docs-text-muted))',
+                  }}
+                  aria-label="Toggle mockup color mode"
+                >
+                  <Palette className="w-3 h-3" />
+                  {mode === "bw" ? "B&W" : "Color"}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="text-xs">
+                Toggle mockup color mode
+              </TooltipContent>
+            </Tooltip>
           </div>
 
           {/* Subtitle */}
@@ -784,7 +899,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             <span className="w-0.5 h-0.5 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.3)' }} />
             <span>Updated Mar 8, 2026</span>
             <span className="w-0.5 h-0.5 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.3)' }} />
-            <span>26 sections</span>
+            <span>{SECTIONS.length} sections</span>
           </div>
         </div>
       </header>
