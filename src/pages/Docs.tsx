@@ -510,12 +510,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Play}
               />
               <QuickNav items={[
-                { label: "Create Account", id: "getting-started" },
-                { label: "Navigate", id: "getting-started" },
-                { label: "Free vs Pro", id: "getting-started" },
+                { label: "Quick Start", id: "gs-quick-start" },
+                { label: "Platform Overview", id: "gs-platform-overview" },
               ]} />
               <VideoPlaceholder title="Getting Started with TradeBook — Full Walkthrough" duration="5 min" />
-              <SubTopic title="Quick Start" description="Get up and running in under 5 minutes." />
+              <SubTopic title="Quick Start" description="Get up and running in under 5 minutes." id="gs-quick-start" />
               <StepByStep title="Your First 5 Minutes" steps={[
                 { title: "Sign up with email", description: "Create your account with email and password. Verify via the confirmation email.", detail: "No credit card required — you get 14 days of Pro features free." },
                 { title: "Set your starting capital", description: "Enter your trading capital amount during onboarding. This is used for risk calculations.", detail: "You can update this anytime in Settings → Preferences." },
