@@ -652,26 +652,29 @@
      DOCS PAGE — Premium Documentation Design System
      ================================================================
      
-     Typography (docs-specific):
-       Page title:        48–56px desktop, 40–44px tablet, 32–36px mobile
-       Section title:     34–40px desktop, 30–34px tablet, 24–28px mobile
-       Topic heading:     28px desktop, 24px tablet, 20–22px mobile
-       Sub-topic heading: 22px desktop, 20px tablet, 17–18px mobile
-       Card title:        18–20px
-       Body large:        18px desktop, 16–17px tablet, 15px mobile
-       Body standard:     16px desktop, 15–16px tablet, 15px mobile
-       Sidebar/nav:       14px
-       Helper/meta:       12–13px
+     Typography hierarchy (technical docs):
+       Page title:        48px desktop, 42px tablet, 32px mobile — Libre Bodoni
+       Section title:     30px desktop, 26px tablet, 22px mobile — Source Sans 3, 650
+       Topic heading:     24px desktop, 21px tablet, 19px mobile — Source Sans 3, 650
+       Sub-topic heading: 20px desktop, 18px tablet, 17px mobile — Source Sans 3, 600
+       Card title:        17px desktop                           — Source Sans 3, 600
+       Body large:        17px desktop, 16px tablet, 15px mobile — Source Sans 3, 400
+       Body standard:     15.5px desktop, 15px tablet/mobile     — Source Sans 3, 400
+       Label:             13px, 550 weight, slight tracking       — Source Sans 3
+       Sidebar/nav:       13px, 450 weight                       — Source Sans 3
+       Helper/meta:       12.5px, 420 weight                     — Source Sans 3
+       Caption:           11.5px, 500 weight                     — Source Sans 3
+       Note/callout body: 14.5px, 440 weight                     — Source Sans 3
+       Code:              13.5px, JetBrains Mono
      
      Font assignment:
-       Manrope       — page title, section title, topic heading, sub-topic, card title
-       Instrument S. — premium accent words only (sparingly)
-       Inter         — body, sidebar, nav, cards, labels, buttons, lists, helpers
+       Libre Bodoni  — page title only (serif editorial anchor)
+       Source Sans 3 — everything else (professional, highly readable)
        JetBrains M.  — code, kbd, API, tokens, commands
      
      Spacing rhythm:
-       Section gap:  4rem (desktop), 2.5rem (mobile)
-       Card padding: 1.5rem default, 1.25rem compact, 1.75rem roomy
+       Section gap:  3.5rem (desktop), 2.5rem (mobile)
+       Card padding: 1.5rem default, 1.25rem compact
        Card radius:  0.75rem (12px)
        Panel depth:  surface < elevated < card
        Divider:      1px, gradient fade, 3rem margin
@@ -729,133 +732,170 @@
 
   /* ── Docs Typography Scale ────────────────────────
      Desktop → Tablet → Mobile responsive cascade
+     Designed for technical reading, not posters.
      ────────────────────────────────────────────────── */
 
-  /* Page title: 52px desktop — Bodoni for premium feel */
+  /* Page title: 48px desktop — Libre Bodoni serif anchor, restrained */
   .docs-title {
     font-family: 'Libre Bodoni', Georgia, serif;
-    font-size: 3.25rem;
-    line-height: 1.06;
+    font-size: 3rem;
+    line-height: 1.08;
     font-weight: 700;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
   }
 
-  /* Section title: 36px desktop — Source Sans Pro for professional readability */
+  /* Section title: 30px desktop — clear section entry, not oversized */
   .docs-section-title {
     font-family: 'Source Sans 3', system-ui, sans-serif;
-    font-size: 2.25rem;
-    line-height: 1.12;
-    font-weight: 700;
+    font-size: 1.875rem;
+    line-height: 1.15;
+    font-weight: 650;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.015em;
+    letter-spacing: -0.018em;
   }
 
-  /* Topic heading: 28px desktop */
+  /* Topic heading: 24px desktop — primary content divider */
   .docs-topic-heading {
     font-family: 'Source Sans 3', system-ui, sans-serif;
-    font-size: 1.75rem;
-    line-height: 1.2;
-    font-weight: 700;
+    font-size: 1.5rem;
+    line-height: 1.22;
+    font-weight: 650;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.012em;
+    letter-spacing: -0.014em;
   }
 
-  /* Sub-topic heading: 22px desktop */
+  /* Sub-topic heading: 20px desktop — secondary content divider */
   .docs-subtopic-heading {
     font-family: 'Source Sans 3', system-ui, sans-serif;
-    font-size: 1.375rem;
-    line-height: 1.28;
+    font-size: 1.25rem;
+    line-height: 1.3;
     font-weight: 600;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.008em;
+    letter-spacing: -0.01em;
   }
 
-  /* Card title: 18–20px */
+  /* Card title: 17px — compact but clear */
   .docs-card-title {
     font-family: 'Source Sans 3', system-ui, sans-serif;
-    font-size: 1.175rem;
-    line-height: 1.32;
+    font-size: 1.0625rem;
+    line-height: 1.35;
     font-weight: 600;
     color: hsl(var(--docs-text-strong));
     letter-spacing: -0.006em;
   }
 
-  /* Body large: 18px */
+  /* Body large: 17px — intro paragraphs, section descriptions */
   .docs-body-lg {
     font-family: 'Source Sans 3', system-ui, sans-serif;
-    font-size: 1.125rem;
-    line-height: 1.72;
+    font-size: 1.0625rem;
+    line-height: 1.7;
     font-weight: 400;
     color: hsl(var(--docs-text-primary));
     letter-spacing: -0.003em;
   }
 
-  /* Body standard: 16px */
+  /* Body standard: 15.5px — main content text */
   .docs-body {
     font-family: 'Source Sans 3', system-ui, sans-serif;
-    font-size: 1rem;
-    line-height: 1.75;
+    font-size: 0.96875rem;
+    line-height: 1.72;
     font-weight: 400;
     color: hsl(var(--docs-text-primary));
     letter-spacing: -0.005em;
   }
 
-  /* Sidebar / navigation: 14px */
+  /* Label: 13px — form labels, tag labels, meta identifiers */
+  .docs-label {
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    font-weight: 550;
+    color: hsl(var(--docs-text-secondary));
+    letter-spacing: 0.01em;
+  }
+
+  /* Sidebar / navigation: 13px — left rail items */
   .docs-sidebar-item {
     font-family: 'Source Sans 3', system-ui, sans-serif;
-    font-size: 0.875rem;
-    line-height: 1.45;
+    font-size: 0.8125rem;
+    line-height: 1.4;
     font-weight: 450;
   }
 
-  /* Helper / meta: 13px */
+  /* Helper / meta: 12.5px — timestamps, counts, secondary info */
   .docs-helper {
     font-family: 'Source Sans 3', system-ui, sans-serif;
-    font-size: 0.8125rem;
+    font-size: 0.78125rem;
     line-height: 1.45;
     font-weight: 420;
     color: hsl(var(--docs-text-muted));
   }
 
-  /* Caption: 12px */
+  /* Caption: 11.5px — smallest text, breadcrumbs, micro labels */
   .docs-caption {
     font-family: 'Source Sans 3', system-ui, sans-serif;
-    font-size: 0.75rem;
+    font-size: 0.71875rem;
     line-height: 1.4;
     font-weight: 500;
     color: hsl(var(--docs-text-muted));
+    letter-spacing: 0.005em;
   }
 
-  /* Code: JetBrains Mono */
+  /* Note/callout body: 14.5px — ProTip, info, warning content */
+  .docs-note {
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-size: 0.90625rem;
+    line-height: 1.68;
+    font-weight: 440;
+    color: hsl(var(--docs-text-primary));
+  }
+
+  /* Code: JetBrains Mono — inline and block code */
   .docs-code {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.875rem;
-    line-height: 1.65;
+    font-size: 0.84375rem;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+
+  /* Code label: 11px mono — language badges, file names */
+  .docs-code-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6875rem;
+    line-height: 1.3;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: hsl(var(--docs-text-muted));
   }
 
   /* ── Tablet scale (max-width: 1024px) ── */
   @media (max-width: 1024px) {
     .docs-title { font-size: 2.625rem; line-height: 1.08; }
-    .docs-section-title { font-size: 1.875rem; line-height: 1.14; }
-    .docs-topic-heading { font-size: 1.5rem; }
-    .docs-subtopic-heading { font-size: 1.25rem; }
-    .docs-card-title { font-size: 1.0625rem; }
-    .docs-body-lg { font-size: 1.0625rem; line-height: 1.7; }
-    .docs-body { font-size: 0.9375rem; line-height: 1.72; }
+    .docs-section-title { font-size: 1.625rem; line-height: 1.16; }
+    .docs-topic-heading { font-size: 1.3125rem; }
+    .docs-subtopic-heading { font-size: 1.125rem; }
+    .docs-card-title { font-size: 1rem; }
+    .docs-body-lg { font-size: 1rem; line-height: 1.68; }
+    .docs-body { font-size: 0.9375rem; line-height: 1.7; }
+    .docs-note { font-size: 0.875rem; }
+    .docs-code { font-size: 0.8125rem; }
   }
 
   /* ── Mobile scale (max-width: 767px) ── */
   @media (max-width: 767px) {
     .docs-title { font-size: 2rem; line-height: 1.1; letter-spacing: -0.02em; }
-    .docs-section-title { font-size: 1.5rem; line-height: 1.16; }
-    .docs-topic-heading { font-size: 1.3125rem; line-height: 1.22; }
+    .docs-section-title { font-size: 1.375rem; line-height: 1.18; }
+    .docs-topic-heading { font-size: 1.1875rem; line-height: 1.24; }
     .docs-subtopic-heading { font-size: 1.0625rem; line-height: 1.3; }
-    .docs-card-title { font-size: 1rem; }
-    .docs-body-lg { font-size: 0.9375rem; line-height: 1.68; }
-    .docs-body { font-size: 0.9375rem; line-height: 1.68; }
+    .docs-card-title { font-size: 0.9375rem; }
+    .docs-body-lg { font-size: 0.9375rem; line-height: 1.65; }
+    .docs-body { font-size: 0.9375rem; line-height: 1.65; }
     .docs-sidebar-item { font-size: 0.8125rem; line-height: 1.38; }
     .docs-caption { font-size: 0.6875rem; }
+    .docs-note { font-size: 0.875rem; line-height: 1.65; }
+    .docs-code { font-size: 0.78125rem; }
   }
 
   /* ── Docs card content typography ── */
