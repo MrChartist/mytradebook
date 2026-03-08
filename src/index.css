@@ -474,17 +474,22 @@
   }
   /* ── Landing Page Typography ───────────────────── */
   .landing-page h1,
-  .landing-page h2,
+  .landing-page h2 {
+    font-family: 'Libre Bodoni', Georgia, serif;
+    letter-spacing: -0.02em;
+  }
+
   .landing-page h3 {
-    font-family: 'Sora', 'Inter', sans-serif;
-    letter-spacing: -0.03em;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    letter-spacing: -0.015em;
   }
 
   .landing-page p,
   .landing-page span,
   .landing-page button,
-  .landing-page a {
-    font-family: 'Inter', sans-serif;
+  .landing-page a,
+  .landing-page li {
+    font-family: 'Source Sans 3', system-ui, sans-serif;
   }
 
   .landing-page .font-mono {
