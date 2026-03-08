@@ -1037,37 +1037,63 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Save your frequently-used trade setups as reusable templates. Plus, get AI-suggested setups based on your trading patterns."
                 icon={FileText}
               />
+              <QuickNav items={[
+                { label: "Template Setup", id: "tpl-setup" },
+                { label: "Smart Suggestions", id: "tpl-smart" },
+              ]} />
+
+              <SubTopic title="Template Setup" description="Create and manage reusable trade templates for faster logging." id="tpl-setup" />
+
+              <StepByStep title="Creating Your First Template" steps={[
+                { title: "Go to Settings → Trade Templates", description: "Open the template manager from your settings page.", detail: "You can also create templates directly from the trade creation modal." },
+                { title: "Define your setup", description: "Choose the segment (Intraday, Options, etc.), trade type (BUY/SELL), and default stop loss %.", detail: "Add your preferred tags and timeframe to auto-fill them on every use." },
+                { title: "Add optional defaults", description: "Set a notes template for pre-written checklists, and toggle auto-tracking or Telegram posting.", detail: "Notes templates are great for embedding your setup criteria as a reminder." },
+                { title: "Save and use", description: "Hit save. Next time you create a trade, click 'Use Template' to pre-fill everything in one click.", detail: "You can edit or delete templates anytime from the settings page." },
+              ]} />
+
+              <FeatureCard icon={Zap} title="Template Configuration">
+                <p className="text-sm text-muted-foreground mb-3">Build templates for your most common trade setups:</p>
+                <FeatureList items={[
+                  "Pre-fill segment, trade type, default SL %, and tags",
+                  "Optional notes template and preferred timeframe",
+                  "Enable/disable auto-tracking per template",
+                  "Toggle Telegram posting per template",
+                  "One-click 'Use' button when creating new trades",
+                ]} />
+                <div className="mt-4"><TradeTemplateMockup /></div>
+              </FeatureCard>
+
+              <ProTip variant="info">
+                <p>A template-based trade takes about <strong>5–10 seconds</strong> to log — compared to 45–60 seconds filling every field manually. Over 20 trades a week, that's 15+ minutes saved, and more importantly, zero missed fields or forgotten stop losses.</p>
+              </ProTip>
+
               <ProTip>
                 <p>Create a template for each of your top 3 setups. When you see a setup forming, use the template to log the trade in under 10 seconds — no more missed opportunities.</p>
               </ProTip>
-              <SubTopic title="Template Setup" description="Create and manage reusable trade templates." id="tpl-setup" />
-              <QuickNav items={[
-                { label: "Creating Templates", id: "tpl-setup" },
-                { label: "Smart Suggestions", id: "tpl-setup" },
-              ]} />
-              <div className="grid md:grid-cols-2 gap-5">
-                <FeatureCard icon={Zap} title="Creating Templates">
-                  <p className="text-sm text-muted-foreground mb-3">Build templates for your most common trade setups:</p>
-                  <FeatureList items={[
-                    "Pre-fill segment, trade type, default SL %, and tags",
-                    "Optional notes template and preferred timeframe",
-                    "Enable/disable auto-tracking per template",
-                    "Toggle Telegram posting per template",
-                    "One-click 'Use' button when creating new trades",
-                  ]} />
-                  <div className="mt-4"><TradeTemplateMockup /></div>
-                </FeatureCard>
-                <FeatureCard icon={Sparkles} title="Smart Suggestions" badge="AI">
-                  <p className="text-sm text-muted-foreground mb-3">AI analyzes your closed trades to surface patterns:</p>
-                  <FeatureList items={[
-                    "Identifies your most frequent trade setups automatically",
-                    "Shows top 3 combos (e.g., 'Options BUY 5min — used 23 times')",
-                    "One-click pre-fill from any suggestion",
-                    "Updates as you add more trades",
-                    "Helps standardize your approach over time",
-                  ]} />
-                </FeatureCard>
-              </div>
+
+              <SubTopic title="Smart Suggestions" description="AI-powered setup recommendations based on your actual trading history." id="tpl-smart" />
+              <FeatureCard icon={Sparkles} title="Smart Suggestions" badge="AI">
+                <p className="text-sm text-muted-foreground mb-3">AI analyzes your closed trades to surface recurring patterns:</p>
+                <FeatureList items={[
+                  "Identifies your most frequent trade setups automatically",
+                  "Shows top 3 combos (e.g., 'Options BUY 5min — used 23 times')",
+                  "One-click pre-fill from any suggestion",
+                  "Updates as you add more trades",
+                  "Helps standardize your approach over time",
+                ]} />
+              </FeatureCard>
+
+              <ExpandableDetail title="How Smart Suggestions Learn From Your Trades" icon={Sparkles} badge="Deep Dive">
+                <p>Smart Suggestions analyze your closed trade history to find recurring combinations of segment, trade type, and timeframe. Here's how the learning works:</p>
+                <FeatureList items={[
+                  "After you close 10+ trades, the system starts identifying patterns in your entries.",
+                  "It groups trades by (segment + trade type + timeframe) — e.g., 'Options BUY 5min'.",
+                  "The top 3 most-used combinations are surfaced as quick-fill chips in the Create Trade modal.",
+                  "Suggestions update dynamically — as your trading style evolves, so do the recommendations.",
+                  "Each suggestion shows the exact count of times you've used that setup, building confidence in your process.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Smart Suggestions are purely frequency-based — they reflect what you actually trade, not what performed best. For performance-based insights, see the Analytics section.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
