@@ -990,7 +990,7 @@ function TokenValidityCard({ settings, userId }: { settings: any; userId?: strin
                 : "bg-muted-foreground"
             }`}
           />
-          <span className="text-sm font-medium">
+          <span className="text-[12px] font-medium">
             Token: {tokenStatus === "active" ? "Active" : tokenStatus === "expired" ? "Expired" : "Unknown"}
           </span>
         </div>
