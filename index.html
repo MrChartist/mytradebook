@@ -54,6 +54,40 @@
       }
     }
     </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://mytradebook.lovable.app/" },
+        { "@type": "ListItem", "position": 2, "name": "Docs", "item": "https://mytradebook.lovable.app/docs" },
+        { "@type": "ListItem", "position": 3, "name": "Login", "item": "https://mytradebook.lovable.app/login" }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is TradeBook free?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes, TradeBook is free during beta. All core features are available at no cost." }
+        },
+        {
+          "@type": "Question",
+          "name": "Which markets does TradeBook support?",
+          "acceptedAnswer": { "@type": "Answer", "text": "TradeBook is built for Indian markets — NSE, BSE, MCX — covering Equity Intraday, Positional, Futures, Options, and Commodities." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I sync trades from my broker?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes, TradeBook supports auto-sync with Dhan broker. You can also import trades via CSV." }
+        }
+      ]
+    }
+    </script>
     <!-- Critical CSS for instant first paint -->
     <style>
       #root-loader {

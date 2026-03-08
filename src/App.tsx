@@ -129,6 +129,7 @@ const App = () => (
         </TooltipProvider>
       </QueryClientProvider>
     </HelmetProvider>
+    </MotionConfig>
   </ErrorBoundary>
 );
 

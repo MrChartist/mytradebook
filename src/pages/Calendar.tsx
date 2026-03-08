@@ -63,7 +63,7 @@ export default function Calendar() {
     <div className="space-y-6 animate-fade-in" role="region" aria-label="Trading calendar">
 
       {/* Monthly Summary Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3" aria-live="polite" aria-label="Monthly summary">
         <div className="glass-card p-3 text-center">
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Month P&L</p>
           <p className={cn("text-lg font-bold", monthStats.totalPnl >= 0 ? "text-profit" : "text-loss")}>
