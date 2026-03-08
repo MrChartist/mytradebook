@@ -316,12 +316,12 @@
   }
 
   .glass-topbar {
-    @apply bg-card/90 backdrop-blur-lg border-b border-border;
-    box-shadow: var(--shadow-xs), inset 0 -1px 0 0 hsl(0 0% 100% / 0.04);
+    @apply bg-card/90 backdrop-blur-lg border-b border-border/40;
+    box-shadow: var(--shadow-xs);
   }
 
   .glass-input {
-    @apply bg-background border border-border rounded-xl transition-all duration-200;
+    @apply bg-background border border-input rounded-[var(--radius-md)] transition-all duration-200;
   }
 
   .glass-input:focus {
