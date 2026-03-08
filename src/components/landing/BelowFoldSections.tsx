@@ -421,7 +421,7 @@ export function IndianMarketsSection() {
           {/* Text side */}
           <motion.div variants={fadeUp}>
             <SectionBadge>Made in India</SectionBadge>
-            <h2 className="text-4xl lg:text-5xl font-extrabold mb-6 leading-[1.1] tracking-tight">
+            <h2 className="font-display text-4xl lg:text-5xl font-bold mb-6 leading-[1.1] tracking-tight">
               Built for{" "}<span className="accent-script">Indian</span>{" "}markets
             </h2>
             <p className="text-muted-foreground text-[15px] leading-[1.7] mb-8">
