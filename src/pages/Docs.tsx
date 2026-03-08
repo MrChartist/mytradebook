@@ -469,7 +469,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               {mode === "bw" ? "B&W" : "Color"}
             </button>
           </div>
-          <p className="text-[14px] text-muted-foreground leading-relaxed max-w-xl">
+          <p className="text-[15px] text-muted-foreground leading-relaxed max-w-xl">
             Complete guide to every TradeBook feature — from trade logging to advanced analytics.
           </p>
           <div className="flex items-center gap-3 mt-3 text-[11px] text-muted-foreground/50">
