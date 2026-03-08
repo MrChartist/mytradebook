@@ -167,7 +167,7 @@ export default function Dashboard() {
         return <PortfolioHeatMap key={w.id} />;
       case "chart":
         return (
-          <div key={w.id} className={cn("grid grid-cols-1 gap-5", alertsVisible ? "lg:grid-cols-3" : "")}>
+          <div key={w.id} className={cn("grid grid-cols-1 gap-4", alertsVisible ? "lg:grid-cols-3" : "")}>
             <div className={alertsVisible ? "lg:col-span-2" : ""}><DailySectorChart /></div>
             {alertsVisible && <DashboardAlertsPanel alerts={alerts} />}
           </div>
