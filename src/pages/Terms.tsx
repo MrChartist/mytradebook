@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, ScrollText } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import logo from "@/assets/logo.png";
+import { BrandLogoInline } from "@/components/ui/brand-logo";
 
 const sections = [
   { id: "acceptance", title: "1. Acceptance of Terms" },
