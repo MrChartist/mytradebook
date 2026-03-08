@@ -442,7 +442,7 @@ export default function Login() {
                             </div>
                             <span className={cn(
                               "text-xs font-medium min-w-[42px] text-right",
-                              pwStrength.score <= 1 ? "text-destructive" : pwStrength.score <= 3 ? "text-yellow-500" : "text-profit"
+                              pwStrength.score <= 1 ? "text-destructive" : pwStrength.score <= 3 ? "text-warning" : "text-profit"
                             )}>
                               {pwStrength.label}
                             </span>
