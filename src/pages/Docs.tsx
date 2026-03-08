@@ -1143,14 +1143,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 5. Studies & Research ───────────────────── */}
+            {/* ── Phase 9. Studies & Research ───────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={9} total={26} />
               <SectionHeader
                 id="studies"
                 title="Studies & Research"
                 description="Document your trade ideas, chart analyses, and research findings. Tag with patterns, track status through a workflow, and link studies to actual trades."
                 icon={BookOpen}
               />
+              <ProTip>
+                <p>Link your studies to trades when you execute them. This builds a powerful feedback loop — you can see which of your research ideas actually led to profitable trades.</p>
+              </ProTip>
               <StudyCardMockup />
 
               <FeatureCard icon={Layers} title="Categories & Status Workflow">
