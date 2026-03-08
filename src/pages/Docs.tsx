@@ -457,14 +457,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       <LandingNavbar activePage="docs" isInsideApp={isInsideApp} />
 
       {/* Docs Header */}
-      <div className={cn("pt-20 border-b border-border/40", isInsideApp && "border-border/20")}>
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-8 py-8 lg:py-10">
-          <div className="flex items-center gap-3 mb-3">
-            <h1 className="font-display text-2xl lg:text-[1.7rem] font-bold tracking-tight">Documentation</h1>
+      <div className={cn("pt-20 border-b border-border/30", isInsideApp && "border-border/20")}>
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-8 py-10 lg:py-12">
+          <div className="flex items-center gap-2 mb-1">
+            <p className="text-[12px] font-medium text-muted-foreground/50 uppercase tracking-[0.08em]">TradeBook</p>
+            <ChevronRight className="w-3 h-3 text-muted-foreground/30" />
+            <p className="text-[12px] font-medium text-foreground/70 uppercase tracking-[0.08em]">Docs</p>
+          </div>
+          <div className="flex items-center gap-3 mt-3 mb-3">
+            <h1 className="font-display text-[1.75rem] lg:text-[2rem] font-bold tracking-tight">Documentation</h1>
             <button
               onClick={toggle}
               className={cn(
-                "inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-semibold transition-all border",
+                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all border",
                 mode === "bw"
                   ? "bg-foreground text-background border-foreground"
                   : "bg-muted/40 text-muted-foreground/60 border-border/30 hover:border-border/50"
