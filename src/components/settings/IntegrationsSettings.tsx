@@ -279,9 +279,9 @@ export default function IntegrationsSettings() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="glass-card p-6 flex items-center justify-center min-h-[200px]">
-          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+      <div className="space-y-4">
+        <div className="premium-card-hover p-5 flex items-center justify-center min-h-[200px]">
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground/30" />
         </div>
       </div>
     );
