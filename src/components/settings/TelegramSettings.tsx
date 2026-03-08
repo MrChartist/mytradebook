@@ -80,7 +80,7 @@ function ChatIdHelpGuide() {
         <div>
           <p className="font-semibold text-foreground mb-1">📱 Personal Chat</p>
           <ol className="list-decimal list-inside space-y-0.5 ml-1">
-            <li>Open Telegram and search for <a href="https://t.me/userinfobot" target="_blank" rel="noopener" className="text-primary hover:underline">@userinfobot</a></li>
+            <li>Open Telegram and search for <a href="https://t.me/userinfobot" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">@userinfobot</a></li>
             <li>Send <code className="bg-accent px-1 rounded">/start</code> — it will reply with your Chat ID</li>
             <li>Your ID is a positive number (e.g. <code className="bg-accent px-1 rounded">123456789</code>)</li>
           </ol>
