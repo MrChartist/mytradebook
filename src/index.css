@@ -355,6 +355,11 @@
     @apply rounded-xl border border-border/30 p-3;
   }
 
+  /* Light mode - visible inner panels */
+  :root .inner-panel {
+    border-color: hsl(var(--border) / 0.6);
+  }
+
   .dark .inner-panel {
     background: hsl(var(--card-inner));
     border-color: hsl(var(--border) / 0.35);
