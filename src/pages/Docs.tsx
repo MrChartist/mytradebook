@@ -2127,6 +2127,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <div className="mt-4"><JournalFiltersSegmentationMockup /></div>
               </FeatureCard>
+
+              <NextStepBlock steps={[
+                { label: "Analytics", description: "Deep performance breakdowns", targetId: "analytics" },
+                { label: "Calendar", description: "Daily journal and P&L heatmap", targetId: "calendar" },
+                { label: "Mistakes Review", description: "Identify recurring trading errors", targetId: "mistakes" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
