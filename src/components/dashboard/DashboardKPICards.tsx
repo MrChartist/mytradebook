@@ -105,7 +105,7 @@ export function DashboardKPICards({ alerts }: Props) {
             <p className={cn("text-xs font-bold font-mono mt-0.5", unrealizedToday >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(unrealizedToday)}</p>
           </div>
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2">
+        <p className="kpi-sublabel mt-2">
           {closedToday.length} closed • {openTradesAll.length} open
         </p>
       </div>
