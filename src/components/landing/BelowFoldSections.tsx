@@ -28,21 +28,9 @@ const testimonials = [
   { name: "Sneha R.", role: "Positional Trader, Pune", style: "Positional", quote: "Getting EOD reports and morning briefings on Telegram means I never miss a setup. It's like having a trading assistant that actually understands my portfolio.", highlight: "EOD reports and morning briefings", stars: 5, avatar: "S", featured: false },
 ];
 
-const allFeatures = [
-  "Unlimited trades", "Advanced analytics & reports", "Telegram notifications",
-  "Trailing stop loss engine", "Broker integration (Dhan)", "Unlimited watchlists",
-  "Pattern & mistake tracking", "Weekly reports", "Priority support",
-];
-
 const shortFeatures = [
   "Unlimited trade logging", "AI-powered trade insights", "Advanced analytics suite",
   "Trailing stop loss engine", "Broker integration (Dhan)",
-];
-
-const pricingPlans = [
-  { name: "Monthly", price: "₹0", originalPrice: "₹199", period: "/mo", description: "Full access, billed monthly", features: shortFeatures, cta: "Start Free", highlighted: false, isBeta: true, saveBadge: null, badge: null, badgeIcon: null, showAllNote: true },
-  { name: "Quarterly", price: "₹0", originalPrice: "₹499", period: "/quarter", description: "All features, best for active traders", features: allFeatures, cta: "Start Free", highlighted: true, isBeta: true, saveBadge: "Save 17%", badge: "Most Popular", badgeIcon: Zap, showAllNote: false },
-  { name: "Yearly", price: "₹1,499", originalPrice: null, period: "/year", description: "All features, best value", features: shortFeatures, cta: "Subscribe", highlighted: false, isBeta: false, saveBadge: "Save 37%", badge: "Best Value", badgeIcon: Crown, showAllNote: true },
 ];
 
 const comparisonFeatures = [
