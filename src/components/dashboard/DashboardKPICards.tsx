@@ -64,7 +64,7 @@ export function DashboardKPICards({ alerts }: Props) {
   const cardBase = "premium-card-hover card-hover-lift block cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.99] transition-transform duration-150";
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
       {/* Today's P&L — hero card */}
       <div
         role="button"
@@ -76,18 +76,18 @@ export function DashboardKPICards({ alerts }: Props) {
       >
         {/* Accent top bar */}
         <div className={cn(
-          "absolute top-0 left-0 right-0 h-[3px] rounded-t-[1.25rem]",
+          "absolute top-0 left-0 right-0 h-[2px] rounded-t-[1.25rem]",
           totalTodayPnl >= 0 ? "bg-profit" : "bg-loss"
         )} />
         {/* Gradient overlay */}
         <div className={cn(
-          "absolute top-0 right-0 w-40 h-40 rounded-bl-full opacity-[0.04] pointer-events-none",
+          "absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-[0.03] pointer-events-none",
           totalTodayPnl >= 0 ? "bg-profit" : "bg-loss"
         )} />
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-2.5">
           <span className="kpi-label">Today's P&L</span>
-          <div className={cn("icon-badge", totalTodayPnl >= 0 ? "bg-profit/10" : "bg-loss/10")}>
-            <Flame className={cn("w-4.5 h-4.5", totalTodayPnl >= 0 ? "text-profit" : "text-loss")} />
+          <div className={cn("icon-badge-sm", totalTodayPnl >= 0 ? "bg-profit/8" : "bg-loss/8")}>
+            <Flame className={cn("w-4 h-4", totalTodayPnl >= 0 ? "text-profit" : "text-loss")} />
           </div>
         </div>
         <AnimatedNumber
@@ -95,14 +95,14 @@ export function DashboardKPICards({ alerts }: Props) {
           formatFn={(n) => formatCurrency(n)}
           className={cn("kpi-value", totalTodayPnl >= 0 ? "text-profit" : "text-loss")}
         />
-        <div className="flex gap-3 mt-3">
-          <div className="inner-panel flex-1">
+        <div className="flex gap-2.5 mt-2.5">
+          <div className="inner-panel flex-1 !p-2">
             <p className="kpi-sublabel">Realized</p>
-            <p className={cn("text-xs font-bold font-mono mt-0.5", realizedToday >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(realizedToday)}</p>
+            <p className={cn("text-[11px] font-bold font-mono mt-0.5", realizedToday >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(realizedToday)}</p>
           </div>
-          <div className="inner-panel flex-1">
+          <div className="inner-panel flex-1 !p-2">
             <p className="kpi-sublabel">Unrealized</p>
-            <p className={cn("text-xs font-bold font-mono mt-0.5", unrealizedToday >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(unrealizedToday)}</p>
+            <p className={cn("text-[11px] font-bold font-mono mt-0.5", unrealizedToday >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(unrealizedToday)}</p>
           </div>
         </div>
         <p className="kpi-sublabel mt-2">
@@ -119,23 +119,23 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/reports")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/reports"); }}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <span className="kpi-label">MTD P&L</span>
-          <div className={cn("icon-badge", realizedPnl + unrealizedPnl >= 0 ? "bg-profit/10" : "bg-loss/10")}>
-            <Wallet className={cn("w-4.5 h-4.5", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")} />
+          <div className={cn("icon-badge-sm", realizedPnl + unrealizedPnl >= 0 ? "bg-profit/8" : "bg-loss/8")}>
+            <Wallet className={cn("w-4 h-4", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")} />
           </div>
         </div>
         <p className={cn("kpi-value", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>
           {formatCurrency(realizedPnl + unrealizedPnl)}
         </p>
-        <div className="flex gap-3 mt-3">
-          <div className="inner-panel flex-1">
+        <div className="flex gap-2.5 mt-2.5">
+          <div className="inner-panel flex-1 !p-2">
             <p className="kpi-sublabel">Realized</p>
-            <p className={cn("text-xs font-bold font-mono mt-0.5", realizedPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(realizedPnl)}</p>
+            <p className={cn("text-[11px] font-bold font-mono mt-0.5", realizedPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(realizedPnl)}</p>
           </div>
-          <div className="inner-panel flex-1">
+          <div className="inner-panel flex-1 !p-2">
             <p className="kpi-sublabel">Unrealized</p>
-            <p className={cn("text-xs font-bold font-mono mt-0.5", unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(unrealizedPnl)}</p>
+            <p className={cn("text-[11px] font-bold font-mono mt-0.5", unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>{formatCurrency(unrealizedPnl)}</p>
           </div>
         </div>
       </div>
@@ -149,16 +149,16 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/trades?status=OPEN")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/trades?status=OPEN"); }}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <span className="kpi-label">Open Positions</span>
-          <div className="icon-badge bg-primary/10">
-            <Target className="w-4.5 h-4.5 text-primary" />
+          <div className="icon-badge-sm bg-primary/8">
+            <Target className="w-4 h-4 text-primary" />
           </div>
         </div>
         <p className="kpi-value">{openTrades.length}</p>
-        <div className="inner-panel mt-3">
+        <div className="inner-panel mt-2.5 !p-2">
           <p className="kpi-sublabel">Risk to SL</p>
-          <p className="text-xs font-semibold font-mono text-loss mt-0.5">₹{riskAtSL.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</p>
+          <p className="text-[11px] font-semibold font-mono text-loss mt-0.5">₹{riskAtSL.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</p>
         </div>
         <p className="kpi-sublabel mt-2">{monthTrades.length} total trades this month</p>
       </div>
@@ -172,18 +172,16 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/analytics")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/analytics"); }}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <span className="kpi-label">Win Rate</span>
-          <div className={cn("icon-badge", winRate >= 50 ? "bg-profit/10" : "bg-loss/10")}>
-            <TrendingUp className={cn("w-4.5 h-4.5", winRate >= 50 ? "text-profit" : "text-loss")} />
+          <div className={cn("icon-badge-sm", winRate >= 50 ? "bg-profit/8" : "bg-loss/8")}>
+            <TrendingUp className={cn("w-4 h-4", winRate >= 50 ? "text-profit" : "text-loss")} />
           </div>
         </div>
-        <div className="flex items-baseline gap-2">
-          <p className={cn("kpi-value", winRate >= 50 ? "text-profit" : "text-loss")}>{winRate.toFixed(1)}%</p>
-        </div>
+        <p className={cn("kpi-value", winRate >= 50 ? "text-profit" : "text-loss")}>{winRate.toFixed(1)}%</p>
         {/* Mini circular progress */}
-        <div className="flex items-center gap-2 mt-3">
-          <svg width="24" height="24" viewBox="0 0 24 24" className="shrink-0">
+        <div className="flex items-center gap-2 mt-2.5">
+          <svg width="22" height="22" viewBox="0 0 24 24" className="shrink-0">
             <circle cx="12" cy="12" r="10" fill="none" strokeWidth="2.5" stroke="hsl(var(--muted))" />
             <circle
               cx="12" cy="12" r="10" fill="none" strokeWidth="2.5"
@@ -194,8 +192,8 @@ export function DashboardKPICards({ alerts }: Props) {
             />
           </svg>
           <span className={cn(
-            "text-[10px] font-medium px-1.5 py-0.5 rounded-full",
-            expectancy >= 0 ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss"
+            "text-[9px] font-medium px-1.5 py-0.5 rounded-md",
+            expectancy >= 0 ? "bg-profit/8 text-profit" : "bg-loss/8 text-loss"
           )}>
             Exp: {formatCurrency(expectancy)}/trade
           </span>
@@ -214,10 +212,10 @@ export function DashboardKPICards({ alerts }: Props) {
         onClick={() => navigate("/alerts")}
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/alerts"); }}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <span className="kpi-label">Active Alerts</span>
-          <div className="icon-badge bg-warning/10">
-            <Bell className="w-4.5 h-4.5 text-warning" />
+          <div className="icon-badge-sm bg-warning/8">
+            <Bell className="w-4 h-4 text-warning" />
           </div>
         </div>
         <div className="flex items-baseline gap-2">
@@ -225,19 +223,19 @@ export function DashboardKPICards({ alerts }: Props) {
           {triggeredToday > 0 && (
             <div className="flex items-center gap-1">
               <span className="pulse-dot bg-warning" />
-              <span className="text-2xs font-medium px-1.5 py-0.5 rounded-full bg-warning/10 text-warning">
+              <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-md bg-warning/8 text-warning">
                 {triggeredToday} triggered
               </span>
             </div>
           )}
         </div>
-        <div className="inner-panel mt-3">
+        <div className="inner-panel mt-2.5 !p-2">
           <p className="kpi-sublabel">
             Price: {priceAlerts} | Technical: {techAlerts}
           </p>
         </div>
-        <span className="mt-2 inline-flex items-center gap-1 text-2xs text-primary font-medium">
-          <Plus className="w-3.5 h-3.5" /> Create alert
+        <span className="mt-2 inline-flex items-center gap-1 text-[10px] text-primary font-medium">
+          <Plus className="w-3 h-3" /> Create alert
         </span>
       </div>
     </div>
