@@ -482,7 +482,7 @@ export default function Fundamentals() {
         {/* ── Custom Filter Builder ── */}
         <Collapsible open={showFilterBuilder} onOpenChange={setShowFilterBuilder}>
           <CollapsibleContent>
-            <div className="rounded-xl border border-border bg-card p-4 space-y-3">
+             <div className="rounded-xl border border-border/20 bg-card/80 p-3.5 space-y-2.5">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-semibold text-foreground">Filter Conditions <span className="text-muted-foreground font-normal">(AND logic)</span></p>
                 <Button variant="ghost" size="sm" className="h-6 text-[10px] text-muted-foreground" onClick={clearCustomFilters}>
