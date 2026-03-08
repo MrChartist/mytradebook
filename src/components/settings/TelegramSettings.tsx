@@ -399,7 +399,7 @@ export default function TelegramSettings() {
           <div className="p-4 rounded-lg border border-border bg-card space-y-3">
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground">
-                <strong>Step 1:</strong> Open Telegram and search for <a href="https://t.me/BotFather" target="_blank" rel="noopener" className="text-primary hover:underline font-medium">@BotFather</a>
+                <strong>Step 1:</strong> Open Telegram and search for <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">@BotFather</a>
               </p>
               <p className="text-xs text-muted-foreground">
                 <strong>Step 2:</strong> Send <code className="bg-accent px-1 rounded">/newbot</code>, follow prompts to name your bot
