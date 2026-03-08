@@ -3618,6 +3618,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   <p className="text-[12px] text-muted-foreground/60 mt-3 italic">Free column = PWA (TradeBook). Pro column = Native App. TradeBook's PWA delivers a near-native experience without the overhead of app store distribution.</p>
                 </div>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Settings", description: "Configure your account", targetId: "settings" },
+                { label: "Keyboard Shortcuts", description: "Navigate faster with hotkeys", targetId: "shortcuts" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
