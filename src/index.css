@@ -858,7 +858,7 @@
 
   /* Note/callout body: 14.5px — ProTip, info, warning content */
   .docs-note {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.90625rem;
     line-height: 1.68;
     font-weight: 440;
