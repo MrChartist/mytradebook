@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SEOHead } from "@/components/SEOHead";
 import { useNavigate } from "react-router-dom";
@@ -250,47 +250,45 @@ const SECTION_ANCHORS: Record<string, { label: string; id: string }[]> = {
   ],
 };
 
-function FeatureList({ items }: { items: string[] }) {
-  return (
-    <ul className="space-y-3 mt-4">
-      {items.map((item) => (
-        <li key={item} className="flex items-start gap-3 docs-body leading-relaxed" style={{ color: 'hsl(var(--docs-text-primary))' }}>
-          <ChevronRight className="w-3.5 h-3.5 mt-[5px] shrink-0" style={{ color: 'hsl(var(--docs-accent))' }} />
-          <span>{item}</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
+const FeatureList = React.forwardRef<HTMLUListElement, { items: string[] }>(({ items }, ref) => (
+  <ul ref={ref} className="space-y-3 mt-4">
+    {items.map((item) => (
+      <li key={item} className="flex items-start gap-3 docs-body leading-relaxed" style={{ color: 'hsl(var(--docs-text-primary))' }}>
+        <ChevronRight className="w-3.5 h-3.5 mt-[5px] shrink-0" style={{ color: 'hsl(var(--docs-accent))' }} />
+        <span>{item}</span>
+      </li>
+    ))}
+  </ul>
+));
+FeatureList.displayName = "FeatureList";
 
-function FeatureCard({ icon: Icon, title, children, badge }: {
+const FeatureCard = React.forwardRef<HTMLDivElement, {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
-}) {
-  return (
-    <div className="docs-feature-card group mt-6 overflow-hidden">
-      <div className="px-6 pt-5 pb-3">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
-            <Icon className="w-4 h-4" style={{ color: 'hsl(var(--docs-accent))' }} />
-          </div>
-          <h4 className="docs-card-title">{title}</h4>
-          {badge && (
-            <span className="text-[11px] font-bold tracking-wide uppercase px-2.5 py-0.5 rounded-md" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)', color: 'hsl(var(--docs-accent))' }}>
-              {badge}
-            </span>
-          )}
+}>(({ icon: Icon, title, children, badge }, ref) => (
+  <div ref={ref} className="docs-feature-card group mt-6 overflow-hidden">
+    <div className="px-6 pt-5 pb-3">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
+          <Icon className="w-4 h-4" style={{ color: 'hsl(var(--docs-accent))' }} />
         </div>
-      </div>
-      <div className="px-6 pb-6">
-        <div className="docs-card-content">{children}</div>
+        <h4 className="docs-card-title">{title}</h4>
+        {badge && (
+          <span className="text-[11px] font-bold tracking-wide uppercase px-2.5 py-0.5 rounded-md" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)', color: 'hsl(var(--docs-accent))' }}>
+            {badge}
+          </span>
+        )}
       </div>
     </div>
-  );
-}
+    <div className="px-6 pb-6">
+      <div className="docs-card-content">{children}</div>
+    </div>
+  </div>
+));
+FeatureCard.displayName = "FeatureCard";
 
-function VideoPlaceholder({ title, duration }: { title: string; duration: string }) {
-  return (
-    <div className="my-6 docs-feature-card overflow-hidden group cursor-pointer">
+const VideoPlaceholder = React.forwardRef<HTMLDivElement, { title: string; duration: string }>(
+  ({ title, duration }, ref) => (
+    <div ref={ref} className="my-6 docs-feature-card overflow-hidden group cursor-pointer">
       <div className="flex items-center gap-4 px-6 py-5">
         <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-colors" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)', border: '1px solid hsl(var(--docs-accent-soft) / 0.15)' }}>
           <Play className="w-4 h-4 ml-0.5" style={{ color: 'hsl(var(--docs-accent))' }} />
@@ -301,16 +299,18 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
         </div>
       </div>
     </div>
-  );
-}
+  )
+);
+VideoPlaceholder.displayName = "VideoPlaceholder";
 
-function SectionDivider() {
-  return <div className="docs-divider" />;
-}
+const SectionDivider = React.forwardRef<HTMLDivElement>((_, ref) => (
+  <div ref={ref} className="docs-divider" />
+));
+SectionDivider.displayName = "SectionDivider";
 
-function SectionHeader({ id, title, description, icon: Icon }: {
+const SectionHeader = React.forwardRef<HTMLDivElement, {
   id: string; title: string; description: string; icon: React.ElementType;
-}) {
+}>(({ id, title, description, icon: Icon }, ref) => {
   const copyLink = useCallback(() => {
     const url = `${window.location.origin}/docs#${id}`;
     navigator.clipboard.writeText(url).then(() => {
@@ -320,7 +320,7 @@ function SectionHeader({ id, title, description, icon: Icon }: {
   }, [id]);
 
   return (
-    <div id={id} className="scroll-mt-24 mb-10 group">
+    <div ref={ref} id={id} className="scroll-mt-24 mb-10 group">
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
           <Icon className="w-5 h-5" style={{ color: 'hsl(var(--docs-accent))' }} />
@@ -339,15 +339,15 @@ function SectionHeader({ id, title, description, icon: Icon }: {
       <p className="docs-body-lg max-w-2xl lg:pl-[52px]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>{description}</p>
     </div>
   );
-}
+});
+SectionHeader.displayName = "SectionHeader";
 
-function ShortcutKey({ children }: { children: string }) {
-  return (
-    <kbd className="px-2.5 py-1 rounded-md text-[12px] font-mono font-semibold" style={{ background: 'hsl(var(--docs-elevated))', border: '1px solid hsl(var(--docs-border-subtle))', color: 'hsl(var(--docs-text-strong))' }}>
-      {children}
-    </kbd>
-  );
-}
+const ShortcutKey = React.forwardRef<HTMLElement, { children: string }>(({ children }, ref) => (
+  <kbd ref={ref} className="px-2.5 py-1 rounded-md text-[12px] font-mono font-semibold" style={{ background: 'hsl(var(--docs-elevated))', border: '1px solid hsl(var(--docs-border-subtle))', color: 'hsl(var(--docs-text-strong))' }}>
+    {children}
+  </kbd>
+));
+ShortcutKey.displayName = "ShortcutKey";
 
 export default function Docs() {
   const navigate = useNavigate();
