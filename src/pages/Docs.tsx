@@ -377,7 +377,7 @@ const SectionHeader = React.forwardRef<HTMLDivElement, {
           <span id={`copy-${id}`}>#</span>
         </button>
       </div>
-      <p className="docs-body-lg max-w-2xl lg:pl-[52px]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>{description}</p>
+      <p className="docs-body-lg max-w-2xl lg:pl-[54px]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>{description}</p>
     </div>
   );
 });
