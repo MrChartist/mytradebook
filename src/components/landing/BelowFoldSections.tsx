@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight, BookOpen, CheckCircle2, ChevronRight, Eye, Zap, Trophy,
   Crown, Lock, Shield, RefreshCw, Star, Quote, Sparkles, Minus,
   TrendingUp, Layers, Globe, Clock, BarChart3, CandlestickChart,
 } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -155,6 +157,7 @@ export function ComparisonSection() {
 
 export function PricingSection() {
   const navigate = useNavigate();
+  const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   return (
     <section id="pricing" className="py-24 lg:py-32 bg-muted/10 dot-pattern" aria-label="Pricing">
       <MotionSection className="max-w-5xl mx-auto px-6">
@@ -165,12 +168,26 @@ export function PricingSection() {
         </motion.div>
         <motion.div variants={fadeUp} className="flex justify-center mb-12">
           <div className="inline-flex items-center bg-muted/50 rounded-full p-1 gap-0.5">
-            <button className="px-5 py-2 rounded-full text-sm font-medium bg-card shadow-sm text-foreground transition-colors">Monthly</button>
-            <button className="px-5 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Annual</button>
+            <button
+              onClick={() => setBilling("monthly")}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${billing === "monthly" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBilling("annual")}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${billing === "annual" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              Annual {billing === "annual" && <span className="ml-1 text-[10px] text-profit font-bold">Save 37%</span>}
+            </button>
           </div>
         </motion.div>
         <div className="grid md:grid-cols-3 gap-7 items-start">
-          {pricingPlans.map((plan, i) => (
+          {pricingPlans.map((plan, i) => {
+            const showAnnual = billing === "annual";
+            const displayPrice = showAnnual && plan.name === "Monthly" ? "₹149" : showAnnual && plan.name === "Quarterly" ? "₹399" : plan.price;
+            const displayPeriod = showAnnual && plan.name !== "Yearly" ? "/mo (billed yearly)" : plan.period;
+            return (
             <motion.div key={plan.name} variants={fadeUp} custom={i * 0.1}>
               <motion.div
                 className={cn(
@@ -189,8 +206,19 @@ export function PricingSection() {
                 {plan.isBeta && <div className="inline-flex self-start items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-profit/10 text-profit text-[11px] font-semibold mt-2 animate-pulse">Free During Beta</div>}
                 <div className="mt-4 mb-1 flex items-baseline gap-1 flex-wrap">
                   {plan.originalPrice && <span className="text-lg text-muted-foreground/50 line-through mr-1">{plan.originalPrice}</span>}
-                  <span className="text-5xl font-extrabold font-mono">{plan.price}</span>
-                  <span className="text-muted-foreground/70 text-sm">{plan.period}</span>
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={displayPrice}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.25 }}
+                      className="text-5xl font-extrabold font-mono"
+                    >
+                      {displayPrice}
+                    </motion.span>
+                  </AnimatePresence>
+                  <span className="text-muted-foreground/70 text-sm">{displayPeriod}</span>
                   {plan.saveBadge && <span className="ml-2 px-2 py-0.5 rounded-full bg-profit/10 text-profit text-[10px] font-bold">{plan.saveBadge}</span>}
                 </div>
                 <p className="text-[15px] text-muted-foreground mb-8">{plan.description}</p>
@@ -203,7 +231,8 @@ export function PricingSection() {
                 </motion.div>
               </motion.div>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
         <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4 mt-14">
           {[{ icon: Lock, text: "No credit card required" }, { icon: RefreshCw, text: "Cancel anytime" }, { icon: Shield, text: "14-day money-back guarantee" }].map((item) => (
@@ -215,7 +244,79 @@ export function PricingSection() {
   );
 }
 
+function TestimonialCard({ testimonial, large = false }: { testimonial: typeof testimonials[0]; large?: boolean }) {
+  if (large) {
+    return (
+      <motion.div className="rounded-2xl border border-foreground/10 bg-foreground text-background p-10 h-full flex flex-col dot-pattern relative overflow-hidden" whileHover={{ y: -3 }}>
+        <Quote className="w-12 h-12 text-[hsl(var(--tb-accent)/0.15)] mb-7" />
+        <p className="text-xl leading-[1.7] flex-1 mb-7 font-medium">"<HighlightedQuote testimonial={testimonial} />"</p>
+        <div className="flex items-center gap-1.5 mb-5">{[...Array(testimonial.stars)].map((_, j) => (<Star key={j} className="w-4 h-4 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))] drop-shadow-[0_0_3px_hsl(var(--tb-accent)/0.3)]" />))}</div>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-[hsl(var(--tb-accent)/0.2)] ring-2 ring-background flex items-center justify-center text-sm font-bold text-[hsl(var(--tb-accent))]">{testimonial.avatar}</div>
+          <div><p className="font-semibold">{testimonial.name}</p><p className="text-sm text-background/50">{testimonial.role}</p><span className="inline-block mt-1 bg-[hsl(var(--tb-accent)/0.15)] text-[hsl(var(--tb-accent))] rounded-full px-2 py-0.5 text-[10px] font-semibold">{testimonial.style}</span></div>
+        </div>
+      </motion.div>
+    );
+  }
+  return (
+    <motion.div
+      className="rounded-2xl border border-border/40 bg-card p-8 h-full flex flex-col"
+      style={{ boxShadow: glassInner }}
+      whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}
+    >
+      <Quote className="w-7 h-7 text-[hsl(var(--tb-accent)/0.15)] mb-4" />
+      <p className="text-[15px] text-muted-foreground leading-relaxed flex-1 mb-5">"<HighlightedQuote testimonial={testimonial} />"</p>
+      <div className="flex items-center gap-1 mb-3">{[...Array(testimonial.stars)].map((_, j) => (<Star key={j} className="w-3 h-3 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))] drop-shadow-[0_0_3px_hsl(var(--tb-accent)/0.3)]" />))}</div>
+      <div className="flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-full bg-[hsl(var(--tb-accent)/0.08)] ring-2 ring-background flex items-center justify-center text-xs font-bold text-[hsl(var(--tb-accent))]">{testimonial.avatar}</div>
+        <div><p className="text-sm font-semibold">{testimonial.name}</p><p className="text-xs text-muted-foreground/60">{testimonial.role}</p></div>
+      </div>
+    </motion.div>
+  );
+}
+
+function MobileTestimonialCarousel() {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    emblaApi.on("select", onSelect);
+    return () => { emblaApi.off("select", onSelect); };
+  }, [emblaApi, onSelect]);
+
+  return (
+    <div>
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex gap-4">
+          {testimonials.map((t, i) => (
+            <div key={i} className="flex-[0_0_85%] min-w-0">
+              <TestimonialCard testimonial={t} />
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="flex justify-center gap-1.5 mt-6">
+        {testimonials.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => emblaApi?.scrollTo(i)}
+            className={cn("w-2 h-2 rounded-full transition-all", i === selectedIndex ? "bg-[hsl(var(--tb-accent))] w-5" : "bg-muted-foreground/30")}
+            aria-label={`Go to testimonial ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function TestimonialsSection() {
+  const isMobile = useIsMobile();
   return (
     <section className="py-24 lg:py-32" aria-label="Testimonials">
       <MotionSection className="max-w-6xl mx-auto px-6 lg:px-10">
@@ -224,77 +325,43 @@ export function TestimonialsSection() {
           <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Trusted by{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>real traders</span></h2>
           <p className="text-muted-foreground max-w-md mx-auto text-lg">Here's what traders across India are saying.</p>
         </motion.div>
-        <div className="grid md:grid-cols-3 gap-7">
-          <motion.div variants={fadeUp} className="md:col-span-2">
-            <motion.div className="rounded-2xl border border-foreground/10 bg-foreground text-background p-10 h-full flex flex-col dot-pattern relative overflow-hidden" whileHover={{ y: -3 }}>
-              <Quote className="w-12 h-12 text-[hsl(var(--tb-accent)/0.15)] mb-7" />
-              <p className="text-xl leading-[1.7] flex-1 mb-7 font-medium">"<HighlightedQuote testimonial={testimonials[0]} />"</p>
-              <div className="flex items-center gap-1.5 mb-5">{[...Array(testimonials[0].stars)].map((_, j) => (<Star key={j} className="w-4 h-4 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))] drop-shadow-[0_0_3px_hsl(var(--tb-accent)/0.3)]" />))}</div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[hsl(var(--tb-accent)/0.2)] ring-2 ring-background flex items-center justify-center text-sm font-bold text-[hsl(var(--tb-accent))]">{testimonials[0].avatar}</div>
-                <div><p className="font-semibold">{testimonials[0].name}</p><p className="text-sm text-background/50">{testimonials[0].role}</p><span className="inline-block mt-1 bg-[hsl(var(--tb-accent)/0.15)] text-[hsl(var(--tb-accent))] rounded-full px-2 py-0.5 text-[10px] font-semibold">{testimonials[0].style}</span></div>
-              </div>
-            </motion.div>
-          </motion.div>
-          <div className="space-y-7">
-            {[1, 2].map((idx) => (
-              <motion.div key={idx} variants={fadeUp} custom={idx * 0.1}>
-                <motion.div
-                  className="rounded-2xl border border-border/40 bg-card p-8 h-full flex flex-col"
-                  style={{ boxShadow: glassInner }}
-                  whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}
-                >
-                  <Quote className="w-7 h-7 text-[hsl(var(--tb-accent)/0.15)] mb-4" />
-                  <p className="text-[15px] text-muted-foreground leading-relaxed flex-1 mb-5">"<HighlightedQuote testimonial={testimonials[idx]} />"</p>
-                  <div className="flex items-center gap-1 mb-3">{[...Array(testimonials[idx].stars)].map((_, j) => (<Star key={j} className="w-3 h-3 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))] drop-shadow-[0_0_3px_hsl(var(--tb-accent)/0.3)]" />))}</div>
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-[hsl(var(--tb-accent)/0.08)] ring-2 ring-background flex items-center justify-center text-xs font-bold text-[hsl(var(--tb-accent))]">{testimonials[idx].avatar}</div>
-                    <div><p className="text-sm font-semibold">{testimonials[idx].name}</p><p className="text-xs text-muted-foreground/60">{testimonials[idx].role}</p></div>
-                  </div>
-                </motion.div>
+        {isMobile ? (
+          <MobileTestimonialCarousel />
+        ) : (
+          <>
+            <div className="grid md:grid-cols-3 gap-7">
+              <motion.div variants={fadeUp} className="md:col-span-2">
+                <TestimonialCard testimonial={testimonials[0]} large />
               </motion.div>
-            ))}
-          </div>
-        </div>
-        <div className="grid md:grid-cols-3 gap-7 mt-7">
-          <motion.div variants={fadeUp} custom={0.2}>
-            <motion.div
-              className="rounded-2xl border border-border/40 bg-card p-8 h-full flex flex-col"
-              style={{ boxShadow: glassInner }}
-              whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}
-            >
-              <Quote className="w-7 h-7 text-[hsl(var(--tb-accent)/0.15)] mb-4" />
-              <p className="text-[15px] text-muted-foreground leading-relaxed flex-1 mb-5">"<HighlightedQuote testimonial={testimonials[3]} />"</p>
-              <div className="flex items-center gap-1 mb-3">{[...Array(testimonials[3].stars)].map((_, j) => (<Star key={j} className="w-3 h-3 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))] drop-shadow-[0_0_3px_hsl(var(--tb-accent)/0.3)]" />))}</div>
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-[hsl(var(--tb-accent)/0.08)] ring-2 ring-background flex items-center justify-center text-xs font-bold text-[hsl(var(--tb-accent))]">{testimonials[3].avatar}</div>
-                <div><p className="text-sm font-semibold">{testimonials[3].name}</p><p className="text-xs text-muted-foreground/60">{testimonials[3].role}</p></div>
+              <div className="space-y-7">
+                {[1, 2].map((idx) => (
+                  <motion.div key={idx} variants={fadeUp} custom={idx * 0.1}>
+                    <TestimonialCard testimonial={testimonials[idx]} />
+                  </motion.div>
+                ))}
               </div>
-            </motion.div>
-          </motion.div>
-          <motion.div variants={fadeUp} custom={0.3} className="md:col-span-2">
-            <motion.div className="rounded-2xl border border-foreground/10 bg-foreground text-background p-10 h-full flex flex-col dot-pattern relative overflow-hidden" whileHover={{ y: -3 }}>
-              <Quote className="w-12 h-12 text-[hsl(var(--tb-accent)/0.15)] mb-7" />
-              <p className="text-xl leading-[1.7] flex-1 mb-7 font-medium">"<HighlightedQuote testimonial={testimonials[3]} />"</p>
-              <div className="flex items-center gap-1.5 mb-5">{[...Array(testimonials[3].stars)].map((_, j) => (<Star key={j} className="w-4 h-4 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))] drop-shadow-[0_0_3px_hsl(var(--tb-accent)/0.3)]" />))}</div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[hsl(var(--tb-accent)/0.2)] ring-2 ring-background flex items-center justify-center text-sm font-bold text-[hsl(var(--tb-accent))]">{testimonials[3].avatar}</div>
-                <div><p className="font-semibold">{testimonials[3].name}</p><p className="text-sm text-background/50">{testimonials[3].role}</p><span className="inline-block mt-1 bg-[hsl(var(--tb-accent)/0.15)] text-[hsl(var(--tb-accent))] rounded-full px-2 py-0.5 text-[10px] font-semibold">{testimonials[3].style}</span></div>
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-        <motion.div variants={fadeUp} custom={0.4} className="mt-7">
-          <motion.div className="rounded-2xl border border-[hsl(var(--tb-accent)/0.2)] bg-[hsl(var(--tb-accent)/0.04)] p-7 flex flex-col md:flex-row md:items-center gap-6" whileHover={{ y: -2, borderColor: "hsl(var(--tb-accent) / 0.4)" }}>
-            <Quote className="w-7 h-7 text-[hsl(var(--tb-accent)/0.2)] shrink-0" />
-            <p className="text-[15px] text-muted-foreground leading-relaxed flex-1">"<HighlightedQuote testimonial={testimonials[4]} />"</p>
-            <div className="flex items-center gap-3 shrink-0">
-              <div className="flex items-center gap-1 mr-2">{[...Array(testimonials[4].stars)].map((_, j) => (<Star key={j} className="w-3.5 h-3.5 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))] drop-shadow-[0_0_3px_hsl(var(--tb-accent)/0.3)]" />))}</div>
-              <div className="w-8 h-8 rounded-full bg-[hsl(var(--tb-accent)/0.08)] ring-2 ring-background flex items-center justify-center text-xs font-bold text-[hsl(var(--tb-accent))]">{testimonials[4].avatar}</div>
-              <div><p className="text-sm font-semibold">{testimonials[4].name}</p><p className="text-xs text-muted-foreground/60">{testimonials[4].role}</p><span className="inline-block mt-0.5 bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] rounded-full px-2 py-0.5 text-[10px] font-semibold">{testimonials[4].style}</span></div>
             </div>
-          </motion.div>
-        </motion.div>
+            <div className="grid md:grid-cols-3 gap-7 mt-7">
+              <motion.div variants={fadeUp} custom={0.2}>
+                <TestimonialCard testimonial={testimonials[3]} />
+              </motion.div>
+              <motion.div variants={fadeUp} custom={0.3} className="md:col-span-2">
+                <TestimonialCard testimonial={testimonials[3]} large />
+              </motion.div>
+            </div>
+            <motion.div variants={fadeUp} custom={0.4} className="mt-7">
+              <motion.div className="rounded-2xl border border-[hsl(var(--tb-accent)/0.2)] bg-[hsl(var(--tb-accent)/0.04)] p-7 flex flex-col md:flex-row md:items-center gap-6" whileHover={{ y: -2, borderColor: "hsl(var(--tb-accent) / 0.4)" }}>
+                <Quote className="w-7 h-7 text-[hsl(var(--tb-accent)/0.2)] shrink-0" />
+                <p className="text-[15px] text-muted-foreground leading-relaxed flex-1">"<HighlightedQuote testimonial={testimonials[4]} />"</p>
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="flex items-center gap-1 mr-2">{[...Array(testimonials[4].stars)].map((_, j) => (<Star key={j} className="w-3.5 h-3.5 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))] drop-shadow-[0_0_3px_hsl(var(--tb-accent)/0.3)]" />))}</div>
+                  <div className="w-8 h-8 rounded-full bg-[hsl(var(--tb-accent)/0.08)] ring-2 ring-background flex items-center justify-center text-xs font-bold text-[hsl(var(--tb-accent))]">{testimonials[4].avatar}</div>
+                  <div><p className="text-sm font-semibold">{testimonials[4].name}</p><p className="text-xs text-muted-foreground/60">{testimonials[4].role}</p><span className="inline-block mt-0.5 bg-[hsl(var(--tb-accent)/0.08)] text-[hsl(var(--tb-accent))] rounded-full px-2 py-0.5 text-[10px] font-semibold">{testimonials[4].style}</span></div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </>
+        )}
         <motion.div variants={fadeUp} className="mt-14 flex flex-wrap items-center justify-center gap-3">
           <span className="inline-flex items-center gap-1.5 bg-muted/40 rounded-full px-4 py-2 text-sm font-medium" style={{ boxShadow: glassInner }}><span className="flex items-center gap-0.5">{[...Array(5)].map((_, i) => (<Star key={i} className="w-3 h-3 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))]" />))}</span>4.9/5 average rating</span>
           <span className="text-muted-foreground/30">·</span>

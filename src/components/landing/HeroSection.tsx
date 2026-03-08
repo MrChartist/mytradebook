@@ -2,17 +2,19 @@ import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
-  ArrowRight, CheckCircle2, Lock, Zap, Clock,
+  ArrowRight, CheckCircle2, Lock, Zap, Clock, Play, ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { fadeUp, scaleIn } from "./LandingShared";
 import { FloatingElements } from "./FloatingElements";
 import { DashboardPreview } from "./DashboardPreview";
+import { VideoModal } from "./VideoModal";
 
 export function HeroSection() {
   const navigate = useNavigate();
   const [heroEmail, setHeroEmail] = useState("");
+  const [videoOpen, setVideoOpen] = useState(false);
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 100]);
@@ -73,40 +75,70 @@ export function HeroSection() {
           <strong className="text-foreground font-semibold">why</strong> you lose — with segment-level analytics for Equity, F&O, and Commodities.
         </motion.p>
 
-        {/* Email CTA */}
-        <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.3} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-lg mx-auto mb-10 px-2">
-          <Input
-            type="email"
-            placeholder="Enter your email"
-            value={heroEmail}
-            onChange={(e) => setHeroEmail(e.target.value)}
-            aria-label="Email address for signup"
-            className="h-12 sm:h-14 rounded-full px-6 text-base border-border/40 bg-card/70 backdrop-blur-md shadow-sm flex-1 w-full focus-visible:ring-[hsl(var(--tb-accent)/0.3)]"
-            style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.1), var(--shadow-sm)" }}
-          />
-          <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
-            <Button
-              size="lg"
-              className="h-12 sm:h-14 px-8 text-base gap-2 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_6px_24px_hsl(var(--tb-accent)/0.3)] font-semibold whitespace-nowrap w-full sm:w-auto shimmer-cta"
-              onClick={() => navigate(`/login?mode=signup${heroEmail ? `&email=${encodeURIComponent(heroEmail)}` : ""}`)}
-            >
-              Start Free
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </motion.div>
+        {/* Email CTA + Watch Demo */}
+        <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.3} className="flex flex-col items-center gap-4 max-w-lg mx-auto mb-10 px-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full">
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              value={heroEmail}
+              onChange={(e) => setHeroEmail(e.target.value)}
+              aria-label="Email address for signup"
+              className="h-12 sm:h-14 rounded-full px-6 text-base border-border/40 bg-card/70 backdrop-blur-md shadow-sm flex-1 w-full focus-visible:ring-[hsl(var(--tb-accent)/0.3)]"
+              style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.1), var(--shadow-sm)" }}
+            />
+            <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
+              <Button
+                size="lg"
+                className="h-12 sm:h-14 px-8 text-base gap-2 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_6px_24px_hsl(var(--tb-accent)/0.3)] font-semibold whitespace-nowrap w-full sm:w-auto shimmer-cta"
+                onClick={() => navigate(`/login?mode=signup${heroEmail ? `&email=${encodeURIComponent(heroEmail)}` : ""}`)}
+              >
+                Start Free
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </motion.div>
+          </div>
+          <motion.button
+            onClick={() => setVideoOpen(true)}
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            <span className="w-8 h-8 rounded-full bg-[hsl(var(--tb-accent)/0.1)] border border-[hsl(var(--tb-accent)/0.2)] flex items-center justify-center group-hover:bg-[hsl(var(--tb-accent)/0.15)] transition-colors">
+              <Play className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))] ml-0.5" />
+            </span>
+            <span className="font-medium">Watch Demo</span>
+            <span className="text-muted-foreground/60 text-xs">2 min</span>
+          </motion.button>
         </motion.div>
 
-        {/* Micro trust */}
-        <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.4} className="flex flex-wrap items-center justify-center gap-5 sm:gap-6 text-[13px] text-muted-foreground mb-20">
-          <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-profit" /> Free during beta</span>
-          <span className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5" /> Bank-grade security</span>
-          <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-[hsl(var(--tb-accent))]" /> No credit card</span>
-          <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> Setup in 2 min</span>
+        {/* Trust badges — enhanced visual cards */}
+        <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.4} className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-20">
+          {[
+            { icon: CheckCircle2, label: "Free during beta", iconClass: "text-profit" },
+            { icon: ShieldCheck, label: "256-bit SSL", iconClass: "text-[hsl(var(--tb-accent))]" },
+            { icon: Lock, label: "Bank-grade security", iconClass: "text-muted-foreground" },
+            { icon: Zap, label: "No credit card", iconClass: "text-[hsl(var(--tb-accent))]" },
+            { icon: Clock, label: "Setup in 2 min", iconClass: "text-muted-foreground" },
+          ].map((badge) => (
+            <motion.span
+              key={badge.label}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border/30 bg-card/50 backdrop-blur-sm text-[12px] sm:text-[13px] text-muted-foreground font-medium"
+              style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.05)" }}
+              whileHover={{ scale: 1.04, borderColor: "hsl(var(--tb-accent) / 0.3)" }}
+            >
+              <badge.icon className={`w-3.5 h-3.5 ${badge.iconClass}`} />
+              {badge.label}
+            </motion.span>
+          ))}
         </motion.div>
       </motion.div>
 
       {/* Dashboard Preview */}
       <DashboardPreview />
+
+      {/* Video Modal */}
+      <VideoModal open={videoOpen} onOpenChange={setVideoOpen} />
     </section>
   );
 }

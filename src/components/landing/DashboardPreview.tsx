@@ -1,6 +1,7 @@
 // Dashboard mockup preview — realistic mini replica of the actual dashboard
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, useInView } from "framer-motion";
 import {
   BarChart3, Bell, BookOpen, Target, Eye, Layers, Calendar,
   Home, ChevronRight, Activity, TrendingUp, ArrowUpRight,
@@ -26,10 +27,10 @@ const sidebarItems = [
 ];
 
 const kpiCards = [
-  { label: "MTD P&L", value: "+₹24,850", sub: "Realized +₹18.2K  Unrealized +₹6.6K", icon: BarChart3, iconColor: "text-profit", iconBg: "bg-profit/10", colored: true },
-  { label: "OPEN POSITIONS", value: "3", sub: "₹2.4L at risk (to SL)", icon: Target, iconColor: "text-primary", iconBg: "bg-primary/10", colored: false },
-  { label: "WIN RATE", value: "67.5%", sub: "Closed: 12 | W: 8 | L: 4", icon: TrendingUp, iconColor: "text-primary", iconBg: "bg-primary/10", colored: true },
-  { label: "ACTIVE ALERTS", value: "8", sub: "Price: 5 | Technical: 3", icon: Bell, iconColor: "text-primary", iconBg: "bg-primary/10", colored: false },
+  { label: "MTD P&L", value: 24850, prefix: "+₹", format: (n: number) => `+₹${Math.round(n).toLocaleString("en-IN")}`, sub: "Realized +₹18.2K  Unrealized +₹6.6K", icon: BarChart3, iconColor: "text-profit", iconBg: "bg-profit/10", colored: true },
+  { label: "OPEN POSITIONS", value: 3, prefix: "", format: (n: number) => String(Math.round(n)), sub: "₹2.4L at risk (to SL)", icon: Target, iconColor: "text-primary", iconBg: "bg-primary/10", colored: false },
+  { label: "WIN RATE", value: 67.5, prefix: "", format: (n: number) => `${n.toFixed(1)}%`, sub: "Closed: 12 | W: 8 | L: 4", icon: TrendingUp, iconColor: "text-primary", iconBg: "bg-primary/10", colored: true },
+  { label: "ACTIVE ALERTS", value: 8, prefix: "", format: (n: number) => String(Math.round(n)), sub: "Price: 5 | Technical: 3", icon: Bell, iconColor: "text-primary", iconBg: "bg-primary/10", colored: false },
 ];
 
 const chartBars = [
@@ -45,9 +46,51 @@ const alerts = [
   { sym: "HDFCBANK", cond: "Price < ₹1,600", type: "Price" },
 ];
 
+const todayPnlValues = [12450, 13200, 11800];
+
+function useCountUpOnView(end: number, duration = 1200) {
+  const [value, setValue] = useState(0);
+  const started = useRef(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-40px" });
+
+  useEffect(() => {
+    if (!isInView || started.current) return;
+    started.current = true;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(eased * end);
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [isInView, end, duration]);
+
+  return { value, ref };
+}
+
 export function DashboardPreview() {
+  const navigate = useNavigate();
+  const [hovered, setHovered] = useState(false);
+  const [tickerIndex, setTickerIndex] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: true, margin: "-60px" });
+
+  // Cycle today's P&L value
+  useEffect(() => {
+    if (!isInView) return;
+    const interval = setInterval(() => {
+      setTickerIndex((prev) => (prev + 1) % todayPnlValues.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [isInView]);
+
+  const currentPnl = todayPnlValues[tickerIndex];
+
   return (
-    <div className="relative max-w-6xl mx-auto px-2 sm:px-6 pb-16 sm:pb-24 overflow-hidden">
+    <div ref={containerRef} className="relative max-w-6xl mx-auto px-2 sm:px-6 pb-16 sm:pb-24 overflow-hidden">
       {/* Background watermark */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
         <span className="text-[6rem] sm:text-[8rem] lg:text-[12rem] font-black text-muted-foreground/[0.03] uppercase tracking-widest">
@@ -63,14 +106,34 @@ export function DashboardPreview() {
         <div className="absolute inset-x-2 sm:inset-x-4 -bottom-2 h-6 rounded-3xl bg-foreground/[0.04] blur-md" />
 
         <motion.div
-          className="relative rounded-2xl sm:rounded-3xl border border-border/40 bg-card overflow-hidden max-w-full"
+          className="relative rounded-2xl sm:rounded-3xl border border-border/40 bg-card overflow-hidden max-w-full group cursor-pointer"
           style={{
             boxShadow:
               "0 25px 60px -15px rgba(0,0,0,0.08), 0 0 0 1px hsl(var(--border)/0.3), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)",
           }}
           whileHover={{ y: -4 }}
           transition={{ duration: 0.4 }}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          onClick={() => navigate("/login?mode=signup")}
         >
+          {/* Hover overlay CTA */}
+          <motion.div
+            className="absolute inset-0 z-20 flex items-center justify-center bg-background/60 backdrop-blur-sm"
+            initial={false}
+            animate={{ opacity: hovered ? 1 : 0 }}
+            transition={{ duration: 0.25 }}
+            style={{ pointerEvents: hovered ? "auto" : "none" }}
+          >
+            <motion.div
+              className="flex items-center gap-2 px-6 py-3 rounded-full bg-[hsl(var(--tb-accent))] text-white font-semibold shadow-[0_6px_24px_hsl(var(--tb-accent)/0.4)]"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: hovered ? 1 : 0.9 }}
+            >
+              Try it yourself →
+            </motion.div>
+          </motion.div>
+
           {/* ── Window chrome ── */}
           <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 border-b border-border/30 bg-gradient-to-b from-muted/20 to-muted/10">
             <div className="flex gap-1.5">
@@ -121,7 +184,10 @@ export function DashboardPreview() {
                 <ChevronRight className="w-2.5 h-2.5 opacity-40" />
                 <span className="text-foreground font-medium">Dashboard</span>
                 <div className="ml-auto flex items-center gap-1">
-                  <Activity className="w-3 h-3 text-profit animate-pulse" />
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-profit opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-profit" />
+                  </span>
                   <span className="text-profit font-medium text-[9px] sm:text-[10px]">Live</span>
                 </div>
               </div>
@@ -165,7 +231,9 @@ export function DashboardPreview() {
                 <div className="flex items-center justify-between mb-1.5 sm:mb-2 relative">
                   <div>
                     <p className="text-[8px] sm:text-[9px] text-muted-foreground uppercase tracking-wider font-medium mb-0.5 sm:mb-1">Today's P&L</p>
-                    <p className="text-lg sm:text-2xl font-bold font-mono text-profit tracking-tight">+₹12,450</p>
+                    <p className="text-lg sm:text-2xl font-bold font-mono text-profit tracking-tight">
+                      +₹{currentPnl.toLocaleString("en-IN")}
+                    </p>
                   </div>
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-profit/10 flex items-center justify-center">
                     <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-profit" />
@@ -185,25 +253,8 @@ export function DashboardPreview() {
                 </div>
               </div>
 
-              {/* ── KPI Cards row ── */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-                {kpiCards.map((kpi) => (
-                  <div
-                    key={kpi.label}
-                    className="rounded-xl border border-border/20 hover:border-border/40 bg-card p-2 sm:p-2.5 relative overflow-hidden transition-all hover:scale-[1.02]"
-                    style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}
-                  >
-                    <div className="flex items-center justify-between mb-1 sm:mb-1.5">
-                      <p className="text-[7px] sm:text-[8px] text-muted-foreground uppercase tracking-wider font-medium">{kpi.label}</p>
-                      <div className={cn("w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center", kpi.iconBg)}>
-                        <kpi.icon className={cn("w-3 h-3", kpi.iconColor)} />
-                      </div>
-                    </div>
-                    <p className={cn("text-xs sm:text-sm font-bold font-mono tracking-tight", kpi.colored ? "text-profit" : "text-foreground")}>{kpi.value}</p>
-                    <p className="text-[6px] sm:text-[7px] font-mono mt-0.5 text-muted-foreground truncate">{kpi.sub}</p>
-                  </div>
-                ))}
-              </div>
+              {/* ── KPI Cards row (animated numbers) ── */}
+              <KPICardsRow />
 
               {/* ── Chart + Alerts row ── */}
               <div className="grid sm:grid-cols-5 gap-1.5 sm:gap-2">
@@ -262,6 +313,51 @@ export function DashboardPreview() {
           </div>
         </motion.div>
       </motion.div>
+    </div>
+  );
+}
+
+function KPICardsRow() {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-40px" });
+  const [animated, setAnimated] = useState(false);
+  const [values, setValues] = useState(kpiCards.map(() => 0));
+
+  useEffect(() => {
+    if (!isInView || animated) return;
+    setAnimated(true);
+    const start = performance.now();
+    const duration = 1200;
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValues(kpiCards.map((kpi) => eased * kpi.value));
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [isInView, animated]);
+
+  return (
+    <div ref={ref} className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+      {kpiCards.map((kpi, idx) => (
+        <div
+          key={kpi.label}
+          className="rounded-xl border border-border/20 hover:border-border/40 bg-card p-2 sm:p-2.5 relative overflow-hidden transition-all hover:scale-[1.02]"
+          style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}
+        >
+          <div className="flex items-center justify-between mb-1 sm:mb-1.5">
+            <p className="text-[7px] sm:text-[8px] text-muted-foreground uppercase tracking-wider font-medium">{kpi.label}</p>
+            <div className={cn("w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center", kpi.iconBg)}>
+              <kpi.icon className={cn("w-3 h-3", kpi.iconColor)} />
+            </div>
+          </div>
+          <p className={cn("text-xs sm:text-sm font-bold font-mono tracking-tight", kpi.colored ? "text-profit" : "text-foreground")}>
+            {kpi.format(values[idx])}
+          </p>
+          <p className="text-[6px] sm:text-[7px] font-mono mt-0.5 text-muted-foreground truncate">{kpi.sub}</p>
+        </div>
+      ))}
     </div>
   );
 }
