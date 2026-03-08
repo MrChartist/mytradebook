@@ -293,10 +293,10 @@ export default function Reports() {
                 {/* Report Header */}
                 <div className="p-4 border-b border-border/15 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-lg font-semibold">
-                      Week: {formatDate(report.weekStart)} - {formatDate(report.weekEnd)}
+                    <h3 className="text-[15px] font-semibold">
+                      Week: {formatDate(report.weekStart)} – {formatDate(report.weekEnd)}
                     </h3>
-                    <p className="text-sm text-muted-foreground">{report.totalTrades} trades executed</p>
+                    <p className="text-[11px] text-muted-foreground/50">{report.totalTrades} trades executed</p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
