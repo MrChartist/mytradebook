@@ -3421,6 +3421,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Security & Integrations", id: "set-security" },
               ]} />
 
+              <ProTip variant="best-practice">
+                <p><strong>Why this matters:</strong> Settings aren't just preferences — they're the foundation your entire analytics and risk management system runs on. If your starting capital is wrong, every return % is wrong. If your tags are poorly organized, your pattern analysis is meaningless. If your integrations aren't configured, you're missing live prices and automated notifications. Spend 10 minutes setting this up correctly on day one, and everything downstream works better.</p>
+              </ProTip>
+
               <SettingsPanelMockup />
 
               <StepByStep title="Initial Settings Configuration Checklist" steps={[
