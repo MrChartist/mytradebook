@@ -2307,7 +2307,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
 
               <SubTopic title="Formats & Sizes" description="Three output sizes optimized for different platforms." id="sh-formats" />
-              <FeatureCard icon={Maximize2} title="Output Formats">
+              <FeatureCard icon={Grid3X3} title="Output Formats">
                 <p className="text-sm text-muted-foreground mb-3">Each card can be generated in three sizes with live preview scaling:</p>
                 <FeatureList items={[
                   "Square (1080×1080) — ideal for Instagram posts and general social media",
