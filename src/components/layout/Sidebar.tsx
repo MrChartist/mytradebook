@@ -169,7 +169,7 @@ export function Sidebar() {
           )}
           {/* Profile */}
           {!collapsed && profile && (
-            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/30 rounded-xl border border-border/30">
+            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/30 rounded-[var(--radius-md)] border border-border/30">
               <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0 ring-2 ring-background">
                 <span className="text-primary-foreground font-semibold text-xs">
                   {profile.name?.charAt(0).toUpperCase() || "U"}
