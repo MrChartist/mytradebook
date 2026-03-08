@@ -60,7 +60,8 @@ import {
 } from "@/components/docs/DocsEnhancements";
 import {
   AnnotatedMockup, MockupCaption, FeatureZoneGrid,
-  VisualWalkthrough, VisualSummaryRow
+  VisualWalkthrough, VisualSummaryRow, WhatWhyWhenBlock,
+  UseCaseCards, CommonMistakesPanel, NextStepBlock, QuickOverviewStrip
 } from "@/components/docs/DocsVisualBlocks";
 import {
   ShareCardsMockup, AchievementsMockup, PositionSizingCalcMockup,
