@@ -1737,16 +1737,6 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="best-practice">
                 <p>Read your AI Coach feedback before taking the next trade. If the coach flagged "exited too early" on 3 consecutive trades, it's a signal to work on your trailing stop strategy.</p>
               </ProTip>
-              <ComparisonTable
-                title="AI Trade Coach — Free vs Pro"
-                rows={[
-                  { feature: "Basic post-trade feedback", free: false, pro: true },
-                  { feature: "Detailed 3-part analysis", free: false, pro: true },
-                  { feature: "Star rating per trade", free: false, pro: true },
-                  { feature: "Saved coaching history", free: false, pro: true },
-                  { feature: "Pattern-based insights", free: false, pro: true },
-                ]}
-              />
             </motion.section>
 
             <SectionDivider />
