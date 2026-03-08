@@ -365,7 +365,7 @@ export default function Alerts() {
                     ? `Expires ${format(new Date(alert.expires_at), "dd MMM HH:mm")}`
                     : undefined}
                   onView={() => handleEditClick(alert)}
-                  onCreateTrade={() => {}}
+                  
                   menuActions={menuActions}
                   viewMode={viewMode}
                   className={cn(
