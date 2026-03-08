@@ -86,6 +86,7 @@ const App = () => (
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/auth/callback" element={<AuthCallback />} />
                   <Route path="/dhan-callback" element={<DhanCallback />} />
+                  <Route path="/trader/:userId" element={<PublicProfile />} />
                   <Route
                     path="/dashboard"
                     element={
