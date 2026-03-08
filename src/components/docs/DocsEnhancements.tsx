@@ -13,7 +13,7 @@ import {
    ────────────────────────────────────────────── */
 const CARD_BORDER = "border-[hsl(var(--docs-border-subtle,215_25%_18%))]";
 const CARD_RADIUS = "rounded-xl";
-const CARD_SPACING = "my-7";
+const CARD_SPACING = "my-6";
 const BODY_TEXT = "docs-body";
 
 /* ──────────────────────────────────────────────
@@ -61,7 +61,7 @@ export function ProTip({ children, variant = "tip" }: { children: ReactNode; var
     <div className={cn(CARD_RADIUS, "border relative overflow-hidden", CARD_SPACING, s.border, s.bg, "docs-callout")}>
       {/* Left accent bar */}
       <div className={cn("absolute left-0 top-0 bottom-0 w-[3px]", s.accent)} />
-      <div className="flex items-start gap-3.5 px-6 py-5 pl-7">
+      <div className="flex items-start gap-3.5 px-6 py-5 pl-8">
         <Icon className={cn("w-4 h-4 shrink-0 mt-0.5", s.iconColor)} />
         <div className="flex-1 min-w-0">
           <p className={cn("text-[11px] font-bold uppercase tracking-wider mb-2", s.iconColor)}>{s.label}</p>
@@ -243,7 +243,7 @@ export function InteractiveMockup({ children, label, className }: { children: Re
 export function PhaseHeader({ phase, total = 26 }: { phase: number; total?: number }) {
   return (
     <div className="flex items-center gap-2.5 mb-4">
-      <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg text-[11px] font-bold" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)', color: 'hsl(var(--docs-accent))' }}>
+      <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg text-[11px] font-bold ring-1 ring-[hsl(var(--docs-accent-soft)/0.2)]" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)', color: 'hsl(var(--docs-accent))' }}>
         {phase}
       </span>
       <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, hsl(var(--docs-border-subtle)), transparent 60%)' }} />

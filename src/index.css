@@ -761,32 +761,32 @@
 
   /* Section title: 30px desktop — clear section entry, not oversized */
   .docs-section-title {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
     font-size: 1.875rem;
     line-height: 1.15;
     font-weight: 650;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.018em;
+    letter-spacing: -0.022em;
   }
 
   /* Topic heading: 24px desktop — primary content divider */
   .docs-topic-heading {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
     font-size: 1.5rem;
     line-height: 1.22;
     font-weight: 650;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.014em;
+    letter-spacing: -0.016em;
   }
 
   /* Sub-topic heading: 20px desktop — secondary content divider */
   .docs-subtopic-heading {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
     font-size: 1.25rem;
     line-height: 1.3;
     font-weight: 600;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.01em;
+    letter-spacing: -0.012em;
   }
 
   /* Card title: 17px — compact but clear */
@@ -803,7 +803,7 @@
   .docs-body-lg {
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 1.0625rem;
-    line-height: 1.7;
+    line-height: 1.76;
     font-weight: 400;
     color: hsl(var(--docs-text-primary));
     letter-spacing: -0.003em;
@@ -813,7 +813,7 @@
   .docs-body {
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.96875rem;
-    line-height: 1.72;
+    line-height: 1.78;
     font-weight: 400;
     color: hsl(var(--docs-text-primary));
     letter-spacing: -0.005em;
@@ -905,7 +905,7 @@
     .docs-subtopic-heading { font-size: 1.0625rem; line-height: 1.3; }
     .docs-card-title { font-size: 0.9375rem; }
     .docs-body-lg { font-size: 0.9375rem; line-height: 1.65; }
-    .docs-body { font-size: 0.9375rem; line-height: 1.65; }
+    .docs-body { font-size: 0.96875rem; line-height: 1.68; }
     .docs-sidebar-item { font-size: 0.8125rem; line-height: 1.38; }
     .docs-caption { font-size: 0.6875rem; }
     .docs-note { font-size: 0.875rem; line-height: 1.65; }
@@ -916,8 +916,12 @@
   .docs-card-content > p {
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.96875rem;
-    line-height: 1.72;
+    line-height: 1.78;
     color: hsl(var(--docs-text-secondary));
+    margin-bottom: 0.5rem;
+  }
+  .docs-card-content > p:last-child {
+    margin-bottom: 0;
   }
   .docs-card-content > p.text-sm {
     font-size: 0.96875rem !important;
@@ -964,7 +968,7 @@
   /* Sidebar sub-topic link (nested under active section) */
   .docs-page .docs-sidebar-sub-link {
     font-family: 'Inter', system-ui, sans-serif;
-    font-size: 0.75rem;
+    font-size: 0.78125rem;
     font-weight: 420;
     line-height: 1.35;
     letter-spacing: 0.005em;
@@ -979,11 +983,11 @@
   /* Sidebar group label — quieter, structured */
   .docs-page .docs-sidebar-group-label {
     font-family: 'Inter', system-ui, sans-serif;
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
     font-weight: 650;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: hsl(var(--docs-text-muted) / 0.4);
+    color: hsl(var(--docs-text-muted) / 0.5);
     padding: 0.5rem 0.75rem 0.25rem;
     margin-bottom: 0.125rem;
   }
@@ -1011,12 +1015,12 @@
   .docs-page .docs-anchor-link {
     font-family: 'Inter', system-ui, sans-serif;
     color: hsl(var(--docs-text-muted) / 0.7);
-    font-size: 0.78125rem;
+    font-size: 0.8125rem;
     font-weight: 430;
     line-height: 1.45;
     letter-spacing: 0.005em;
     transition: color 150ms ease-out, border-color 150ms ease-out, background 150ms ease-out;
-    border-left: 2px solid hsl(var(--docs-border-subtle) / 0.5);
+    border-left: 2.5px solid hsl(var(--docs-border-subtle) / 0.5);
     padding-left: 0.875rem;
     border-radius: 0 0.25rem 0.25rem 0;
   }
@@ -1027,6 +1031,7 @@
   .docs-page .docs-anchor-link.active {
     color: hsl(var(--docs-accent));
     border-left-color: hsl(var(--docs-accent));
+    border-left-width: 3px;
     font-weight: 530;
     background: hsl(var(--docs-accent-soft) / 0.05);
   }
@@ -1046,6 +1051,9 @@
     -webkit-backdrop-filter: blur(20px) saturate(1.4);
     border-bottom: 1px solid hsl(var(--docs-border-subtle) / 0.5);
     box-shadow: 0 1px 3px -1px hsl(var(--docs-bg) / 0.15);
+  }
+  .docs-navbar--glow {
+    border-image: linear-gradient(90deg, transparent 10%, hsl(var(--docs-accent) / 0.15) 50%, transparent 90%) 1;
   }
   .docs-navbar-badge {
     display: inline-flex;
@@ -1143,7 +1151,7 @@
     font-weight: 500;
     letter-spacing: 0.01em;
     white-space: nowrap;
-    padding: 0.4rem 0.75rem;
+    padding: 0.45rem 0.85rem;
     border-radius: 9999px;
     transition: all 150ms ease-out;
     color: hsl(var(--docs-text-muted));

@@ -361,9 +361,9 @@ const SectionHeader = React.forwardRef<HTMLDivElement, {
   }, [id]);
 
   return (
-    <div ref={ref} id={id} className="scroll-mt-28 mb-10 group">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
+    <div ref={ref} id={id} className="scroll-mt-28 mb-10 pt-2 group">
+      <div className="flex items-center gap-3.5 mb-4">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ring-1 ring-[hsl(var(--docs-accent-soft)/0.15)]" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
           <Icon className="w-5 h-5" style={{ color: 'hsl(var(--docs-accent))' }} />
         </div>
         <h2 className="docs-section-title">{title}</h2>
@@ -377,7 +377,7 @@ const SectionHeader = React.forwardRef<HTMLDivElement, {
           <span id={`copy-${id}`}>#</span>
         </button>
       </div>
-      <p className="docs-body-lg max-w-2xl lg:pl-[52px]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>{description}</p>
+      <p className="docs-body-lg max-w-2xl lg:pl-[54px]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>{description}</p>
     </div>
   );
 });
@@ -427,7 +427,7 @@ function RightRail({ activeSection }: { activeSection: string }) {
       <div className="sticky top-[3.25rem] h-[calc(100vh-3.25rem)] py-7 pl-5 pr-3 overflow-y-auto">
         <p
           className="text-[10.5px] font-semibold uppercase tracking-[0.1em] mb-5"
-          style={{ color: 'hsl(var(--docs-text-muted) / 0.45)' }}
+          style={{ color: 'hsl(var(--docs-text-muted) / 0.55)' }}
         >
           On this page
         </p>
@@ -594,11 +594,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       {/* ═══════════════════════════════════════════════════════════════
           DOCS HEADER — Compact, documentation-first
           ═══════════════════════════════════════════════════════════════ */}
-      <header className="pt-14 lg:pt-16" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.5)' }}>
-        <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 py-7 lg:py-9">
+      <header className="pt-14 lg:pt-16 relative overflow-hidden" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.5)' }}>
+        <div className="absolute inset-0 opacity-[0.03]" style={{ background: 'radial-gradient(ellipse 60% 50% at 20% 50%, hsl(var(--docs-accent)), transparent)' }} />
+        <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 py-8 lg:py-10 relative">
           {/* Title row */}
           <div className="flex flex-wrap items-center gap-3 mb-3">
-            <h1 className="docs-title" style={{ fontSize: 'clamp(1.75rem, 3vw, 2.5rem)' }}>Documentation</h1>
+            <h1 className="docs-title font-heading" style={{ fontSize: 'clamp(1.75rem, 3vw, 2.5rem)' }}>Documentation</h1>
             <button
               onClick={toggle}
               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-semibold transition-all"
@@ -646,8 +647,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         aria-label="Section navigation"
       >
         <div className="relative">
-          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 z-10" style={{ background: 'linear-gradient(to right, hsl(var(--docs-bg) / 0.94), transparent)' }} />
-          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 z-10" style={{ background: 'linear-gradient(to left, hsl(var(--docs-bg) / 0.94), transparent)' }} />
+          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 z-10" style={{ background: 'linear-gradient(to right, hsl(var(--docs-bg) / 0.94), transparent)' }} />
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 z-10" style={{ background: 'linear-gradient(to left, hsl(var(--docs-bg) / 0.94), transparent)' }} />
           <div
             className="flex gap-1.5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-4 py-2.5 no-scrollbar"
             style={{ WebkitOverflowScrolling: "touch" }}
@@ -772,7 +773,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                                 {isActive && !sidebarCollapsed && (
                                   <motion.div
                                     layoutId="docs-active-indicator"
-                                    className="absolute left-0 top-0 bottom-0 w-[2.5px] rounded-r-full"
+                                    className="absolute left-0 top-0 bottom-0 w-[3px] rounded-r-full"
                                     style={{ background: 'hsl(var(--docs-accent))' }}
                                     transition={{ type: "spring", stiffness: 400, damping: 28 }}
                                   />
@@ -4345,9 +4346,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           <div className="max-w-[1440px] mx-auto px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8">
               <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <img src="/favicon-32x32.png" alt="TradeBook" className="h-6 object-contain" loading="lazy" />
-                  <span className="docs-card-title" style={{ fontSize: '0.9375rem' }}>TradeBook</span>
+                <div className="flex items-center gap-2.5 mb-3">
+                  <img src="/assets/logo.png" alt="TradeBook" className="h-7 object-contain" loading="lazy"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/favicon-32x32.png'; }} />
+                  <span className="font-heading text-[15px] font-semibold tracking-tight" style={{ color: 'hsl(var(--docs-text-strong))' }}>TradeBook</span>
                 </div>
                 <p className="docs-helper leading-relaxed mb-4">The trading journal built for Indian markets.</p>
                 <Button size="sm" onClick={() => navigate("/login?mode=signup")} className="rounded-lg px-4 text-[12px] h-8">
@@ -4364,7 +4366,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   <ul className="space-y-2">
                     {col.links.map((l) => (
                       <li key={l.label}>
-                        <button onClick={() => l.href.startsWith("mailto") ? window.open(l.href) : l.href.startsWith("#") ? document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: "smooth" }) : navigate(l.href)} className="docs-sidebar-item transition-colors" style={{ color: 'hsl(var(--docs-text-secondary))' }}>
+                        <button onClick={() => l.href.startsWith("mailto") ? window.open(l.href) : l.href.startsWith("#") ? document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: "smooth" }) : navigate(l.href)} className="docs-sidebar-item transition-colors hover:!text-[hsl(var(--docs-text-strong))]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>
                           {l.label}
                         </button>
                       </li>
