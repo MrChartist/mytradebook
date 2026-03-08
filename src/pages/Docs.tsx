@@ -988,6 +988,28 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Link up to 5 chart images per trade (TradingView or direct URLs)",
                 ]} />
               </FeatureCard>
+
+              <ExpandableDetail title="Understanding Segment-Driven Defaults" icon={Layers} badge="Real Feature">
+                <p>When you select a segment, TradeBook auto-configures defaults to match that trading style:</p>
+                <FeatureList items={[
+                  "Equity Intraday — holding period defaults to 'Same Day', trailing SL enabled, Telegram posting on, auto-tracking enabled.",
+                  "Equity Positional — holding period defaults to '1-4 weeks', trailing SL off (manual management), Telegram on.",
+                  "Futures — holding period '1-5 days', trailing SL enabled for momentum management.",
+                  "Options — holding period 'Same Day' (theta decay), trailing SL off (options decay differently), Telegram enabled.",
+                  "Commodities — holding period '1-5 days', trailing SL enabled, Telegram enabled.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">These defaults save time and enforce best practices per segment. You can override any setting for individual trades. Templates let you create even more specific configurations.</p>
+              </ExpandableDetail>
+
+              <ExpandableDetail title="Notes Templates — Pre-Written Checklists" icon={FileText} badge="Power User">
+                <p>The trade form includes three built-in notes templates you can insert with one click:</p>
+                <FeatureList items={[
+                  "Trade Plan template — structured sections for Setup, Trigger, Entry, SL, Targets, Risk Plan, and Management notes. Forces you to articulate the full trade thesis before entering.",
+                  "Quick Notes template — lightweight version: Why this trade, Key levels, Invalidation, Exit plan. Good for rapid-fire trade logging.",
+                  "Post-Trade template — What worked, What failed, Lessons, Would I take this again. Use this when reviewing closed trades to capture learnings.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Click any template name above the notes field to auto-insert it. You can customize the text after insertion. Consistent note structure makes future trade reviews dramatically more useful.</p>
+              </ExpandableDetail>
               <AnnotatedMockup
                 caption="The trade form adapts based on your selected instrument — F&O trades show lot size and expiry, while equity trades focus on price and quantity."
                 highlights={["Instrument Search", "Stop Loss", "Targets", "Tags"]}
