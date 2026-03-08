@@ -79,7 +79,7 @@ export function HeroSection() {
     <>
       <section ref={heroRef} className="relative min-h-[100svh] flex flex-col overflow-hidden" aria-label="Hero">
         {/* Background */}
-        <motion.div className="absolute inset-0" style={{ scale: imgScale }}>
+        <motion.div className="absolute inset-0 will-change-transform" style={{ scale: imgScale }}>
           <img
             src={heroLifestyle}
             alt=""
