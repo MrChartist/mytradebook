@@ -252,10 +252,10 @@ const SECTION_ANCHORS: Record<string, { label: string; id: string }[]> = {
 
 function FeatureList({ items }: { items: string[] }) {
   return (
-    <ul className="space-y-2.5 mt-4">
+    <ul className="space-y-3 mt-4">
       {items.map((item) => (
-        <li key={item} className="flex items-start gap-2.5 text-[15px] text-muted-foreground/80 leading-relaxed">
-          <ChevronRight className="w-3.5 h-3.5 text-primary mt-[3px] shrink-0" />
+        <li key={item} className="flex items-start gap-3 docs-body leading-relaxed" style={{ color: 'hsl(var(--docs-text-primary))' }}>
+          <ChevronRight className="w-3.5 h-3.5 mt-[5px] shrink-0" style={{ color: 'hsl(var(--docs-accent))' }} />
           <span>{item}</span>
         </li>
       ))}
@@ -267,21 +267,21 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
 }) {
   return (
-    <div className="group rounded-xl border border-border/30 bg-card relative overflow-hidden transition-colors duration-200 hover:border-border/40 mt-6">
-      <div className="px-5 pt-5 pb-3">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
-            <Icon className="w-3.5 h-3.5 text-primary" />
+    <div className="docs-feature-card group mt-6 overflow-hidden">
+      <div className="px-6 pt-5 pb-3">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
+            <Icon className="w-4 h-4" style={{ color: 'hsl(var(--docs-accent))' }} />
           </div>
-          <h4 className="text-[15px] font-semibold leading-tight">{title}</h4>
+          <h4 className="docs-card-title">{title}</h4>
           {badge && (
-            <span className="text-[10px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-md bg-primary/8 text-primary">
+            <span className="text-[11px] font-bold tracking-wide uppercase px-2.5 py-0.5 rounded-md" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)', color: 'hsl(var(--docs-accent))' }}>
               {badge}
             </span>
           )}
         </div>
       </div>
-      <div className="px-5 pb-5">
+      <div className="px-6 pb-6">
         <div className="docs-card-content">{children}</div>
       </div>
     </div>
@@ -290,14 +290,14 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
 
 function VideoPlaceholder({ title, duration }: { title: string; duration: string }) {
   return (
-    <div className="my-6 rounded-xl border border-border/30 overflow-hidden group cursor-pointer hover:border-border/40 transition-colors duration-200">
-      <div className="flex items-center gap-4 px-5 py-5">
-        <div className="w-10 h-10 rounded-full bg-primary/8 border border-primary/15 flex items-center justify-center shrink-0 group-hover:bg-primary/12 transition-colors">
-          <Play className="w-4 h-4 text-primary ml-0.5" />
+    <div className="my-6 docs-feature-card overflow-hidden group cursor-pointer">
+      <div className="flex items-center gap-4 px-6 py-5">
+        <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-colors" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)', border: '1px solid hsl(var(--docs-accent-soft) / 0.15)' }}>
+          <Play className="w-4 h-4 ml-0.5" style={{ color: 'hsl(var(--docs-accent))' }} />
         </div>
         <div>
-          <p className="text-[15px] font-medium text-foreground">{title}</p>
-          <span className="text-[12px] text-muted-foreground/55">{duration} · Coming Soon</span>
+          <p className="docs-card-title">{title}</p>
+          <span className="docs-caption mt-1 block">{duration} · Coming Soon</span>
         </div>
       </div>
     </div>
@@ -305,7 +305,7 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
 }
 
 function SectionDivider() {
-  return <div className="h-px bg-gradient-to-r from-transparent via-border/20 to-transparent my-8" />;
+  return <div className="docs-divider" />;
 }
 
 function SectionHeader({ id, title, description, icon: Icon }: {
@@ -320,29 +320,30 @@ function SectionHeader({ id, title, description, icon: Icon }: {
   }, [id]);
 
   return (
-    <div id={id} className="scroll-mt-24 mb-8 group">
-      <div className="flex items-center gap-2.5 mb-3">
-        <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
-          <Icon className="w-4 h-4 text-primary" />
+    <div id={id} className="scroll-mt-24 mb-10 group">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
+          <Icon className="w-5 h-5" style={{ color: 'hsl(var(--docs-accent))' }} />
         </div>
-        <h2 className="font-display text-[1.35rem] font-bold tracking-tight leading-tight">{title}</h2>
+        <h2 className="docs-section-title">{title}</h2>
         <button
           onClick={copyLink}
-          className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 p-1 rounded text-muted-foreground/40 hover:text-primary transition-all text-[12px] font-mono"
+          className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 p-1 rounded transition-all text-[13px] font-mono"
+          style={{ color: 'hsl(var(--docs-text-muted))' }}
           aria-label={`Copy link to ${title}`}
           title="Copy section link"
         >
           <span id={`copy-${id}`}>#</span>
         </button>
       </div>
-      <p className="text-[15px] text-muted-foreground/75 leading-[1.75] max-w-2xl lg:pl-[42px]">{description}</p>
+      <p className="docs-body-lg max-w-2xl lg:pl-[52px]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>{description}</p>
     </div>
   );
 }
 
 function ShortcutKey({ children }: { children: string }) {
   return (
-    <kbd className="px-2 py-1 rounded-md bg-muted border border-border text-[12px] font-mono font-semibold text-foreground">
+    <kbd className="px-2.5 py-1 rounded-md text-[12px] font-mono font-semibold" style={{ background: 'hsl(var(--docs-elevated))', border: '1px solid hsl(var(--docs-border-subtle))', color: 'hsl(var(--docs-text-strong))' }}>
       {children}
     </kbd>
   );
