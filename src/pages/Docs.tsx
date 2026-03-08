@@ -1643,67 +1643,122 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 title="Analytics"
                 icon={BarChart3}
               />
-              <ProTip variant="info">
-                <p>Analytics require at least 20 closed trades to generate meaningful insights. The more trades you log, the more statistically significant your analytics become.</p>
-              </ProTip>
               <QuickNav items={[
+                { label: "Getting Started", id: "an-start" },
                 { label: "Core Metrics", id: "an-core" },
+                { label: "Equity & Drawdown", id: "an-equity" },
                 { label: "Time Analysis", id: "an-time" },
+                { label: "Streaks & R:R", id: "an-streaks" },
                 { label: "AI Behavioral", id: "an-ai" },
+                { label: "Statistical Depth", id: "an-stats" },
               ]} />
-              <AnalyticsMetricCards />
-              <AIInsightsMockup />
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <EquityCurveMockup />
-                <AnalyticsHeatmapMockup />
-              </div>
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <SegmentPerformanceMockup />
-                <RiskOfRuinMockup />
-              </div>
-              <SubTopic title="Core Metrics & AI Insights" description="Fundamental performance statistics and AI-powered analysis." id="an-core" />
+
+              <ProTip variant="best-practice">
+                <p>Don't try to track everything at once. Start with just <strong>3 metrics</strong>: Win Rate, Expectancy, and Profit Factor. These three alone tell you whether you have an edge. Add more metrics only after you've consistently tracked these for 30+ trades.</p>
+              </ProTip>
+
+              <InteractiveMockup label="Analytics Overview">
+                <AnalyticsMetricCards />
+                <AIInsightsMockup />
+                <div className="grid md:grid-cols-2 gap-6 mt-4">
+                  <EquityCurveMockup />
+                  <AnalyticsHeatmapMockup />
+                </div>
+                <div className="grid md:grid-cols-2 gap-6 mt-4">
+                  <SegmentPerformanceMockup />
+                  <RiskOfRuinMockup />
+                </div>
+              </InteractiveMockup>
+
+              <SubTopic title="Reading Your First Report" description="A guided walkthrough for making sense of your analytics dashboard." id="an-start" />
+              <StepByStep title="Reading Your First Analytics Report" steps={[
+                { title: "Check the KPI cards at the top", description: "Start with Win Rate, Total P&L, and Profit Factor. These are your headline numbers — they tell you at a glance whether you're profitable.", detail: "Win Rate above 50% is good, but only meaningful alongside Profit Factor above 1.0. A 40% win rate with a 2.5 profit factor is better than 60% with 0.8." },
+                { title: "Scan the Equity Curve", description: "Look at the overall shape: is it trending up, down, or sideways? Sharp drops indicate drawdown periods worth investigating.", detail: "Click on drawdown periods to see which trades caused them. Often it's a cluster of 2-3 bad trades, not a systemic issue." },
+                { title: "Review the Time Heatmaps", description: "Check which hours and days are most profitable. Many traders discover they lose money during the first 15 minutes or on Mondays.", detail: "If a time slot is consistently red across 30+ trades, consider avoiding it entirely. This single change can significantly improve your P&L." },
+                { title: "Read the AI Insights", description: "The AI pattern detection surfaces behavioral patterns you'd never spot manually — like overtrading after wins or freezing after losses.", detail: "Focus on 'Critical' and 'Warning' severity insights first. 'Info' level insights are interesting but not urgent." },
+                { title: "Pick 1-2 areas to improve", description: "Don't try to fix everything. Pick your single biggest leak (worst time slot, worst segment, or most expensive mistake) and focus on that for the next 2 weeks.", detail: "After fixing one leak, revisit analytics to measure the impact before moving to the next improvement area." },
+              ]} />
+
+              <ProTip variant="info">
+                <p>Analytics require at least <strong>20 closed trades</strong> to generate meaningful insights. The more trades you log, the more statistically significant your analytics become. Most AI behavioral patterns need 50+ trades to detect reliably.</p>
+              </ProTip>
+
+              <SubTopic title="Core Metrics & AI Insights" description="Fundamental performance statistics that define your trading edge." id="an-core" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={BarChart3} title="Core Metrics" badge="Pro">
+                  <p className="text-sm text-muted-foreground mb-3">The essential numbers that tell you whether you have an edge:</p>
                   <FeatureList items={[
-                    "Win Rate — overall and by segment",
-                    "Total P&L — cumulative profit/loss",
-                    "Average Win / Average Loss",
-                    "Expectancy — expected value per trade",
-                    "Profit Factor — gross profit ÷ gross loss",
-                    "Best Trade and Worst Trade",
+                    "Win Rate — overall and by segment (what % of trades are profitable)",
+                    "Total P&L — cumulative profit/loss across all closed trades",
+                    "Average Win / Average Loss — the size ratio of your winners vs losers",
+                    "Expectancy — expected value per trade (positive = you have an edge)",
+                    "Profit Factor — gross profit ÷ gross loss (above 1.5 is strong)",
+                    "Best Trade and Worst Trade — your extremes for context",
                   ]} />
                 </FeatureCard>
                 <FeatureCard icon={Sparkles} title="AI Trade Insights" badge="Pro">
-                  <p className="text-sm text-muted-foreground">
-                    AI-powered analysis of your trading patterns. Identifies your most profitable setups, optimal trading times, common mistakes, and suggests actionable improvements. Insights update as you add more trades.
+                  <p className="text-sm text-muted-foreground mb-3">
+                    AI-powered analysis of your trading patterns. Identifies your most profitable setups, optimal trading times, common mistakes, and suggests actionable improvements.
                   </p>
+                  <FeatureList items={[
+                    "Insights update automatically as you add more trades",
+                    "Powered by Gemini for nuanced behavioral analysis",
+                    "Actionable suggestions — not just observations",
+                  ]} />
                 </FeatureCard>
+              </div>
+
+              <SubTopic title="Equity Curve & Drawdown Analysis" description="Visualize your capital curve and understand recovery patterns." id="an-equity" />
+              <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={TrendingDown} title="Equity Curve & Drawdown" badge="Pro">
-                  <p className="text-sm text-muted-foreground">
-                    Full equity curve showing cumulative P&L over time with drawdown overlay. Identifies maximum drawdown periods, recovery times, and helps you understand your capital curve's behavior under different market conditions.
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Full equity curve showing cumulative P&L over time with drawdown overlay:
                   </p>
+                  <FeatureList items={[
+                    "Cumulative P&L line chart with date range selector",
+                    "Drawdown overlay showing peak-to-trough declines",
+                    "Maximum drawdown % and duration in days",
+                    "Recovery time analysis — how long to recover from each drawdown",
+                    "Underwater chart showing time spent below peak equity",
+                  ]} />
                 </FeatureCard>
                 <FeatureCard icon={PieChart} title="Segment Performance" badge="Pro">
                   <p className="text-sm text-muted-foreground mb-3">Performance breakdown per market segment:</p>
                   <FeatureList items={[
-                    "Win rate per segment",
-                    "Sharpe ratio calculations",
-                    "Average holding period",
+                    "Win rate per segment (Intraday, Positional, F&O, Commodities)",
+                    "Sharpe ratio calculations per segment",
+                    "Average holding period comparison",
                     "Best and worst setups per segment",
-                    "P&L distribution charts",
+                    "P&L distribution charts for each segment",
                   ]} />
                 </FeatureCard>
               </div>
-              <SubTopic title="Time & Streak Analysis" description="Discover your best trading times and track momentum." id="an-time" />
+
+              <SubTopic title="Time-Based Analysis" description="Discover your most and least profitable trading windows." id="an-time" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Clock} title="Time-Based Heatmaps" badge="Pro">
+                  <p className="text-sm text-muted-foreground mb-3">Two heatmaps that reveal your optimal trading schedule:</p>
                   <FeatureList items={[
-                    "Time of Day heatmap — which hours are most profitable",
-                    "Day of Week heatmap — which days you perform best",
-                    "Color intensity shows P&L magnitude",
-                    "Helps optimize your trading schedule",
+                    "Time of Day heatmap — which hours (9 AM – 3:30 PM) are most profitable",
+                    "Day of Week heatmap — which days you perform best on",
+                    "Color intensity shows P&L magnitude (green = profit, red = loss)",
+                    "Trade count overlay for statistical significance",
+                    "Helps you avoid trading during your historically weak periods",
                   ]} />
                 </FeatureCard>
+                <FeatureCard icon={Clock} title="Day & Time Cross-Analysis" badge="Pro">
+                  <p className="text-sm text-muted-foreground mb-3">Combined Day × Time grid for granular insights:</p>
+                  <FeatureList items={[
+                    "5×5 grid: weekdays as rows, time slots as columns",
+                    "Each cell shows win rate and trade count",
+                    "Identify specific windows like 'Tuesday 10-12 AM' as your best slot",
+                    "Color-coded cells: green ≥ 60% win rate, red < 40%",
+                  ]} />
+                </FeatureCard>
+              </div>
+
+              <SubTopic title="Streaks & Risk-Reward" description="Track momentum and analyze your planned vs actual risk-reward ratios." id="an-streaks" />
+              <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Activity} title="Streak Tracker" badge="Pro">
                   <p className="text-sm text-muted-foreground mb-3">Track and visualize winning and losing streaks:</p>
                   <FeatureList items={[
@@ -1722,37 +1777,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "Average R:R by segment and timeframe",
                   ]} />
                 </FeatureCard>
-                <FeatureCard icon={TrendingDown} title="Drawdown Recovery" badge="Pro">
-                  <p className="text-sm text-muted-foreground mb-3">Understand your capital curve's resilience:</p>
+                <FeatureCard icon={Activity} title="Additional Advanced Metrics" badge="Pro">
                   <FeatureList items={[
-                    "Maximum drawdown % and duration in days",
-                    "Drawdown overlay on equity curve chart",
-                    "Recovery time analysis — how long to recover from each drawdown",
-                    "Underwater chart showing time spent below peak equity",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Clock} title="Day & Time of Day Analysis" badge="Pro">
-                  <p className="text-sm text-muted-foreground mb-3">Discover your optimal trading windows:</p>
-                  <FeatureList items={[
-                    "Day of Week heatmap — win rate and P&L by weekday",
-                    "Time of Day heatmap — performance by hour (9 AM – 3 PM)",
-                    "Color-coded cells: green for profitable, red for losing periods",
-                    "Trade count overlay to show statistical significance",
-                    "Helps you avoid trading during your historically weak periods",
-                  ]} />
-                </FeatureCard>
-                <FeatureCard icon={Activity} title="Additional Advanced Analytics" badge="Pro">
-                  <FeatureList items={[
-                    "Setup/Tag Performance Matrix — P&L by setup tag",
-                    "Risk of Ruin Calculator — statistical probability of account blowup",
+                    "Setup/Tag Performance Matrix — P&L breakdown by setup tag",
+                    "Risk of Ruin Calculator — statistical probability of account blowup based on your actual stats",
                   ]} />
                 </FeatureCard>
               </div>
-              <SubTopic title="AI-Powered Behavioral Analytics" description="Machine learning insights into your trading psychology." id="an-ai" />
+
+              <SubTopic title="AI-Powered Behavioral Analytics" description="Machine learning insights into your trading psychology and hidden patterns." id="an-ai" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Sparkles} title="AI Pattern Detection" badge="New">
                   <p className="text-sm text-muted-foreground mb-3">
-                    AI analyzes your entire trade history to surface hidden behavioral patterns — things you'd never spot manually. Powered by Gemini, it examines time-of-day performance, day-of-week tendencies, streak effects, and segment biases.
+                    AI analyzes your entire trade history to surface hidden behavioral patterns — things you'd never spot manually:
                   </p>
                   <FeatureList items={[
                     "\"You lose 70% of trades taken after 2 PM\" — automatic time-of-day patterns",
@@ -1765,7 +1802,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </FeatureCard>
                 <FeatureCard icon={Grid3X3} title="Sector Rotation Heatmap" badge="New">
                   <p className="text-sm text-muted-foreground mb-3">
-                    A 6-month heatmap grid showing how your trading allocation and P&L shifts across market segments over time. Spot trends in where you're focusing your capital.
+                    A 6-month heatmap grid showing how your trading allocation shifts across segments over time:
                   </p>
                   <FeatureList items={[
                     "Rows: Market segments (Options, Futures, Equity Intraday, etc.)",
@@ -1778,7 +1815,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </FeatureCard>
                 <FeatureCard icon={Target} title="Setup Win-Rate Matrix" badge="New">
                   <p className="text-sm text-muted-foreground mb-3">
-                    A cross-tabulation of Segment × Timeframe showing win rates and trade counts. Instantly see which combinations of segment and timeframe give you the best edge.
+                    Cross-tabulation of Segment × Timeframe showing win rates and trade counts:
                   </p>
                   <FeatureList items={[
                     "Matrix grid: segments as rows, timeframes as columns",
@@ -1786,23 +1823,34 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "Color-coded: green ≥ 60%, yellow 40-60%, red < 40%",
                     "Identifies your best-performing segment/timeframe combos",
                     "Highlights cells with statistical significance (5+ trades)",
-                    "Requires trades with timeframe and segment populated",
                   ]} />
                 </FeatureCard>
                 <FeatureCard icon={Activity} title="Emotional P&L Correlation" badge="New">
                   <p className="text-sm text-muted-foreground mb-3">
-                    A bar chart correlating your emotion tags (FOMO, Calm, Anxious, Confident, etc.) with trading outcomes. See which emotional states lead to profits vs losses.
+                    Bar chart correlating your emotion tags with trading outcomes:
                   </p>
                   <FeatureList items={[
-                    "Average P&L per emotion tag — bars colored by profit/loss",
+                    "Average P&L per emotion tag (FOMO, Calm, Anxious, Confident, etc.)",
                     "Win rate percentage displayed for each emotion",
                     "Trade count per emotion for statistical context",
-                    "Uses the emotion_tag field on your trades",
                     "Helps identify which emotional states to cultivate or avoid",
-                    "Empty state guide if no emotion tags are used yet",
                   ]} />
                 </FeatureCard>
               </div>
+
+              <SubTopic title="Statistical Significance" description="Understanding when your analytics become statistically meaningful." id="an-stats" />
+              <ExpandableDetail title="Minimum Trade Count for Statistical Significance" icon={BarChart3} badge="Important">
+                <p>Not all analytics are equally reliable with small sample sizes. Here's a guide to when each metric becomes meaningful:</p>
+                <FeatureList items={[
+                  "Win Rate — needs 30+ trades to stabilize. Below 30 trades, a few lucky/unlucky outcomes can swing it by 15-20%.",
+                  "Profit Factor — reliable after 50+ trades. Sensitive to outlier trades (one huge win can distort it).",
+                  "Time-of-Day Heatmap — needs 5+ trades per time slot to show real patterns. With 50+ total trades, most slots have enough data.",
+                  "AI Pattern Detection — requires 50+ trades for basic patterns, 100+ for nuanced behavioral insights.",
+                  "Emotional Correlation — needs 10+ trades per emotion tag. Sparse tags produce unreliable correlations.",
+                  "Setup Win-Rate Matrix — cells with fewer than 5 trades are dimmed to indicate low confidence.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">As a rule of thumb: if a metric is based on fewer than 20 data points, treat it as directional rather than definitive. The analytics page dims or hides metrics that don't meet minimum thresholds.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
