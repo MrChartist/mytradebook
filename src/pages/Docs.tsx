@@ -972,6 +972,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Built-in risk calculator that tells you exactly how many shares to buy based on your capital, risk tolerance, and stop loss distance."
                 icon={Calculator}
               />
+              <PositionSizingCalcMockup />
               <SubTopic title="Calculation Workflow" description="How the calculator determines your optimal position size." />
               <StepByStep title="How It Works" steps={[
                 { title: "Set your capital & risk %", description: "Define your total capital and the max % you're willing to risk per trade (e.g., 1.5%)." },
