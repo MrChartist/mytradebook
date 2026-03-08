@@ -2701,6 +2701,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">These indicators are computed server-side from live NSE data. In the Custom Filter Builder, you can combine technical indicators with fundamental metrics (e.g., RSI &lt; 30 AND P/E &lt; 20) for powerful cross-domain screening.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Watchlists", description: "Save screener results to watchlists", targetId: "watchlists" },
+                { label: "Alerts", description: "Set alerts on screener stocks", targetId: "alerts" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
