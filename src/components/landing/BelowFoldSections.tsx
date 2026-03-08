@@ -244,7 +244,79 @@ export function PricingSection() {
   );
 }
 
+function TestimonialCard({ testimonial, large = false }: { testimonial: typeof testimonials[0]; large?: boolean }) {
+  if (large) {
+    return (
+      <motion.div className="rounded-2xl border border-foreground/10 bg-foreground text-background p-10 h-full flex flex-col dot-pattern relative overflow-hidden" whileHover={{ y: -3 }}>
+        <Quote className="w-12 h-12 text-[hsl(var(--tb-accent)/0.15)] mb-7" />
+        <p className="text-xl leading-[1.7] flex-1 mb-7 font-medium">"<HighlightedQuote testimonial={testimonial} />"</p>
+        <div className="flex items-center gap-1.5 mb-5">{[...Array(testimonial.stars)].map((_, j) => (<Star key={j} className="w-4 h-4 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))] drop-shadow-[0_0_3px_hsl(var(--tb-accent)/0.3)]" />))}</div>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-[hsl(var(--tb-accent)/0.2)] ring-2 ring-background flex items-center justify-center text-sm font-bold text-[hsl(var(--tb-accent))]">{testimonial.avatar}</div>
+          <div><p className="font-semibold">{testimonial.name}</p><p className="text-sm text-background/50">{testimonial.role}</p><span className="inline-block mt-1 bg-[hsl(var(--tb-accent)/0.15)] text-[hsl(var(--tb-accent))] rounded-full px-2 py-0.5 text-[10px] font-semibold">{testimonial.style}</span></div>
+        </div>
+      </motion.div>
+    );
+  }
+  return (
+    <motion.div
+      className="rounded-2xl border border-border/40 bg-card p-8 h-full flex flex-col"
+      style={{ boxShadow: glassInner }}
+      whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}
+    >
+      <Quote className="w-7 h-7 text-[hsl(var(--tb-accent)/0.15)] mb-4" />
+      <p className="text-[15px] text-muted-foreground leading-relaxed flex-1 mb-5">"<HighlightedQuote testimonial={testimonial} />"</p>
+      <div className="flex items-center gap-1 mb-3">{[...Array(testimonial.stars)].map((_, j) => (<Star key={j} className="w-3 h-3 fill-[hsl(var(--tb-accent))] text-[hsl(var(--tb-accent))] drop-shadow-[0_0_3px_hsl(var(--tb-accent)/0.3)]" />))}</div>
+      <div className="flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-full bg-[hsl(var(--tb-accent)/0.08)] ring-2 ring-background flex items-center justify-center text-xs font-bold text-[hsl(var(--tb-accent))]">{testimonial.avatar}</div>
+        <div><p className="text-sm font-semibold">{testimonial.name}</p><p className="text-xs text-muted-foreground/60">{testimonial.role}</p></div>
+      </div>
+    </motion.div>
+  );
+}
+
+function MobileTestimonialCarousel() {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    emblaApi.on("select", onSelect);
+    return () => { emblaApi.off("select", onSelect); };
+  }, [emblaApi, onSelect]);
+
+  return (
+    <div>
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex gap-4">
+          {testimonials.map((t, i) => (
+            <div key={i} className="flex-[0_0_85%] min-w-0">
+              <TestimonialCard testimonial={t} />
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="flex justify-center gap-1.5 mt-6">
+        {testimonials.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => emblaApi?.scrollTo(i)}
+            className={cn("w-2 h-2 rounded-full transition-all", i === selectedIndex ? "bg-[hsl(var(--tb-accent))] w-5" : "bg-muted-foreground/30")}
+            aria-label={`Go to testimonial ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function TestimonialsSection() {
+  const isMobile = useIsMobile();
   return (
     <section className="py-24 lg:py-32" aria-label="Testimonials">
       <MotionSection className="max-w-6xl mx-auto px-6 lg:px-10">
@@ -253,7 +325,11 @@ export function TestimonialsSection() {
           <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Trusted by{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>real traders</span></h2>
           <p className="text-muted-foreground max-w-md mx-auto text-lg">Here's what traders across India are saying.</p>
         </motion.div>
+        {isMobile ? (
+          <MobileTestimonialCarousel />
+        ) : (
         <div className="grid md:grid-cols-3 gap-7">
+        )}
           <motion.div variants={fadeUp} className="md:col-span-2">
             <motion.div className="rounded-2xl border border-foreground/10 bg-foreground text-background p-10 h-full flex flex-col dot-pattern relative overflow-hidden" whileHover={{ y: -3 }}>
               <Quote className="w-12 h-12 text-[hsl(var(--tb-accent)/0.15)] mb-7" />
