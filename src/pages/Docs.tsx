@@ -512,8 +512,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <QuickNav items={[
                 { label: "Quick Start", id: "gs-quick-start" },
                 { label: "Platform Overview", id: "gs-platform-overview" },
+                { label: "System Requirements", id: "gs-system-req" },
               ]} />
               <VideoPlaceholder title="Getting Started with TradeBook — Full Walkthrough" duration="5 min" />
+
               <SubTopic title="Quick Start" description="Get up and running in under 5 minutes." id="gs-quick-start" />
               <StepByStep title="Your First 5 Minutes" steps={[
                 { title: "Sign up with email", description: "Create your account with email and password. Verify via the confirmation email.", detail: "No credit card required — you get 14 days of Pro features free." },
@@ -522,10 +524,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Log your first trade", description: "Click '+ New Trade' or press N on keyboard. Fill in symbol, entry price, and quantity.", detail: "Try the Command Palette (⌘K) for even faster trade entry." },
                 { title: "Explore the dashboard", description: "Your trading cockpit shows P&L, risk gauge, equity curve, and all key metrics.", detail: "Drag-and-drop widgets to customize your layout." },
               ]} />
-              <OnboardingFlowMockup />
+
+              <ProTip variant="best-practice">
+                <p>Set your starting capital accurately before logging your first trade. This number drives all risk-per-trade calculations, position sizing suggestions, and portfolio % metrics. You can update it later in <strong>Settings → Capital Management</strong>, but getting it right from day one ensures your analytics are meaningful from the start.</p>
+              </ProTip>
+
+              <InteractiveMockup label="Onboarding Flow">
+                <OnboardingFlowMockup />
+              </InteractiveMockup>
               <MobileAppMockup />
+
               <SubTopic title="Platform Overview" description="Understand the key areas of TradeBook." id="gs-platform-overview" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="grid md:grid-cols-2 gap-5 mt-2">
                 <FeatureCard icon={Users} title="Create Your Account">
                   <p className="text-sm text-muted-foreground mb-3">Sign up with email and verify your account. You'll get a 14-day Pro trial with full access to every feature — no credit card required.</p>
                   <FeatureList items={[
@@ -547,9 +557,23 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                 </FeatureCard>
               </div>
+
               <ProTip variant="info">
                 <p>Press <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-[11px] font-mono font-semibold">⌘K</kbd> anywhere to open the Command Palette — search trades, create alerts, and navigate instantly without touching the mouse.</p>
               </ProTip>
+
+              <SubTopic title="System Requirements & Browser Support" id="gs-system-req" />
+              <ExpandableDetail title="Supported Browsers & Devices" icon={Shield} defaultOpen={false}>
+                <p>TradeBook is a modern web application optimized for the latest browsers. For the best experience:</p>
+                <FeatureList items={[
+                  "Chrome 90+ (recommended) — best performance and PWA support",
+                  "Firefox 88+ — fully supported",
+                  "Safari 15+ — fully supported on macOS and iOS",
+                  "Edge 90+ — fully supported (Chromium-based)",
+                  "Mobile — responsive design with PWA install for Android & iOS",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Internet Explorer is not supported. For real-time price updates, a stable broadband connection is recommended.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
