@@ -325,8 +325,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
       {/* Hero */}
       <div className={cn("pt-20 border-b border-border/15 bg-gradient-to-b from-primary/[0.02] to-transparent", isInsideApp && "border-none")}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-12 lg:py-16">
-          <div className="flex items-center gap-2.5 mb-5">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-14 lg:py-20">
+          <div className="flex items-center gap-2.5 mb-6">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/8 text-primary text-[10px] font-bold tracking-wide">
               Documentation
             </span>
@@ -343,14 +343,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               {mode === "bw" ? "B&W" : "Color"}
             </button>
           </div>
-          <h1 className="text-3xl lg:text-4xl xl:text-5xl font-extrabold tracking-tight mb-4 leading-[1.08]">
+          <h1 className="text-3xl lg:text-4xl xl:text-5xl font-extrabold tracking-tight mb-5 leading-[1.08] max-w-2xl">
             Everything you need to know about{" "}
             <span className="accent-script text-primary">TradeBook</span>
           </h1>
-          <p className="text-[15px] text-muted-foreground/80 max-w-xl leading-relaxed">
+          <p className="text-[15px] lg:text-base text-muted-foreground/80 max-w-xl leading-[1.75]">
             A comprehensive guide to every feature, capability, and workflow — from your first trade log to advanced analytics.
           </p>
-          <div className="flex items-center gap-2.5 mt-3 text-[11px] text-muted-foreground/50">
+          <div className="flex items-center gap-2.5 mt-4 text-[11px] text-muted-foreground/50">
             <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~35 min read</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
             <span>Last updated: March 2026</span>
@@ -360,7 +360,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.35 }}
-            className="flex flex-wrap gap-2 mt-5"
+            className="flex flex-wrap gap-2 mt-6"
           >
             {[
               { label: "26 Sections", icon: FileText },
@@ -374,12 +374,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
             ))}
           </motion.div>
-          <BentoFeatureGrid />
+          <div className="mt-8">
+            <BentoFeatureGrid />
+          </div>
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-10">
-        <div className="flex gap-10">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-12 lg:py-14">
+        <div className="flex gap-12">
           {/* Sidebar — desktop */}
           <TooltipProvider delayDuration={200}>
             <aside className={cn(
@@ -388,13 +390,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             )}>
               <div className="sticky top-24">
                 {/* Scroll progress bar */}
-                <div className="h-0.5 bg-muted rounded-full overflow-hidden mb-3">
-                  <div className="h-full bg-primary transition-all duration-150" style={{ width: `${scrollProgress}%` }} />
+                <div className="h-0.5 bg-muted/60 rounded-full overflow-hidden mb-4">
+                  <div className="h-full bg-primary/80 transition-all duration-150" style={{ width: `${scrollProgress}%` }} />
                 </div>
                 {/* Header with collapse toggle */}
-                <div className={cn("flex items-center mb-3", sidebarCollapsed ? "justify-center" : "justify-between px-3")}>
+                <div className={cn("flex items-center mb-4", sidebarCollapsed ? "justify-center" : "justify-between px-3")}>
                   {!sidebarCollapsed && (
-                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Table of Contents</p>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/50">Contents</p>
                   )}
                   <button
                     onClick={toggleSidebar}
@@ -426,10 +428,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                       if (groupSections.length === 0) return null;
                       return (
                       <div key={group.label}>
-                         {gi > 0 && !sidebarCollapsed && <Separator className="my-1.5 mx-2" />}
-                         {gi > 0 && sidebarCollapsed && <Separator className="my-1.5" />}
+                         {gi > 0 && !sidebarCollapsed && <Separator className="my-2.5 mx-2" />}
+                         {gi > 0 && sidebarCollapsed && <Separator className="my-2" />}
                          {!sidebarCollapsed && (
-                           <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-muted-foreground/40 px-2.5 py-1">{group.label}</p>
+                           <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground/45 px-2.5 pt-1.5 pb-1">{group.label}</p>
                         )}
                         {groupSections.map((s) => {
                           const btn = (
@@ -508,12 +510,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Play}
               />
               <QuickNav items={[
-                { label: "Create Account", id: "getting-started" },
-                { label: "Navigate", id: "getting-started" },
-                { label: "Free vs Pro", id: "getting-started" },
+                { label: "Quick Start", id: "gs-quick-start" },
+                { label: "Platform Overview", id: "gs-platform-overview" },
               ]} />
               <VideoPlaceholder title="Getting Started with TradeBook — Full Walkthrough" duration="5 min" />
-              <SubTopic title="Quick Start" description="Get up and running in under 5 minutes." />
+              <SubTopic title="Quick Start" description="Get up and running in under 5 minutes." id="gs-quick-start" />
               <StepByStep title="Your First 5 Minutes" steps={[
                 { title: "Sign up with email", description: "Create your account with email and password. Verify via the confirmation email.", detail: "No credit card required — you get 14 days of Pro features free." },
                 { title: "Set your starting capital", description: "Enter your trading capital amount during onboarding. This is used for risk calculations.", detail: "You can update this anytime in Settings → Preferences." },
@@ -523,7 +524,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               ]} />
               <OnboardingFlowMockup />
               <MobileAppMockup />
-              <SubTopic title="Platform Overview" description="Understand the key areas of TradeBook." />
+              <SubTopic title="Platform Overview" description="Understand the key areas of TradeBook." id="gs-platform-overview" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Users} title="Create Your Account">
                   <p className="text-sm text-muted-foreground mb-3">Sign up with email and verify your account. You'll get a 14-day Pro trial with full access to every feature — no credit card required.</p>
@@ -563,14 +564,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={LayoutDashboard}
               />
               <QuickNav items={[
-                { label: "Today's P&L", id: "dashboard" },
-                { label: "KPI Cards", id: "dashboard" },
-                { label: "Risk Gauge", id: "dashboard" },
-                { label: "Equity Curve", id: "dashboard" },
-                { label: "Widget Customization", id: "dashboard" },
+                { label: "Performance Overview", id: "db-performance" },
+                { label: "Charts & Visualizations", id: "db-charts" },
+                { label: "Customization", id: "db-customization" },
+                { label: "Advanced Widgets", id: "db-advanced" },
               ]} />
               <DashboardMockup />
-              <SubTopic title="Performance Overview" description="Real-time P&L and key trading metrics at a glance." />
+              <SubTopic title="Performance Overview" description="Real-time P&L and key trading metrics at a glance." id="db-performance" />
               <FeatureCard icon={Activity} title="Today's P&L Hero Card">
                 <p className="text-sm text-muted-foreground">
                   The top hero card shows your total P&L for the day with a large, color-coded number. Green for profit, red for loss. Breaks down realized vs unrealized gains and shows win/loss count. Updates in real-time if you have live prices enabled via Dhan integration.
@@ -596,7 +596,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><RiskGaugeDetailMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Charts & Visualizations" description="Visual tools to track your equity, streaks, and daily performance." />
+              <SubTopic title="Charts & Visualizations" description="Visual tools to track your equity, streaks, and daily performance." id="db-charts" />
               <FeatureCard icon={TrendingUp} title="Equity Curve Widget">
                 <p className="text-sm text-muted-foreground">
                   A compact equity curve chart showing your cumulative P&L over the selected month with gradient fill. Shows peak equity, max drawdown, and date labels. Hover over data points to see exact values. The curve updates automatically as you close trades.
@@ -618,7 +618,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><CalendarHeatmapWidgetMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Customization & Layout" description="Tailor your dashboard to your workflow." />
+              <SubTopic title="Customization & Layout" description="Tailor your dashboard to your workflow." id="db-customization" />
               <FeatureCard icon={Settings} title="Widget Customization" badge="Enhanced">
                 <p className="text-sm text-muted-foreground mb-3">Personalize your dashboard by showing/hiding widgets and drag-to-reorder them:</p>
                 <FeatureList items={[
@@ -650,7 +650,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </p>
               </FeatureCard>
 
-              <SubTopic title="Advanced Widgets" description="Power-user widgets for portfolio visualization and daily reviews." />
+              <SubTopic title="Advanced Widgets" description="Power-user widgets for portfolio visualization and daily reviews." id="db-advanced" />
               <FeatureCard icon={Grid3X3} title="Portfolio Heat Map" badge="New">
                 <p className="text-sm text-muted-foreground mb-3">
                   A treemap-style visualization of your open positions. Each tile represents a position, sized by its value and color-coded by unrealized P&L — deep green for profits, deep red for losses.
@@ -706,8 +706,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip>
                 <p>Always set your stop loss before submitting a trade. TradeBook calculates your risk-to-reward ratio automatically — trades with R:R below 1:2 are flagged in your analytics.</p>
               </ProTip>
-
-              <SubTopic title="Creating & Managing Trades" description="Log trades with detailed metadata and smart defaults." />
+              <QuickNav items={[
+                { label: "Creating Trades", id: "tm-creating" },
+                { label: "Risk Management", id: "tm-risk" },
+                { label: "Post-Trade Review", id: "tm-review" },
+                { label: "Sharing & Discipline", id: "tm-sharing" },
+                { label: "Quick Actions", id: "tm-quick" },
+              ]} />
+              <SubTopic title="Creating & Managing Trades" description="Log trades with detailed metadata and smart defaults." id="tm-creating" />
               <FeatureCard icon={Search} title="Creating a Trade">
                 <p className="text-sm text-muted-foreground mb-3">Step-by-step trade creation with smart defaults:</p>
                 <FeatureList items={[
@@ -733,7 +739,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><TradeStatusLifecycleMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Risk Management Tools" description="Automated stop loss, position sizing, and multi-leg strategies." />
+              <SubTopic title="Risk Management Tools" description="Automated stop loss, position sizing, and multi-leg strategies." id="tm-risk" />
               <FeatureCard icon={Target} title="Trailing Stop Loss (TSL)">
                 <p className="text-sm text-muted-foreground mb-3">Automated stop loss management for open positions:</p>
                 <FeatureList items={[
@@ -765,7 +771,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><PositionSizingDetailMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Post-Trade Review & Reflection" description="Structured review process after closing every trade." />
+              <SubTopic title="Post-Trade Review & Reflection" description="Structured review process after closing every trade." id="tm-review" />
               <FeatureCard icon={Star} title="Post-Trade Review">
                 <p className="text-sm text-muted-foreground mb-3">When you close a trade, a review modal prompts you to reflect:</p>
                 <FeatureList items={[
@@ -779,7 +785,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><PostTradeReviewMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Sharing, Gamification & Discipline" description="Social cards, badges, trading rules, and AI coaching." />
+              <SubTopic title="Sharing, Gamification & Discipline" description="Social cards, badges, trading rules, and AI coaching." id="tm-sharing" />
               <FeatureCard icon={Share2} title="P&L & Trade Share Cards" badge="New">
                 <p className="text-sm text-muted-foreground mb-3">
                   Generate beautiful, branded share cards for social media. Share your daily P&L summary, individual trade results, or winning streaks with customizable templates.
@@ -838,7 +844,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p className="text-xs text-muted-foreground mt-3 italic">See also: <button onClick={() => document.getElementById("ai-integration")?.scrollIntoView({ behavior: "smooth" })} className="text-primary hover:underline">AI Insights Setup</button></p>
               </FeatureCard>
 
-              <SubTopic title="Quick Actions & Data Tools" description="Fast trade closing, CSV import/export, and templates." />
+              <SubTopic title="Quick Actions & Data Tools" description="Fast trade closing, CSV import/export, and templates." id="tm-quick" />
               <FeatureCard icon={Zap} title="Quick Close Popover">
                 <p className="text-sm text-muted-foreground mb-3">
                   Close open trades without leaving the trades list. A compact popover lets you enter the exit price and close instantly.
@@ -885,7 +891,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Bulk import trades from CSV files with intelligent column mapping, or export your entire trade history for backup and external analysis."
                 icon={Upload}
               />
-              <SubTopic title="Import Workflow" description="Step-by-step process to bring your existing trades into TradeBook." />
+              <QuickNav items={[
+                { label: "Import Workflow", id: "csv-import-workflow" },
+                { label: "Import & Export Details", id: "csv-details" },
+              ]} />
+              <SubTopic title="Import Workflow" description="Step-by-step process to bring your existing trades into TradeBook." id="csv-import-workflow" />
               <StepByStep title="How to Import" steps={[
                 { title: "Export from your broker", description: "Download your trade history as CSV from your broker's platform." },
                 { title: "Upload to TradeBook", description: "Go to Trades → Import CSV and select your file." },
@@ -893,7 +903,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Preview & confirm", description: "Review mapped data, fix any validation errors, then confirm the import." },
               ]} />
               <VideoPlaceholder title="How to Import Trades from CSV" duration="3 min" />
-              <SubTopic title="Import & Export Details" description="Detailed capabilities for importing and exporting trade data." />
+              <SubTopic title="Import & Export Details" description="Detailed capabilities for importing and exporting trade data." id="csv-details" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Upload} title="Importing Trades">
                   <p className="text-sm text-muted-foreground mb-3">Step-by-step CSV import with validation:</p>
@@ -934,8 +944,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip>
                 <p>Create a template for each of your top 3 setups. When you see a setup forming, use the template to log the trade in under 10 seconds — no more missed opportunities.</p>
               </ProTip>
-              <SubTopic title="Template Setup" description="Create and manage reusable trade templates." />
-              <VideoPlaceholder title="Setting Up Trade Templates" duration="2 min" />
+              <SubTopic title="Template Setup" description="Create and manage reusable trade templates." id="tpl-setup" />
+              <QuickNav items={[
+                { label: "Creating Templates", id: "tpl-setup" },
+                { label: "Smart Suggestions", id: "tpl-setup" },
+              ]} />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Zap} title="Creating Templates">
                   <p className="text-sm text-muted-foreground mb-3">Build templates for your most common trade setups:</p>
@@ -973,14 +986,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Calculator}
               />
               <PositionSizingCalcMockup />
-              <SubTopic title="Calculation Workflow" description="How the calculator determines your optimal position size." />
+              <QuickNav items={[
+                { label: "Calculation Workflow", id: "ps-workflow" },
+                { label: "Advanced Sizing", id: "ps-advanced" },
+              ]} />
+              <SubTopic title="Calculation Workflow" description="How the calculator determines your optimal position size." id="ps-workflow" />
               <StepByStep title="How It Works" steps={[
                 { title: "Set your capital & risk %", description: "Define your total capital and the max % you're willing to risk per trade (e.g., 1.5%)." },
                 { title: "Enter entry & stop loss prices", description: "The calculator computes the risk per share (entry − SL)." },
                 { title: "Get recommended quantity", description: "Max shares = (Capital × Risk%) ÷ Risk per share. Automatically rounds down." },
                 { title: "Review max loss", description: "See the maximum loss in rupees before you commit to the trade." },
               ]} />
-              <SubTopic title="Advanced Sizing" description="Expert-level position sizing with the Kelly Criterion." />
+              <SubTopic title="Advanced Sizing" description="Expert-level position sizing with the Kelly Criterion." id="ps-advanced" />
               <ExpandableDetail title="Advanced: Kelly Criterion" icon={Target}>
                 <p>For experienced traders, the Position Sizing Calculator can suggest position sizes based on the Kelly Criterion — factoring in your historical win rate and average win/loss ratio to optimize long-term capital growth.</p>
               </ExpandableDetail>
@@ -1001,7 +1018,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={ClipboardCheck}
               />
               <TradingRulesMockup />
-              <SubTopic title="Setup & Usage" description="How to create and enforce your personal trading rules." />
+              <QuickNav items={[
+                { label: "Setup & Usage", id: "tr-setup" },
+                { label: "Rule Examples", id: "tr-examples" },
+              ]} />
+              <SubTopic title="Setup & Usage" description="How to create and enforce your personal trading rules." id="tr-setup" />
               <FeatureCard icon={ClipboardCheck} title="How Trading Rules Work">
                 <p className="text-sm text-muted-foreground mb-3">Create a custom checklist that appears in the trade creation modal:</p>
                 <FeatureList items={[
@@ -1015,7 +1036,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="best-practice">
                 <p>Start with 3-5 rules maximum. The best rules are specific and actionable: "Confirm volume is above 20-day average" is better than "Check volume."</p>
               </ProTip>
-              <SubTopic title="Rule Examples" description="Pre-built rule sets for different trading styles." />
+              <SubTopic title="Rule Examples" description="Pre-built rule sets for different trading styles." id="tr-examples" />
               <ExpandableDetail title="Example Rules for Different Styles" icon={BookOpen} defaultOpen>
                 <div className="grid md:grid-cols-2 gap-4 mt-2">
                   <div>
@@ -1051,11 +1072,17 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Set price alerts, percentage change triggers, volume spike detectors, and custom conditions. Get notified instantly via in-app notifications or Telegram."
                 icon={Bell}
               />
+              <QuickNav items={[
+                { label: "Alert Types", id: "al-types" },
+                { label: "Trigger Logic", id: "al-trigger" },
+                { label: "Management", id: "al-management" },
+                { label: "AI Suggestions", id: "al-ai" },
+              ]} />
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 <AlertCardMockup />
                 <TelegramNotifMockup />
               </div>
-              <SubTopic title="Alert Types" description="Seven condition types to monitor any price action." />
+              <SubTopic title="Alert Types" description="Seven condition types to monitor any price action." id="al-types" />
               <FeatureCard icon={Bell} title="Alert Condition Types">
                 <FeatureList items={[
                   "Price Above — triggers when LTP exceeds your threshold",
@@ -1069,7 +1096,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><AlertConditionTypesMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Trigger Logic & Delivery" description="Control when and how alerts fire and reach you." />
+              <SubTopic title="Trigger Logic & Delivery" description="Control when and how alerts fire and reach you." id="al-trigger" />
               <FeatureCard icon={RefreshCw} title="Recurrence & Cooldowns">
                 <FeatureList items={[
                   "Once — fires once and auto-deactivates",
@@ -1094,7 +1121,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><DeliveryChannelsMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Alert Management" description="Organize, filter, and monitor all your alerts." />
+              <SubTopic title="Alert Management" description="Organize, filter, and monitor all your alerts." id="al-management" />
               <FeatureCard icon={Eye} title="Alert Management">
                 <p className="text-sm text-muted-foreground mb-3">Organize and monitor your alerts:</p>
                 <FeatureList items={[
@@ -1107,7 +1134,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><AlertManagementMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="AI-Powered Suggestions" description="Let AI recommend alerts based on your trading patterns." />
+              <SubTopic title="AI-Powered Suggestions" description="Let AI recommend alerts based on your trading patterns." id="al-ai" />
               <FeatureCard icon={Sparkles} title="Smart Alert Suggestions" badge="AI">
                 <p className="text-sm text-muted-foreground mb-3">
                   AI analyzes your frequently traded symbols and suggests relevant price alerts with reasoning.
@@ -1137,8 +1164,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip>
                 <p>Link your studies to trades when you execute them. This builds a powerful feedback loop — you can see which of your research ideas actually led to profitable trades.</p>
               </ProTip>
+              <QuickNav items={[
+                { label: "Study Workflow", id: "st-workflow" },
+                { label: "Pattern Tagging", id: "st-patterns" },
+                { label: "Research Tools", id: "st-tools" },
+              ]} />
               <StudyCardMockup />
-              <SubTopic title="Study Workflow" description="Organize studies by category and track their lifecycle." />
+              <SubTopic title="Study Workflow" description="Organize studies by category and track their lifecycle." id="st-workflow" />
               <FeatureCard icon={Layers} title="Categories & Status Workflow">
                 <p className="text-sm text-muted-foreground mb-3">Organize studies by type and track their lifecycle:</p>
                 <FeatureList items={[
@@ -1150,7 +1182,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><StudyCategoryWorkflowMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Pattern Tagging" description="Rich multi-category tagging for chart pattern recognition." />
+              <SubTopic title="Pattern Tagging" description="Rich multi-category tagging for chart pattern recognition." id="st-patterns" />
               <FeatureCard icon={Tag} title="Pattern Tagging System">
                 <p className="text-sm text-muted-foreground mb-3">Rich tagging for pattern recognition:</p>
                 <FeatureList items={[
@@ -1163,7 +1195,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><PatternTaggingMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Research Tools" description="Live prices, duration tracking, and linking studies to trades." />
+              <SubTopic title="Research Tools" description="Live prices, duration tracking, and linking studies to trades." id="st-tools" />
               <FeatureCard icon={Clock} title="Additional Features">
                 <FeatureList items={[
                   "Live prices displayed for active/draft studies",
@@ -1188,7 +1220,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Eye}
               />
               <WatchlistMockup />
-              <SubTopic title="Organization & Live Data" description="Create lists, track prices, and act on opportunities." />
+              <SubTopic title="Organization & Live Data" description="Create lists, track prices, and act on opportunities." id="wl-org" />
               <FeatureCard icon={Eye} title="Watchlist Capabilities">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -1233,7 +1265,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <CalendarHeatmapMockup />
                 <KanbanBoardMockup />
               </div>
-              <SubTopic title="Journal Views" description="Four specialized tabs for different aspects of your journal." />
+              <SubTopic title="Journal Views" description="Four specialized tabs for different aspects of your journal." id="jn-views" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={PieChart} title="Dashboard Tab">
                   <p className="text-sm text-muted-foreground mb-3">High-level summary of your trading performance:</p>
@@ -1287,6 +1319,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="info">
                 <p>Analytics require at least 20 closed trades to generate meaningful insights. The more trades you log, the more statistically significant your analytics become.</p>
               </ProTip>
+              <QuickNav items={[
+                { label: "Core Metrics", id: "an-core" },
+                { label: "Time Analysis", id: "an-time" },
+                { label: "AI Behavioral", id: "an-ai" },
+              ]} />
               <AnalyticsMetricCards />
               <AIInsightsMockup />
               <div className="grid md:grid-cols-2 gap-6 mb-6">
@@ -1297,7 +1334,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <SegmentPerformanceMockup />
                 <RiskOfRuinMockup />
               </div>
-              <SubTopic title="Core Metrics & AI Insights" description="Fundamental performance statistics and AI-powered analysis." />
+              <SubTopic title="Core Metrics & AI Insights" description="Fundamental performance statistics and AI-powered analysis." id="an-core" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={BarChart3} title="Core Metrics" badge="Pro">
                   <FeatureList items={[
@@ -1330,7 +1367,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                 </FeatureCard>
               </div>
-              <SubTopic title="Time & Streak Analysis" description="Discover your best trading times and track momentum." />
+              <SubTopic title="Time & Streak Analysis" description="Discover your best trading times and track momentum." id="an-time" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Clock} title="Time-Based Heatmaps" badge="Pro">
                   <FeatureList items={[
@@ -1384,7 +1421,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                 </FeatureCard>
               </div>
-              <SubTopic title="AI-Powered Behavioral Analytics" description="Machine learning insights into your trading psychology." />
+              <SubTopic title="AI-Powered Behavioral Analytics" description="Machine learning insights into your trading psychology." id="an-ai" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Sparkles} title="AI Pattern Detection" badge="New">
                   <p className="text-sm text-muted-foreground mb-3">
@@ -1453,15 +1490,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Calendar}
               />
               <QuickNav items={[
-                { label: "Calendar View", id: "calendar" },
-                { label: "Journal Editor", id: "calendar" },
-                { label: "Daily Workflow", id: "calendar" },
+                { label: "Calendar View", id: "cal-view" },
+                { label: "Journal Editor", id: "cal-editor" },
               ]} />
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 <DailyJournalMockup />
                 <CalendarDayDetailMockup />
               </div>
-              <SubTopic title="Calendar View" description="A monthly heatmap grid showing your P&L performance at a glance." />
+              <SubTopic title="Calendar View" description="A monthly heatmap grid showing your P&L performance at a glance." id="cal-view" />
               <FeatureCard icon={Calendar} title="P&L Heatmap Calendar">
                 <FeatureList items={[
                   "Monthly grid with color-coded P&L per day",
@@ -1470,7 +1506,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Click any date to open the journal editor",
                 ]} />
               </FeatureCard>
-              <SubTopic title="Journal Editor" description="Write structured daily reflections to track your trading mindset." />
+              <SubTopic title="Journal Editor" description="Write structured daily reflections to track your trading mindset." id="cal-editor" />
               <FeatureCard icon={FileText} title="Daily Journal Entry">
                 <FeatureList items={[
                   "Pre-market plan — write your plan before market opens",
@@ -1502,7 +1538,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p>Your most costly mistake is usually not your most frequent one. Check the "Most Costly" column — a single mistake type might account for 40% of your total losses.</p>
               </ProTip>
               <MistakeTrendMockup />
-              <SubTopic title="Pattern Recognition" description="Identify repeat mistakes and track their frequency over time." />
+              <SubTopic title="Pattern Recognition" description="Identify repeat mistakes and track their frequency over time." id="mk-patterns" />
               <FeatureCard icon={Search} title="Mistake Pattern Analysis">
                 <FeatureList items={[
                   "Repeat pattern analysis with occurrence counts",
@@ -1511,7 +1547,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Most common vs most costly mistakes comparison",
                 ]} />
               </FeatureCard>
-              <SubTopic title="Severity Classification" description="Categorize mistakes by financial impact to prioritize fixes." />
+              <SubTopic title="Severity Classification" description="Categorize mistakes by financial impact to prioritize fixes." id="mk-severity" />
               <FeatureCard icon={AlertTriangle} title="Severity Breakdown">
                 <FeatureList items={[
                   "Low severity: losses under ₹500",
@@ -1535,13 +1571,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Search}
               />
               <QuickNav items={[
-                { label: "Scanner Presets", id: "fundamentals" },
-                { label: "Custom Filters", id: "fundamentals" },
-                { label: "Stock Insights", id: "fundamentals" },
-                { label: "Results Table", id: "fundamentals" },
+                { label: "Scanner Presets", id: "sc-presets" },
+                { label: "Custom Filters", id: "sc-filters" },
+                { label: "Results Table", id: "sc-results" },
               ]} />
 
-              <SubTopic title="Scanner Presets" description="47 built-in presets across 5 categories for instant stock screening." />
+              <SubTopic title="Scanner Presets" description="47 built-in presets across 5 categories for instant stock screening." id="sc-presets" />
               <ScreenerPresetsMockup />
 
               <div className="grid md:grid-cols-2 gap-5 mt-6">
@@ -1568,7 +1603,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </FeatureCard>
               </div>
 
-              <SubTopic title="Custom Filters & Stock Insights" description="Build multi-condition screens and explore detailed stock data." />
+              <SubTopic title="Custom Filters & Stock Insights" description="Build multi-condition screens and explore detailed stock data." id="sc-filters" />
               <ScreenerTableMockup />
 
               <div className="grid md:grid-cols-2 gap-5 mt-6">
@@ -1600,7 +1635,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <CustomFilterBuilderMockup />
               </div>
 
-              <SubTopic title="Data-Rich Results" description="Sort, filter, and explore screening results with sparklines and inline search." />
+              <SubTopic title="Data-Rich Results" description="Sort, filter, and explore screening results with sparklines and inline search." id="sc-results" />
               <div className="grid md:grid-cols-2 gap-5 mt-6">
                 <FeatureCard icon={BarChart3} title="Data-Rich Results Table">
                   <FeatureList items={[
@@ -1640,7 +1675,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={PieChart}
               />
               <WeeklyReportMockup />
-              <SubTopic title="Report Generation & Contents" description="Auto-generated weekly summaries with segment breakdowns and action items." />
+              <SubTopic title="Report Generation & Contents" description="Auto-generated weekly summaries with segment breakdowns and action items." id="rp-contents" />
               <FeatureCard icon={FileText} title="Report Features" badge="Pro">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -1677,7 +1712,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Share2}
               />
               <ShareCardsMockup />
-              <SubTopic title="Card Types" description="Three types of share cards for different occasions." />
+              <SubTopic title="Card Types" description="Three types of share cards for different occasions." id="sh-cards" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Share2} title="P&L Share Cards">
                   <p className="text-sm text-muted-foreground mb-3">Generate visual P&L summaries to share on social media:</p>
@@ -1700,7 +1735,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                 </FeatureCard>
               </div>
-              <SubTopic title="Streak Celebrations" description="Visual streak cards to share your winning momentum." />
+              <SubTopic title="Streak Celebrations" description="Visual streak cards to share your winning momentum." id="sh-streaks" />
               <StreakShareMockup />
               <FeatureCard icon={Award} title="Streak Share Cards" badge="New">
                 <p className="text-sm text-muted-foreground mb-3">Celebrate your winning streaks with visual share cards:</p>
@@ -1728,7 +1763,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Trophy}
               />
               <AchievementsMockup />
-              <SubTopic title="Badge Categories" description="Five achievement groups covering milestones, streaks, discipline, analytics, and social." />
+              <SubTopic title="Badge Categories" description="Five achievement groups covering milestones, streaks, discipline, analytics, and social." id="ach-categories" />
               <FeatureCard icon={Trophy} title="Badge Categories">
                 <p className="text-sm text-muted-foreground mb-3">Achievements are grouped into categories:</p>
                 <FeatureList items={[
@@ -1739,7 +1774,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Social — sharing trades, inviting friends, writing journal entries",
                 ]} />
               </FeatureCard>
-              <SubTopic title="Progress Tracking" description="How badges are earned and tracked automatically." />
+              <SubTopic title="Progress Tracking" description="How badges are earned and tracked automatically." id="ach-progress" />
               <ExpandableDetail title="How Achievements Are Tracked" icon={Target} defaultOpen>
                 <p className="text-[13px] text-muted-foreground mb-2">Achievements are tracked automatically as you use TradeBook. Each badge has a threshold (e.g., "Log 50 trades") and your progress is updated in real-time. When you reach the threshold, the badge unlocks with a celebration animation.</p>
                 <p className="text-[13px] text-muted-foreground">View your progress in the Dashboard achievements widget or Settings → Profile. Unlocked badges show a timestamp of when they were earned.</p>
@@ -1761,14 +1796,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Sparkles}
               />
               <TradeCoachMockup />
-              <SubTopic title="Coaching Workflow" description="Automatic 4-step analysis triggered after every closed trade." />
+              <SubTopic title="Coaching Workflow" description="Automatic 4-step analysis triggered after every closed trade." id="tc-workflow" />
               <StepByStep title="How the AI Trade Coach Works" steps={[
                 { title: "Close a trade", description: "When you close or exit a trade, the AI Coach is automatically triggered." },
                 { title: "AI analyzes your trade", description: "The coach examines entry timing, stop loss placement, exit strategy, and risk management." },
                 { title: "Get structured feedback", description: "Receive 'What Went Well', 'Room for Improvement', and an overall rating (1-5 stars)." },
                 { title: "Feedback is saved", description: "All coaching feedback is stored on the trade record for future reference and pattern tracking." },
               ]} />
-              <SubTopic title="Analysis Dimensions" description="Six areas the AI evaluates on every trade." />
+              <SubTopic title="Analysis Dimensions" description="Six areas the AI evaluates on every trade." id="tc-analysis" />
               <FeatureCard icon={Zap} title="What the Coach Analyzes" badge="Pro">
                 <FeatureList items={[
                   "Entry timing — was the entry at an optimal price level?",
@@ -1799,7 +1834,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <DhanFlowDiagram />
                 <TelegramChannelsMockup />
               </div>
-              <SubTopic title="Broker Connection" description="Connect Dhan for live prices, portfolio sync, and one-click execution." />
+              <SubTopic title="Broker Connection" description="Connect Dhan for live prices, portfolio sync, and one-click execution." id="int-broker" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={LineChart} title="Dhan Broker Integration">
                   <p className="text-sm text-muted-foreground mb-3">Connect your Dhan trading account for seamless data sync:</p>
@@ -1923,7 +1958,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Keyboard}
               />
               <ShortcutKeyboardMockup />
-              <SubTopic title="Command Palette" description="Global search and action launcher accessible from anywhere." />
+              <SubTopic title="Command Palette" description="Global search and action launcher accessible from anywhere." id="kb-palette" />
               <FeatureCard icon={Command} title="Command Palette (⌘K)" badge="Enhanced">
                 <p className="text-sm text-muted-foreground mb-3">
                   A global search that goes beyond navigation. Press <ShortcutKey>⌘K</ShortcutKey> or <ShortcutKey>/</ShortcutKey> to open and search across everything:
@@ -1938,7 +1973,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Quick Trade Entry — keyboard-only trade logging (Symbol → Type → Price → Qty → Confirm)",
                 ]} />
               </FeatureCard>
-              <SubTopic title="Shortcut Reference" description="Complete keyboard shortcut reference for quick actions and navigation." />
+              <SubTopic title="Shortcut Reference" description="Complete keyboard shortcut reference for quick actions and navigation." id="kb-shortcuts" />
               <FeatureCard icon={Command} title="All Shortcuts">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
@@ -1996,7 +2031,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="TradeBook is a fully installable Progressive Web App. Add it to your home screen for a native-like experience with offline capabilities."
                 icon={Smartphone}
               />
-              <SubTopic title="Installation & Offline" description="Install as a native-like app with offline trade queuing." />
+              <SubTopic title="Installation & Offline" description="Install as a native-like app with offline trade queuing." id="pwa-install" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Smartphone} title="Install as App">
                   <p className="text-sm text-muted-foreground mb-3">
@@ -2024,7 +2059,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                 </FeatureCard>
               </div>
-              <SubTopic title="Mobile Navigation & Onboarding" description="Touch-optimized navigation with guided onboarding for new users." />
+              <SubTopic title="Mobile Navigation & Onboarding" description="Touch-optimized navigation with guided onboarding for new users." id="pwa-mobile" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={LayoutDashboard} title="Mobile Navigation">
                   <FeatureList items={[
@@ -2064,7 +2099,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Settings}
               />
               <SettingsPanelMockup />
-              <SubTopic title="Account & Preferences" description="Profile, billing, theme, and capital configuration." />
+              <SubTopic title="Account & Preferences" description="Profile, billing, theme, and capital configuration." id="set-account" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Users} title="Profile & Billing">
                   <FeatureList items={[
@@ -2137,7 +2172,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Answers to frequently asked questions and solutions to common issues."
                 icon={MessageSquare}
               />
-              <SubTopic title="Common Questions" description="Quick answers to the most frequently asked questions." />
+              <SubTopic title="Common Questions" description="Quick answers to the most frequently asked questions." id="faq-common" />
               <div className="space-y-4">
                 {[
                   { q: "Is TradeBook free to use?", a: "Yes! The Free plan includes trade logging, watchlists, alerts, and basic analytics. The Pro plan unlocks advanced analytics, AI insights, weekly reports, and more." },
@@ -2175,10 +2210,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Recent updates and upcoming features. We ship improvements every week."
                 icon={RefreshCw}
               />
+              <QuickNav items={[
+                { label: "Recent Updates", id: "cl-updates" },
+                { label: "Roadmap", id: "cl-roadmap" },
+              ]} />
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Recent updates */}
-                <SubTopic title="Recent Updates" description="Features shipped in recent releases." />
                 <div>
+                  <SubTopic title="Recent Updates" description="Features shipped in recent releases." id="cl-updates" />
                   <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-profit" /> Latest Releases
                   </h3>
@@ -2211,6 +2250,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
                 {/* Roadmap */}
                 <div>
+                  <SubTopic title="Upcoming Roadmap" description="Features we're building next." id="cl-roadmap" />
                   <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-[hsl(var(--tb-accent))]" /> Upcoming Roadmap
                   </h3>
