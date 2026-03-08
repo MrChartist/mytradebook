@@ -621,7 +621,7 @@ export default function Fundamentals() {
             )}
             <style>{`@keyframes indeterminate { 0% { transform: translateX(-100%) scaleX(0.3); } 50% { transform: translateX(0%) scaleX(0.5); } 100% { transform: translateX(100%) scaleX(0.3); } }`}</style>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-auto max-h-[calc(100vh-340px)]">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-card border-b border-border/30 sticky top-0 z-10">
