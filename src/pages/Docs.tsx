@@ -1568,7 +1568,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </FeatureCard>
               </div>
 
-              {/* Screener table visual */}
+              <SubTopic title="Custom Filters & Stock Insights" description="Build multi-condition screens and explore detailed stock data." />
               <ScreenerTableMockup />
 
               <div className="grid md:grid-cols-2 gap-5 mt-6">
