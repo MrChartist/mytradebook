@@ -4345,9 +4345,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           <div className="max-w-[1440px] mx-auto px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8">
               <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <img src="/favicon-32x32.png" alt="TradeBook" className="h-6 object-contain" loading="lazy" />
-                  <span className="docs-card-title" style={{ fontSize: '0.9375rem' }}>TradeBook</span>
+                <div className="flex items-center gap-2.5 mb-3">
+                  <img src="/assets/logo.png" alt="TradeBook" className="h-7 object-contain" loading="lazy"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/favicon-32x32.png'; }} />
+                  <span className="font-heading text-[15px] font-semibold tracking-tight" style={{ color: 'hsl(var(--docs-text-strong))' }}>TradeBook</span>
                 </div>
                 <p className="docs-helper leading-relaxed mb-4">The trading journal built for Indian markets.</p>
                 <Button size="sm" onClick={() => navigate("/login?mode=signup")} className="rounded-lg px-4 text-[12px] h-8">
