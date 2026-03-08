@@ -1187,7 +1187,7 @@
     font-size: 0.9375rem;
   }
   .docs-page table:not(.recharts-surface table) thead th {
-    font-family: Inter, system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
