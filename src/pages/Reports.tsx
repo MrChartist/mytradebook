@@ -285,13 +285,13 @@ export default function Reports() {
           hint="Reports break down performance by segment with top setups and common mistakes"
         />
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {groupedReports.map((report) => {
             const reportKey = `${report.weekStart}_${report.weekEnd}`;
             return (
-              <div key={reportKey} className="glass-card overflow-hidden">
+              <div key={reportKey} className="premium-card-hover !p-0 overflow-hidden">
                 {/* Report Header */}
-                <div className="p-5 border-b border-border flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div className="p-4 border-b border-border/15 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
                   <div>
                     <h3 className="text-lg font-semibold">
                       Week: {formatDate(report.weekStart)} - {formatDate(report.weekEnd)}
