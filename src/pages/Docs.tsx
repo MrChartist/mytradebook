@@ -93,10 +93,10 @@ const SECTIONS = [
 
 function FeatureList({ items }: { items: string[] }) {
   return (
-    <ul className="space-y-2 mt-4">
+    <ul className="space-y-2.5 mt-4">
       {items.map((item) => (
-        <li key={item} className="flex items-start gap-2 text-[13px] text-muted-foreground leading-relaxed">
-          <ChevronRight className="w-4 h-4 text-primary mt-[1px] shrink-0" />
+        <li key={item} className="flex items-start gap-2.5 text-[13px] text-muted-foreground leading-relaxed">
+          <ChevronRight className="w-3.5 h-3.5 text-primary mt-[2px] shrink-0" />
           <span>{item}</span>
         </li>
       ))}
@@ -111,12 +111,12 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
     <div className="group rounded-xl border border-border/20 bg-card/60 backdrop-blur-sm relative overflow-hidden transition-all duration-200 hover:border-border/35">
       {/* Top accent on hover */}
       <div className="absolute top-0 left-0 right-0 h-[1.5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-transparent via-primary to-transparent" />
-      <div className="p-5 lg:p-6 pb-3">
-        <div className="flex items-center gap-2.5">
+      <div className="p-5 lg:p-6 pb-3.5">
+        <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
             <Icon className="w-[18px] h-[18px] text-primary" />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <h3 className="text-[15px] font-bold leading-tight tracking-tight">{title}</h3>
             {badge && (
               <span className="text-[9px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-full bg-primary/8 text-primary">
@@ -126,8 +126,8 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
           </div>
         </div>
       </div>
-      <div className="px-5 lg:px-6 pb-5 lg:pb-6">
-        <div className="[&>p]:text-[13px] [&>p]:leading-relaxed [&>p]:text-muted-foreground">{children}</div>
+      <div className="px-5 lg:px-6 pb-6 lg:pb-7">
+        <div className="[&>p]:text-[13px] [&>p]:leading-[1.7] [&>p]:text-muted-foreground">{children}</div>
       </div>
     </div>
   );
@@ -151,10 +151,10 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
 
 function SectionDivider() {
   return (
-    <div className="flex items-center gap-4 py-1.5">
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/30 to-transparent" />
-      <div className="w-1 h-1 rounded-full bg-primary/20" />
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/30 to-transparent" />
+    <div className="flex items-center gap-4 py-4">
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/25 to-transparent" />
+      <div className="w-1 h-1 rounded-full bg-primary/15" />
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/25 to-transparent" />
     </div>
   );
 }
@@ -171,7 +171,7 @@ function SectionHeader({ id, title, description, icon: Icon }: {
   }, [id]);
 
   return (
-    <div id={id} className="scroll-mt-24 mb-6 relative">
+    <div id={id} className="scroll-mt-24 mb-8 relative group">
       {/* Subtle left accent */}
       <motion.div
         initial={{ scaleY: 0 }}
@@ -181,11 +181,11 @@ function SectionHeader({ id, title, description, icon: Icon }: {
         className="absolute left-0 top-0 bottom-0 w-[2px] rounded-full bg-primary/40 origin-top"
       />
       <div className="pl-5">
-        <div className="flex items-center gap-2.5 mb-2">
-          <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center">
-            <Icon className="w-[17px] h-[17px] text-primary" />
+        <div className="flex items-center gap-3 mb-2.5">
+          <div className="w-9 h-9 rounded-xl bg-primary/8 flex items-center justify-center">
+            <Icon className="w-[18px] h-[18px] text-primary" />
           </div>
-          <h2 className="text-xl lg:text-2xl font-bold tracking-tight leading-tight">{title}</h2>
+          <h2 className="text-xl lg:text-[1.65rem] font-extrabold tracking-tight leading-tight">{title}</h2>
           <button
             onClick={copyLink}
             className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 ml-0.5 p-1 rounded-md text-muted-foreground/40 hover:text-primary hover:bg-primary/5 transition-all text-[11px] font-mono"
@@ -195,7 +195,7 @@ function SectionHeader({ id, title, description, icon: Icon }: {
             <span id={`copy-${id}`}>#</span>
           </button>
         </div>
-        <p className="text-[13px] text-muted-foreground leading-relaxed max-w-2xl">{description}</p>
+        <p className="text-sm text-muted-foreground/80 leading-relaxed max-w-2xl">{description}</p>
       </div>
     </div>
   );
@@ -325,8 +325,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
       {/* Hero */}
       <div className={cn("pt-20 border-b border-border/15 bg-gradient-to-b from-primary/[0.02] to-transparent", isInsideApp && "border-none")}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
-          <div className="flex items-center gap-2.5 mb-4">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-12 lg:py-16">
+          <div className="flex items-center gap-2.5 mb-5">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/8 text-primary text-[10px] font-bold tracking-wide">
               Documentation
             </span>
@@ -343,14 +343,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               {mode === "bw" ? "B&W" : "Color"}
             </button>
           </div>
-          <h1 className="text-3xl lg:text-4xl xl:text-5xl font-extrabold tracking-tight mb-3 leading-[1.1]">
+          <h1 className="text-3xl lg:text-4xl xl:text-5xl font-extrabold tracking-tight mb-4 leading-[1.08]">
             Everything you need to know about{" "}
             <span className="accent-script text-primary">TradeBook</span>
           </h1>
-          <p className="text-base text-muted-foreground max-w-xl leading-relaxed">
+          <p className="text-[15px] text-muted-foreground/80 max-w-xl leading-relaxed">
             A comprehensive guide to every feature, capability, and workflow — from your first trade log to advanced analytics.
           </p>
-          <div className="flex items-center gap-2.5 mt-2.5 text-[11px] text-muted-foreground/50">
+          <div className="flex items-center gap-2.5 mt-3 text-[11px] text-muted-foreground/50">
             <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~35 min read</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
             <span>Last updated: March 2026</span>
@@ -378,8 +378,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-8">
-        <div className="flex gap-8">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-10">
+        <div className="flex gap-10">
           {/* Sidebar — desktop */}
           <TooltipProvider delayDuration={200}>
             <aside className={cn(
@@ -496,7 +496,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </nav>
 
           {/* Main content */}
-          <main className={cn("flex-1 min-w-0 space-y-20 lg:pt-0 pt-14 transition-all duration-300", sidebarCollapsed ? "max-w-5xl" : "max-w-4xl")}>
+          <main className={cn("flex-1 min-w-0 space-y-24 lg:pt-0 pt-14 transition-all duration-300", sidebarCollapsed ? "max-w-5xl" : "max-w-4xl")}>
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>

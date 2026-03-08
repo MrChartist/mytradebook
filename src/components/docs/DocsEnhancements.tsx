@@ -49,15 +49,15 @@ export function ProTip({ children, variant = "tip" }: { children: ReactNode; var
   const Icon = s.icon;
 
   return (
-    <div className={cn("rounded-xl border p-4 my-5 relative overflow-hidden", s.border, s.bg)}>
+    <div className={cn("rounded-xl border p-4.5 my-6 relative overflow-hidden", s.border, s.bg)}>
       <div className="absolute top-0 left-0 w-1 h-full rounded-full" style={{ backgroundColor: variant === "tip" ? "hsl(var(--primary))" : variant === "warning" ? "hsl(var(--warning))" : variant === "info" ? "hsl(var(--tb-accent))" : "hsl(var(--profit))" }} />
-      <div className="flex items-start gap-3 pl-2">
+      <div className="flex items-start gap-3.5 pl-2.5">
         <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5", s.iconBg)}>
           <Icon className={cn("w-3.5 h-3.5", s.iconColor)} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className={cn("text-[11px] font-bold uppercase tracking-wider mb-1", s.iconColor)}>{s.label}</p>
-          <div className="text-[13px] text-muted-foreground leading-relaxed [&>p]:mb-0">{children}</div>
+          <p className={cn("text-[10px] font-bold uppercase tracking-widest mb-1.5", s.iconColor)}>{s.label}</p>
+          <div className="text-[13px] text-muted-foreground/80 leading-[1.7] [&>p]:mb-0">{children}</div>
         </div>
       </div>
     </div>
@@ -75,12 +75,12 @@ interface Step {
 
 export function StepByStep({ steps, title }: { steps: Step[]; title?: string }) {
   return (
-    <div className="my-6">
-      {title && <p className="text-[13px] font-bold text-foreground mb-4">{title}</p>}
+    <div className="my-7">
+      {title && <p className="text-sm font-bold text-foreground mb-5">{title}</p>}
       <div className="relative">
         {/* Vertical line */}
         <div className="absolute left-[15px] top-4 bottom-4 w-px bg-gradient-to-b from-primary/30 via-primary/15 to-transparent" />
-        <div className="space-y-4">
+        <div className="space-y-5">
           {steps.map((step, i) => (
             <motion.div
               key={i}
@@ -88,16 +88,16 @@ export function StepByStep({ steps, title }: { steps: Step[]; title?: string }) 
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.3, delay: i * 0.08 }}
-              className="flex items-start gap-3.5 relative"
+              className="flex items-start gap-4 relative"
             >
               <div className="w-[30px] h-[30px] rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 z-10 relative">
                 <span className="text-[11px] font-bold text-primary">{i + 1}</span>
               </div>
               <div className="flex-1 pt-0.5">
                 <p className="text-[13px] font-semibold text-foreground leading-tight">{step.title}</p>
-                <p className="text-[12px] text-muted-foreground mt-0.5 leading-relaxed">{step.description}</p>
+                <p className="text-[12.5px] text-muted-foreground/80 mt-1 leading-relaxed">{step.description}</p>
                 {step.detail && (
-                  <p className="text-[11px] text-muted-foreground/60 mt-1 italic">{step.detail}</p>
+                  <p className="text-[11px] text-muted-foreground/55 mt-1.5 italic leading-relaxed">{step.detail}</p>
                 )}
               </div>
             </motion.div>
@@ -182,10 +182,10 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
   const IconComp = Icon || ChevronRight;
 
   return (
-    <div className="rounded-xl border border-border/20 bg-card/30 overflow-hidden my-3 transition-all duration-200 hover:border-border/30">
+    <div className="rounded-xl border border-border/20 bg-card/30 overflow-hidden my-4 transition-all duration-200 hover:border-border/30">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center gap-2.5 px-4 py-3 text-left group"
+        className="w-full flex items-center gap-3 px-4 py-3.5 text-left group"
       >
         <div className="w-7 h-7 rounded-lg bg-primary/6 flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
           <IconComp className="w-3.5 h-3.5 text-primary" />
@@ -205,8 +205,8 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
             transition={{ duration: 0.25, ease: "easeOut" }}
             className="overflow-hidden"
           >
-            <div className="px-4 pb-4 pt-0 border-t border-border/10">
-              <div className="pt-3 [&>p]:text-[13px] [&>p]:text-muted-foreground [&>p]:leading-relaxed">{children}</div>
+            <div className="px-4 pb-5 pt-0 border-t border-border/10">
+              <div className="pt-3.5 [&>p]:text-[13px] [&>p]:text-muted-foreground/80 [&>p]:leading-[1.7]">{children}</div>
             </div>
           </motion.div>
         )}
@@ -267,12 +267,12 @@ export function InteractiveMockup({ children, label, className }: { children: Re
    ────────────────────────────────────────────── */
 export function PhaseHeader({ phase, total = 21 }: { phase: number; total?: number }) {
   return (
-    <div className="flex items-center gap-2 mb-4">
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/8 text-primary text-[10px] font-bold tracking-wide">
+    <div className="flex items-center gap-2.5 mb-5">
+      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/6 text-primary text-[10px] font-bold tracking-wider">
         Phase {phase}
-        <span className="text-primary/40">/ {total}</span>
+        <span className="text-primary/35">/ {total}</span>
       </span>
-      <div className="flex-1 h-px bg-gradient-to-r from-primary/15 to-transparent" />
+      <div className="flex-1 h-px bg-gradient-to-r from-primary/12 to-transparent" />
     </div>
   );
 }
@@ -282,14 +282,14 @@ export function PhaseHeader({ phase, total = 21 }: { phase: number; total?: numb
    ────────────────────────────────────────────── */
 export function QuickNav({ items }: { items: { label: string; id: string }[] }) {
   return (
-    <div className="my-4 rounded-xl border border-border/15 bg-card/30 p-3.5">
-      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-2.5">In this section</p>
-      <div className="flex flex-wrap gap-1.5">
+    <div className="my-5 rounded-xl border border-border/15 bg-card/30 p-4">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/45 mb-3">In this section</p>
+      <div className="flex flex-wrap gap-2">
         {items.map((item) => (
           <button
             key={item.id}
             onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-muted/30 hover:bg-primary/8 text-[11px] font-medium text-muted-foreground hover:text-primary transition-all duration-200"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-muted/25 hover:bg-primary/8 text-[11px] font-medium text-muted-foreground hover:text-primary transition-all duration-200"
           >
             <ChevronRight className="w-3 h-3" />
             {item.label}
