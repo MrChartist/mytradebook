@@ -1379,7 +1379,7 @@
     border-spacing: 0;
     border-radius: 0.75rem;
     overflow: hidden;
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.9375rem;
   }
   .docs-page table:not(.recharts-surface table) thead th {
