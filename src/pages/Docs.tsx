@@ -969,12 +969,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Attach setup tags, pattern tags, and notes",
                   "Link up to 5 chart images per trade (TradingView or direct URLs)",
                 ]} />
-                <AnnotatedMockup
-                  caption="The trade form adapts based on your selected instrument — F&O trades show lot size and expiry, while equity trades focus on price and quantity."
-                  highlights={["Instrument Search", "Stop Loss", "Targets", "Tags"]}
-                >
-                  <CreateTradeMockup />
-                </AnnotatedMockup>
+              </FeatureCard>
+              <AnnotatedMockup
+                caption="The trade form adapts based on your selected instrument — F&O trades show lot size and expiry, while equity trades focus on price and quantity."
+                highlights={["Instrument Search", "Stop Loss", "Targets", "Tags"]}
+              >
+                <CreateTradeMockup />
+              </AnnotatedMockup>
 
               <ProTip variant="best-practice">
                 <p>Always attach chart screenshots or TradingView links to your trades. When you review them weeks later, the chart context is invaluable — it shows what you <em>saw</em> at entry time, not what the chart looks like in hindsight. You can attach up to 5 links per trade.</p>
