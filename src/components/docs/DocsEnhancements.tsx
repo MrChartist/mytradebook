@@ -104,7 +104,7 @@ interface ComparisonRow {
 
 export function ComparisonTable({ rows, title }: { rows: ComparisonRow[]; title?: string }) {
   return (
-    <div className="my-5 rounded-lg border border-border/40 overflow-hidden">
+    <div className="my-6 rounded-xl border border-border/40 overflow-hidden">
       {title && (
         <div className="px-4 py-2.5 bg-muted/30 border-b border-border/30">
           <p className="text-[14px] font-semibold text-foreground flex items-center gap-2">
