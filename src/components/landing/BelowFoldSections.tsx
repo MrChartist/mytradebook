@@ -85,7 +85,7 @@ export function HowItWorksSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>How It Works</SectionBadge>
-          <h2 className="font-display text-[2rem] lg:text-[3rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">Three steps to{" "}<span className="accent-script">mastery</span></h2>
+          <h2 className="font-heading text-[2rem] lg:text-[3rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">Three steps to{" "}<span className="accent-serif">mastery</span></h2>
           <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-base leading-[1.65]">From first trade to consistent edge — in minutes.</p>
         </motion.div>
 
@@ -175,8 +175,8 @@ export function PricingSection() {
       <MotionSection className="max-w-5xl mx-auto px-6 lg:px-8">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>Pricing</SectionBadge>
-          <h2 className="font-display text-[1.875rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.1] tracking-[-0.02em]">
-            Simple,{" "}<span className="accent-script">transparent</span>{" "}pricing
+          <h2 className="font-heading text-[1.875rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.1] tracking-[-0.02em]">
+            Simple,{" "}<span className="accent-serif">transparent</span>{" "}pricing
           </h2>
           <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-base leading-[1.65]">
             Everything free during beta. No credit card. No catch.
@@ -328,8 +328,8 @@ export function TestimonialsSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>Testimonials</SectionBadge>
-          <h2 className="font-display text-[2rem] lg:text-[3rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">
-            Trusted by{" "}<span className="accent-script">real traders</span>
+          <h2 className="font-heading text-[2rem] lg:text-[3rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">
+            Trusted by{" "}<span className="accent-serif">real traders</span>
           </h2>
           <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-base leading-[1.65]">Here's what traders across India are saying.</p>
         </motion.div>
@@ -421,8 +421,8 @@ export function IndianMarketsSection() {
           {/* Text side */}
           <motion.div variants={fadeUp}>
             <SectionBadge>Made in India</SectionBadge>
-            <h2 className="font-display text-[2rem] lg:text-[2.75rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">
-              Built for{" "}<span className="accent-script">Indian</span>{" "}markets
+            <h2 className="font-heading text-[2rem] lg:text-[2.75rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">
+              Built for{" "}<span className="accent-serif">Indian</span>{" "}markets
             </h2>
             <p className="text-muted-foreground text-[15px] leading-[1.7] mb-8 tracking-[-0.006em]">
               Unlike generic journals, TradeBook understands Indian market structure — segments, lot sizes, INR formatting, and trading hours.
@@ -523,8 +523,8 @@ export function FAQSection() {
       <MotionSection className="max-w-2xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>FAQ</SectionBadge>
-          <h2 className="font-display text-[2rem] lg:text-[3rem] font-bold mb-5 leading-[1.1] tracking-[-0.02em]">
-            Got{" "}<span className="accent-script">questions</span>?
+          <h2 className="font-heading text-[2rem] lg:text-[3rem] font-bold mb-5 leading-[1.1] tracking-[-0.02em]">
+            Got{" "}<span className="accent-serif">questions</span>?
           </h2>
           <p className="text-muted-foreground text-[15px] lg:text-base leading-[1.65]">Everything you need to know about TradeBook.</p>
         </motion.div>
@@ -589,11 +589,11 @@ export function FinalCTASection() {
           <span className="text-sm font-medium text-muted-foreground">1,200+ traders · 42,000+ trades</span>
         </motion.div>
 
-        <motion.h2 variants={fadeUp} className="font-display text-[2rem] lg:text-[3rem] font-bold leading-[1.1] tracking-[-0.02em] mb-3">
+        <motion.h2 variants={fadeUp} className="font-heading text-[2rem] lg:text-[3rem] font-bold leading-[1.1] tracking-[-0.02em] mb-3">
           Stop losing money to
         </motion.h2>
-        <motion.h2 variants={fadeUp} className="font-display text-[2rem] lg:text-[3rem] font-bold leading-[1.1] tracking-[-0.02em] mb-8">
-          <span className="accent-script">undisciplined</span> trading
+        <motion.h2 variants={fadeUp} className="font-heading text-[2rem] lg:text-[3rem] font-bold leading-[1.1] tracking-[-0.02em] mb-8">
+          <span className="accent-serif">undisciplined</span> trading
         </motion.h2>
 
         <motion.p variants={fadeUp} className="text-lg text-muted-foreground mb-12 max-w-xl mx-auto leading-[1.65] tracking-[-0.008em]">
