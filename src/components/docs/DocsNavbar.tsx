@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, Search, ArrowLeft, ExternalLink, Moon, Sun, Command, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useTheme } from "next-themes";
 import { BrandLogoInline } from "@/components/ui/brand-logo";
 
 interface DocsNavbarProps {
@@ -19,9 +18,31 @@ const DOC_NAV_ITEMS = [
   { label: "Changelog", id: "changelog" },
 ];
 
+function useManualTheme() {
+  const [dark, setDark] = useState(() => {
+    if (typeof window === "undefined") return true;
+    const stored = localStorage.getItem("theme");
+    if (stored) return stored === "dark";
+    return document.documentElement.classList.contains("dark");
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (dark) {
+      root.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      root.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [dark]);
+
+  return { dark, toggle: () => setDark((d) => !d) };
+}
+
 export function DocsNavbar({ isInsideApp = false, onSearchOpen }: DocsNavbarProps) {
   const navigate = useNavigate();
-  const { theme, setTheme } = useTheme();
+  const { dark, toggle: toggleTheme } = useManualTheme();
   const [scrolled, setScrolled] = useState(false);
   const [activeNav, setActiveNav] = useState("getting-started");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -146,11 +167,11 @@ export function DocsNavbar({ isInsideApp = false, onSearchOpen }: DocsNavbarProp
 
             {/* Theme toggle */}
             <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              onClick={toggleTheme}
               className="docs-navbar-util-icon"
-              aria-label="Toggle theme"
+              aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
             >
-              {theme === "dark" ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+              {dark ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
             </button>
 
             {/* Context action */}
