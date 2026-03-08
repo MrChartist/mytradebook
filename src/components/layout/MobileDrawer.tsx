@@ -14,6 +14,7 @@ import {
   LogOut,
   Eye,
   HelpCircle,
+  Sparkles,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,19 +23,19 @@ import logo from "@/assets/logo.png";
 
 const mainNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-  { icon: TrendingUp, label: "Trades", path: "/trades" },
+  { icon: Sparkles, label: "Studies", path: "/studies" },
   { icon: Bell, label: "Alerts", path: "/alerts" },
+  { icon: TrendingUp, label: "Trades", path: "/trades" },
   { icon: BookOpen, label: "Journal", path: "/journal" },
-  { icon: BookOpen, label: "Studies", path: "/studies" },
   { icon: Eye, label: "Watchlist", path: "/watchlist" },
-  { icon: Building2, label: "Fundamentals", path: "/fundamentals" },
 ];
 
 const analyticsNavItems = [
-  { icon: CalendarDays, label: "Calendar", path: "/calendar" },
   { icon: AlertTriangle, label: "Mistakes", path: "/mistakes" },
   { icon: BarChart3, label: "Analytics", path: "/analytics" },
   { icon: FileText, label: "Reports", path: "/reports" },
+  { icon: CalendarDays, label: "Calendar", path: "/calendar" },
+  { icon: Building2, label: "Fundamentals", path: "/fundamentals" },
 ];
 
 interface MobileDrawerProps {

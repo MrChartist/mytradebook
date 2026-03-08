@@ -84,22 +84,23 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
         </div>
 
         {/* Desktop links — clean, generous spacing */}
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden md:flex items-center gap-0.5">
           {NAV_LINKS.map((item) => {
-            const isActive = item.page === activePage;
+            const isActive = item.page === activePage || (activePage === "home" && item.href.startsWith("/#"));
+            const isCurrent = item.page === activePage;
             return (
               <button
                 key={item.label}
                 onClick={() => handleNavClick(item.href)}
                 className={cn(
                   "relative px-3.5 py-1.5 rounded-[var(--radius-sm)] text-[13px] font-medium transition-all duration-200",
-                  isActive
+                  isCurrent
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                 )}
               >
                 {item.label}
-                {isActive && (
+                {isCurrent && (
                   <motion.span
                     layoutId="nav-underline"
                     className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-[2px] rounded-full bg-primary"
