@@ -323,10 +323,20 @@
     border-color: hsl(var(--primary) / 0.18);
   }
 
+  .dark .premium-card-hover:hover {
+    border-color: hsl(var(--primary) / 0.28);
+    box-shadow: var(--shadow-md), 0 0 0 1px hsl(var(--primary) / 0.06);
+  }
+
   /* ── Inner Panel (nested depth) ────────────────────── */
   .inner-panel {
     background: hsl(var(--card-inner));
     @apply rounded-xl border border-border/30 p-3;
+  }
+
+  .dark .inner-panel {
+    background: hsl(var(--card-inner));
+    border-color: hsl(var(--border) / 0.35);
   }
 
   /* ── Card Corner Glows ────────────────────────────── */
