@@ -3012,7 +3012,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Launch from your home screen", description: "Open TradeBook like any native app — it runs full-screen without browser chrome.", detail: "Auto-updates happen seamlessly. You'll see a refresh prompt when a new version is available." },
               ]} />
 
-              <div className="grid md:grid-cols-2 gap-5 mt-6">
+              <div className="space-y-5 mt-6">
                 <FeatureCard icon={Smartphone} title="Install as App">
                   <p className="text-sm text-muted-foreground mb-3">
                     TradeBook works as a PWA — install it on your phone or desktop for instant access without the browser chrome.
