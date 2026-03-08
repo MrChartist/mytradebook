@@ -152,6 +152,15 @@ function SectionDivider() {
 function SectionHeader({ id, title, description, icon: Icon }: {
   id: string; title: string; description: string; icon: React.ElementType;
 }) {
+  const copyLink = useCallback(() => {
+    const url = `${window.location.origin}/docs#${id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      // Use a simple toast-like feedback
+      const el = document.getElementById(`copy-${id}`);
+      if (el) { el.textContent = "Copied!"; setTimeout(() => { el.textContent = "#"; }, 1500); }
+    });
+  }, [id]);
+
   return (
     <div id={id} className="scroll-mt-24 mb-8 dashboard-card relative overflow-hidden">
       {/* Top accent bar */}
@@ -167,6 +176,14 @@ function SectionHeader({ id, title, description, icon: Icon }: {
           <Icon className="w-5 h-5 text-primary" />
         </div>
         <h2 className="text-2xl lg:text-[2rem] font-bold tracking-tight leading-tight">{title}</h2>
+        <button
+          onClick={copyLink}
+          className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 ml-1 p-1.5 rounded-lg text-muted-foreground/50 hover:text-primary hover:bg-primary/5 transition-all text-xs font-mono"
+          aria-label={`Copy link to ${title}`}
+          title="Copy section link"
+        >
+          <span id={`copy-${id}`}>#</span>
+        </button>
       </div>
       <p className="text-muted-foreground leading-relaxed max-w-3xl mb-6">{description}</p>
     </div>
