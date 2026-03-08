@@ -14,6 +14,10 @@ import { SetupTagPerformance } from "@/components/analytics/SetupTagPerformance"
 import { PlanGate } from "@/components/PlanGate";
 import { AITradeInsights } from "@/components/analytics/AITradeInsights";
 import { RiskOfRuinCalculator } from "@/components/analytics/RiskOfRuinCalculator";
+import { AIPatternDetection } from "@/components/analytics/AIPatternDetection";
+import { SectorRotationHeatmap } from "@/components/analytics/SectorRotationHeatmap";
+import { SetupWinRateMatrix } from "@/components/analytics/SetupWinRateMatrix";
+import { EmotionalPnlCorrelation } from "@/components/analytics/EmotionalPnlCorrelation";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -141,12 +145,26 @@ export default function Analytics() {
         <AITradeInsights />
       </PlanGate>
 
+      {/* AI Pattern Detection */}
+      <AIPatternDetection trades={trades} />
+
       {/* Equity Curve & Drawdown */}
       <EquityCurveDrawdown trades={trades} startingCapital={startingCapital} capitalTransactions={capitalTransactions} />
+
+      {/* Sector Rotation & Emotional Correlation */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <SectorRotationHeatmap trades={trades} />
+        <EmotionalPnlCorrelation trades={trades} />
+      </div>
 
       {/* Segment Performance Breakdown */}
       <PlanGate plan="pro" feature="advancedAnalytics" message="Upgrade to Pro to unlock segment breakdown, time analysis, and more.">
         <SegmentPerformance trades={trades} />
+
+        {/* Setup Win-Rate Matrix */}
+        <div className="mt-4">
+          <SetupWinRateMatrix trades={trades} />
+        </div>
 
         {/* Time & Day Heatmaps */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
