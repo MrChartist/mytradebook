@@ -647,7 +647,7 @@ export default function Fundamentals() {
                       <TableRow
                         key={s.ticker}
                         className={cn(
-                          "cursor-pointer transition-colors border-b border-border/30 border-l-2 border-l-transparent hover:border-l-primary hover:bg-primary/[0.03]",
+                          "cursor-pointer transition-colors duration-150 border-b border-border/15 border-l-2 border-l-transparent hover:border-l-primary hover:bg-primary/[0.02]",
                           idx % 2 === 1 && "bg-muted/30"
                         )}
                         onClick={() => setSelectedStock(s)}
