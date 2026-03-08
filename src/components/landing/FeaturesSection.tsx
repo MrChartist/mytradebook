@@ -6,7 +6,7 @@ import {
   Filter, Shield, Calendar, LineChart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { fadeUp, staggerContainer, MotionSection, SectionBadge } from "./LandingShared";
+import { fadeUp, slideFromLeft, slideFromRight, staggerContainer, MotionSection, SectionBadge } from "./LandingShared";
 import { previewMap } from "./FeatureMiniPreviews";
 
 /* ─── Feature Categories ──────────────────────────────── */
@@ -65,26 +65,41 @@ export function FeaturesSection() {
   return (
     <section id="features" className="py-24 lg:py-32" aria-label="Features">
       <MotionSection className="max-w-6xl mx-auto px-6 lg:px-8">
-        {/* Heading */}
-        <motion.div variants={fadeUp} className="text-center mb-16 lg:mb-20">
-          <SectionBadge>Features</SectionBadge>
-          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.06] tracking-[-0.03em]">
+        {/* Heading — split entrance */}
+        <div className="text-center mb-16 lg:mb-20">
+          <motion.div variants={fadeUp}>
+            <SectionBadge>Features</SectionBadge>
+          </motion.div>
+          <motion.h2
+            variants={slideFromLeft}
+            className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.06] tracking-[-0.03em]"
+          >
             Everything you need to{" "}
-            <span className="text-gradient">trade</span>{" "}better
-          </h2>
-          <p className="text-muted-foreground max-w-lg mx-auto text-[15px] lg:text-[1rem] leading-[1.7] tracking-[-0.008em]">
+            <span className="text-shimmer">trade</span>{" "}better
+          </motion.h2>
+          <motion.p
+            variants={slideFromRight}
+            className="text-muted-foreground max-w-lg mx-auto text-[15px] lg:text-[1rem] leading-[1.7] tracking-[-0.008em]"
+          >
             Journal, analyze, and automate — tools designed by traders, for traders.
-          </p>
+          </motion.p>
 
-          {/* Category pills */}
-          <div className="flex items-center justify-center gap-2 mt-7 flex-wrap">
+          {/* Category pills with animated underline on hover */}
+          <motion.div variants={fadeUp} className="flex items-center justify-center gap-2 mt-7 flex-wrap">
             {(Object.keys(categoryLabels) as FeatureCategory[]).map((cat) => (
-              <span key={cat} className={cn("px-3 py-1 rounded-full text-[10px] font-semibold tracking-[0.04em] uppercase", categoryColors[cat])}>
+              <span
+                key={cat}
+                className={cn(
+                  "relative px-3 py-1 rounded-full text-[10px] font-semibold tracking-[0.04em] uppercase transition-all duration-200 cursor-default group",
+                  categoryColors[cat]
+                )}
+              >
                 {categoryLabels[cat]}
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 group-hover:w-3/4 h-[1.5px] bg-current transition-all duration-300 rounded-full" />
               </span>
             ))}
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
 
         {/* Bento Grid */}
         <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-12 gap-3.5 lg:gap-4">
@@ -97,12 +112,16 @@ export function FeaturesSection() {
             >
               <motion.div
                 className={cn(
-                  "group rounded-xl border border-border/25 bg-card/60 backdrop-blur-sm h-full relative overflow-hidden transition-all duration-300",
+                  "group rounded-xl border border-border/25 bg-card/60 backdrop-blur-sm h-full relative overflow-hidden transition-all duration-300 gradient-border-animated",
                   f.span === "hero" ? "p-6 sm:p-8" : "p-5 sm:p-6",
                 )}
                 style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}
-                whileHover={{ y: -3, borderColor: "hsl(var(--border) / 0.45)", boxShadow: `inset 0 1px 0 0 hsl(0 0% 100% / 0.03), 0 0 30px -10px ${f.color.replace(")", " / 0.15)")}` }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
+                whileHover={{
+                  y: -4,
+                  borderColor: "hsl(var(--border) / 0.45)",
+                  boxShadow: `inset 0 1px 0 0 hsl(0 0% 100% / 0.03), 0 0 40px -10px ${f.color.replace(")", " / 0.18)")}`,
+                }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               >
                 {/* Colored top accent line */}
                 <div
@@ -113,12 +132,14 @@ export function FeaturesSection() {
                 <div className="relative">
                   {/* Icon + Category — unified row */}
                   <div className="flex items-center gap-2.5 mb-3.5">
-                    <div
+                    <motion.div
                       className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
                       style={{ backgroundColor: `${f.color.replace(")", " / 0.08)")}` }}
+                      whileHover={{ scale: 1.15, rotate: 5 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 15 }}
                     >
                       <f.icon className="w-[18px] h-[18px]" style={{ color: f.color }} />
-                    </div>
+                    </motion.div>
                     <span className={cn("px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider", categoryColors[f.category])}>
                       {categoryLabels[f.category]}
                     </span>
