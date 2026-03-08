@@ -634,10 +634,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       </header>
 
       {/* ═══════════════════════════════════════════════════════════════
-          MOBILE TOPIC RAIL — Fixed horizontal tabs
+          MOBILE TOPIC RAIL — Fixed horizontal tabs below navbar
           ═══════════════════════════════════════════════════════════════ */}
       <nav 
-        className="lg:hidden fixed top-14 left-0 right-0 z-40 backdrop-blur-xl" 
+        className="lg:hidden fixed top-[3.25rem] left-0 right-0 z-40 backdrop-blur-xl" 
         style={{ 
           background: 'hsl(var(--docs-bg) / 0.94)', 
           borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.5)',
