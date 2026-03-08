@@ -2840,6 +2840,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   <li className="flex items-start gap-2"><span className="text-primary mt-0.5">•</span> Only aggregated statistics are sent — not your full trade history or personal data</li>
                 </ul>
                 <p className="mt-3 text-[12px] text-muted-foreground/60 italic">Tip: If you're on Gemini's free tier and hit the 15 requests/minute limit, just wait a minute. For most traders, this limit is never reached during normal usage.</p>
+
+                <CodeBlock tabs={[
+                  { label: "Gemini", language: "Shell", code: "# Get your free API key from:\n# https://aistudio.google.com/app/apikey\n\nAPI_KEY=AIzaSy...your-key-here\n\n# Free tier limits:\n#   15 requests / minute\n#   1,000,000 tokens / day\n#   ~500 trade analyses / day" },
+                  { label: "OpenAI", language: "Shell", code: "# Get your API key from:\n# https://platform.openai.com/api-keys\n\nAPI_KEY=sk-...your-key-here\n\n# Pricing (GPT-4o Mini):\n#   ~₹1-2 per trade analysis\n#   Requires billing credits" },
+                ]} title="API Key Reference" />
+
+                <OutputBlock label="Example AI Coach Response">{"## Trade Analysis: RELIANCE (Long)\n\n### ✅ What Went Well\n- Entry at ₹2,450 aligned with your historical avg entry\n- Stop loss at ₹2,410 (1.6%) — well-placed below support\n\n### ⚠️ Room for Improvement\n- Exit at ₹2,498 captured only 40% of the move\n- Consider trailing SL to lock in more upside\n\n### Rating: ★★★★☆ (4/5)"}</OutputBlock>
               </ExpandableDetail>
 
               <div className="mt-5">
