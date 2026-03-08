@@ -23,9 +23,13 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [pastHero, setPastHero] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20);
+      setPastHero(window.scrollY > 600);
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
