@@ -330,39 +330,36 @@ export default function Fundamentals() {
     <>
       <SEOHead title="Fundamentals — TradeBook" description="Scan & screen NSE stocks by fundamentals, valuation, and technicals." />
 
-      <div className="space-y-4">
-        {/* ── Header Card ── */}
-        <div className="rounded-2xl bg-card border border-border p-3 sm:p-4 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: "radial-gradient(hsl(var(--foreground)) 1px, transparent 1px)", backgroundSize: "16px 16px" }} />
-          <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h1 className="text-xl font-bold text-foreground">Fundamentals</h1>
-              <p className="text-[13px] text-muted-foreground mt-0.5 leading-relaxed">
-                Top NSE stocks by market cap with key metrics
-                <span className="text-muted-foreground/40 mx-1.5">·</span>
-                <span className="font-mono font-bold text-foreground">{totalCount.toLocaleString()}</span> stocks
-                {isCustomMode && appliedFilters.length > 0 && (
-                  <>
-                    <span className="text-muted-foreground/40 mx-1.5">·</span>
-                    <span className="font-medium text-primary">{appliedFilters.length} filters</span>
-                  </>
-                )}
-              </p>
-            </div>
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-              <Input
-                placeholder="Search symbol, sector..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-8 h-9 text-sm bg-background"
-              />
-              {search && (
-                <button onClick={() => setSearch("")} className="absolute right-2 top-1/2 -translate-y-1/2">
-                  <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
-                </button>
+      <div className="space-y-3.5">
+        {/* ── Header ── */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="space-y-0.5">
+            <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Fundamentals</h1>
+            <p className="text-[13px] text-muted-foreground/70 leading-relaxed">
+              Top NSE stocks with key metrics
+              <span className="text-muted-foreground/20 mx-1.5">·</span>
+              <span className="font-mono font-semibold text-foreground">{totalCount.toLocaleString()}</span> stocks
+              {isCustomMode && appliedFilters.length > 0 && (
+                <>
+                  <span className="text-muted-foreground/20 mx-1.5">·</span>
+                  <span className="font-medium text-primary">{appliedFilters.length} filters</span>
+                </>
               )}
-            </div>
+            </p>
+          </div>
+          <div className="relative w-full sm:w-56">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
+            <Input
+              placeholder="Search symbol, sector..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-8 h-9 text-[13px] bg-muted/20 border-border/20 focus:border-primary/30"
+            />
+            {search && (
+              <button onClick={() => setSearch("")} className="absolute right-2 top-1/2 -translate-y-1/2">
+                <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
+              </button>
+            )}
           </div>
         </div>
 
