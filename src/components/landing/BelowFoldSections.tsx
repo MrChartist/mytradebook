@@ -11,7 +11,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { fadeUp, blurIn, popIn, MotionSection, SectionBadge, GradientDivider } from "./LandingShared";
+import { fadeUp, blurIn, slideFromLeft, slideFromRight, popIn, MotionSection, SectionBadge, GradientDivider } from "./LandingShared";
 
 /* ─── Data ─── */
 
