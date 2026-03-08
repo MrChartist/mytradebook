@@ -1002,6 +1002,20 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <div className="mt-4"><AlertManagementMockup /></div>
               </FeatureCard>
+
+              <FeatureCard icon={Sparkles} title="Smart Alert Suggestions" badge="AI">
+                <p className="text-sm text-muted-foreground mb-3">
+                  AI analyzes your frequently traded symbols and suggests relevant price alerts with reasoning.
+                </p>
+                <FeatureList items={[
+                  "Scans your trade history to identify top traded symbols",
+                  "Suggests price-above or price-below alerts with AI-generated reasoning",
+                  "One-click create — instantly convert a suggestion into an active alert",
+                  "Refresh to regenerate suggestions with updated data",
+                  "Empty state guide when not enough trade data exists",
+                ]} />
+                <p className="text-xs text-muted-foreground mt-3 italic">See also: <button onClick={() => document.getElementById("ai-integration")?.scrollIntoView({ behavior: "smooth" })} className="text-primary hover:underline">AI Insights Setup</button></p>
+              </FeatureCard>
             </motion.section>
 
             <SectionDivider />
