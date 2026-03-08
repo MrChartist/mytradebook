@@ -23,6 +23,7 @@ import {
   Calculator, ClipboardCheck, Trophy, Info, Radio
 } from "lucide-react";
 import { LandingNavbar } from "@/components/landing/LandingNavbar";
+import { DocsNavbar } from "@/components/docs/DocsNavbar";
 import {
   OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
   TradeLifecycleFlow, AlertCardMockup, TelegramNotifMockup, WatchlistMockup,
