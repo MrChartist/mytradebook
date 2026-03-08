@@ -330,7 +330,7 @@ export default function Fundamentals() {
 
   return (
     <>
-      <SEOHead title="Fundamentals — TradeBook" description="Scan & screen NSE stocks by fundamentals, valuation, and technicals." />
+      <SEOHead title="Stock Screener & Fundamentals" description="Scan & screen NSE stocks by fundamentals, valuation, and technicals." />
 
       <div className="space-y-3.5">
         {/* ── Header ── */}
