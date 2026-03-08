@@ -49,8 +49,8 @@ export function ProTip({ children, variant = "tip" }: { children: ReactNode; var
       <div className="flex items-start gap-3">
         <Icon className={cn("w-4 h-4 shrink-0 mt-0.5", s.iconColor)} />
         <div className="flex-1 min-w-0">
-          <p className={cn("text-[10px] font-semibold uppercase tracking-wider mb-1", s.iconColor)}>{s.label}</p>
-          <div className="text-[13px] text-muted-foreground leading-[1.7] [&>p]:mb-0">{children}</div>
+          <p className={cn("text-[11px] font-semibold uppercase tracking-wider mb-1", s.iconColor)}>{s.label}</p>
+          <div className="text-[15px] text-muted-foreground leading-[1.7] [&>p]:mb-0">{children}</div>
         </div>
       </div>
     </div>
@@ -76,13 +76,13 @@ export function StepByStep({ steps, title }: { steps: Step[]; title?: string }) 
           {steps.map((step, i) => (
             <div key={i} className="flex items-start gap-3.5 relative">
               <div className="w-[26px] h-[26px] rounded-full bg-muted border border-border/50 flex items-center justify-center shrink-0 z-10 relative">
-                <span className="text-[10px] font-semibold text-muted-foreground">{i + 1}</span>
+                <span className="text-[12px] font-semibold text-muted-foreground">{i + 1}</span>
               </div>
               <div className="flex-1 pt-0.5">
-                <p className="text-[13px] font-medium text-foreground leading-tight">{step.title}</p>
-                <p className="text-[12.5px] text-muted-foreground mt-1 leading-relaxed">{step.description}</p>
+                <p className="text-[15px] font-medium text-foreground leading-tight">{step.title}</p>
+                <p className="text-[14px] text-muted-foreground mt-1 leading-relaxed">{step.description}</p>
                 {step.detail && (
-                  <p className="text-[11px] text-muted-foreground/55 mt-1.5 leading-relaxed">{step.detail}</p>
+                  <p className="text-[13px] text-muted-foreground/55 mt-1.5 leading-relaxed">{step.detail}</p>
                 )}
               </div>
             </div>
@@ -107,14 +107,14 @@ export function ComparisonTable({ rows, title }: { rows: ComparisonRow[]; title?
     <div className="my-5 rounded-lg border border-border/40 overflow-hidden">
       {title && (
         <div className="px-4 py-2.5 bg-muted/30 border-b border-border/30">
-          <p className="text-[12px] font-semibold text-foreground flex items-center gap-2">
+          <p className="text-[14px] font-semibold text-foreground flex items-center gap-2">
             <Crown className="w-3.5 h-3.5 text-primary" />
             {title}
           </p>
         </div>
       )}
       <div className="overflow-x-auto">
-        <table className="w-full text-[12px]">
+        <table className="w-full text-[14px]">
           <thead>
             <tr className="border-b border-border/30">
               <th className="text-left px-4 py-2.5 font-medium text-muted-foreground w-[55%]">Feature</th>
@@ -173,9 +173,9 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
         className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-muted/20 transition-colors"
       >
         <IconComp className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-        <span className="text-[13px] font-medium text-foreground flex-1">{title}</span>
+        <span className="text-[15px] font-medium text-foreground flex-1">{title}</span>
         {badge && (
-          <span className="text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/8 text-primary">{badge}</span>
+          <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/8 text-primary">{badge}</span>
         )}
         <ChevronDown className={cn("w-4 h-4 text-muted-foreground/40 transition-transform duration-200", open && "rotate-180")} />
       </button>
@@ -189,7 +189,7 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
             className="overflow-hidden"
           >
             <div className="px-4 pb-4 pt-0 border-t border-border/20">
-              <div className="pt-3 [&>p]:text-[13px] [&>p]:text-muted-foreground [&>p]:leading-[1.7]">{children}</div>
+              <div className="pt-3 [&>p]:text-[15px] [&>p]:text-muted-foreground [&>p]:leading-[1.7]">{children}</div>
             </div>
           </motion.div>
         )}
@@ -211,7 +211,7 @@ export function InteractiveMockup({ children, label, className }: { children: Re
             <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/15" />
             <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/15" />
           </div>
-          <span className="text-[9px] font-medium text-muted-foreground/40 ml-1 tracking-wide uppercase">{label}</span>
+          <span className="text-[10px] font-medium text-muted-foreground/40 ml-1 tracking-wide uppercase">{label}</span>
         </div>
       )}
       <div className="p-4 md:p-5 bg-muted/5">
@@ -241,9 +241,9 @@ export function QuickNav({ items }: { items: { label: string; id: string }[] }) 
 export function KeyMetric({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
     <div className="rounded-lg border border-border/40 bg-muted/20 p-3 text-center">
-      <p className="text-[10px] text-muted-foreground/60 mb-0.5">{label}</p>
+      <p className="text-[12px] text-muted-foreground/60 mb-0.5">{label}</p>
       <p className="text-lg font-bold font-mono text-foreground">{value}</p>
-      {sub && <p className="text-[10px] text-muted-foreground/50 mt-0.5">{sub}</p>}
+      {sub && <p className="text-[12px] text-muted-foreground/50 mt-0.5">{sub}</p>}
     </div>
   );
 }
@@ -254,9 +254,9 @@ export function KeyMetric({ label, value, sub }: { label: string; value: string;
 export function SubTopic({ title, description, id }: { title: string; description?: string; id?: string }) {
   return (
     <div id={id} className={cn("mt-8 mb-4 first:mt-4", id && "scroll-mt-24")}>
-      <h3 className="text-[15px] font-semibold tracking-tight text-foreground">{title}</h3>
+      <h3 className="text-[17px] font-semibold tracking-tight text-foreground">{title}</h3>
       {description && (
-        <p className="text-[13px] text-muted-foreground/70 leading-relaxed mt-1">{description}</p>
+        <p className="text-[15px] text-muted-foreground/70 leading-relaxed mt-1">{description}</p>
       )}
     </div>
   );
