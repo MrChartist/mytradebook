@@ -1232,14 +1232,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 7. Trade Journal ───────────────────────── */}
+            {/* ── Phase 11. Trade Journal ───────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={11} total={26} />
               <SectionHeader
                 id="journal"
                 title="Trade Journal"
                 description="A multi-view journal that combines summary analytics, equity curves, performance tables, pattern analysis, and a Kanban board for reviewing mistakes."
                 icon={FileText}
               />
+              <ProTip variant="best-practice">
+                <p>Review your journal every Sunday evening. Look at your Patterns & Mistakes tab — the patterns that made you money last month should inform your trading plan for next week.</p>
+              </ProTip>
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 <CalendarHeatmapMockup />
                 <KanbanBoardMockup />
