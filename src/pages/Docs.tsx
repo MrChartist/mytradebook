@@ -151,10 +151,10 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
 
 function SectionDivider() {
   return (
-    <div className="flex items-center gap-4 py-1.5">
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/30 to-transparent" />
-      <div className="w-1 h-1 rounded-full bg-primary/20" />
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/30 to-transparent" />
+    <div className="flex items-center gap-4 py-4">
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/25 to-transparent" />
+      <div className="w-1 h-1 rounded-full bg-primary/15" />
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/25 to-transparent" />
     </div>
   );
 }
