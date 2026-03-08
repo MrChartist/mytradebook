@@ -21,8 +21,7 @@ import {
   Wallet, Share2, MessageSquare, Command, Hash, Palette,
   PanelLeftClose, PanelLeftOpen, SlidersHorizontal
 } from "lucide-react";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import docsLogo from "@/assets/logo.png";
+import { LandingNavbar } from "@/components/landing/LandingNavbar";
 import {
   BentoFeatureGrid, OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
   TradeLifecycleFlow, AlertCardMockup, TelegramNotifMockup, WatchlistMockup,

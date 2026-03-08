@@ -29,7 +29,6 @@ function SectionFallback() {
 export default function Landing() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const s3 = useCountUp(5, 1200);
   const s4 = useCountUp(50, 1500);
@@ -56,43 +55,7 @@ export default function Landing() {
       />
 
       {/* ── Navbar ────────────────────────────────────────── */}
-      <motion.nav
-        initial={{ y: -40, opacity: 0, scale: 0.95 }}
-        animate={{ y: 0, opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed top-4 left-0 right-0 z-50 mx-auto max-w-3xl px-4"
-      >
-        <div className="flex items-center justify-between px-3 pl-4 py-2 rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg shadow-foreground/[0.03]" style={{ boxShadow: "0 4px 20px -6px rgba(0,0,0,0.06), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
-          <motion.div className="flex items-center gap-2" whileHover={{ scale: 1.03 }}>
-            <img src={landingLogo} alt="TradeBook" className="h-8 object-contain" />
-          </motion.div>
-          <div className="hidden md:flex items-center gap-0.5 text-sm text-muted-foreground">
-            {["Features", "Pricing", "FAQ", "Docs"].map((item) => (
-              <motion.a key={item} href={item === "Docs" ? "/docs" : `#${item.toLowerCase()}`} className="relative px-3.5 py-1.5 rounded-full hover:bg-muted/60 hover:text-foreground transition-colors duration-200 text-[13px] font-medium after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-[hsl(var(--tb-accent))] after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-200" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>{item}</motion.a>
-            ))}
-          </div>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <button className="md:hidden w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted/60 transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle navigation menu">
-              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-            </button>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/login")} className="hidden sm:inline-flex text-muted-foreground hover:text-foreground text-[13px] h-8 px-3 rounded-full">Sign In</Button>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.96 }}>
-              <Button size="sm" onClick={() => navigate("/login?mode=signup")} className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 h-8 text-[13px] font-semibold shadow-[0_6px_16px_hsl(var(--tb-accent)/0.35)]">Get Started</Button>
-            </motion.div>
-          </div>
-        </div>
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div initial={{ opacity: 0, y: -8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.97 }} transition={{ duration: 0.2 }} className="md:hidden mt-2 rounded-2xl border border-border/40 bg-card/95 backdrop-blur-xl shadow-xl p-4 space-y-1">
-              {[{ label: "Features", href: "#features" }, { label: "Pricing", href: "#pricing" }, { label: "FAQ", href: "#faq" }, { label: "Docs", href: "/docs" }].map((item) => (
-                <a key={item.label} href={item.href} onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted/50 hover:border-l-[3px] hover:border-l-[hsl(var(--tb-accent))] text-sm font-medium text-foreground/80 hover:text-foreground transition-all duration-150">{item.label}</a>
-              ))}
-              <div className="pt-2 border-t border-border/30 mt-2"><Button variant="ghost" className="w-full justify-center rounded-xl text-sm" onClick={() => { setMobileMenuOpen(false); navigate("/login"); }}>Sign In</Button></div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.nav>
+      <LandingNavbar activePage="home" />
 
       {/* ── Hero (eagerly loaded) ─────────────────────────── */}
       <HeroSection />
