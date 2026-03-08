@@ -773,7 +773,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                                 {isActive && !sidebarCollapsed && (
                                   <motion.div
                                     layoutId="docs-active-indicator"
-                                    className="absolute left-0 top-0 bottom-0 w-[2.5px] rounded-r-full"
+                                    className="absolute left-0 top-0 bottom-0 w-[3px] rounded-r-full"
                                     style={{ background: 'hsl(var(--docs-accent))' }}
                                     transition={{ type: "spring", stiffness: 400, damping: 28 }}
                                   />
