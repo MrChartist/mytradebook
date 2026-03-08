@@ -342,13 +342,12 @@ const SectionHeader = React.forwardRef<HTMLDivElement, {
 });
 SectionHeader.displayName = "SectionHeader";
 
-function ShortcutKey({ children }: { children: string }) {
-  return (
-    <kbd className="px-2.5 py-1 rounded-md text-[12px] font-mono font-semibold" style={{ background: 'hsl(var(--docs-elevated))', border: '1px solid hsl(var(--docs-border-subtle))', color: 'hsl(var(--docs-text-strong))' }}>
-      {children}
-    </kbd>
-  );
-}
+const ShortcutKey = React.forwardRef<HTMLElement, { children: string }>(({ children }, ref) => (
+  <kbd ref={ref} className="px-2.5 py-1 rounded-md text-[12px] font-mono font-semibold" style={{ background: 'hsl(var(--docs-elevated))', border: '1px solid hsl(var(--docs-border-subtle))', color: 'hsl(var(--docs-text-strong))' }}>
+    {children}
+  </kbd>
+));
+ShortcutKey.displayName = "ShortcutKey";
 
 export default function Docs() {
   const navigate = useNavigate();
