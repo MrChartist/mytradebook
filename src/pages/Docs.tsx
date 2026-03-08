@@ -1134,7 +1134,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><AlertManagementMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="AI-Powered Suggestions" description="Let AI recommend alerts based on your trading patterns." />
+              <SubTopic title="AI-Powered Suggestions" description="Let AI recommend alerts based on your trading patterns." id="al-ai" />
               <FeatureCard icon={Sparkles} title="Smart Alert Suggestions" badge="AI">
                 <p className="text-sm text-muted-foreground mb-3">
                   AI analyzes your frequently traded symbols and suggests relevant price alerts with reasoning.
