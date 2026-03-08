@@ -20,7 +20,7 @@ import {
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
   Wallet, Share2, MessageSquare, Command, Hash, Palette,
   PanelLeftClose, PanelLeftOpen, SlidersHorizontal,
-  Calculator, ClipboardCheck, Trophy
+  Calculator, ClipboardCheck, Trophy, Info
 } from "lucide-react";
 import { LandingNavbar } from "@/components/landing/LandingNavbar";
 import {
