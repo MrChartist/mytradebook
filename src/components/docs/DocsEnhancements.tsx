@@ -11,10 +11,10 @@ import {
 /* ──────────────────────────────────────────────
    Shared constants for visual unity
    ────────────────────────────────────────────── */
-const CARD_BORDER = "border-border/30";
+const CARD_BORDER = "border-[hsl(var(--docs-border-subtle,215_25%_18%))]";
 const CARD_RADIUS = "rounded-xl";
-const CARD_SPACING = "my-6";
-const BODY_TEXT = "text-[15px] text-muted-foreground/80 leading-[1.75]";
+const CARD_SPACING = "my-7";
+const BODY_TEXT = "docs-body";
 
 /* ──────────────────────────────────────────────
    ProTip — Callout box with trading advice

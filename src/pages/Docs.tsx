@@ -3434,15 +3434,15 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </main>
 
           {/* Right sidebar — On this page */}
-          <aside className="hidden xl:block w-[190px] shrink-0 border-l border-border/15">
-            <div className="sticky top-20 py-8 pl-6">
-              <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground/50 mb-4">On this page</p>
-              <nav className="space-y-0.5 border-l border-border/20 pl-3">
+          <aside className="hidden xl:block w-[200px] shrink-0" style={{ borderLeft: '1px solid hsl(var(--docs-border-subtle))' }}>
+            <div className="sticky top-20 py-8 pl-6 pr-4">
+              <p className="docs-caption uppercase tracking-[0.12em] mb-5">On this page</p>
+              <nav className="space-y-0.5">
                 {(SECTION_ANCHORS[activeSection] || []).map((anchor) => (
                   <button
                     key={anchor.id}
                     onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                    className="block w-full text-left text-[13px] text-muted-foreground/60 hover:text-foreground py-1.5 transition-colors duration-150 leading-snug"
+                    className="docs-anchor-link block w-full text-left docs-sidebar-item py-2 transition-colors duration-150 leading-snug"
                   >
                     {anchor.label}
                   </button>
@@ -3461,7 +3461,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-xl bg-card border border-border/40 shadow-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-border/60 transition-all"
+            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-xl shadow-lg flex items-center justify-center transition-all"
+            style={{ background: 'hsl(var(--docs-elevated))', border: '1px solid hsl(var(--docs-border))', color: 'hsl(var(--docs-text-secondary))' }}
             aria-label="Back to top"
           >
             <ArrowUpRight className="w-4 h-4 -rotate-45" />
@@ -3471,15 +3472,15 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
       {/* Footer — only on standalone */}
       {!isInsideApp && (
-        <footer className="border-t border-border/30 py-12" role="contentinfo">
+        <footer style={{ borderTop: '1px solid hsl(var(--docs-border-subtle))' }} className="py-14" role="contentinfo">
           <div className="max-w-[1440px] mx-auto px-6 lg:px-8">
             <div className="grid md:grid-cols-4 gap-8 mb-8">
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <img src="/favicon-32x32.png" alt="TradeBook" className="h-6 object-contain" loading="lazy" />
-                  <span className="text-sm font-semibold text-foreground">TradeBook</span>
+                  <span className="docs-card-title" style={{ fontSize: '0.9375rem' }}>TradeBook</span>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed mb-4">The trading journal built for Indian markets.</p>
+                <p className="docs-helper leading-relaxed mb-4">The trading journal built for Indian markets.</p>
                 <Button size="sm" onClick={() => navigate("/login?mode=signup")} className="rounded-lg px-4 text-[12px] h-8">
                   Get Started <ArrowRight className="w-3 h-3" />
                 </Button>
@@ -3490,11 +3491,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }, { label: "Contact", href: "mailto:founder@mrchartist.com" }] },
               ].map((col) => (
                 <div key={col.title}>
-                  <h4 className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/50 mb-3">{col.title}</h4>
-                  <ul className="space-y-1.5">
+                  <h4 className="docs-caption uppercase tracking-[0.12em] mb-4">{col.title}</h4>
+                  <ul className="space-y-2">
                     {col.links.map((l) => (
                       <li key={l.label}>
-                        <button onClick={() => l.href.startsWith("mailto") ? window.open(l.href) : l.href.startsWith("#") ? document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: "smooth" }) : navigate(l.href)} className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
+                        <button onClick={() => l.href.startsWith("mailto") ? window.open(l.href) : l.href.startsWith("#") ? document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: "smooth" }) : navigate(l.href)} className="docs-sidebar-item transition-colors" style={{ color: 'hsl(var(--docs-text-secondary))' }}>
                           {l.label}
                         </button>
                       </li>
@@ -3503,12 +3504,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
               ))}
             </div>
-            <div className="h-px bg-border/30 mb-4" />
+            <div className="h-px mb-5" style={{ background: 'hsl(var(--docs-border-subtle))' }} />
             <div className="flex flex-col md:flex-row items-center justify-between gap-2">
-              <p className="text-[11px] text-muted-foreground/60">
+              <p className="docs-caption">
                 © {new Date().getFullYear()} TradeBook. All rights reserved.
               </p>
-              <span className="text-[10px] text-muted-foreground/40">Not SEBI registered · For educational purposes only</span>
+              <span className="docs-caption" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>Not SEBI registered · For educational purposes only</span>
             </div>
           </div>
         </footer>
