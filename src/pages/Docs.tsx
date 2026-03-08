@@ -2261,7 +2261,27 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Generate beautiful share cards for your P&L, individual trades, and streaks. Share your trading wins on social media with branded, professional-looking graphics."
                 icon={Share2}
               />
-              <ShareCardsMockup />
+              <QuickNav items={[
+                { label: "Creating a Card", id: "sh-create" },
+                { label: "Card Types", id: "sh-cards" },
+                { label: "Formats & Sizes", id: "sh-formats" },
+                { label: "Streaks", id: "sh-streaks" },
+                { label: "Templates", id: "sh-templates" },
+              ]} />
+
+              <InteractiveMockup label="Share Card Examples">
+                <ShareCardsMockup />
+              </InteractiveMockup>
+
+              <SubTopic title="Creating Your First Card" description="A quick walkthrough from trade to shareable image." id="sh-create" />
+              <StepByStep title="Creating and Sharing Your First P&L Card" steps={[
+                { title: "Open the Share modal", description: "From the Dashboard, click the Share P&L button. You can also share from the Journal, Reports page, or any Trade Detail modal.", detail: "P&L cards summarize your performance over a period. Trade cards share a single trade's result." },
+                { title: "Choose your card type", description: "Select P&L Summary, Individual Trade, or Streak card depending on what you want to share.", detail: "P&L cards show aggregate stats (win rate, trade count, total P&L). Trade cards show entry/exit details, R:R ratio, and holding duration." },
+                { title: "Pick a template and format", description: "Choose from Dark Premium, Light Clean, or Gradient template. Then select your size: Square (1080×1080), Story (1080×1920), or Twitter (1200×675).", detail: "The live preview updates instantly as you switch templates and sizes so you can see exactly what you'll share." },
+                { title: "Add your custom branding", description: "Upload your own logo to replace the default TradeBook watermark. Logos are saved to localStorage for future use.", detail: "This is great for traders who run public channels or communities — your cards carry your brand." },
+                { title: "Download and share", description: "Click Download to save as a high-resolution PNG. Share it on Twitter, Instagram, Telegram, or wherever your trading community lives.", detail: "Cards are rendered using html-to-image for pixel-perfect output at the exact resolution of your chosen format." },
+              ]} />
+
               <SubTopic title="Card Types" description="Three types of share cards for different occasions." id="sh-cards" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Share2} title="P&L Share Cards">
@@ -2270,34 +2290,59 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "Daily, weekly, or monthly P&L snapshots",
                     "Includes win rate, trade count, and streak data",
                     "Multiple card templates with different styles",
-                    "Download as PNG image for sharing",
-                    "Watermarked with your TradeBook branding",
+                    "Download as high-resolution PNG image",
+                    "Custom logo upload for personal branding",
                   ]} />
                 </FeatureCard>
                 <FeatureCard icon={TrendingUp} title="Trade Share Cards">
-                  <p className="text-sm text-muted-foreground mb-3">Share individual trade results with detailed metrics:</p>
+                  <p className="text-sm text-muted-foreground mb-3">Share individual closed trade results with high-density details:</p>
                   <FeatureList items={[
                     "Entry/exit prices, P&L, and return %",
-                    "Setup tags and timeframe shown on card",
-                    "Multiple visual templates to choose from",
-                    "One-click download from trade detail modal",
+                    "Timeline, holding duration, and R:R ratio",
+                    "Targets hit and setup tags displayed on card",
+                    "Qualitative review notes included if available",
                     "Privacy-safe — no account details shared",
                   ]} />
                 </FeatureCard>
               </div>
+
+              <SubTopic title="Formats & Sizes" description="Three output sizes optimized for different platforms." id="sh-formats" />
+              <FeatureCard icon={Grid3X3} title="Output Formats">
+                <p className="text-sm text-muted-foreground mb-3">Each card can be generated in three sizes with live preview scaling:</p>
+                <FeatureList items={[
+                  "Square (1080×1080) — ideal for Instagram posts and general social media",
+                  "Story (1080×1920) — optimized for Instagram Stories, WhatsApp Status, and Telegram",
+                  "Twitter (1200×675) — matches Twitter's recommended image dimensions for maximum display",
+                ]} />
+              </FeatureCard>
+
               <SubTopic title="Streak Celebrations" description="Visual streak cards to share your winning momentum." id="sh-streaks" />
-              <StreakShareMockup />
+              <InteractiveMockup label="Streak Share Card">
+                <StreakShareMockup />
+              </InteractiveMockup>
               <FeatureCard icon={Award} title="Streak Share Cards" badge="New">
-                <p className="text-sm text-muted-foreground mb-3">Celebrate your winning streaks with visual share cards:</p>
+                <p className="text-sm text-muted-foreground mb-3">Celebrate your winning streaks (2+ consecutive wins) with visual share cards:</p>
                 <FeatureList items={[
                   "Consecutive winning day counter with fire emoji",
                   "Day-by-day breakdown of the streak period",
                   "Share directly from the Dashboard streak widget",
-                  "Branded card with TradeBook watermark",
+                  "Branded card with custom logo or TradeBook watermark",
                 ]} />
               </FeatureCard>
+
+              <SubTopic title="Template Gallery" description="Choosing the right visual style for your audience." id="sh-templates" />
+              <ExpandableDetail title="Template Gallery — Which Template for What" icon={Share2} badge="Style Guide">
+                <p>Three templates are available, each designed for a different context and audience:</p>
+                <FeatureList items={[
+                  "Dark Premium — Rich dark background with subtle gradients. Best for: Twitter/X posts, trading communities, and professional channels. Looks sharp on dark-mode feeds and conveys a serious, institutional aesthetic.",
+                  "Light Clean — Minimal white background with clean typography. Best for: LinkedIn, WhatsApp shares, and printing. High contrast makes numbers easy to read even on small screens or when forwarded.",
+                  "Gradient — Bold color gradients with modern styling. Best for: Instagram posts and stories, Telegram channels. Eye-catching in busy social feeds and works well with the Story (1080×1920) format.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">All three templates support custom logo uploads. Your logo replaces the default TradeBook watermark in the card footer. Upload once and it's saved for all future cards. For best results, use a transparent PNG logo under 500KB.</p>
+              </ExpandableDetail>
+
               <ProTip>
-                <p>Sharing your wins publicly creates accountability. Traders who share their journal consistently show 15% higher discipline scores in our data.</p>
+                <p>Sharing your wins publicly creates accountability. Traders who share their journal consistently show 15% higher discipline scores in our data. The share triggers are placed on Dashboard, Journal, Reports, and Trade Detail modals — so you're always one click away.</p>
               </ProTip>
             </motion.section>
 
