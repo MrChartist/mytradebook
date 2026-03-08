@@ -319,7 +319,7 @@ function SectionHeader({ id, title, description, icon: Icon }: {
   return (
     <div id={id} className="scroll-mt-24 mb-6 pb-5 border-b border-border/30 group">
       <div className="flex items-center gap-2 mb-2">
-        <h2 className="text-xl font-bold tracking-tight leading-tight">{title}</h2>
+        <h2 className="font-display text-xl font-bold tracking-tight leading-tight">{title}</h2>
         <button
           onClick={copyLink}
           className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 p-1 rounded text-muted-foreground/40 hover:text-primary transition-all text-[11px] font-mono"
