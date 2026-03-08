@@ -191,7 +191,7 @@ export function TestimonialsSection() {
   const secondary = [testimonials[1], testimonials[2], testimonials[5]];
 
   return (
-    <section className="py-28 lg:py-36" aria-label="Testimonials">
+    <section id="testimonials" className="py-28 lg:py-36" aria-label="Testimonials">
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>Testimonials</SectionBadge>
