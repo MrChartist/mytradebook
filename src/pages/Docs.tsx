@@ -211,6 +211,21 @@ const SECTION_ANCHORS: Record<string, { label: string; id: string }[]> = {
     { label: "Sharing Badges", id: "ach-sharing" },
     { label: "Milestone Rewards", id: "ach-milestones" },
   ],
+  "notifications": [
+    { label: "Notification Types", id: "notif-types" },
+    { label: "Unread Management", id: "notif-unread" },
+    { label: "Click Actions", id: "notif-actions" },
+  ],
+  "referral": [
+    { label: "Getting Your Link", id: "ref-link" },
+    { label: "Sharing", id: "ref-sharing" },
+    { label: "Tracking Rewards", id: "ref-tracking" },
+  ],
+  "public-profile": [
+    { label: "Setup", id: "pp-setup" },
+    { label: "Privacy Controls", id: "pp-privacy" },
+    { label: "Monthly Stats", id: "pp-stats" },
+  ],
   "trade-coach": [
     { label: "Coaching Workflow", id: "tc-workflow" },
     { label: "Analysis Dimensions", id: "tc-analysis" },
