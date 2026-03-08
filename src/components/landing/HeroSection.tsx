@@ -133,7 +133,7 @@ export function HeroSection() {
         {/* Stats bar */}
         <motion.div
           variants={fadeUp} initial="hidden" animate="visible" custom={0.5}
-          className="relative z-10 mx-4 sm:mx-8 lg:mx-auto lg:max-w-3xl mb-8 rounded-2xl bg-card/60 backdrop-blur-xl border border-border/40 shadow-sm"
+          className="relative z-10 mx-4 sm:mx-8 lg:mx-auto lg:max-w-3xl mb-8 rounded-2xl bg-card/60 dark:bg-card/40 backdrop-blur-xl border border-border/40 dark:border-border/30 shadow-sm"
         >
           <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-border/30">
             {stats.map((stat) => (
