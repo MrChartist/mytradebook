@@ -843,7 +843,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p className="text-xs text-muted-foreground mt-3 italic">See also: <button onClick={() => document.getElementById("ai-integration")?.scrollIntoView({ behavior: "smooth" })} className="text-primary hover:underline">AI Insights Setup</button></p>
               </FeatureCard>
 
-              <SubTopic title="Quick Actions & Data Tools" description="Fast trade closing, CSV import/export, and templates." />
+              <SubTopic title="Quick Actions & Data Tools" description="Fast trade closing, CSV import/export, and templates." id="tm-quick" />
               <FeatureCard icon={Zap} title="Quick Close Popover">
                 <p className="text-sm text-muted-foreground mb-3">
                   Close open trades without leaving the trades list. A compact popover lets you enter the exit price and close instantly.
