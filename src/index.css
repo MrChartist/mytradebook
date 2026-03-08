@@ -54,76 +54,87 @@
 
 @layer base {
   :root {
-    --background: 30 20% 98%;
-    --foreground: 20 15% 10%;
+    /* Page background - warm off-white, premium feel */
+    --background: 35 25% 97%;
+    --foreground: 20 18% 12%;
 
+    /* Card surfaces - pure white for clear elevation */
     --card: 0 0% 100%;
-    --card-foreground: 20 15% 10%;
+    --card-foreground: 20 18% 12%;
 
+    /* Popover/dropdown - slightly elevated */
     --popover: 0 0% 100%;
-    --popover-foreground: 20 15% 10%;
+    --popover-foreground: 20 18% 12%;
 
-    --primary: 24 90% 55%;
+    /* Primary accent - warm orange */
+    --primary: 24 90% 52%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 30 15% 95%;
-    --secondary-foreground: 20 15% 10%;
+    /* Secondary surfaces */
+    --secondary: 35 18% 94%;
+    --secondary-foreground: 20 18% 12%;
 
-    --muted: 30 10% 95%;
-    --muted-foreground: 20 10% 40%;
+    /* Muted tones - better contrast for readability */
+    --muted: 35 15% 94%;
+    --muted-foreground: 20 12% 38%;
 
-    --accent: 30 15% 95%;
-    --accent-foreground: 20 15% 10%;
+    /* Accent for hover states */
+    --accent: 35 20% 95%;
+    --accent-foreground: 20 18% 12%;
 
-    --destructive: 0 84% 60%;
+    /* Status colors */
+    --destructive: 0 78% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 12% 92%;
-    --input: 30 12% 92%;
-    --ring: 24 90% 55%;
+    /* Borders - visible but subtle */
+    --border: 30 15% 88%;
+    --input: 30 15% 90%;
+    --ring: 24 90% 52%;
 
+    /* Radius tiers */
     --radius: 1.25rem;
     --radius-sm: 0.5rem;
     --radius-md: 0.75rem;
     --radius-lg: 1.25rem;
 
     /* TradeBook accent (orange) */
-    --tb-accent: 24 90% 55%;
-    --tb-accent-hover: 24 90% 48%;
+    --tb-accent: 24 90% 52%;
+    --tb-accent-hover: 24 90% 45%;
 
-    /* Inner panel bg */
-    --card-inner: 30 15% 96%;
+    /* Inner panel bg - subtle depth */
+    --card-inner: 35 18% 96%;
 
-    /* Trading-specific colors */
-    --profit: 152 60% 42%;
+    /* Trading-specific colors - vivid and clear */
+    --profit: 152 62% 38%;
     --profit-foreground: 0 0% 100%;
-    --loss: 0 72% 55%;
+    --loss: 0 72% 52%;
     --loss-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 38 92% 10%;
+    --warning: 38 92% 48%;
+    --warning-foreground: 38 92% 12%;
 
     /* Gradient tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(24 90% 55%) 0%, hsl(16 85% 50%) 100%);
-    --gradient-profit: linear-gradient(135deg, hsl(152 60% 42%) 0%, hsl(152 60% 35%) 100%);
-    --gradient-loss: linear-gradient(135deg, hsl(0 72% 55%) 0%, hsl(0 72% 48%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(24 90% 52%) 0%, hsl(16 85% 48%) 100%);
+    --gradient-profit: linear-gradient(135deg, hsl(152 62% 38%) 0%, hsl(152 60% 32%) 100%);
+    --gradient-loss: linear-gradient(135deg, hsl(0 72% 52%) 0%, hsl(0 72% 45%) 100%);
 
-    /* Shadows */
-    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.03);
-    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.03);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.03);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.06), 0 4px 6px -4px rgb(0 0 0 / 0.03);
-    --shadow-glow: 0 0 20px hsl(24 90% 55% / 0.15);
-    --shadow-profit-glow: 0 0 20px hsl(152 60% 42% / 0.15);
-    --shadow-loss-glow: 0 0 20px hsl(0 72% 55% / 0.15);
+    /* Shadows - refined for light mode depth */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+    --shadow-md: 0 4px 8px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+    --shadow-lg: 0 12px 20px -4px rgb(0 0 0 / 0.1), 0 6px 8px -4px rgb(0 0 0 / 0.05);
+    --shadow-glow: 0 0 20px hsl(24 90% 52% / 0.18);
+    --shadow-profit-glow: 0 0 20px hsl(152 62% 38% / 0.18);
+    --shadow-loss-glow: 0 0 20px hsl(0 72% 52% / 0.18);
 
+    /* Sidebar - clean white with subtle border */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 20 15% 10%;
-    --sidebar-primary: 24 90% 55%;
+    --sidebar-foreground: 20 18% 12%;
+    --sidebar-primary: 24 90% 52%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 24 90% 97%;
-    --sidebar-accent-foreground: 20 15% 10%;
-    --sidebar-border: 30 15% 92%;
-    --sidebar-ring: 24 90% 55%;
+    --sidebar-accent: 24 90% 96%;
+    --sidebar-accent-foreground: 20 18% 12%;
+    --sidebar-border: 30 15% 90%;
+    --sidebar-ring: 24 90% 52%;
   }
 
   .dark {
@@ -265,8 +276,13 @@
 @layer components {
   /* ── Surface Cards ─────────────────────────────────── */
   .surface-card {
-    @apply bg-card rounded-[1.25rem] border border-border/70;
+    @apply bg-card rounded-[1.25rem] border border-border/80;
     box-shadow: var(--shadow-sm);
+  }
+
+  /* Light mode - stronger border for visibility */
+  :root .surface-card {
+    border-color: hsl(var(--border));
   }
 
   .dark .surface-card {
@@ -289,8 +305,13 @@
 
   /* ── Premium Card (rich, layered) ──────────────────── */
   .premium-card {
-    @apply bg-card rounded-[1.25rem] border border-border/70 p-6 relative overflow-hidden;
+    @apply bg-card rounded-[1.25rem] border border-border/80 p-6 relative overflow-hidden;
     box-shadow: var(--shadow-sm);
+  }
+
+  /* Light mode - visible borders */
+  :root .premium-card {
+    border-color: hsl(var(--border));
   }
 
   .dark .premium-card {
@@ -332,6 +353,11 @@
   .inner-panel {
     background: hsl(var(--card-inner));
     @apply rounded-xl border border-border/30 p-3;
+  }
+
+  /* Light mode - visible inner panels */
+  :root .inner-panel {
+    border-color: hsl(var(--border) / 0.6);
   }
 
   .dark .inner-panel {
