@@ -19,7 +19,8 @@ import {
   List, Search, Tag, AlertTriangle, CheckCircle2, TrendingDown,
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
   Wallet, Share2, MessageSquare, Command, Hash, Palette,
-  PanelLeftClose, PanelLeftOpen, SlidersHorizontal
+  PanelLeftClose, PanelLeftOpen, SlidersHorizontal,
+  Calculator, ClipboardCheck, Trophy
 } from "lucide-react";
 import { LandingNavbar } from "@/components/landing/LandingNavbar";
 import {
@@ -52,6 +53,14 @@ import {
   ScreenerPresetsMockup, ScreenerTableMockup, StockPopupMockup, CustomFilterBuilderMockup, ScreenerSparklineMockup,
   DocsColorModeProvider, useDocsColorMode
 } from "@/components/docs/DocsMockups";
+import {
+  ProTip, StepByStep, ComparisonTable, ExpandableDetail,
+  InteractiveMockup, PhaseHeader, QuickNav, KeyMetric
+} from "@/components/docs/DocsEnhancements";
+import {
+  ShareCardsMockup, AchievementsMockup, PositionSizingCalcMockup,
+  TradingRulesMockup, TradeCoachMockup, StreakShareMockup
+} from "@/components/docs/DocsNewMockups";
 
 const SECTIONS = [
   { id: "getting-started", label: "Getting Started", icon: Play },
@@ -59,6 +68,8 @@ const SECTIONS = [
   { id: "trade-management", label: "Trade Management", icon: CandlestickChart },
   { id: "csv-import", label: "CSV Import", icon: Upload },
   { id: "trade-templates", label: "Trade Templates", icon: FileText },
+  { id: "position-sizing", label: "Position Sizing", icon: Calculator },
+  { id: "trading-rules", label: "Trading Rules", icon: ClipboardCheck },
   { id: "alerts", label: "Alerts System", icon: Bell },
   { id: "studies", label: "Studies & Research", icon: BookOpen },
   { id: "watchlists", label: "Watchlists", icon: Eye },
@@ -68,6 +79,9 @@ const SECTIONS = [
   { id: "mistakes", label: "Mistakes Review", icon: AlertTriangle },
   { id: "fundamentals", label: "Stock Screener", icon: Search },
   { id: "reports", label: "Weekly Reports", icon: PieChart },
+  { id: "sharing", label: "Sharing & Social", icon: Share2 },
+  { id: "achievements", label: "Achievements", icon: Trophy },
+  { id: "trade-coach", label: "AI Trade Coach", icon: Sparkles },
   { id: "integrations", label: "Integrations", icon: Layers },
   { id: "ai-integration", label: "AI Insights Setup", icon: Sparkles },
   { id: "shortcuts", label: "Keyboard Shortcuts", icon: Keyboard },
@@ -232,8 +246,9 @@ export default function Docs() {
   // Sidebar group separators
   const sidebarGroups = [
     { label: "Getting Started", ids: ["getting-started"] },
-    { label: "Core Features", ids: ["dashboard", "trade-management", "csv-import", "trade-templates", "alerts", "studies", "watchlists", "journal"] },
+    { label: "Core Features", ids: ["dashboard", "trade-management", "csv-import", "trade-templates", "position-sizing", "trading-rules", "alerts", "studies", "watchlists", "journal"] },
     { label: "Advanced", ids: ["analytics", "calendar", "mistakes", "fundamentals", "reports"] },
+    { label: "Social & AI", ids: ["sharing", "achievements", "trade-coach"] },
     { label: "Settings & Tools", ids: ["integrations", "ai-integration", "shortcuts", "pwa", "settings"] },
     { label: "Help", ids: ["faq", "changelog"] },
   ];
@@ -336,7 +351,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             A comprehensive guide to every feature, capability, and workflow — from your first trade log to advanced analytics.
           </p>
           <div className="flex items-center gap-2.5 mt-2.5 text-[11px] text-muted-foreground/50">
-            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~25 min read</span>
+            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~35 min read</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
             <span>Last updated: March 2026</span>
           </div>
@@ -348,10 +363,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             className="flex flex-wrap gap-2 mt-5"
           >
             {[
-              { label: "21 Sections", icon: FileText },
-              { label: "60+ Mockups", icon: Eye },
+              { label: "26 Sections", icon: FileText },
+              { label: "80+ Mockups", icon: Eye },
               { label: "Every Feature", icon: Zap },
-              { label: "Free & Pro", icon: Star },
+              { label: "Free vs Pro", icon: Star },
             ].map((stat) => (
               <div key={stat.label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/15 bg-card/40 text-[11px] font-semibold text-foreground/80">
                 <stat.icon className="w-3 h-3 text-primary" />
@@ -483,15 +498,28 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           {/* Main content */}
           <main className={cn("flex-1 min-w-0 space-y-20 lg:pt-0 pt-14 transition-all duration-300", sidebarCollapsed ? "max-w-5xl" : "max-w-4xl")}>
 
-            {/* ── 1. Getting Started ─────────────────────── */}
+            {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={1} total={26} />
               <SectionHeader
                 id="getting-started"
                 title="Getting Started"
                 description="TradeBook is a professional trading journal built specifically for Indian markets — NSE, BSE, and MCX. Whether you trade equities, futures, options, or commodities, it gives you the tools to log, analyze, and improve your trading."
                 icon={Play}
               />
+              <QuickNav items={[
+                { label: "Create Account", id: "getting-started" },
+                { label: "Navigate", id: "getting-started" },
+                { label: "Free vs Pro", id: "getting-started" },
+              ]} />
               <VideoPlaceholder title="Getting Started with TradeBook — Full Walkthrough" duration="5 min" />
+              <StepByStep title="Your First 5 Minutes" steps={[
+                { title: "Sign up with email", description: "Create your account with email and password. Verify via the confirmation email.", detail: "No credit card required — you get 14 days of Pro features free." },
+                { title: "Set your starting capital", description: "Enter your trading capital amount during onboarding. This is used for risk calculations.", detail: "You can update this anytime in Settings → Preferences." },
+                { title: "Choose your theme", description: "Pick light or dark mode. The interface adapts instantly.", detail: "Tip: Dark mode reduces eye strain during long market hours." },
+                { title: "Log your first trade", description: "Click '+ New Trade' or press N on keyboard. Fill in symbol, entry price, and quantity.", detail: "Try the Command Palette (⌘K) for even faster trade entry." },
+                { title: "Explore the dashboard", description: "Your trading cockpit shows P&L, risk gauge, equity curve, and all key metrics.", detail: "Drag-and-drop widgets to customize your layout." },
+              ]} />
               <OnboardingFlowMockup />
               <MobileAppMockup />
               <div className="grid md:grid-cols-2 gap-5">
@@ -516,18 +544,44 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                 </FeatureCard>
               </div>
+              <ProTip variant="info">
+                <p>Press <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-[11px] font-mono font-semibold">⌘K</kbd> anywhere to open the Command Palette — search trades, create alerts, and navigate instantly without touching the mouse.</p>
+              </ProTip>
+              <ComparisonTable
+                title="Free vs Pro — At a Glance"
+                rows={[
+                  { feature: "Trade logging", free: true, pro: true },
+                  { feature: "Watchlists & Alerts", free: true, pro: true },
+                  { feature: "Daily Journal", free: true, pro: true },
+                  { feature: "CSV Import/Export", free: true, pro: true },
+                  { feature: "Advanced Analytics", free: false, pro: true },
+                  { feature: "AI Pattern Detection", free: false, pro: true },
+                  { feature: "AI Trade Coach", free: false, pro: true },
+                  { feature: "Weekly Reports", free: false, pro: true },
+                  { feature: "Stock Screener", free: "Basic", pro: "Full" },
+                  { feature: "Trade Templates", free: "3 max", pro: "Unlimited" },
+                ]}
+              />
             </motion.section>
 
             <SectionDivider />
 
             {/* ── 2. Dashboard ───────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4, delay: 0.05 }}>
+              <PhaseHeader phase={2} total={26} />
               <SectionHeader
                 id="dashboard"
                 title="Dashboard"
                 description="Your trading cockpit. A single screen that shows your P&L, risk exposure, open positions, and trading discipline — all updated in real-time during market hours."
                 icon={LayoutDashboard}
               />
+              <QuickNav items={[
+                { label: "Today's P&L", id: "dashboard" },
+                { label: "KPI Cards", id: "dashboard" },
+                { label: "Risk Gauge", id: "dashboard" },
+                { label: "Equity Curve", id: "dashboard" },
+                { label: "Widget Customization", id: "dashboard" },
+              ]} />
               <DashboardMockup />
 
               <FeatureCard icon={Activity} title="Today's P&L Hero Card">
@@ -643,18 +697,39 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <div className="mt-4"><SegmentFilterMockup /></div>
               </FeatureCard>
+              <ProTip variant="best-practice">
+                <p>Check your dashboard every morning before market opens. The segment filter lets you focus on today's active market — switch to "All" only during your weekly review.</p>
+              </ProTip>
+              <ComparisonTable
+                title="Dashboard Features — Free vs Pro"
+                rows={[
+                  { feature: "Today's P&L card", free: true, pro: true },
+                  { feature: "KPI Cards (4 metrics)", free: true, pro: true },
+                  { feature: "Equity Curve widget", free: true, pro: true },
+                  { feature: "Calendar Heatmap", free: true, pro: true },
+                  { feature: "Risk Gauge & Goals", free: false, pro: true },
+                  { feature: "Widget drag-and-drop", free: false, pro: true },
+                  { feature: "Floating Trade Ticker", free: false, pro: true },
+                  { feature: "Portfolio Heat Map", free: false, pro: true },
+                  { feature: "Daily Review Wizard", free: false, pro: true },
+                ]}
+              />
             </motion.section>
 
             <SectionDivider />
 
-            {/* ── 3. Trade Management ────────────────────── */}
+            {/* ── Phase 3. Trade Management ────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={3} total={26} />
               <SectionHeader
                 id="trade-management"
                 title="Trade Management"
                 description="The core of TradeBook. Log every trade with detailed metadata — entry, exit, stop loss, targets, tags, chart images, and post-trade reviews. Manage your entire trading book from one screen."
                 icon={CandlestickChart}
               />
+              <ProTip>
+                <p>Always set your stop loss before submitting a trade. TradeBook calculates your risk-to-reward ratio automatically — trades with R:R below 1:2 are flagged in your analytics.</p>
+              </ProTip>
 
               <FeatureCard icon={Search} title="Creating a Trade">
                 <p className="text-sm text-muted-foreground mb-3">Step-by-step trade creation with smart defaults:</p>
@@ -820,14 +895,21 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 3b. CSV Import ──────────────────────────── */}
+            {/* ── Phase 4. CSV Import ──────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={4} total={26} />
               <SectionHeader
                 id="csv-import"
                 title="CSV Import & Export"
                 description="Bulk import trades from CSV files with intelligent column mapping, or export your entire trade history for backup and external analysis."
                 icon={Upload}
               />
+              <StepByStep title="How to Import" steps={[
+                { title: "Export from your broker", description: "Download your trade history as CSV from your broker's platform." },
+                { title: "Upload to TradeBook", description: "Go to Trades → Import CSV and select your file." },
+                { title: "Map columns", description: "Match your CSV column headers to TradeBook fields. Common names are auto-detected." },
+                { title: "Preview & confirm", description: "Review mapped data, fix any validation errors, then confirm the import." },
+              ]} />
               <VideoPlaceholder title="How to Import Trades from CSV" duration="3 min" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Upload} title="Importing Trades">
@@ -857,14 +939,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 3c. Trade Templates ─────────────────────── */}
+            {/* ── Phase 5. Trade Templates ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={5} total={26} />
               <SectionHeader
                 id="trade-templates"
                 title="Trade Templates & Smart Suggestions"
                 description="Save your frequently-used trade setups as reusable templates. Plus, get AI-suggested setups based on your trading patterns."
                 icon={FileText}
               />
+              <ProTip>
+                <p>Create a template for each of your top 3 setups. When you see a setup forming, use the template to log the trade in under 10 seconds — no more missed opportunities.</p>
+              </ProTip>
               <VideoPlaceholder title="Setting Up Trade Templates" duration="2 min" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Zap} title="Creating Templates">
@@ -892,7 +978,94 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             </motion.section>
 
             <SectionDivider />
+
+            {/* ── Phase 6. Position Sizing ────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={6} total={26} />
+              <SectionHeader
+                id="position-sizing"
+                title="Position Sizing Calculator"
+                description="Built-in risk calculator that tells you exactly how many shares to buy based on your capital, risk tolerance, and stop loss distance."
+                icon={Calculator}
+              />
+              <PositionSizingCalcMockup />
+              <StepByStep title="How It Works" steps={[
+                { title: "Set your capital & risk %", description: "Define your total capital and the max % you're willing to risk per trade (e.g., 1.5%)." },
+                { title: "Enter entry & stop loss prices", description: "The calculator computes the risk per share (entry − SL)." },
+                { title: "Get recommended quantity", description: "Max shares = (Capital × Risk%) ÷ Risk per share. Automatically rounds down." },
+                { title: "Review max loss", description: "See the maximum loss in rupees before you commit to the trade." },
+              ]} />
+              <ExpandableDetail title="Advanced: Kelly Criterion" icon={Target}>
+                <p>For experienced traders, the Position Sizing Calculator can suggest position sizes based on the Kelly Criterion — factoring in your historical win rate and average win/loss ratio to optimize long-term capital growth.</p>
+              </ExpandableDetail>
+              <ProTip variant="warning">
+                <p>Never risk more than 2% of your capital on a single trade. The calculator will flag oversized positions with a red warning if you exceed this threshold.</p>
+              </ProTip>
+              <ComparisonTable
+                title="Position Sizing — Free vs Pro"
+                rows={[
+                  { feature: "Basic calculator", free: true, pro: true },
+                  { feature: "Kelly Criterion", free: false, pro: true },
+                  { feature: "Auto-fill from trade form", free: true, pro: true },
+                  { feature: "Risk % presets", free: false, pro: true },
+                ]}
+              />
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 7. Trading Rules ──────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={7} total={26} />
+              <SectionHeader
+                id="trading-rules"
+                title="Trading Rules Checklist"
+                description="Define your personal pre-trade rules and enforce discipline. Every rule must be checked before a trade can be submitted."
+                icon={ClipboardCheck}
+              />
+              <TradingRulesMockup />
+              <FeatureCard icon={ClipboardCheck} title="How Trading Rules Work">
+                <p className="text-sm text-muted-foreground mb-3">Create a custom checklist that appears in the trade creation modal:</p>
+                <FeatureList items={[
+                  "Add unlimited custom rules in Settings → Trading Rules",
+                  "Drag-to-reorder rules by priority",
+                  "All rules must be checked to submit a new trade",
+                  "Rules can be temporarily toggled active/inactive",
+                  "Enforces consistent pre-trade analysis every time",
+                ]} />
+              </FeatureCard>
+              <ProTip variant="best-practice">
+                <p>Start with 3-5 rules maximum. The best rules are specific and actionable: "Confirm volume is above 20-day average" is better than "Check volume."</p>
+              </ProTip>
+              <ExpandableDetail title="Example Rules for Different Styles" icon={BookOpen} defaultOpen>
+                <div className="grid md:grid-cols-2 gap-4 mt-2">
+                  <div>
+                    <p className="text-[12px] font-semibold text-foreground mb-2">Intraday Trader</p>
+                    <ul className="space-y-1 text-[12px] text-muted-foreground">
+                      <li>✓ Check pre-market gap direction</li>
+                      <li>✓ Volume above VWAP</li>
+                      <li>✓ No trades in first 5 minutes</li>
+                      <li>✓ Risk under 1% of capital</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-semibold text-foreground mb-2">Swing Trader</p>
+                    <ul className="space-y-1 text-[12px] text-muted-foreground">
+                      <li>✓ Higher timeframe trend aligns</li>
+                      <li>✓ No earnings in next 5 days</li>
+                      <li>✓ Sector is not overbought</li>
+                      <li>✓ R:R is at least 1:3</li>
+                    </ul>
+                  </div>
+                </div>
+              </ExpandableDetail>
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 8. Alerts ─────────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={8} total={26} />
               <SectionHeader
                 id="alerts"
                 title="Alerts System"
@@ -970,14 +1143,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 5. Studies & Research ───────────────────── */}
+            {/* ── Phase 9. Studies & Research ───────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={9} total={26} />
               <SectionHeader
                 id="studies"
                 title="Studies & Research"
                 description="Document your trade ideas, chart analyses, and research findings. Tag with patterns, track status through a workflow, and link studies to actual trades."
                 icon={BookOpen}
               />
+              <ProTip>
+                <p>Link your studies to trades when you execute them. This builds a powerful feedback loop — you can see which of your research ideas actually led to profitable trades.</p>
+              </ProTip>
               <StudyCardMockup />
 
               <FeatureCard icon={Layers} title="Categories & Status Workflow">
@@ -1017,8 +1194,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 6. Watchlists ──────────────────────────── */}
+            {/* ── Phase 10. Watchlists ──────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={10} total={26} />
               <SectionHeader
                 id="watchlists"
                 title="Watchlists"
@@ -1054,14 +1232,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 7. Trade Journal ───────────────────────── */}
+            {/* ── Phase 11. Trade Journal ───────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={11} total={26} />
               <SectionHeader
                 id="journal"
                 title="Trade Journal"
                 description="A multi-view journal that combines summary analytics, equity curves, performance tables, pattern analysis, and a Kanban board for reviewing mistakes."
                 icon={FileText}
               />
+              <ProTip variant="best-practice">
+                <p>Review your journal every Sunday evening. Look at your Patterns & Mistakes tab — the patterns that made you money last month should inform your trading plan for next week.</p>
+              </ProTip>
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 <CalendarHeatmapMockup />
                 <KanbanBoardMockup />
@@ -1107,14 +1289,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 8. Analytics (Pro) ─────────────────────── */}
+            {/* ── Phase 12. Analytics (Pro) ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={12} total={26} />
               <SectionHeader
                 id="analytics"
-                title="Analytics"
                 description="Deep performance analytics powered by your trade data. Understand your edge with heatmaps, breakdowns, and statistical measures. Available on the Pro plan."
+                title="Analytics"
                 icon={BarChart3}
               />
+              <ProTip variant="info">
+                <p>Analytics require at least 20 closed trades to generate meaningful insights. The more trades you log, the more statistically significant your analytics become.</p>
+              </ProTip>
               <AnalyticsMetricCards />
               <AIInsightsMockup />
               <div className="grid md:grid-cols-2 gap-6 mb-6">
@@ -1264,8 +1450,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 9. Calendar & Daily Journal ────────────── */}
+            {/* ── Phase 13. Calendar & Daily Journal ────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={13} total={26} />
               <SectionHeader
                 id="calendar"
                 title="Calendar & Daily Journal"
@@ -1305,14 +1492,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 10. Mistakes Review ────────────────────── */}
+            {/* ── Phase 14. Mistakes Review ────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={14} total={26} />
               <SectionHeader
                 id="mistakes"
                 title="Mistakes Review"
                 description="Dedicated page for analyzing your trading mistakes. Identify repeat patterns, track loss severity, and monitor improvement trends over time."
                 icon={AlertTriangle}
               />
+              <ProTip variant="warning">
+                <p>Your most costly mistake is usually not your most frequent one. Check the "Most Costly" column — a single mistake type might account for 40% of your total losses.</p>
+              </ProTip>
               <MistakeTrendMockup />
               <FeatureCard icon={AlertTriangle} title="Mistake Analysis Tools">
                 <div className="grid md:grid-cols-2 gap-6">
@@ -1341,8 +1532,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 10b. Stock Screener (Fundamentals) ─────── */}
+            {/* ── Phase 15. Stock Screener (Fundamentals) ─────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={15} total={26} />
               <SectionHeader
                 id="fundamentals"
                 title="Stock Screener"
@@ -1438,8 +1630,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 11. Weekly Reports ─────────────────────── */}
+            {/* ── Phase 16. Weekly Reports ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={16} total={26} />
               <SectionHeader
                 id="reports"
                 title="Weekly Reports"
@@ -1473,8 +1666,132 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 12. Integrations ───────────────────────── */}
+            {/* ── Phase 17. Sharing & Social Cards ────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={17} total={26} />
+              <SectionHeader
+                id="sharing"
+                title="Sharing & Social Cards"
+                description="Generate beautiful share cards for your P&L, individual trades, and streaks. Share your trading wins on social media with branded, professional-looking graphics."
+                icon={Share2}
+              />
+              <ShareCardsMockup />
+              <div className="grid md:grid-cols-2 gap-5">
+                <FeatureCard icon={Share2} title="P&L Share Cards">
+                  <p className="text-sm text-muted-foreground mb-3">Generate visual P&L summaries to share on social media:</p>
+                  <FeatureList items={[
+                    "Daily, weekly, or monthly P&L snapshots",
+                    "Includes win rate, trade count, and streak data",
+                    "Multiple card templates with different styles",
+                    "Download as PNG image for sharing",
+                    "Watermarked with your TradeBook branding",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={TrendingUp} title="Trade Share Cards">
+                  <p className="text-sm text-muted-foreground mb-3">Share individual trade results with detailed metrics:</p>
+                  <FeatureList items={[
+                    "Entry/exit prices, P&L, and return %",
+                    "Setup tags and timeframe shown on card",
+                    "Multiple visual templates to choose from",
+                    "One-click download from trade detail modal",
+                    "Privacy-safe — no account details shared",
+                  ]} />
+                </FeatureCard>
+              </div>
+              <StreakShareMockup />
+              <FeatureCard icon={Award} title="Streak Share Cards" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">Celebrate your winning streaks with visual share cards:</p>
+                <FeatureList items={[
+                  "Consecutive winning day counter with fire emoji",
+                  "Day-by-day breakdown of the streak period",
+                  "Share directly from the Dashboard streak widget",
+                  "Branded card with TradeBook watermark",
+                ]} />
+              </FeatureCard>
+              <ProTip>
+                <p>Sharing your wins publicly creates accountability. Traders who share their journal consistently show 15% higher discipline scores in our data.</p>
+              </ProTip>
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 18. Achievements & Gamification ──────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={18} total={26} />
+              <SectionHeader
+                id="achievements"
+                title="Achievements & Gamification"
+                description="Earn badges as you hit trading milestones. From your first trade to 100-day streaks, achievements make your trading journey rewarding and motivating."
+                icon={Trophy}
+              />
+              <AchievementsMockup />
+              <FeatureCard icon={Trophy} title="Badge Categories">
+                <p className="text-sm text-muted-foreground mb-3">Achievements are grouped into categories:</p>
+                <FeatureList items={[
+                  "Milestones — trade count targets (1, 10, 50, 100, 500 trades)",
+                  "Streaks — consecutive profitable days (3, 5, 7, 14, 30 days)",
+                  "Discipline — following rules, setting SL, using templates",
+                  "Analytics — reviewing your data, using AI insights, generating reports",
+                  "Social — sharing trades, inviting friends, writing journal entries",
+                ]} />
+              </FeatureCard>
+              <ExpandableDetail title="How Achievements Are Tracked" icon={Target} defaultOpen>
+                <p className="text-[13px] text-muted-foreground mb-2">Achievements are tracked automatically as you use TradeBook. Each badge has a threshold (e.g., "Log 50 trades") and your progress is updated in real-time. When you reach the threshold, the badge unlocks with a celebration animation.</p>
+                <p className="text-[13px] text-muted-foreground">View your progress in the Dashboard achievements widget or Settings → Profile. Unlocked badges show a timestamp of when they were earned.</p>
+              </ExpandableDetail>
+              <ProTip variant="info">
+                <p>Check the Achievements grid on your Dashboard to see which badges you're closest to earning. Some badges unlock hidden features or special share card templates!</p>
+              </ProTip>
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 19. AI Trade Coach ────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={19} total={26} />
+              <SectionHeader
+                id="trade-coach"
+                title="AI Trade Coach"
+                description="Get instant AI-powered feedback on every closed trade. The coach analyzes your entry, exit, timing, and risk management — then gives actionable advice."
+                icon={Sparkles}
+              />
+              <TradeCoachMockup />
+              <StepByStep title="How the AI Trade Coach Works" steps={[
+                { title: "Close a trade", description: "When you close or exit a trade, the AI Coach is automatically triggered." },
+                { title: "AI analyzes your trade", description: "The coach examines entry timing, stop loss placement, exit strategy, and risk management." },
+                { title: "Get structured feedback", description: "Receive 'What Went Well', 'Room for Improvement', and an overall rating (1-5 stars)." },
+                { title: "Feedback is saved", description: "All coaching feedback is stored on the trade record for future reference and pattern tracking." },
+              ]} />
+              <FeatureCard icon={Zap} title="What the Coach Analyzes" badge="Pro">
+                <FeatureList items={[
+                  "Entry timing — was the entry at an optimal price level?",
+                  "Stop loss placement — was the SL too tight or too wide?",
+                  "Exit strategy — did you take profits too early or hold too long?",
+                  "Risk management — was the position size appropriate for the setup?",
+                  "Pattern recognition — was the trade consistent with your best setups?",
+                  "Emotional assessment — signs of FOMO, revenge trading, or overconfidence",
+                ]} />
+              </FeatureCard>
+              <ProTip variant="best-practice">
+                <p>Read your AI Coach feedback before taking the next trade. If the coach flagged "exited too early" on 3 consecutive trades, it's a signal to work on your trailing stop strategy.</p>
+              </ProTip>
+              <ComparisonTable
+                title="AI Trade Coach — Free vs Pro"
+                rows={[
+                  { feature: "Basic post-trade feedback", free: false, pro: true },
+                  { feature: "Detailed 3-part analysis", free: false, pro: true },
+                  { feature: "Star rating per trade", free: false, pro: true },
+                  { feature: "Saved coaching history", free: false, pro: true },
+                  { feature: "Pattern-based insights", free: false, pro: true },
+                ]}
+              />
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 20. Integrations ───────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={20} total={26} />
               <SectionHeader
                 id="integrations"
                 title="Integrations"
@@ -1515,8 +1832,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 12b. AI Insights Setup ─────────────────── */}
+            {/* ── Phase 24. AI Insights Setup ─────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={24} total={26} />
               <SectionHeader
                 id="ai-integration"
                 title="AI Trade Insights"
@@ -1597,8 +1915,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 13. Keyboard Shortcuts ─────────────────── */}
+            {/* ── Phase 21. Keyboard Shortcuts ─────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={21} total={26} />
               <SectionHeader
                 id="shortcuts"
                 title="Keyboard Shortcuts"
@@ -1668,8 +1987,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 14b. Mobile & PWA ──────────────────────── */}
+            {/* ── Phase 22. Mobile & PWA ──────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={22} total={26} />
               <SectionHeader
                 id="pwa"
                 title="Mobile & PWA"
@@ -1730,8 +2050,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 15. Settings ───────────────────────────── */}
+            {/* ── Phase 23. Settings ───────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={23} total={26} />
               <SectionHeader
                 id="settings"
                 title="Settings"
@@ -1802,8 +2123,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── FAQ & Troubleshooting ──────────────────── */}
+            {/* ── Phase 25. FAQ & Troubleshooting ──────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={25} total={26} />
               <SectionHeader
                 id="faq"
                 title="FAQ & Troubleshooting"
@@ -1838,8 +2160,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── Changelog & Roadmap ────────────────────── */}
+            {/* ── Phase 26. Changelog & Roadmap ────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={26} total={26} />
               <SectionHeader
                 id="changelog"
                 title="Changelog & Roadmap"
