@@ -149,7 +149,6 @@ export function HeroSection() {
               <div key={stat.label} className="px-4 sm:px-6 py-5 text-center">
                 <p
                   className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight"
-                  style={{ fontFamily: "'Sora', 'Inter', sans-serif" }}
                 >
                   {stat.value}
                 </p>
