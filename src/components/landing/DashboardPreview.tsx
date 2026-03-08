@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import {
@@ -26,6 +27,7 @@ const sidebarItems = [
 ];
 
 export function DashboardPreview() {
+  const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-60px" });
 
@@ -105,13 +107,13 @@ export function DashboardPreview() {
           {/* Bottom fade */}
           <div className="absolute bottom-0 left-0 right-0 h-28 sm:h-36 bg-gradient-to-t from-card via-card/95 to-transparent pointer-events-none z-10" />
           <div className="absolute bottom-4 sm:bottom-5 left-0 right-0 z-20 flex justify-center">
-            <a
-              href="/login"
+            <button
+              onClick={() => navigate("/login?mode=signup")}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground text-xs sm:text-[13px] font-semibold shadow-md shadow-primary/20 hover:shadow-primary/30 hover:scale-[1.03] transition-all duration-200"
             >
               Start Trading Smarter
               <ArrowRight className="w-3.5 h-3.5" />
-            </a>
+            </button>
           </div>
         </motion.div>
       </motion.div>

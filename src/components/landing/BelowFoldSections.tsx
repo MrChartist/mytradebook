@@ -28,21 +28,9 @@ const testimonials = [
   { name: "Sneha R.", role: "Positional Trader, Pune", style: "Positional", quote: "Getting EOD reports and morning briefings on Telegram means I never miss a setup. It's like having a trading assistant that actually understands my portfolio.", highlight: "EOD reports and morning briefings", stars: 5, avatar: "S", featured: false },
 ];
 
-const allFeatures = [
-  "Unlimited trades", "Advanced analytics & reports", "Telegram notifications",
-  "Trailing stop loss engine", "Broker integration (Dhan)", "Unlimited watchlists",
-  "Pattern & mistake tracking", "Weekly reports", "Priority support",
-];
-
 const shortFeatures = [
   "Unlimited trade logging", "AI-powered trade insights", "Advanced analytics suite",
   "Trailing stop loss engine", "Broker integration (Dhan)",
-];
-
-const pricingPlans = [
-  { name: "Monthly", price: "₹0", originalPrice: "₹199", period: "/mo", description: "Full access, billed monthly", features: shortFeatures, cta: "Start Free", highlighted: false, isBeta: true, saveBadge: null, badge: null, badgeIcon: null, showAllNote: true },
-  { name: "Quarterly", price: "₹0", originalPrice: "₹499", period: "/quarter", description: "All features, best for active traders", features: allFeatures, cta: "Start Free", highlighted: true, isBeta: true, saveBadge: "Save 17%", badge: "Most Popular", badgeIcon: Zap, showAllNote: false },
-  { name: "Yearly", price: "₹1,499", originalPrice: null, period: "/year", description: "All features, best value", features: shortFeatures, cta: "Subscribe", highlighted: false, isBeta: false, saveBadge: "Save 37%", badge: "Best Value", badgeIcon: Crown, showAllNote: true },
 ];
 
 const comparisonFeatures = [
@@ -165,7 +153,7 @@ export function HowItWorksSection() {
 }
 
 export function ComparisonSection() {
-  return null;
+  return null; // Comparison data is now inline in PricingSection
 }
 
 export function PricingSection() {
@@ -673,8 +661,6 @@ export function FooterSection() {
 
             <div className="flex items-center gap-2">
               {[
-                { href: "https://x.com", icon: "𝕏", label: "Twitter" },
-                { href: "https://t.me", icon: "✈", label: "Telegram" },
                 { href: "mailto:founder@mrchartist.com", icon: "✉", label: "Email" },
               ].map((s) => (
                 <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="w-8 h-8 rounded-full bg-muted/30 border border-border/20 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all text-xs">
@@ -689,13 +675,12 @@ export function FooterSection() {
             <h4 className="text-xs uppercase tracking-[0.12em] font-bold text-muted-foreground/50 mb-4">Product</h4>
             <ul className="space-y-1.5 text-[14px] text-muted-foreground">
               {[
-                { label: "Features", href: "#features" },
-                { label: "Pricing", href: "#pricing" },
-                { label: "Documentation", href: "/docs" },
-                { label: "Changelog", href: "#" },
+                { label: "Features", action: () => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" }) },
+                { label: "Pricing", action: () => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" }) },
+                { label: "Documentation", action: () => navigate("/docs") },
               ].map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className="inline-block py-0.5 hover:text-foreground transition-colors">{l.label}</a>
+                  <button onClick={l.action} className="inline-block py-0.5 hover:text-foreground transition-colors">{l.label}</button>
                 </li>
               ))}
             </ul>
@@ -706,12 +691,11 @@ export function FooterSection() {
             <h4 className="text-xs uppercase tracking-[0.12em] font-bold text-muted-foreground/50 mb-4">Resources</h4>
             <ul className="space-y-1.5 text-[14px] text-muted-foreground">
               {[
-                { label: "FAQ", href: "#faq" },
-                { label: "Blog", href: "#" },
-                { label: "Contact Us", href: "mailto:founder@mrchartist.com" },
+                { label: "FAQ", action: () => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }) },
+                { label: "Contact Us", action: () => window.open("mailto:founder@mrchartist.com", "_blank") },
               ].map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className="inline-block py-0.5 hover:text-foreground transition-colors">{l.label}</a>
+                  <button onClick={l.action} className="inline-block py-0.5 hover:text-foreground transition-colors">{l.label}</button>
                 </li>
               ))}
             </ul>
