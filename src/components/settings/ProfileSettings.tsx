@@ -83,66 +83,66 @@ export default function ProfileSettings() {
           </div>
 
           {/* Form Fields */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-            <div className="space-y-1.5">
-              <Label htmlFor="name" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Full Name</Label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-[11px] text-muted-foreground/70 font-medium uppercase tracking-wider">Full Name</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="bg-muted/20 border-border/20 h-9 text-[13px] focus:border-primary/30"
+                className="h-10 text-[14px]"
                 placeholder="Enter your name"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Email</Label>
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-[11px] text-muted-foreground/70 font-medium uppercase tracking-wider">Email</Label>
               <div className="relative">
                 <Input
                   id="email"
                   value={formData.email}
                   readOnly
-                  className="bg-muted/20 border-border/20 h-9 text-[13px] pr-24"
+                  className="h-10 text-[14px] pr-24"
                 />
-                <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1 text-profit">
-                  <CheckCircle className="w-3 h-3" />
-                  <span className="text-[10px] font-medium">Verified</span>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-profit">
+                  <CheckCircle className="w-3.5 h-3.5" />
+                  <span className="text-[11px] font-medium">Verified</span>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="phone" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Phone Number</Label>
+            <div className="space-y-2">
+              <Label htmlFor="phone" className="text-[11px] text-muted-foreground/70 font-medium uppercase tracking-wider">Phone Number</Label>
               <Input
                 id="phone"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="bg-muted/20 border-border/20 h-9 text-[13px] focus:border-primary/30"
+                className="h-10 text-[14px]"
                 placeholder="+91 9876543210"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="role" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Role</Label>
+            <div className="space-y-2">
+              <Label htmlFor="role" className="text-[11px] text-muted-foreground/70 font-medium uppercase tracking-wider">Role</Label>
               <Input
                 id="role"
                 value="Client"
                 readOnly
                 disabled
-                className="bg-muted/20 border-border/20 h-9 text-[13px]"
+                className="h-10 text-[14px]"
               />
             </div>
           </div>
 
           <Button
-            className="bg-gradient-primary h-9 text-[13px] rounded-lg"
+            className="h-10 text-[13px] rounded-lg font-medium"
             onClick={handleSaveProfile}
             disabled={saving}
           >
             {saving ? (
-              <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
             ) : (
-              <Save className="w-3.5 h-3.5 mr-1.5" />
+              <Save className="w-4 h-4 mr-2" />
             )}
             Update Profile
           </Button>
