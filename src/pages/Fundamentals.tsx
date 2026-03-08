@@ -364,7 +364,7 @@ export default function Fundamentals() {
         </div>
 
         {/* ── Mobile Quick Presets ── */}
-        <div className="flex sm:hidden items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+        <div className="flex sm:hidden items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
           {[
             SCANNER_PRESETS.find(p => p.id === "top_gainers")!,
             SCANNER_PRESETS.find(p => p.id === "top_losers")!,
@@ -375,10 +375,10 @@ export default function Fundamentals() {
             <button
               key={p.id}
               className={cn(
-                "shrink-0 text-[13px] font-medium px-4 py-2 rounded-full transition-all",
+                "shrink-0 text-[11px] font-medium px-3 py-1.5 rounded-lg border transition-all duration-200",
                 presetId === p.id
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "bg-muted text-muted-foreground hover:text-foreground"
+                  ? "border-primary/15 bg-primary/6 text-primary"
+                  : "border-border/15 text-muted-foreground/50 hover:text-foreground"
               )}
               onClick={() => handlePresetChange(p.id)}
             >
@@ -387,10 +387,10 @@ export default function Fundamentals() {
           ))}
           <button
             className={cn(
-              "shrink-0 text-[13px] font-medium px-4 py-2 rounded-full transition-all flex items-center gap-1.5",
+              "shrink-0 text-[11px] font-medium px-3 py-1.5 rounded-lg border transition-all duration-200 flex items-center gap-1",
               isCustomMode
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "bg-muted text-muted-foreground hover:text-foreground"
+                ? "border-primary/15 bg-primary/6 text-primary"
+                : "border-border/15 text-muted-foreground/50 hover:text-foreground"
             )}
             onClick={toggleFilterBuilder}
           >
