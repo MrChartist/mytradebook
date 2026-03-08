@@ -77,20 +77,17 @@ export function HeroSection() {
             </div>
           </motion.div>
 
-          {/* Headline — Sora display font */}
           <motion.h1
             variants={fadeUp} initial="hidden" animate="visible" custom={0.1}
             className="text-5xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] font-extrabold leading-[1.05] tracking-[-0.03em] text-white mb-6"
             style={{
-              fontFamily: "'Sora', 'Inter', sans-serif",
               textShadow: "0 4px 40px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2)",
             }}
           >
             Know Your{" "}
             <span
-              className="text-[hsl(var(--tb-accent))] italic"
+              className="accent-script"
               style={{
-                fontFamily: "'Dancing Script', cursive",
                 textShadow: "0 0 40px hsl(var(--tb-accent) / 0.35), 0 4px 40px rgba(0,0,0,0.3)",
               }}
             >
