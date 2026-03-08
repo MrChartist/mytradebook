@@ -80,9 +80,9 @@ export function StepByStep({ steps, title }: { steps: Step[]; title?: string }) 
               </div>
               <div className="flex-1 pt-0.5">
                 <p className="text-[15px] font-medium text-foreground leading-tight">{step.title}</p>
-                <p className="text-[14px] text-muted-foreground mt-1 leading-relaxed">{step.description}</p>
+                <p className="text-[14px] text-muted-foreground/75 mt-1 leading-relaxed">{step.description}</p>
                 {step.detail && (
-                  <p className="text-[13px] text-muted-foreground/55 mt-1.5 leading-relaxed">{step.detail}</p>
+                  <p className="text-[13px] text-muted-foreground/60 mt-1.5 leading-relaxed">{step.detail}</p>
                 )}
               </div>
             </div>
