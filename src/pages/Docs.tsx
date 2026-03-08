@@ -691,9 +691,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
     });
   };
 
+  const [readProgress, setReadProgress] = useState(0);
+
   useEffect(() => {
     const handleScroll = () => {
       setShowBackToTop(window.scrollY > 600);
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      setReadProgress(docHeight > 0 ? Math.min(100, Math.round((window.scrollY / docHeight) * 100)) : 0);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
