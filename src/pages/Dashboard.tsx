@@ -20,8 +20,6 @@ const JournalCalendarView = lazy(() => import("@/components/journal/JournalCalen
 const AITradeInsights = lazy(() => import("@/components/analytics/AITradeInsights").then(m => ({ default: m.AITradeInsights })));
 const PortfolioHeatMap = lazy(() => import("@/components/dashboard/PortfolioHeatMap").then(m => ({ default: m.PortfolioHeatMap })));
 const AchievementsBadgeGrid = lazy(() => import("@/components/dashboard/AchievementsBadgeGrid").then(m => ({ default: m.AchievementsBadgeGrid })));
-import { FloatingTradeTicker } from "@/components/dashboard/FloatingTradeTicker";
-import { SortableWidgetItem } from "@/components/dashboard/DashboardWidgetSortable";
 import { useAchievements } from "@/hooks/useAchievements";
 import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
