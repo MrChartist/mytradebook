@@ -41,16 +41,16 @@ export function DashboardPreview() {
   const scale = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.98, 1, 1, 0.99]);
 
   return (
-    <div ref={containerRef} className="relative max-w-6xl mx-auto px-4 sm:px-6 pb-12 sm:pb-20 overflow-hidden" style={{ perspective: "1200px" }}>
+    <div ref={containerRef} className="relative max-w-5xl mx-auto px-4 sm:px-6 pb-12 sm:pb-20 overflow-hidden" style={{ perspective: "1200px" }}>
       <motion.div variants={scaleIn} initial="hidden" animate={isInView ? "visible" : "hidden"} className="relative" style={{ y, rotateX, scale, transformStyle: "preserve-3d" }}>
         {/* Soft shadow layers */}
         <div className="absolute inset-x-6 sm:inset-x-10 -bottom-3 h-6 rounded-3xl bg-foreground/[0.03] blur-xl" />
         <div className="absolute inset-x-4 sm:inset-x-6 -bottom-1.5 h-4 rounded-3xl bg-foreground/[0.04] blur-md" />
 
         <motion.div
-          className="relative rounded-xl sm:rounded-2xl border border-border/30 bg-card overflow-hidden"
+          className="relative rounded-xl sm:rounded-2xl border border-border/20 bg-card overflow-hidden max-h-[420px] sm:max-h-[520px]"
           style={{
-            boxShadow: "0 20px 50px -15px rgba(0,0,0,0.06), 0 0 0 1px hsl(var(--border)/0.2), inset 0 1px 0 0 hsl(0 0% 100% / 0.05)",
+            boxShadow: "0 25px 60px -15px rgba(0,0,0,0.1), 0 12px 30px -10px rgba(0,0,0,0.06), 0 0 0 1px hsl(var(--border)/0.15), 0 0 80px -20px hsl(var(--primary)/0.08), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)",
           }}
         >
           {/* Window chrome */}
@@ -99,13 +99,13 @@ export function DashboardPreview() {
             </div>
 
             {/* Main content */}
-            <div className="flex-1 p-3 sm:p-5 min-w-0">
+            <div className="flex-1 p-2.5 sm:p-4 min-w-0">
               <DashboardTab />
             </div>
           </div>
 
-          {/* Bottom fade */}
-          <div className="absolute bottom-0 left-0 right-0 h-28 sm:h-36 bg-gradient-to-t from-card via-card/95 to-transparent pointer-events-none z-10" />
+          {/* Bottom fade — stronger for cropped effect */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 sm:h-44 bg-gradient-to-t from-card via-card/98 to-transparent pointer-events-none z-10" />
           <div className="absolute bottom-4 sm:bottom-5 left-0 right-0 z-20 flex justify-center">
             <button
               onClick={() => navigate("/login?mode=signup")}
