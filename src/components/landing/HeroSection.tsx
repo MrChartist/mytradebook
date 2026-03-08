@@ -64,7 +64,7 @@ export function HeroSection() {
             variants={fadeUp} initial="hidden" animate="visible" custom={0}
             className="mb-8"
           >
-            <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-card/60 backdrop-blur-xl border border-border/40 shadow-sm">
+            <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-card/60 dark:bg-card/40 backdrop-blur-xl border border-border/40 dark:border-border/30 shadow-sm">
               <div className="flex -space-x-2">
                 {avatarInitials.map((init, i) => (
                   <div
