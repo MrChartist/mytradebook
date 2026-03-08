@@ -1383,7 +1383,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "Risk of Ruin Calculator — statistical probability of account blowup",
                   ]} />
                 </FeatureCard>
-                <SubTopic title="AI-Powered Behavioral Analytics" description="Machine learning insights into your trading psychology." />
+              </div>
+              <SubTopic title="AI-Powered Behavioral Analytics" description="Machine learning insights into your trading psychology." />
+              <div className="grid md:grid-cols-2 gap-5">
+                <FeatureCard icon={Sparkles} title="AI Pattern Detection" badge="New">
                   <p className="text-sm text-muted-foreground mb-3">
                     AI analyzes your entire trade history to surface hidden behavioral patterns — things you'd never spot manually. Powered by Gemini, it examines time-of-day performance, day-of-week tendencies, streak effects, and segment biases.
                   </p>
@@ -1396,7 +1399,6 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "One-click refresh to re-run analysis with latest data",
                   ]} />
                 </FeatureCard>
-                <FeatureCard icon={Grid3X3} title="Sector Rotation Heatmap" badge="New">
                   <p className="text-sm text-muted-foreground mb-3">
                     A 6-month heatmap grid showing how your trading allocation and P&L shifts across market segments over time. Spot trends in where you're focusing your capital.
                   </p>
