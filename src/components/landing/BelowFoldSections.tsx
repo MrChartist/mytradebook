@@ -200,14 +200,14 @@ export function PricingSection() {
                 <Zap className="w-3 h-3" /> Currently Active
               </div>
 
-              <h3 className="text-xl font-bold tracking-tight mb-3">Free Beta</h3>
+              <h3 className="text-xl font-semibold tracking-[-0.015em] mb-3">Free Beta</h3>
 
               <div className="flex items-baseline gap-2 mb-1.5">
                 <span className="text-base text-muted-foreground/40 line-through font-mono">₹499</span>
-                <span className="text-4xl font-extrabold font-mono tracking-tight">₹0</span>
-                <span className="text-muted-foreground text-[13px]">/month</span>
+                <span className="text-4xl font-extrabold font-mono tracking-[-0.03em]">₹0</span>
+                <span className="text-muted-foreground text-[13px] tracking-[-0.006em]">/month</span>
               </div>
-              <p className="text-[13px] text-muted-foreground/70 mb-6 leading-relaxed">Full access to every feature. Free while we're in beta.</p>
+              <p className="text-[13px] text-muted-foreground/70 mb-6 leading-[1.6]">Full access to every feature. Free while we're in beta.</p>
 
               <ul className="space-y-2.5 flex-1 mb-6">
                 {[
