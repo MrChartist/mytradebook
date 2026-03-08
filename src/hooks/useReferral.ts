@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -7,29 +7,34 @@ function generateCode(): string {
 }
 
 export function useReferral() {
-  const { user, profile } = useAuth();
-  const queryClient = useQueryClient();
+  const { user } = useAuth();
 
-  // Get or create referral code
+  // Get or create referral code from profiles table
   const { data: referralCode } = useQuery({
     queryKey: ["referral-code", user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      // Check if profile already has a code
-      if (profile?.referral_code) return profile.referral_code as string;
+      // Check existing code
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("referral_code")
+        .eq("user_id", user.id)
+        .single();
 
-      // Generate and save one
+      const existingCode = (profile as Record<string, unknown> | null)?.referral_code as string | null;
+      if (existingCode) return existingCode;
+
+      // Generate and save
       const code = generateCode();
       await supabase
         .from("profiles")
-        .update({ referral_code: code })
+        .update({ referral_code: code } as Record<string, unknown>)
         .eq("user_id", user.id);
       return code;
     },
     enabled: !!user?.id,
   });
 
-  // Get referral stats
   const { data: referrals = [] } = useQuery({
     queryKey: ["referrals", user?.id],
     queryFn: async () => {

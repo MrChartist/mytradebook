@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import type { Json } from "@/integrations/supabase/types";
 
 export interface PublicProfile {
   id: string;
@@ -36,7 +37,7 @@ export function usePublicProfile(userId?: string) {
   });
 
   const upsertProfile = useMutation({
-    mutationFn: async (updates: Partial<PublicProfile>) => {
+    mutationFn: async (updates: Partial<Omit<PublicProfile, "monthly_stats">> & { monthly_stats?: Json }) => {
       if (!user?.id) throw new Error("Not authenticated");
       const { data: existing } = await supabase
         .from("public_profiles")
