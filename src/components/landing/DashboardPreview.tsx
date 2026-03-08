@@ -41,7 +41,7 @@ export function DashboardPreview() {
   const scale = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.98, 1, 1, 0.99]);
 
   return (
-    <div ref={containerRef} className="relative max-w-6xl mx-auto px-4 sm:px-6 pb-12 sm:pb-20 overflow-hidden" style={{ perspective: "1200px" }}>
+    <div ref={containerRef} className="relative max-w-5xl mx-auto px-4 sm:px-6 pb-12 sm:pb-20 overflow-hidden" style={{ perspective: "1200px" }}>
       <motion.div variants={scaleIn} initial="hidden" animate={isInView ? "visible" : "hidden"} className="relative" style={{ y, rotateX, scale, transformStyle: "preserve-3d" }}>
         {/* Soft shadow layers */}
         <div className="absolute inset-x-6 sm:inset-x-10 -bottom-3 h-6 rounded-3xl bg-foreground/[0.03] blur-xl" />
