@@ -24,7 +24,7 @@ interface JournalEquityCurveProps {
 export function JournalEquityCurve({ data, isLoading }: JournalEquityCurveProps) {
   if (isLoading) {
     return (
-      <div className="glass-card p-5">
+      <div className="surface-card p-5">
         <Skeleton className="h-6 w-32 mb-4" />
         <Skeleton className="h-[250px] w-full" />
       </div>
