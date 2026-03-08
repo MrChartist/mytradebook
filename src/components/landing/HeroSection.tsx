@@ -98,7 +98,7 @@ export function HeroSection() {
           {/* Subtitle */}
           <motion.p
             variants={fadeUp} initial="hidden" animate="visible" custom={0.2}
-            className="text-lg lg:text-xl text-muted-foreground max-w-lg mx-auto mb-12 leading-relaxed font-medium tracking-wide"
+            className="text-xl lg:text-2xl text-muted-foreground max-w-xl mx-auto mb-14 leading-relaxed font-medium tracking-wide"
           >
             The trading journal built for Indian markets — NSE, BSE, MCX.
           </motion.p>
