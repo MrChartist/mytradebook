@@ -210,6 +210,7 @@ export function Sidebar() {
           {collapsed && (
             <button
               onClick={() => setCollapsed(false)}
+              aria-label="Expand sidebar"
               className="flex items-center justify-center w-full py-1.5 rounded-[var(--radius-sm)] text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors duration-200"
             >
               <ChevronLeft className="w-4 h-4 rotate-180" />
