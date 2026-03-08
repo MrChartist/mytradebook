@@ -3375,44 +3375,96 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p className="mt-3 text-[12px] text-muted-foreground/60 italic">We ship improvements weekly. Version numbers help you track what's new, but many quality-of-life improvements land between numbered releases.</p>
               </ExpandableDetail>
 
-              <SubTopic title="Upcoming Roadmap" description="Features we're building next." id="cl-roadmap" />
-              <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[hsl(var(--tb-accent))]" /> Upcoming Roadmap
-              </h3>
-              <div className="space-y-3">
-                {[
-                  { label: "Alert Chains & Workflows", desc: "Multi-step alert automation — 'If NIFTY crosses 22000, auto-create BANKNIFTY alert at 48000'", status: "In Progress" },
-                  { label: "Social Trading", desc: "Share your trade journal publicly with a custom RA-compliant profile", status: "In Progress" },
-                  { label: "Notification Analytics", desc: "Dashboard showing delivery rates, alert trigger analytics, and bot health metrics", status: "Planned" },
-                  { label: "Option Chain Analyzer", desc: "Visual option chain with Greeks, IV surface, and strategy payoff diagrams", status: "Planned" },
-                  { label: "Advanced Backtesting", desc: "Test your strategies against historical data with simulated P&L", status: "Planned" },
-                  { label: "Trade Similarity Engine", desc: "AI finds similar past trades and shows your historical win rate for that pattern", status: "Planned" },
-                  { label: "Zerodha Integration", desc: "Connect your Zerodha Kite account for live prices and auto-sync", status: "Exploring" },
-                  { label: "Multi-Currency Support", desc: "Support for USD, EUR and other currencies for NRI traders", status: "Exploring" },
-                  { label: "Community Leaderboard", desc: "Opt-in public leaderboard comparing anonymized win rates and streaks", status: "Exploring" },
-                ].map((item) => (
-                  <div key={item.label} className="premium-card-hover p-4 flex items-start gap-3">
-                    <div className="mt-0.5">
-                      <div className={cn(
-                        "w-2 h-2 rounded-full",
-                        item.status === "In Progress" ? "bg-[hsl(var(--tb-accent))] animate-pulse" :
-                        item.status === "Planned" ? "bg-primary/40" : "bg-muted-foreground/30"
-                      )} />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm font-semibold text-foreground">{item.label}</span>
-                        <span className={cn(
-                          "text-[9px] px-1.5 py-0.5 rounded-full font-semibold",
-                          item.status === "In Progress" ? "bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))]" :
-                          item.status === "Planned" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
-                        )}>{item.status}</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{item.desc}</p>
-                    </div>
+              <SubTopic title="Upcoming Roadmap" description="What we're building next — grouped by development stage." id="cl-roadmap" />
+
+              {/* Roadmap grouped by status */}
+              {([
+                {
+                  status: "Coming Soon",
+                  color: "hsl(142 71% 45%)",
+                  bgColor: "hsl(142 71% 45% / 0.08)",
+                  dotClass: "bg-[hsl(142_71%_45%)] animate-pulse",
+                  badgeClass: "bg-[hsl(142_71%_45%/0.1)] text-[hsl(142_71%_45%)]",
+                  items: [
+                    { label: "Alert Chains & Workflows", desc: "Multi-step alert automation — e.g. 'If NIFTY crosses 22000, auto-create BANKNIFTY alert at 48000'. Chain alerts together with auto-snooze and auto-trade-template actions.", value: "Automate complex trading workflows without manual intervention." },
+                    { label: "Enhanced P&L Share Cards", desc: "New share card templates with weekly/monthly summaries, custom watermarks, and branded RA disclaimers for social sharing.", value: "Build credibility and attract followers with professional performance cards." },
+                    { label: "Quiet Hours & Notification Digest", desc: "Auto-mute notifications outside market hours. Batch similar alerts into a single digest instead of individual pings.", value: "Reduce notification fatigue without missing critical signals." },
+                  ],
+                },
+                {
+                  status: "In Progress",
+                  color: "hsl(var(--tb-accent))",
+                  bgColor: "hsl(var(--tb-accent) / 0.06)",
+                  dotClass: "bg-[hsl(var(--tb-accent))] animate-pulse",
+                  badgeClass: "bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))]",
+                  items: [
+                    { label: "Social Trading Profile", desc: "Share your trade journal publicly with an RA-compliant profile page. Includes monthly stats, equity curve, disclaimer, and follower view.", value: "Showcase your track record transparently while staying SEBI-compliant." },
+                    { label: "Advanced Mistake Heatmap", desc: "Visual heatmap of mistake frequency by day-of-week, time-of-day, and market segment. Spot behavioral patterns that cost you money.", value: "Turn mistake data into actionable self-improvement insights." },
+                    { label: "Scanner Custom Filter Builder", desc: "Build fully custom screening filters with AND/OR logic, save as presets, and set alerts when scanner conditions match.", value: "Find trading opportunities faster with personalized screening criteria." },
+                  ],
+                },
+                {
+                  status: "Planned",
+                  color: "hsl(var(--primary))",
+                  bgColor: "hsl(var(--primary) / 0.04)",
+                  dotClass: "bg-primary/50",
+                  badgeClass: "bg-primary/10 text-primary",
+                  items: [
+                    { label: "Trade Similarity Engine", desc: "AI compares your current trade setup against your historical trades. Shows win rate, avg P&L, and common mistakes for similar setups.", value: "Make data-driven entry decisions based on your own trading history." },
+                    { label: "Option Chain Analyzer", desc: "Visual option chain with Greeks display, IV surface heatmap, and multi-leg strategy payoff diagrams integrated with your trade log.", value: "Options traders get institutional-grade analysis without switching apps." },
+                    { label: "Notification & Alert Analytics", desc: "Dashboard showing delivery success rates, alert trigger frequency, most-triggered symbols, and Telegram bot health metrics.", value: "Understand your alert system's effectiveness and optimize your setup." },
+                    { label: "Custom Dashboard Layouts", desc: "Drag-and-drop dashboard builder with resizable widgets. Save multiple layout presets for different trading sessions (morning scan, intraday, EOD review).", value: "Tailor your workspace to match your exact trading workflow." },
+                    { label: "Advanced Journal Templates", desc: "Pre-built journal templates for different trading styles — scalping, swing, positional. Auto-populate relevant fields based on trade type.", value: "Faster, more structured journaling tailored to your strategy." },
+                    { label: "Broker CSV Auto-Mapping", desc: "Intelligent CSV parser that auto-detects broker format (Zerodha, Angel One, ICICI Direct, Groww) and maps columns automatically.", value: "Import months of trade history in seconds, from any Indian broker." },
+                    { label: "Watchlist Price Alerts", desc: "Set price alerts directly from watchlist items. Auto-suggest alert levels based on recent support/resistance from your trade history.", value: "Seamless alert creation from the instruments you're already watching." },
+                  ],
+                },
+                {
+                  status: "Exploring",
+                  color: "hsl(var(--muted-foreground))",
+                  bgColor: "hsl(var(--muted-foreground) / 0.03)",
+                  dotClass: "bg-muted-foreground/30",
+                  badgeClass: "bg-muted text-muted-foreground",
+                  items: [
+                    { label: "Zerodha Kite Integration", desc: "Connect your Zerodha Kite account for live prices, auto-sync positions, and one-click trade import from order book.", value: "India's most popular broker, natively integrated." },
+                    { label: "Advanced Backtesting Engine", desc: "Test your strategies against historical OHLC data with simulated entries, exits, and P&L. Compare strategy variants side-by-side.", value: "Validate your edge before risking real capital." },
+                    { label: "AI Weekly Coach Summary", desc: "End-of-week AI analysis of your trading patterns, emotional triggers, and missed opportunities. Personalized improvement plan for next week.", value: "A personal trading coach that learns from your actual behavior." },
+                    { label: "Multi-Currency & International Markets", desc: "Support for USD, EUR, and other currencies. Track US stocks, crypto, and forex alongside Indian market positions.", value: "One journal for all your trading, regardless of market or currency." },
+                    { label: "Community Leaderboard", desc: "Opt-in anonymized leaderboard comparing win rates, streaks, and consistency scores. Monthly challenges and achievement unlocks.", value: "Gamified motivation with privacy-first community competition." },
+                    { label: "Mobile Native App (iOS & Android)", desc: "Dedicated native mobile app with push notifications, biometric login, offline trade logging, and quick-capture trade entry.", value: "Full TradeBook power in your pocket, optimized for on-the-go trading." },
+                    { label: "Collaborative Trade Reviews", desc: "Invite a mentor or trading buddy to review and comment on your trades. Shared journal view with annotation tools.", value: "Learn faster with structured feedback from experienced traders." },
+                  ],
+                },
+              ] as const).map((group) => (
+                <div key={group.status} className="mb-8">
+                  <div className="flex items-center gap-2.5 mb-4">
+                    <div className={cn("w-2.5 h-2.5 rounded-full", group.dotClass)} />
+                    <h3 className="text-sm font-bold text-foreground">{group.status}</h3>
+                    <span className={cn("text-[9px] px-2 py-0.5 rounded-full font-semibold", group.badgeClass)}>{group.items.length} items</span>
+                    <div className="flex-1 h-px" style={{ background: 'hsl(var(--docs-border-subtle))' }} />
                   </div>
-                ))}
-              </div>
+                  <div className="space-y-2.5">
+                    {group.items.map((item) => (
+                      <div key={item.label} className="premium-card-hover p-4 flex items-start gap-3 group">
+                        <div className="mt-1.5 shrink-0">
+                          <div className={cn("w-1.5 h-1.5 rounded-full", group.dotClass.replace(" animate-pulse", ""))} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <span className="text-[13px] font-semibold text-foreground">{item.label}</span>
+                            <span className={cn("text-[9px] px-1.5 py-0.5 rounded-full font-semibold shrink-0", group.badgeClass)}>{group.status}</span>
+                          </div>
+                          <p className="text-[12px] text-muted-foreground leading-relaxed mb-1.5">{item.desc}</p>
+                          <p className="text-[11px] italic flex items-start gap-1.5" style={{ color: 'hsl(var(--docs-text-muted) / 0.7)' }}>
+                            <Zap className="w-3 h-3 shrink-0 mt-0.5" style={{ color: String(group.color) }} />
+                            {item.value}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </motion.section>
 
             {/* CTA at bottom */}
