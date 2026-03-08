@@ -494,7 +494,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 {/* Header with collapse toggle */}
                 <div className={cn("flex items-center mb-3", sidebarCollapsed ? "justify-center" : "justify-between")}>
                   {!sidebarCollapsed && (
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50">Contents</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50">Contents</p>
                   )}
                   <button
                     onClick={toggleSidebar}
