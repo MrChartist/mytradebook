@@ -2557,6 +2557,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">Focus on fixing one mistake category at a time. Trying to eliminate all mistakes simultaneously leads to analysis paralysis. Pick your most costly mistake, work on it for 2-4 weeks, then move to the next one.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Analytics", description: "Deep performance breakdowns", targetId: "analytics" },
+                { label: "Calendar", description: "Daily journal for tracking context", targetId: "calendar" },
+                { label: "Trading Rules", description: "Prevent mistakes with checklists", targetId: "trading-rules" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
