@@ -200,7 +200,7 @@ export function DashboardKPICards({ alerts }: Props) {
             Exp: {formatCurrency(expectancy)}/trade
           </span>
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2">
+        <p className="kpi-sublabel mt-2">
           Closed: {closedMonth.length} | W: {wins.length} | L: {losses.length}
         </p>
       </div>
