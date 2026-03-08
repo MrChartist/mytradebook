@@ -95,6 +95,13 @@ export default function PublicProfile() {
               <strong>Disclaimer:</strong> {publicProfile.disclaimer}
             </div>
           )}
+
+          {/* Regulatory notice */}
+          <div className="text-center">
+            <span className="text-[10px] text-muted-foreground/50 bg-muted/20 border border-border/20 rounded-full px-3 py-1">
+              Not SEBI registered · For educational purposes only
+            </span>
+          </div>
         </div>
       </div>
     </>

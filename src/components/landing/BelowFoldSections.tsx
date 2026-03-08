@@ -628,9 +628,21 @@ export function FooterSection() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
   const [email, setEmail] = useState("");
 
-  const handleNewsletter = (e: React.FormEvent) => {
+  const handleNewsletter = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
+    try {
+      const { error } = await supabase
+        .from("newsletter_subscribers")
+        .insert({ email: email.trim().toLowerCase() });
+      if (error && error.code === "23505") {
+        // duplicate — still show success
+      } else if (error) {
+        throw error;
+      }
+    } catch {
+      // Silently fail — still show confirmation
+    }
     setEmail("");
     const el = document.createElement("div");
     el.textContent = "✓ Thanks! We'll keep you posted.";
