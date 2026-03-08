@@ -611,15 +611,15 @@ export default function IntegrationsSettings() {
                   </div>
 
                   {/* Redirect URL instruction */}
-                  <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                    <p className="text-xs font-medium text-amber-700 dark:text-amber-400 mb-1">
-                      ⚠️ Important: Set this Redirect URL in your Dhan API Key settings
+                  <div className="p-2.5 rounded-lg bg-warning/6 border border-warning/15">
+                    <p className="text-[10px] font-medium text-warning mb-1">
+                      ⚠️ Set this Redirect URL in Dhan API settings
                     </p>
-                    <code className="text-xs bg-accent px-2 py-1 rounded block break-all select-all">
+                    <code className="text-[10px] bg-muted/30 px-2 py-1 rounded-md block break-all select-all font-mono">
                       {window.location.origin}/dhan-callback
                     </code>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Go to web.dhan.co → My Profile → Access DhanHQ APIs → API Key → Edit → Set Redirect URL to the above.
+                    <p className="text-[10px] text-muted-foreground/40 mt-1">
+                      web.dhan.co → My Profile → Access DhanHQ APIs → API Key → Edit → Set Redirect URL
                     </p>
                   </div>
 
