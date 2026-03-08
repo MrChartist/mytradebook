@@ -839,8 +839,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         {/* ─────────────────────────────────────────────────────────────
             CENTER CONTENT COLUMN — Readable width, proper padding
             ───────────────────────────────────────────────────────────── */}
-        <main className="flex-1 min-w-0 px-5 sm:px-8 lg:px-12 xl:px-16 py-10 lg:py-14 pt-[8rem] lg:pt-14">
-          <div className="max-w-[720px] mx-auto space-y-14 lg:space-y-16">
+        <main className="flex-1 min-w-0 px-6 sm:px-10 lg:px-14 xl:px-16 py-10 lg:py-12 pt-[7.5rem] lg:pt-12">
+          <div className="max-w-[740px] mx-auto space-y-14 lg:space-y-16">
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
