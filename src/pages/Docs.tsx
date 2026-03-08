@@ -1761,12 +1761,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Sparkles}
               />
               <TradeCoachMockup />
+              <SubTopic title="Coaching Workflow" description="Automatic 4-step analysis triggered after every closed trade." />
               <StepByStep title="How the AI Trade Coach Works" steps={[
                 { title: "Close a trade", description: "When you close or exit a trade, the AI Coach is automatically triggered." },
                 { title: "AI analyzes your trade", description: "The coach examines entry timing, stop loss placement, exit strategy, and risk management." },
                 { title: "Get structured feedback", description: "Receive 'What Went Well', 'Room for Improvement', and an overall rating (1-5 stars)." },
                 { title: "Feedback is saved", description: "All coaching feedback is stored on the trade record for future reference and pattern tracking." },
               ]} />
+              <SubTopic title="Analysis Dimensions" description="Six areas the AI evaluates on every trade." />
               <FeatureCard icon={Zap} title="What the Coach Analyzes" badge="Pro">
                 <FeatureList items={[
                   "Entry timing — was the entry at an optimal price level?",
