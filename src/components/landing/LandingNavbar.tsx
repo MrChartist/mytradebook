@@ -147,7 +147,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
                 <Button
                   size="sm"
                   onClick={() => navigate("/login?mode=signup")}
-                  className="bg-foreground hover:bg-foreground/90 text-background rounded-full px-4 h-8 text-[13px] font-semibold gap-1.5"
+                  className="bg-foreground hover:bg-foreground/90 text-background rounded-[var(--radius-md)] px-4 h-8 text-[13px] font-semibold gap-1.5"
                 >
                   Get Started
                   <ArrowRight className="w-3.5 h-3.5" />
