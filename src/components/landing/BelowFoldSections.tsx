@@ -14,11 +14,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { fadeUp, blurIn, slideFromLeft, slideFromRight, popIn, MotionSection, SectionBadge, GradientDivider } from "./LandingShared";
 
 /* ─── Data ─── */
-const steps = [
-  { step: "01", icon: BookOpen, title: "Log", subtitle: "your trades", desc: "Manual entry or auto-sync from Dhan. Tag setups, patterns, and mistakes in seconds.", accent: "from-primary/20 to-primary/5" },
-  { step: "02", icon: Eye, title: "Analyze", subtitle: "your edge", desc: "Segment-level analytics reveal what's working — by setup, time, emotion, and market condition.", accent: "from-primary/15 to-primary/5" },
-  { step: "03", icon: Zap, title: "Automate", subtitle: "your discipline", desc: "Rules engine, smart alerts, and trailing stops enforce your system — even when you won't.", accent: "from-primary/10 to-primary/5" },
-];
 
 const testimonials = [
   { name: "Rahul M.", role: "Options Trader, Mumbai", style: "Options", quote: "TradeBook helped me identify that my Monday morning trades were consistently losing. After adjusting my strategy, my win rate went from 42% to 61%.", highlight: "win rate went from 42% to 61%", stars: 5, avatar: "R", featured: true },
