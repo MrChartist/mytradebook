@@ -813,7 +813,7 @@
   .docs-body {
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.96875rem;
-    line-height: 1.72;
+    line-height: 1.78;
     font-weight: 400;
     color: hsl(var(--docs-text-primary));
     letter-spacing: -0.005em;
