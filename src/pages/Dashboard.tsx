@@ -185,14 +185,16 @@ export default function Dashboard() {
           <div key={w.id} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div className="min-h-[340px]"><StreakDiscipline /></div>
             <div className="min-h-[340px]">
-              <JournalCalendarView
-                calendarData={calendarData}
-                isLoading={tradesLoading}
-                onTradeClick={() => {}}
-                compact
-                showLink
-                onDayClick={handleCalendarDayClick}
-              />
+              <Suspense fallback={<Skeleton className="h-[340px] w-full rounded-xl" />}>
+                <JournalCalendarView
+                  calendarData={calendarData}
+                  isLoading={tradesLoading}
+                  onTradeClick={() => {}}
+                  compact
+                  showLink
+                  onDayClick={handleCalendarDayClick}
+                />
+              </Suspense>
             </div>
           </div>
         );
