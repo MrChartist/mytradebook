@@ -899,7 +899,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           MAIN THREE-COLUMN LAYOUT
           Left sidebar (250px) | Content (flex) | Right rail (210px)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="max-w-[1440px] mx-auto flex">
+      <div className="max-w-[1480px] mx-auto flex">
         
         {/* ─────────────────────────────────────────────────────────────
             LEFT SIDEBAR — Desktop only, collapsible, with nested sub-topics
