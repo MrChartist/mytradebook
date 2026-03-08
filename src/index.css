@@ -1329,13 +1329,15 @@
 
   /* ── Section spacing — responsive ── */
   @media (max-width: 767px) {
+    .docs-page main > .space-y-20 > * + *,
     .docs-page main > .space-y-16 > * + * {
-      margin-top: 2.5rem !important;
+      margin-top: 3rem !important;
     }
   }
   @media (min-width: 768px) and (max-width: 1023px) {
+    .docs-page main > .space-y-20 > * + *,
     .docs-page main > .space-y-16 > * + * {
-      margin-top: 3rem !important;
+      margin-top: 3.5rem !important;
     }
   }
 
