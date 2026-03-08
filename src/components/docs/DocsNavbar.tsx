@@ -111,7 +111,15 @@ export function DocsNavbar({ isInsideApp = false, onSearchOpen }: DocsNavbarProp
         <div className="flex items-center gap-1.5 shrink-0">
           {/* Search trigger */}
           <button
-            onClick={onSearchOpen}
+            onClick={() => {
+              if (onSearchOpen) {
+                onSearchOpen();
+              } else {
+                // Fallback: focus the sidebar search input
+                const input = document.querySelector<HTMLInputElement>('.docs-sidebar-search input, [placeholder*="Search"]');
+                if (input) { input.focus(); input.scrollIntoView({ behavior: "smooth", block: "center" }); }
+              }
+            }}
             className="docs-navbar-util-btn hidden sm:flex items-center gap-2 px-2.5 h-[30px] rounded-md"
           >
             <Search className="w-3.5 h-3.5" />
@@ -123,7 +131,14 @@ export function DocsNavbar({ isInsideApp = false, onSearchOpen }: DocsNavbarProp
 
           {/* Mobile search */}
           <button
-            onClick={onSearchOpen}
+            onClick={() => {
+              if (onSearchOpen) {
+                onSearchOpen();
+              } else {
+                const input = document.querySelector<HTMLInputElement>('.docs-sidebar-search input, [placeholder*="Search"]');
+                if (input) { input.focus(); input.scrollIntoView({ behavior: "smooth", block: "center" }); }
+              }
+            }}
             className="docs-navbar-util-icon sm:hidden"
             aria-label="Search docs"
           >
