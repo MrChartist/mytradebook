@@ -2378,6 +2378,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">As a rule of thumb: if a metric is based on fewer than 20 data points, treat it as directional rather than definitive. The analytics page dims or hides metrics that don't meet minimum thresholds.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Reports", description: "Weekly performance summaries", targetId: "reports" },
+                { label: "Journal", description: "Connect analytics to daily habits", targetId: "journal" },
+                { label: "Mistakes Review", description: "Fix your costliest errors", targetId: "mistakes" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
