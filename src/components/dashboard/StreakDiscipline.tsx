@@ -97,9 +97,9 @@ export function StreakDiscipline() {
             ) : (
               <TrendingDown className="w-3.5 h-3.5 text-loss" />
             )}
-            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Streak</p>
+            <p className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-wider">Streak</p>
           </div>
-          <p className={cn("text-xl font-bold font-mono", stats.streakType === "win" ? "text-profit" : "text-loss")}>
+          <p className={cn("text-lg font-bold font-mono", stats.streakType === "win" ? "text-profit" : "text-loss")}>
             {stats.currentStreak} {stats.streakType === "win" ? "W" : "L"}
           </p>
         </div>
