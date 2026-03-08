@@ -200,24 +200,26 @@ export default function Journal() {
       </div>
 
       {/* Tabs */}
+      <div className="h-px bg-border/20" />
+
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-card border border-border">
-          <TabsTrigger value="dashboard" className="gap-2">
-            <LayoutDashboard className="w-4 h-4" />
+        <TabsList className="inline-flex w-auto gap-0.5 h-auto p-0.5 bg-muted/40 border border-border/15 rounded-lg">
+          <TabsTrigger value="dashboard" className="gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-medium data-[state=active]:bg-card data-[state=active]:shadow-sm">
+            <LayoutDashboard className="w-3.5 h-3.5" />
             Dashboard
           </TabsTrigger>
-          <TabsTrigger value="calendar" className="gap-2">
-            <Calendar className="w-4 h-4" />
+          <TabsTrigger value="calendar" className="gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-medium data-[state=active]:bg-card data-[state=active]:shadow-sm">
+            <Calendar className="w-3.5 h-3.5" />
             Calendar
           </TabsTrigger>
-          <TabsTrigger value="mistakes" className="gap-2">
-            <AlertTriangle className="w-4 h-4" />
-            Mistakes Review
+          <TabsTrigger value="mistakes" className="gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-medium data-[state=active]:bg-card data-[state=active]:shadow-sm">
+            <AlertTriangle className="w-3.5 h-3.5" />
+            Mistakes
           </TabsTrigger>
         </TabsList>
 
         {/* Dashboard Tab */}
-        <TabsContent value="dashboard" className="space-y-6 mt-6">
+        <TabsContent value="dashboard" className="space-y-4 mt-4">
           {/* Summary Cards */}
           <JournalSummaryCards
             totalPnl={analytics.totalPnl}
