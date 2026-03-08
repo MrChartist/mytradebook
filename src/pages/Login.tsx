@@ -317,11 +317,11 @@ export default function Login() {
                 </>
               ) : (
                 <>
-                  <div className="text-center mb-6 sm:mb-8">
-                    <h3 className="text-2xl sm:text-3xl font-heading font-bold mb-2 tracking-tight">
+                  <div className="text-center mb-6">
+                    <h3 className="text-2xl font-heading font-bold mb-2 tracking-tight">
                       {authMode === "login" ? "Welcome Back" : "Create Account"}
                     </h3>
-                    <p className="text-muted-foreground text-sm sm:text-base">
+                    <p className="text-muted-foreground text-[13px] leading-relaxed">
                       {authMode === "login"
                         ? "Sign in to continue to your dashboard"
                         : "Sign up to start tracking your trades"}
