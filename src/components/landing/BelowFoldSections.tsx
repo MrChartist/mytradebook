@@ -88,7 +88,7 @@ export function HowItWorksSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>How It Works</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Three steps to{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>mastery</span></h2>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Three steps to{" "}<span className="accent-script">mastery</span></h2>
           <p className="text-muted-foreground max-w-md mx-auto text-lg">From first trade to edge mastery — in minutes.</p>
         </motion.div>
         <div className="grid md:grid-cols-3 gap-8 relative">
@@ -129,7 +129,7 @@ export function ComparisonSection() {
       <MotionSection className="max-w-3xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>Comparison</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Why{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>TradeBook</span>?</h2>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Why{" "}<span className="accent-script">TradeBook</span>?</h2>
           <p className="text-muted-foreground max-w-md mx-auto text-lg">See how we compare to generic trading journals.</p>
         </motion.div>
         <motion.div variants={fadeUp} className="rounded-2xl border border-border/60 bg-card overflow-hidden" style={{ boxShadow: `${glassInner}, 0 4px 20px -6px rgba(0,0,0,0.06)` }}>
@@ -163,7 +163,7 @@ export function PricingSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>Pricing</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Simple,{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>transparent</span>{" "}pricing</h2>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Simple,{" "}<span className="accent-script">transparent</span>{" "}pricing</h2>
           <p className="text-muted-foreground max-w-md mx-auto text-lg">One plan. All features. Pick your billing cycle.</p>
         </motion.div>
         <motion.div variants={fadeUp} className="flex justify-center mb-12">
@@ -322,7 +322,7 @@ export function TestimonialsSection() {
       <MotionSection className="max-w-6xl mx-auto px-6 lg:px-10">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>Testimonials</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Trusted by{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>real traders</span></h2>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Trusted by{" "}<span className="accent-script">real traders</span></h2>
           <p className="text-muted-foreground max-w-md mx-auto text-lg">Here's what traders across India are saying.</p>
         </motion.div>
         {isMobile ? (
@@ -382,7 +382,7 @@ export function IndianMarketsSection() {
         <div className="grid md:grid-cols-2 gap-14 items-center">
           <motion.div variants={fadeUp}>
             <SectionBadge>Made in India</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Built for{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>Indian</span>{" "}markets</h2>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Built for{" "}<span className="accent-script">Indian</span>{" "}markets</h2>
             <p className="text-foreground/80 text-[15px] leading-[1.7] mb-6">Unlike generic journals, TradeBook understands Indian market structure — segments, lot sizes, INR formatting, and market hours (9:15 AM – 3:30 PM).</p>
             <ul className="space-y-2.5 mb-8">
               {["NSE, BSE & MCX exchange support", "INR currency with Indian numbering (Lakhs, Crores)", "Dhan broker integration for auto-sync", "Indian market hours & holiday awareness"].map((item) => (
@@ -427,7 +427,7 @@ export function FAQSection() {
       <MotionSection className="max-w-4xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>FAQ</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-[1.1]">Got{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>questions</span>?</h2>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-[1.1]">Got{" "}<span className="accent-script">questions</span>?</h2>
           <p className="text-muted-foreground text-lg">Everything you need to know about TradeBook</p>
         </motion.div>
         <motion.div variants={fadeUp}>
@@ -493,7 +493,7 @@ export function FinalCTASection() {
         </motion.div>
         <motion.div variants={{ visible: { transition: { staggerChildren: 0.12 } } }} className="mb-8 space-y-2">
           <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-[1.1]">Stop losing money to</motion.h2>
-          <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-[1.1]"><span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>undisciplined</span>{" "}trading</motion.h2>
+          <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-[1.1]"><span className="accent-script">undisciplined</span>{" "}trading</motion.h2>
         </motion.div>
         <motion.p variants={fadeUp} className="text-xl text-muted-foreground mb-12 max-w-xl mx-auto leading-[1.7]">Join 1,200+ traders who journal, analyze, and compound their edge — every single day.</motion.p>
         <motion.div variants={fadeUp} whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}>

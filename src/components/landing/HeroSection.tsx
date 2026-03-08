@@ -77,20 +77,17 @@ export function HeroSection() {
             </div>
           </motion.div>
 
-          {/* Headline — Sora display font */}
           <motion.h1
             variants={fadeUp} initial="hidden" animate="visible" custom={0.1}
             className="text-5xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] font-extrabold leading-[1.05] tracking-[-0.03em] text-white mb-6"
             style={{
-              fontFamily: "'Sora', 'Inter', sans-serif",
               textShadow: "0 4px 40px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2)",
             }}
           >
             Know Your{" "}
             <span
-              className="text-[hsl(var(--tb-accent))] italic"
+              className="accent-script"
               style={{
-                fontFamily: "'Dancing Script', cursive",
                 textShadow: "0 0 40px hsl(var(--tb-accent) / 0.35), 0 4px 40px rgba(0,0,0,0.3)",
               }}
             >
@@ -107,7 +104,7 @@ export function HeroSection() {
           <motion.p
             variants={fadeUp} initial="hidden" animate="visible" custom={0.2}
             className="text-lg lg:text-xl text-white/65 max-w-lg mx-auto mb-12 leading-relaxed font-medium tracking-wide"
-            style={{ fontFamily: "'Inter', sans-serif" }}
+          
           >
             The trading journal built for Indian markets — NSE, BSE, MCX.
           </motion.p>
@@ -121,7 +118,6 @@ export function HeroSection() {
               <Button
                 size="lg"
                 className="h-14 px-10 text-base gap-2.5 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_8px_32px_hsl(var(--tb-accent)/0.45)] font-semibold shimmer-cta tracking-wide"
-                style={{ fontFamily: "'Sora', 'Inter', sans-serif" }}
                 onClick={() => navigate("/login?mode=signup")}
               >
                 Start Free
@@ -153,7 +149,6 @@ export function HeroSection() {
               <div key={stat.label} className="px-4 sm:px-6 py-5 text-center">
                 <p
                   className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight"
-                  style={{ fontFamily: "'Sora', 'Inter', sans-serif" }}
                 >
                   {stat.value}
                 </p>

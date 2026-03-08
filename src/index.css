@@ -394,6 +394,30 @@
     @apply bg-card/30;
     box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.04);
   }
+  /* ── Landing Page Typography ───────────────────── */
+  .landing-page h1,
+  .landing-page h2,
+  .landing-page h3 {
+    font-family: 'Sora', 'Inter', sans-serif;
+    letter-spacing: -0.03em;
+  }
+
+  .landing-page p,
+  .landing-page span,
+  .landing-page button,
+  .landing-page a {
+    font-family: 'Inter', sans-serif;
+  }
+
+  .landing-page .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .landing-page .accent-script {
+    font-family: 'Dancing Script', 'Satisfy', cursive;
+    font-style: italic;
+    color: hsl(var(--tb-accent));
+  }
 }
 
 @layer utilities {

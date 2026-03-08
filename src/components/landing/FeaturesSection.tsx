@@ -224,7 +224,7 @@ export function FeaturesSection() {
       <MotionSection className="max-w-7xl mx-auto px-6 lg:px-10">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>Features</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Get your{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>money's</span>{" "}worth</h2>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Get your{" "}<span className="accent-script">money's</span>{" "}worth</h2>
           <p className="text-muted-foreground max-w-lg mx-auto text-lg leading-relaxed">From journaling to automation — tools designed by traders, for traders.</p>
         </motion.div>
 
