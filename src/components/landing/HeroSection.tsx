@@ -172,7 +172,7 @@ export function HeroSection() {
           {/* Trust micro-line */}
           <motion.div
             variants={fadeUp} initial="hidden" animate="visible" custom={0.4}
-            className="flex items-center gap-4 text-[12px] text-muted-foreground/50"
+            className="flex items-center gap-4 text-[12px] text-muted-foreground/60"
           >
             <span className="flex items-center gap-1.5"><Shield className="w-3 h-3" /> Bank-grade security</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
