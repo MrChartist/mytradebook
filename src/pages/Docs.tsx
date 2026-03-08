@@ -1545,51 +1545,91 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="A multi-view journal that combines summary analytics, equity curves, performance tables, pattern analysis, and a Kanban board for reviewing mistakes."
                 icon={FileText}
               />
+              <QuickNav items={[
+                { label: "Weekly Review", id: "jn-review" },
+                { label: "Dashboard Tab", id: "jn-dashboard" },
+                { label: "Calendar Tab", id: "jn-calendar" },
+                { label: "Mistakes Board", id: "jn-mistakes" },
+                { label: "Filters", id: "jn-filters" },
+              ]} />
+
               <ProTip variant="best-practice">
                 <p>Review your journal every Sunday evening. Look at your Patterns & Mistakes tab — the patterns that made you money last month should inform your trading plan for next week.</p>
               </ProTip>
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <CalendarHeatmapMockup />
-                <KanbanBoardMockup />
-              </div>
-              <SubTopic title="Journal Views" description="Four specialized tabs for different aspects of your journal." id="jn-views" />
-              <div className="grid md:grid-cols-2 gap-5">
-                <FeatureCard icon={PieChart} title="Dashboard Tab">
-                  <p className="text-sm text-muted-foreground mb-3">High-level summary of your trading performance:</p>
-                  <FeatureList items={[
-                    "Summary cards: Total P&L, Win Rate, Avg Holding Time, Best Pattern, Top Mistake",
-                    "Equity curve visualization with date range selector",
-                    "Performance tables broken down by Rating (1-10) and Confidence (1-5)",
-                    "Patterns & Mistakes analysis showing which setups make/lose money",
-                  ]} />
-                  <div className="mt-4"><JournalDashboardTabMockup /></div>
-                </FeatureCard>
-                <FeatureCard icon={Calendar} title="Calendar Tab">
-                  <p className="text-sm text-muted-foreground">
-                    A visual P&L heatmap calendar. Each day is colored by total P&L — deep green for big wins, deep red for big losses, neutral for flat days. Click any day to see the trades closed on that date and open the daily journal editor.
-                  </p>
-                  <div className="mt-4"><JournalCalendarTabMockup /></div>
-                </FeatureCard>
-                <FeatureCard icon={AlertTriangle} title="Mistakes Review Tab">
-                  <p className="text-sm text-muted-foreground mb-3">Kanban-style board for categorizing and reviewing trading mistakes:</p>
-                  <FeatureList items={[
-                    "Columns grouped by severity: Low, Medium, High",
-                    "Each card shows the mistake tag, trade details, and loss amount",
-                    "Drag cards between severity columns as you reassess",
-                    "Helps identify recurring behavioral patterns",
-                  ]} />
-                  <div className="mt-4"><JournalMistakesTabMockup /></div>
-                </FeatureCard>
-                <FeatureCard icon={Filter} title="Filters & Segmentation">
-                  <FeatureList items={[
-                    "Filter by segment: All, Intraday, Positional, Futures, Options, Commodities",
-                    "Date range presets: 30 days, 60 days, 90 days",
-                    "Custom date range picker",
-                    "All tabs and analytics update based on selected filters",
-                  ]} />
-                  <div className="mt-4"><JournalFiltersSegmentationMockup /></div>
-                </FeatureCard>
-              </div>
+
+              <InteractiveMockup label="Journal Views">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <CalendarHeatmapMockup />
+                  <KanbanBoardMockup />
+                </div>
+              </InteractiveMockup>
+
+              <SubTopic title="Weekly Journal Review Routine" description="A structured weekly habit that compounds your trading improvement." id="jn-review" />
+              <StepByStep title="Your Weekly Journal Review Routine" steps={[
+                { title: "Open the Dashboard tab", description: "Start with the big picture — check your weekly P&L, win rate, and equity curve trend.", detail: "Look for the overall direction: are you improving week over week?" },
+                { title: "Review the Calendar tab", description: "Scan the heatmap for red clusters. Multiple losing days in a row signal emotional or process problems.", detail: "Click individual days to re-read your daily journal entries and see what you were thinking." },
+                { title: "Analyze Patterns & Mistakes", description: "Check which patterns made money and which mistakes cost you the most this week.", detail: "Your top 3 mistakes should become next week's focus areas for improvement." },
+                { title: "Drag-review on the Kanban board", description: "Re-assess mistake severity. Drag cards between Low/Medium/High as your understanding deepens.", detail: "A 'Low' mistake that keeps recurring should be promoted to 'High' — it's a habit, not a one-off." },
+                { title: "Write your plan for next week", description: "Open the daily journal for Monday and write your pre-market plan based on this review.", detail: "Include: which setups to focus on, which mistakes to avoid, and your max risk budget." },
+              ]} />
+
+              <ProTip variant="info">
+                <p>Journal consistency matters more than journal depth. Writing <strong>3 sentences daily</strong> for 30 days straight builds more insight than a detailed 2-page entry once a month. The journal tracks your streak — aim for at least 5 consecutive trading days of entries to build the habit.</p>
+              </ProTip>
+
+              <SubTopic title="Journal Views" description="Four specialized tabs for different aspects of your journal." id="jn-dashboard" />
+
+              <FeatureCard icon={PieChart} title="Dashboard Tab">
+                <p className="text-sm text-muted-foreground mb-3">High-level summary of your trading performance:</p>
+                <FeatureList items={[
+                  "Summary cards: Total P&L, Win Rate, Avg Holding Time, Best Pattern, Top Mistake",
+                  "Equity curve visualization with date range selector",
+                  "Performance tables broken down by Rating (1-10) and Confidence (1-5)",
+                  "Patterns & Mistakes analysis showing which setups make/lose money",
+                ]} />
+                <div className="mt-4"><JournalDashboardTabMockup /></div>
+              </FeatureCard>
+
+              <SubTopic title="Calendar Tab" description="A visual P&L heatmap for spotting winning and losing streaks." id="jn-calendar" />
+              <FeatureCard icon={Calendar} title="Calendar Tab">
+                <p className="text-sm text-muted-foreground">
+                  A visual P&L heatmap calendar. Each day is colored by total P&L — deep green for big wins, deep red for big losses, neutral for flat days. Click any day to see the trades closed on that date and open the daily journal editor.
+                </p>
+                <div className="mt-4"><JournalCalendarTabMockup /></div>
+              </FeatureCard>
+
+              <SubTopic title="Mistakes Review Board" description="Kanban-style board for categorizing trading mistakes by severity." id="jn-mistakes" />
+              <FeatureCard icon={AlertTriangle} title="Mistakes Review Tab">
+                <p className="text-sm text-muted-foreground mb-3">Kanban-style board for categorizing and reviewing trading mistakes:</p>
+                <FeatureList items={[
+                  "Columns grouped by severity: Low, Medium, High",
+                  "Each card shows the mistake tag, trade details, and loss amount",
+                  "Drag cards between severity columns as you reassess",
+                  "Helps identify recurring behavioral patterns",
+                ]} />
+                <div className="mt-4"><JournalMistakesTabMockup /></div>
+              </FeatureCard>
+
+              <ExpandableDetail title="How the Kanban Board Categorizes Mistakes" icon={AlertTriangle} badge="Deep Dive">
+                <p>The Kanban board maps your tagged mistakes into three severity columns, helping you prioritize which habits to fix first:</p>
+                <FeatureList items={[
+                  "Low — minor process deviations that didn't significantly impact P&L. Examples: entering slightly early, not waiting for confirmation candle.",
+                  "Medium — mistakes that cost noticeable money but aren't habitual yet. Examples: oversizing a position, ignoring a stop loss once.",
+                  "High — recurring mistakes with significant financial impact. Examples: revenge trading after a loss, consistently moving stop losses further away.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">As you review weekly, drag cards between columns based on updated severity. A 'Low' mistake that appears 5+ times should be escalated to 'High' — frequency turns minor errors into major leaks. The goal is to empty the 'High' column over time.</p>
+              </ExpandableDetail>
+
+              <SubTopic title="Filters & Segmentation" description="Slice your journal data by segment and time period." id="jn-filters" />
+              <FeatureCard icon={Filter} title="Filters & Segmentation">
+                <FeatureList items={[
+                  "Filter by segment: All, Intraday, Positional, Futures, Options, Commodities",
+                  "Date range presets: 30 days, 60 days, 90 days",
+                  "Custom date range picker",
+                  "All tabs and analytics update based on selected filters",
+                ]} />
+                <div className="mt-4"><JournalFiltersSegmentationMockup /></div>
+              </FeatureCard>
             </motion.section>
 
             <SectionDivider />
