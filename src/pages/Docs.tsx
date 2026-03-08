@@ -253,7 +253,7 @@ function FeatureList({ items }: { items: string[] }) {
   return (
     <ul className="space-y-2.5 mt-4">
       {items.map((item) => (
-        <li key={item} className="flex items-start gap-2.5 text-[15px] text-muted-foreground leading-relaxed">
+        <li key={item} className="flex items-start gap-2.5 text-[15px] text-muted-foreground/80 leading-relaxed">
           <ChevronRight className="w-3.5 h-3.5 text-primary mt-[3px] shrink-0" />
           <span>{item}</span>
         </li>
@@ -304,7 +304,7 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
 }
 
 function SectionDivider() {
-  return <div className="h-px bg-gradient-to-r from-transparent via-border/40 to-transparent my-4" />;
+  return <div className="h-px bg-gradient-to-r from-transparent via-border/25 to-transparent my-6" />;
 }
 
 function SectionHeader({ id, title, description, icon: Icon }: {
@@ -319,7 +319,7 @@ function SectionHeader({ id, title, description, icon: Icon }: {
   }, [id]);
 
   return (
-    <div id={id} className="scroll-mt-24 mb-6 group">
+    <div id={id} className="scroll-mt-24 mb-8 group">
       <div className="flex items-center gap-2.5 mb-3">
         <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
           <Icon className="w-4 h-4 text-primary" />
@@ -334,7 +334,7 @@ function SectionHeader({ id, title, description, icon: Icon }: {
           <span id={`copy-${id}`}>#</span>
         </button>
       </div>
-      <p className="text-[15px] text-muted-foreground leading-relaxed max-w-2xl lg:pl-[42px]">{description}</p>
+      <p className="text-[15px] text-muted-foreground/75 leading-[1.75] max-w-2xl lg:pl-[42px]">{description}</p>
     </div>
   );
 }
@@ -479,10 +479,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               {mode === "bw" ? "B&W" : "Color"}
             </button>
           </div>
-          <p className="text-[15px] text-muted-foreground leading-relaxed max-w-xl">
+          <p className="text-[15px] text-muted-foreground/75 leading-relaxed max-w-xl">
             Complete guide to every TradeBook feature — from trade logging to advanced analytics.
           </p>
-          <div className="flex items-center gap-3 mt-3 text-[12px] text-muted-foreground/50">
+          <div className="flex items-center gap-3 mt-4 text-[12px] text-muted-foreground/50">
             <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~35 min read</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
             <span>Last updated: March 2026</span>
@@ -504,7 +504,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 {/* Header with collapse toggle */}
                 <div className={cn("flex items-center mb-4", sidebarCollapsed ? "justify-center" : "justify-between")}>
                   {!sidebarCollapsed && (
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/40">Navigation</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/50">Navigation</p>
                   )}
                   <button
                     onClick={toggleSidebar}
@@ -538,7 +538,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                       <div key={group.label}>
                          {gi > 0 && <div className="h-px bg-border/15 my-3" />}
                          {!sidebarCollapsed && (
-                           <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground/35 px-2.5 pt-2 pb-1.5">{group.label}</p>
+                           <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground/45 px-2.5 pt-2 pb-1.5">{group.label}</p>
                         )}
                         {groupSections.map((s) => {
                           const isActive = activeSection === s.id;
@@ -548,10 +548,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                                onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
                                className={cn(
                                  "w-full flex items-center rounded-lg text-[13px] transition-all duration-150 text-left relative",
-                                 sidebarCollapsed ? "justify-center p-2" : "gap-2.5 px-2.5 py-[7px]",
-                                 isActive
-                                   ? "text-foreground font-medium bg-muted/50"
-                                   : "text-muted-foreground/55 hover:text-foreground hover:bg-muted/25"
+                                  sidebarCollapsed ? "justify-center p-2" : "gap-2.5 px-2.5 py-[7px]",
+                                  isActive
+                                    ? "text-foreground font-medium bg-muted/50"
+                                    : "text-muted-foreground/65 hover:text-foreground hover:bg-muted/25"
                                )}
                              >
                                {isActive && !sidebarCollapsed && (
@@ -603,7 +603,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                       "shrink-0 px-3 py-1.5 rounded-lg text-[12px] font-medium transition-colors whitespace-nowrap",
                       activeSection === s.id
                         ? "bg-foreground text-background"
-                        : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/30"
+                        : "text-muted-foreground/60 hover:text-foreground hover:bg-muted/30"
                     )}
                   >
                     {s.label}
@@ -616,7 +616,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </nav>
 
           {/* Main content */}
-          <main className="flex-1 min-w-0 max-w-[740px] px-6 lg:px-12 py-8 lg:py-10 space-y-20 pt-[6.5rem] lg:pt-8">
+          <main className="flex-1 min-w-0 max-w-[740px] px-6 lg:px-12 py-10 lg:py-12 space-y-24 pt-[6.5rem] lg:pt-10">
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
@@ -3393,13 +3393,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           {/* Right sidebar — On this page */}
           <aside className="hidden xl:block w-[190px] shrink-0 border-l border-border/15">
             <div className="sticky top-20 py-8 pl-6">
-              <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground/40 mb-4">On this page</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground/50 mb-4">On this page</p>
               <nav className="space-y-0.5 border-l border-border/20 pl-3">
                 {(SECTION_ANCHORS[activeSection] || []).map((anchor) => (
                   <button
                     key={anchor.id}
                     onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                    className="block w-full text-left text-[13px] text-muted-foreground/50 hover:text-foreground py-1.5 transition-colors duration-150 leading-snug"
+                    className="block w-full text-left text-[13px] text-muted-foreground/60 hover:text-foreground py-1.5 transition-colors duration-150 leading-snug"
                   >
                     {anchor.label}
                   </button>
@@ -3447,7 +3447,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }, { label: "Contact", href: "mailto:founder@mrchartist.com" }] },
               ].map((col) => (
                 <div key={col.title}>
-                  <h4 className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/40 mb-3">{col.title}</h4>
+                  <h4 className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/50 mb-3">{col.title}</h4>
                   <ul className="space-y-1.5">
                     {col.links.map((l) => (
                       <li key={l.label}>

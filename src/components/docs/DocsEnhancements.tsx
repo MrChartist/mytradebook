@@ -50,7 +50,7 @@ export function ProTip({ children, variant = "tip" }: { children: ReactNode; var
         <Icon className={cn("w-4 h-4 shrink-0 mt-0.5", s.iconColor)} />
         <div className="flex-1 min-w-0">
           <p className={cn("text-[11px] font-semibold uppercase tracking-wider mb-1", s.iconColor)}>{s.label}</p>
-          <div className="text-[15px] text-muted-foreground leading-[1.7] [&>p]:mb-0">{children}</div>
+          <div className="text-[15px] text-muted-foreground/80 leading-[1.75] [&>p]:mb-0">{children}</div>
         </div>
       </div>
     </div>
@@ -80,9 +80,9 @@ export function StepByStep({ steps, title }: { steps: Step[]; title?: string }) 
               </div>
               <div className="flex-1 pt-0.5">
                 <p className="text-[15px] font-medium text-foreground leading-tight">{step.title}</p>
-                <p className="text-[14px] text-muted-foreground mt-1 leading-relaxed">{step.description}</p>
+                <p className="text-[14px] text-muted-foreground/75 mt-1 leading-relaxed">{step.description}</p>
                 {step.detail && (
-                  <p className="text-[13px] text-muted-foreground/55 mt-1.5 leading-relaxed">{step.detail}</p>
+                  <p className="text-[13px] text-muted-foreground/60 mt-1.5 leading-relaxed">{step.detail}</p>
                 )}
               </div>
             </div>
@@ -189,7 +189,7 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
             className="overflow-hidden"
           >
             <div className="px-4 pb-4 pt-0 border-t border-border/20">
-              <div className="pt-3 [&>p]:text-[15px] [&>p]:text-muted-foreground [&>p]:leading-[1.7]">{children}</div>
+              <div className="pt-3 [&>p]:text-[15px] [&>p]:text-muted-foreground/80 [&>p]:leading-[1.75]">{children}</div>
             </div>
           </motion.div>
         )}
@@ -211,7 +211,7 @@ export function InteractiveMockup({ children, label, className }: { children: Re
             <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/12" />
             <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/12" />
           </div>
-          <span className="text-[11px] font-medium text-muted-foreground/35 ml-1.5 tracking-wide uppercase">{label}</span>
+          <span className="text-[11px] font-medium text-muted-foreground/45 ml-1.5 tracking-wide uppercase">{label}</span>
         </div>
       )}
       <div className="p-5 md:p-6 bg-muted/[0.03]">
@@ -241,9 +241,9 @@ export function QuickNav({ items }: { items: { label: string; id: string }[] }) 
 export function KeyMetric({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
     <div className="rounded-lg border border-border/40 bg-muted/20 p-3 text-center">
-      <p className="text-[12px] text-muted-foreground/60 mb-0.5">{label}</p>
+      <p className="text-[12px] text-muted-foreground/70 mb-0.5">{label}</p>
       <p className="text-lg font-bold font-mono text-foreground">{value}</p>
-      {sub && <p className="text-[12px] text-muted-foreground/50 mt-0.5">{sub}</p>}
+      {sub && <p className="text-[12px] text-muted-foreground/60 mt-0.5">{sub}</p>}
     </div>
   );
 }
@@ -256,7 +256,7 @@ export function SubTopic({ title, description, id }: { title: string; descriptio
     <div id={id} className={cn("mt-8 mb-4 first:mt-4", id && "scroll-mt-24")}>
       <h3 className="text-[17px] font-semibold tracking-tight text-foreground">{title}</h3>
       {description && (
-        <p className="text-[15px] text-muted-foreground/70 leading-relaxed mt-1">{description}</p>
+        <p className="text-[15px] text-muted-foreground/75 leading-relaxed mt-1">{description}</p>
       )}
     </div>
   );
