@@ -3562,6 +3562,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Troubleshooting", id: "faq-troubleshooting" },
               ]} />
 
+              <ProTip variant="info">
+                <p><strong>How to use this section:</strong> Use the jump links above to go directly to your question category. Each answer is self-contained — you don't need to read them in order. For technical issues, start with the <strong>Troubleshooting</strong> section at the bottom, which covers the most common error scenarios with step-by-step fixes.</p>
+              </ProTip>
+
               {/* ── Account & Billing ── */}
               <SubTopic title="Account & Billing" id="faq-account" />
               <FAQGroup icon={Users} title="Account & Billing" items={[
