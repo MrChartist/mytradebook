@@ -804,6 +804,47 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
               </FeatureCard>
 
+              <FeatureCard icon={Shield} title="Trading Rules Checklist">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Enforce personal discipline before every trade entry. Create your own rules and check them off before submitting a trade.
+                </p>
+                <FeatureList items={[
+                  "Custom rules — add, edit, reorder, or delete your own trading rules",
+                  "Pre-trade enforcement — checklist appears in the trade creation flow",
+                  "Visual \"All Clear\" indicator when every rule is checked",
+                  "Active/inactive toggle per rule — temporarily disable rules without deleting",
+                  "Rules persist across sessions — always available when you need them",
+                ]} />
+                <p className="text-xs text-muted-foreground mt-3 italic">See also: <button onClick={() => document.getElementById("settings")?.scrollIntoView({ behavior: "smooth" })} className="text-primary hover:underline">Settings → Tag Management</button></p>
+              </FeatureCard>
+
+              <FeatureCard icon={Sparkles} title="AI Trade Coach" badge="AI">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Get instant AI-generated feedback on your closed trades. The coach analyzes your entry, exit, timing, and outcome to provide actionable coaching.
+                </p>
+                <FeatureList items={[
+                  "Auto-triggers on freshly closed trades — no manual action needed",
+                  "Markdown-formatted coaching feedback with structured analysis",
+                  "Evaluates: entry timing, exit quality, risk management, emotional discipline",
+                  "Refresh button to regenerate feedback with latest context",
+                  "Coaching feedback cached in the database — revisit anytime",
+                  "Accessible from the Trade Detail modal",
+                ]} />
+                <p className="text-xs text-muted-foreground mt-3 italic">See also: <button onClick={() => document.getElementById("ai-integration")?.scrollIntoView({ behavior: "smooth" })} className="text-primary hover:underline">AI Insights Setup</button></p>
+              </FeatureCard>
+
+              <FeatureCard icon={Zap} title="Quick Close Popover">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Close open trades without leaving the trades list. A compact popover lets you enter the exit price and close instantly.
+                </p>
+                <FeatureList items={[
+                  "One-click access from the trade row actions menu",
+                  "Inline exit price input with auto-calculated P&L preview",
+                  "Triggers the Post-Trade Review modal after closing",
+                  "Works on both desktop and mobile layouts",
+                ]} />
+              </FeatureCard>
+
               <FeatureCard icon={Download} title="CSV Import & Export">
                 <p className="text-sm text-muted-foreground">
                   Import trades from CSV files with column mapping. Export your entire trade history to CSV for backup or external analysis. The export includes all trade fields, tags, and review data.
