@@ -1349,7 +1349,7 @@
     flex-shrink: 0;
   }
   .docs-page .docs-meta-value {
-    font-family: Inter, system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     font-size: 0.9375rem;
     color: hsl(var(--docs-text-primary));
   }
