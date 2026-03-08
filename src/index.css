@@ -228,24 +228,28 @@
   .text-caption { font-size: 0.75rem;  line-height: 1.5; letter-spacing: 0.005em; } /* 12px */
   .text-body-sm { font-size: 0.875rem; line-height: 1.55; letter-spacing: -0.006em; } /* 14px */
   .text-body  { font-size: 1rem;      line-height: 1.6; letter-spacing: -0.011em; }  /* 16px */
-  .text-heading-sm { font-size: 1.125rem; line-height: 1.45; letter-spacing: -0.015em; font-weight: 600; font-family: 'Source Sans 3', sans-serif; } /* 18px */
-  .text-heading { font-size: 1.375rem; line-height: 1.35; letter-spacing: -0.02em; font-weight: 600; font-family: 'Source Sans 3', sans-serif; } /* 22px */
-  .text-heading-lg { font-size: 1.75rem; line-height: 1.25; letter-spacing: -0.025em; font-weight: 700; font-family: 'Source Sans 3', sans-serif; } /* 28px */
-  .text-display { font-size: 2.25rem; line-height: 1.15; letter-spacing: -0.028em; font-weight: 700; font-family: 'Libre Bodoni', Georgia, serif; } /* 36px — premium display */
+  .text-heading-sm { font-size: 1.125rem; line-height: 1.45; letter-spacing: -0.015em; font-weight: 600; font-family: 'Inter', sans-serif; }
+  .text-heading { font-size: 1.375rem; line-height: 1.35; letter-spacing: -0.02em; font-weight: 600; font-family: 'Inter', sans-serif; }
+  .text-heading-lg { font-size: 1.75rem; line-height: 1.25; letter-spacing: -0.025em; font-weight: 700; font-family: 'Inter', sans-serif; }
+  .text-display { font-size: 2.25rem; line-height: 1.15; letter-spacing: -0.028em; font-weight: 700; font-family: 'Sora', 'Inter', sans-serif; }
 
-  /* ── Accent serif (Libre Bodoni) — use sparingly in premium headings ── */
-  .accent-serif {
-    font-family: 'Libre Bodoni', Georgia, serif;
-    font-style: italic;
-    font-weight: 400;
+  /* ── Gradient text accent — replaces serif accent ── */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--tb-accent)) 0%, hsl(16 85% 55%) 50%, hsl(340 70% 55%) 100%);
   }
 
-  /* Legacy alias for accent-script (migration helper) — same as accent-serif */
+  /* Legacy alias — maps to gradient now */
+  .accent-serif {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--tb-accent)) 0%, hsl(16 85% 55%) 50%, hsl(340 70% 55%) 100%);
+    font-style: normal;
+  }
+
   .accent-script {
-    font-family: 'Libre Bodoni', Georgia, serif;
-    font-style: italic;
-    font-weight: 400;
-    color: hsl(var(--tb-accent));
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--tb-accent)) 0%, hsl(16 85% 55%) 50%, hsl(340 70% 55%) 100%);
+    font-style: normal;
   }
 
   /* ── Standardized label for KPI/stat cards ───── */
