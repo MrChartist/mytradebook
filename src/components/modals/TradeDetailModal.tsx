@@ -259,6 +259,22 @@ export function TradeDetailModal({ trade, open, onOpenChange, onDuplicate }: Tra
               isClosing={closeTrade.isPending}
               onShowReview={() => setShowReview(true)}
               onDeleteClick={() => setDeleteModalOpen(true)}
+              onDuplicate={onDuplicate ? () => {
+                const dupeData: Partial<Trade> = {
+                  symbol: trade.symbol,
+                  segment: trade.segment,
+                  trade_type: trade.trade_type,
+                  quantity: trade.quantity,
+                  stop_loss: trade.stop_loss,
+                  targets: trade.targets,
+                  timeframe: (trade as any).timeframe,
+                  holding_period: (trade as any).holding_period,
+                  notes: trade.notes,
+                  chart_link: (trade as any).chart_link,
+                };
+                onOpenChange(false);
+                onDuplicate(dupeData);
+              } : undefined}
             />
 
             <Separator />
