@@ -81,7 +81,7 @@ export function JournalKanbanBoard({
         return (
           <div
             key={column.id}
-            className={cn("glass-card border-t-4", column.color)}
+            className={cn("surface-card border-t-4", column.color)}
           >
             {/* Column Header */}
             <div className="p-4 border-b border-border">

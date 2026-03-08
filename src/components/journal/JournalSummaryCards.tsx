@@ -81,12 +81,12 @@ export function JournalSummaryCards({
           ) : (
             <Award className="w-4 h-4 text-warning" />
           )}
-          <p className="text-sm text-muted-foreground">
+          <p className="text-[12px] text-muted-foreground/60">
             {topMistake ? "Top Mistake" : "Best Pattern"}
           </p>
         </div>
-        <p className="text-2xl font-bold truncate">{topMistake || bestPattern || "N/A"}</p>
-        <p className={cn("text-xs mt-1", topMistake ? "text-loss" : "text-profit")}>
+        <p className="text-lg font-bold truncate">{topMistake || bestPattern || "N/A"}</p>
+        <p className={cn("text-[10px] mt-1", topMistake ? "text-loss" : "text-profit")}>
           {topMistake ? "Most impact" : "Highest win rate"}
         </p>
       </div>

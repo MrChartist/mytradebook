@@ -99,7 +99,7 @@ export function JournalPatternsAndMistakes({
       </div>
 
       {/* Common Mistakes */}
-      <div className="glass-card p-5">
+      <div className="surface-card p-5">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-loss" />

@@ -43,7 +43,7 @@ export function JournalEquityCurve({ data, isLoading }: JournalEquityCurveProps)
   }
 
   return (
-    <div className="glass-card p-5">
+    <div className="surface-card p-5">
       <h3 className="font-semibold mb-4">Equity Curve</h3>
       <div className="h-[250px]">
         <ResponsiveContainer width="100%" height="100%">

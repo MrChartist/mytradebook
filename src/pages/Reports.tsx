@@ -224,13 +224,13 @@ export default function Reports() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 animate-fade-in">
+      <div className="space-y-4 animate-fade-in">
         <PageHeader title="Weekly Reports" subtitle="Auto-generated performance summaries">
           <Skeleton className="h-10 w-40" />
         </PageHeader>
-        <div className="space-y-6">
+        <div className="space-y-4">
           {[1, 2].map((i) => (
-            <Skeleton key={i} className="h-64" />
+            <Skeleton key={i} className="h-64 rounded-[1.25rem]" />
           ))}
         </div>
       </div>

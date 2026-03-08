@@ -129,7 +129,7 @@ export function JournalPerformanceTables({
       </div>
 
       {/* Performance by Confidence */}
-      <div className="glass-card p-5">
+      <div className="surface-card p-5">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="w-4 h-4 text-primary" />
           <h3 className="font-semibold">Performance by Confidence</h3>

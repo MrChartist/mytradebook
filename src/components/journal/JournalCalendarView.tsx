@@ -299,7 +299,7 @@ export function JournalCalendarView({
       {calendarGrid}
 
       {/* Day Detail Sidebar */}
-      <div className="glass-card p-5 lg:w-80">
+      <div className="surface-card p-5 lg:w-80">
         <h4 className="font-semibold mb-4">
           {selectedDate ? `Trades on ${format(selectedDate, "MMM dd, yyyy")}` : "Select a date"}
         </h4>
