@@ -231,7 +231,7 @@
   .text-heading-sm { font-size: 1.125rem; line-height: 1.45; letter-spacing: -0.015em; font-weight: 600; font-family: 'Inter', sans-serif; }
   .text-heading { font-size: 1.375rem; line-height: 1.35; letter-spacing: -0.02em; font-weight: 600; font-family: 'Inter', sans-serif; }
   .text-heading-lg { font-size: 1.75rem; line-height: 1.25; letter-spacing: -0.025em; font-weight: 700; font-family: 'Inter', sans-serif; }
-  .text-display { font-size: 2.25rem; line-height: 1.15; letter-spacing: -0.028em; font-weight: 700; font-family: 'Sora', 'Inter', sans-serif; }
+  .text-display { font-size: 2.25rem; line-height: 1.15; letter-spacing: -0.028em; font-weight: 700; font-family: 'Space Grotesk', 'Inter', sans-serif; }
 
   /* ── Gradient text accent — replaces serif accent ── */
   .text-gradient {
