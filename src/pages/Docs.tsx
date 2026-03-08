@@ -364,7 +364,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       </div>
 
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-8">
-        <div className="flex gap-10">
+        <div className="flex gap-8">
           {/* Sidebar — desktop */}
           <TooltipProvider delayDuration={200}>
             <aside className={cn(
