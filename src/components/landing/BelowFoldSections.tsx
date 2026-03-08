@@ -337,7 +337,7 @@ export function IndianMarketsSection() {
 
             <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.97 }} className="inline-block">
               <Button size="lg" className="rounded-full bg-foreground hover:bg-foreground/90 text-background font-semibold shadow-lg h-13 px-8" onClick={() => navigate("/login?mode=signup")}>
-                Start Journaling <ArrowRight className="w-4 h-4 ml-1.5" />
+                Try It Free <ArrowRight className="w-4 h-4 ml-1.5" />
               </Button>
             </motion.div>
           </motion.div>
