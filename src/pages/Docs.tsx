@@ -2960,6 +2960,28 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Enable auto-sync (optional)", description: "Toggle 'Auto Sync Portfolio' in Dhan settings to automatically import executed orders and calculate P&L for closed positions.", detail: "Multiple API keys are supported with priority-based failover. If one key expires, the system falls back to the next active key." },
               ]} />
 
+              <ExpandableDetail title="Dhan Authentication Methods — Manual vs OAuth" icon={Shield} badge="Real Feature">
+                <p>Dhan offers two authentication methods, and TradeBook supports both. Choose based on your needs:</p>
+                <FeatureList items={[
+                  "Manual Access Token (24-hour) — Quick setup: paste a token from Dhan's API console. But tokens expire every 24 hours, requiring daily re-authentication. Good for testing or occasional use.",
+                  "OAuth Flow with API Key + Secret (12-month) — The recommended approach: enter your API Key and Secret, then complete the OAuth authorization flow. Tokens last 12 months and auto-refresh. Set-and-forget.",
+                  "Multiple API Keys — Pro users can configure multiple Dhan API keys with priority settings. If your primary key hits rate limits or expires, TradeBook automatically fails over to the backup.",
+                  "Token Expiry Detection — TradeBook monitors your token's validity and shows a warning in the header when expiry is approaching.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">For the OAuth flow, the /dhan-callback route uses a sessionless, popup-based flow to work around iframe and cross-tab session restrictions. If the popup doesn't appear, check your browser's popup blocker settings.</p>
+              </ExpandableDetail>
+
+              <ExpandableDetail title="What Dhan Integration Actually Syncs" icon={Layers} badge="Deep Dive">
+                <p>Here's exactly what data flows between TradeBook and your Dhan account:</p>
+                <FeatureList items={[
+                  "Live Prices — LTP, day high/low, volume, and change % for all instruments in your open positions, watchlists, and alerts.",
+                  "Portfolio Positions — Your current holdings sync automatically every 5 minutes. New positions appear without manual trade entry.",
+                  "Order Book (Read Only) — TradeBook reads your order book to match executed orders with logged trades. It does NOT place or cancel orders.",
+                  "What's NOT Synced — TradeBook never accesses your bank details, fund transfers, or personal KYC data.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Data sync is one-way for positions (Dhan → TradeBook). TradeBook analyzes and journals your trades but never modifies your broker account.</p>
+              </ExpandableDetail>
+
               <FeatureCard icon={LineChart} title="Dhan Broker Integration">
                 <p className="text-sm text-muted-foreground mb-3">Full-featured broker connection for seamless trading:</p>
                 <FeatureList items={[
