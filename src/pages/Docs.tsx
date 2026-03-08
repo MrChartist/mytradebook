@@ -253,7 +253,7 @@ function FeatureList({ items }: { items: string[] }) {
   return (
     <ul className="space-y-2.5 mt-4">
       {items.map((item) => (
-        <li key={item} className="flex items-start gap-2.5 text-[13px] text-muted-foreground leading-relaxed">
+        <li key={item} className="flex items-start gap-2.5 text-[15px] text-muted-foreground leading-relaxed">
           <ChevronRight className="w-3.5 h-3.5 text-primary mt-[2px] shrink-0" />
           <span>{item}</span>
         </li>
@@ -270,16 +270,16 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
       <div className="p-5 pb-3">
         <div className="flex items-center gap-2.5">
           <Icon className="w-4 h-4 text-primary shrink-0" />
-          <h4 className="text-sm font-semibold leading-tight">{title}</h4>
+          <h4 className="text-[15px] font-semibold leading-tight">{title}</h4>
           {badge && (
-            <span className="text-[9px] font-semibold tracking-wide uppercase px-1.5 py-0.5 rounded bg-primary/8 text-primary">
+            <span className="text-[10px] font-semibold tracking-wide uppercase px-1.5 py-0.5 rounded bg-primary/8 text-primary">
               {badge}
             </span>
           )}
         </div>
       </div>
       <div className="px-5 pb-5">
-        <div className="[&>p]:text-[13px] [&>p]:leading-[1.7] [&>p]:text-muted-foreground">{children}</div>
+        <div className="[&>p]:text-[15px] [&>p]:leading-[1.7] [&>p]:text-muted-foreground">{children}</div>
       </div>
     </div>
   );
@@ -293,8 +293,8 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
           <Play className="w-4 h-4 text-primary ml-0.5" />
         </div>
         <div>
-          <p className="text-[13px] font-medium text-foreground">{title}</p>
-          <span className="text-[11px] text-muted-foreground/60">{duration} · Coming Soon</span>
+          <p className="text-[15px] font-medium text-foreground">{title}</p>
+          <span className="text-[12px] text-muted-foreground/60">{duration} · Coming Soon</span>
         </div>
       </div>
     </div>
@@ -329,7 +329,7 @@ function SectionHeader({ id, title, description, icon: Icon }: {
           <span id={`copy-${id}`}>#</span>
         </button>
       </div>
-      <p className="text-[13.5px] text-muted-foreground leading-relaxed max-w-2xl">{description}</p>
+      <p className="text-[15px] text-muted-foreground leading-relaxed max-w-2xl">{description}</p>
     </div>
   );
 }
@@ -469,10 +469,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               {mode === "bw" ? "B&W" : "Color"}
             </button>
           </div>
-          <p className="text-[14px] text-muted-foreground leading-relaxed max-w-xl">
+          <p className="text-[15px] text-muted-foreground leading-relaxed max-w-xl">
             Complete guide to every TradeBook feature — from trade logging to advanced analytics.
           </p>
-          <div className="flex items-center gap-3 mt-3 text-[11px] text-muted-foreground/50">
+          <div className="flex items-center gap-3 mt-3 text-[12px] text-muted-foreground/50">
             <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~35 min read</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
             <span>Last updated: March 2026</span>
@@ -494,7 +494,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 {/* Header with collapse toggle */}
                 <div className={cn("flex items-center mb-3", sidebarCollapsed ? "justify-center" : "justify-between")}>
                   {!sidebarCollapsed && (
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50">Contents</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50">Contents</p>
                   )}
                   <button
                     onClick={toggleSidebar}
@@ -514,7 +514,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                         value={sidebarSearch}
                         onChange={(e) => setSidebarSearch(e.target.value)}
                         placeholder="Filter…"
-                        className="w-full h-7 pl-7 pr-2 rounded bg-muted/30 border border-border/30 text-[11px] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+                        className="w-full h-7 pl-7 pr-2 rounded bg-muted/30 border border-border/30 text-[12px] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
                       />
                     </div>
                   </div>
@@ -528,7 +528,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                       <div key={group.label}>
                          {gi > 0 && <div className="h-px bg-border/20 my-2" />}
                          {!sidebarCollapsed && (
-                           <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/40 px-2 pt-2 pb-1">{group.label}</p>
+                           <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/40 px-2 pt-2 pb-1">{group.label}</p>
                         )}
                         {groupSections.map((s) => {
                           const btn = (
@@ -536,7 +536,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                                key={s.id}
                                onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
                                className={cn(
-                                 "w-full flex items-center rounded text-[12px] transition-colors duration-150 text-left relative",
+                                 "w-full flex items-center rounded text-[13px] transition-colors duration-150 text-left relative",
                                  sidebarCollapsed ? "justify-center p-2" : "gap-2 px-2 py-[5px]",
                                  activeSection === s.id
                                    ? "text-foreground font-medium"
@@ -582,7 +582,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   key={s.id}
                   onClick={() => scrollTo(s.id)}
                   className={cn(
-                    "shrink-0 px-2.5 py-1 rounded text-[11px] font-medium transition-colors whitespace-nowrap",
+                    "shrink-0 px-2.5 py-1 rounded text-[12px] font-medium transition-colors whitespace-nowrap",
                     activeSection === s.id
                       ? "bg-foreground text-background"
                       : "text-muted-foreground/60 hover:text-foreground"
@@ -3372,13 +3372,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           {/* Right sidebar — On this page */}
           <aside className="hidden xl:block w-[180px] shrink-0 border-l border-border/30">
             <div className="sticky top-20 py-6 pl-5">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50 mb-3">On this page</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50 mb-3">On this page</p>
               <nav className="space-y-0.5">
                 {(SECTION_ANCHORS[activeSection] || []).map((anchor) => (
                   <button
                     key={anchor.id}
                     onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                    className="block w-full text-left text-[11px] text-muted-foreground/60 hover:text-foreground py-1 transition-colors duration-150 leading-snug"
+                    className="block w-full text-left text-[12px] text-muted-foreground/60 hover:text-foreground py-1 transition-colors duration-150 leading-snug"
                   >
                     {anchor.label}
                   </button>

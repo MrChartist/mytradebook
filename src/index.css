@@ -176,25 +176,25 @@
     @apply bg-background text-foreground antialiased;
     font-family: 'Source Sans 3', system-ui, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
-    font-size: 0.875rem; /* 14px base for app */
+    font-size: 1rem; /* 16px base for app */
     line-height: 1.6;
     letter-spacing: -0.006em;
   }
 
   /* ── Semantic typography classes ───────────────── */
-  .text-2xs   { font-size: 0.625rem;  line-height: 1.4; letter-spacing: 0.01em; }   /* 10px */
-  .text-caption { font-size: 0.6875rem; line-height: 1.5; letter-spacing: 0.005em; } /* 11px */
-  .text-body-sm { font-size: 0.8125rem; line-height: 1.55; letter-spacing: -0.003em; } /* 13px */
-  .text-body  { font-size: 0.875rem;  line-height: 1.6; letter-spacing: -0.006em; }  /* 14px */
-  .text-heading-sm { font-size: 1rem; line-height: 1.45; letter-spacing: -0.011em; font-weight: 600; } /* 16px */
-  .text-heading { font-size: 1.25rem; line-height: 1.35; letter-spacing: -0.017em; font-weight: 600; } /* 20px */
-  .text-heading-lg { font-size: 1.5rem; line-height: 1.25; letter-spacing: -0.022em; font-weight: 700; } /* 24px */
-  .text-display { font-size: 1.875rem; line-height: 1.15; letter-spacing: -0.025em; font-weight: 700; } /* 30px */
+  .text-2xs   { font-size: 0.6875rem; line-height: 1.4; letter-spacing: 0.01em; }   /* 11px */
+  .text-caption { font-size: 0.75rem;  line-height: 1.5; letter-spacing: 0.005em; } /* 12px */
+  .text-body-sm { font-size: 0.875rem; line-height: 1.55; letter-spacing: -0.003em; } /* 14px */
+  .text-body  { font-size: 1rem;      line-height: 1.6; letter-spacing: -0.006em; }  /* 16px */
+  .text-heading-sm { font-size: 1.125rem; line-height: 1.45; letter-spacing: -0.011em; font-weight: 600; } /* 18px */
+  .text-heading { font-size: 1.375rem; line-height: 1.35; letter-spacing: -0.017em; font-weight: 600; } /* 22px */
+  .text-heading-lg { font-size: 1.75rem; line-height: 1.25; letter-spacing: -0.022em; font-weight: 700; } /* 28px */
+  .text-display { font-size: 2.25rem; line-height: 1.15; letter-spacing: -0.025em; font-weight: 700; } /* 36px */
 
   /* ── Display heading (Libre Bodoni) — use sparingly ── */
   .text-display-serif {
     font-family: 'Libre Bodoni', Georgia, serif;
-    font-size: 1.875rem;
+    font-size: 2.25rem;
     line-height: 1.15;
     letter-spacing: -0.02em;
     font-weight: 700;
@@ -385,7 +385,7 @@
 
   /* Section divider for sidebar */
   .sidebar-section-label {
-    @apply px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/50;
+    @apply px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/50;
   }
 
   .nav-active-bar {

@@ -12,7 +12,7 @@ export function PageHeader({ title, subtitle, children }: PageHeaderProps) {
       <div className="space-y-0.5">
         <h1 className="text-xl lg:text-2xl font-semibold tracking-tight text-foreground">{title}</h1>
         {subtitle && (
-          <p className="text-[13px] text-muted-foreground leading-relaxed">{subtitle}</p>
+          <p className="text-[15px] text-muted-foreground leading-relaxed">{subtitle}</p>
         )}
       </div>
       {children && <div className="flex items-center gap-2 flex-wrap shrink-0">{children}</div>}
