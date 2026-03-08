@@ -2786,6 +2786,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="best-practice">
                 <p>Read your AI Coach feedback before taking the next trade. If the coach flagged "exited too early" on 3 consecutive trades, it's a signal to work on your trailing stop strategy.</p>
               </ProTip>
+
+              <ExpandableDetail title="How Trade Coach Connects with Other Features" icon={Layers} badge="Workflow">
+                <p>The AI Trade Coach integrates with several other TradeBook features to create a comprehensive review system:</p>
+                <FeatureList items={[
+                  "Post-Trade Review Modal → Coach feedback is displayed alongside your manual review notes. Both perspectives together give you a complete picture.",
+                  "Mistake Tags → If the coach identifies a pattern (e.g., 'SL too tight'), you can create a corresponding mistake tag and track its frequency in the Mistakes Review page.",
+                  "Analytics AI Insights → Coach feedback on individual trades feeds into the aggregate behavioral patterns surfaced in Analytics. If the coach says 'exited too early' on 10 trades, Analytics will detect the pattern and flag it.",
+                  "Journal → When you write your daily journal, reference your recent coach feedback. The best journal entries connect coach observations to specific rule changes.",
+                  "Trading Rules → If coach feedback keeps flagging the same issue, add a new Trading Rule to address it. 'Don't move SL until trade is +1R' becomes an enforceable checkpoint.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">The coach is most powerful when you treat its feedback as input to your overall improvement system — not as isolated comments on individual trades.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
