@@ -404,8 +404,8 @@ export default function IntegrationsSettings() {
                 </button>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="ai-api-key">
+              <div className="space-y-1.5">
+                <Label htmlFor="ai-api-key" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">
                   {aiProvider === "gemini" ? "Gemini API Key" : "OpenAI API Key"}
                 </Label>
                 <div className="relative">
@@ -414,7 +414,7 @@ export default function IntegrationsSettings() {
                     type={showAiKey ? "text" : "password"}
                     value={aiApiKey}
                     onChange={(e) => setAiApiKey(e.target.value)}
-                    className="bg-accent border-border pr-10"
+                    className="bg-muted/20 border-border/20 pr-10 h-9 text-[13px] font-mono focus:border-primary/30"
                     placeholder={aiProvider === "gemini" ? "AIza..." : "sk-..."}
                   />
                   <Button
