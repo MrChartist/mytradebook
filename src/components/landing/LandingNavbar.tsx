@@ -63,14 +63,29 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
             : "bg-transparent border-transparent shadow-none"
         )}
       >
-        {/* Logo + context */}
-        <motion.button
-          onClick={() => navigate("/")}
-          className="flex items-center gap-2.5 shrink-0"
-          whileHover={{ scale: 1.03 }}
-        >
-          <img src={landingLogo} alt="TradeBook" className="h-8 object-contain" />
-        </motion.button>
+        {/* Logo + breadcrumb */}
+        <div className="flex items-center gap-2 shrink-0">
+          <motion.button
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2.5"
+            whileHover={{ scale: 1.03 }}
+          >
+            <img src={landingLogo} alt="TradeBook" className="h-8 object-contain" />
+          </motion.button>
+          {activePage === "docs" && (
+            <div className="hidden sm:flex items-center gap-1.5 text-[12px] text-muted-foreground">
+              <ChevronRight className="w-3 h-3 text-muted-foreground/50" />
+              <button
+                onClick={() => navigate("/")}
+                className="hover:text-foreground transition-colors font-medium"
+              >
+                Home
+              </button>
+              <ChevronRight className="w-3 h-3 text-muted-foreground/50" />
+              <span className="text-foreground font-semibold">Docs</span>
+            </div>
+          )}
+        </div>
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-0.5 text-sm">
