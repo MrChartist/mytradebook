@@ -85,8 +85,8 @@ export function HowItWorksSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>How It Works</SectionBadge>
-          <h2 className="font-display text-4xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight">Three steps to{" "}<span className="accent-script">mastery</span></h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-lg">From first trade to consistent edge — in minutes.</p>
+          <h2 className="font-display text-[2rem] lg:text-[3rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">Three steps to{" "}<span className="accent-script">mastery</span></h2>
+          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-base leading-[1.65]">From first trade to consistent edge — in minutes.</p>
         </motion.div>
 
         {/* Timeline steps */}
@@ -141,8 +141,8 @@ export function HowItWorksSection() {
                         Step {item.step}
                       </span>
                     </div>
-                    <h3 className="text-xl font-bold mb-2 tracking-tight">{item.title}</h3>
-                    <p className="text-[15px] text-muted-foreground leading-relaxed">{item.desc}</p>
+                    <h3 className="text-xl font-semibold mb-2 tracking-[-0.015em]">{item.title}</h3>
+                    <p className="text-[15px] text-muted-foreground leading-[1.65]">{item.desc}</p>
                   </motion.div>
                 </motion.div>
               );
@@ -152,7 +152,7 @@ export function HowItWorksSection() {
 
         {/* CTA */}
         <motion.div variants={fadeUp} className="text-center mt-20">
-          <p className="text-muted-foreground mb-5 text-base">Ready to start? Takes less than 60 seconds.</p>
+          <p className="text-muted-foreground mb-5 text-[15px] tracking-[-0.006em]">Ready to start? Takes less than 60 seconds.</p>
           <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.97 }} className="inline-block">
             <Button size="lg" className="h-14 px-10 gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-wide" onClick={() => navigate("/login?mode=signup")}>
               Create Free Account <ArrowRight className="w-4 h-4" />
@@ -175,10 +175,10 @@ export function PricingSection() {
       <MotionSection className="max-w-5xl mx-auto px-6 lg:px-8">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>Pricing</SectionBadge>
-          <h2 className="font-display text-3xl lg:text-5xl font-bold mb-4 leading-[1.1] tracking-tight">
+          <h2 className="font-display text-[1.875rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.1] tracking-[-0.02em]">
             Simple,{" "}<span className="accent-script">transparent</span>{" "}pricing
           </h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-base lg:text-lg leading-relaxed">
+          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-base leading-[1.65]">
             Everything free during beta. No credit card. No catch.
           </p>
         </motion.div>
@@ -200,14 +200,14 @@ export function PricingSection() {
                 <Zap className="w-3 h-3" /> Currently Active
               </div>
 
-              <h3 className="text-xl font-bold tracking-tight mb-3">Free Beta</h3>
+              <h3 className="text-xl font-semibold tracking-[-0.015em] mb-3">Free Beta</h3>
 
               <div className="flex items-baseline gap-2 mb-1.5">
                 <span className="text-base text-muted-foreground/40 line-through font-mono">₹499</span>
-                <span className="text-4xl font-extrabold font-mono tracking-tight">₹0</span>
-                <span className="text-muted-foreground text-[13px]">/month</span>
+                <span className="text-4xl font-extrabold font-mono tracking-[-0.03em]">₹0</span>
+                <span className="text-muted-foreground text-[13px] tracking-[-0.006em]">/month</span>
               </div>
-              <p className="text-[13px] text-muted-foreground/70 mb-6 leading-relaxed">Full access to every feature. Free while we're in beta.</p>
+              <p className="text-[13px] text-muted-foreground/70 mb-6 leading-[1.6]">Full access to every feature. Free while we're in beta.</p>
 
               <ul className="space-y-2.5 flex-1 mb-6">
                 {[
@@ -221,9 +221,9 @@ export function PricingSection() {
                   "Weekly performance reports",
                   "Watchlists & alerts",
                 ].map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-[13px] leading-relaxed">
+                  <li key={f} className="flex items-start gap-2 text-[13px] leading-[1.6]">
                     <CheckCircle2 className="w-4 h-4 text-profit shrink-0 mt-[1px]" />
-                    <span>{f}</span>
+                    <span className="tracking-[-0.006em]">{f}</span>
                   </li>
                 ))}
               </ul>
@@ -252,13 +252,13 @@ export function PricingSection() {
                 <Crown className="w-3 h-3" /> Coming Soon
               </div>
 
-              <h3 className="text-xl font-bold tracking-tight mb-3">Pro</h3>
+              <h3 className="text-xl font-semibold tracking-[-0.015em] mb-3">Pro</h3>
 
               <div className="flex items-baseline gap-2 mb-1.5">
-                <span className="text-4xl font-extrabold font-mono tracking-tight text-muted-foreground/30">₹499</span>
-                <span className="text-muted-foreground text-[13px]">/month</span>
+                <span className="text-4xl font-extrabold font-mono tracking-[-0.03em] text-muted-foreground/30">₹499</span>
+                <span className="text-muted-foreground text-[13px] tracking-[-0.006em]">/month</span>
               </div>
-              <p className="text-[13px] text-muted-foreground/70 mb-6 leading-relaxed">Priority support, advanced AI, and team features.</p>
+              <p className="text-[13px] text-muted-foreground/70 mb-6 leading-[1.6]">Priority support, advanced AI, and team features.</p>
 
               <ul className="space-y-2.5 flex-1 mb-6">
                 {[
@@ -268,9 +268,9 @@ export function PricingSection() {
                   "Team & shared workspaces",
                   "Custom report exports",
                 ].map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-[13px] leading-relaxed text-muted-foreground/60">
+                  <li key={f} className="flex items-start gap-2 text-[13px] leading-[1.6] text-muted-foreground/60">
                     <Lock className="w-4 h-4 text-muted-foreground/20 shrink-0 mt-[1px]" />
-                    <span>{f}</span>
+                    <span className="tracking-[-0.006em]">{f}</span>
                   </li>
                 ))}
               </ul>
@@ -289,7 +289,7 @@ export function PricingSection() {
 
         {/* Comparison table */}
         <motion.div variants={fadeUp} className="max-w-3xl mx-auto mb-12">
-          <h3 className="text-base font-bold text-center mb-5 tracking-tight">How we compare</h3>
+          <h3 className="text-base font-semibold text-center mb-5 tracking-[-0.015em]">How we compare</h3>
           <div className="rounded-xl border border-border/20 bg-card/50 overflow-hidden" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}>
             <div className="grid grid-cols-3 gap-0 border-b border-border/15 px-5 py-3 bg-muted/15">
               <span className="text-[13px] font-bold text-foreground">Feature</span>
@@ -328,10 +328,10 @@ export function TestimonialsSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>Testimonials</SectionBadge>
-          <h2 className="font-display text-4xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight">
+          <h2 className="font-display text-[2rem] lg:text-[3rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">
             Trusted by{" "}<span className="accent-script">real traders</span>
           </h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-lg">Here's what traders across India are saying.</p>
+          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-base leading-[1.65]">Here's what traders across India are saying.</p>
         </motion.div>
 
         {/* Hero testimonial — dark card */}
@@ -342,7 +342,7 @@ export function TestimonialsSection() {
             transition={{ duration: 0.3 }}
           >
             <Quote className="w-10 h-10 text-primary/15 mb-6" />
-            <p className="text-xl md:text-2xl leading-[1.7] mb-8 font-medium max-w-3xl">
+            <p className="text-xl md:text-2xl leading-[1.7] mb-8 font-medium max-w-3xl tracking-[-0.01em]">
               "<HighlightedQuote testimonial={featured} />"
             </p>
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
@@ -375,7 +375,7 @@ export function TestimonialsSection() {
                 transition={{ duration: 0.3 }}
               >
                 <Quote className="w-6 h-6 text-primary/10 mb-3" />
-                <p className="text-[15px] text-muted-foreground leading-relaxed flex-1 mb-5">
+                <p className="text-[15px] text-muted-foreground leading-[1.65] flex-1 mb-5 tracking-[-0.006em]">
                   "<HighlightedQuote testimonial={t} />"
                 </p>
                 <div className="flex items-center gap-1 mb-3">
@@ -421,10 +421,10 @@ export function IndianMarketsSection() {
           {/* Text side */}
           <motion.div variants={fadeUp}>
             <SectionBadge>Made in India</SectionBadge>
-            <h2 className="font-display text-4xl lg:text-5xl font-bold mb-6 leading-[1.1] tracking-tight">
+            <h2 className="font-display text-[2rem] lg:text-[2.75rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">
               Built for{" "}<span className="accent-script">Indian</span>{" "}markets
             </h2>
-            <p className="text-muted-foreground text-[15px] leading-[1.7] mb-8">
+            <p className="text-muted-foreground text-[15px] leading-[1.7] mb-8 tracking-[-0.006em]">
               Unlike generic journals, TradeBook understands Indian market structure — segments, lot sizes, INR formatting, and trading hours.
             </p>
             <ul className="space-y-2 mb-10">
@@ -434,7 +434,7 @@ export function IndianMarketsSection() {
                 "Dhan broker auto-sync",
                 "Market hours & holiday awareness",
               ].map((item) => (
-                <li key={item} className="flex items-center gap-2.5 text-[15px] text-foreground/85">
+                <li key={item} className="flex items-center gap-2.5 text-[15px] text-foreground/85 tracking-[-0.006em]">
                   <CheckCircle2 className="w-4 h-4 text-profit shrink-0" />
                   <span>{item}</span>
                 </li>
@@ -523,10 +523,10 @@ export function FAQSection() {
       <MotionSection className="max-w-2xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>FAQ</SectionBadge>
-          <h2 className="font-display text-4xl lg:text-6xl font-bold mb-5 leading-[1.1] tracking-tight">
+          <h2 className="font-display text-[2rem] lg:text-[3rem] font-bold mb-5 leading-[1.1] tracking-[-0.02em]">
             Got{" "}<span className="accent-script">questions</span>?
           </h2>
-          <p className="text-muted-foreground text-lg">Everything you need to know about TradeBook.</p>
+          <p className="text-muted-foreground text-[15px] lg:text-base leading-[1.65]">Everything you need to know about TradeBook.</p>
         </motion.div>
 
         <motion.div variants={fadeUp}>
@@ -537,7 +537,7 @@ export function FAQSection() {
                 value={`faq-${i}`}
                 className="rounded-xl border border-border/30 bg-card/70 px-6 data-[state=open]:border-primary/20 data-[state=open]:shadow-sm transition-colors"
               >
-                <AccordionTrigger className="text-left text-[15px] font-semibold hover:no-underline py-4">
+                <AccordionTrigger className="text-left text-[15px] font-semibold hover:no-underline py-4 tracking-[-0.01em]">
                   <span className="flex items-center gap-3">
                     <span className="text-[10px] font-mono text-muted-foreground/50 bg-muted/20 rounded-md px-1.5 py-0.5">
                       {String(i + 1).padStart(2, "0")}
@@ -545,7 +545,7 @@ export function FAQSection() {
                     {faq.q}
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="text-[15px] text-muted-foreground leading-[1.7] pl-8 pb-5">
+                <AccordionContent className="text-[15px] text-muted-foreground leading-[1.7] pl-8 pb-5 tracking-[-0.006em]">
                   {faq.a}
                 </AccordionContent>
               </AccordionItem>
@@ -557,10 +557,10 @@ export function FAQSection() {
         <motion.div variants={fadeUp} className="mt-14">
           <div className="rounded-2xl border border-border/30 bg-card/70 p-8 flex flex-col sm:flex-row items-center justify-between gap-5" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
             <div>
-              <h3 className="text-base font-bold mb-1 flex items-center gap-2">
+              <h3 className="text-base font-semibold mb-1 flex items-center gap-2 tracking-[-0.015em]">
                 <BookOpen className="w-4 h-4 text-primary" />Want to dive deeper?
               </h3>
-              <p className="text-sm text-muted-foreground">Explore our docs with visual guides and tutorials.</p>
+              <p className="text-sm text-muted-foreground leading-[1.6]">Explore our docs with visual guides and tutorials.</p>
             </div>
             <Button variant="outline" onClick={() => navigate("/docs")} className="gap-2 shrink-0 rounded-full">
               <BookOpen className="w-4 h-4" />Browse Docs
@@ -589,21 +589,21 @@ export function FinalCTASection() {
           <span className="text-sm font-medium text-muted-foreground">1,200+ traders · 42,000+ trades</span>
         </motion.div>
 
-        <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-6xl font-bold leading-[1.1] tracking-tight mb-3">
+        <motion.h2 variants={fadeUp} className="font-display text-[2rem] lg:text-[3rem] font-bold leading-[1.1] tracking-[-0.02em] mb-3">
           Stop losing money to
         </motion.h2>
-        <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-6xl font-bold leading-[1.1] tracking-tight mb-8">
+        <motion.h2 variants={fadeUp} className="font-display text-[2rem] lg:text-[3rem] font-bold leading-[1.1] tracking-[-0.02em] mb-8">
           <span className="accent-script">undisciplined</span> trading
         </motion.h2>
 
-        <motion.p variants={fadeUp} className="text-xl text-muted-foreground mb-12 max-w-xl mx-auto leading-relaxed">
+        <motion.p variants={fadeUp} className="text-lg text-muted-foreground mb-12 max-w-xl mx-auto leading-[1.65] tracking-[-0.008em]">
           Join traders who journal, analyze, and compound their edge — every single day.
         </motion.p>
 
         <motion.div variants={fadeUp} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
           <Button
             size="lg"
-            className="h-16 px-12 text-lg gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-wide"
+            className="h-16 px-12 text-[17px] gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-[-0.01em]"
             onClick={() => navigate("/login?mode=signup")}
           >
             Get Started — It's Free <ArrowRight className="w-4 h-4" />
@@ -644,7 +644,7 @@ export function FooterSection() {
               <img src="/favicon-32x32.png" alt="TradeBook" className="h-7 object-contain" loading="lazy" />
               <span className="text-lg font-bold tracking-tight text-foreground">TradeBook</span>
             </div>
-            <p className="text-[14px] text-muted-foreground leading-relaxed mb-6 max-w-xs">
+            <p className="text-[14px] text-muted-foreground leading-[1.65] mb-6 max-w-xs tracking-[-0.006em]">
               The trading journal built for Indian markets. Track, analyze, and improve your edge.
             </p>
 
