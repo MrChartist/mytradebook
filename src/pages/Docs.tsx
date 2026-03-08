@@ -1164,8 +1164,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip>
                 <p>Link your studies to trades when you execute them. This builds a powerful feedback loop — you can see which of your research ideas actually led to profitable trades.</p>
               </ProTip>
+              <QuickNav items={[
+                { label: "Study Workflow", id: "st-workflow" },
+                { label: "Pattern Tagging", id: "st-patterns" },
+                { label: "Research Tools", id: "st-tools" },
+              ]} />
               <StudyCardMockup />
-              <SubTopic title="Study Workflow" description="Organize studies by category and track their lifecycle." />
+              <SubTopic title="Study Workflow" description="Organize studies by category and track their lifecycle." id="st-workflow" />
               <FeatureCard icon={Layers} title="Categories & Status Workflow">
                 <p className="text-sm text-muted-foreground mb-3">Organize studies by type and track their lifecycle:</p>
                 <FeatureList items={[
