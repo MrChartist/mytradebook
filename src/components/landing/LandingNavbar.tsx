@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils";
 interface LandingNavbarProps {
   activePage?: "home" | "docs";
   isInsideApp?: boolean;
-  /** Extra right-side content (e.g. Docs B&W toggle) */
   extraRight?: React.ReactNode;
 }
 
@@ -53,10 +52,10 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out border-b",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out",
         scrolled
-          ? "bg-card/90 backdrop-blur-xl border-border/40 shadow-[0_1px_12px_-4px_rgba(0,0,0,0.1)]"
-          : "bg-transparent backdrop-blur-none border-transparent shadow-none"
+          ? "bg-background/80 backdrop-blur-xl border-b border-border/40 shadow-[0_1px_8px_-3px_rgba(0,0,0,0.08)]"
+          : "bg-transparent backdrop-blur-none border-b border-transparent"
       )}
       aria-label="Main navigation"
     >
@@ -86,7 +85,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
         </div>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-0.5 text-sm">
+        <div className="hidden md:flex items-center gap-1 text-sm">
           {NAV_LINKS.map((item) => {
             const isActive = item.page === activePage;
             return (
@@ -94,20 +93,19 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
                 key={item.label}
                 onClick={() => handleNavClick(item.href)}
                 className={cn(
-                  "relative px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors duration-200",
+                  "relative px-4 py-1.5 rounded-full text-[13px] font-medium transition-colors duration-200",
                   isActive
                     ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
               >
                 {item.label}
-                {/* Active underline bar */}
                 {isActive && (
                   <motion.span
                     layoutId="nav-underline"
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-[2px] rounded-full bg-[hsl(var(--tb-accent))]"
+                    className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-5 h-[2px] rounded-full bg-foreground"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}
@@ -120,7 +118,6 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
         <div className="flex items-center gap-2">
           {extraRight}
           <ThemeToggle />
-          {/* Mobile toggle */}
           <button
             className="md:hidden w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted/60 transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -132,7 +129,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
             <Button
               size="sm"
               onClick={() => navigate("/dashboard")}
-              className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 h-8 text-[13px] font-semibold shadow-[0_6px_16px_hsl(var(--tb-accent)/0.35)]"
+              className="bg-foreground hover:bg-foreground/90 text-background rounded-full px-4 h-8 text-[13px] font-semibold"
             >
               Dashboard
             </Button>
@@ -150,7 +147,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
                 <Button
                   size="sm"
                   onClick={() => navigate("/login?mode=signup")}
-                  className="bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full px-4 h-8 text-[13px] font-semibold shadow-[0_6px_16px_hsl(var(--tb-accent)/0.35)] gap-1.5"
+                  className="bg-foreground hover:bg-foreground/90 text-background rounded-full px-4 h-8 text-[13px] font-semibold gap-1.5"
                 >
                   Get Started
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -169,7 +166,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="md:hidden overflow-hidden border-t border-border/30 bg-card/95 backdrop-blur-xl"
+            className="md:hidden overflow-hidden border-t border-border/30 bg-background/95 backdrop-blur-xl"
           >
             <div className="px-4 py-3 space-y-0.5">
               {NAV_LINKS.map((item) => {
@@ -182,11 +179,11 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
                     className={cn(
                       "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150",
                       isActive
-                        ? "bg-[hsl(var(--tb-accent)/0.08)] text-foreground border-l-[3px] border-l-[hsl(var(--tb-accent))]"
-                        : "text-foreground/70 hover:bg-muted/50 hover:text-foreground"
+                        ? "bg-foreground/5 text-foreground border-l-[3px] border-l-foreground"
+                        : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                     )}
                   >
-                    <Icon className="w-4 h-4 text-muted-foreground" />
+                    <Icon className="w-4 h-4" />
                     {item.label}
                   </button>
                 );
