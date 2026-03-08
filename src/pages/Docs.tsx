@@ -995,6 +995,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Cancelled — trade idea abandoned before entry",
                 ]} />
                 <div className="mt-4"><TradeStatusLifecycleMockup /></div>
+                <MockupCaption>Planned → Open → Closed is the standard flow. Cancelled trades are excluded from all P&L calculations and analytics.</MockupCaption>
               </FeatureCard>
 
               <ExpandableDetail title="Understanding Trade Statuses" icon={Layers} badge="Deep Dive">
