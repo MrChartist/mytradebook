@@ -203,18 +203,18 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
    ────────────────────────────────────────────── */
 export function InteractiveMockup({ children, label, className }: { children: ReactNode; label?: string; className?: string }) {
   return (
-    <div className={cn("rounded-lg border border-border/40 overflow-hidden my-5", className)}>
+    <div className={cn("rounded-xl border border-border/30 overflow-hidden my-6", className)}>
       {label && (
-        <div className="flex items-center gap-1.5 px-3 py-1.5 border-b border-border/30 bg-muted/20">
+        <div className="flex items-center gap-1.5 px-4 py-2 border-b border-border/20 bg-muted/10">
           <div className="flex items-center gap-1">
-            <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/15" />
-            <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/15" />
-            <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/15" />
+            <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/12" />
+            <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/12" />
+            <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/12" />
           </div>
-          <span className="text-[10px] font-medium text-muted-foreground/40 ml-1 tracking-wide uppercase">{label}</span>
+          <span className="text-[11px] font-medium text-muted-foreground/35 ml-1.5 tracking-wide uppercase">{label}</span>
         </div>
       )}
-      <div className="p-4 md:p-5 bg-muted/5">
+      <div className="p-5 md:p-6 bg-muted/[0.03]">
         {children}
       </div>
     </div>

@@ -254,7 +254,7 @@ function FeatureList({ items }: { items: string[] }) {
     <ul className="space-y-2.5 mt-4">
       {items.map((item) => (
         <li key={item} className="flex items-start gap-2.5 text-[15px] text-muted-foreground leading-relaxed">
-          <ChevronRight className="w-3.5 h-3.5 text-primary mt-[2px] shrink-0" />
+          <ChevronRight className="w-3.5 h-3.5 text-primary mt-[3px] shrink-0" />
           <span>{item}</span>
         </li>
       ))}
@@ -266,10 +266,12 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
 }) {
   return (
-    <div className="group rounded-lg border border-border/40 bg-card relative overflow-hidden transition-colors duration-200 hover:border-border/60">
+    <div className="group rounded-xl border border-border/40 bg-card relative overflow-hidden transition-colors duration-200 hover:border-border/60 mt-5">
       <div className="p-5 pb-3">
         <div className="flex items-center gap-2.5">
-          <Icon className="w-4 h-4 text-primary shrink-0" />
+          <div className="w-7 h-7 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
+            <Icon className="w-3.5 h-3.5 text-primary" />
+          </div>
           <h4 className="text-[15px] font-semibold leading-tight">{title}</h4>
           {badge && (
             <span className="text-[10px] font-semibold tracking-wide uppercase px-1.5 py-0.5 rounded bg-primary/8 text-primary">
@@ -287,9 +289,9 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
 
 function VideoPlaceholder({ title, duration }: { title: string; duration: string }) {
   return (
-    <div className="my-5 rounded-lg border border-border/40 bg-muted/20 overflow-hidden group cursor-pointer hover:border-border/60 transition-colors duration-200">
-      <div className="flex items-center gap-3 px-4 py-6">
-        <div className="w-10 h-10 rounded-full bg-primary/8 border border-primary/15 flex items-center justify-center shrink-0">
+    <div className="my-6 rounded-xl border border-border/40 bg-muted/15 overflow-hidden group cursor-pointer hover:border-border/60 transition-colors duration-200">
+      <div className="flex items-center gap-4 px-5 py-6">
+        <div className="w-11 h-11 rounded-full bg-primary/8 border border-primary/15 flex items-center justify-center shrink-0 group-hover:bg-primary/12 transition-colors">
           <Play className="w-4 h-4 text-primary ml-0.5" />
         </div>
         <div>
@@ -302,7 +304,7 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
 }
 
 function SectionDivider() {
-  return <div className="h-px bg-border/30 my-2" />;
+  return <div className="h-px bg-gradient-to-r from-transparent via-border/40 to-transparent my-4" />;
 }
 
 function SectionHeader({ id, title, description, icon: Icon }: {
@@ -317,19 +319,22 @@ function SectionHeader({ id, title, description, icon: Icon }: {
   }, [id]);
 
   return (
-    <div id={id} className="scroll-mt-24 mb-6 pb-5 border-b border-border/30 group">
-      <div className="flex items-center gap-2 mb-2">
-        <h2 className="font-display text-xl font-bold tracking-tight leading-tight">{title}</h2>
+    <div id={id} className="scroll-mt-24 mb-6 group">
+      <div className="flex items-center gap-2.5 mb-3">
+        <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
+          <Icon className="w-4 h-4 text-primary" />
+        </div>
+        <h2 className="font-display text-[1.35rem] font-bold tracking-tight leading-tight">{title}</h2>
         <button
           onClick={copyLink}
-          className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 p-1 rounded text-muted-foreground/40 hover:text-primary transition-all text-[11px] font-mono"
+          className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 p-1 rounded text-muted-foreground/40 hover:text-primary transition-all text-[12px] font-mono"
           aria-label={`Copy link to ${title}`}
           title="Copy section link"
         >
           <span id={`copy-${id}`}>#</span>
         </button>
       </div>
-      <p className="text-[15px] text-muted-foreground leading-relaxed max-w-2xl">{description}</p>
+      <p className="text-[15px] text-muted-foreground leading-relaxed max-w-2xl pl-[42px]">{description}</p>
     </div>
   );
 }
@@ -452,14 +457,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       <LandingNavbar activePage="docs" isInsideApp={isInsideApp} />
 
       {/* Docs Header */}
-      <div className={cn("pt-20 border-b border-border/40", isInsideApp && "border-border/20")}>
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-8 py-8 lg:py-10">
-          <div className="flex items-center gap-3 mb-3">
-            <h1 className="font-display text-2xl lg:text-[1.7rem] font-bold tracking-tight">Documentation</h1>
+      <div className={cn("pt-20 border-b border-border/30", isInsideApp && "border-border/20")}>
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-8 py-10 lg:py-12">
+          <div className="flex items-center gap-2 mb-1">
+            <p className="text-[12px] font-medium text-muted-foreground/50 uppercase tracking-[0.08em]">TradeBook</p>
+            <ChevronRight className="w-3 h-3 text-muted-foreground/30" />
+            <p className="text-[12px] font-medium text-foreground/70 uppercase tracking-[0.08em]">Docs</p>
+          </div>
+          <div className="flex items-center gap-3 mt-3 mb-3">
+            <h1 className="font-display text-[1.75rem] lg:text-[2rem] font-bold tracking-tight">Documentation</h1>
             <button
               onClick={toggle}
               className={cn(
-                "inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-semibold transition-all border",
+                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all border",
                 mode === "bw"
                   ? "bg-foreground text-background border-foreground"
                   : "bg-muted/40 text-muted-foreground/60 border-border/30 hover:border-border/50"
@@ -487,18 +497,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           {/* Left Sidebar — desktop */}
           <TooltipProvider delayDuration={200}>
             <aside className={cn(
-              "hidden lg:block shrink-0 transition-all duration-300 border-r border-border/30",
-              sidebarCollapsed ? "w-14" : "w-[220px]"
+              "hidden lg:block shrink-0 transition-all duration-300 border-r border-border/20",
+              sidebarCollapsed ? "w-14" : "w-[240px]"
             )}>
-              <div className="sticky top-20 py-6 pr-4 pl-4">
+              <div className="sticky top-20 py-6 pr-5 pl-5">
                 {/* Header with collapse toggle */}
-                <div className={cn("flex items-center mb-3", sidebarCollapsed ? "justify-center" : "justify-between")}>
+                <div className={cn("flex items-center mb-4", sidebarCollapsed ? "justify-center" : "justify-between")}>
                   {!sidebarCollapsed && (
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50">Contents</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/40">Navigation</p>
                   )}
                   <button
                     onClick={toggleSidebar}
-                    className="p-1 rounded text-muted-foreground/50 hover:text-foreground hover:bg-muted/40 transition-colors"
+                    className="p-1.5 rounded-md text-muted-foreground/40 hover:text-foreground hover:bg-muted/40 transition-colors"
                     aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
                   >
                     {sidebarCollapsed ? <PanelLeftOpen className="w-3.5 h-3.5" /> : <PanelLeftClose className="w-3.5 h-3.5" />}
@@ -506,51 +516,52 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
                 {/* Search filter */}
                 {!sidebarCollapsed && (
-                  <div className="mb-3">
+                  <div className="mb-4">
                     <div className="relative">
-                      <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground/40" />
+                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/30" />
                       <input
                         type="text"
                         value={sidebarSearch}
                         onChange={(e) => setSidebarSearch(e.target.value)}
-                        placeholder="Filter…"
-                        className="w-full h-7 pl-7 pr-2 rounded bg-muted/30 border border-border/30 text-[12px] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+                        placeholder="Search docs…"
+                        className="w-full h-8 pl-8 pr-3 rounded-lg bg-muted/20 border border-border/20 text-[13px] text-foreground placeholder:text-muted-foreground/35 focus:outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary/20 transition-all"
                       />
                     </div>
                   </div>
                 )}
-                <ScrollArea className="h-[calc(100vh-10rem)]">
+                <ScrollArea className="h-[calc(100vh-11rem)]">
                   <nav>
                     {sidebarGroups.map((group, gi) => {
                       const groupSections = filteredSections.filter((s) => group.ids.includes(s.id));
                       if (groupSections.length === 0) return null;
                       return (
                       <div key={group.label}>
-                         {gi > 0 && <div className="h-px bg-border/20 my-2" />}
+                         {gi > 0 && <div className="h-px bg-border/15 my-3" />}
                          {!sidebarCollapsed && (
-                           <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/40 px-2 pt-2 pb-1">{group.label}</p>
+                           <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground/35 px-2.5 pt-2 pb-1.5">{group.label}</p>
                         )}
                         {groupSections.map((s) => {
+                          const isActive = activeSection === s.id;
                           const btn = (
                              <button
                                key={s.id}
                                onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
                                className={cn(
-                                 "w-full flex items-center rounded text-[13px] transition-colors duration-150 text-left relative",
-                                 sidebarCollapsed ? "justify-center p-2" : "gap-2 px-2 py-[5px]",
-                                 activeSection === s.id
-                                   ? "text-foreground font-medium"
-                                   : "text-muted-foreground/60 hover:text-foreground"
+                                 "w-full flex items-center rounded-lg text-[13px] transition-all duration-150 text-left relative",
+                                 sidebarCollapsed ? "justify-center p-2" : "gap-2.5 px-2.5 py-[7px]",
+                                 isActive
+                                   ? "text-foreground font-medium bg-muted/50"
+                                   : "text-muted-foreground/55 hover:text-foreground hover:bg-muted/25"
                                )}
                              >
-                               {activeSection === s.id && !sidebarCollapsed && (
+                               {isActive && !sidebarCollapsed && (
                                  <motion.div
                                    layoutId="docs-active-pill"
-                                   className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 rounded-full bg-primary"
+                                   className="absolute left-0 top-1/2 -translate-y-1/2 w-[2.5px] h-5 rounded-full bg-primary"
                                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
                                  />
                                )}
-                               <s.icon className="w-3.5 h-3.5 shrink-0" />
+                               <s.icon className={cn("w-4 h-4 shrink-0", isActive ? "text-primary" : "")} />
                                {!sidebarCollapsed && <span className="truncate">{s.label}</span>}
                              </button>
                           );
@@ -595,7 +606,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </nav>
 
           {/* Main content */}
-          <main className="flex-1 min-w-0 max-w-3xl px-6 lg:px-10 py-8 lg:py-10 space-y-16 pt-14 lg:pt-8">
+          <main className="flex-1 min-w-0 max-w-[740px] px-6 lg:px-12 py-8 lg:py-10 space-y-20 pt-14 lg:pt-8">
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
@@ -3370,15 +3381,15 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </main>
 
           {/* Right sidebar — On this page */}
-          <aside className="hidden xl:block w-[180px] shrink-0 border-l border-border/30">
-            <div className="sticky top-20 py-6 pl-5">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50 mb-3">On this page</p>
-              <nav className="space-y-0.5">
+          <aside className="hidden xl:block w-[190px] shrink-0 border-l border-border/15">
+            <div className="sticky top-20 py-8 pl-6">
+              <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground/40 mb-4">On this page</p>
+              <nav className="space-y-1 border-l border-border/20 pl-3">
                 {(SECTION_ANCHORS[activeSection] || []).map((anchor) => (
                   <button
                     key={anchor.id}
                     onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                    className="block w-full text-left text-[12px] text-muted-foreground/60 hover:text-foreground py-1 transition-colors duration-150 leading-snug"
+                    className="block w-full text-left text-[13px] text-muted-foreground/50 hover:text-foreground py-1.5 transition-colors duration-150 leading-snug hover:border-l-2 hover:border-primary hover:-ml-[13px] hover:pl-[11px]"
                   >
                     {anchor.label}
                   </button>
@@ -3397,10 +3408,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-6 right-6 z-50 w-9 h-9 rounded-lg bg-card border border-border/50 shadow-sm flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-xl bg-card border border-border/40 shadow-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-border/60 transition-all"
             aria-label="Back to top"
           >
-            <ArrowUpRight className="w-3.5 h-3.5 -rotate-45" />
+            <ArrowUpRight className="w-4 h-4 -rotate-45" />
           </motion.button>
         )}
       </AnimatePresence>
@@ -3426,7 +3437,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }, { label: "Contact", href: "mailto:founder@mrchartist.com" }] },
               ].map((col) => (
                 <div key={col.title}>
-                  <h4 className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground/50 mb-3">{col.title}</h4>
+                  <h4 className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/40 mb-3">{col.title}</h4>
                   <ul className="space-y-1.5">
                     {col.links.map((l) => (
                       <li key={l.label}>
