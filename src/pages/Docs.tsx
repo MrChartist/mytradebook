@@ -3145,7 +3145,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
 
               <SubTopic title="Tags & Customisation" description="Personalise your trading taxonomy with custom tags." id="set-tags" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Tag} title="Tag Management">
                   <p className="text-sm text-muted-foreground mb-3">Create and manage your custom tags:</p>
                   <FeatureList items={[
