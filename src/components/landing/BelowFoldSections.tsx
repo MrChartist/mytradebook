@@ -537,7 +537,7 @@ export function FAQSection() {
                 value={`faq-${i}`}
                 className="rounded-xl border border-border/30 bg-card/70 px-6 data-[state=open]:border-primary/20 data-[state=open]:shadow-sm transition-colors"
               >
-                <AccordionTrigger className="text-left text-[15px] font-semibold hover:no-underline py-4">
+                <AccordionTrigger className="text-left text-[15px] font-semibold hover:no-underline py-4 tracking-[-0.01em]">
                   <span className="flex items-center gap-3">
                     <span className="text-[10px] font-mono text-muted-foreground/50 bg-muted/20 rounded-md px-1.5 py-0.5">
                       {String(i + 1).padStart(2, "0")}
