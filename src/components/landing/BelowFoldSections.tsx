@@ -171,40 +171,45 @@ export function ComparisonSection() {
 export function PricingSection() {
   const navigate = useNavigate();
   return (
-    <section id="pricing" className="py-24 lg:py-32" aria-label="Pricing">
-      <MotionSection className="max-w-5xl mx-auto px-6">
-        <motion.div variants={fadeUp} className="text-center mb-16">
+    <section id="pricing" className="py-20 lg:py-28" aria-label="Pricing">
+      <MotionSection className="max-w-5xl mx-auto px-6 lg:px-8">
+        <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>Pricing</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1] tracking-tight">
+          <h2 className="text-3xl lg:text-5xl font-extrabold mb-4 leading-[1.1] tracking-tight">
             Simple,{" "}<span className="accent-script">transparent</span>{" "}pricing
           </h2>
-          <p className="text-muted-foreground max-w-lg mx-auto text-lg">
+          <p className="text-muted-foreground max-w-md mx-auto text-base lg:text-lg leading-relaxed">
             Everything free during beta. No credit card. No catch.
           </p>
         </motion.div>
 
         {/* 2-card layout */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-16">
+        <div className="grid md:grid-cols-2 gap-4 lg:gap-5 max-w-3xl mx-auto mb-14">
           {/* Free Beta Card */}
           <motion.div variants={fadeUp} custom={0}>
             <motion.div
-              className="rounded-2xl border border-primary/25 bg-card/70 backdrop-blur-sm p-8 h-full flex flex-col relative overflow-hidden ring-2 ring-primary/10"
-              style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}
-              whileHover={{ y: -3, borderColor: "hsl(var(--primary) / 0.4)" }}
-              transition={{ duration: 0.3 }}
+              className="group rounded-xl border border-primary/20 bg-card/60 backdrop-blur-sm p-6 lg:p-7 h-full flex flex-col relative overflow-hidden"
+              style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}
+              whileHover={{ y: -3, borderColor: "hsl(var(--primary) / 0.35)" }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
             >
-              <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary" />
-              <div className="inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-profit/10 text-profit text-[11px] font-bold mb-5">
+              {/* Top accent */}
+              <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-primary to-transparent" />
+
+              <div className="inline-flex self-start items-center gap-1.5 px-2.5 py-1 rounded-full bg-profit/8 text-profit text-[10px] font-bold tracking-wide mb-5">
                 <Zap className="w-3 h-3" /> Currently Active
               </div>
-              <h3 className="text-2xl font-bold tracking-tight">Free Beta</h3>
-              <div className="mt-4 mb-2 flex items-baseline gap-2">
-                <span className="text-lg text-muted-foreground/50 line-through">₹499</span>
-                <span className="text-5xl font-extrabold font-mono">₹0</span>
-                <span className="text-muted-foreground text-sm">/month</span>
+
+              <h3 className="text-xl font-bold tracking-tight mb-3">Free Beta</h3>
+
+              <div className="flex items-baseline gap-2 mb-1.5">
+                <span className="text-base text-muted-foreground/40 line-through font-mono">₹499</span>
+                <span className="text-4xl font-extrabold font-mono tracking-tight">₹0</span>
+                <span className="text-muted-foreground text-[13px]">/month</span>
               </div>
-              <p className="text-[15px] text-muted-foreground mb-8">Full access to every feature. Free while we're in beta.</p>
-              <ul className="space-y-3 flex-1 mb-8">
+              <p className="text-[13px] text-muted-foreground/70 mb-6 leading-relaxed">Full access to every feature. Free while we're in beta.</p>
+
+              <ul className="space-y-2.5 flex-1 mb-6">
                 {[
                   "Unlimited trade logging",
                   "AI-powered trade insights",
@@ -216,42 +221,46 @@ export function PricingSection() {
                   "Weekly performance reports",
                   "Watchlists & alerts",
                 ].map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-[15px] leading-relaxed">
-                    <CheckCircle2 className="w-[18px] h-[18px] text-profit shrink-0 mt-0.5" />
+                  <li key={f} className="flex items-start gap-2 text-[13px] leading-relaxed">
+                    <CheckCircle2 className="w-4 h-4 text-profit shrink-0 mt-[1px]" />
                     <span>{f}</span>
                   </li>
                 ))}
               </ul>
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Button
                   size="lg"
-                  className="w-full h-13 rounded-full text-base bg-foreground hover:bg-foreground/90 text-background font-semibold shadow-lg"
+                  className="w-full h-11 rounded-lg text-[13px] bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
                   onClick={() => navigate("/login?mode=signup")}
                 >
-                  Start Free <ArrowRight className="w-4 h-4 ml-1.5" />
+                  Start Free <ArrowRight className="w-3.5 h-3.5 ml-1" />
                 </Button>
               </motion.div>
             </motion.div>
           </motion.div>
 
           {/* Pro Card (Coming Soon) */}
-          <motion.div variants={fadeUp} custom={0.1}>
+          <motion.div variants={fadeUp} custom={0.08}>
             <motion.div
-              className="rounded-2xl border border-border/30 bg-card/50 backdrop-blur-sm p-8 h-full flex flex-col relative overflow-hidden"
-              style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}
-              whileHover={{ y: -3 }}
-              transition={{ duration: 0.3 }}
+              className="group rounded-xl border border-border/20 bg-card/40 backdrop-blur-sm p-6 lg:p-7 h-full flex flex-col relative overflow-hidden"
+              style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}
+              whileHover={{ y: -3, borderColor: "hsl(var(--border) / 0.4)" }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
             >
-              <div className="inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-muted/50 text-muted-foreground text-[11px] font-bold mb-5">
+              <div className="inline-flex self-start items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted/40 text-muted-foreground text-[10px] font-bold tracking-wide mb-5">
                 <Crown className="w-3 h-3" /> Coming Soon
               </div>
-              <h3 className="text-2xl font-bold tracking-tight">Pro</h3>
-              <div className="mt-4 mb-2 flex items-baseline gap-2">
-                <span className="text-5xl font-extrabold font-mono text-muted-foreground/40">₹499</span>
-                <span className="text-muted-foreground text-sm">/month</span>
+
+              <h3 className="text-xl font-bold tracking-tight mb-3">Pro</h3>
+
+              <div className="flex items-baseline gap-2 mb-1.5">
+                <span className="text-4xl font-extrabold font-mono tracking-tight text-muted-foreground/30">₹499</span>
+                <span className="text-muted-foreground text-[13px]">/month</span>
               </div>
-              <p className="text-[15px] text-muted-foreground mb-8">Priority support, advanced AI, and team features.</p>
-              <ul className="space-y-3 flex-1 mb-8">
+              <p className="text-[13px] text-muted-foreground/70 mb-6 leading-relaxed">Priority support, advanced AI, and team features.</p>
+
+              <ul className="space-y-2.5 flex-1 mb-6">
                 {[
                   "Everything in Free Beta",
                   "Priority support & onboarding",
@@ -259,16 +268,17 @@ export function PricingSection() {
                   "Team & shared workspaces",
                   "Custom report exports",
                 ].map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-[15px] leading-relaxed text-muted-foreground">
-                    <Lock className="w-[18px] h-[18px] text-muted-foreground/30 shrink-0 mt-0.5" />
+                  <li key={f} className="flex items-start gap-2 text-[13px] leading-relaxed text-muted-foreground/60">
+                    <Lock className="w-4 h-4 text-muted-foreground/20 shrink-0 mt-[1px]" />
                     <span>{f}</span>
                   </li>
                 ))}
               </ul>
+
               <Button
                 size="lg"
                 variant="outline"
-                className="w-full h-13 rounded-full text-base font-semibold"
+                className="w-full h-11 rounded-lg text-[13px] font-semibold"
                 disabled
               >
                 Notify Me
@@ -277,30 +287,30 @@ export function PricingSection() {
           </motion.div>
         </div>
 
-        {/* Comparison table inline */}
-        <motion.div variants={fadeUp} className="max-w-3xl mx-auto mb-14">
-          <h3 className="text-lg font-bold text-center mb-6 tracking-tight">How we compare</h3>
-          <div className="rounded-2xl border border-border/30 bg-card/70 overflow-hidden" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
-            <div className="grid grid-cols-3 gap-0 border-b border-border/20 px-6 py-4 bg-muted/20">
-              <span className="text-sm font-bold text-foreground">Feature</span>
-              <span className="text-sm font-bold text-center text-primary flex items-center justify-center gap-1.5"><Trophy className="w-3.5 h-3.5" />TradeBook</span>
-              <span className="text-sm font-medium text-center text-muted-foreground/60">Others</span>
+        {/* Comparison table */}
+        <motion.div variants={fadeUp} className="max-w-3xl mx-auto mb-12">
+          <h3 className="text-base font-bold text-center mb-5 tracking-tight">How we compare</h3>
+          <div className="rounded-xl border border-border/20 bg-card/50 overflow-hidden" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}>
+            <div className="grid grid-cols-3 gap-0 border-b border-border/15 px-5 py-3 bg-muted/15">
+              <span className="text-[13px] font-bold text-foreground">Feature</span>
+              <span className="text-[13px] font-bold text-center text-primary flex items-center justify-center gap-1.5"><Trophy className="w-3.5 h-3.5" />TradeBook</span>
+              <span className="text-[13px] font-medium text-center text-muted-foreground/50">Others</span>
             </div>
             {comparisonFeatures.map((row, i) => (
-              <div key={row.feature} className={cn("grid grid-cols-3 gap-0 border-b border-border/10 last:border-0 px-6 py-4", i % 2 === 0 ? "bg-muted/5" : "")}>
-                <span className="text-[14px] text-foreground/85">{row.feature}</span>
-                <div className="flex justify-center">{row.tradebook === true ? <CheckCircle2 className="w-4.5 h-4.5 text-profit" /> : <span className="text-sm text-muted-foreground">{String(row.tradebook)}</span>}</div>
-                <div className="flex justify-center">{row.others === true ? <CheckCircle2 className="w-4.5 h-4.5 text-muted-foreground/30" /> : row.others === false ? <Minus className="w-4.5 h-4.5 text-muted-foreground/20" /> : <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-muted/40 text-muted-foreground">{String(row.others)}</span>}</div>
+              <div key={row.feature} className={cn("grid grid-cols-3 gap-0 border-b border-border/8 last:border-0 px-5 py-3", i % 2 === 0 ? "bg-muted/[0.03]" : "")}>
+                <span className="text-[13px] text-foreground/80">{row.feature}</span>
+                <div className="flex justify-center">{row.tradebook === true ? <CheckCircle2 className="w-4 h-4 text-profit" /> : <span className="text-[13px] text-muted-foreground">{String(row.tradebook)}</span>}</div>
+                <div className="flex justify-center">{row.others === true ? <CheckCircle2 className="w-4 h-4 text-muted-foreground/25" /> : row.others === false ? <Minus className="w-4 h-4 text-muted-foreground/15" /> : <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted/30 text-muted-foreground/50">{String(row.others)}</span>}</div>
               </div>
             ))}
           </div>
         </motion.div>
 
         {/* Trust badges */}
-        <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4">
+        <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-3">
           {[{ icon: Lock, text: "No credit card required" }, { icon: RefreshCw, text: "Cancel anytime" }, { icon: Shield, text: "14-day money-back guarantee" }].map((item) => (
-            <div key={item.text} className="flex items-center gap-2 bg-muted/30 rounded-full px-4 py-2 text-sm text-muted-foreground">
-              <item.icon className="w-3.5 h-3.5" /><span>{item.text}</span>
+            <div key={item.text} className="flex items-center gap-1.5 bg-muted/20 rounded-full px-3 py-1.5 text-[12px] text-muted-foreground/60">
+              <item.icon className="w-3 h-3" /><span>{item.text}</span>
             </div>
           ))}
         </motion.div>
