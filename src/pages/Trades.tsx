@@ -91,6 +91,7 @@ export default function Trades() {
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [sortBy, setSortBy] = useState("latest");
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [duplicateData, setDuplicateData] = useState<Partial<Trade> | null>(null);
   const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
   const [strategyModalOpen, setStrategyModalOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
