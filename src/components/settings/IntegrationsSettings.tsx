@@ -978,7 +978,7 @@ function TokenValidityCard({ settings, userId }: { settings: any; userId?: strin
   };
 
   return (
-    <div className="p-3 rounded-lg border border-border bg-accent/30 space-y-2">
+    <div className="p-2.5 rounded-lg border border-border/15 bg-muted/20 space-y-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div
