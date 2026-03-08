@@ -616,7 +616,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </nav>
 
           {/* Main content */}
-          <main className="flex-1 min-w-0 max-w-[740px] px-6 lg:px-12 py-8 lg:py-10 space-y-20 pt-[6.5rem] lg:pt-8">
+          <main className="flex-1 min-w-0 max-w-[740px] px-6 lg:px-12 py-10 lg:py-12 space-y-24 pt-[6.5rem] lg:pt-10">
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
