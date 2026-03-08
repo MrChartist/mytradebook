@@ -55,7 +55,7 @@ import {
 } from "@/components/docs/DocsMockups";
 import {
   ProTip, StepByStep, ExpandableDetail,
-  InteractiveMockup, PhaseHeader, QuickNav, KeyMetric
+  InteractiveMockup, PhaseHeader, QuickNav, KeyMetric, SubTopic
 } from "@/components/docs/DocsEnhancements";
 import {
   ShareCardsMockup, AchievementsMockup, PositionSizingCalcMockup,
@@ -513,6 +513,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Free vs Pro", id: "getting-started" },
               ]} />
               <VideoPlaceholder title="Getting Started with TradeBook — Full Walkthrough" duration="5 min" />
+              <SubTopic title="Quick Start" description="Get up and running in under 5 minutes." />
               <StepByStep title="Your First 5 Minutes" steps={[
                 { title: "Sign up with email", description: "Create your account with email and password. Verify via the confirmation email.", detail: "No credit card required — you get 14 days of Pro features free." },
                 { title: "Set your starting capital", description: "Enter your trading capital amount during onboarding. This is used for risk calculations.", detail: "You can update this anytime in Settings → Preferences." },
@@ -522,6 +523,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               ]} />
               <OnboardingFlowMockup />
               <MobileAppMockup />
+              <SubTopic title="Platform Overview" description="Understand the key areas of TradeBook." />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Users} title="Create Your Account">
                   <p className="text-sm text-muted-foreground mb-3">Sign up with email and verify your account. You'll get a 14-day Pro trial with full access to every feature — no credit card required.</p>
@@ -568,7 +570,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Widget Customization", id: "dashboard" },
               ]} />
               <DashboardMockup />
-
+              <SubTopic title="Performance Overview" description="Real-time P&L and key trading metrics at a glance." />
               <FeatureCard icon={Activity} title="Today's P&L Hero Card">
                 <p className="text-sm text-muted-foreground">
                   The top hero card shows your total P&L for the day with a large, color-coded number. Green for profit, red for loss. Breaks down realized vs unrealized gains and shows win/loss count. Updates in real-time if you have live prices enabled via Dhan integration.
@@ -594,6 +596,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><RiskGaugeDetailMockup /></div>
               </FeatureCard>
 
+              <SubTopic title="Charts & Visualizations" description="Visual tools to track your equity, streaks, and daily performance." />
               <FeatureCard icon={TrendingUp} title="Equity Curve Widget">
                 <p className="text-sm text-muted-foreground">
                   A compact equity curve chart showing your cumulative P&L over the selected month with gradient fill. Shows peak equity, max drawdown, and date labels. Hover over data points to see exact values. The curve updates automatically as you close trades.
@@ -615,6 +618,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><CalendarHeatmapWidgetMockup /></div>
               </FeatureCard>
 
+              <SubTopic title="Customization & Layout" description="Tailor your dashboard to your workflow." />
               <FeatureCard icon={Settings} title="Widget Customization" badge="Enhanced">
                 <p className="text-sm text-muted-foreground mb-3">Personalize your dashboard by showing/hiding widgets and drag-to-reorder them:</p>
                 <FeatureList items={[
@@ -646,6 +650,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </p>
               </FeatureCard>
 
+              <SubTopic title="Advanced Widgets" description="Power-user widgets for portfolio visualization and daily reviews." />
               <FeatureCard icon={Grid3X3} title="Portfolio Heat Map" badge="New">
                 <p className="text-sm text-muted-foreground mb-3">
                   A treemap-style visualization of your open positions. Each tile represents a position, sized by its value and color-coded by unrealized P&L — deep green for profits, deep red for losses.
@@ -702,6 +707,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p>Always set your stop loss before submitting a trade. TradeBook calculates your risk-to-reward ratio automatically — trades with R:R below 1:2 are flagged in your analytics.</p>
               </ProTip>
 
+              <SubTopic title="Creating & Managing Trades" description="Log trades with detailed metadata and smart defaults." />
               <FeatureCard icon={Search} title="Creating a Trade">
                 <p className="text-sm text-muted-foreground mb-3">Step-by-step trade creation with smart defaults:</p>
                 <FeatureList items={[
@@ -727,6 +733,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><TradeStatusLifecycleMockup /></div>
               </FeatureCard>
 
+              <SubTopic title="Risk Management Tools" description="Automated stop loss, position sizing, and multi-leg strategies." />
               <FeatureCard icon={Target} title="Trailing Stop Loss (TSL)">
                 <p className="text-sm text-muted-foreground mb-3">Automated stop loss management for open positions:</p>
                 <FeatureList items={[
@@ -758,6 +765,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><PositionSizingDetailMockup /></div>
               </FeatureCard>
 
+              <SubTopic title="Post-Trade Review & Reflection" description="Structured review process after closing every trade." />
               <FeatureCard icon={Star} title="Post-Trade Review">
                 <p className="text-sm text-muted-foreground mb-3">When you close a trade, a review modal prompts you to reflect:</p>
                 <FeatureList items={[
@@ -771,6 +779,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><PostTradeReviewMockup /></div>
               </FeatureCard>
 
+              <SubTopic title="Sharing, Gamification & Discipline" description="Social cards, badges, trading rules, and AI coaching." />
               <FeatureCard icon={Share2} title="P&L & Trade Share Cards" badge="New">
                 <p className="text-sm text-muted-foreground mb-3">
                   Generate beautiful, branded share cards for social media. Share your daily P&L summary, individual trade results, or winning streaks with customizable templates.
@@ -829,6 +838,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p className="text-xs text-muted-foreground mt-3 italic">See also: <button onClick={() => document.getElementById("ai-integration")?.scrollIntoView({ behavior: "smooth" })} className="text-primary hover:underline">AI Insights Setup</button></p>
               </FeatureCard>
 
+              <SubTopic title="Quick Actions & Data Tools" description="Fast trade closing, CSV import/export, and templates." />
               <FeatureCard icon={Zap} title="Quick Close Popover">
                 <p className="text-sm text-muted-foreground mb-3">
                   Close open trades without leaving the trades list. A compact popover lets you enter the exit price and close instantly.
@@ -875,6 +885,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Bulk import trades from CSV files with intelligent column mapping, or export your entire trade history for backup and external analysis."
                 icon={Upload}
               />
+              <SubTopic title="Import Workflow" description="Step-by-step process to bring your existing trades into TradeBook." />
               <StepByStep title="How to Import" steps={[
                 { title: "Export from your broker", description: "Download your trade history as CSV from your broker's platform." },
                 { title: "Upload to TradeBook", description: "Go to Trades → Import CSV and select your file." },
@@ -882,6 +893,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Preview & confirm", description: "Review mapped data, fix any validation errors, then confirm the import." },
               ]} />
               <VideoPlaceholder title="How to Import Trades from CSV" duration="3 min" />
+              <SubTopic title="Import & Export Details" description="Detailed capabilities for importing and exporting trade data." />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Upload} title="Importing Trades">
                   <p className="text-sm text-muted-foreground mb-3">Step-by-step CSV import with validation:</p>
@@ -922,6 +934,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip>
                 <p>Create a template for each of your top 3 setups. When you see a setup forming, use the template to log the trade in under 10 seconds — no more missed opportunities.</p>
               </ProTip>
+              <SubTopic title="Template Setup" description="Create and manage reusable trade templates." />
               <VideoPlaceholder title="Setting Up Trade Templates" duration="2 min" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Zap} title="Creating Templates">
@@ -960,12 +973,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Calculator}
               />
               <PositionSizingCalcMockup />
+              <SubTopic title="Calculation Workflow" description="How the calculator determines your optimal position size." />
               <StepByStep title="How It Works" steps={[
                 { title: "Set your capital & risk %", description: "Define your total capital and the max % you're willing to risk per trade (e.g., 1.5%)." },
                 { title: "Enter entry & stop loss prices", description: "The calculator computes the risk per share (entry − SL)." },
                 { title: "Get recommended quantity", description: "Max shares = (Capital × Risk%) ÷ Risk per share. Automatically rounds down." },
                 { title: "Review max loss", description: "See the maximum loss in rupees before you commit to the trade." },
               ]} />
+              <SubTopic title="Advanced Sizing" description="Expert-level position sizing with the Kelly Criterion." />
               <ExpandableDetail title="Advanced: Kelly Criterion" icon={Target}>
                 <p>For experienced traders, the Position Sizing Calculator can suggest position sizes based on the Kelly Criterion — factoring in your historical win rate and average win/loss ratio to optimize long-term capital growth.</p>
               </ExpandableDetail>
@@ -986,6 +1001,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={ClipboardCheck}
               />
               <TradingRulesMockup />
+              <SubTopic title="Setup & Usage" description="How to create and enforce your personal trading rules." />
               <FeatureCard icon={ClipboardCheck} title="How Trading Rules Work">
                 <p className="text-sm text-muted-foreground mb-3">Create a custom checklist that appears in the trade creation modal:</p>
                 <FeatureList items={[
@@ -999,6 +1015,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="best-practice">
                 <p>Start with 3-5 rules maximum. The best rules are specific and actionable: "Confirm volume is above 20-day average" is better than "Check volume."</p>
               </ProTip>
+              <SubTopic title="Rule Examples" description="Pre-built rule sets for different trading styles." />
               <ExpandableDetail title="Example Rules for Different Styles" icon={BookOpen} defaultOpen>
                 <div className="grid md:grid-cols-2 gap-4 mt-2">
                   <div>
@@ -1038,7 +1055,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <AlertCardMockup />
                 <TelegramNotifMockup />
               </div>
-
+              <SubTopic title="Alert Types" description="Seven condition types to monitor any price action." />
               <FeatureCard icon={Bell} title="Alert Condition Types">
                 <FeatureList items={[
                   "Price Above — triggers when LTP exceeds your threshold",
@@ -1052,6 +1069,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><AlertConditionTypesMockup /></div>
               </FeatureCard>
 
+              <SubTopic title="Trigger Logic & Delivery" description="Control when and how alerts fire and reach you." />
               <FeatureCard icon={RefreshCw} title="Recurrence & Cooldowns">
                 <FeatureList items={[
                   "Once — fires once and auto-deactivates",
@@ -1076,6 +1094,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><DeliveryChannelsMockup /></div>
               </FeatureCard>
 
+              <SubTopic title="Alert Management" description="Organize, filter, and monitor all your alerts." />
               <FeatureCard icon={Eye} title="Alert Management">
                 <p className="text-sm text-muted-foreground mb-3">Organize and monitor your alerts:</p>
                 <FeatureList items={[
@@ -1088,6 +1107,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><AlertManagementMockup /></div>
               </FeatureCard>
 
+              <SubTopic title="AI-Powered Suggestions" description="Let AI recommend alerts based on your trading patterns." />
               <FeatureCard icon={Sparkles} title="Smart Alert Suggestions" badge="AI">
                 <p className="text-sm text-muted-foreground mb-3">
                   AI analyzes your frequently traded symbols and suggests relevant price alerts with reasoning.
@@ -1118,7 +1138,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p>Link your studies to trades when you execute them. This builds a powerful feedback loop — you can see which of your research ideas actually led to profitable trades.</p>
               </ProTip>
               <StudyCardMockup />
-
+              <SubTopic title="Study Workflow" description="Organize studies by category and track their lifecycle." />
               <FeatureCard icon={Layers} title="Categories & Status Workflow">
                 <p className="text-sm text-muted-foreground mb-3">Organize studies by type and track their lifecycle:</p>
                 <FeatureList items={[
@@ -1130,6 +1150,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><StudyCategoryWorkflowMockup /></div>
               </FeatureCard>
 
+              <SubTopic title="Pattern Tagging" description="Rich multi-category tagging for chart pattern recognition." />
               <FeatureCard icon={Tag} title="Pattern Tagging System">
                 <p className="text-sm text-muted-foreground mb-3">Rich tagging for pattern recognition:</p>
                 <FeatureList items={[
@@ -1142,6 +1163,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><PatternTaggingMockup /></div>
               </FeatureCard>
 
+              <SubTopic title="Research Tools" description="Live prices, duration tracking, and linking studies to trades." />
               <FeatureCard icon={Clock} title="Additional Features">
                 <FeatureList items={[
                   "Live prices displayed for active/draft studies",
@@ -1166,6 +1188,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Eye}
               />
               <WatchlistMockup />
+              <SubTopic title="Organization & Live Data" description="Create lists, track prices, and act on opportunities." />
               <FeatureCard icon={Eye} title="Watchlist Capabilities">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -1210,6 +1233,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <CalendarHeatmapMockup />
                 <KanbanBoardMockup />
               </div>
+              <SubTopic title="Journal Views" description="Four specialized tabs for different aspects of your journal." />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={PieChart} title="Dashboard Tab">
                   <p className="text-sm text-muted-foreground mb-3">High-level summary of your trading performance:</p>
@@ -1273,6 +1297,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <SegmentPerformanceMockup />
                 <RiskOfRuinMockup />
               </div>
+              <SubTopic title="Core Metrics & AI Insights" description="Fundamental performance statistics and AI-powered analysis." />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={BarChart3} title="Core Metrics" badge="Pro">
                   <FeatureList items={[
@@ -1304,6 +1329,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "P&L distribution charts",
                   ]} />
                 </FeatureCard>
+              </div>
+              <SubTopic title="Time & Streak Analysis" description="Discover your best trading times and track momentum." />
+              <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Clock} title="Time-Based Heatmaps" badge="Pro">
                   <FeatureList items={[
                     "Time of Day heatmap — which hours are most profitable",
@@ -1355,6 +1383,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "Risk of Ruin Calculator — statistical probability of account blowup",
                   ]} />
                 </FeatureCard>
+              </div>
+              <SubTopic title="AI-Powered Behavioral Analytics" description="Machine learning insights into your trading psychology." />
+              <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Sparkles} title="AI Pattern Detection" badge="New">
                   <p className="text-sm text-muted-foreground mb-3">
                     AI analyzes your entire trade history to surface hidden behavioral patterns — things you'd never spot manually. Powered by Gemini, it examines time-of-day performance, day-of-week tendencies, streak effects, and segment biases.

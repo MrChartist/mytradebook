@@ -312,3 +312,21 @@ export function KeyMetric({ label, value, sub }: { label: string; value: string;
     </div>
   );
 }
+
+/* ──────────────────────────────────────────────
+   SubTopic — Visual sub-heading within a section
+   ────────────────────────────────────────────── */
+export function SubTopic({ title, description }: { title: string; description?: string }) {
+  return (
+    <div className="mt-10 mb-5 first:mt-6">
+      <div className="flex items-center gap-3">
+        <div className="w-1.5 h-1.5 rounded-full bg-primary/50" />
+        <h3 className="text-[15px] font-bold tracking-tight text-foreground">{title}</h3>
+      </div>
+      {description && (
+        <p className="text-[13px] text-muted-foreground/70 leading-relaxed mt-1.5 ml-[18px]">{description}</p>
+      )}
+      <div className="ml-[18px] mt-3 h-px w-16 bg-gradient-to-r from-primary/20 to-transparent" />
+    </div>
+  );
+}
