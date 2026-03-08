@@ -103,11 +103,14 @@ export function AITradeInsights({ compact = false, maxInsights }: AITradeInsight
               <Skeleton className="h-16 w-full rounded-lg" />
             </>
           ) : !hasAiKey ? (
-            <div className="text-center py-4">
-              <Settings className="w-8 h-8 mx-auto text-muted-foreground/40 mb-2" />
-              <p className="text-xs text-muted-foreground mb-2">Connect your Gemini or OpenAI key to unlock AI insights</p>
-              <Button variant="outline" size="sm" className="text-xs" onClick={() => navigate("/settings?tab=integrations")}>
-                <ExternalLink className="w-3 h-3 mr-1" /> Setup AI Key
+            <div className="text-center py-4 space-y-2">
+              <Sparkles className="w-8 h-8 mx-auto text-muted-foreground/30 mb-1" />
+              <p className="text-xs font-medium">Bring Your Own AI Key</p>
+              <p className="text-[10px] text-muted-foreground/50 leading-relaxed max-w-[260px] mx-auto">
+                Connect a free Gemini API key to get personalized insights on timing, risk, and behavioral patterns.
+              </p>
+              <Button variant="outline" size="sm" className="text-[11px] h-7" onClick={() => navigate("/settings?tab=integrations")}>
+                <ExternalLink className="w-3 h-3 mr-1" /> Setup in Settings
               </Button>
             </div>
           ) : insights.length === 0 ? (
