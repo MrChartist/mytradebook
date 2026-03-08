@@ -19,7 +19,8 @@ import {
   List, Search, Tag, AlertTriangle, CheckCircle2, TrendingDown,
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
   Wallet, Share2, MessageSquare, Command, Hash, Palette,
-  PanelLeftClose, PanelLeftOpen, SlidersHorizontal
+  PanelLeftClose, PanelLeftOpen, SlidersHorizontal,
+  Calculator, ClipboardCheck, Trophy
 } from "lucide-react";
 import { LandingNavbar } from "@/components/landing/LandingNavbar";
 import {
@@ -52,6 +53,14 @@ import {
   ScreenerPresetsMockup, ScreenerTableMockup, StockPopupMockup, CustomFilterBuilderMockup, ScreenerSparklineMockup,
   DocsColorModeProvider, useDocsColorMode
 } from "@/components/docs/DocsMockups";
+import {
+  ProTip, StepByStep, ComparisonTable, ExpandableDetail,
+  InteractiveMockup, PhaseHeader, QuickNav, KeyMetric
+} from "@/components/docs/DocsEnhancements";
+import {
+  ShareCardsMockup, AchievementsMockup, PositionSizingCalcMockup,
+  TradingRulesMockup, TradeCoachMockup, StreakShareMockup
+} from "@/components/docs/DocsNewMockups";
 
 const SECTIONS = [
   { id: "getting-started", label: "Getting Started", icon: Play },
