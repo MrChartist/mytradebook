@@ -793,7 +793,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   The top hero card shows your total P&L for the day with a large, color-coded number. Green for profit, red for loss. Breaks down realized vs unrealized gains and shows win/loss count. Updates in real-time if you have live prices enabled via Dhan integration.
                 </p>
                 <div className="mt-4"><TodaysPnlHeroMockup /></div>
-              </FeatureCard>
+                <MockupCaption>Green background for profit days, red for loss days. The hero card pulses with a subtle glow animation when P&L updates in real-time.</MockupCaption>
 
               <FeatureCard icon={BarChart3} title="KPI Cards">
                 <p className="text-sm text-muted-foreground mb-3">Four key metrics at a glance, each clickable to navigate to the relevant page:</p>
