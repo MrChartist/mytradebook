@@ -1214,11 +1214,46 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "Helps optimize your trading schedule",
                   ]} />
                 </FeatureCard>
-                <FeatureCard icon={Activity} title="Advanced Analytics" badge="Pro">
+                <FeatureCard icon={Activity} title="Streak Tracker" badge="Pro">
+                  <p className="text-sm text-muted-foreground mb-3">Track and visualize winning and losing streaks:</p>
                   <FeatureList items={[
-                    "Streak Tracker — winning/losing streak analysis",
+                    "Current streak indicator — win/loss count with visual badge",
+                    "Longest winning and losing streaks in your history",
+                    "Streak calendar — day-by-day win/loss visualization",
+                    "Streak share card — share your streaks on social media",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Target} title="Risk-Reward Analytics" badge="Pro">
+                  <p className="text-sm text-muted-foreground mb-3">Analyze planned vs actual risk-reward ratios:</p>
+                  <FeatureList items={[
+                    "Planned R:R — calculated from entry, stop loss, and targets",
+                    "Actual R:R — based on realized P&L vs risk taken",
+                    "R:R distribution chart — how often you achieve 1R, 2R, 3R+",
+                    "Average R:R by segment and timeframe",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={TrendingDown} title="Drawdown Recovery" badge="Pro">
+                  <p className="text-sm text-muted-foreground mb-3">Understand your capital curve's resilience:</p>
+                  <FeatureList items={[
+                    "Maximum drawdown % and duration in days",
+                    "Drawdown overlay on equity curve chart",
+                    "Recovery time analysis — how long to recover from each drawdown",
+                    "Underwater chart showing time spent below peak equity",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Clock} title="Day & Time of Day Analysis" badge="Pro">
+                  <p className="text-sm text-muted-foreground mb-3">Discover your optimal trading windows:</p>
+                  <FeatureList items={[
+                    "Day of Week heatmap — win rate and P&L by weekday",
+                    "Time of Day heatmap — performance by hour (9 AM – 3 PM)",
+                    "Color-coded cells: green for profitable, red for losing periods",
+                    "Trade count overlay to show statistical significance",
+                    "Helps you avoid trading during your historically weak periods",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Activity} title="Additional Advanced Analytics" badge="Pro">
+                  <FeatureList items={[
                     "Setup/Tag Performance Matrix — P&L by setup tag",
-                    "Risk-Reward Analytics — actual R:R vs planned R:R",
                     "Risk of Ruin Calculator — statistical probability of account blowup",
                   ]} />
                 </FeatureCard>
