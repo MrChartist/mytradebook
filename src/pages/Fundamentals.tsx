@@ -302,6 +302,8 @@ export default function Fundamentals() {
     cap: "bg-primary",
     fundamental: "bg-profit",
     technical: "bg-[hsl(210_80%_55%)]",
+    price: "bg-warning",
+    volume: "bg-[hsl(280_60%_55%)]",
   };
 
   const SortHeader = ({ label, field }: { label: string; field: SortKey }) => (
