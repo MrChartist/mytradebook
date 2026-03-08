@@ -93,7 +93,7 @@ export function DashboardKPICards({ alerts }: Props) {
         <AnimatedNumber
           value={totalTodayPnl}
           formatFn={(n) => formatCurrency(n)}
-          className={cn("text-[28px] font-bold font-mono leading-none", totalTodayPnl >= 0 ? "text-profit" : "text-loss")}
+          className={cn("kpi-value", totalTodayPnl >= 0 ? "text-profit" : "text-loss")}
         />
         <div className="flex gap-3 mt-3">
           <div className="inner-panel flex-1">
