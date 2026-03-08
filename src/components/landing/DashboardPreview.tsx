@@ -56,7 +56,6 @@ function TabContent({ tab }: { tab: TabKey }) {
 
 export function DashboardPreview() {
   const [activeTab, setActiveTab] = useState<TabKey>("dashboard");
-  const [activeTab, setActiveTab] = useState<TabKey>("dashboard");
   const [paused, setPaused] = useState(false);
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -108,39 +107,25 @@ export function DashboardPreview() {
         <div className="absolute inset-x-2 sm:inset-x-4 -bottom-2 h-6 rounded-3xl bg-foreground/[0.04] blur-md" />
 
         <motion.div
-          className="relative rounded-2xl sm:rounded-3xl border border-border/40 bg-card overflow-hidden max-w-full group cursor-pointer"
+          className="relative rounded-2xl sm:rounded-3xl border border-border/40 bg-card overflow-hidden max-w-full group"
           style={{
             boxShadow: "0 25px 60px -15px rgba(0,0,0,0.08), 0 0 0 1px hsl(var(--border)/0.3), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)",
           }}
           whileHover={{ y: -4 }}
           transition={{ duration: 0.4 }}
-          onMouseEnter={() => { setHovered(true); setPaused(true); }}
-          onMouseLeave={() => { setHovered(false); setPaused(false); }}
-          onClick={() => navigate("/login?mode=signup")}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
         >
-          {/* Hover CTA */}
-          <motion.div
-            className="absolute inset-0 z-20 flex items-center justify-center bg-background/60 backdrop-blur-sm"
-            initial={false}
-            animate={{ opacity: hovered ? 1 : 0 }}
-            transition={{ duration: 0.25 }}
-            style={{ pointerEvents: hovered ? "auto" : "none" }}
-          >
-            <motion.div
-              className="flex items-center gap-2 px-6 py-3 rounded-full bg-[hsl(var(--tb-accent))] text-white font-semibold shadow-[0_6px_24px_hsl(var(--tb-accent)/0.4)]"
-              initial={{ scale: 0.9 }}
-              animate={{ scale: hovered ? 1 : 0.9 }}
-            >
-              Try it yourself →
-            </motion.div>
-          </motion.div>
-
           {/* Window chrome */}
           <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 border-b border-border/30 bg-gradient-to-b from-muted/20 to-muted/10">
             <div className="flex gap-1.5">
               <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FF605C]" />
               <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FFBD44]" />
               <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#00CA4E]" />
+            </div>
+            <div className="ml-auto flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-muted/40 border border-border/20">
+              <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40" />
+              <span className="text-[8px] sm:text-[9px] font-medium text-muted-foreground tracking-wide">View Only</span>
             </div>
           </div>
 
