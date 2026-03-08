@@ -8,34 +8,46 @@ import {
 } from "lucide-react";
 
 /* ──────────────────────────────────────────────
+   Shared constants for visual unity
+   ────────────────────────────────────────────── */
+const CARD_BORDER = "border-border/30";
+const CARD_RADIUS = "rounded-xl";
+const CARD_SPACING = "my-6";
+const BODY_TEXT = "text-[15px] text-muted-foreground/80 leading-[1.75]";
+
+/* ──────────────────────────────────────────────
    ProTip — Callout box with trading advice
    ────────────────────────────────────────────── */
 export function ProTip({ children, variant = "tip" }: { children: ReactNode; variant?: "tip" | "warning" | "info" | "best-practice" }) {
   const styles = {
     tip: {
-      border: "border-primary/15",
-      bg: "bg-primary/[0.03]",
+      border: "border-primary/20",
+      bg: "bg-primary/[0.04]",
+      accent: "bg-primary",
       iconColor: "text-primary",
       icon: Lightbulb,
       label: "Pro Tip",
     },
     warning: {
-      border: "border-[hsl(var(--warning))]/15",
-      bg: "bg-[hsl(var(--warning))]/[0.03]",
+      border: "border-[hsl(var(--warning))]/20",
+      bg: "bg-[hsl(var(--warning))]/[0.04]",
+      accent: "bg-[hsl(var(--warning))]",
       iconColor: "text-[hsl(var(--warning))]",
       icon: AlertTriangle,
       label: "Watch Out",
     },
     info: {
-      border: "border-[hsl(var(--tb-accent))]/15",
-      bg: "bg-[hsl(var(--tb-accent))]/[0.03]",
+      border: "border-[hsl(var(--tb-accent))]/20",
+      bg: "bg-[hsl(var(--tb-accent))]/[0.04]",
+      accent: "bg-[hsl(var(--tb-accent))]",
       iconColor: "text-[hsl(var(--tb-accent))]",
       icon: Info,
       label: "Note",
     },
     "best-practice": {
-      border: "border-profit/15",
-      bg: "bg-profit/[0.03]",
+      border: "border-profit/20",
+      bg: "bg-profit/[0.04]",
+      accent: "bg-profit",
       iconColor: "text-profit",
       icon: Star,
       label: "Best Practice",
@@ -45,12 +57,14 @@ export function ProTip({ children, variant = "tip" }: { children: ReactNode; var
   const Icon = s.icon;
 
   return (
-    <div className={cn("rounded-xl border p-4 my-6", s.border, s.bg)}>
-      <div className="flex items-start gap-3">
+    <div className={cn(CARD_RADIUS, "border relative overflow-hidden", CARD_SPACING, s.border, s.bg)}>
+      {/* Left accent bar */}
+      <div className={cn("absolute left-0 top-0 bottom-0 w-[3px]", s.accent)} />
+      <div className="flex items-start gap-3 px-5 py-4 pl-6">
         <Icon className={cn("w-4 h-4 shrink-0 mt-0.5", s.iconColor)} />
         <div className="flex-1 min-w-0">
-          <p className={cn("text-[11px] font-semibold uppercase tracking-wider mb-1", s.iconColor)}>{s.label}</p>
-          <div className="text-[15px] text-muted-foreground/80 leading-[1.75] [&>p]:mb-0">{children}</div>
+          <p className={cn("text-[11px] font-bold uppercase tracking-wider mb-1.5", s.iconColor)}>{s.label}</p>
+          <div className={cn(BODY_TEXT, "[&>p]:mb-0")}>{children}</div>
         </div>
       </div>
     </div>
@@ -68,21 +82,21 @@ interface Step {
 
 export function StepByStep({ steps, title }: { steps: Step[]; title?: string }) {
   return (
-    <div className="my-6">
+    <div className={CARD_SPACING}>
       {title && <p className="text-[15px] font-semibold text-foreground mb-4">{title}</p>}
-      <div className="relative">
-        <div className="absolute left-[13px] top-4 bottom-4 w-px bg-border/40" />
-        <div className="space-y-4">
+      <div className="relative pl-1">
+        <div className="absolute left-[13px] top-5 bottom-5 w-px bg-border/30" />
+        <div className="space-y-5">
           {steps.map((step, i) => (
-            <div key={i} className="flex items-start gap-3.5 relative">
-              <div className="w-[26px] h-[26px] rounded-full bg-muted border border-border/50 flex items-center justify-center shrink-0 z-10 relative">
-                <span className="text-[12px] font-semibold text-muted-foreground">{i + 1}</span>
+            <div key={i} className="flex items-start gap-4 relative">
+              <div className="w-[26px] h-[26px] rounded-full bg-card border border-border/40 flex items-center justify-center shrink-0 z-10 relative shadow-sm">
+                <span className="text-[11px] font-bold text-muted-foreground/70">{i + 1}</span>
               </div>
-              <div className="flex-1 pt-0.5">
-                <p className="text-[15px] font-medium text-foreground leading-tight">{step.title}</p>
-                <p className="text-[14px] text-muted-foreground/75 mt-1 leading-relaxed">{step.description}</p>
+              <div className="flex-1 pt-0.5 min-w-0">
+                <p className="text-[15px] font-medium text-foreground leading-snug">{step.title}</p>
+                <p className="text-[14px] text-muted-foreground/75 mt-1.5 leading-relaxed">{step.description}</p>
                 {step.detail && (
-                  <p className="text-[13px] text-muted-foreground/60 mt-1.5 leading-relaxed">{step.detail}</p>
+                  <p className="text-[13px] text-muted-foreground/55 mt-1.5 leading-relaxed italic">{step.detail}</p>
                 )}
               </div>
             </div>
@@ -104,9 +118,9 @@ interface ComparisonRow {
 
 export function ComparisonTable({ rows, title }: { rows: ComparisonRow[]; title?: string }) {
   return (
-    <div className="my-6 rounded-xl border border-border/40 overflow-hidden">
+    <div className={cn(CARD_RADIUS, "border", CARD_BORDER, CARD_SPACING, "overflow-hidden")}>
       {title && (
-        <div className="px-4 py-2.5 bg-muted/30 border-b border-border/30">
+        <div className="px-5 py-3 bg-muted/20 border-b border-border/20">
           <p className="text-[14px] font-semibold text-foreground flex items-center gap-2">
             <Crown className="w-3.5 h-3.5 text-primary" />
             {title}
@@ -116,30 +130,30 @@ export function ComparisonTable({ rows, title }: { rows: ComparisonRow[]; title?
       <div className="overflow-x-auto">
         <table className="w-full text-[14px]">
           <thead>
-            <tr className="border-b border-border/30">
-              <th className="text-left px-4 py-2.5 font-medium text-muted-foreground w-[55%]">Feature</th>
-              <th className="text-center px-3 py-2.5 font-medium text-muted-foreground w-[22.5%]">
+            <tr className="border-b border-border/20">
+              <th className="text-left px-5 py-3 font-medium text-muted-foreground/70 w-[55%]">Feature</th>
+              <th className="text-center px-3 py-3 font-medium text-muted-foreground/70 w-[22.5%]">
                 <span className="flex items-center justify-center gap-1"><Unlock className="w-3 h-3" /> Free</span>
               </th>
-              <th className="text-center px-3 py-2.5 font-medium w-[22.5%]">
+              <th className="text-center px-3 py-3 font-medium w-[22.5%]">
                 <span className="flex items-center justify-center gap-1 text-primary"><Crown className="w-3 h-3" /> Pro</span>
               </th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row, i) => (
-              <tr key={i} className="border-b border-border/15 last:border-0">
-                <td className="px-4 py-2 text-foreground/80">{row.feature}</td>
-                <td className="px-3 py-2 text-center">
+              <tr key={i} className="border-b border-border/10 last:border-0">
+                <td className="px-5 py-2.5 text-foreground/80">{row.feature}</td>
+                <td className="px-3 py-2.5 text-center">
                   {typeof row.free === "boolean" ? (
-                    row.free ? <Check className="w-4 h-4 text-profit mx-auto" /> : <X className="w-4 h-4 text-muted-foreground/30 mx-auto" />
+                    row.free ? <Check className="w-4 h-4 text-profit mx-auto" /> : <X className="w-4 h-4 text-muted-foreground/25 mx-auto" />
                   ) : (
-                    <span className="text-muted-foreground">{row.free}</span>
+                    <span className="text-muted-foreground/70">{row.free}</span>
                   )}
                 </td>
-                <td className="px-3 py-2 text-center">
+                <td className="px-3 py-2.5 text-center">
                   {typeof row.pro === "boolean" ? (
-                    row.pro ? <Check className="w-4 h-4 text-profit mx-auto" /> : <X className="w-4 h-4 text-muted-foreground/30 mx-auto" />
+                    row.pro ? <Check className="w-4 h-4 text-profit mx-auto" /> : <X className="w-4 h-4 text-muted-foreground/25 mx-auto" />
                   ) : (
                     <span className="text-primary font-semibold">{row.pro}</span>
                   )}
@@ -167,17 +181,17 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
   const IconComp = Icon || ChevronRight;
 
   return (
-    <div className="rounded-xl border border-border/40 overflow-hidden my-5">
+    <div className={cn(CARD_RADIUS, "border", CARD_BORDER, "overflow-hidden", CARD_SPACING)}>
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-muted/20 transition-colors"
+        className="w-full flex items-center gap-3 px-5 py-3.5 text-left hover:bg-muted/15 transition-colors duration-150"
       >
-        <IconComp className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+        <IconComp className="w-4 h-4 text-muted-foreground/60 shrink-0" />
         <span className="text-[15px] font-medium text-foreground flex-1">{title}</span>
         {badge && (
-          <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/8 text-primary">{badge}</span>
+          <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-primary/8 text-primary">{badge}</span>
         )}
-        <ChevronDown className={cn("w-4 h-4 text-muted-foreground/40 transition-transform duration-200", open && "rotate-180")} />
+        <ChevronDown className={cn("w-4 h-4 text-muted-foreground/35 transition-transform duration-200", open && "rotate-180")} />
       </button>
       <AnimatePresence>
         {open && (
@@ -188,8 +202,10 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="overflow-hidden"
           >
-            <div className="px-4 pb-4 pt-0 border-t border-border/20">
-              <div className="pt-3 [&>p]:text-[15px] [&>p]:text-muted-foreground/80 [&>p]:leading-[1.75]">{children}</div>
+            <div className="px-5 pb-5 pt-0 border-t border-border/15">
+              <div className={cn("pt-4", `[&>p]:${BODY_TEXT.split(' ').join('] [&>p]:')}`)}>
+                <div className="[&>p]:text-[15px] [&>p]:text-muted-foreground/80 [&>p]:leading-[1.75]">{children}</div>
+              </div>
             </div>
           </motion.div>
         )}
@@ -203,18 +219,18 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
    ────────────────────────────────────────────── */
 export function InteractiveMockup({ children, label, className }: { children: ReactNode; label?: string; className?: string }) {
   return (
-    <div className={cn("rounded-xl border border-border/30 overflow-hidden my-6", className)}>
+    <div className={cn(CARD_RADIUS, "border", CARD_BORDER, "overflow-hidden", CARD_SPACING, className)}>
       {label && (
-        <div className="flex items-center gap-1.5 px-4 py-2 border-b border-border/20 bg-muted/10">
-          <div className="flex items-center gap-1">
-            <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/12" />
-            <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/12" />
-            <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/12" />
+        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/15 bg-muted/8">
+          <div className="flex items-center gap-1.5">
+            <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/15" />
+            <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/15" />
+            <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/15" />
           </div>
-          <span className="text-[11px] font-medium text-muted-foreground/45 ml-1.5 tracking-wide uppercase">{label}</span>
+          <span className="text-[11px] font-medium text-muted-foreground/45 ml-1 tracking-wide uppercase">{label}</span>
         </div>
       )}
-      <div className="p-5 md:p-6 bg-muted/[0.03]">
+      <div className="p-5 md:p-6">
         {children}
       </div>
     </div>
@@ -240,10 +256,10 @@ export function QuickNav({ items }: { items: { label: string; id: string }[] }) 
    ────────────────────────────────────────────── */
 export function KeyMetric({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <div className="rounded-lg border border-border/40 bg-muted/20 p-3 text-center">
-      <p className="text-[12px] text-muted-foreground/70 mb-0.5">{label}</p>
+    <div className={cn(CARD_RADIUS, "border", CARD_BORDER, "bg-muted/15 p-4 text-center")}>
+      <p className="text-[12px] text-muted-foreground/65 mb-1 uppercase tracking-wide font-medium">{label}</p>
       <p className="text-lg font-bold font-mono text-foreground">{value}</p>
-      {sub && <p className="text-[12px] text-muted-foreground/60 mt-0.5">{sub}</p>}
+      {sub && <p className="text-[12px] text-muted-foreground/55 mt-1">{sub}</p>}
     </div>
   );
 }
@@ -253,10 +269,10 @@ export function KeyMetric({ label, value, sub }: { label: string; value: string;
    ────────────────────────────────────────────── */
 export function SubTopic({ title, description, id }: { title: string; description?: string; id?: string }) {
   return (
-    <div id={id} className={cn("mt-8 mb-4 first:mt-4", id && "scroll-mt-24")}>
+    <div id={id} className={cn("mt-10 mb-5 first:mt-4", id && "scroll-mt-24")}>
       <h3 className="text-[17px] font-semibold tracking-tight text-foreground">{title}</h3>
       {description && (
-        <p className="text-[15px] text-muted-foreground/75 leading-relaxed mt-1">{description}</p>
+        <p className="text-[15px] text-muted-foreground/70 leading-relaxed mt-1.5">{description}</p>
       )}
     </div>
   );
