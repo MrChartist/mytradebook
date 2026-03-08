@@ -2210,10 +2210,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Recent updates and upcoming features. We ship improvements every week."
                 icon={RefreshCw}
               />
+              <QuickNav items={[
+                { label: "Recent Updates", id: "cl-updates" },
+                { label: "Roadmap", id: "cl-roadmap" },
+              ]} />
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Recent updates */}
-                <SubTopic title="Recent Updates" description="Features shipped in recent releases." />
                 <div>
+                  <SubTopic title="Recent Updates" description="Features shipped in recent releases." id="cl-updates" />
                   <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-profit" /> Latest Releases
                   </h3>
