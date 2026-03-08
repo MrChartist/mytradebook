@@ -75,12 +75,12 @@ interface Step {
 
 export function StepByStep({ steps, title }: { steps: Step[]; title?: string }) {
   return (
-    <div className="my-6">
-      {title && <p className="text-[13px] font-bold text-foreground mb-4">{title}</p>}
+    <div className="my-7">
+      {title && <p className="text-sm font-bold text-foreground mb-5">{title}</p>}
       <div className="relative">
         {/* Vertical line */}
         <div className="absolute left-[15px] top-4 bottom-4 w-px bg-gradient-to-b from-primary/30 via-primary/15 to-transparent" />
-        <div className="space-y-4">
+        <div className="space-y-5">
           {steps.map((step, i) => (
             <motion.div
               key={i}
@@ -88,16 +88,16 @@ export function StepByStep({ steps, title }: { steps: Step[]; title?: string }) 
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.3, delay: i * 0.08 }}
-              className="flex items-start gap-3.5 relative"
+              className="flex items-start gap-4 relative"
             >
               <div className="w-[30px] h-[30px] rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 z-10 relative">
                 <span className="text-[11px] font-bold text-primary">{i + 1}</span>
               </div>
               <div className="flex-1 pt-0.5">
                 <p className="text-[13px] font-semibold text-foreground leading-tight">{step.title}</p>
-                <p className="text-[12px] text-muted-foreground mt-0.5 leading-relaxed">{step.description}</p>
+                <p className="text-[12.5px] text-muted-foreground/80 mt-1 leading-relaxed">{step.description}</p>
                 {step.detail && (
-                  <p className="text-[11px] text-muted-foreground/60 mt-1 italic">{step.detail}</p>
+                  <p className="text-[11px] text-muted-foreground/55 mt-1.5 italic leading-relaxed">{step.detail}</p>
                 )}
               </div>
             </motion.div>
