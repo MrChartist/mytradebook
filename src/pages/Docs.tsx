@@ -3121,7 +3121,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               ]} />
 
               <SubTopic title="Profile & Billing" description="Manage your identity, subscription, and payment." id="set-account" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Users} title="Profile & Billing">
                   <FeatureList items={[
                     "Update your name, email, and phone number",
