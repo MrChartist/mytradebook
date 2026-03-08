@@ -175,7 +175,7 @@ export function PricingSection() {
       <MotionSection className="max-w-5xl mx-auto px-6 lg:px-8">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>Pricing</SectionBadge>
-          <h2 className="text-3xl lg:text-5xl font-extrabold mb-4 leading-[1.1] tracking-tight">
+          <h2 className="font-display text-3xl lg:text-5xl font-bold mb-4 leading-[1.1] tracking-tight">
             Simple,{" "}<span className="accent-script">transparent</span>{" "}pricing
           </h2>
           <p className="text-muted-foreground max-w-md mx-auto text-base lg:text-lg leading-relaxed">
