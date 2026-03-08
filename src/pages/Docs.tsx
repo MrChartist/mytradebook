@@ -755,19 +755,26 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           {/* Title row */}
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <h1 className="docs-title font-heading" style={{ fontSize: 'clamp(1.75rem, 3vw, 2.5rem)' }}>Documentation</h1>
-            <button
-              onClick={toggle}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-semibold transition-all"
-              style={{
-                background: mode === "bw" ? 'hsl(var(--docs-text-strong))' : 'hsl(var(--docs-elevated))',
-                border: `1px solid ${mode === "bw" ? 'hsl(var(--docs-text-strong))' : 'hsl(var(--docs-border-subtle))'}`,
-                color: mode === "bw" ? 'hsl(var(--docs-bg))' : 'hsl(var(--docs-text-muted))',
-              }}
-              aria-label="Toggle color mode"
-            >
-              <Palette className="w-3 h-3" />
-              {mode === "bw" ? "B&W" : "Color"}
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={toggle}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-semibold transition-all"
+                  style={{
+                    background: mode === "bw" ? 'hsl(var(--docs-text-strong))' : 'hsl(var(--docs-elevated))',
+                    border: `1px solid ${mode === "bw" ? 'hsl(var(--docs-text-strong))' : 'hsl(var(--docs-border-subtle))'}`,
+                    color: mode === "bw" ? 'hsl(var(--docs-bg))' : 'hsl(var(--docs-text-muted))',
+                  }}
+                  aria-label="Toggle mockup color mode"
+                >
+                  <Palette className="w-3 h-3" />
+                  {mode === "bw" ? "B&W" : "Color"}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="text-xs">
+                Toggle mockup color mode
+              </TooltipContent>
+            </Tooltip>
           </div>
 
           {/* Subtitle */}
