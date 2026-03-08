@@ -49,15 +49,15 @@ export function ProTip({ children, variant = "tip" }: { children: ReactNode; var
   const Icon = s.icon;
 
   return (
-    <div className={cn("rounded-xl border p-4 my-5 relative overflow-hidden", s.border, s.bg)}>
+    <div className={cn("rounded-xl border p-4.5 my-6 relative overflow-hidden", s.border, s.bg)}>
       <div className="absolute top-0 left-0 w-1 h-full rounded-full" style={{ backgroundColor: variant === "tip" ? "hsl(var(--primary))" : variant === "warning" ? "hsl(var(--warning))" : variant === "info" ? "hsl(var(--tb-accent))" : "hsl(var(--profit))" }} />
-      <div className="flex items-start gap-3 pl-2">
+      <div className="flex items-start gap-3.5 pl-2.5">
         <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5", s.iconBg)}>
           <Icon className={cn("w-3.5 h-3.5", s.iconColor)} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className={cn("text-[11px] font-bold uppercase tracking-wider mb-1", s.iconColor)}>{s.label}</p>
-          <div className="text-[13px] text-muted-foreground leading-relaxed [&>p]:mb-0">{children}</div>
+          <p className={cn("text-[10px] font-bold uppercase tracking-widest mb-1.5", s.iconColor)}>{s.label}</p>
+          <div className="text-[13px] text-muted-foreground/80 leading-[1.7] [&>p]:mb-0">{children}</div>
         </div>
       </div>
     </div>
