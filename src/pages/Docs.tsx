@@ -1072,11 +1072,17 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Set price alerts, percentage change triggers, volume spike detectors, and custom conditions. Get notified instantly via in-app notifications or Telegram."
                 icon={Bell}
               />
+              <QuickNav items={[
+                { label: "Alert Types", id: "al-types" },
+                { label: "Trigger Logic", id: "al-trigger" },
+                { label: "Management", id: "al-management" },
+                { label: "AI Suggestions", id: "al-ai" },
+              ]} />
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 <AlertCardMockup />
                 <TelegramNotifMockup />
               </div>
-              <SubTopic title="Alert Types" description="Seven condition types to monitor any price action." />
+              <SubTopic title="Alert Types" description="Seven condition types to monitor any price action." id="al-types" />
               <FeatureCard icon={Bell} title="Alert Condition Types">
                 <FeatureList items={[
                   "Price Above — triggers when LTP exceeds your threshold",
