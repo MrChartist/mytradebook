@@ -570,7 +570,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Widget Customization", id: "dashboard" },
               ]} />
               <DashboardMockup />
-
+              <SubTopic title="Performance Overview" description="Real-time P&L and key trading metrics at a glance." />
               <FeatureCard icon={Activity} title="Today's P&L Hero Card">
                 <p className="text-sm text-muted-foreground">
                   The top hero card shows your total P&L for the day with a large, color-coded number. Green for profit, red for loss. Breaks down realized vs unrealized gains and shows win/loss count. Updates in real-time if you have live prices enabled via Dhan integration.
