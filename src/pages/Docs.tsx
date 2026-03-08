@@ -3411,6 +3411,20 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   <div className="mt-4"><SettingsIntegrationsMockup /></div>
                 </FeatureCard>
               </div>
+
+              <ExpandableDetail title="Common Settings Issues & Troubleshooting" icon={AlertTriangle} badge="Troubleshooting">
+                <p>Quick fixes for the most common settings-related problems:</p>
+                <FeatureList items={[
+                  "Starting capital shows ₹0 — Go to Settings → Preferences and enter your actual trading capital. This is required for risk % calculations and return metrics to work correctly.",
+                  "Tags not appearing in trade form — Tags are segment-specific. Ensure you've created tags in Settings → Tags that match the segment you're trading (e.g., Options tags only appear for Options trades).",
+                  "Dhan connection expired — Dhan access tokens expire after 24 hours. Go to Settings → Integrations → Dhan and re-authenticate. This is a Dhan security requirement.",
+                  "Telegram not receiving alerts — Check: (1) Is the Telegram chat verified? (2) Is 'Telegram enabled' toggled on for that notification type? (3) Did you send /start to your bot? The delivery log shows failure reasons.",
+                  "Theme not saving — Theme preference is stored locally. If you cleared browser data or switched devices, you'll need to re-select your theme in Settings → Preferences.",
+                  "Risk gauge always shows 0% — Risk gauge requires open trades with stop losses set. If your trades have no SL, risk can't be calculated. Also check that starting capital is set.",
+                  "Analytics showing wrong data — Check the segment filter and date range at the top. Also verify you have closed trades — open trades don't contribute to most analytics calculations.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">For issues not covered here, check the FAQ section below or reach out via the in-app feedback button.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
