@@ -1117,7 +1117,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <VideoPlaceholder title="How to Import Trades from CSV" duration="3 min" />
 
               <SubTopic title="Import & Export Details" description="Detailed capabilities for importing and exporting trade data." id="csv-details" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Upload} title="Importing Trades">
                   <p className="text-sm text-muted-foreground mb-3">Full-featured CSV import with validation:</p>
                   <FeatureList items={[
