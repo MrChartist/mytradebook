@@ -564,14 +564,13 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={LayoutDashboard}
               />
               <QuickNav items={[
-                { label: "Today's P&L", id: "dashboard" },
-                { label: "KPI Cards", id: "dashboard" },
-                { label: "Risk Gauge", id: "dashboard" },
-                { label: "Equity Curve", id: "dashboard" },
-                { label: "Widget Customization", id: "dashboard" },
+                { label: "Performance Overview", id: "db-performance" },
+                { label: "Charts & Visualizations", id: "db-charts" },
+                { label: "Customization", id: "db-customization" },
+                { label: "Advanced Widgets", id: "db-advanced" },
               ]} />
               <DashboardMockup />
-              <SubTopic title="Performance Overview" description="Real-time P&L and key trading metrics at a glance." />
+              <SubTopic title="Performance Overview" description="Real-time P&L and key trading metrics at a glance." id="db-performance" />
               <FeatureCard icon={Activity} title="Today's P&L Hero Card">
                 <p className="text-sm text-muted-foreground">
                   The top hero card shows your total P&L for the day with a large, color-coded number. Green for profit, red for loss. Breaks down realized vs unrealized gains and shows win/loss count. Updates in real-time if you have live prices enabled via Dhan integration.
