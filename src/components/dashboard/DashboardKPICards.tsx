@@ -120,7 +120,7 @@ export function DashboardKPICards({ alerts }: Props) {
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/reports"); }}
       >
         <div className="flex items-center justify-between mb-4">
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">MTD P&L</span>
+          <span className="kpi-label">MTD P&L</span>
           <div className={cn("icon-badge", realizedPnl + unrealizedPnl >= 0 ? "bg-profit/10" : "bg-loss/10")}>
             <Wallet className={cn("w-4.5 h-4.5", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")} />
           </div>
