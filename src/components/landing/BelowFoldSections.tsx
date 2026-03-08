@@ -252,13 +252,13 @@ export function PricingSection() {
                 <Crown className="w-3 h-3" /> Coming Soon
               </div>
 
-              <h3 className="text-xl font-bold tracking-tight mb-3">Pro</h3>
+              <h3 className="text-xl font-semibold tracking-[-0.015em] mb-3">Pro</h3>
 
               <div className="flex items-baseline gap-2 mb-1.5">
-                <span className="text-4xl font-extrabold font-mono tracking-tight text-muted-foreground/30">₹499</span>
-                <span className="text-muted-foreground text-[13px]">/month</span>
+                <span className="text-4xl font-extrabold font-mono tracking-[-0.03em] text-muted-foreground/30">₹499</span>
+                <span className="text-muted-foreground text-[13px] tracking-[-0.006em]">/month</span>
               </div>
-              <p className="text-[13px] text-muted-foreground/70 mb-6 leading-relaxed">Priority support, advanced AI, and team features.</p>
+              <p className="text-[13px] text-muted-foreground/70 mb-6 leading-[1.6]">Priority support, advanced AI, and team features.</p>
 
               <ul className="space-y-2.5 flex-1 mb-6">
                 {[
