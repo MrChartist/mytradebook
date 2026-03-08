@@ -2784,7 +2784,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
               <AIProviderComparisonMockup />
 
-              <div className="grid md:grid-cols-2 gap-5 mt-6">
+              <div className="space-y-5 mt-6">
                 <FeatureCard icon={Star} title="Google Gemini (Recommended)" badge="Free">
                   <p className="text-sm text-muted-foreground mb-3">
                     <span className="font-semibold text-profit">Completely free</span> — Gemini's free tier is more than enough for daily trade analysis. No credit card required.
