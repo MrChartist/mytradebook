@@ -895,14 +895,21 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 3b. CSV Import ──────────────────────────── */}
+            {/* ── Phase 4. CSV Import ──────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={4} total={26} />
               <SectionHeader
                 id="csv-import"
                 title="CSV Import & Export"
                 description="Bulk import trades from CSV files with intelligent column mapping, or export your entire trade history for backup and external analysis."
                 icon={Upload}
               />
+              <StepByStep title="How to Import" steps={[
+                { title: "Export from your broker", description: "Download your trade history as CSV from your broker's platform." },
+                { title: "Upload to TradeBook", description: "Go to Trades → Import CSV and select your file." },
+                { title: "Map columns", description: "Match your CSV column headers to TradeBook fields. Common names are auto-detected." },
+                { title: "Preview & confirm", description: "Review mapped data, fix any validation errors, then confirm the import." },
+              ]} />
               <VideoPlaceholder title="How to Import Trades from CSV" duration="3 min" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Upload} title="Importing Trades">
