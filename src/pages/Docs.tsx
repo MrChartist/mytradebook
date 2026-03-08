@@ -389,6 +389,98 @@ const ShortcutKey = React.forwardRef<HTMLElement, { children: string }>(({ child
 ));
 ShortcutKey.displayName = "ShortcutKey";
 
+/* ──────────────────────────────────────────────
+   RightRail — Sticky "On this page" with scroll-aware active heading
+   ────────────────────────────────────────────── */
+function RightRail({ activeSection }: { activeSection: string }) {
+  const [activeAnchor, setActiveAnchor] = useState<string | null>(null);
+  const anchors = SECTION_ANCHORS[activeSection] || [];
+  const sectionMeta = SECTIONS.find(s => s.id === activeSection);
+
+  useEffect(() => {
+    if (anchors.length === 0) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter(e => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible.length > 0) {
+          setActiveAnchor(visible[0].target.id);
+        }
+      },
+      { rootMargin: "-80px 0px -65% 0px", threshold: 0 }
+    );
+    anchors.forEach(a => {
+      const el = document.getElementById(a.id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, [activeSection, anchors]);
+
+  useEffect(() => {
+    setActiveAnchor(anchors[0]?.id || null);
+  }, [activeSection]);
+
+  return (
+    <aside className="hidden xl:block w-[200px] shrink-0" style={{ borderLeft: '1px solid hsl(var(--docs-border-subtle) / 0.35)' }}>
+      <div className="sticky top-20 h-[calc(100vh-5rem)] py-8 pl-5 pr-3 overflow-y-auto">
+        <p
+          className="text-[10.5px] font-semibold uppercase tracking-[0.1em] mb-5"
+          style={{ color: 'hsl(var(--docs-text-muted) / 0.45)' }}
+        >
+          On this page
+        </p>
+        <AnimatePresence mode="wait">
+          <motion.nav
+            key={activeSection}
+            initial={{ opacity: 0, x: 4 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -4 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="space-y-0.5"
+            aria-label="Page outline"
+          >
+            {sectionMeta && (
+              <button
+                onClick={() => document.getElementById(activeSection)?.scrollIntoView({ behavior: "smooth" })}
+                className="block w-full text-left mb-3 pb-3 group"
+                style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.4)' }}
+              >
+                <span
+                  className="text-[12px] font-semibold leading-snug transition-colors duration-150 group-hover:opacity-80"
+                  style={{ color: 'hsl(var(--docs-text-strong))' }}
+                >
+                  {sectionMeta.label}
+                </span>
+              </button>
+            )}
+            {anchors.map((anchor) => {
+              const isActive = activeAnchor === anchor.id;
+              return (
+                <button
+                  key={anchor.id}
+                  onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                  className={cn(
+                    "docs-anchor-link block w-full text-left py-[5px] transition-all duration-150 leading-snug",
+                    isActive && "active"
+                  )}
+                >
+                  {anchor.label}
+                </button>
+              );
+            })}
+            {anchors.length === 0 && (
+              <p className="text-[11px] italic" style={{ color: 'hsl(var(--docs-text-muted) / 0.4)' }}>
+                No sub-sections
+              </p>
+            )}
+          </motion.nav>
+        </AnimatePresence>
+      </div>
+    </aside>
+  );
+}
+
 export default function Docs() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -4201,34 +4293,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         </main>
 
         {/* ─────────────────────────────────────────────────────────────
-            RIGHT RAIL — On this page / Section outline
+            RIGHT RAIL — On this page / Section outline with scroll-aware active heading
             ───────────────────────────────────────────────────────────── */}
-        <aside className="hidden xl:block w-[200px] shrink-0" style={{ borderLeft: '1px solid hsl(var(--docs-border-subtle) / 0.4)' }}>
-          <div className="sticky top-20 h-[calc(100vh-5rem)] py-8 pl-6 pr-4 overflow-y-auto">
-            <p className="docs-caption uppercase tracking-[0.08em] mb-5" style={{ color: 'hsl(var(--docs-text-muted) / 0.5)' }}>On this page</p>
-            <AnimatePresence mode="wait">
-              <motion.nav 
-                key={activeSection}
-                initial={{ opacity: 0, x: 5 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -5 }}
-                transition={{ duration: 0.18, ease: "easeOut" }}
-                className="space-y-1"
-              >
-                {(SECTION_ANCHORS[activeSection] || []).map((anchor, idx) => (
-                  <button
-                    key={anchor.id}
-                    onClick={() => document.getElementById(anchor.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                    className="docs-anchor-link block w-full text-left py-1.5 transition-all duration-150 leading-snug"
-                    style={{ paddingLeft: idx === 0 ? '0.75rem' : '0.75rem' }}
-                  >
-                    {anchor.label}
-                  </button>
-                ))}
-              </motion.nav>
-            </AnimatePresence>
-          </div>
-        </aside>
+        <RightRail activeSection={activeSection} />
       </div>
 
       {/* Back to top button */}
