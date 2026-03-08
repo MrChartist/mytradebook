@@ -194,40 +194,40 @@ function PublicProfileCard() {
   const profileUrl = user ? `${window.location.origin}/trader/${user.id}` : "";
 
   return (
-    <div className="premium-card-hover p-5 space-y-4">
+    <div className="premium-card p-6 space-y-5">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           <div className="icon-badge-sm bg-primary/8">
             <Globe className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h2 className="text-[15px] font-semibold">Public Profile</h2>
-            <p className="text-[11px] text-muted-foreground/50">Allow others to see your trader stats</p>
+            <h2 className="text-base font-semibold font-heading">Public Profile</h2>
+            <p className="text-[12px] text-muted-foreground/60">Allow others to see your trader stats</p>
           </div>
         </div>
         <Switch checked={isPublic} onCheckedChange={setIsPublic} />
       </div>
       {isPublic && (
-        <div className="space-y-3">
-          <div className="space-y-1.5">
-            <Label className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Display Name</Label>
-            <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Your trader name" className="bg-muted/20 border-border/20 h-9 text-[13px] focus:border-primary/30" />
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label className="text-[11px] text-muted-foreground/70 font-medium uppercase tracking-wider">Display Name</Label>
+            <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Your trader name" className="h-10 text-[14px]" />
           </div>
-          <div className="space-y-1.5">
-            <Label className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Bio</Label>
-            <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="A brief description..." className="bg-muted/20 border-border/20 text-[13px] focus:border-primary/30" rows={2} />
+          <div className="space-y-2">
+            <Label className="text-[11px] text-muted-foreground/70 font-medium uppercase tracking-wider">Bio</Label>
+            <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="A brief description..." className="text-[14px]" rows={2} />
           </div>
-          <div className="space-y-1.5">
-            <Label className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Disclaimer</Label>
-            <Textarea value={disclaimer} onChange={(e) => setDisclaimer(e.target.value)} placeholder="Not SEBI registered..." className="bg-muted/20 border-border/20 text-[13px] focus:border-primary/30" rows={2} />
+          <div className="space-y-2">
+            <Label className="text-[11px] text-muted-foreground/70 font-medium uppercase tracking-wider">Disclaimer</Label>
+            <Textarea value={disclaimer} onChange={(e) => setDisclaimer(e.target.value)} placeholder="Not SEBI registered..." className="text-[14px]" rows={2} />
           </div>
-          <div className="text-[11px] text-muted-foreground/40 bg-muted/20 rounded-lg px-3 py-2 border border-border/10 truncate font-mono">
+          <div className="text-[12px] text-muted-foreground/50 bg-muted/30 rounded-lg px-3 py-2.5 border border-border/20 truncate font-mono">
             {profileUrl}
           </div>
         </div>
       )}
-      <Button variant="outline" size="sm" onClick={handleSave} disabled={saving} className="h-8 text-[11px] rounded-lg border-border/20">
-        {saving ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Save className="w-3.5 h-3.5 mr-1.5" />}
+      <Button variant="outline" size="sm" onClick={handleSave} disabled={saving} className="h-9 text-[12px] rounded-lg">
+        {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
         Save Public Profile
       </Button>
     </div>
