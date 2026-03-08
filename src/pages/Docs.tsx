@@ -4348,6 +4348,29 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </FeatureCard>
               </div>
 
+              <SubTopic title="Subscription & Plans" description="Free, Pro, and Team tiers with trial mechanics and plan-gated features." id="set-plans" />
+              <div className="space-y-5">
+                <FeatureCard icon={Crown} title="Plan Tiers & Trial">
+                  <p className="text-sm text-muted-foreground mb-3">TradeBook offers three plan tiers to match your trading needs:</p>
+                  <FeatureList items={[
+                    "Free — core trade logging, basic analytics, and limited alerts. Great for getting started.",
+                    "Pro — unlocks AI Trade Coach, advanced analytics (sector heatmap, risk of ruin, pattern detection), unlimited alerts, CSV import, and weekly reports.",
+                    "Team — everything in Pro plus collaborative features and priority support.",
+                    "14-day Pro trial — every new account starts with full Pro access for 14 days, no credit card required.",
+                    "Plan-gated features show an 'Upgrade' prompt with a lock icon when you try to access them on a lower tier.",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Wallet} title="Billing & Upgrade Flow">
+                  <FeatureList items={[
+                    "Navigate to Settings → Billing to view your current plan and subscription status",
+                    "Choose between Monthly, Quarterly (save 17%), or Yearly (save 37%) billing cycles",
+                    "Upgrade instantly — your new plan activates immediately after payment",
+                    "Downgrade at end of billing period — you keep Pro access until the current cycle ends",
+                    "Referral bonus days extend your trial period (30 days per successful referral)",
+                  ]} />
+                </FeatureCard>
+              </div>
+
               <SubTopic title="Tags & Customisation" description="Personalise your trading taxonomy with custom tags." id="set-tags" />
               <div className="space-y-5">
                 <FeatureCard icon={Tag} title="Tag Management">
