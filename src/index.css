@@ -761,12 +761,12 @@
 
   /* Section title: 30px desktop — clear section entry, not oversized */
   .docs-section-title {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
     font-size: 1.875rem;
     line-height: 1.15;
     font-weight: 650;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.018em;
+    letter-spacing: -0.022em;
   }
 
   /* Topic heading: 24px desktop — primary content divider */
