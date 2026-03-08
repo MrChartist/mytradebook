@@ -29,16 +29,17 @@ function getMarketStatus(): { label: string; isOpen: boolean } {
 }
 
 export function DashboardGreeting() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
   const greeting = useMemo(() => getGreeting(), []);
   const market = useMemo(() => getMarketStatus(), []);
   const dateStr = useMemo(() => format(new Date(), "EEEE, d MMMM yyyy"), []);
 
   const displayName = useMemo(() => {
+    if (profile?.name) return profile.name;
     const email = user?.email || "";
     return email.split("@")[0]?.replace(/[._-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) || "Trader";
-  }, [user]);
+  }, [user, profile]);
 
   return (
     <div className="flex flex-col gap-1">
