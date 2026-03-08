@@ -675,13 +675,12 @@ export function FooterSection() {
             <h4 className="text-xs uppercase tracking-[0.12em] font-bold text-muted-foreground/50 mb-4">Product</h4>
             <ul className="space-y-1.5 text-[14px] text-muted-foreground">
               {[
-                { label: "Features", href: "#features" },
-                { label: "Pricing", href: "#pricing" },
-                { label: "Documentation", href: "/docs" },
-                { label: "Changelog", href: "#" },
+                { label: "Features", action: () => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" }) },
+                { label: "Pricing", action: () => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" }) },
+                { label: "Documentation", action: () => navigate("/docs") },
               ].map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className="inline-block py-0.5 hover:text-foreground transition-colors">{l.label}</a>
+                  <button onClick={l.action} className="inline-block py-0.5 hover:text-foreground transition-colors">{l.label}</button>
                 </li>
               ))}
             </ul>
