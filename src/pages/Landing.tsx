@@ -38,8 +38,9 @@ export default function Landing() {
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden font-sans landing-page">
       <SEOHead
         title="Trading Journal for Indian Markets — NSE, MCX, F&O"
-        description="Track, analyze, and improve your trades with TradeBook. Real-time alerts, broker integration, and segment-based analytics built for Equity, F&O, and Commodity traders in India."
+        description="Track, analyze, and improve your trades with TradeBook. Real-time alerts, Dhan broker integration, trailing stop loss engine, and segment-based analytics built for Equity, F&O, and Commodity traders in India."
         path="/"
+        keywords="trading journal India, NSE journal, MCX trading log, F&O trade tracker, options trading journal, equity trading analytics, Dhan broker integration, trade analytics India, stock market journal"
         jsonLd={[
           {
             "@context": "https://schema.org",

@@ -19,7 +19,7 @@ const sections = [
 export default function Terms() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <SEOHead title="Terms of Service" path="/terms" description="Terms of Service for TradeBook — trading journal for Indian markets." />
+      <SEOHead title="Terms of Service" path="/terms" description="Read the Terms of Service for TradeBook — the trading journal and analytics platform for Indian stock market traders. Learn about account usage, subscriptions, and data policies." keywords="TradeBook terms of service, trading journal terms, Indian market platform terms" />
 
       {/* Navbar */}
       <motion.nav

@@ -20,7 +20,7 @@ const sections = [
 export default function Privacy() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <SEOHead title="Privacy Policy" path="/privacy" description="Privacy Policy for TradeBook — how we handle your data." />
+      <SEOHead title="Privacy Policy" path="/privacy" description="Learn how TradeBook protects your trading data. Our privacy policy covers data collection, security measures, broker integration privacy, and your rights as an Indian market trader." keywords="TradeBook privacy policy, trading data privacy, Indian market data security" />
 
       {/* Navbar */}
       <motion.nav

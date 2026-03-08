@@ -529,18 +529,38 @@ export default function Docs() {
   return (
     <DocsColorModeProvider>
       <SEOHead
-        title="Documentation & Feature Guide"
-        description="Complete guide to TradeBook features — dashboard, trade logging, alerts, analytics, journal, and integrations for Indian market traders."
+        title="Documentation — Complete Feature Guide for Indian Traders"
+        description="Step-by-step guide to TradeBook: dashboard setup, trade logging, alerts, AI analytics, journal, Dhan integration, and 26 features for NSE, BSE & MCX traders."
         path="/docs"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "TechArticle",
-          "name": "TradeBook Documentation",
-          "description": "Complete guide to every TradeBook feature — from trade logging to AI-powered analytics for Indian market traders.",
-          "url": "https://mytradebook.lovable.app/docs",
-          "author": { "@type": "Organization", "name": "TradeBook" },
-          "about": { "@type": "SoftwareApplication", "name": "TradeBook" }
-        }}
+        ogType="article"
+        datePublished="2025-12-01"
+        dateModified="2026-03-08"
+        keywords="TradeBook docs, trading journal guide, NSE trading tutorial, trade logging help, Dhan integration guide, F&O analytics, Indian market trading tools"
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "TechArticle",
+            "headline": "TradeBook Documentation — Complete Feature Guide",
+            "name": "TradeBook Documentation",
+            "description": "Complete guide to every TradeBook feature — from trade logging to AI-powered analytics for Indian market traders.",
+            "url": "https://tradebook.mrchartist.com/docs",
+            "datePublished": "2025-12-01",
+            "dateModified": "2026-03-08",
+            "author": { "@type": "Organization", "name": "TradeBook", "url": "https://tradebook.mrchartist.com" },
+            "publisher": { "@type": "Organization", "name": "TradeBook", "logo": { "@type": "ImageObject", "url": "https://tradebook.mrchartist.com/assets/logo.png" } },
+            "about": { "@type": "SoftwareApplication", "name": "TradeBook", "applicationCategory": "FinanceApplication" },
+            "wordCount": 12000,
+            "articleSection": "Documentation"
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tradebook.mrchartist.com/" },
+              { "@type": "ListItem", "position": 2, "name": "Documentation", "item": "https://tradebook.mrchartist.com/docs" }
+            ]
+          }
+        ]}
       />
       <DocsContent
         navigate={navigate}
