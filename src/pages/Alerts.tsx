@@ -3,7 +3,7 @@ import {
   Bell, Plus, Search, TrendingUp, TrendingDown, Percent,
   ToggleLeft, ToggleRight, Trash2, Edit2, Loader2, Zap,
   Send, Clock, CalendarClock, PauseCircle,
-  BellOff, Timer, History, MoreHorizontal,
+  BellOff, Timer, History, MoreHorizontal, ArrowRightCircle,
 } from "lucide-react";
 import { useLivePrices, type InstrumentInput } from "@/hooks/useLivePrices";
 import { Button } from "@/components/ui/button";
