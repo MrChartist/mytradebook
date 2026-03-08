@@ -13,7 +13,7 @@ import {
 
 // Lazy-loaded — below the fold
 const FeaturesSection = lazy(() => import("@/components/landing/FeaturesSection").then(m => ({ default: m.FeaturesSection })));
-const HowItWorksSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.HowItWorksSection })));
+
 const PricingSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.PricingSection })));
 const TestimonialsSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.TestimonialsSection })));
 const IndianMarketsSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.IndianMarketsSection })));
