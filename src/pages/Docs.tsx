@@ -1666,8 +1666,132 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── 12. Integrations ───────────────────────── */}
+            {/* ── Phase 17. Sharing & Social Cards ────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={17} total={26} />
+              <SectionHeader
+                id="sharing"
+                title="Sharing & Social Cards"
+                description="Generate beautiful share cards for your P&L, individual trades, and streaks. Share your trading wins on social media with branded, professional-looking graphics."
+                icon={Share2}
+              />
+              <ShareCardsMockup />
+              <div className="grid md:grid-cols-2 gap-5">
+                <FeatureCard icon={Share2} title="P&L Share Cards">
+                  <p className="text-sm text-muted-foreground mb-3">Generate visual P&L summaries to share on social media:</p>
+                  <FeatureList items={[
+                    "Daily, weekly, or monthly P&L snapshots",
+                    "Includes win rate, trade count, and streak data",
+                    "Multiple card templates with different styles",
+                    "Download as PNG image for sharing",
+                    "Watermarked with your TradeBook branding",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={TrendingUp} title="Trade Share Cards">
+                  <p className="text-sm text-muted-foreground mb-3">Share individual trade results with detailed metrics:</p>
+                  <FeatureList items={[
+                    "Entry/exit prices, P&L, and return %",
+                    "Setup tags and timeframe shown on card",
+                    "Multiple visual templates to choose from",
+                    "One-click download from trade detail modal",
+                    "Privacy-safe — no account details shared",
+                  ]} />
+                </FeatureCard>
+              </div>
+              <StreakShareMockup />
+              <FeatureCard icon={Award} title="Streak Share Cards" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">Celebrate your winning streaks with visual share cards:</p>
+                <FeatureList items={[
+                  "Consecutive winning day counter with fire emoji",
+                  "Day-by-day breakdown of the streak period",
+                  "Share directly from the Dashboard streak widget",
+                  "Branded card with TradeBook watermark",
+                ]} />
+              </FeatureCard>
+              <ProTip>
+                <p>Sharing your wins publicly creates accountability. Traders who share their journal consistently show 15% higher discipline scores in our data.</p>
+              </ProTip>
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 18. Achievements & Gamification ──────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={18} total={26} />
+              <SectionHeader
+                id="achievements"
+                title="Achievements & Gamification"
+                description="Earn badges as you hit trading milestones. From your first trade to 100-day streaks, achievements make your trading journey rewarding and motivating."
+                icon={Trophy}
+              />
+              <AchievementsMockup />
+              <FeatureCard icon={Trophy} title="Badge Categories">
+                <p className="text-sm text-muted-foreground mb-3">Achievements are grouped into categories:</p>
+                <FeatureList items={[
+                  "Milestones — trade count targets (1, 10, 50, 100, 500 trades)",
+                  "Streaks — consecutive profitable days (3, 5, 7, 14, 30 days)",
+                  "Discipline — following rules, setting SL, using templates",
+                  "Analytics — reviewing your data, using AI insights, generating reports",
+                  "Social — sharing trades, inviting friends, writing journal entries",
+                ]} />
+              </FeatureCard>
+              <ExpandableDetail title="How Achievements Are Tracked" icon={Target} defaultOpen>
+                <p className="text-[13px] text-muted-foreground mb-2">Achievements are tracked automatically as you use TradeBook. Each badge has a threshold (e.g., "Log 50 trades") and your progress is updated in real-time. When you reach the threshold, the badge unlocks with a celebration animation.</p>
+                <p className="text-[13px] text-muted-foreground">View your progress in the Dashboard achievements widget or Settings → Profile. Unlocked badges show a timestamp of when they were earned.</p>
+              </ExpandableDetail>
+              <ProTip variant="info">
+                <p>Check the Achievements grid on your Dashboard to see which badges you're closest to earning. Some badges unlock hidden features or special share card templates!</p>
+              </ProTip>
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 19. AI Trade Coach ────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={19} total={26} />
+              <SectionHeader
+                id="trade-coach"
+                title="AI Trade Coach"
+                description="Get instant AI-powered feedback on every closed trade. The coach analyzes your entry, exit, timing, and risk management — then gives actionable advice."
+                icon={Sparkles}
+              />
+              <TradeCoachMockup />
+              <StepByStep title="How the AI Trade Coach Works" steps={[
+                { title: "Close a trade", description: "When you close or exit a trade, the AI Coach is automatically triggered." },
+                { title: "AI analyzes your trade", description: "The coach examines entry timing, stop loss placement, exit strategy, and risk management." },
+                { title: "Get structured feedback", description: "Receive 'What Went Well', 'Room for Improvement', and an overall rating (1-5 stars)." },
+                { title: "Feedback is saved", description: "All coaching feedback is stored on the trade record for future reference and pattern tracking." },
+              ]} />
+              <FeatureCard icon={Zap} title="What the Coach Analyzes" badge="Pro">
+                <FeatureList items={[
+                  "Entry timing — was the entry at an optimal price level?",
+                  "Stop loss placement — was the SL too tight or too wide?",
+                  "Exit strategy — did you take profits too early or hold too long?",
+                  "Risk management — was the position size appropriate for the setup?",
+                  "Pattern recognition — was the trade consistent with your best setups?",
+                  "Emotional assessment — signs of FOMO, revenge trading, or overconfidence",
+                ]} />
+              </FeatureCard>
+              <ProTip variant="best-practice">
+                <p>Read your AI Coach feedback before taking the next trade. If the coach flagged "exited too early" on 3 consecutive trades, it's a signal to work on your trailing stop strategy.</p>
+              </ProTip>
+              <ComparisonTable
+                title="AI Trade Coach — Free vs Pro"
+                rows={[
+                  { feature: "Basic post-trade feedback", free: false, pro: true },
+                  { feature: "Detailed 3-part analysis", free: false, pro: true },
+                  { feature: "Star rating per trade", free: false, pro: true },
+                  { feature: "Saved coaching history", free: false, pro: true },
+                  { feature: "Pattern-based insights", free: false, pro: true },
+                ]}
+              />
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 20. Integrations ───────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={20} total={26} />
               <SectionHeader
                 id="integrations"
                 title="Integrations"
