@@ -74,7 +74,7 @@ export default function ResetPassword() {
           <div className="w-16 h-16 rounded-full bg-profit/10 flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-8 h-8 text-profit" />
           </div>
-          <h2 className="text-2xl font-bold mb-2">Password Updated!</h2>
+          <h2 className="text-2xl font-display font-bold mb-2 tracking-tight">Password Updated!</h2>
           <p className="text-muted-foreground">Redirecting you to the dashboard...</p>
         </div>
       </div>
