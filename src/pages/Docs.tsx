@@ -341,7 +341,7 @@ function SectionHeader({ id, title, description, icon: Icon }: {
 
 function ShortcutKey({ children }: { children: string }) {
   return (
-    <kbd className="px-2 py-1 rounded-md bg-muted border border-border text-xs font-mono font-semibold text-foreground">
+    <kbd className="px-2 py-1 rounded-md bg-muted border border-border text-[12px] font-mono font-semibold text-foreground">
       {children}
     </kbd>
   );
