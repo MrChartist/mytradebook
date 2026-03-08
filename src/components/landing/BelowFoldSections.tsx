@@ -289,7 +289,7 @@ export function PricingSection() {
 
         {/* Comparison table */}
         <motion.div variants={fadeUp} className="max-w-3xl mx-auto mb-12">
-          <h3 className="text-base font-bold text-center mb-5 tracking-tight">How we compare</h3>
+          <h3 className="text-base font-semibold text-center mb-5 tracking-[-0.015em]">How we compare</h3>
           <div className="rounded-xl border border-border/20 bg-card/50 overflow-hidden" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}>
             <div className="grid grid-cols-3 gap-0 border-b border-border/15 px-5 py-3 bg-muted/15">
               <span className="text-[13px] font-bold text-foreground">Feature</span>
