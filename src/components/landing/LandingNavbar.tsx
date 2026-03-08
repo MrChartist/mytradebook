@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Menu, X, BookOpen, Zap, Tag, HelpCircle, ChevronRight } from "lucide-react";
+import { ArrowRight, Menu, X, BookOpen, Zap, Tag, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { BrandLogoInline } from "@/components/ui/brand-logo";
@@ -16,7 +16,6 @@ interface LandingNavbarProps {
 const NAV_LINKS = [
   { label: "Features", href: "/#features", page: "home", icon: Zap },
   { label: "Pricing", href: "/#pricing", page: "home", icon: Tag },
-  { label: "FAQ", href: "/#faq", page: "home", icon: HelpCircle },
   { label: "Docs", href: "/docs", page: "docs", icon: BookOpen },
 ];
 
@@ -24,9 +23,13 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [pastHero, setPastHero] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20);
+      setPastHero(window.scrollY > 600);
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
@@ -144,7 +147,10 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
               <Button
                 size="sm"
                 onClick={() => navigate("/login?mode=signup")}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 h-8 text-[13px] font-semibold gap-1.5"
+                className={cn(
+                  "bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 h-8 text-[13px] font-semibold gap-1.5 transition-all duration-300",
+                  pastHero && "md:inline-flex hidden"
+                )}
               >
                 Get Started
                 <ArrowRight className="w-3.5 h-3.5" />
