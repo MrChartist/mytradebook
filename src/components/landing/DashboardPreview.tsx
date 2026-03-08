@@ -97,7 +97,7 @@ export function DashboardPreview() {
             </div>
 
             {/* Main content — Dashboard only */}
-            <div className="flex-1 p-3 sm:p-5 min-w-0">
+            <div className="flex-1 p-4 sm:p-6 min-w-0">
               <DashboardTab />
             </div>
           </div>
