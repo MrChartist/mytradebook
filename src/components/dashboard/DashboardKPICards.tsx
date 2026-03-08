@@ -85,7 +85,7 @@ export function DashboardKPICards({ alerts }: Props) {
           totalTodayPnl >= 0 ? "bg-profit" : "bg-loss"
         )} />
         <div className="flex items-center justify-between mb-3">
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Today's P&L</span>
+          <span className="kpi-label">Today's P&L</span>
           <div className={cn("icon-badge", totalTodayPnl >= 0 ? "bg-profit/10" : "bg-loss/10")}>
             <Flame className={cn("w-4.5 h-4.5", totalTodayPnl >= 0 ? "text-profit" : "text-loss")} />
           </div>
