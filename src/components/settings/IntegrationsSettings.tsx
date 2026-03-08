@@ -645,15 +645,15 @@ export default function IntegrationsSettings() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="dhan-api-secret">API Secret</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="dhan-api-secret" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">API Secret</Label>
                     <div className="relative">
                       <Input
                         id="dhan-api-secret"
                         type={showApiSecret ? "text" : "password"}
                         value={dhanApiSecret}
                         onChange={(e) => setDhanApiSecret(e.target.value)}
-                        className="bg-accent border-border pr-10"
+                        className="bg-muted/20 border-border/20 pr-10 h-9 text-[13px] font-mono focus:border-primary/30"
                         placeholder="Your Dhan API Secret"
                       />
                       <Button
