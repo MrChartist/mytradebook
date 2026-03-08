@@ -779,6 +779,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><PostTradeReviewMockup /></div>
               </FeatureCard>
 
+              <SubTopic title="Sharing, Gamification & Discipline" description="Social cards, badges, trading rules, and AI coaching." />
               <FeatureCard icon={Share2} title="P&L & Trade Share Cards" badge="New">
                 <p className="text-sm text-muted-foreground mb-3">
                   Generate beautiful, branded share cards for social media. Share your daily P&L summary, individual trade results, or winning streaks with customizable templates.
