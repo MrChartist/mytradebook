@@ -43,16 +43,16 @@ export function HeroSection() {
             alt=""
             className="w-full h-full object-cover"
             loading="eager"
-            style={{ filter: "blur(18px) saturate(1.1)", transform: "scale(1.05)" }}
+            style={{ filter: "blur(24px) saturate(1.15) brightness(1.1)", transform: "scale(1.08)" }}
           />
         </motion.div>
 
-        {/* Light overlays — soft, airy feel */}
-        <div className="absolute inset-0 bg-background/70 dark:bg-background/85" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/95 dark:from-background/60 dark:via-background/20 dark:to-background/95" />
+        {/* Light overlays — crisp, white-washed editorial feel */}
+        <div className="absolute inset-0 bg-background/80 dark:bg-background/85" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/30 to-background dark:from-background/60 dark:via-background/20 dark:to-background/95" />
 
-        {/* Subtle warm accent glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-[hsl(var(--tb-accent)/0.06)] dark:bg-[hsl(var(--tb-accent)/0.04)] blur-[120px] pointer-events-none" />
+        {/* Subtle warm accent glow — reduced for light mode cleanliness */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-[hsl(var(--tb-accent)/0.04)] dark:bg-[hsl(var(--tb-accent)/0.04)] blur-[140px] pointer-events-none" />
 
         {/* Content */}
         <motion.div
