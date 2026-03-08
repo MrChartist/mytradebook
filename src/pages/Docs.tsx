@@ -817,6 +817,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">TradeBook excels at post-trade analysis, discipline enforcement, and behavioral improvement. It's the tool you use after your trading platform, not instead of it.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Dashboard", description: "Your real-time trading cockpit", targetId: "dashboard" },
+                { label: "Trade Management", description: "Learn how to log and manage trades", targetId: "trade-management" },
+                { label: "Settings", description: "Configure your account and preferences", targetId: "settings" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
