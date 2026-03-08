@@ -761,7 +761,7 @@
 
   /* Section title: 30px desktop — clear section entry, not oversized */
   .docs-section-title {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 1.875rem;
     line-height: 1.15;
     font-weight: 650;
