@@ -341,7 +341,7 @@ export default function Reports() {
                             <span className="text-[12px] text-muted-foreground/50">Trades</span>
                             <span className="font-semibold font-mono text-[13px]">{segment.total_trades}</span>
                           </div>
-                          <div className="pt-2 border-t border-border/50">
+                          <div className="pt-2 border-t border-border/15">
                             {topSetups.length > 0 && (
                               <div className="flex items-center gap-1 text-xs">
                                 <Award className="w-3 h-3 text-warning" />
