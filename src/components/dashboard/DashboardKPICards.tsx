@@ -125,7 +125,7 @@ export function DashboardKPICards({ alerts }: Props) {
             <Wallet className={cn("w-4.5 h-4.5", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")} />
           </div>
         </div>
-        <p className={cn("text-[28px] font-bold font-mono leading-none", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>
+        <p className={cn("kpi-value", realizedPnl + unrealizedPnl >= 0 ? "text-profit" : "text-loss")}>
           {formatCurrency(realizedPnl + unrealizedPnl)}
         </p>
         <div className="flex gap-3 mt-3">
