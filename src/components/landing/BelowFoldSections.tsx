@@ -221,9 +221,9 @@ export function PricingSection() {
                   "Weekly performance reports",
                   "Watchlists & alerts",
                 ].map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-[13px] leading-relaxed">
+                  <li key={f} className="flex items-start gap-2 text-[13px] leading-[1.6]">
                     <CheckCircle2 className="w-4 h-4 text-profit shrink-0 mt-[1px]" />
-                    <span>{f}</span>
+                    <span className="tracking-[-0.006em]">{f}</span>
                   </li>
                 ))}
               </ul>
