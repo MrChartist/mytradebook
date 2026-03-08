@@ -109,6 +109,14 @@ export function TradeDetailActions({ trade, onClose, isClosing, onShowReview, on
         </>
       )}
 
+      {onDuplicate && (
+        <>
+          <Button variant="outline" className="w-full" onClick={onDuplicate}>
+            <Copy className="w-4 h-4 mr-2" /> Clone / Duplicate Trade
+          </Button>
+        </>
+      )}
+
       <Separator />
       <Button variant="outline" className="w-full text-loss border-loss/30 hover:bg-loss/10" onClick={onDeleteClick}>
         <Trash2 className="w-4 h-4 mr-2" /> Delete Trade
