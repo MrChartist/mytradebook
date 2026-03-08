@@ -594,8 +594,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       {/* ═══════════════════════════════════════════════════════════════
           DOCS HEADER — Compact, documentation-first
           ═══════════════════════════════════════════════════════════════ */}
-      <header className="pt-14 lg:pt-16" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.5)' }}>
-        <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 py-7 lg:py-9">
+      <header className="pt-14 lg:pt-16 relative overflow-hidden" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.5)' }}>
+        <div className="absolute inset-0 opacity-[0.03]" style={{ background: 'radial-gradient(ellipse 60% 50% at 20% 50%, hsl(var(--docs-accent)), transparent)' }} />
+        <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 py-8 lg:py-10 relative">
           {/* Title row */}
           <div className="flex flex-wrap items-center gap-3 mb-3">
             <h1 className="docs-title" style={{ fontSize: 'clamp(1.75rem, 3vw, 2.5rem)' }}>Documentation</h1>
