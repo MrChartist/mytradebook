@@ -497,18 +497,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           {/* Left Sidebar — desktop */}
           <TooltipProvider delayDuration={200}>
             <aside className={cn(
-              "hidden lg:block shrink-0 transition-all duration-300 border-r border-border/30",
-              sidebarCollapsed ? "w-14" : "w-[220px]"
+              "hidden lg:block shrink-0 transition-all duration-300 border-r border-border/20",
+              sidebarCollapsed ? "w-14" : "w-[240px]"
             )}>
-              <div className="sticky top-20 py-6 pr-4 pl-4">
+              <div className="sticky top-20 py-6 pr-5 pl-5">
                 {/* Header with collapse toggle */}
-                <div className={cn("flex items-center mb-3", sidebarCollapsed ? "justify-center" : "justify-between")}>
+                <div className={cn("flex items-center mb-4", sidebarCollapsed ? "justify-center" : "justify-between")}>
                   {!sidebarCollapsed && (
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50">Contents</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/40">Navigation</p>
                   )}
                   <button
                     onClick={toggleSidebar}
-                    className="p-1 rounded text-muted-foreground/50 hover:text-foreground hover:bg-muted/40 transition-colors"
+                    className="p-1.5 rounded-md text-muted-foreground/40 hover:text-foreground hover:bg-muted/40 transition-colors"
                     aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
                   >
                     {sidebarCollapsed ? <PanelLeftOpen className="w-3.5 h-3.5" /> : <PanelLeftClose className="w-3.5 h-3.5" />}
@@ -516,51 +516,52 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
                 {/* Search filter */}
                 {!sidebarCollapsed && (
-                  <div className="mb-3">
+                  <div className="mb-4">
                     <div className="relative">
-                      <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground/40" />
+                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/30" />
                       <input
                         type="text"
                         value={sidebarSearch}
                         onChange={(e) => setSidebarSearch(e.target.value)}
-                        placeholder="Filter…"
-                        className="w-full h-7 pl-7 pr-2 rounded bg-muted/30 border border-border/30 text-[12px] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+                        placeholder="Search docs…"
+                        className="w-full h-8 pl-8 pr-3 rounded-lg bg-muted/20 border border-border/20 text-[13px] text-foreground placeholder:text-muted-foreground/35 focus:outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary/20 transition-all"
                       />
                     </div>
                   </div>
                 )}
-                <ScrollArea className="h-[calc(100vh-10rem)]">
+                <ScrollArea className="h-[calc(100vh-11rem)]">
                   <nav>
                     {sidebarGroups.map((group, gi) => {
                       const groupSections = filteredSections.filter((s) => group.ids.includes(s.id));
                       if (groupSections.length === 0) return null;
                       return (
                       <div key={group.label}>
-                         {gi > 0 && <div className="h-px bg-border/20 my-2" />}
+                         {gi > 0 && <div className="h-px bg-border/15 my-3" />}
                          {!sidebarCollapsed && (
-                           <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/40 px-2 pt-2 pb-1">{group.label}</p>
+                           <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground/35 px-2.5 pt-2 pb-1.5">{group.label}</p>
                         )}
                         {groupSections.map((s) => {
+                          const isActive = activeSection === s.id;
                           const btn = (
                              <button
                                key={s.id}
                                onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
                                className={cn(
-                                 "w-full flex items-center rounded text-[13px] transition-colors duration-150 text-left relative",
-                                 sidebarCollapsed ? "justify-center p-2" : "gap-2 px-2 py-[5px]",
-                                 activeSection === s.id
-                                   ? "text-foreground font-medium"
-                                   : "text-muted-foreground/60 hover:text-foreground"
+                                 "w-full flex items-center rounded-lg text-[13px] transition-all duration-150 text-left relative",
+                                 sidebarCollapsed ? "justify-center p-2" : "gap-2.5 px-2.5 py-[7px]",
+                                 isActive
+                                   ? "text-foreground font-medium bg-muted/50"
+                                   : "text-muted-foreground/55 hover:text-foreground hover:bg-muted/25"
                                )}
                              >
-                               {activeSection === s.id && !sidebarCollapsed && (
+                               {isActive && !sidebarCollapsed && (
                                  <motion.div
                                    layoutId="docs-active-pill"
-                                   className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 rounded-full bg-primary"
+                                   className="absolute left-0 top-1/2 -translate-y-1/2 w-[2.5px] h-5 rounded-full bg-primary"
                                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
                                  />
                                )}
-                               <s.icon className="w-3.5 h-3.5 shrink-0" />
+                               <s.icon className={cn("w-4 h-4 shrink-0", isActive ? "text-primary" : "")} />
                                {!sidebarCollapsed && <span className="truncate">{s.label}</span>}
                              </button>
                           );
