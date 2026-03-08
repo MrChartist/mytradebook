@@ -6,12 +6,15 @@
    TradeBook Design System v2 — Unified Visual Language
    ================================================================
    
-   Font System:
-     Display:  'Libre Bodoni' — premium serif for hero headlines,
-               marketing section headings, docs titles
-     Body:     'Source Sans 3' — all functional UI text, paragraphs,
-               nav, labels, buttons, forms, cards, tables
-     Mono:     'JetBrains Mono' — financial metrics, code snippets
+   Font System (4-font):
+     Heading:  'Manrope' — main headings, section titles, page titles,
+               card titles, pricing titles, major product headings
+     Accent:   'Instrument Serif' — accent font for selected highlighted
+               words in hero/section headings (use sparingly)
+     Body:     'Inter' — all functional UI text, navbar, footer, buttons,
+               forms, sidebar, docs body, dashboard, tables, settings
+     Mono:     'JetBrains Mono' — code blocks, keyboard shortcuts, API keys,
+               command examples, technical labels
    
    Typography Scale (semantic):
      --text-2xs:  0.625rem  (10px)  — micro labels, metadata
