@@ -221,7 +221,7 @@ export function DashboardKPICards({ alerts }: Props) {
           </div>
         </div>
         <div className="flex items-baseline gap-2">
-          <p className="text-[28px] font-bold font-mono leading-none">{alerts.length}</p>
+          <p className="kpi-value">{alerts.length}</p>
           {triggeredToday > 0 && (
             <div className="flex items-center gap-1">
               <span className="pulse-dot bg-warning" />
