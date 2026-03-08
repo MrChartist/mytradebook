@@ -714,6 +714,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Quick Actions", id: "tm-quick" },
               ]} />
               <SubTopic title="Creating & Managing Trades" description="Log trades with detailed metadata and smart defaults." id="tm-creating" />
+              <FeatureCard icon={Search} title="Creating a Trade">
                 <p className="text-sm text-muted-foreground mb-3">Step-by-step trade creation with smart defaults:</p>
                 <FeatureList items={[
                   "Unified instrument search across NSE, BSE, MCX (equity, futures, options)",
