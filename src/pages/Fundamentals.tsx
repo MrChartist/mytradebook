@@ -400,45 +400,41 @@ export default function Fundamentals() {
         </div>
 
         {/* ── Desktop Grouped Scanner Presets ── */}
-        <div className="hidden sm:flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
+        <div className="hidden sm:flex items-center gap-0.5 overflow-x-auto pb-0.5 scrollbar-none">
           {PRESET_GROUPS.map((group, gi) => (
-            <div key={group.key} className="flex items-center gap-0.5 shrink-0">
-              {gi > 0 && <div className="w-px h-4 bg-border mx-2 shrink-0" />}
-              <span className={cn("w-2 h-2 rounded-full shrink-0 mr-1", PRESET_GROUP_COLORS[group.key])} />
+            <div key={group.key} className="flex items-center gap-0 shrink-0">
+              {gi > 0 && <div className="w-px h-3.5 bg-border/20 mx-1.5 shrink-0" />}
+              <span className={cn("w-1.5 h-1.5 rounded-full shrink-0 mr-1 opacity-60", PRESET_GROUP_COLORS[group.key])} />
               {SCANNER_PRESETS.filter((p) => p.group === group.key).map((p) => (
-                <Button
+                <button
                   key={p.id}
-                  variant="ghost"
-                  size="sm"
                   className={cn(
-                    "h-7 text-[11px] rounded-none px-3 shrink-0 transition-all font-medium border-b-2",
+                    "h-7 text-[10px] px-2.5 shrink-0 transition-all duration-200 font-medium rounded-md",
                     presetId === p.id
-                      ? "border-primary text-foreground bg-muted/40"
-                      : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                      ? "text-primary bg-primary/6"
+                      : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/30"
                   )}
                   onClick={() => handlePresetChange(p.id)}
                   title={p.description}
                 >
                   {p.label}
-                </Button>
+                </button>
               ))}
             </div>
           ))}
           {/* Saved Presets */}
           {savedPresets.length > 0 && (
             <>
-              <div className="w-px h-4 bg-border mx-2 shrink-0" />
-              <span className="w-2 h-2 rounded-full shrink-0 mr-1 bg-accent" />
+              <div className="w-px h-3.5 bg-border/20 mx-1.5 shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full shrink-0 mr-1 bg-accent opacity-60" />
               {savedPresets.map((sp) => (
                 <div key={sp.id} className="flex items-center gap-0 shrink-0">
-                  <Button
-                    variant="ghost"
-                    size="sm"
+                  <button
                     className={cn(
-                      "h-7 text-[11px] rounded-none px-3 transition-all font-medium border-b-2",
+                      "h-7 text-[10px] px-2.5 transition-all duration-200 font-medium rounded-md inline-flex items-center gap-1",
                       presetId === `saved_${sp.id}`
-                        ? "border-primary text-foreground bg-muted/40"
-                        : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                        ? "text-primary bg-primary/6"
+                        : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/30"
                     )}
                     onClick={() => {
                       setAppliedFilters(sp.filters);
@@ -449,12 +445,12 @@ export default function Fundamentals() {
                       setPage(0);
                     }}
                   >
-                    <Bookmark className="w-2.5 h-2.5 mr-1" />
+                    <Bookmark className="w-2.5 h-2.5" />
                     {sp.name}
-                  </Button>
+                  </button>
                   <button
                     onClick={() => deletePreset.mutate(sp.id)}
-                    className="p-0.5 text-muted-foreground hover:text-destructive transition-colors"
+                    className="p-0.5 text-muted-foreground/30 hover:text-destructive transition-colors"
                   >
                     <X className="w-2.5 h-2.5" />
                   </button>
@@ -463,15 +459,13 @@ export default function Fundamentals() {
             </>
           )}
           {/* Custom Filter Toggle */}
-          <div className="w-px h-4 bg-border mx-2 shrink-0" />
-          <Button
-            variant="ghost"
-            size="sm"
+          <div className="w-px h-3.5 bg-border/20 mx-1.5 shrink-0" />
+          <button
             className={cn(
-              "h-7 text-[11px] rounded-none px-3 shrink-0 transition-all gap-1 font-medium border-b-2",
+              "h-7 text-[10px] px-2.5 shrink-0 transition-all duration-200 gap-1 font-medium rounded-md inline-flex items-center",
               isCustomMode
-                ? "border-primary text-foreground bg-muted/40"
-                : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                ? "text-primary bg-primary/6"
+                : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/30"
             )}
             onClick={toggleFilterBuilder}
           >
@@ -482,7 +476,7 @@ export default function Fundamentals() {
                 {appliedFilters.length}
               </span>
             )}
-          </Button>
+          </button>
         </div>
 
         {/* ── Custom Filter Builder ── */}
