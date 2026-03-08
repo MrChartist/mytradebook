@@ -2474,6 +2474,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">Color intensity is relative to your own trading history, not absolute amounts. A ₹5,000 profit day will be deep green for a ₹1L account but barely colored for a ₹50L account. This keeps the heatmap meaningful regardless of account size.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Journal", description: "Multi-view journal with analytics", targetId: "journal" },
+                { label: "Mistakes Review", description: "Track and fix recurring errors", targetId: "mistakes" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
