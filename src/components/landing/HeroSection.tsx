@@ -48,11 +48,11 @@ export function HeroSection() {
         </motion.div>
 
         {/* Light overlays — soft, airy feel */}
-        <div className="absolute inset-0 bg-background/70 dark:bg-background/75" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/90" />
+        <div className="absolute inset-0 bg-background/70 dark:bg-background/85" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/95 dark:from-background/60 dark:via-background/20 dark:to-background/95" />
 
         {/* Subtle warm accent glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-[hsl(var(--tb-accent)/0.06)] blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-[hsl(var(--tb-accent)/0.06)] dark:bg-[hsl(var(--tb-accent)/0.04)] blur-[120px] pointer-events-none" />
 
         {/* Content */}
         <motion.div
