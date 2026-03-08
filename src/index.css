@@ -771,7 +771,7 @@
 
   /* Topic heading: 24px desktop — primary content divider */
   .docs-topic-heading {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 1.5rem;
     line-height: 1.22;
     font-weight: 650;
