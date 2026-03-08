@@ -67,7 +67,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
             className="flex items-center gap-2.5"
             whileHover={{ scale: 1.03 }}
           >
-            <img src={landingLogo} alt="TradeBook" className="h-8 object-contain" />
+            <img src={landingLogo} alt="TradeBook" className="h-9 object-contain" />
           </motion.button>
           {activePage === "docs" && (
             <div className="hidden sm:flex items-center gap-1.5 text-[12px] text-muted-foreground">
