@@ -1243,10 +1243,10 @@
   .docs-divider {
     height: 1px;
     background: linear-gradient(90deg, transparent 0%, hsl(var(--docs-border-subtle)) 15%, hsl(var(--docs-border-subtle)) 85%, transparent 100%);
-    margin: 3rem 0;
+    margin: 3.5rem 0;
   }
   @media (max-width: 767px) {
-    .docs-divider { margin: 2rem 0; }
+    .docs-divider { margin: 2.5rem 0; }
   }
 
   /* ── Section scroll margin ── */
