@@ -641,66 +641,11 @@
     color: hsl(var(--tb-accent));
   }
 
-  /* ── Docs card content typography normalization ── */
-  .docs-card-content > p {
-    font-family: Inter, system-ui, sans-serif;
-    font-size: 1rem; /* 16px */
-    line-height: 1.75;
-    color: hsl(var(--docs-text-secondary, var(--muted-foreground) / 0.8));
-  }
-
-  .docs-card-content > p.text-sm {
-    font-size: 1rem !important;
-    color: hsl(var(--docs-text-secondary, var(--muted-foreground) / 0.8)) !important;
-  }
-
-  /* ── Inline code styling ── */
-  .docs-card-content code:not(pre code),
-  [role="document"] code:not(pre code) {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8125rem;
-    padding: 0.15em 0.4em;
-    border-radius: 0.375rem;
-    font-weight: 500;
-  }
-  
-  /* Light mode inline code */
-  :root .docs-card-content code:not(pre code),
-  :root [role="document"] code:not(pre code) {
-    background: hsl(35 18% 92%);
-    border: 1px solid hsl(30 15% 85%);
-    color: hsl(20 18% 25%);
-  }
-  
-  /* Dark mode inline code */
-  .dark .docs-card-content code:not(pre code),
-  .dark [role="document"] code:not(pre code) {
-    background: hsl(222 40% 14%);
-    border: 1px solid hsl(215 22% 22%);
-    color: hsl(24 80% 70%);
-  }
-
-  /* ── Code block theming ── */
+  /* ── Legacy code block theming (non-docs pages) ── */
   .docs-code-block pre,
   .docs-output-block pre {
     margin: 0;
     tab-size: 2;
-  }
-
-  :root .docs-code-block {
-    background: hsl(35 18% 95%);
-  }
-
-  :root .docs-output-block {
-    background: hsl(35 18% 96%);
-  }
-
-  .dark .docs-code-block {
-    background: hsl(222 47% 6%);
-  }
-
-  .dark .docs-output-block {
-    background: hsl(222 47% 5.5%);
   }
 
   /* ================================================================
