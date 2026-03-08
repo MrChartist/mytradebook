@@ -593,7 +593,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Customization", id: "db-customization" },
                 { label: "Advanced Widgets", id: "db-advanced" },
               ]} />
-              <DashboardMockup />
+              <InteractiveMockup label="Dashboard Overview">
+                <DashboardMockup />
+              </InteractiveMockup>
+
               <SubTopic title="Performance Overview" description="Real-time P&L and key trading metrics at a glance." id="db-performance" />
               <FeatureCard icon={Activity} title="Today's P&L Hero Card">
                 <p className="text-sm text-muted-foreground">
@@ -619,6 +622,16 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </p>
                 <div className="mt-4"><RiskGaugeDetailMockup /></div>
               </FeatureCard>
+
+              <ExpandableDetail title="Understanding the Risk Gauge Colors" icon={Gauge} badge="Deep Dive">
+                <p>The risk gauge uses a three-zone color system based on your total capital at risk across all open positions:</p>
+                <FeatureList items={[
+                  "Green (0–1%) — healthy risk. You're within conservative limits for most trading styles.",
+                  "Yellow (1–1.5%) — moderate risk. Acceptable for aggressive strategies, but be cautious adding new positions.",
+                  "Red (1.5%+) — elevated risk. Consider reducing exposure or tightening stop losses on open trades.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Risk % is calculated as: (Total capital at risk across open positions ÷ Starting capital) × 100. Capital at risk per trade = quantity × |entry price − stop loss|. Trades without a stop loss use a default 2% assumed risk.</p>
+              </ExpandableDetail>
 
               <SubTopic title="Charts & Visualizations" description="Visual tools to track your equity, streaks, and daily performance." id="db-charts" />
               <FeatureCard icon={TrendingUp} title="Equity Curve Widget">
@@ -653,6 +666,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <div className="mt-4"><WidgetCustomizerMockup /></div>
               </FeatureCard>
+
+              <ProTip variant="warning">
+                <p>Resist the urge to show every widget at once. A cluttered dashboard splits your attention — start with P&L, KPIs, and the equity curve, then add widgets only when you find yourself needing them regularly. You can always reset to default layout if things get noisy.</p>
+              </ProTip>
 
               <FeatureCard icon={Activity} title="Floating Trade Ticker" badge="New">
                 <p className="text-sm text-muted-foreground mb-3">
@@ -701,16 +718,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
               </FeatureCard>
 
-              <FeatureCard icon={Filter} title="Segment & Month Filters">
-                <p className="text-sm text-muted-foreground mb-3">Filter the entire dashboard by market segment and time period:</p>
-                <FeatureList items={[
-                  "Segments: All, Intraday, Positional, Futures, Options, Commodities",
-                  "Quick month selector for the last 3 months",
-                  "Live indicator shows streaming status and last update time",
-                  "All KPIs, charts, and widgets update based on filters",
-                ]} />
-                <div className="mt-4"><SegmentFilterMockup /></div>
-              </FeatureCard>
+              <InteractiveMockup label="Segment & Month Filters">
+                <FeatureCard icon={Filter} title="Segment & Month Filters">
+                  <p className="text-sm text-muted-foreground mb-3">Filter the entire dashboard by market segment and time period:</p>
+                  <FeatureList items={[
+                    "Segments: All, Intraday, Positional, Futures, Options, Commodities",
+                    "Quick month selector for the last 3 months",
+                    "Live indicator shows streaming status and last update time",
+                    "All KPIs, charts, and widgets update based on filters",
+                  ]} />
+                  <div className="mt-4"><SegmentFilterMockup /></div>
+                </FeatureCard>
+              </InteractiveMockup>
+
               <ProTip variant="best-practice">
                 <p>Check your dashboard every morning before market opens. The segment filter lets you focus on today's active market — switch to "All" only during your weekly review.</p>
               </ProTip>
