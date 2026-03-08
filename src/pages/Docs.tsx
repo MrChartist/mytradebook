@@ -261,7 +261,7 @@ const SECTION_ANCHORS: Record<string, { label: string; id: string }[]> = {
 };
 
 const FeatureList = React.forwardRef<HTMLUListElement, { items: string[] }>(({ items }, ref) => (
-  <ul ref={ref} className="space-y-3 mt-4">
+  <ul ref={ref} className="space-y-3.5 mt-5">
     {items.map((item) => (
       <li key={item} className="flex items-start gap-3 docs-body leading-relaxed" style={{ color: 'hsl(var(--docs-text-primary))' }}>
         <ChevronRight className="w-3.5 h-3.5 mt-[5px] shrink-0" style={{ color: 'hsl(var(--docs-accent))' }} />
@@ -277,25 +277,25 @@ const FAQGroup = ({ icon: Icon, title, items }: {
   title: string; 
   items: { q: string; a: string }[] 
 }) => (
-  <div className="mb-6">
-    <div className="flex items-center gap-2.5 mb-4">
+  <div className="mb-8">
+    <div className="flex items-center gap-2.5 mb-5">
       <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
         <Icon className="w-3.5 h-3.5" style={{ color: 'hsl(var(--docs-accent))' }} />
       </div>
-      <h3 className="text-[13px] font-bold" style={{ color: 'hsl(var(--docs-text-strong))' }}>{title}</h3>
+      <h3 className="text-[14px] font-bold" style={{ color: 'hsl(var(--docs-text-strong))' }}>{title}</h3>
       <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: 'hsl(var(--docs-elevated))', color: 'hsl(var(--docs-text-muted))' }}>{items.length} questions</span>
     </div>
-    <div className="space-y-2">
+    <div className="space-y-2.5">
       {items.map((faq) => (
         <details key={faq.q} className="group premium-card-hover">
-          <summary className="cursor-pointer p-4 flex items-start gap-3 list-none [&::-webkit-details-marker]:hidden">
+          <summary className="cursor-pointer p-4 sm:p-5 flex items-start gap-3 list-none [&::-webkit-details-marker]:hidden">
             <div className="w-5 h-5 rounded-md flex items-center justify-center mt-0.5 shrink-0 transition-colors" style={{ background: 'hsl(var(--docs-elevated))' }}>
               <ChevronRight className="w-3 h-3 transition-transform group-open:rotate-90" style={{ color: 'hsl(var(--docs-accent))' }} />
             </div>
-            <span className="text-[13px] font-medium leading-snug" style={{ color: 'hsl(var(--docs-text-primary))' }}>{faq.q}</span>
+            <span className="text-[14px] font-medium leading-relaxed" style={{ color: 'hsl(var(--docs-text-primary))' }}>{faq.q}</span>
           </summary>
-          <div className="px-4 pb-4 pt-0 pl-12">
-            <p className="text-[13px] leading-relaxed" style={{ color: 'hsl(var(--docs-text-secondary))' }}>{faq.a}</p>
+          <div className="px-4 sm:px-5 pb-5 pt-0 pl-12 sm:pl-14">
+            <p className="text-[14px] leading-[1.75]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>{faq.a}</p>
           </div>
         </details>
       ))}
@@ -306,7 +306,7 @@ const FAQGroup = ({ icon: Icon, title, items }: {
 const FeatureCard = React.forwardRef<HTMLDivElement, {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
 }>(({ icon: Icon, title, children, badge }, ref) => (
-  <div ref={ref} className="docs-feature-card group mt-6 overflow-hidden">
+  <div ref={ref} className="docs-feature-card group mt-7 overflow-hidden">
     <div className="px-6 pt-5 pb-3">
       <div className="flex items-center gap-3">
         <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
@@ -361,8 +361,8 @@ const SectionHeader = React.forwardRef<HTMLDivElement, {
   }, [id]);
 
   return (
-    <div ref={ref} id={id} className="scroll-mt-36 mb-10 pt-2 group">
-      <div className="flex items-center gap-3.5 mb-4">
+    <div ref={ref} id={id} className="scroll-mt-36 mb-12 pt-2 group">
+      <div className="flex items-center gap-3.5 mb-5">
         <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ring-1 ring-[hsl(var(--docs-accent-soft)/0.15)]" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
           <Icon className="w-5 h-5" style={{ color: 'hsl(var(--docs-accent))' }} />
         </div>
@@ -423,8 +423,8 @@ function RightRail({ activeSection }: { activeSection: string }) {
   }, [activeSection]);
 
   return (
-    <aside className="hidden xl:block w-[210px] shrink-0" style={{ borderLeft: '1px solid hsl(var(--docs-border-subtle) / 0.3)' }}>
-      <div className="sticky top-[3.25rem] h-[calc(100vh-3.25rem)] py-7 pl-5 pr-3 overflow-y-auto">
+    <aside className="hidden xl:block w-[220px] shrink-0" style={{ borderLeft: '1px solid hsl(var(--docs-border-subtle) / 0.3)' }}>
+      <div className="sticky top-[3.25rem] h-[calc(100vh-3.25rem)] py-8 pl-6 pr-3 overflow-y-auto">
         <p
           className="text-[10.5px] font-semibold uppercase tracking-[0.1em] mb-5"
           style={{ color: 'hsl(var(--docs-text-muted) / 0.55)' }}
@@ -728,7 +728,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
   }, [activeSection, sidebarGroups]);
 
   return (
-    <div className={cn("docs-page min-h-screen", isInsideApp && "pb-6", mode === "bw" && "docs-bw")} role="document">
+    <div className={cn("docs-page min-h-screen", isInsideApp && "pb-6", mode === "bw" && "docs-bw")} role="document" style={{ scrollBehavior: 'smooth' }}>
       {/* Reading progress bar */}
       <div className="fixed top-0 left-0 right-0 z-[60] h-[2px]" style={{ background: 'hsl(var(--docs-border-subtle) / 0.2)' }}>
         <div
@@ -751,9 +751,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           ═══════════════════════════════════════════════════════════════ */}
       <header className="pt-14 lg:pt-16 relative overflow-hidden" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle) / 0.5)' }}>
         <div className="absolute inset-0 opacity-[0.03]" style={{ background: 'radial-gradient(ellipse 60% 50% at 20% 50%, hsl(var(--docs-accent)), transparent)' }} />
-        <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 py-8 lg:py-10 relative">
+        <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 py-10 lg:py-14 relative">
           {/* Title row */}
-          <div className="flex flex-wrap items-center gap-3 mb-3">
+          <div className="flex flex-wrap items-center gap-3 mb-4">
             <h1 className="docs-title font-heading" style={{ fontSize: 'clamp(1.75rem, 3vw, 2.5rem)' }}>Documentation</h1>
             <button
               onClick={toggle}
@@ -771,12 +771,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           </div>
 
           {/* Subtitle */}
-          <p className="docs-body max-w-xl" style={{ color: 'hsl(var(--docs-text-muted))' }}>
+          <p className="docs-body-lg max-w-2xl" style={{ color: 'hsl(var(--docs-text-secondary))' }}>
             Complete guide to every feature — trade logging, analytics, alerts, and integrations for Indian market traders.
           </p>
 
           {/* Meta row */}
-          <div className="flex items-center gap-3.5 mt-4 flex-wrap docs-caption" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>
+          <div className="flex items-center gap-3.5 mt-5 flex-wrap docs-caption" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>
             <span className="flex items-center gap-1.5">
               <Clock className="w-3 h-3" />
               ~35 min read
@@ -899,7 +899,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           MAIN THREE-COLUMN LAYOUT
           Left sidebar (250px) | Content (flex) | Right rail (210px)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="max-w-[1440px] mx-auto flex">
+      <div className="max-w-[1480px] mx-auto flex">
         
         {/* ─────────────────────────────────────────────────────────────
             LEFT SIDEBAR — Desktop only, collapsible, with nested sub-topics
@@ -1051,8 +1051,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         {/* ─────────────────────────────────────────────────────────────
             CENTER CONTENT COLUMN — Readable width, proper padding
             ───────────────────────────────────────────────────────────── */}
-        <main className="flex-1 min-w-0 px-5 sm:px-8 lg:px-12 xl:px-16 py-10 lg:py-12 pt-[8.5rem] lg:pt-12">
-          <div className="max-w-[720px] mx-auto space-y-16 lg:space-y-18">
+        <main className="flex-1 min-w-0 px-5 sm:px-8 lg:px-12 xl:px-16 py-10 lg:py-14 pt-[8.5rem] lg:pt-14">
+          <div className="max-w-[740px] mx-auto space-y-20 lg:space-y-24">
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
@@ -4538,16 +4538,21 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       <AnimatePresence>
         {showBackToTop && (
           <motion.button
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, scale: 0.8, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 10 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-5 right-5 z-50 w-11 h-11 rounded-xl shadow-lg flex flex-col items-center justify-center gap-0 transition-all"
-            style={{ background: 'hsl(var(--docs-elevated))', border: '1px solid hsl(var(--docs-border))', color: 'hsl(var(--docs-text-secondary))' }}
+            className="fixed bottom-6 right-6 sm:bottom-5 sm:right-5 z-50 w-12 h-12 sm:w-11 sm:h-11 rounded-xl shadow-lg flex flex-col items-center justify-center gap-0 transition-all hover:scale-105 active:scale-95"
+            style={{
+              background: 'hsl(var(--docs-surface))',
+              border: '1px solid hsl(var(--docs-border))',
+              color: 'hsl(var(--docs-text-secondary))',
+              boxShadow: '0 4px 12px -2px hsl(var(--docs-bg) / 0.3), 0 2px 4px -1px hsl(0 0% 0% / 0.06)',
+            }}
             aria-label="Back to top"
           >
             <ArrowUpRight className="w-4 h-4 -rotate-45" />
-            <span className="text-[8px] font-semibold leading-none -mt-0.5" style={{ color: 'hsl(var(--docs-text-muted) / 0.6)' }}>{readProgress}%</span>
+            <span className="text-[8px] font-bold leading-none -mt-0.5" style={{ color: 'hsl(var(--docs-accent))' }}>{readProgress}%</span>
           </motion.button>
         )}
       </AnimatePresence>
