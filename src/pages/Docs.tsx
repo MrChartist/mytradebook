@@ -1458,6 +1458,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">This feedback loop is one of the most powerful features for improving your edge. Traders who link studies to trades can objectively measure which types of research lead to profitable outcomes.</p>
               </ExpandableDetail>
+            </motion.section>
 
             <SectionDivider />
 
