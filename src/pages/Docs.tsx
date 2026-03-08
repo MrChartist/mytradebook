@@ -2430,7 +2430,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 10. Watchlists ──────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={10} total={26} />
+              <PhaseHeader phase={10} total={29} />
               <SectionHeader
                 id="watchlists"
                 title="Watchlists"
