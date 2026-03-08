@@ -242,7 +242,7 @@
 
   /* Legacy alias for accent-script (migration helper) */
   .accent-script {
-    font-family: 'Instrument Serif', Georgia, serif;
+    font-family: 'Libre Bodoni', Georgia, serif;
     font-style: italic;
     font-weight: 400;
   }
