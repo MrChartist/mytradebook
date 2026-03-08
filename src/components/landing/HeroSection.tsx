@@ -192,7 +192,7 @@ export function HeroSection() {
                   <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground tracking-[-0.02em] font-mono tabular-nums">
                     {formatStat(i, statRefs[i].count)}
                   </p>
-                  <p className="text-[10px] text-muted-foreground/50 uppercase tracking-[0.12em] mt-1.5 font-semibold">
+                  <p className="text-[10px] text-muted-foreground/60 uppercase tracking-[0.12em] mt-1.5 font-semibold">
                     {stat.label}
                   </p>
                 </div>
