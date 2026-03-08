@@ -182,17 +182,18 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
   const IconComp = Icon || ChevronRight;
 
   return (
-    <div className={cn(CARD_RADIUS, "border", CARD_BORDER, "overflow-hidden", CARD_SPACING)}>
+    <div className={cn(CARD_RADIUS, "border overflow-hidden", CARD_SPACING)} style={{ borderColor: 'hsl(var(--docs-border-subtle))' }}>
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center gap-3 px-5 py-3.5 text-left hover:bg-muted/15 transition-colors duration-150"
+        className="w-full flex items-center gap-3 px-6 py-4 text-left transition-colors duration-150"
+        style={{ color: 'hsl(var(--docs-text-secondary))' }}
       >
-        <IconComp className="w-4 h-4 text-muted-foreground/60 shrink-0" />
-        <span className="text-[15px] font-medium text-foreground flex-1">{title}</span>
+        <IconComp className="w-4 h-4 shrink-0" style={{ color: 'hsl(var(--docs-text-muted))' }} />
+        <span className="docs-card-title flex-1" style={{ fontSize: '1rem' }}>{title}</span>
         {badge && (
-          <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-primary/8 text-primary">{badge}</span>
+          <span className="text-[10px] font-bold uppercase tracking-wide px-2.5 py-0.5 rounded-md" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)', color: 'hsl(var(--docs-accent))' }}>{badge}</span>
         )}
-        <ChevronDown className={cn("w-4 h-4 text-muted-foreground/35 transition-transform duration-200", open && "rotate-180")} />
+        <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", open && "rotate-180")} style={{ color: 'hsl(var(--docs-text-muted))' }} />
       </button>
       <AnimatePresence>
         {open && (
@@ -203,10 +204,8 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="overflow-hidden"
           >
-            <div className="px-5 pb-5 pt-0 border-t border-border/15">
-              <div className={cn("pt-4", `[&>p]:${BODY_TEXT.split(' ').join('] [&>p]:')}`)}>
-                <div className="[&>p]:text-[15px] [&>p]:text-muted-foreground/80 [&>p]:leading-[1.75]">{children}</div>
-              </div>
+            <div className="px-6 pb-6 pt-0" style={{ borderTop: '1px solid hsl(var(--docs-border-subtle) / 0.5)' }}>
+              <div className="pt-5 docs-body">{children}</div>
             </div>
           </motion.div>
         )}
@@ -214,9 +213,6 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
     </div>
   );
 }
-
-/* ──────────────────────────────────────────────
-   InteractiveMockup — Wrapper with hover states
    ────────────────────────────────────────────── */
 export function InteractiveMockup({ children, label, className }: { children: ReactNode; label?: string; className?: string }) {
   return (
