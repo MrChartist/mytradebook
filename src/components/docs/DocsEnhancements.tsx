@@ -295,7 +295,7 @@ export function KeyMetric({ label, value, sub }: { label: string; value: string;
    ────────────────────────────────────────────── */
 export function SubTopic({ title, description, id }: { title: string; description?: string; id?: string }) {
   return (
-    <div id={id} className={cn("mt-12 mb-6 first:mt-4", id && "scroll-mt-24")}>
+    <div id={id} className={cn("mt-12 mb-6 first:mt-4", id && "scroll-mt-28")}>
       <h3 className="docs-subtopic-heading">{title}</h3>
       {description && (
         <p className="docs-body mt-2" style={{ color: 'hsl(var(--docs-text-secondary, 215 16% 62%))' }}>{description}</p>

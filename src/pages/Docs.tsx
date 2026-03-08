@@ -361,7 +361,7 @@ const SectionHeader = React.forwardRef<HTMLDivElement, {
   }, [id]);
 
   return (
-    <div ref={ref} id={id} className="scroll-mt-24 mb-10 group">
+    <div ref={ref} id={id} className="scroll-mt-28 mb-10 group">
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)' }}>
           <Icon className="w-5 h-5" style={{ color: 'hsl(var(--docs-accent))' }} />
@@ -471,8 +471,8 @@ function RightRail({ activeSection }: { activeSection: string }) {
               );
             })}
             {anchors.length === 0 && (
-              <p className="text-[11px] italic" style={{ color: 'hsl(var(--docs-text-muted) / 0.4)' }}>
-                No sub-sections
+              <p className="text-[11px] italic py-1" style={{ color: 'hsl(var(--docs-text-muted) / 0.35)' }}>
+                Select a section to see outline
               </p>
             )}
           </motion.nav>
@@ -839,8 +839,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         {/* ─────────────────────────────────────────────────────────────
             CENTER CONTENT COLUMN — Readable width, proper padding
             ───────────────────────────────────────────────────────────── */}
-        <main className="flex-1 min-w-0 px-6 sm:px-10 lg:px-14 xl:px-16 py-10 lg:py-12 pt-[7.5rem] lg:pt-12">
-          <div className="max-w-[740px] mx-auto space-y-14 lg:space-y-16">
+        <main className="flex-1 min-w-0 px-5 sm:px-8 lg:px-12 xl:px-16 py-10 lg:py-12 pt-[7rem] lg:pt-12">
+          <div className="max-w-[720px] mx-auto space-y-16 lg:space-y-18">
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
@@ -4356,8 +4356,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
               {[
                 { title: "Product", links: [{ label: "Features", href: "/#features" }, { label: "Pricing", href: "/#pricing" }, { label: "Documentation", href: "/docs" }] },
-                { title: "Resources", links: [{ label: "Changelog", href: "#changelog" }, { label: "FAQ", href: "#faq" }, { label: "Blog", href: "#" }] },
-                { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }, { label: "Contact", href: "mailto:founder@mrchartist.com" }] },
+                { title: "Resources", links: [{ label: "Changelog", href: "#changelog" }, { label: "FAQ", href: "#faq" }, { label: "Contact", href: "mailto:founder@mrchartist.com" }] },
+                { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }] },
               ].map((col) => (
                 <div key={col.title}>
                   <h4 className="docs-caption uppercase tracking-[0.12em] mb-4">{col.title}</h4>
