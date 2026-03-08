@@ -634,13 +634,13 @@ export default function IntegrationsSettings() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="dhan-api-key">API Key</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="dhan-api-key" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">API Key</Label>
                     <Input
                       id="dhan-api-key"
                       value={dhanApiKey}
                       onChange={(e) => setDhanApiKey(e.target.value)}
-                      className="bg-accent border-border"
+                      className="bg-muted/20 border-border/20 h-9 text-[13px] font-mono focus:border-primary/30"
                       placeholder="Your Dhan API Key"
                     />
                   </div>
