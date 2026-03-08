@@ -839,7 +839,7 @@
 
   /* Helper / meta: 12.5px — timestamps, counts, secondary info */
   .docs-helper {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.78125rem;
     line-height: 1.45;
     font-weight: 420;
