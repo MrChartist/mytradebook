@@ -60,7 +60,7 @@ export default function Calendar() {
   const selectedTrade = selectedTradeId ? trades.find((t) => t.id === selectedTradeId) : null;
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in" role="region" aria-label="Trading calendar">
 
       {/* Monthly Summary Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
