@@ -61,6 +61,12 @@ export default function Calendar() {
 
   return (
     <div className="space-y-4 animate-fade-in" role="region" aria-label="Trading calendar">
+      {/* Header */}
+      <div className="space-y-0.5">
+        <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Calendar</h1>
+        <p className="text-[13px] text-muted-foreground/70 leading-relaxed">Daily P&L heatmap and journal entries</p>
+      </div>
+      <div className="h-px bg-border/20" />
 
       {/* Monthly Summary Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3" aria-live="polite" aria-label="Monthly summary">
