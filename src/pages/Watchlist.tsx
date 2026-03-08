@@ -168,7 +168,7 @@ export default function WatchlistPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem><Edit2 className="w-4 h-4 mr-2" /> Rename</DropdownMenuItem>
+                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setRenameTarget(wl); setRenameName(wl.name); }}><Edit2 className="w-4 h-4 mr-2" /> Rename</DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         className="text-destructive"
