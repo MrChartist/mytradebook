@@ -152,6 +152,15 @@ function SectionDivider() {
 function SectionHeader({ id, title, description, icon: Icon }: {
   id: string; title: string; description: string; icon: React.ElementType;
 }) {
+  const copyLink = useCallback(() => {
+    const url = `${window.location.origin}/docs#${id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      // Use a simple toast-like feedback
+      const el = document.getElementById(`copy-${id}`);
+      if (el) { el.textContent = "Copied!"; setTimeout(() => { el.textContent = "#"; }, 1500); }
+    });
+  }, [id]);
+
   return (
     <div id={id} className="scroll-mt-24 mb-8 dashboard-card relative overflow-hidden">
       {/* Top accent bar */}
@@ -167,6 +176,14 @@ function SectionHeader({ id, title, description, icon: Icon }: {
           <Icon className="w-5 h-5 text-primary" />
         </div>
         <h2 className="text-2xl lg:text-[2rem] font-bold tracking-tight leading-tight">{title}</h2>
+        <button
+          onClick={copyLink}
+          className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 ml-1 p-1.5 rounded-lg text-muted-foreground/50 hover:text-primary hover:bg-primary/5 transition-all text-xs font-mono"
+          aria-label={`Copy link to ${title}`}
+          title="Copy section link"
+        >
+          <span id={`copy-${id}`}>#</span>
+        </button>
       </div>
       <p className="text-muted-foreground leading-relaxed max-w-3xl mb-6">{description}</p>
     </div>
@@ -368,6 +385,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
             A comprehensive guide to every feature, capability, and workflow in the platform — from your first trade log to advanced analytics.
           </p>
+          <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground/70">
+            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~25 min read</span>
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+            <span>Last updated: March 2026</span>
+          </div>
           {/* Hero stats strip */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -728,6 +750,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Add up to 4 individual trade legs under the parent",
                   "Combined P&L and net premium calculated automatically",
                   "Strategy-level notes and status tracking",
+                  "Option Chain Selector — dynamic strike selection with 50/25/10 increments based on underlying price, supports 185+ F&O underlyings",
                 ]} />
                 <div className="mt-4"><MultiLegStrategyDetailMockup /></div>
               </FeatureCard>
@@ -778,6 +801,47 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Analytics engagement badges",
                   "Progress tracking with percentage completion",
                   "Badge grid displayed on the dashboard",
+                ]} />
+              </FeatureCard>
+
+              <FeatureCard icon={Shield} title="Trading Rules Checklist">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Enforce personal discipline before every trade entry. Create your own rules and check them off before submitting a trade.
+                </p>
+                <FeatureList items={[
+                  "Custom rules — add, edit, reorder, or delete your own trading rules",
+                  "Pre-trade enforcement — checklist appears in the trade creation flow",
+                  "Visual \"All Clear\" indicator when every rule is checked",
+                  "Active/inactive toggle per rule — temporarily disable rules without deleting",
+                  "Rules persist across sessions — always available when you need them",
+                ]} />
+                <p className="text-xs text-muted-foreground mt-3 italic">See also: <button onClick={() => document.getElementById("settings")?.scrollIntoView({ behavior: "smooth" })} className="text-primary hover:underline">Settings → Tag Management</button></p>
+              </FeatureCard>
+
+              <FeatureCard icon={Sparkles} title="AI Trade Coach" badge="AI">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Get instant AI-generated feedback on your closed trades. The coach analyzes your entry, exit, timing, and outcome to provide actionable coaching.
+                </p>
+                <FeatureList items={[
+                  "Auto-triggers on freshly closed trades — no manual action needed",
+                  "Markdown-formatted coaching feedback with structured analysis",
+                  "Evaluates: entry timing, exit quality, risk management, emotional discipline",
+                  "Refresh button to regenerate feedback with latest context",
+                  "Coaching feedback cached in the database — revisit anytime",
+                  "Accessible from the Trade Detail modal",
+                ]} />
+                <p className="text-xs text-muted-foreground mt-3 italic">See also: <button onClick={() => document.getElementById("ai-integration")?.scrollIntoView({ behavior: "smooth" })} className="text-primary hover:underline">AI Insights Setup</button></p>
+              </FeatureCard>
+
+              <FeatureCard icon={Zap} title="Quick Close Popover">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Close open trades without leaving the trades list. A compact popover lets you enter the exit price and close instantly.
+                </p>
+                <FeatureList items={[
+                  "One-click access from the trade row actions menu",
+                  "Inline exit price input with auto-calculated P&L preview",
+                  "Triggers the Post-Trade Review modal after closing",
+                  "Works on both desktop and mobile layouts",
                 ]} />
               </FeatureCard>
 
@@ -937,6 +1001,20 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Trigger count tracking per alert",
                 ]} />
                 <div className="mt-4"><AlertManagementMockup /></div>
+              </FeatureCard>
+
+              <FeatureCard icon={Sparkles} title="Smart Alert Suggestions" badge="AI">
+                <p className="text-sm text-muted-foreground mb-3">
+                  AI analyzes your frequently traded symbols and suggests relevant price alerts with reasoning.
+                </p>
+                <FeatureList items={[
+                  "Scans your trade history to identify top traded symbols",
+                  "Suggests price-above or price-below alerts with AI-generated reasoning",
+                  "One-click create — instantly convert a suggestion into an active alert",
+                  "Refresh to regenerate suggestions with updated data",
+                  "Empty state guide when not enough trade data exists",
+                ]} />
+                <p className="text-xs text-muted-foreground mt-3 italic">See also: <button onClick={() => document.getElementById("ai-integration")?.scrollIntoView({ behavior: "smooth" })} className="text-primary hover:underline">AI Insights Setup</button></p>
               </FeatureCard>
             </motion.section>
 
@@ -1136,11 +1214,46 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "Helps optimize your trading schedule",
                   ]} />
                 </FeatureCard>
-                <FeatureCard icon={Activity} title="Advanced Analytics" badge="Pro">
+                <FeatureCard icon={Activity} title="Streak Tracker" badge="Pro">
+                  <p className="text-sm text-muted-foreground mb-3">Track and visualize winning and losing streaks:</p>
                   <FeatureList items={[
-                    "Streak Tracker — winning/losing streak analysis",
+                    "Current streak indicator — win/loss count with visual badge",
+                    "Longest winning and losing streaks in your history",
+                    "Streak calendar — day-by-day win/loss visualization",
+                    "Streak share card — share your streaks on social media",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Target} title="Risk-Reward Analytics" badge="Pro">
+                  <p className="text-sm text-muted-foreground mb-3">Analyze planned vs actual risk-reward ratios:</p>
+                  <FeatureList items={[
+                    "Planned R:R — calculated from entry, stop loss, and targets",
+                    "Actual R:R — based on realized P&L vs risk taken",
+                    "R:R distribution chart — how often you achieve 1R, 2R, 3R+",
+                    "Average R:R by segment and timeframe",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={TrendingDown} title="Drawdown Recovery" badge="Pro">
+                  <p className="text-sm text-muted-foreground mb-3">Understand your capital curve's resilience:</p>
+                  <FeatureList items={[
+                    "Maximum drawdown % and duration in days",
+                    "Drawdown overlay on equity curve chart",
+                    "Recovery time analysis — how long to recover from each drawdown",
+                    "Underwater chart showing time spent below peak equity",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Clock} title="Day & Time of Day Analysis" badge="Pro">
+                  <p className="text-sm text-muted-foreground mb-3">Discover your optimal trading windows:</p>
+                  <FeatureList items={[
+                    "Day of Week heatmap — win rate and P&L by weekday",
+                    "Time of Day heatmap — performance by hour (9 AM – 3 PM)",
+                    "Color-coded cells: green for profitable, red for losing periods",
+                    "Trade count overlay to show statistical significance",
+                    "Helps you avoid trading during your historically weak periods",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Activity} title="Additional Advanced Analytics" badge="Pro">
+                  <FeatureList items={[
                     "Setup/Tag Performance Matrix — P&L by setup tag",
-                    "Risk-Reward Analytics — actual R:R vs planned R:R",
                     "Risk of Ruin Calculator — statistical probability of account blowup",
                   ]} />
                 </FeatureCard>
@@ -1757,6 +1870,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   { q: "How do I fix Telegram notifications not sending?", a: "Verify your bot token and chat ID in Settings → Integrations → Telegram. Use the 'Send Test' button to confirm delivery. Check the Delivery Log for error details." },
                   { q: "My dashboard shows no data — what's wrong?", a: "Ensure you have trades logged. Check the segment filter and month selector — they may be filtering out your data. Try selecting 'All Segments' and expanding the date range." },
                   { q: "Can I use TradeBook on mobile?", a: "Yes! TradeBook is a Progressive Web App (PWA). Add it to your home screen for a native-like experience with offline trade queuing." },
+                  { q: "What is the AI Trade Coach?", a: "The AI Trade Coach provides instant feedback on your closed trades — analyzing entry, exit, timing, and risk management. It auto-triggers when you close a trade and the feedback is saved for future reference." },
+                  { q: "How do Trading Rules work?", a: "Trading Rules are a customizable checklist that appears before you submit a new trade. Add your personal rules (e.g., 'Check trend on higher timeframe'), and the system enforces checking them all before entry." },
+                  { q: "Can I get AI-suggested alerts?", a: "Yes! Smart Alert Suggestions analyzes your frequently traded symbols and recommends price alerts with AI-generated reasoning. One-click to create any suggestion as an active alert." },
+                  { q: "How does the Command Palette work?", a: "Press ⌘K or / to open the Command Palette. It searches across pages, trades, alerts, and journal entries. You can also create new trades, alerts, and studies directly from it." },
                 ].map((faq) => (
                   <div key={faq.q} className="premium-card-hover p-5 group">
                     <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
@@ -1787,6 +1904,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   </h3>
                   <div className="space-y-3">
                     {[
+                      { version: "v3.1", date: "Mar 2026", items: ["Trading Rules Checklist", "AI Trade Coach", "Smart Alert Suggestions", "Quick Close Popover", "Day/Time of Day Analysis", "Streak Tracker expansion", "Docs deep-links & reading time"] },
                       { version: "v3.0", date: "Mar 2026", items: ["AI Pattern Detection — behavioral insights", "Sector Rotation Heatmap", "Setup Win-Rate Matrix", "Emotional P&L Correlation"] },
                       { version: "v2.9", date: "Mar 2026", items: ["Dashboard drag-and-drop reordering", "Floating Trade Ticker", "Animated KPI numbers", "Mobile swipe-to-act on trades", "Quick Trade Entry via Command Palette", "P&L & Trade Share Cards"] },
                       { version: "v2.8", date: "Feb 2026", items: ["Stock Screener with 47 presets", "Custom filter builder", "Stock insight cards"] },
