@@ -47,16 +47,39 @@ export function StreakDiscipline() {
     return { currentStreak: streak, streakType, avgRR, bestTrade, worstTrade, disciplineScore };
   }, [trades]);
 
+  // Build streak share data
+  const streakShareData: StreakCardData = useMemo(() => {
+    const closed = trades.filter(t => t.status === "CLOSED" && t.pnl !== null);
+    const sorted = [...closed].sort((a, b) => new Date(b.closed_at || 0).getTime() - new Date(a.closed_at || 0).getTime());
+    const streakTrades = sorted.slice(0, stats.currentStreak).map(t => ({ symbol: t.symbol, pnl: t.pnl || 0 }));
+    const totalStreakPnl = streakTrades.reduce((a, t) => a + t.pnl, 0);
+    return {
+      streakCount: stats.currentStreak,
+      streakType: stats.streakType,
+      totalPnl: totalStreakPnl,
+      trades: streakTrades,
+    };
+  }, [trades, stats]);
+
   return (
     <div className={cn("dashboard-card h-full", stats.streakType === "win" ? "card-glow-profit" : "card-glow-loss")}>
       <div className="flex items-center gap-3 mb-4">
         <div className="icon-badge-sm bg-primary/10">
           <Trophy className="w-4 h-4 text-primary" />
         </div>
-        <div>
+        <div className="flex-1">
           <h3 className="font-semibold">Streak & Discipline</h3>
           <p className="text-xs text-muted-foreground mt-0.5">Trading consistency</p>
         </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={() => setShareOpen(true)}
+          title="Share streak"
+        >
+          <Share2 className="w-3.5 h-3.5" />
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
