@@ -69,12 +69,6 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
           whileHover={{ scale: 1.03 }}
         >
           <img src={landingLogo} alt="TradeBook" className="h-8 object-contain" />
-          {activePage === "docs" && (
-            <>
-              <span className="text-border/60 text-lg font-extralight select-none">|</span>
-              <span className="text-[13px] font-semibold text-foreground/70 tracking-wide">Docs</span>
-            </>
-          )}
         </motion.button>
 
         {/* Desktop links */}

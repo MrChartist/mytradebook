@@ -413,7 +413,7 @@
     font-family: 'JetBrains Mono', monospace;
   }
 
-  .landing-page .accent-script {
+  .accent-script {
     font-family: 'Dancing Script', 'Satisfy', cursive;
     font-style: italic;
     color: hsl(var(--tb-accent));
