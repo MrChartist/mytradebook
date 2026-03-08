@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTrades } from "@/hooks/useTrades";
 import { toast } from "sonner";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 interface Achievement {
   id: string;
@@ -24,12 +24,18 @@ interface UserAchievement {
   progress: number;
 }
 
+export interface EnrichedAchievement extends Achievement {
+  unlocked: boolean;
+  userProgress: UserAchievement | undefined;
+  currentProgress: number;
+  progressPercent: number;
+}
+
 export function useAchievements() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { trades } = useTrades();
 
-  // Fetch all achievement definitions
   const { data: achievements = [] } = useQuery({
     queryKey: ["achievements"],
     queryFn: async () => {
@@ -40,10 +46,9 @@ export function useAchievements() {
       if (error) throw error;
       return data as Achievement[];
     },
-    staleTime: 1000 * 60 * 60, // 1 hour
+    staleTime: 1000 * 60 * 60,
   });
 
-  // Fetch user's unlocked achievements
   const { data: userAchievements = [] } = useQuery({
     queryKey: ["user-achievements", user?.id],
     queryFn: async () => {
@@ -78,16 +83,13 @@ export function useAchievements() {
 
   const unlockedIds = new Set(userAchievements.map((ua) => ua.achievement_id));
 
-  // Check and unlock achievements based on current trade data
-  const checkAchievements = useCallback(async () => {
-    if (!user?.id || achievements.length === 0) return;
-
+  // Compute current progress for each achievement key
+  const progressMap = useMemo(() => {
     const closedTrades = trades.filter((t) => t.status === "CLOSED");
     const totalClosed = closedTrades.length;
     const totalPnl = closedTrades.reduce((sum, t) => sum + (t.pnl || 0), 0);
     const reviewedCount = closedTrades.filter((t) => t.reviewed_at).length;
 
-    // Calculate current win streak
     const sorted = [...closedTrades].sort(
       (a, b) => new Date(b.closed_at!).getTime() - new Date(a.closed_at!).getTime()
     );
@@ -97,83 +99,42 @@ export function useAchievements() {
       else break;
     }
 
+    const winRate = totalClosed >= 20
+      ? (closedTrades.filter((t) => (t.pnl || 0) > 0).length / totalClosed) * 100
+      : 0;
+
+    const map: Record<string, number> = {
+      first_trade: Math.min(totalClosed, 1),
+      trades_10: Math.min(totalClosed, 10),
+      trades_50: Math.min(totalClosed, 50),
+      trades_100: Math.min(totalClosed, 100),
+      trades_500: Math.min(totalClosed, 500),
+      win_streak_3: Math.min(winStreak, 3),
+      win_streak_5: Math.min(winStreak, 5),
+      win_streak_10: Math.min(winStreak, 10),
+      first_profit: closedTrades.some((t) => (t.pnl || 0) > 0) ? 1 : 0,
+      profit_10k: Math.min(Math.max(Math.floor(totalPnl), 0), 10000),
+      profit_100k: Math.min(Math.max(Math.floor(totalPnl), 0), 100000),
+      first_review: Math.min(reviewedCount, 1),
+      reviews_10: Math.min(reviewedCount, 10),
+      win_rate_70: Math.floor(winRate),
+    };
+    return map;
+  }, [trades]);
+
+  const checkAchievements = useCallback(async () => {
+    if (!user?.id || achievements.length === 0) return;
+
     const newUnlocks: { achievement: Achievement; progress: number }[] = [];
 
     for (const a of achievements) {
       if (unlockedIds.has(a.id)) continue;
-
-      let shouldUnlock = false;
-      let progress = 0;
-
-      switch (a.key) {
-        case "first_trade":
-          shouldUnlock = totalClosed >= 1;
-          progress = Math.min(totalClosed, 1);
-          break;
-        case "trades_10":
-          shouldUnlock = totalClosed >= 10;
-          progress = Math.min(totalClosed, 10);
-          break;
-        case "trades_50":
-          shouldUnlock = totalClosed >= 50;
-          progress = Math.min(totalClosed, 50);
-          break;
-        case "trades_100":
-          shouldUnlock = totalClosed >= 100;
-          progress = Math.min(totalClosed, 100);
-          break;
-        case "trades_500":
-          shouldUnlock = totalClosed >= 500;
-          progress = Math.min(totalClosed, 500);
-          break;
-        case "win_streak_3":
-          shouldUnlock = winStreak >= 3;
-          progress = Math.min(winStreak, 3);
-          break;
-        case "win_streak_5":
-          shouldUnlock = winStreak >= 5;
-          progress = Math.min(winStreak, 5);
-          break;
-        case "win_streak_10":
-          shouldUnlock = winStreak >= 10;
-          progress = Math.min(winStreak, 10);
-          break;
-        case "first_profit":
-          shouldUnlock = closedTrades.some((t) => (t.pnl || 0) > 0);
-          progress = shouldUnlock ? 1 : 0;
-          break;
-        case "profit_10k":
-          shouldUnlock = totalPnl >= 10000;
-          progress = Math.min(Math.floor(totalPnl), 10000);
-          break;
-        case "profit_100k":
-          shouldUnlock = totalPnl >= 100000;
-          progress = Math.min(Math.floor(totalPnl), 100000);
-          break;
-        case "first_review":
-          shouldUnlock = reviewedCount >= 1;
-          progress = Math.min(reviewedCount, 1);
-          break;
-        case "reviews_10":
-          shouldUnlock = reviewedCount >= 10;
-          progress = Math.min(reviewedCount, 10);
-          break;
-        case "win_rate_70": {
-          const winRate = totalClosed >= 20
-            ? (closedTrades.filter((t) => (t.pnl || 0) > 0).length / totalClosed) * 100
-            : 0;
-          shouldUnlock = totalClosed >= 20 && winRate >= 70;
-          progress = Math.floor(winRate);
-          break;
-        }
-      }
-
-      if (shouldUnlock) {
+      const progress = progressMap[a.key] ?? 0;
+      if (progress >= a.threshold) {
         newUnlocks.push({ achievement: a, progress });
       }
     }
 
-    // Unlock new achievements
     for (const { achievement, progress } of newUnlocks) {
       await unlockAchievement.mutateAsync({ achievementId: achievement.id, progress });
       toast.success(`🏆 Achievement Unlocked: ${achievement.icon} ${achievement.title}`, {
@@ -181,18 +142,45 @@ export function useAchievements() {
         duration: 5000,
       });
     }
-  }, [user?.id, achievements, trades, unlockedIds, unlockAchievement]);
+  }, [user?.id, achievements, progressMap, unlockedIds, unlockAchievement]);
 
-  const enrichedAchievements = achievements.map((a) => ({
-    ...a,
-    unlocked: unlockedIds.has(a.id),
-    userProgress: userAchievements.find((ua) => ua.achievement_id === a.id),
-  }));
+  const enrichedAchievements: EnrichedAchievement[] = useMemo(() => {
+    return achievements.map((a) => {
+      const ua = userAchievements.find((u) => u.achievement_id === a.id);
+      const currentProgress = ua?.progress ?? (progressMap[a.key] ?? 0);
+      const progressPercent = a.threshold > 0
+        ? Math.min((currentProgress / a.threshold) * 100, 100)
+        : 0;
+      return {
+        ...a,
+        unlocked: unlockedIds.has(a.id),
+        userProgress: ua,
+        currentProgress,
+        progressPercent,
+      };
+    });
+  }, [achievements, userAchievements, unlockedIds, progressMap]);
+
+  const recentUnlocks = useMemo(() => {
+    return enrichedAchievements
+      .filter((a) => a.unlocked && a.userProgress?.unlocked_at)
+      .sort((a, b) => new Date(b.userProgress!.unlocked_at).getTime() - new Date(a.userProgress!.unlocked_at).getTime())
+      .slice(0, 3);
+  }, [enrichedAchievements]);
+
+  const nextUp = useMemo(() => {
+    return enrichedAchievements
+      .filter((a) => !a.unlocked && a.progressPercent > 0)
+      .sort((a, b) => b.progressPercent - a.progressPercent)
+      .slice(0, 2);
+  }, [enrichedAchievements]);
 
   return {
     achievements: enrichedAchievements,
     unlockedCount: userAchievements.length,
     totalCount: achievements.length,
+    recentUnlocks,
+    nextUp,
     checkAchievements,
   };
 }
