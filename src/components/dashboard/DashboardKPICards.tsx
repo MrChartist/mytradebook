@@ -225,7 +225,7 @@ export function DashboardKPICards({ alerts }: Props) {
           {triggeredToday > 0 && (
             <div className="flex items-center gap-1">
               <span className="pulse-dot bg-warning" />
-              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-warning/10 text-warning">
+              <span className="text-2xs font-medium px-1.5 py-0.5 rounded-full bg-warning/10 text-warning">
                 {triggeredToday} triggered
               </span>
             </div>
