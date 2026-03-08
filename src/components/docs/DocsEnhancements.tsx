@@ -211,7 +211,7 @@ export function InteractiveMockup({ children, label, className }: { children: Re
             <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/12" />
             <div className="w-[7px] h-[7px] rounded-full bg-muted-foreground/12" />
           </div>
-          <span className="text-[11px] font-medium text-muted-foreground/35 ml-1.5 tracking-wide uppercase">{label}</span>
+          <span className="text-[11px] font-medium text-muted-foreground/45 ml-1.5 tracking-wide uppercase">{label}</span>
         </div>
       )}
       <div className="p-5 md:p-6 bg-muted/[0.03]">
