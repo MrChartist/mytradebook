@@ -1319,6 +1319,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="info">
                 <p>Analytics require at least 20 closed trades to generate meaningful insights. The more trades you log, the more statistically significant your analytics become.</p>
               </ProTip>
+              <QuickNav items={[
+                { label: "Core Metrics", id: "an-core" },
+                { label: "Time Analysis", id: "an-time" },
+                { label: "AI Behavioral", id: "an-ai" },
+              ]} />
               <AnalyticsMetricCards />
               <AIInsightsMockup />
               <div className="grid md:grid-cols-2 gap-6 mb-6">
@@ -1329,7 +1334,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <SegmentPerformanceMockup />
                 <RiskOfRuinMockup />
               </div>
-              <SubTopic title="Core Metrics & AI Insights" description="Fundamental performance statistics and AI-powered analysis." />
+              <SubTopic title="Core Metrics & AI Insights" description="Fundamental performance statistics and AI-powered analysis." id="an-core" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={BarChart3} title="Core Metrics" badge="Pro">
                   <FeatureList items={[
