@@ -2604,10 +2604,33 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Get AI-powered analysis of your trading patterns, timing, and risk management. Uses a Bring Your Own Key (BYOK) model — your key, your cost, zero cost to us. We strongly recommend Google Gemini as it offers a generous free tier."
                 icon={Sparkles}
               />
+
+              <QuickNav items={[
+                { label: "Provider Setup", id: "ai-provider" },
+                { label: "How It Works", id: "ai-how" },
+                { label: "Credit Usage", id: "ai-credits" },
+                { label: "Privacy", id: "ai-privacy" },
+              ]} />
+
               <AIApiSetupMockup />
+
+              <SubTopic title="Choose & Configure Your AI Provider" description="Pick a provider, generate an API key, and connect it to TradeBook in under 2 minutes." id="ai-provider" />
+
+              <StepByStep title="Configuring Your AI Provider" steps={[
+                { title: "Open Settings → Integrations → AI Trade Insights", description: "Navigate to the AI configuration panel inside your Settings page." },
+                { title: "Select your provider", description: "Choose between Google Gemini (recommended, free) or OpenAI. Both deliver high-quality trade analysis.", detail: "Gemini is strongly recommended — it offers a generous free tier that covers most traders' usage." },
+                { title: "Generate your API key", description: "For Gemini: visit aistudio.google.com/app/apikey and click 'Create API Key'. For OpenAI: visit platform.openai.com/api-keys.", detail: "Gemini keys are instant and free. OpenAI requires adding billing credits first." },
+                { title: "Paste the key and save", description: "Copy the API key and paste it into the field in TradeBook. Click Save — the key is encrypted and stored securely server-side." },
+                { title: "Test the connection", description: "Close a trade or navigate to the AI Insights panel. If the key is valid, you'll see AI-generated analysis within seconds.", detail: "If something goes wrong, check the key is correct and hasn't expired." },
+              ]} />
+
+              <ProTip variant="tip">
+                <p><strong>Which provider should you choose?</strong> For most traders, <strong>Google Gemini</strong> is the best option — it's completely free (15 req/min, 1M tokens/day) and delivers excellent trade analysis. Choose <strong>OpenAI</strong> if you already have an OpenAI account with credits and prefer GPT-style responses. Both providers analyse the same aggregated trade data, so the quality difference is minimal.</p>
+              </ProTip>
+
               <AIProviderComparisonMockup />
 
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="grid md:grid-cols-2 gap-5 mt-6">
                 <FeatureCard icon={Star} title="Google Gemini (Recommended)" badge="Free">
                   <p className="text-sm text-muted-foreground mb-3">
                     <span className="font-semibold text-profit">Completely free</span> — Gemini's free tier is more than enough for daily trade analysis. No credit card required.
@@ -2643,6 +2666,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </FeatureCard>
               </div>
 
+              <SubTopic title="How AI Analysis Works" description="What data is sent, how it's processed, and what you get back." id="ai-how" />
+
               <div className="mt-5">
                 <FeatureCard icon={Shield} title="How It Works & Privacy">
                   <div className="grid md:grid-cols-2 gap-6">
@@ -2656,7 +2681,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                         "Mistake frequency and recurring patterns",
                       ]} />
                     </div>
-                    <div>
+                    <div id="ai-privacy">
                       <h4 className="text-sm font-semibold mb-2">Privacy & Security</h4>
                       <FeatureList items={[
                         "Your API key is stored securely in the database",
@@ -2670,6 +2695,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   <div className="mt-4"><AIInsightSampleMockup /></div>
                 </FeatureCard>
               </div>
+
+              <ExpandableDetail title="Understanding AI Credit Usage" icon={Sparkles} badge="BYOK">
+                <p>TradeBook uses a <strong>Bring Your Own Key (BYOK)</strong> model. You provide your own API key from Google or OpenAI, and all AI costs are billed directly to your provider account — TradeBook never charges for AI usage.</p>
+                <p className="mt-3"><strong>How token usage works:</strong></p>
+                <ul className="mt-2 space-y-1.5 text-[13px] text-muted-foreground/80">
+                  <li className="flex items-start gap-2"><span className="text-primary mt-0.5">•</span> Each trade analysis uses approximately <strong>2,000 tokens</strong> (input + output combined)</li>
+                  <li className="flex items-start gap-2"><span className="text-primary mt-0.5">•</span> Google Gemini free tier: <strong>1,000,000 tokens/day</strong> — enough for ~500 analyses daily</li>
+                  <li className="flex items-start gap-2"><span className="text-primary mt-0.5">•</span> OpenAI GPT-4o Mini: approximately <strong>₹1–2 per analysis</strong> (varies by response length)</li>
+                  <li className="flex items-start gap-2"><span className="text-primary mt-0.5">•</span> Only aggregated statistics are sent — not your full trade history or personal data</li>
+                </ul>
+                <p className="mt-3 text-[12px] text-muted-foreground/60 italic">Tip: If you're on Gemini's free tier and hit the 15 requests/minute limit, just wait a minute. For most traders, this limit is never reached during normal usage.</p>
+              </ExpandableDetail>
 
               <div className="mt-5">
                 <AISettingsPreviewMockup />
