@@ -460,7 +460,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
       {/* Docs Header */}
       <div className="pt-20" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle))' }}>
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-8 py-12 lg:py-16">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
           <div className="flex items-center gap-2 mb-2">
             <p className="docs-caption uppercase tracking-[0.1em]">TradeBook</p>
             <ChevronRight className="w-3 h-3" style={{ color: 'hsl(var(--docs-text-muted))' }} />
@@ -601,38 +601,40 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           <nav className="lg:hidden fixed top-14 left-0 right-0 z-40 backdrop-blur-xl" style={{ background: 'hsl(var(--docs-bg) / 0.95)', borderBottom: '1px solid hsl(var(--docs-border-subtle))' }} aria-label="Section navigation">
             <div className="relative">
               {/* Fade edges */}
-              <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-5 z-10" style={{ background: 'linear-gradient(to right, hsl(var(--docs-bg) / 0.95), transparent)' }} />
-              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-5 z-10" style={{ background: 'linear-gradient(to left, hsl(var(--docs-bg) / 0.95), transparent)' }} />
+              <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 z-10" style={{ background: 'linear-gradient(to right, hsl(var(--docs-bg) / 0.95), transparent)' }} />
+              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 z-10" style={{ background: 'linear-gradient(to left, hsl(var(--docs-bg) / 0.95), transparent)' }} />
               <div
-                className="flex gap-1.5 overflow-x-auto overscroll-x-contain px-5 py-3 no-scrollbar"
+                className="flex gap-1 overflow-x-auto overscroll-x-contain px-4 py-2.5 no-scrollbar"
                 style={{ WebkitOverflowScrolling: "touch" }}
               >
-                {SECTIONS.map((s) => (
-                  <button
-                    key={s.id}
-                    onClick={() => scrollTo(s.id)}
-                    className={cn(
-                      "shrink-0 px-3.5 py-1.5 rounded-lg docs-sidebar-item transition-colors whitespace-nowrap",
-                      activeSection === s.id
-                        ? "font-semibold"
-                        : ""
-                    )}
-                    style={{
-                      background: activeSection === s.id ? 'hsl(var(--docs-accent-soft) / 0.14)' : 'transparent',
-                      color: activeSection === s.id ? 'hsl(0 0% 100%)' : 'hsl(var(--docs-text-muted))',
-                    }}
-                  >
-                    {s.label}
-                  </button>
-                ))}
+                {SECTIONS.map((s) => {
+                  const isActive = activeSection === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      onClick={() => scrollTo(s.id)}
+                      className={cn(
+                        "shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap text-[12px]",
+                        isActive ? "font-semibold" : ""
+                      )}
+                      style={{
+                        background: isActive ? 'hsl(var(--docs-accent-soft) / 0.14)' : 'transparent',
+                        color: isActive ? 'hsl(0 0% 100%)' : 'hsl(var(--docs-text-muted))',
+                      }}
+                    >
+                      <s.icon className="w-3 h-3 shrink-0" />
+                      {s.label}
+                    </button>
+                  );
+                })}
                 {/* Spacer so last item isn't clipped by fade */}
-                <div className="shrink-0 w-3" aria-hidden="true" />
+                <div className="shrink-0 w-4" aria-hidden="true" />
               </div>
             </div>
           </nav>
 
           {/* Main content */}
-          <main className="flex-1 min-w-0 max-w-[760px] px-6 lg:px-14 py-10 lg:py-14 space-y-16 pt-[7rem] lg:pt-12">
+          <main className="flex-1 min-w-0 max-w-[760px] px-4 sm:px-6 lg:px-14 py-8 lg:py-14 space-y-16 pt-[7.5rem] lg:pt-12">
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
@@ -3468,7 +3470,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-xl shadow-lg flex items-center justify-center transition-all"
+            className="fixed bottom-20 lg:bottom-6 right-4 lg:right-6 z-50 w-10 h-10 rounded-xl shadow-lg flex items-center justify-center transition-all"
             style={{ background: 'hsl(var(--docs-elevated))', border: '1px solid hsl(var(--docs-border))', color: 'hsl(var(--docs-text-secondary))' }}
             aria-label="Back to top"
           >
@@ -3481,7 +3483,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       {!isInsideApp && (
         <footer style={{ borderTop: '1px solid hsl(var(--docs-border-subtle))' }} className="py-14" role="contentinfo">
           <div className="max-w-[1440px] mx-auto px-6 lg:px-8">
-            <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8">
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <img src="/favicon-32x32.png" alt="TradeBook" className="h-6 object-contain" loading="lazy" />
