@@ -43,8 +43,8 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
       >
         <div className="flex items-start justify-between relative">
           <div className="space-y-2">
-            <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">{title}</p>
-            <p className="text-[28px] font-bold tracking-tight font-mono leading-none">{value}</p>
+            <p className="kpi-label">{title}</p>
+            <p className="kpi-value">{value}</p>
             {change && (
               <p
                 className={cn(
@@ -58,17 +58,16 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
               </p>
             )}
             {subtitle && (
-              <p className="text-[11px] text-muted-foreground/70">{subtitle}</p>
+              <p className="kpi-sublabel">{subtitle}</p>
             )}
           </div>
           <div
             className={cn(
-              "inner-panel !p-2.5 !rounded-xl",
-              changeType === "profit" && "!bg-profit/8 !border-profit/15",
-              changeType === "loss" && "!bg-loss/8 !border-loss/15",
-              changeType === "neutral" && "!bg-primary/8 !border-primary/15"
+              "icon-badge",
+              changeType === "profit" && "bg-profit/8",
+              changeType === "loss" && "bg-loss/8",
+              changeType === "neutral" && "bg-primary/8"
             )}
-            style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.08)" }}
           >
             <Icon
               className={cn(

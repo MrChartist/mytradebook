@@ -67,10 +67,10 @@ export function Sidebar() {
         key={item.path}
         to={item.path}
         className={cn(
-          "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 group",
+          "flex items-center gap-3 px-3 py-2 rounded-[var(--radius-sm)] transition-all duration-200 group",
           isActive
             ? "nav-active-bar liquid-glass-sm !bg-primary/8 text-primary font-medium"
-            : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+            : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
         )}
       >
         <item.icon
@@ -80,7 +80,7 @@ export function Sidebar() {
           )}
         />
         {!collapsed && (
-          <span className="text-[13px]">{item.label}</span>
+          <span className="text-body-sm">{item.label}</span>
         )}
       </NavLink>
     );
@@ -102,15 +102,15 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-gradient-to-b from-card/95 to-card/85 backdrop-blur-xl border-b border-border/40 flex items-center justify-between px-4" style={{ boxShadow: "inset 0 -1px 0 0 hsl(0 0% 100% / 0.04), 0 4px 12px -4px rgba(0,0,0,0.06)" }}>
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-card/95 backdrop-blur-xl border-b border-border/40 flex items-center justify-between px-4" style={{ boxShadow: "var(--shadow-xs)" }}>
         <img src={logo} alt="TradeBook" className="h-8 object-contain drop-shadow-sm" />
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <NotificationBell />
-          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl">
+          <Button variant="ghost" size="icon" className="rounded-[var(--radius-sm)]">
             <Search className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl" onClick={() => setMobileOpen(true)}>
+          <Button variant="ghost" size="icon" className="rounded-[var(--radius-sm)]" onClick={() => setMobileOpen(true)}>
             <Menu className="w-5 h-5" />
           </Button>
         </div>
@@ -135,7 +135,7 @@ export function Sidebar() {
           {!collapsed && (
             <button
               onClick={() => setCollapsed(true)}
-              className="ml-auto w-7 h-7 rounded-lg border border-border/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors duration-200"
+              className="ml-auto w-7 h-7 rounded-[var(--radius-sm)] border border-border/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors duration-200"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
             </button>
@@ -160,7 +160,7 @@ export function Sidebar() {
           {/* Theme toggle */}
           {!collapsed && (
             <div className="flex items-center justify-between px-3 py-1.5 mb-1.5">
-              <span className="text-[11px] text-muted-foreground font-medium">Theme</span>
+              <span className="text-caption text-muted-foreground font-medium">Theme</span>
               <div className="flex items-center gap-1.5">
                 <NotificationBell />
                 <ThemeToggle />
@@ -169,7 +169,7 @@ export function Sidebar() {
           )}
           {/* Profile */}
           {!collapsed && profile && (
-            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/30 rounded-xl border border-border/30">
+            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/30 rounded-[var(--radius-md)] border border-border/30">
               <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0 ring-2 ring-background">
                 <span className="text-primary-foreground font-semibold text-xs">
                   {profile.name?.charAt(0).toUpperCase() || "U"}
@@ -177,7 +177,7 @@ export function Sidebar() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <p className="text-[13px] font-medium truncate">{profile.name || "User"}</p>
+                  <p className="text-body-sm font-medium truncate">{profile.name || "User"}</p>
                   <span className={cn(
                     "text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full shrink-0",
                     plan === "pro" || plan === "team"
@@ -187,7 +187,7 @@ export function Sidebar() {
                     {isTrialing ? `Trial · ${trialDaysLeft}d` : plan}
                   </span>
                 </div>
-                <p className="text-[11px] text-muted-foreground truncate">{profile.email}</p>
+                <p className="text-caption text-muted-foreground truncate">{profile.email}</p>
               </div>
             </div>
           )}
@@ -195,33 +195,33 @@ export function Sidebar() {
           <NavLink
             to="/docs"
             className={cn(
-              "flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 group",
+              "flex items-center gap-3 px-3 py-2 rounded-[var(--radius-sm)] transition-all duration-200 group",
               location.pathname === "/docs"
                 ? "bg-primary/8 text-primary font-medium"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
             )}
           >
             <HelpCircle className="w-[18px] h-[18px]" />
-            {!collapsed && <span className="text-[13px]">Docs & FAQs</span>}
+            {!collapsed && <span className="text-body-sm">Docs & FAQs</span>}
           </NavLink>
 
           <NavLink
             to="/settings"
             className={cn(
-              "flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 group",
+              "flex items-center gap-3 px-3 py-2 rounded-[var(--radius-sm)] transition-all duration-200 group",
               location.pathname === "/settings"
                 ? "bg-primary/8 text-primary font-medium"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
             )}
           >
             <Settings className="w-[18px] h-[18px]" />
-            {!collapsed && <span className="text-[13px]">Settings</span>}
+            {!collapsed && <span className="text-body-sm">Settings</span>}
           </NavLink>
 
           {collapsed && (
             <button
               onClick={() => setCollapsed(false)}
-              className="flex items-center justify-center w-full py-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted hover:shadow-sm transition-all"
+              className="flex items-center justify-center w-full py-2 rounded-[var(--radius-sm)] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-200"
             >
               <ChevronLeft className="w-[18px] h-[18px] rotate-180" />
             </button>
@@ -229,10 +229,10 @@ export function Sidebar() {
 
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2 rounded-xl text-muted-foreground hover:text-loss hover:bg-loss/8 transition-all duration-150 w-full"
+            className="flex items-center gap-3 px-3 py-2 rounded-[var(--radius-sm)] text-muted-foreground hover:text-loss hover:bg-loss/8 transition-all duration-200 w-full"
           >
             <LogOut className="w-[18px] h-[18px] flex-shrink-0" />
-            {!collapsed && <span className="text-[13px]">Logout</span>}
+            {!collapsed && <span className="text-body-sm">Logout</span>}
           </button>
         </div>
       </aside>

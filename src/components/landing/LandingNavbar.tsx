@@ -59,7 +59,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
       )}
       aria-label="Main navigation"
     >
-      <div className="mx-auto max-w-7xl flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
+      <div className="mx-auto max-w-7xl flex items-center justify-between px-4 sm:px-6 lg:px-8 h-14">
         {/* Logo + breadcrumb */}
         <div className="flex items-center gap-2 shrink-0">
           <motion.button
@@ -85,7 +85,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
         </div>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-2 text-sm">
+        <div className="hidden md:flex items-center gap-1.5 text-sm">
           {NAV_LINKS.map((item) => {
             const isActive = item.page === activePage;
             return (
@@ -93,7 +93,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
                 key={item.label}
                 onClick={() => handleNavClick(item.href)}
                 className={cn(
-                  "relative px-4 py-1.5 rounded-full text-sm font-medium transition-colors duration-200",
+                  "relative px-3.5 py-1.5 rounded-[var(--radius-sm)] text-[13px] font-medium transition-colors duration-200",
                   isActive
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground"
@@ -119,7 +119,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
           {extraRight}
           <ThemeToggle />
           <button
-            className="md:hidden w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted/60 transition-colors"
+            className="md:hidden w-9 h-9 flex items-center justify-center rounded-[var(--radius-sm)] hover:bg-muted/60 transition-colors duration-200"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle navigation menu"
           >
@@ -129,7 +129,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
             <Button
               size="sm"
               onClick={() => navigate("/dashboard")}
-              className="bg-foreground hover:bg-foreground/90 text-background rounded-full px-4 h-8 text-[13px] font-semibold"
+              className="bg-foreground hover:bg-foreground/90 text-background rounded-[var(--radius-md)] px-4 h-8 text-[13px] font-semibold"
             >
               Dashboard
             </Button>
@@ -139,7 +139,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate("/login")}
-                className="hidden sm:inline-flex text-muted-foreground hover:text-foreground text-[13px] h-8 px-3 rounded-full"
+                className="hidden sm:inline-flex text-muted-foreground hover:text-foreground text-[13px] h-8 px-3 rounded-[var(--radius-md)]"
               >
                 Sign In
               </Button>
@@ -147,7 +147,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
                 <Button
                   size="sm"
                   onClick={() => navigate("/login?mode=signup")}
-                  className="bg-foreground hover:bg-foreground/90 text-background rounded-full px-4 h-8 text-[13px] font-semibold gap-1.5"
+                  className="bg-foreground hover:bg-foreground/90 text-background rounded-[var(--radius-md)] px-4 h-8 text-[13px] font-semibold gap-1.5"
                 >
                   Get Started
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -166,7 +166,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="md:hidden overflow-hidden border-t border-border/30 bg-background/95 backdrop-blur-xl"
+            className="md:hidden overflow-hidden border-t border-border/40 bg-background/95 backdrop-blur-xl"
           >
             <div className="px-4 py-3 space-y-0.5">
               {NAV_LINKS.map((item) => {
@@ -177,7 +177,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
                     key={item.label}
                     onClick={() => handleNavClick(item.href)}
                     className={cn(
-                      "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150",
+                      "w-full flex items-center gap-3 px-4 py-2.5 rounded-[var(--radius-md)] text-[13px] font-medium transition-all duration-200",
                       isActive
                         ? "bg-foreground/5 text-foreground border-l-[3px] border-l-foreground"
                         : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
