@@ -38,9 +38,9 @@ export function JournalPatternsAndMistakes({
 }: JournalPatternsAndMistakesProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
         {[0, 1].map((i) => (
-          <div key={i} className="glass-card p-5">
+          <div key={i} className="surface-card p-5">
             <Skeleton className="h-6 w-32 mb-4" />
             <div className="space-y-3">
               {[...Array(4)].map((_, j) => (
@@ -54,9 +54,9 @@ export function JournalPatternsAndMistakes({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
       {/* Top Patterns */}
-      <div className="glass-card p-5">
+      <div className="surface-card p-5">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-primary" />
