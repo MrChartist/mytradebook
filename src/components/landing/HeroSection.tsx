@@ -79,12 +79,13 @@ export function HeroSection() {
     <>
       <section ref={heroRef} className="relative min-h-[100svh] flex flex-col overflow-hidden" aria-label="Hero">
         {/* Background */}
-        <motion.div className="absolute inset-0" style={{ scale: imgScale }}>
+        <motion.div className="absolute inset-0 will-change-transform" style={{ scale: imgScale }}>
           <img
             src={heroLifestyle}
             alt=""
-            className="w-full h-full object-cover"
-            loading="eager"
+            className="w-full h-full object-cover will-change-transform"
+            fetchPriority="high"
+            decoding="async"
             style={{ filter: "blur(28px) saturate(1.1) brightness(1.08)", transform: "scale(1.1)" }}
           />
         </motion.div>
@@ -171,7 +172,7 @@ export function HeroSection() {
           {/* Trust micro-line */}
           <motion.div
             variants={fadeUp} initial="hidden" animate="visible" custom={0.4}
-            className="flex items-center gap-4 text-[12px] text-muted-foreground/50"
+            className="flex items-center gap-4 text-[12px] text-muted-foreground/60"
           >
             <span className="flex items-center gap-1.5"><Shield className="w-3 h-3" /> Bank-grade security</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
@@ -191,7 +192,7 @@ export function HeroSection() {
                   <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground tracking-[-0.02em] font-mono tabular-nums">
                     {formatStat(i, statRefs[i].count)}
                   </p>
-                  <p className="text-[10px] text-muted-foreground/50 uppercase tracking-[0.12em] mt-1.5 font-semibold">
+                  <p className="text-[10px] text-muted-foreground/60 uppercase tracking-[0.12em] mt-1.5 font-semibold">
                     {stat.label}
                   </p>
                 </div>
