@@ -1502,27 +1502,23 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <p>Your most costly mistake is usually not your most frequent one. Check the "Most Costly" column — a single mistake type might account for 40% of your total losses.</p>
               </ProTip>
               <MistakeTrendMockup />
-              <FeatureCard icon={AlertTriangle} title="Mistake Analysis Tools">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="text-sm font-semibold mb-2">Pattern Recognition</h4>
-                    <FeatureList items={[
-                      "Repeat pattern analysis with occurrence counts",
-                      "Total loss attributed to each mistake type",
-                      "6-month mistake trend chart showing improvement",
-                      "Most common vs most costly mistakes comparison",
-                    ]} />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold mb-2">Severity Breakdown</h4>
-                    <FeatureList items={[
-                      "Low severity: losses under ₹500",
-                      "Medium severity: losses between ₹500 – ₹2,000",
-                      "High severity: losses above ₹2,000",
-                      "Manage mistake tags via Settings → Tag Management",
-                    ]} />
-                  </div>
-                </div>
+              <SubTopic title="Pattern Recognition" description="Identify repeat mistakes and track their frequency over time." />
+              <FeatureCard icon={Search} title="Mistake Pattern Analysis">
+                <FeatureList items={[
+                  "Repeat pattern analysis with occurrence counts",
+                  "Total loss attributed to each mistake type",
+                  "6-month mistake trend chart showing improvement",
+                  "Most common vs most costly mistakes comparison",
+                ]} />
+              </FeatureCard>
+              <SubTopic title="Severity Classification" description="Categorize mistakes by financial impact to prioritize fixes." />
+              <FeatureCard icon={AlertTriangle} title="Severity Breakdown">
+                <FeatureList items={[
+                  "Low severity: losses under ₹500",
+                  "Medium severity: losses between ₹500 – ₹2,000",
+                  "High severity: losses above ₹2,000",
+                  "Manage mistake tags via Settings → Tag Management",
+                ]} />
                 <div className="mt-4"><MistakeAnalysisToolsMockup /></div>
               </FeatureCard>
             </motion.section>
