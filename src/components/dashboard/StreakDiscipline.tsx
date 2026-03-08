@@ -82,7 +82,7 @@ export function StreakDiscipline() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2.5">
         {/* Current Streak */}
         <div className={cn(
           "inner-panel",
