@@ -423,8 +423,8 @@ function RightRail({ activeSection }: { activeSection: string }) {
   }, [activeSection]);
 
   return (
-    <aside className="hidden xl:block w-[210px] shrink-0" style={{ borderLeft: '1px solid hsl(var(--docs-border-subtle) / 0.3)' }}>
-      <div className="sticky top-[3.25rem] h-[calc(100vh-3.25rem)] py-7 pl-5 pr-3 overflow-y-auto">
+    <aside className="hidden xl:block w-[220px] shrink-0" style={{ borderLeft: '1px solid hsl(var(--docs-border-subtle) / 0.3)' }}>
+      <div className="sticky top-[3.25rem] h-[calc(100vh-3.25rem)] py-8 pl-6 pr-3 overflow-y-auto">
         <p
           className="text-[10.5px] font-semibold uppercase tracking-[0.1em] mb-5"
           style={{ color: 'hsl(var(--docs-text-muted) / 0.55)' }}
