@@ -3,18 +3,18 @@
 @tailwind utilities;
 
 /* ================================================================
-   TradeBook Design System v2 — Unified Visual Language
+   TradeBook Design System v3 — Unified Typography
    ================================================================
    
-   Font System (4-font):
-     Heading:  'Manrope' — main headings, section titles, page titles,
-               card titles, pricing titles, major product headings
-     Accent:   'Instrument Serif' — accent font for selected highlighted
-               words in hero/section headings (use sparingly)
-     Body:     'Inter' — all functional UI text, navbar, footer, buttons,
-               forms, sidebar, docs body, dashboard, tables, settings
-     Mono:     'JetBrains Mono' — code blocks, keyboard shortcuts, API keys,
-               command examples, technical labels
+   Font System (2-font + mono):
+     Display:  'Libre Bodoni' — premium serif for hero headlines,
+               major landing section titles, docs page title,
+               top-level page titles where emphasis is useful
+     UI/Body:  'Source Sans 3' — all functional UI text: navbar,
+               footer, sidebar, docs body, dashboard, tables,
+               forms, settings, buttons, labels, cards, badges
+     Mono:     'JetBrains Mono' — code blocks, keyboard shortcuts,
+               API keys, command examples, technical labels
    
    Typography Scale (semantic):
      --text-2xs:  0.625rem  (10px)  — micro labels, metadata
