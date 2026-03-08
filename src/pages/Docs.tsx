@@ -343,7 +343,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               {mode === "bw" ? "B&W" : "Color"}
             </button>
           </div>
-          <h1 className="text-3xl lg:text-4xl xl:text-5xl font-extrabold tracking-tight mb-3 leading-[1.1]">
+          <h1 className="text-3xl lg:text-4xl xl:text-5xl font-extrabold tracking-tight mb-4 leading-[1.08]">
             Everything you need to know about{" "}
             <span className="accent-script text-primary">TradeBook</span>
           </h1>
