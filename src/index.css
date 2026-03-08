@@ -276,8 +276,13 @@
 @layer components {
   /* ── Surface Cards ─────────────────────────────────── */
   .surface-card {
-    @apply bg-card rounded-[1.25rem] border border-border/70;
+    @apply bg-card rounded-[1.25rem] border border-border/80;
     box-shadow: var(--shadow-sm);
+  }
+
+  /* Light mode - stronger border for visibility */
+  :root .surface-card {
+    border-color: hsl(var(--border));
   }
 
   .dark .surface-card {
@@ -300,8 +305,13 @@
 
   /* ── Premium Card (rich, layered) ──────────────────── */
   .premium-card {
-    @apply bg-card rounded-[1.25rem] border border-border/70 p-6 relative overflow-hidden;
+    @apply bg-card rounded-[1.25rem] border border-border/80 p-6 relative overflow-hidden;
     box-shadow: var(--shadow-sm);
+  }
+
+  /* Light mode - visible borders */
+  :root .premium-card {
+    border-color: hsl(var(--border));
   }
 
   .dark .premium-card {
