@@ -3159,79 +3159,89 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <QuickNav items={[
                 { label: "Recent Updates", id: "cl-updates" },
                 { label: "Roadmap", id: "cl-roadmap" },
+                { label: "Versioning", id: "cl-versioning" },
               ]} />
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Recent updates */}
-                <div>
-                  <SubTopic title="Recent Updates" description="Features shipped in recent releases." id="cl-updates" />
-                  <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-profit" /> Latest Releases
-                  </h3>
-                  <div className="space-y-3">
-                    {[
-                      { version: "v3.1", date: "Mar 2026", items: ["Trading Rules Checklist", "AI Trade Coach", "Smart Alert Suggestions", "Quick Close Popover", "Day/Time of Day Analysis", "Streak Tracker expansion", "Docs deep-links & reading time"] },
-                      { version: "v3.0", date: "Mar 2026", items: ["AI Pattern Detection — behavioral insights", "Sector Rotation Heatmap", "Setup Win-Rate Matrix", "Emotional P&L Correlation"] },
-                      { version: "v2.9", date: "Mar 2026", items: ["Dashboard drag-and-drop reordering", "Floating Trade Ticker", "Animated KPI numbers", "Mobile swipe-to-act on trades", "Quick Trade Entry via Command Palette", "P&L & Trade Share Cards"] },
-                      { version: "v2.8", date: "Feb 2026", items: ["Stock Screener with 47 presets", "Custom filter builder", "Stock insight cards"] },
-                      { version: "v2.7", date: "Feb 2026", items: ["Portfolio Heat Map widget", "Daily Review Wizard", "Enhanced onboarding"] },
-                      { version: "v2.6", date: "Jan 2026", items: ["Multi-leg strategy support", "TSL profiles per segment", "AI Trade Insights"] },
-                      { version: "v2.5", date: "Dec 2025", items: ["Trade Templates & Smart Suggestions", "CSV Import improvements", "Offline trade queue"] },
-                    ].map((release) => (
-                      <div key={release.version} className="premium-card-hover p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Badge variant="secondary" className="bg-primary/10 text-primary border-none text-[10px]">{release.version}</Badge>
-                          <span className="text-[10px] text-muted-foreground">{release.date}</span>
-                        </div>
-                        <ul className="space-y-1">
-                          {release.items.map((item) => (
-                            <li key={item} className="text-xs text-muted-foreground flex items-center gap-1.5">
-                              <CheckCircle2 className="w-3 h-3 text-profit shrink-0" /> {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                </div>
 
-                {/* Roadmap */}
-                <div>
-                  <SubTopic title="Upcoming Roadmap" description="Features we're building next." id="cl-roadmap" />
-                  <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-[hsl(var(--tb-accent))]" /> Upcoming Roadmap
-                  </h3>
-                  <div className="space-y-3">
-                    {[
-                      { label: "Social Trading", desc: "Share your trade journal publicly with a custom RA-compliant profile", status: "In Progress" },
-                      { label: "Option Chain Analyzer", desc: "Visual option chain with Greeks, IV surface, and strategy payoff diagrams", status: "Planned" },
-                      { label: "Advanced Backtesting", desc: "Test your strategies against historical data with simulated P&L", status: "Planned" },
-                      { label: "Zerodha Integration", desc: "Connect your Zerodha Kite account for live prices and auto-sync", status: "Exploring" },
-                      { label: "Trade Similarity Engine", desc: "AI finds similar past trades and shows your historical win rate for that pattern", status: "Planned" },
-                      { label: "Multi-Currency Support", desc: "Support for USD, EUR and other currencies for NRI traders", status: "Exploring" },
-                    ].map((item) => (
-                      <div key={item.label} className="premium-card-hover p-4 flex items-start gap-3">
-                        <div className="mt-0.5">
-                          <div className={cn(
-                            "w-2 h-2 rounded-full",
-                            item.status === "In Progress" ? "bg-[hsl(var(--tb-accent))] animate-pulse" :
-                            item.status === "Planned" ? "bg-primary/40" : "bg-muted-foreground/30"
-                          )} />
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-sm font-semibold text-foreground">{item.label}</span>
-                            <span className={cn(
-                              "text-[9px] px-1.5 py-0.5 rounded-full font-semibold",
-                              item.status === "In Progress" ? "bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))]" :
-                              item.status === "Planned" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
-                            )}>{item.status}</span>
-                          </div>
-                          <p className="text-xs text-muted-foreground">{item.desc}</p>
-                        </div>
-                      </div>
-                    ))}
+              <ProTip variant="best-practice">
+                <p>Check the changelog weekly to stay on top of new features. Many improvements — like new analytics widgets or shortcut enhancements — ship silently and can significantly improve your workflow if you know about them.</p>
+              </ProTip>
+
+              <SubTopic title="Recent Updates" description="Features shipped in recent releases." id="cl-updates" />
+              <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-profit" /> Latest Releases
+              </h3>
+              <div className="space-y-3">
+                {[
+                  { version: "v3.2", date: "Mar 2026", items: ["Enhanced Docs — QuickNav, StepByStep guides, and ExpandableDetail across all sections", "Category-grouped FAQ with 17 questions", "PWA install walkthrough and offline queue explanation", "Settings configuration checklist", "Capital Management deep-dive", "AI Insights credit usage guide"] },
+                  { version: "v3.1", date: "Mar 2026", items: ["Trading Rules Checklist", "AI Trade Coach", "Smart Alert Suggestions", "Quick Close Popover", "Day/Time of Day Analysis", "Streak Tracker expansion", "Docs deep-links & reading time"] },
+                  { version: "v3.0", date: "Mar 2026", items: ["AI Pattern Detection — behavioral insights", "Sector Rotation Heatmap", "Setup Win-Rate Matrix", "Emotional P&L Correlation"] },
+                  { version: "v2.9", date: "Mar 2026", items: ["Dashboard drag-and-drop reordering", "Floating Trade Ticker", "Animated KPI numbers", "Mobile swipe-to-act on trades", "Quick Trade Entry via Command Palette", "P&L & Trade Share Cards"] },
+                  { version: "v2.8", date: "Feb 2026", items: ["Stock Screener with 47 presets", "Custom filter builder", "Stock insight cards"] },
+                  { version: "v2.7", date: "Feb 2026", items: ["Portfolio Heat Map widget", "Daily Review Wizard", "Enhanced onboarding"] },
+                  { version: "v2.6", date: "Jan 2026", items: ["Multi-leg strategy support", "TSL profiles per segment", "AI Trade Insights"] },
+                  { version: "v2.5", date: "Dec 2025", items: ["Trade Templates & Smart Suggestions", "CSV Import improvements", "Offline trade queue"] },
+                ].map((release) => (
+                  <div key={release.version} className="premium-card-hover p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge variant="secondary" className="bg-primary/10 text-primary border-none text-[10px]">{release.version}</Badge>
+                      <span className="text-[10px] text-muted-foreground">{release.date}</span>
+                      {release.version === "v3.2" && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-profit/10 text-profit font-bold">Latest</span>}
+                    </div>
+                    <ul className="space-y-1">
+                      {release.items.map((item) => (
+                        <li key={item} className="text-xs text-muted-foreground flex items-center gap-1.5">
+                          <CheckCircle2 className="w-3 h-3 text-profit shrink-0" /> {item}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
+                ))}
+              </div>
+
+              <ExpandableDetail title="Version Numbering Explained" icon={RefreshCw} id="cl-versioning">
+                <p>TradeBook follows a <strong>semantic-style versioning</strong> scheme to communicate the scope of each release:</p>
+                <ul className="mt-3 space-y-1.5 text-[13px] text-muted-foreground/80">
+                  <li className="flex items-start gap-2"><span className="text-primary mt-0.5">•</span> <strong>Major (vX.0)</strong> — Significant new feature areas or architectural changes (e.g., AI Pattern Detection, Sector Heatmap)</li>
+                  <li className="flex items-start gap-2"><span className="text-primary mt-0.5">•</span> <strong>Minor (vX.Y)</strong> — New features, enhancements, and meaningful improvements to existing capabilities</li>
+                  <li className="flex items-start gap-2"><span className="text-primary mt-0.5">•</span> <strong>Patches</strong> — Bug fixes and small refinements are shipped continuously and don't always bump the version number</li>
+                </ul>
+                <p className="mt-3 text-[12px] text-muted-foreground/60 italic">We ship improvements weekly. Version numbers help you track what's new, but many quality-of-life improvements land between numbered releases.</p>
+              </ExpandableDetail>
+
+              <SubTopic title="Upcoming Roadmap" description="Features we're building next." id="cl-roadmap" />
+              <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[hsl(var(--tb-accent))]" /> Upcoming Roadmap
+              </h3>
+              <div className="space-y-3">
+                {[
+                  { label: "Social Trading", desc: "Share your trade journal publicly with a custom RA-compliant profile", status: "In Progress" },
+                  { label: "Option Chain Analyzer", desc: "Visual option chain with Greeks, IV surface, and strategy payoff diagrams", status: "Planned" },
+                  { label: "Advanced Backtesting", desc: "Test your strategies against historical data with simulated P&L", status: "Planned" },
+                  { label: "Zerodha Integration", desc: "Connect your Zerodha Kite account for live prices and auto-sync", status: "Exploring" },
+                  { label: "Trade Similarity Engine", desc: "AI finds similar past trades and shows your historical win rate for that pattern", status: "Planned" },
+                  { label: "Multi-Currency Support", desc: "Support for USD, EUR and other currencies for NRI traders", status: "Exploring" },
+                ].map((item) => (
+                  <div key={item.label} className="premium-card-hover p-4 flex items-start gap-3">
+                    <div className="mt-0.5">
+                      <div className={cn(
+                        "w-2 h-2 rounded-full",
+                        item.status === "In Progress" ? "bg-[hsl(var(--tb-accent))] animate-pulse" :
+                        item.status === "Planned" ? "bg-primary/40" : "bg-muted-foreground/30"
+                      )} />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-sm font-semibold text-foreground">{item.label}</span>
+                        <span className={cn(
+                          "text-[9px] px-1.5 py-0.5 rounded-full font-semibold",
+                          item.status === "In Progress" ? "bg-[hsl(var(--tb-accent)/0.1)] text-[hsl(var(--tb-accent))]" :
+                          item.status === "Planned" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                        )}>{item.status}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </motion.section>
 
