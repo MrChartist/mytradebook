@@ -513,8 +513,8 @@ export default function Login() {
 
                   <p className="text-[11px] text-muted-foreground/60 text-center mt-6">
                     By signing in, you agree to our{" "}
-                    <a href="/terms" className="text-primary hover:underline">Terms</a>{" "}and{" "}
-                    <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a>
+                    <Link to="/terms" className="text-primary hover:underline">Terms</Link>{" "}and{" "}
+                    <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
                   </p>
                 </>
               )}

@@ -58,7 +58,7 @@ export default function ResetPassword() {
       } else {
         setSuccess(true);
         toast({ title: "Password updated!", description: "Redirecting to dashboard..." });
-        setTimeout(() => navigate("/", { replace: true }), 2000);
+        setTimeout(() => navigate("/dashboard", { replace: true }), 2000);
       }
     } catch {
       toast({ title: "Something went wrong", variant: "destructive" });
