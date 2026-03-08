@@ -1078,7 +1078,7 @@
     font-weight: 550;
   }
   .docs-navbar-util-btn {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     color: hsl(var(--docs-text-muted) / 0.6);
     border: 1px solid hsl(var(--docs-border-subtle) / 0.6);
     background: hsl(var(--docs-elevated) / 0.3);
