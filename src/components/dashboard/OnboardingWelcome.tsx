@@ -30,12 +30,9 @@ export function OnboardingWelcome() {
   const { alerts } = useAlerts();
   const { settings } = useUserSettings();
   const { entries: journalEntries } = useDailyJournal();
-  const [dismissed, setDismissed] = useState(true);
-
-  useEffect(() => {
-    const stored = localStorage.getItem(ONBOARDING_KEY);
-    setDismissed(stored === "true");
-  }, []);
+  const [dismissed, setDismissed] = useState(() => {
+    try { return localStorage.getItem(ONBOARDING_KEY) === "true"; } catch { return false; }
+  });
 
   const dismiss = () => {
     localStorage.setItem(ONBOARDING_KEY, "true");
