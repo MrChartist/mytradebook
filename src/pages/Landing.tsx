@@ -8,7 +8,7 @@ import { LandingNavbar } from "@/components/landing/LandingNavbar";
 // Eagerly loaded — above the fold
 import { HeroSection } from "@/components/landing/HeroSection";
 import {
-  useCountUp, GradientDivider,
+  GradientDivider,
 } from "@/components/landing/LandingShared";
 
 // Lazy-loaded — below the fold
