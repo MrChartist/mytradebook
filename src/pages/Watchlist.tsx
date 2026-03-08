@@ -443,6 +443,7 @@ function WatchlistDetail({
       <CreateTradeModal
         open={tradeModalOpen}
         onOpenChange={setTradeModalOpen}
+        initialData={tradePrefill ? { symbol: tradePrefill } : null}
       />
     </div>
   );
