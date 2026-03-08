@@ -2106,15 +2106,15 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
               </VisualWalkthrough>
 
-              <ExpandableDetail title="Common Analytics Misunderstandings" icon={AlertTriangle} badge="Watch Out">
-                <p>Before diving into your analytics, be aware of these common interpretation mistakes:</p>
-                <FeatureList items={[
-                  "\"My win rate is 55% so I'm profitable\" — Win rate means nothing without knowing the average win vs average loss size. A 55% win rate with R:R of 0.5:1 is a net loser. Always check Expectancy alongside Win Rate.",
-                  "\"My best hour is 10 AM\" — Only if you have 30+ trades in that hour. With 5 trades, one big winner can distort the average. The analytics show trade counts alongside P&L — check statistical significance before making schedule changes.",
-                  "\"I should stop trading Options because my win rate there is 40%\" — Options often have lower win rates but higher R:R. A 40% win rate with 3:1 average R:R is extremely profitable. Look at total P&L per segment, not just win rate.",
-                  "\"The AI says I overtrade on Mondays, so I should skip Mondays\" — AI insights are starting points, not final answers. Check the underlying data. If you take 8 trades on Mondays vs 3 on other days, reducing to 4 Monday trades might be better than skipping entirely.",
-                ]} />
-              </ExpandableDetail>
+              <CommonMistakesPanel
+                title="Analytics Interpretation Mistakes"
+                items={[
+                  { mistake: "\"My win rate is 55% so I'm profitable\"", fix: "Win rate means nothing without average win/loss size. Check Expectancy alongside Win Rate." },
+                  { mistake: "\"My best hour is 10 AM\" (based on 5 trades)", fix: "Need 30+ trades per time slot for statistical significance. Check trade counts alongside P&L." },
+                  { mistake: "\"Stop trading Options — only 40% win rate\"", fix: "Options often have lower win rate but higher R:R. A 40% rate with 3:1 R:R is very profitable." },
+                  { mistake: "\"AI says I overtrade on Mondays, skip Mondays\"", fix: "AI insights are starting points. Check underlying data — reducing volume may beat skipping entirely." },
+                ]}
+              />
 
               <SubTopic title="Core Metrics & AI Insights" description="Fundamental performance statistics that define your trading edge." id="an-core" />
               <div className="space-y-5">
