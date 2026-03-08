@@ -84,7 +84,7 @@ export default function Landing() {
         <GradientDivider />
 
         <Suspense fallback={<SectionFallback />}>
-          <FAQSection />
+          <DocsCTASection />
         </Suspense>
 
         <GradientDivider />

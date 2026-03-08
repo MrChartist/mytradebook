@@ -407,56 +407,63 @@ export function IndianMarketsSection() {
   );
 }
 
-export function FAQSection() {
+export function DocsCTASection() {
   const navigate = useNavigate();
+  const docTopics = [
+    { label: "26 Feature Guides", icon: BookOpen },
+    { label: "Visual Mockups", icon: Layers },
+    { label: "Step-by-Step Tutorials", icon: Sparkles },
+    { label: "Analytics Deep-Dives", icon: BarChart3 },
+  ];
+
   return (
-    <section id="faq" className="py-28 lg:py-36" aria-label="Frequently asked questions">
-      <MotionSection className="max-w-2xl mx-auto px-6">
-        <motion.div variants={fadeUp} className="text-center mb-16">
-          <SectionBadge>FAQ</SectionBadge>
-          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.06] tracking-[-0.03em]">
-            Got{" "}<span className="text-shimmer">questions</span>?
-          </h2>
-          <p className="text-muted-foreground text-[15px] lg:text-[1rem] leading-[1.7]">Everything you need to know about TradeBook.</p>
-        </motion.div>
+    <section className="py-28 lg:py-36 relative overflow-hidden" aria-label="Documentation">
+      {/* Subtle glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.04)_0%,transparent_65%)] pointer-events-none" />
 
+      <MotionSection className="relative max-w-3xl mx-auto px-6 text-center">
         <motion.div variants={fadeUp}>
-          <Accordion type="single" collapsible className="space-y-3">
-            {faqs.map((faq, i) => (
-              <AccordionItem
-                key={i}
-                value={`faq-${i}`}
-                className="rounded-xl border border-border/30 bg-card/70 px-6 data-[state=open]:border-primary/20 data-[state=open]:shadow-sm transition-all duration-300"
-              >
-                <AccordionTrigger className="text-left text-[15px] font-semibold hover:no-underline py-4 tracking-[-0.01em]">
-                  <span className="flex items-center gap-3">
-                    <span className="text-[10px] font-mono text-muted-foreground/50 bg-muted/20 rounded-md px-1.5 py-0.5">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    {faq.q}
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent className="text-[15px] text-muted-foreground leading-[1.7] pl-8 pb-5 tracking-[-0.006em]">
-                  {faq.a}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          <SectionBadge>Documentation</SectionBadge>
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.06] tracking-[-0.03em]">
+            Explore the{" "}<span className="text-shimmer">Documentation</span>
+          </h2>
+          <p className="text-muted-foreground max-w-lg mx-auto text-[15px] lg:text-[1rem] leading-[1.7] mb-10 tracking-[-0.006em]">
+            Visual guides, feature walkthroughs, analytics tutorials, and setup instructions — everything you need to master TradeBook.
+          </p>
         </motion.div>
 
-        {/* Docs CTA */}
-        <motion.div variants={fadeUp} className="mt-14">
-          <div className="rounded-2xl border border-border/30 bg-card/70 p-8 flex flex-col sm:flex-row items-center justify-between gap-5" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
-            <div>
-              <h3 className="text-base font-semibold mb-1 flex items-center gap-2 tracking-[-0.015em]">
-                <BookOpen className="w-4 h-4 text-primary" />Want to dive deeper?
-              </h3>
-              <p className="text-sm text-muted-foreground leading-[1.6]">Explore our docs with visual guides and tutorials.</p>
-            </div>
-            <Button variant="outline" onClick={() => navigate("/docs")} className="gap-2 shrink-0 rounded-full">
-              <BookOpen className="w-4 h-4" />Browse Docs
-            </Button>
-          </div>
+        <motion.div variants={popIn} className="mb-10" whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
+          <Button
+            size="lg"
+            className="h-14 px-10 text-[15px] gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-[-0.01em] relative overflow-hidden group"
+            onClick={() => navigate("/docs")}
+          >
+            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-1000" />
+            <span className="relative flex items-center gap-2.5">
+              <BookOpen className="w-4.5 h-4.5" />
+              Browse Documentation
+              <ArrowRight className="w-4 h-4" />
+            </span>
+          </Button>
+        </motion.div>
+
+        {/* Topic pills */}
+        <motion.div variants={fadeUp} className="flex flex-wrap items-center justify-center gap-3">
+          {docTopics.map((topic, i) => (
+            <motion.span
+              key={topic.label}
+              className="inline-flex items-center gap-2 bg-card/70 border border-border/30 rounded-full px-4 py-2 text-[13px] font-medium text-muted-foreground"
+              style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08, duration: 0.4 }}
+              whileHover={{ borderColor: "hsl(var(--primary) / 0.3)", y: -2 }}
+            >
+              <topic.icon className="w-3.5 h-3.5 text-primary" />
+              {topic.label}
+            </motion.span>
+          ))}
         </motion.div>
       </MotionSection>
     </section>
