@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
 /* ─── Animated counter ──────────────────────────────────── */
 export function useCountUp(end: number, duration = 2000) {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = React.useState(0);
   const ref = useRef<HTMLDivElement>(null);
   const started = useRef(false);
-  useEffect(() => {
+  React.useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const observer = new IntersectionObserver(
@@ -34,10 +34,10 @@ export function useCountUp(end: number, duration = 2000) {
 
 /* ─── Motion Wrappers ───────────────────────────────────── */
 export const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 24 },
   visible: (delay: number = 0) => ({
     opacity: 1, y: 0,
-    transition: { duration: 0.6, delay, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] },
+    transition: { duration: 0.7, delay, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] },
   }),
 };
 
@@ -53,7 +53,7 @@ export const scaleIn = {
 
 export function MotionSection({ children, className }: { children: React.ReactNode; className?: string }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-60px" });
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
   return (
     <motion.div
       ref={ref}
@@ -67,10 +67,10 @@ export function MotionSection({ children, className }: { children: React.ReactNo
   );
 }
 
-/* ─── Section Label Badge ───────────────────────────────── */
+/* ─── Section Label Badge — refined pill ────────────────── */
 export function SectionBadge({ children }: { children: React.ReactNode }) {
   return (
-    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-border/40 bg-muted/20 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/70 mb-5">
+    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-border/30 bg-card/40 backdrop-blur-sm text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/60 mb-6">
       {children}
     </div>
   );
@@ -78,5 +78,5 @@ export function SectionBadge({ children }: { children: React.ReactNode }) {
 
 /* ─── Gradient Divider ──────────────────────────────────── */
 export function GradientDivider() {
-  return <div className="h-px bg-gradient-to-r from-transparent via-border/30 to-transparent max-w-3xl mx-auto my-2" />;
+  return <div className="h-px bg-gradient-to-r from-transparent via-border/25 to-transparent max-w-4xl mx-auto my-2" />;
 }

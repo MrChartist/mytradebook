@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight, Play, Shield, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fadeUp } from "./LandingShared";
 import { DashboardPreview } from "./DashboardPreview";
@@ -94,19 +94,19 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-transparent to-background" />
 
         {/* Subtle radial accent */}
-        <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full bg-[hsl(var(--tb-accent)/0.03)] blur-[160px] pointer-events-none" />
+        <div className="absolute top-[28%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-[hsl(var(--tb-accent)/0.025)] blur-[180px] pointer-events-none" />
 
         {/* Content */}
         <motion.div
           style={{ y: contentY }}
-          className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 pt-28 pb-12 text-center"
+          className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 pt-28 pb-14 text-center"
         >
           {/* Social proof pill */}
           <motion.div
             variants={fadeUp} initial="hidden" animate="visible" custom={0}
-            className="mb-8"
+            className="mb-10"
           >
-            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-card/50 dark:bg-card/30 backdrop-blur-xl border border-border/30 shadow-sm">
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-card/50 dark:bg-card/25 backdrop-blur-xl border border-border/25 shadow-sm">
               <div className="flex -space-x-2">
                 {avatarInitials.map((init, i) => (
                   <div
@@ -119,69 +119,79 @@ export function HeroSection() {
                 ))}
               </div>
               <span className="text-muted-foreground text-[13px] font-medium tracking-[-0.01em]">
-                1,200+ traders joined
+                1,200+ traders trust TradeBook
               </span>
             </div>
           </motion.div>
 
-          {/* Headline */}
+          {/* Headline — Bodoni, 60-68px desktop */}
           <motion.h1
             variants={fadeUp} initial="hidden" animate="visible" custom={0.1}
-            className="font-heading text-[2.75rem] sm:text-[3.5rem] lg:text-[4.5rem] xl:text-[5.5rem] font-bold leading-[0.95] tracking-[-0.025em] text-foreground mb-7"
+            className="font-heading text-[2.25rem] sm:text-[3rem] md:text-[3.75rem] lg:text-[4.25rem] font-semibold leading-[1.04] tracking-[-0.02em] text-foreground mb-8 max-w-4xl"
           >
             Know Your{" "}
-            <span className="accent-serif">Edge</span>.
+            <span className="accent-serif text-primary">Edge</span>.
             <br />
-            <span className="text-foreground/75">Compound It Daily.</span>
+            <span className="text-foreground/70">Compound It Daily.</span>
           </motion.h1>
 
-          {/* Subtitle */}
+          {/* Subtitle — Source Sans, 18px, clean */}
           <motion.p
             variants={fadeUp} initial="hidden" animate="visible" custom={0.2}
-            className="text-[1.0625rem] lg:text-lg text-muted-foreground max-w-[26rem] mx-auto mb-12 leading-[1.65] tracking-[-0.008em]"
+            className="text-[1rem] md:text-[1.0625rem] lg:text-[1.125rem] text-muted-foreground max-w-[28rem] mx-auto mb-14 leading-[1.7] tracking-[-0.006em]"
           >
-            The trading journal built for Indian markets — NSE, BSE, MCX.
+            The smart trading journal built for Indian markets. Track every trade across NSE, BSE & MCX — and find your real edge.
           </motion.p>
 
-          {/* CTA buttons */}
+          {/* CTA buttons — clear hierarchy */}
           <motion.div
             variants={fadeUp} initial="hidden" animate="visible" custom={0.3}
-            className="flex flex-col sm:flex-row items-center gap-4"
+            className="flex flex-col sm:flex-row items-center gap-4 mb-6"
           >
             <Button
               size="lg"
-              className="h-14 px-10 text-[15px] gap-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg shadow-primary/20 font-semibold tracking-[-0.01em]"
+              className="h-[3.25rem] px-10 text-[15px] gap-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg shadow-primary/15 font-semibold tracking-[-0.01em]"
               onClick={() => navigate("/login?mode=signup")}
             >
-              Start Free
+              Start Free — No Card Needed
               <ArrowRight className="w-4 h-4" />
             </Button>
 
             <button
               onClick={() => setVideoOpen(true)}
-              className="inline-flex items-center gap-2 text-[15px] text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium group tracking-[-0.01em]"
+              className="inline-flex items-center gap-2.5 text-[14px] text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium group tracking-[-0.01em]"
             >
-              <span className="w-8 h-8 rounded-full border border-border/40 bg-card/50 backdrop-blur-sm flex items-center justify-center group-hover:border-foreground/20 transition-colors duration-200">
-                <Play className="w-3 h-3 ml-0.5" />
+              <span className="w-9 h-9 rounded-full border border-border/30 bg-card/40 backdrop-blur-sm flex items-center justify-center group-hover:border-foreground/20 group-hover:bg-card/60 transition-all duration-200">
+                <Play className="w-3.5 h-3.5 ml-0.5" />
               </span>
               Watch Demo
             </button>
           </motion.div>
+
+          {/* Trust micro-line */}
+          <motion.div
+            variants={fadeUp} initial="hidden" animate="visible" custom={0.4}
+            className="flex items-center gap-4 text-[12px] text-muted-foreground/50"
+          >
+            <span className="flex items-center gap-1.5"><Shield className="w-3 h-3" /> Bank-grade security</span>
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
+            <span className="flex items-center gap-1.5"><Zap className="w-3 h-3" /> Setup in 2 minutes</span>
+          </motion.div>
         </motion.div>
 
-        {/* Stats bar */}
+        {/* Stats bar — cleaner, tighter */}
         <motion.div
           variants={fadeUp} initial="hidden" animate="visible" custom={0.5}
           className="relative z-10 mx-4 sm:mx-8 lg:mx-auto lg:max-w-2xl mb-10"
         >
-          <div className="rounded-2xl bg-card/50 dark:bg-card/30 backdrop-blur-xl border border-border/30 shadow-sm">
-            <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-border/20">
+          <div className="rounded-2xl bg-card/40 dark:bg-card/25 backdrop-blur-xl border border-border/20 shadow-sm">
+            <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-border/15">
               {statsConfig.map((stat, i) => (
                 <div key={stat.label} ref={statRefs[i].ref} className="px-4 sm:px-5 py-4 text-center">
                   <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground tracking-[-0.02em] font-mono tabular-nums">
                     {formatStat(i, statRefs[i].count)}
                   </p>
-                  <p className="text-[10px] text-muted-foreground/60 uppercase tracking-[0.12em] mt-1.5 font-semibold">
+                  <p className="text-[10px] text-muted-foreground/50 uppercase tracking-[0.12em] mt-1.5 font-semibold">
                     {stat.label}
                   </p>
                 </div>
