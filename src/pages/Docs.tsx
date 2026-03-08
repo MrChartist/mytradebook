@@ -1059,6 +1059,17 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><TSLDetailMockup /></div>
               </FeatureCard>
 
+              <ExpandableDetail title="TSL Configuration Options Explained" icon={Target} badge="Deep Dive">
+                <p>The trade form offers four trailing SL methods with specific use cases:</p>
+                <FeatureList items={[
+                  "Fixed % Trail — TSL moves up as price rises, maintaining a fixed % distance. Example: 1.5% trail means SL stays 1.5% below the current high. Best for momentum trades.",
+                  "Fixed Points Trail — TSL moves up maintaining a fixed point distance. Example: 20 points trail on NIFTY means SL stays 20 points below the high. Good for index trading with consistent volatility.",
+                  "Step Trail — More sophisticated: when price moves +X%, move SL +Y%. Example: 'For every 1% gain, move SL up 0.5%'. Lets profits run while locking in gains.",
+                  "Move SL to Cost after T1 — Automatically moves SL to breakeven after hitting your first target. Popular risk-management approach that ensures you never lose on a winning trade.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">You can also configure activation rules: 'Start immediately', 'After price moves +X%', or 'After T1 hit'. This prevents the TSL from triggering prematurely before the trade has room to work.</p>
+              </ExpandableDetail>
+
               <FeatureCard icon={Grid3X3} title="Multi-Leg Strategies">
                 <p className="text-sm text-muted-foreground mb-3">Group related trades under a single strategy:</p>
                 <FeatureList items={[
@@ -1070,6 +1081,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <div className="mt-4"><MultiLegStrategyDetailMockup /></div>
               </FeatureCard>
+
+              <ExpandableDetail title="Option Chain Selector — How Strike Selection Works" icon={Grid3X3} badge="Real Feature">
+                <p>When creating Options trades, the Option Chain Selector provides a visual grid for quick contract selection:</p>
+                <FeatureList items={[
+                  "3-Step Flow — Select Underlying (NIFTY, BANKNIFTY, or 185+ other F&O stocks) → Choose Expiry → Click the CE/PE cell at your desired strike.",
+                  "ATM Auto-Scroll — The grid automatically centers on the At-The-Money strike based on live LTP, so you don't have to scroll through hundreds of strikes.",
+                  "Strike Range Filter — Toggle ±5, ±10, or ±20 strikes around ATM to reduce visual noise. Useful for scalping near-the-money vs positional far-OTM strategies.",
+                  "Strike Increments — Automatically uses the correct increment for the underlying: 50 for underlyings priced >₹5000, 25 for >₹2000, 10 for smaller stocks.",
+                  "Lot Size Display — Each contract shows the lot size inline so you can calculate position value instantly.",
+                  "Live Estimated LTP — For major indices, shows estimated contract LTP based on intrinsic + time value decay calculations.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">The chain pulls from the instrument_master database which syncs daily with exchange data. If a contract isn't appearing, it may be newly listed or expired — the 'Manual' mode lets you enter any trading symbol directly.</p>
+              </ExpandableDetail>
 
               <FeatureCard icon={Gauge} title="Position Sizing Calculator">
                 <p className="text-sm text-muted-foreground">
