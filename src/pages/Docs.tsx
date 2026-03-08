@@ -3187,7 +3187,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </ExpandableDetail>
 
               <SubTopic title="Security & Integrations" description="Password management and third-party connections." id="set-security" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Lock} title="Security">
                   <FeatureList items={[
                     "Change your password",
