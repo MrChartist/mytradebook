@@ -195,14 +195,14 @@ export function Sidebar() {
           <NavLink
             to="/docs"
             className={cn(
-              "flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 group",
+              "flex items-center gap-3 px-3 py-2 rounded-[var(--radius-sm)] transition-all duration-200 group",
               location.pathname === "/docs"
                 ? "bg-primary/8 text-primary font-medium"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
             )}
           >
             <HelpCircle className="w-[18px] h-[18px]" />
-            {!collapsed && <span className="text-[13px]">Docs & FAQs</span>}
+            {!collapsed && <span className="text-body-sm">Docs & FAQs</span>}
           </NavLink>
 
           <NavLink
