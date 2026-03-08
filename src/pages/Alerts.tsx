@@ -387,7 +387,16 @@ export default function Alerts() {
           />
         )}
 
-        <CreateAlertModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
+        <CreateAlertModal open={createModalOpen && !createTradeFromAlert} onOpenChange={setCreateModalOpen} />
+        <CreateTradeModal
+          open={createModalOpen && !!createTradeFromAlert}
+          onOpenChange={(open) => {
+            if (!open) { setCreateModalOpen(false); setCreateTradeFromAlert(null); }
+          }}
+          initialData={createTradeFromAlert ? {
+            symbol: createTradeFromAlert.symbol,
+          } : null}
+        />
         <EditAlertModal open={editModalOpen} onOpenChange={setEditModalOpen} alert={selectedAlert} />
         <ConfirmDeleteModal
           open={deleteModalOpen}
