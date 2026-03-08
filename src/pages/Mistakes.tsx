@@ -115,8 +115,8 @@ export default function Mistakes() {
   // Show empty state when no closed trades at all
   if (closedTrades.length === 0) {
     return (
-      <div className="space-y-6 animate-fade-in">
-        <PageHeader title="Mistakes Review" subtitle="Identify patterns in your losing trades and track improvement over time." />
+      <div className="space-y-4 animate-fade-in">
+        <PageHeader title="Mistakes Review" subtitle="Identify patterns in your losing trades and track improvement." />
         <EmptyState
           icon={AlertTriangle}
           title="No mistakes to review yet"

@@ -105,7 +105,7 @@ export function JournalCalendarView({
 
   if (isLoading) {
     return (
-      <div className="glass-card p-5">
+      <div className="surface-card p-5">
         <Skeleton className="h-8 w-48 mb-4" />
         <div className="grid grid-cols-7 gap-1">
           {Array.from({ length: 35 }).map((_, i) => (
@@ -119,7 +119,7 @@ export function JournalCalendarView({
   /* ─── Compact heatmap mode (dashboard widget) ─── */
   if (compact) {
     return (
-      <div className="glass-card p-5">
+      <div className="surface-card p-5">
         <div className="flex items-center justify-between mb-4">
           <div>
             {showLink ? (
@@ -198,7 +198,7 @@ export function JournalCalendarView({
 
   /* ─── Full calendar grid mode ─── */
   const calendarGrid = (
-    <div className="glass-card p-5">
+    <div className="surface-card p-5">
       {/* Month Navigation */}
       <div className="flex items-center justify-between mb-5">
         <Button variant="ghost" size="icon" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
@@ -299,7 +299,7 @@ export function JournalCalendarView({
       {calendarGrid}
 
       {/* Day Detail Sidebar */}
-      <div className="glass-card p-5 lg:w-80">
+      <div className="surface-card p-5 lg:w-80">
         <h4 className="font-semibold mb-4">
           {selectedDate ? `Trades on ${format(selectedDate, "MMM dd, yyyy")}` : "Select a date"}
         </h4>

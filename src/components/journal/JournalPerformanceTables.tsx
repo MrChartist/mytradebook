@@ -40,9 +40,9 @@ export function JournalPerformanceTables({
 }: JournalPerformanceTablesProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
         {[0, 1].map((i) => (
-          <div key={i} className="glass-card p-5">
+          <div key={i} className="surface-card p-5">
             <Skeleton className="h-6 w-40 mb-4" />
             <Skeleton className="h-[200px] w-full" />
           </div>
@@ -52,9 +52,9 @@ export function JournalPerformanceTables({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
       {/* Performance by Rating */}
-      <div className="glass-card p-5">
+      <div className="surface-card p-5">
         <div className="flex items-center gap-2 mb-4">
           <Star className="w-4 h-4 text-warning" />
           <h3 className="font-semibold">Performance by Rating</h3>
@@ -129,7 +129,7 @@ export function JournalPerformanceTables({
       </div>
 
       {/* Performance by Confidence */}
-      <div className="glass-card p-5">
+      <div className="surface-card p-5">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="w-4 h-4 text-primary" />
           <h3 className="font-semibold">Performance by Confidence</h3>

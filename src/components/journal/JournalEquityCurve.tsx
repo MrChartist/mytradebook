@@ -24,7 +24,7 @@ interface JournalEquityCurveProps {
 export function JournalEquityCurve({ data, isLoading }: JournalEquityCurveProps) {
   if (isLoading) {
     return (
-      <div className="glass-card p-5">
+      <div className="surface-card p-5">
         <Skeleton className="h-6 w-32 mb-4" />
         <Skeleton className="h-[250px] w-full" />
       </div>
@@ -33,7 +33,7 @@ export function JournalEquityCurve({ data, isLoading }: JournalEquityCurveProps)
 
   if (data.length === 0) {
     return (
-      <div className="glass-card p-5">
+      <div className="surface-card p-5">
         <h3 className="font-semibold mb-4">Equity Curve</h3>
         <div className="h-[250px] flex items-center justify-center text-muted-foreground">
           No trade data available
@@ -43,7 +43,7 @@ export function JournalEquityCurve({ data, isLoading }: JournalEquityCurveProps)
   }
 
   return (
-    <div className="glass-card p-5">
+    <div className="surface-card p-5">
       <h3 className="font-semibold mb-4">Equity Curve</h3>
       <div className="h-[250px]">
         <ResponsiveContainer width="100%" height="100%">

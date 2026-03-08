@@ -54,9 +54,9 @@ export function JournalKanbanBoard({
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
         {columns.map((col) => (
-          <div key={col.id} className="glass-card p-4">
+          <div key={col.id} className="surface-card p-4">
             <Skeleton className="h-6 w-32 mb-4" />
             <div className="space-y-3">
               {[...Array(3)].map((_, i) => (
@@ -70,7 +70,7 @@ export function JournalKanbanBoard({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
       {columns.map((column) => {
         const columnTrades = groupedTrades[column.id] || [];
         const totalLoss = columnTrades.reduce(
@@ -81,7 +81,7 @@ export function JournalKanbanBoard({
         return (
           <div
             key={column.id}
-            className={cn("glass-card border-t-4", column.color)}
+            className={cn("surface-card border-t-4", column.color)}
           >
             {/* Column Header */}
             <div className="p-4 border-b border-border">
