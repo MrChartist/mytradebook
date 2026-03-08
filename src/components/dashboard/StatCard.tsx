@@ -34,7 +34,7 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         onClick={isClickable ? handleClick : undefined}
         onKeyDown={isClickable ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleClick(); } } : undefined}
         className={cn(
-          "premium-card-hover p-5 group",
+          "premium-card-hover p-4 lg:p-5 group",
           changeType === "profit" && "card-glow-profit",
           changeType === "loss" && "card-glow-loss",
           changeType === "neutral" && "card-glow-primary",
@@ -42,13 +42,13 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         )}
       >
         <div className="flex items-start justify-between relative">
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <p className="kpi-label">{title}</p>
             <p className="kpi-value">{value}</p>
             {change && (
               <p
                 className={cn(
-                  "text-xs font-medium",
+                  "text-[11px] font-medium",
                   changeType === "profit" && "text-profit",
                   changeType === "loss" && "text-loss",
                   changeType === "neutral" && "text-muted-foreground"
@@ -63,7 +63,7 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
           </div>
           <div
             className={cn(
-              "icon-badge",
+              "icon-badge-sm",
               changeType === "profit" && "bg-profit/8",
               changeType === "loss" && "bg-loss/8",
               changeType === "neutral" && "bg-primary/8"
@@ -71,7 +71,7 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
           >
             <Icon
               className={cn(
-                "w-5 h-5",
+                "w-4 h-4",
                 changeType === "profit" && "text-profit",
                 changeType === "loss" && "text-loss",
                 changeType === "neutral" && "text-primary"
