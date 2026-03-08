@@ -859,14 +859,14 @@
 
   /* ── Mobile scale ── */
   @media (max-width: 767px) {
-    .docs-title { font-size: 2.125rem; line-height: 1.1; }
-    .docs-section-title { font-size: 1.625rem; line-height: 1.15; }
-    .docs-topic-heading { font-size: 1.375rem; line-height: 1.2; }
-    .docs-subtopic-heading { font-size: 1.125rem; line-height: 1.3; }
-    .docs-body-lg { font-size: 1rem; line-height: 1.7; }
-    .docs-body { font-size: 0.9375rem; line-height: 1.7; }
-    .docs-sidebar-item { font-size: 0.875rem; line-height: 1.35; }
-    .docs-caption { font-size: 0.6875rem; }
+    .docs-title { font-size: 1.875rem; line-height: 1.1; letter-spacing: -0.02em; }
+    .docs-section-title { font-size: 1.5rem; line-height: 1.15; }
+    .docs-topic-heading { font-size: 1.25rem; line-height: 1.2; }
+    .docs-subtopic-heading { font-size: 1.0625rem; line-height: 1.3; }
+    .docs-body-lg { font-size: 0.9375rem; line-height: 1.7; }
+    .docs-body { font-size: 0.875rem; line-height: 1.7; }
+    .docs-sidebar-item { font-size: 0.8125rem; line-height: 1.35; }
+    .docs-caption { font-size: 0.625rem; }
   }
 
   /* ── Docs surfaces ── */
