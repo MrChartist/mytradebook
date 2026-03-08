@@ -536,7 +536,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                                key={s.id}
                                onClick={() => { scrollTo(s.id); setSidebarSearch(""); }}
                                className={cn(
-                                 "w-full flex items-center rounded text-[12px] transition-colors duration-150 text-left relative",
+                                 "w-full flex items-center rounded text-[13px] transition-colors duration-150 text-left relative",
                                  sidebarCollapsed ? "justify-center p-2" : "gap-2 px-2 py-[5px]",
                                  activeSection === s.id
                                    ? "text-foreground font-medium"
