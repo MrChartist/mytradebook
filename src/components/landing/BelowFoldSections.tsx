@@ -152,7 +152,7 @@ export function HowItWorksSection() {
 
         {/* CTA */}
         <motion.div variants={fadeUp} className="text-center mt-20">
-          <p className="text-muted-foreground mb-5 text-base">Ready to start? Takes less than 60 seconds.</p>
+          <p className="text-muted-foreground mb-5 text-[15px] tracking-[-0.006em]">Ready to start? Takes less than 60 seconds.</p>
           <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.97 }} className="inline-block">
             <Button size="lg" className="h-14 px-10 gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-wide" onClick={() => navigate("/login?mode=signup")}>
               Create Free Account <ArrowRight className="w-4 h-4" />
