@@ -2903,8 +2903,26 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Configure your account, preferences, integrations, and subscription. Manage your tags, capital, and security settings."
                 icon={Settings}
               />
+
+              <QuickNav items={[
+                { label: "Profile & Billing", id: "set-account" },
+                { label: "Tags & Preferences", id: "set-tags" },
+                { label: "Capital Management", id: "set-capital" },
+                { label: "Security & Integrations", id: "set-security" },
+              ]} />
+
               <SettingsPanelMockup />
-              <SubTopic title="Account & Preferences" description="Profile, billing, theme, and capital configuration." id="set-account" />
+
+              <StepByStep title="Initial Settings Configuration Checklist" steps={[
+                { title: "Complete your profile", description: "Add your name, email, and phone number so your account is identifiable and recoverable.", detail: "Navigate to Settings → Profile to update these details." },
+                { title: "Set your starting capital", description: "Enter the total capital you've allocated for trading. This is used for risk calculations and return percentages.", detail: "Go to Settings → Preferences → Starting Capital." },
+                { title: "Configure default stop loss", description: "Set a default SL percentage that pre-fills when creating new trades — saves time and enforces discipline." },
+                { title: "Create your custom tags", description: "Add Setup, Mistake, Pattern, and Candlestick tags that match your trading style. These appear across trade entry and analytics.", detail: "Settings → Tags tab. Start with 5–10 tags you use most often." },
+                { title: "Connect integrations", description: "Link your Dhan broker account for live prices and auto-sync. Set up Telegram for trade notifications.", detail: "Settings → Integrations tab." },
+                { title: "Review security settings", description: "Ensure your password is strong and consider reviewing your session activity periodically." },
+              ]} />
+
+              <SubTopic title="Profile & Billing" description="Manage your identity, subscription, and payment." id="set-account" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Users} title="Profile & Billing">
                   <FeatureList items={[
@@ -2926,6 +2944,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                   <div className="mt-4"><SettingsPreferencesMockup /></div>
                 </FeatureCard>
+              </div>
+
+              <SubTopic title="Tags & Customisation" description="Personalise your trading taxonomy with custom tags." id="set-tags" />
+              <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Tag} title="Tag Management">
                   <p className="text-sm text-muted-foreground mb-3">Create and manage your custom tags:</p>
                   <FeatureList items={[
@@ -2936,6 +2958,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                   <div className="mt-4"><SettingsTagManagementMockup /></div>
                 </FeatureCard>
+              </div>
+
+              <ProTip variant="best-practice">
+                Review your tags and settings once a month. Remove tags you never use, add new ones for evolving setups, and verify your starting capital is accurate after deposits or withdrawals. Clean settings lead to cleaner analytics.
+              </ProTip>
+
+              <SubTopic title="Capital Management" description="Track deposits, withdrawals, and net deployed capital." id="set-capital" />
+              <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Wallet} title="Capital Management">
                   <FeatureList items={[
                     "Track deposits and withdrawals from your trading capital",
@@ -2945,6 +2975,21 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                   <div className="mt-4"><CapitalManagementMockup /></div>
                 </FeatureCard>
+              </div>
+
+              <ExpandableDetail title="Capital Management — Deposits vs P&L" icon={Wallet}>
+                <p>TradeBook separates <strong>capital flows</strong> (deposits and withdrawals) from <strong>trading P&L</strong> to give you accurate performance metrics.</p>
+                <p className="mt-3">When you deposit ₹1,00,000 into your trading account, that's a capital event — not a profit. Similarly, withdrawing ₹50,000 is not a loss. TradeBook's equity curve merges these transactions chronologically with your closed trade data, ensuring:</p>
+                <ul className="mt-2 space-y-1.5 text-[13px] text-muted-foreground/80">
+                  <li className="flex items-start gap-2"><span className="text-primary mt-0.5">•</span> Return % is calculated on actual deployed capital, not inflated by deposits</li>
+                  <li className="flex items-start gap-2"><span className="text-primary mt-0.5">•</span> Withdrawals don't appear as drawdowns in your performance</li>
+                  <li className="flex items-start gap-2"><span className="text-primary mt-0.5">•</span> Net Capital Deployed reflects your true risk exposure at any point</li>
+                  <li className="flex items-start gap-2"><span className="text-primary mt-0.5">•</span> The equity curve stays clean and accurately represents trading skill</li>
+                </ul>
+              </ExpandableDetail>
+
+              <SubTopic title="Security & Integrations" description="Password management and third-party connections." id="set-security" />
+              <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Lock} title="Security">
                   <FeatureList items={[
                     "Change your password",
