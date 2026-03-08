@@ -1382,9 +1382,6 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Document your trade ideas, chart analyses, and research findings. Tag with patterns, track status through a workflow, and link studies to actual trades."
                 icon={BookOpen}
               />
-              <ProTip>
-                <p>Link your studies to trades when you execute them. This builds a powerful feedback loop — you can see which of your research ideas actually led to profitable trades.</p>
-              </ProTip>
               <QuickNav items={[
                 { label: "Publishing a Study", id: "st-publish" },
                 { label: "Study Workflow", id: "st-workflow" },
@@ -1392,6 +1389,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Research Tools", id: "st-tools" },
                 { label: "Linking to Trades", id: "st-linking" },
               ]} />
+              <ProTip>
+                <p>Link your studies to trades when you execute them. This builds a powerful feedback loop — you can see which of your research ideas actually led to profitable trades.</p>
+              </ProTip>
 
               <InteractiveMockup label="Study Card">
                 <StudyCardMockup />
