@@ -240,11 +240,12 @@
     font-weight: 400;
   }
 
-  /* Legacy alias for accent-script (migration helper) */
+  /* Legacy alias for accent-script (migration helper) — same as accent-serif */
   .accent-script {
     font-family: 'Libre Bodoni', Georgia, serif;
     font-style: italic;
     font-weight: 400;
+    color: hsl(var(--tb-accent));
   }
 
   /* ── Standardized label for KPI/stat cards ───── */
