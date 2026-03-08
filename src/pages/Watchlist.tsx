@@ -302,6 +302,7 @@ export default function WatchlistPage() {
         </DialogContent>
       </Dialog>
     </div>
+    </>
   );
 }
 
