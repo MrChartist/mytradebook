@@ -171,7 +171,7 @@ function SectionHeader({ id, title, description, icon: Icon }: {
   }, [id]);
 
   return (
-    <div id={id} className="scroll-mt-24 mb-6 relative">
+    <div id={id} className="scroll-mt-24 mb-8 relative group">
       {/* Subtle left accent */}
       <motion.div
         initial={{ scaleY: 0 }}
@@ -181,11 +181,11 @@ function SectionHeader({ id, title, description, icon: Icon }: {
         className="absolute left-0 top-0 bottom-0 w-[2px] rounded-full bg-primary/40 origin-top"
       />
       <div className="pl-5">
-        <div className="flex items-center gap-2.5 mb-2">
-          <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center">
-            <Icon className="w-[17px] h-[17px] text-primary" />
+        <div className="flex items-center gap-3 mb-2.5">
+          <div className="w-9 h-9 rounded-xl bg-primary/8 flex items-center justify-center">
+            <Icon className="w-[18px] h-[18px] text-primary" />
           </div>
-          <h2 className="text-xl lg:text-2xl font-bold tracking-tight leading-tight">{title}</h2>
+          <h2 className="text-xl lg:text-[1.65rem] font-extrabold tracking-tight leading-tight">{title}</h2>
           <button
             onClick={copyLink}
             className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 ml-0.5 p-1 rounded-md text-muted-foreground/40 hover:text-primary hover:bg-primary/5 transition-all text-[11px] font-mono"
@@ -195,7 +195,7 @@ function SectionHeader({ id, title, description, icon: Icon }: {
             <span id={`copy-${id}`}>#</span>
           </button>
         </div>
-        <p className="text-[13px] text-muted-foreground leading-relaxed max-w-2xl">{description}</p>
+        <p className="text-sm text-muted-foreground/80 leading-relaxed max-w-2xl">{description}</p>
       </div>
     </div>
   );
