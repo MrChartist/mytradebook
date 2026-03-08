@@ -45,7 +45,7 @@ export function ProTip({ children, variant = "tip" }: { children: ReactNode; var
   const Icon = s.icon;
 
   return (
-    <div className={cn("rounded-lg border p-4 my-5", s.border, s.bg)}>
+    <div className={cn("rounded-xl border p-4 my-6", s.border, s.bg)}>
       <div className="flex items-start gap-3">
         <Icon className={cn("w-4 h-4 shrink-0 mt-0.5", s.iconColor)} />
         <div className="flex-1 min-w-0">
