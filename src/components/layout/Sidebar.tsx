@@ -157,7 +157,7 @@ export function Sidebar() {
           {mainNavItems.map(renderNavItem)}
 
           {!collapsed ? (
-            <div className="px-2.5 pb-1 pt-4 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/50">
+            <div className="px-2.5 pb-1 pt-4 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
               Analytics
             </div>
           ) : (
