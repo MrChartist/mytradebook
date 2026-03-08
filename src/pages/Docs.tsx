@@ -528,7 +528,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                       <div key={group.label}>
                          {gi > 0 && <div className="h-px bg-border/20 my-2" />}
                          {!sidebarCollapsed && (
-                           <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/40 px-2 pt-2 pb-1">{group.label}</p>
+                           <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/40 px-2 pt-2 pb-1">{group.label}</p>
                         )}
                         {groupSections.map((s) => {
                           const btn = (
