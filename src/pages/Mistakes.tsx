@@ -120,8 +120,8 @@ export default function Mistakes() {
 
   // Show empty state when no closed trades at all
   if (closedTrades.length === 0) {
-    return (
       <div className="space-y-4 animate-fade-in">
+        <SEOHead title="Learning Review" noIndex />
         <PageHeader title="Learning Review" subtitle="Track behavioral patterns and build better trading habits." />
         <EmptyState
           icon={BookOpen}

@@ -104,6 +104,8 @@ export default function WatchlistPage() {
   }
 
   return (
+    <>
+    <SEOHead title="Watchlists" noIndex />
     <div className="space-y-4 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
