@@ -205,7 +205,7 @@ export default function Dashboard() {
       case "aiInsights":
         return <Suspense fallback={<Skeleton className="h-48 w-full rounded-xl" />}><AITradeInsights key={w.id} compact maxInsights={2} /></Suspense>;
       case "achievements":
-        return <AchievementsBadgeGrid key={w.id} />;
+        return <Suspense fallback={<Skeleton className="h-48 w-full rounded-xl" />}><AchievementsBadgeGrid key={w.id} /></Suspense>;
       default:
         return null;
     }
