@@ -1135,7 +1135,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   Import trades from CSV files with column mapping. Export your entire trade history to CSV for backup or external analysis. The export includes all trade fields, tags, and review data.
                 </p>
                 <div className="mt-4"><TradeViewsMockup /></div>
+                <MockupCaption>Switch between List and Grid views using the toggle in the top-right. Grid view shows chart thumbnails for visual scanning.</MockupCaption>
                 <div className="mt-4"><CsvImportMockup /></div>
+                <MockupCaption>The CSV importer auto-detects column headers and lets you review mappings before committing the import.</MockupCaption>
               </FeatureCard>
 
               <FeatureCard icon={Zap} title="Trade Templates & Smart Suggestions">
