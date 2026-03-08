@@ -303,32 +303,31 @@ export function CodeBlock({ tabs, title, className }: {
   }, [activeTab, tabs]);
 
   return (
-    <div className={cn(CARD_RADIUS, "border", CARD_BORDER, "overflow-hidden", CARD_SPACING, "docs-code-block", className)}>
+    <div className={cn(CARD_RADIUS, "overflow-hidden", CARD_SPACING, "docs-code-block", className)} style={{ border: '1px solid hsl(var(--docs-border-subtle, 215 25% 18%))' }}>
       {/* Header bar with tabs and copy */}
-      <div className="flex items-center justify-between border-b border-border/15 bg-muted/10 px-1">
+      <div className="flex items-center justify-between px-1" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle, 215 25% 18%) / 0.5)', background: 'hsl(var(--docs-elevated, 222 40% 10%) / 0.3)' }}>
         <div className="flex items-center gap-0">
           {title && (
-            <span className="text-[11px] font-medium text-muted-foreground/50 px-3 py-2.5 shrink-0">{title}</span>
+            <span className="docs-caption px-3 py-2.5 shrink-0">{title}</span>
           )}
           {tabs.length > 1 ? (
             <div className="flex items-center">
-              {title && <div className="w-px h-4 bg-border/20 mr-0.5" />}
+              {title && <div className="w-px h-4 mr-0.5" style={{ background: 'hsl(var(--docs-border-subtle, 215 25% 18%) / 0.5)' }} />}
               {tabs.map((tab, i) => (
                 <button
                   key={tab.label}
                   onClick={() => setActiveTab(i)}
                   className={cn(
-                    "px-3 py-2.5 text-[12px] font-medium transition-colors duration-150 relative",
-                    i === activeTab
-                      ? "text-foreground"
-                      : "text-muted-foreground/45 hover:text-muted-foreground/70"
+                    "px-3 py-2.5 text-[12px] font-medium transition-colors duration-150 relative"
                   )}
+                  style={{ color: i === activeTab ? 'hsl(var(--docs-text-strong, 210 40% 97%))' : 'hsl(var(--docs-text-muted, 217 12% 44%))' }}
                 >
                   {tab.label}
                   {i === activeTab && (
                     <motion.div
                       layoutId="code-tab-indicator"
-                      className="absolute bottom-0 left-2 right-2 h-[2px] bg-primary rounded-full"
+                      className="absolute bottom-0 left-2 right-2 h-[2px] rounded-full"
+                      style={{ background: 'hsl(var(--docs-accent, 24 88% 58%))' }}
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
@@ -337,7 +336,7 @@ export function CodeBlock({ tabs, title, className }: {
             </div>
           ) : (
             !title && tabs[0]?.language && (
-              <span className="text-[11px] font-medium text-muted-foreground/45 px-3 py-2.5 flex items-center gap-1.5">
+              <span className="docs-caption px-3 py-2.5 flex items-center gap-1.5">
                 <FileCode className="w-3 h-3" />
                 {tabs[0].language}
               </span>
@@ -346,10 +345,8 @@ export function CodeBlock({ tabs, title, className }: {
         </div>
         <button
           onClick={handleCopy}
-          className={cn(
-            "flex items-center gap-1.5 px-3 py-2 text-[11px] font-medium transition-colors duration-150 mr-1",
-            copied ? "text-profit" : "text-muted-foreground/40 hover:text-muted-foreground/70"
-          )}
+          className="flex items-center gap-1.5 px-3 py-2 text-[11px] font-medium transition-colors duration-150 mr-1"
+          style={{ color: copied ? 'hsl(142 71% 45%)' : 'hsl(var(--docs-text-muted, 217 12% 44%))' }}
           aria-label="Copy code"
         >
           {copied ? (
@@ -367,7 +364,7 @@ export function CodeBlock({ tabs, title, className }: {
       </div>
       {/* Code content */}
       <div className="overflow-x-auto">
-        <pre className="px-5 py-4 text-[13px] leading-[1.8] font-mono text-foreground/85 whitespace-pre">
+        <pre className="px-5 py-4 docs-code font-mono whitespace-pre" style={{ color: 'hsl(var(--docs-text-primary, 213 20% 78%) / 0.9)' }}>
           <code>{tabs[activeTab].code}</code>
         </pre>
       </div>
@@ -384,13 +381,13 @@ export function OutputBlock({ children, label = "Response", className }: {
   className?: string;
 }) {
   return (
-    <div className={cn(CARD_RADIUS, "border border-border/20 overflow-hidden", CARD_SPACING, "docs-output-block", className)}>
-      <div className="flex items-center gap-1.5 px-4 py-2 border-b border-border/10 bg-muted/6">
-        <Terminal className="w-3 h-3 text-muted-foreground/40" />
-        <span className="text-[11px] font-medium text-muted-foreground/40 tracking-wide uppercase">{label}</span>
+    <div className={cn(CARD_RADIUS, "overflow-hidden", CARD_SPACING, "docs-output-block", className)} style={{ border: '1px solid hsl(var(--docs-border-subtle, 215 25% 18%) / 0.5)' }}>
+      <div className="flex items-center gap-1.5 px-5 py-2.5" style={{ borderBottom: '1px solid hsl(var(--docs-border-subtle, 215 25% 18%) / 0.3)', background: 'hsl(var(--docs-elevated, 222 40% 10%) / 0.2)' }}>
+        <Terminal className="w-3 h-3" style={{ color: 'hsl(var(--docs-text-muted, 217 12% 44%))' }} />
+        <span className="docs-caption tracking-wide uppercase">{label}</span>
       </div>
       <div className="overflow-x-auto">
-        <pre className="px-5 py-4 text-[13px] leading-[1.8] font-mono text-muted-foreground/70 whitespace-pre">
+        <pre className="px-5 py-4 docs-code font-mono whitespace-pre" style={{ color: 'hsl(var(--docs-text-secondary, 215 16% 62%))' }}>
           <code>{children}</code>
         </pre>
       </div>
