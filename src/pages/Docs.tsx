@@ -2059,7 +2059,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   ]} />
                 </FeatureCard>
               </div>
-              <SubTopic title="Mobile Navigation & Onboarding" description="Touch-optimized navigation with guided onboarding for new users." />
+              <SubTopic title="Mobile Navigation & Onboarding" description="Touch-optimized navigation with guided onboarding for new users." id="pwa-mobile" />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={LayoutDashboard} title="Mobile Navigation">
                   <FeatureList items={[
