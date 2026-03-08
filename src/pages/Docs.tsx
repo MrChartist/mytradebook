@@ -287,9 +287,9 @@ const FeatureCard = React.forwardRef<HTMLDivElement, {
 ));
 FeatureCard.displayName = "FeatureCard";
 
-function VideoPlaceholder({ title, duration }: { title: string; duration: string }) {
-  return (
-    <div className="my-6 docs-feature-card overflow-hidden group cursor-pointer">
+const VideoPlaceholder = React.forwardRef<HTMLDivElement, { title: string; duration: string }>(
+  ({ title, duration }, ref) => (
+    <div ref={ref} className="my-6 docs-feature-card overflow-hidden group cursor-pointer">
       <div className="flex items-center gap-4 px-6 py-5">
         <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-colors" style={{ background: 'hsl(var(--docs-accent-soft) / 0.1)', border: '1px solid hsl(var(--docs-accent-soft) / 0.15)' }}>
           <Play className="w-4 h-4 ml-0.5" style={{ color: 'hsl(var(--docs-accent))' }} />
@@ -300,8 +300,9 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
         </div>
       </div>
     </div>
-  );
-}
+  )
+);
+VideoPlaceholder.displayName = "VideoPlaceholder";
 
 const SectionDivider = React.forwardRef<HTMLDivElement>((_, ref) => (
   <div ref={ref} className="docs-divider" />
