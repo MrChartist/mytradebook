@@ -1583,6 +1583,126 @@
     50% { transform: translateY(-10px); }
   }
 
+  /* ── Aurora animated gradient ── */
+  @keyframes aurora-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .aurora-bg {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--tb-accent) / 0.06) 0%,
+      hsl(210 80% 55% / 0.04) 25%,
+      hsl(270 60% 55% / 0.03) 50%,
+      hsl(var(--tb-accent) / 0.05) 75%,
+      hsl(152 60% 45% / 0.03) 100%
+    );
+    background-size: 400% 400%;
+    animation: aurora-shift 15s ease-in-out infinite;
+  }
+
+  .dark .aurora-bg {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--tb-accent) / 0.08) 0%,
+      hsl(210 80% 55% / 0.05) 25%,
+      hsl(270 60% 55% / 0.04) 50%,
+      hsl(var(--tb-accent) / 0.06) 75%,
+      hsl(152 60% 45% / 0.04) 100%
+    );
+    background-size: 400% 400%;
+    animation: aurora-shift 15s ease-in-out infinite;
+  }
+
+  /* ── Text shimmer animation ── */
+  @keyframes text-shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  .text-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--tb-accent)) 0%,
+      hsl(16 85% 55%) 25%,
+      hsl(340 70% 55%) 50%,
+      hsl(16 85% 55%) 75%,
+      hsl(var(--tb-accent)) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: text-shimmer 4s linear infinite;
+  }
+
+  /* ── Glass card with hover lift ── */
+  .glass-card-animated {
+    @apply bg-card/50 backdrop-blur-xl border border-border/20 rounded-2xl;
+    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.06);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), 
+                box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.3s ease;
+  }
+
+  .glass-card-animated:hover {
+    transform: translateY(-4px);
+    border-color: hsl(var(--border) / 0.4);
+    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.06),
+                0 20px 40px -15px hsl(0 0% 0% / 0.1);
+  }
+
+  /* ── Animated gradient border ── */
+  @keyframes border-gradient-rotate {
+    0% { --border-angle: 0deg; }
+    100% { --border-angle: 360deg; }
+  }
+
+  .gradient-border-animated {
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+
+  .gradient-border-animated::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: conic-gradient(
+      from var(--border-angle, 0deg),
+      transparent 25%,
+      hsl(var(--tb-accent) / 0.4) 50%,
+      transparent 75%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: border-gradient-rotate 4s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .gradient-border-animated:hover::before {
+    opacity: 1;
+  }
+
+  /* ── Grain texture overlay ── */
+  .grain-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.02;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+
   .animate-glow {
     animation: glow 2s ease-in-out infinite alternate;
   }
