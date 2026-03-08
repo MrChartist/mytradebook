@@ -375,7 +375,7 @@ export function TestimonialsSection() {
                 transition={{ duration: 0.3 }}
               >
                 <Quote className="w-6 h-6 text-primary/10 mb-3" />
-                <p className="text-[15px] text-muted-foreground leading-relaxed flex-1 mb-5">
+                <p className="text-[15px] text-muted-foreground leading-[1.65] flex-1 mb-5 tracking-[-0.006em]">
                   "<HighlightedQuote testimonial={t} />"
                 </p>
                 <div className="flex items-center gap-1 mb-3">
