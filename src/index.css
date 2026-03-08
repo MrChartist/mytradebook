@@ -1101,6 +1101,215 @@
     }
   }
 
+  /* ── Docs keyboard shortcut styling ── */
+  .docs-page kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5em;
+    padding: 0.125em 0.45em;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8em;
+    font-weight: 600;
+    line-height: 1.4;
+    border-radius: 0.375rem;
+    white-space: nowrap;
+    vertical-align: baseline;
+  }
+  :root .docs-page kbd {
+    background: hsl(35 18% 93%);
+    border: 1px solid hsl(30 15% 82%);
+    box-shadow: 0 1px 0 1px hsl(30 15% 78%);
+    color: hsl(20 18% 22%);
+  }
+  .dark .docs-page kbd {
+    background: hsl(222 40% 14%);
+    border: 1px solid hsl(215 22% 22%);
+    box-shadow: 0 1px 0 1px hsl(222 40% 10%);
+    color: hsl(210 30% 88%);
+  }
+
+  /* ── Docs table styling ── */
+  .docs-page table:not(.recharts-surface table) {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 0.9375rem;
+  }
+  .docs-page table:not(.recharts-surface table) thead th {
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    white-space: nowrap;
+  }
+  :root .docs-page table:not(.recharts-surface table) thead th {
+    background: hsl(35 18% 95%);
+    color: hsl(20 10% 42%);
+    border-bottom: 1px solid hsl(30 15% 88%);
+  }
+  .dark .docs-page table:not(.recharts-surface table) thead th {
+    background: hsl(var(--docs-elevated));
+    color: hsl(var(--docs-text-muted));
+    border-bottom: 1px solid hsl(var(--docs-border-subtle));
+  }
+  .docs-page table:not(.recharts-surface table) tbody td {
+    padding: 0.625rem 1rem;
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  :root .docs-page table:not(.recharts-surface table) tbody tr {
+    border-bottom: 1px solid hsl(30 15% 92%);
+  }
+  .dark .docs-page table:not(.recharts-surface table) tbody tr {
+    border-bottom: 1px solid hsl(var(--docs-border-subtle) / 0.4);
+  }
+  :root .docs-page table:not(.recharts-surface table) tbody td {
+    color: hsl(var(--docs-text-primary));
+  }
+  .dark .docs-page table:not(.recharts-surface table) tbody td {
+    color: hsl(var(--docs-text-primary));
+  }
+
+  /* ── Docs list spacing ── */
+  .docs-page .docs-card-content ul,
+  .docs-page [role="document"] ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  .docs-page .docs-card-content ul > li,
+  .docs-page [role="document"] ul > li {
+    position: relative;
+    padding-left: 1.25rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.7;
+  }
+  .docs-page .docs-card-content ul > li::before,
+  .docs-page [role="document"] ul > li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.65em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: hsl(var(--docs-accent) / 0.5);
+  }
+
+  .docs-page .docs-card-content ol,
+  .docs-page [role="document"] ol {
+    list-style: none;
+    padding-left: 0;
+    counter-reset: docs-ol;
+  }
+  .docs-page .docs-card-content ol > li,
+  .docs-page [role="document"] ol > li {
+    position: relative;
+    padding-left: 1.75rem;
+    margin-bottom: 0.625rem;
+    line-height: 1.7;
+    counter-increment: docs-ol;
+  }
+  .docs-page .docs-card-content ol > li::before,
+  .docs-page [role="document"] ol > li::before {
+    content: counter(docs-ol);
+    position: absolute;
+    left: 0;
+    top: 0.1em;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6875rem;
+    font-weight: 700;
+  }
+  :root .docs-page .docs-card-content ol > li::before,
+  :root .docs-page [role="document"] ol > li::before {
+    background: hsl(var(--docs-accent) / 0.08);
+    color: hsl(var(--docs-accent));
+  }
+  .dark .docs-page .docs-card-content ol > li::before,
+  .dark .docs-page [role="document"] ol > li::before {
+    background: hsl(var(--docs-accent) / 0.1);
+    color: hsl(var(--docs-accent));
+  }
+
+  /* ── Docs FAQ details/summary ── */
+  .docs-page details > summary {
+    cursor: pointer;
+  }
+  .docs-page details > summary::-webkit-details-marker {
+    display: none;
+  }
+  .docs-page details[open] > summary {
+    border-bottom: 1px solid hsl(var(--docs-border-subtle) / 0.3);
+  }
+
+  /* ── Docs callout refinements ── */
+  .docs-page .docs-callout {
+    border-radius: 0.75rem;
+    border: 1px solid;
+  }
+  .docs-page .docs-callout p {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+  .docs-page .docs-callout code {
+    font-size: 0.825em;
+  }
+  .docs-page .docs-callout strong {
+    color: hsl(var(--docs-text-strong));
+    font-weight: 600;
+  }
+
+  /* ── Docs code block line numbers gutter feel ── */
+  .docs-page .docs-code-block {
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+  .docs-page .docs-code-block pre {
+    tab-size: 2;
+    -moz-tab-size: 2;
+  }
+
+  /* ── Docs metadata rows (key-value pairs) ── */
+  .docs-page .docs-meta-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+  }
+  .docs-page .docs-meta-row:not(:last-child) {
+    border-bottom: 1px solid hsl(var(--docs-border-subtle) / 0.3);
+  }
+  .docs-page .docs-meta-key {
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: hsl(var(--docs-text-muted));
+    min-width: 7rem;
+    flex-shrink: 0;
+  }
+  .docs-page .docs-meta-value {
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 0.9375rem;
+    color: hsl(var(--docs-text-primary));
+  }
+  .docs-page .docs-meta-value code {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
   /* No-scrollbar for mobile nav */
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
