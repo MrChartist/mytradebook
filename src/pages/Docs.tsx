@@ -908,18 +908,20 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
               </FeatureCard>
 
-              <InteractiveMockup label="Segment & Month Filters">
-                <FeatureCard icon={Filter} title="Segment & Month Filters">
-                  <p className="text-sm text-muted-foreground mb-3">Filter the entire dashboard by market segment and time period:</p>
-                  <FeatureList items={[
-                    "Segments: All, Intraday, Positional, Futures, Options, Commodities",
-                    "Quick month selector for the last 3 months",
-                    "Live indicator shows streaming status and last update time",
-                    "All KPIs, charts, and widgets update based on filters",
-                  ]} />
-                  <div className="mt-4"><SegmentFilterMockup /></div>
-                </FeatureCard>
-              </InteractiveMockup>
+              <AnnotatedMockup
+                label="Segment & Month Filters"
+                caption="Filter the entire dashboard by market segment and time period. All KPIs, charts, and widgets update instantly based on your selection."
+                highlights={["Segment Tabs", "Month Selector", "Live Indicator"]}
+                layout="side"
+              >
+                <FeatureZoneGrid zones={[
+                  { zone: "A", title: "Segment Tabs", description: "All, Intraday, Positional, Futures, Options, Commodities" },
+                  { zone: "B", title: "Month Selector", description: "Quick month selector for the last 3 months" },
+                  { zone: "C", title: "Live Indicator", description: "Shows streaming status and last price update time" },
+                  { zone: "D", title: "Widget Updates", description: "All dashboard widgets re-render based on your filters" },
+                ]} />
+                <SegmentFilterMockup />
+              </AnnotatedMockup>
 
               <ProTip variant="best-practice">
                 <p>Check your dashboard every morning before market opens. The segment filter lets you focus on today's active market — switch to "All" only during your weekly review.</p>
