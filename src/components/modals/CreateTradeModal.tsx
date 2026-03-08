@@ -113,7 +113,7 @@ function getSegmentDefaults(segment: string) {
   }
 }
 
-export function CreateTradeModal({ open, onOpenChange }: CreateTradeModalProps) {
+export function CreateTradeModal({ open, onOpenChange, initialData }: CreateTradeModalProps) {
   const { createTrade, trades: allTrades } = useTrades();
   const { settings } = useUserSettings();
   const startingCapital = (settings as any)?.starting_capital ?? 500000;
