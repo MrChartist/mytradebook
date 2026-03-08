@@ -269,16 +269,16 @@ export default function Login() {
               <img src={logo} alt="TradeBook" className="h-10 object-contain" />
             </div>
 
-            <div className="liquid-glass p-6 sm:p-8">
+            <div className="liquid-glass p-6 sm:p-8 rounded-2xl">
               {/* Forgot Password View */}
               {authMode === "forgot" ? (
                 <>
-                  <div className="text-center mb-8">
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                      <Mail className="w-6 h-6 text-primary" />
+                  <div className="text-center mb-7">
+                    <div className="w-12 h-12 rounded-xl bg-primary/8 flex items-center justify-center mx-auto mb-4">
+                      <Mail className="w-5 h-5 text-primary" />
                     </div>
-                    <h3 className="text-2xl sm:text-3xl font-heading font-bold mb-2 tracking-tight">Reset Password</h3>
-                    <p className="text-muted-foreground text-sm sm:text-base">
+                    <h3 className="text-2xl font-heading font-bold mb-2 tracking-tight">Reset Password</h3>
+                    <p className="text-muted-foreground text-[13px] leading-relaxed">
                       Enter your email and we'll send you a reset link.
                     </p>
                   </div>
