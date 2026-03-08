@@ -2,14 +2,16 @@ import React, { useEffect, useRef, useState } from "react";
 import { useInView } from "framer-motion";
 import {
   BarChart3, Bell, Target, TrendingUp, ArrowUpRight,
-  Home, ChevronRight,
+  Home, ChevronRight, Flame, Wallet, Radio,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+/* ── mock data ── */
 const kpiCards = [
+  { label: "TODAY'S P&L", value: 12450, format: (n: number) => `+₹${Math.round(n).toLocaleString("en-IN")}`, sub: "Real +₹8.4K · Unreal +₹4K", icon: ArrowUpRight, iconColor: "text-profit", iconBg: "bg-profit/10", colored: true, accent: true },
   { label: "MTD P&L", value: 24850, format: (n: number) => `+₹${Math.round(n).toLocaleString("en-IN")}`, sub: "Realized +₹18.2K  Unrealized +₹6.6K", icon: BarChart3, iconColor: "text-profit", iconBg: "bg-profit/10", colored: true },
   { label: "OPEN POSITIONS", value: 3, format: (n: number) => String(Math.round(n)), sub: "₹2.4L at risk (to SL)", icon: Target, iconColor: "text-primary", iconBg: "bg-primary/10", colored: false },
-  { label: "WIN RATE", value: 67.5, format: (n: number) => `${n.toFixed(1)}%`, sub: "Closed: 12 | W: 8 | L: 4", icon: TrendingUp, iconColor: "text-primary", iconBg: "bg-primary/10", colored: true },
+  { label: "WIN RATE", value: 67.5, format: (n: number) => `${n.toFixed(1)}%`, sub: "W: 8 | L: 4 | Exp: +₹1.5K", icon: TrendingUp, iconColor: "text-primary", iconBg: "bg-primary/10", colored: true },
   { label: "ACTIVE ALERTS", value: 8, format: (n: number) => String(Math.round(n)), sub: "Price: 5 | Technical: 3", icon: Bell, iconColor: "text-primary", iconBg: "bg-primary/10", colored: false },
 ];
 
@@ -26,8 +28,18 @@ const alerts = [
   { sym: "HDFCBANK", cond: "Price < ₹1,600", type: "Price" },
 ];
 
-const todayPnlValues = [12450, 13200, 11800];
+const tickerItems = [
+  { symbol: "RELIANCE", ltp: 2948.5, pnl: 3200, pct: 1.8 },
+  { symbol: "HDFCBANK", ltp: 1645.2, pnl: -850, pct: -0.6 },
+  { symbol: "NIFTY 24500 CE", ltp: 185.0, pnl: 1100, pct: 4.2 },
+];
 
+const equityCurvePoints = "0,40 30,38 60,35 90,30 120,32 150,28 180,22 210,18 240,20 270,15 300,12 330,10 360,8 390,5";
+
+const months = ["All", "Jan", "Feb", "Mar"];
+const segments = ["All", "Intraday", "Positional", "Futures", "Options"];
+
+/* ── Animated KPI Cards ── */
 function KPICardsRow() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-40px" });
@@ -50,9 +62,19 @@ function KPICardsRow() {
   }, [isInView, animated]);
 
   return (
-    <div ref={ref} className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+    <div ref={ref} className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 sm:gap-2 mb-3 sm:mb-4">
       {kpiCards.map((kpi, idx) => (
-        <div key={kpi.label} className="rounded-xl border border-border/20 hover:border-border/40 bg-card p-2 sm:p-2.5 relative overflow-hidden transition-all hover:scale-[1.02]" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
+        <div
+          key={kpi.label}
+          className={cn(
+            "rounded-xl border border-border/20 hover:border-border/40 bg-card p-2 sm:p-2.5 relative overflow-hidden transition-all hover:scale-[1.02]",
+            kpi.accent && "col-span-2 sm:col-span-1"
+          )}
+          style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}
+        >
+          {kpi.accent && (
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-profit/60 via-profit to-profit/60" />
+          )}
           <div className="flex items-center justify-between mb-1 sm:mb-1.5">
             <p className="text-[7px] sm:text-[8px] text-muted-foreground uppercase tracking-wider font-medium">{kpi.label}</p>
             <div className={cn("w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center", kpi.iconBg)}>
@@ -67,36 +89,41 @@ function KPICardsRow() {
   );
 }
 
-export function DashboardTab() {
-  const [tickerIndex, setTickerIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTickerIndex((prev) => (prev + 1) % todayPnlValues.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const currentPnl = todayPnlValues[tickerIndex];
-
+/* ── Floating Trade Ticker ── */
+function MockTradeTicker() {
   return (
-    <div className="min-w-0">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] text-muted-foreground mb-2 sm:mb-3">
-        <Home className="w-3 h-3" />
-        <ChevronRight className="w-2.5 h-2.5 opacity-40" />
-        <span className="text-foreground font-medium">Dashboard</span>
-        <div className="ml-auto flex items-center gap-1">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-profit opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-profit" />
-          </span>
-          <span className="text-profit font-medium text-[9px] sm:text-[10px]">Live</span>
+    <div className="relative overflow-hidden rounded-lg border border-border/30 bg-card/60 backdrop-blur-sm mb-3 sm:mb-4">
+      <div className="flex items-center">
+        <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 border-r border-border/30 bg-muted/30">
+          <Radio className="w-2.5 h-2.5 text-profit animate-pulse" />
+          <span className="text-[8px] sm:text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">Open</span>
+        </div>
+        <div className="overflow-hidden flex-1">
+          <div className="ticker-scroll flex items-center gap-5 py-1.5 px-2.5 whitespace-nowrap">
+            {[...tickerItems, ...tickerItems].map((item, i) => (
+              <div key={`${item.symbol}-${i}`} className="inline-flex items-center gap-1.5 shrink-0">
+                <span className="text-[9px] sm:text-[10px] font-semibold text-foreground">{item.symbol}</span>
+                <span className="text-[8px] sm:text-[9px] font-mono text-muted-foreground">₹{item.ltp.toLocaleString("en-IN")}</span>
+                <span className={cn(
+                  "text-[7px] sm:text-[8px] font-mono font-semibold px-1 py-0.5 rounded-full",
+                  item.pnl >= 0 ? "text-profit bg-profit/10" : "text-loss bg-loss/10"
+                )}>
+                  {item.pnl >= 0 ? "+" : ""}₹{item.pnl} ({item.pct >= 0 ? "+" : ""}{item.pct}%)
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* Greeting */}
-      <div className="flex items-start justify-between mb-2 sm:mb-3">
+export function DashboardTab() {
+  return (
+    <div className="min-w-0">
+      {/* Header row 1: Greeting + Live */}
+      <div className="flex items-start justify-between mb-1.5 sm:mb-2">
         <div>
           <h1 className="text-sm sm:text-xl font-bold tracking-tight">
             Good morning, <span className="text-primary">Mr. Chartist</span> 👋
@@ -110,43 +137,39 @@ export function DashboardTab() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Segment pills */}
-      <div className="flex gap-1 sm:gap-1.5 mb-3 sm:mb-4 flex-wrap">
-        {["All", "Intraday", "Positional", "Futures", "Options"].map((s, i) => (
-          <span key={s} className={cn("px-2 sm:px-2.5 py-0.5 sm:py-1 text-[8px] sm:text-[9px] font-medium rounded-full border transition-colors", i === 0 ? "bg-primary text-primary-foreground border-primary" : "border-border/40 text-muted-foreground")}>{s}</span>
-        ))}
-      </div>
-
-      {/* Today's P&L Hero */}
-      <div className="mb-3 sm:mb-4 rounded-xl border border-profit/15 bg-gradient-to-r from-profit/[0.04] via-transparent to-transparent p-2.5 sm:p-4 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-24 sm:w-32 h-24 sm:h-32 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--profit)/0.08)_0%,transparent_70%)] pointer-events-none" />
-        <div className="flex items-center justify-between mb-1.5 sm:mb-2 relative">
-          <div>
-            <p className="text-[8px] sm:text-[9px] text-muted-foreground uppercase tracking-wider font-medium mb-0.5 sm:mb-1">Today's P&L</p>
-            <p className="text-lg sm:text-2xl font-bold font-mono text-profit tracking-tight">+₹{currentPnl.toLocaleString("en-IN")}</p>
-          </div>
-          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-profit/10 flex items-center justify-center">
-            <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-profit" />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-1.5 sm:pt-2 border-t border-border/10 relative">
-          <div>
-            <p className="text-[7px] sm:text-[8px] text-muted-foreground uppercase tracking-wide">Realized</p>
-            <p className="text-xs sm:text-sm font-bold font-mono text-profit">+₹8,450</p>
-          </div>
-          <div>
-            <p className="text-[7px] sm:text-[8px] text-muted-foreground uppercase tracking-wide">Unrealized</p>
-            <p className="text-xs sm:text-sm font-bold font-mono text-profit">+₹4,000</p>
-          </div>
+        <div className="flex items-center gap-1">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-profit opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-profit" />
+          </span>
+          <span className="text-profit font-medium text-[9px] sm:text-[10px]">Live</span>
         </div>
       </div>
 
+      {/* Header row 2: Month + Segment filters */}
+      <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 flex-wrap">
+        <div className="flex gap-1">
+          {months.map((m, i) => (
+            <span key={m} className={cn("px-2 py-0.5 text-[7px] sm:text-[8px] font-medium rounded-md border transition-colors", i === 3 ? "bg-primary text-primary-foreground border-primary" : "border-border/40 text-muted-foreground")}>{m}</span>
+          ))}
+        </div>
+        <div className="w-px h-4 bg-border/30 hidden sm:block" />
+        <div className="flex gap-1">
+          {segments.map((s, i) => (
+            <span key={s} className={cn("px-2 sm:px-2.5 py-0.5 text-[7px] sm:text-[8px] font-medium rounded-full border transition-colors", i === 0 ? "bg-primary text-primary-foreground border-primary" : "border-border/40 text-muted-foreground")}>{s}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Floating trade ticker */}
+      <MockTradeTicker />
+
+      {/* KPI Cards — 5 columns */}
       <KPICardsRow />
 
-      {/* Chart + Alerts */}
-      <div className="grid sm:grid-cols-5 gap-1.5 sm:gap-2">
+      {/* Chart + Alerts + Equity Curve */}
+      <div className="grid sm:grid-cols-5 gap-1.5 sm:gap-2 mb-2">
+        {/* Daily P&L Chart */}
         <div className="sm:col-span-3 rounded-xl border border-border/20 bg-card p-2.5 sm:p-3" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
           <div className="flex items-center justify-between mb-2 sm:mb-3">
             <div className="flex items-center gap-1.5 sm:gap-2">
@@ -167,6 +190,7 @@ export function DashboardTab() {
           </svg>
         </div>
 
+        {/* Alerts panel */}
         <div className="sm:col-span-2 rounded-xl border border-border/20 bg-card p-2.5 sm:p-3" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
           <div className="flex items-center justify-between mb-2 sm:mb-2.5">
             <div className="flex items-center gap-1.5">
@@ -185,6 +209,54 @@ export function DashboardTab() {
                 <span className="text-[6px] sm:text-[7px] px-1.5 py-0.5 rounded-md bg-muted/50 text-muted-foreground font-medium">{a.type}</span>
               </div>
             ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Equity Curve + Streak row */}
+      <div className="grid sm:grid-cols-5 gap-1.5 sm:gap-2">
+        <div className="sm:col-span-3 rounded-xl border border-border/20 bg-card p-2.5 sm:p-3" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
+          <div className="flex items-center gap-1.5 mb-2">
+            <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+              <TrendingUp className="w-2.5 h-2.5 text-primary" />
+            </div>
+            <div>
+              <p className="text-[9px] sm:text-[10px] font-semibold">Equity Curve</p>
+              <p className="text-[7px] sm:text-[8px] text-muted-foreground">Cumulative P&L over time</p>
+            </div>
+          </div>
+          <svg viewBox="0 0 400 45" className="w-full h-10 sm:h-12" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="eq-fill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="hsl(var(--profit))" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="hsl(var(--profit))" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <polygon points={`0,45 ${equityCurvePoints} 390,45`} fill="url(#eq-fill)" />
+            <polyline points={equityCurvePoints} fill="none" stroke="hsl(var(--profit))" strokeWidth="1.5" strokeLinejoin="round" />
+          </svg>
+        </div>
+
+        {/* Streak & Discipline */}
+        <div className="sm:col-span-2 rounded-xl border border-border/20 bg-card p-2.5 sm:p-3" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}>
+          <div className="flex items-center gap-1.5 mb-2">
+            <Flame className="w-3 h-3 text-orange-500" />
+            <p className="text-[9px] sm:text-[10px] font-semibold">Streak & Discipline</p>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[8px] text-muted-foreground">Win streak</span>
+              <span className="text-[10px] font-bold font-mono text-profit">5 days 🔥</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[8px] text-muted-foreground">Rules followed</span>
+              <span className="text-[10px] font-bold font-mono text-foreground">92%</span>
+            </div>
+            <div className="flex gap-0.5 mt-1">
+              {[1,1,1,0,1,1,1].map((v, i) => (
+                <div key={i} className={cn("w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-sm", v ? "bg-profit/70" : "bg-loss/40")} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
