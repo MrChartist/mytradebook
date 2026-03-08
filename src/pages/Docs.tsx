@@ -604,15 +604,35 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><CalendarHeatmapWidgetMockup /></div>
               </FeatureCard>
 
-              <FeatureCard icon={Settings} title="Widget Customization">
-                <p className="text-sm text-muted-foreground mb-3">Personalize your dashboard by showing/hiding widgets and reordering them:</p>
+              <FeatureCard icon={Settings} title="Widget Customization" badge="Enhanced">
+                <p className="text-sm text-muted-foreground mb-3">Personalize your dashboard by showing/hiding widgets and drag-to-reorder them:</p>
                 <FeatureList items={[
                   "Toggle visibility of any widget (P&L, KPIs, equity curve, etc.)",
-                  "Reorder widgets by moving them up or down",
+                  "Drag-and-drop reordering with smooth animations (@dnd-kit)",
                   "Reset to default layout anytime",
                   "Layout persists across sessions",
                 ]} />
                 <div className="mt-4"><WidgetCustomizerMockup /></div>
+              </FeatureCard>
+
+              <FeatureCard icon={Activity} title="Floating Trade Ticker" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">
+                  A scrolling marquee at the top of the dashboard showing your open positions with real-time P&L. Gives you a quick glance at all active trades without scrolling.
+                </p>
+                <FeatureList items={[
+                  "Auto-scrolling ticker showing all open positions",
+                  "Displays symbol, quantity, entry price, current price, and P&L",
+                  "Color-coded: green for profit, red for loss",
+                  "Pauses on hover to read details",
+                  "Dismissible — hides when no open positions",
+                  "Updates with live price data when available",
+                ]} />
+              </FeatureCard>
+
+              <FeatureCard icon={Zap} title="Animated KPI Numbers" badge="New">
+                <p className="text-sm text-muted-foreground">
+                  All key metrics on the dashboard use smooth "tick-up" number animations when values change. P&L figures, win rates, and trade counts animate from their previous value to the new one using requestAnimationFrame for 60fps smoothness. Profit cards pulse with a green glow, and all cards have a subtle 3D lift on hover.
+                </p>
               </FeatureCard>
 
               <FeatureCard icon={Grid3X3} title="Portfolio Heat Map" badge="New">
