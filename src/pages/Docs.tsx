@@ -3333,36 +3333,161 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </ProTip>
 
               <SubTopic title="Recent Updates" description="Features shipped in recent releases." id="cl-updates" />
-              <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-profit" /> Latest Releases
-              </h3>
-              <div className="space-y-3">
-                {[
-                  { version: "v3.3", date: "Mar 2026", items: ["Notification Center upgrade — date grouping, type filters, click-to-navigate", "Quiet Hours & DND mode for notifications", "Enhanced Telegram message templates with emoji headers and separators", "Alert evaluation engine — staggered checks, priority system", "EOD Report & Morning Briefing template overhaul", "Docs final polish — QuickNav jump links, PhaseHeader badges, inline code styling, section highlight animation"] },
-                  { version: "v3.2", date: "Mar 2026", items: ["Enhanced Docs — StepByStep guides, ExpandableDetail, and ComparisonTable across all sections", "Category-grouped FAQ with 17 questions", "PWA install walkthrough and offline queue explanation", "Settings configuration checklist", "Capital Management deep-dive", "AI Insights credit usage guide"] },
-                  { version: "v3.1", date: "Mar 2026", items: ["Trading Rules Checklist", "AI Trade Coach", "Smart Alert Suggestions", "Quick Close Popover", "Day/Time of Day Analysis", "Streak Tracker expansion", "Docs deep-links & reading time"] },
-                  { version: "v3.0", date: "Mar 2026", items: ["AI Pattern Detection — behavioral insights", "Sector Rotation Heatmap", "Setup Win-Rate Matrix", "Emotional P&L Correlation"] },
-                  { version: "v2.9", date: "Mar 2026", items: ["Dashboard drag-and-drop reordering", "Floating Trade Ticker", "Animated KPI numbers", "Mobile swipe-to-act on trades", "Quick Trade Entry via Command Palette", "P&L & Trade Share Cards"] },
-                  { version: "v2.8", date: "Feb 2026", items: ["Stock Screener with 47 presets", "Custom filter builder", "Stock insight cards"] },
-                  { version: "v2.7", date: "Feb 2026", items: ["Portfolio Heat Map widget", "Daily Review Wizard", "Enhanced onboarding"] },
-                  { version: "v2.6", date: "Jan 2026", items: ["Multi-leg strategy support", "TSL profiles per segment", "AI Trade Insights"] },
-                  { version: "v2.5", date: "Dec 2025", items: ["Trade Templates & Smart Suggestions", "CSV Import improvements", "Offline trade queue"] },
-                ].map((release) => (
-                  <div key={release.version} className="premium-card-hover p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="secondary" className="bg-primary/10 text-primary border-none text-[10px]">{release.version}</Badge>
-                      <span className="text-[10px] text-muted-foreground">{release.date}</span>
-                      {release.version === "v3.3" && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-profit/10 text-profit font-bold">Latest</span>}
+
+              {/* Timeline changelog */}
+              <div className="relative">
+                {/* Timeline line */}
+                <div className="absolute left-[15px] top-0 bottom-0 w-px hidden sm:block" style={{ background: 'linear-gradient(180deg, hsl(var(--docs-accent) / 0.3) 0%, hsl(var(--docs-border-subtle)) 30%, hsl(var(--docs-border-subtle)) 100%)' }} />
+
+                <div className="space-y-6 sm:space-y-8">
+                  {([
+                    {
+                      version: "v3.3", date: "March 8, 2026", summary: "Notification system overhaul with smarter delivery, quiet hours, and refreshed Telegram templates.",
+                      features: ["Notification Center upgrade — date grouping, type filters, click-to-navigate", "Quiet Hours & DND mode for notification control", "Enhanced Telegram templates with emoji headers and ━━━ separators"],
+                      improvements: ["Alert evaluation engine — staggered checks, priority-based scheduling", "EOD Report & Morning Briefing template overhaul", "In-app notification sound toggle and importance levels"],
+                      fixes: ["Fixed duplicate notification delivery on alert cooldown reset", "Resolved Telegram delivery log timezone offset"],
+                      docs: ["Notification Preferences section added", "Telegram integration docs expanded"],
+                    },
+                    {
+                      version: "v3.2", date: "March 5, 2026", summary: "Documentation 2.0 — interactive guides, expandable deep-dives, and categorized FAQ.",
+                      features: ["StepByStep guides and ExpandableDetail components across all 26 doc sections", "Category-grouped FAQ with 20+ questions", "PWA install walkthrough with platform-specific instructions"],
+                      improvements: ["Settings configuration checklist for faster onboarding", "Capital Management section with deposit/withdrawal tracking guide", "AI Insights credit usage and provider comparison table"],
+                      fixes: ["Fixed docs sidebar scroll position not persisting on navigation", "Corrected broken anchor links in Analytics section"],
+                    },
+                    {
+                      version: "v3.1", date: "March 2, 2026", summary: "Trading discipline tools — rules checklist, AI coach, and smart alert suggestions.",
+                      features: ["Trading Rules Checklist — enforced before trade entry", "AI Trade Coach — instant post-trade feedback", "Smart Alert Suggestions — AI-recommended price alerts", "Quick Close Popover for faster position exits"],
+                      improvements: ["Day & Time of Day Analysis charts in Analytics", "Streak Tracker expanded with best/current/loss streaks", "Docs deep-links and estimated reading time"],
+                      fixes: ["Fixed trailing SL calculation rounding on sub-₹10 stocks"],
+                    },
+                    {
+                      version: "v3.0", date: "February 28, 2026", summary: "AI-powered analytics — pattern detection, sector heatmaps, and emotional P&L correlation.",
+                      features: ["AI Pattern Detection — behavioral and setup pattern insights", "Sector Rotation Heatmap — visual sector performance tracking", "Setup Win-Rate Matrix — cross-reference setups vs outcomes", "Emotional P&L Correlation — mood-to-performance analysis"],
+                      improvements: ["Analytics page redesigned with tabbed navigation", "Improved chart rendering performance for large datasets"],
+                    },
+                    {
+                      version: "v2.9", date: "February 24, 2026", summary: "Dashboard customization, mobile UX leap, and social sharing.",
+                      features: ["Dashboard drag-and-drop widget reordering", "Floating Trade Ticker with live P&L", "P&L Share Cards and Trade Share Cards", "Quick Trade Entry via Command Palette (⌘K)"],
+                      improvements: ["Animated KPI number transitions", "Mobile swipe-to-act on trade rows", "Improved mobile bottom navigation with active indicators"],
+                      fixes: ["Fixed widget state not persisting after page refresh", "Resolved share card image generation on Safari"],
+                    },
+                    {
+                      version: "v2.8", date: "February 18, 2026", summary: "Stock Screener launch with 47 built-in presets and custom filter builder.",
+                      features: ["Stock Screener with 47 curated presets", "Custom filter builder with AND/OR logic", "Stock popup insight cards with key metrics"],
+                      improvements: ["Improved instrument search with fuzzy matching"],
+                    },
+                    {
+                      version: "v2.7", date: "February 12, 2026", summary: "Portfolio visualization, daily review wizard, and onboarding improvements.",
+                      features: ["Portfolio Heat Map widget", "Daily Review Wizard — guided EOD reflection", "Enhanced onboarding welcome flow"],
+                      improvements: ["Dashboard loading skeleton shimmer refinements"],
+                    },
+                    {
+                      version: "v2.6", date: "January 28, 2026", summary: "Multi-leg strategies, TSL profiles, and AI Trade Insights.",
+                      features: ["Multi-leg strategy support for options", "TSL profiles per market segment", "AI Trade Insights — automated trade analysis"],
+                      improvements: ["Trade detail modal redesigned with timeline view"],
+                    },
+                    {
+                      version: "v2.5", date: "December 15, 2025", summary: "Trade Templates, CSV import overhaul, and offline resilience.",
+                      features: ["Trade Templates with Smart Suggestions", "Revamped CSV Import with column mapping", "Offline trade queue with auto-sync"],
+                      fixes: ["Fixed CSV date parsing for DD/MM/YYYY format", "Resolved offline queue duplicate submission"],
+                    },
+                  ] as const).map((release, i) => (
+                    <div key={release.version} className="relative sm:pl-10">
+                      {/* Timeline dot */}
+                      <div className="absolute left-[10px] top-1 w-[11px] h-[11px] rounded-full border-2 hidden sm:block" style={{
+                        borderColor: i === 0 ? 'hsl(var(--docs-accent))' : 'hsl(var(--docs-border-subtle))',
+                        background: i === 0 ? 'hsl(var(--docs-accent))' : 'hsl(var(--docs-bg))',
+                      }} />
+
+                      <div className="premium-card-hover p-5 sm:p-6 group">
+                        {/* Header */}
+                        <div className="flex flex-wrap items-center gap-2 mb-3">
+                          <span className="text-[13px] font-bold font-mono tracking-tight px-2.5 py-1 rounded-lg" style={{
+                            background: i === 0 ? 'hsl(var(--docs-accent) / 0.1)' : 'hsl(var(--docs-elevated))',
+                            color: i === 0 ? 'hsl(var(--docs-accent))' : 'hsl(var(--docs-text-primary))',
+                            border: `1px solid ${i === 0 ? 'hsl(var(--docs-accent) / 0.2)' : 'hsl(var(--docs-border-subtle))'}`,
+                          }}>{release.version}</span>
+                          <span className="text-[11px] font-medium" style={{ color: 'hsl(var(--docs-text-muted))' }}>{release.date}</span>
+                          {i === 0 && (
+                            <span className="text-[9px] px-2 py-0.5 rounded-full font-bold bg-profit/10 text-profit flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-profit animate-pulse" /> Latest
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Summary */}
+                        <p className="text-[13px] leading-relaxed mb-4" style={{ color: 'hsl(var(--docs-text-secondary))' }}>{release.summary}</p>
+
+                        {/* Categorized items */}
+                        <div className="space-y-3">
+                          {release.features && release.features.length > 0 && (
+                            <div>
+                              <div className="flex items-center gap-1.5 mb-1.5">
+                                <Sparkles className="w-3 h-3 text-[hsl(var(--tb-accent))]" />
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--tb-accent))]">New</span>
+                              </div>
+                              <ul className="space-y-1 pl-5">
+                                {release.features.map((f) => (
+                                  <li key={f} className="text-[12px] leading-relaxed flex items-start gap-1.5" style={{ color: 'hsl(var(--docs-text-secondary))' }}>
+                                    <span className="text-[hsl(var(--tb-accent))] mt-1 shrink-0">+</span> {f}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {"improvements" in release && release.improvements && release.improvements.length > 0 && (
+                            <div>
+                              <div className="flex items-center gap-1.5 mb-1.5">
+                                <TrendingUp className="w-3 h-3 text-primary" />
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Improved</span>
+                              </div>
+                              <ul className="space-y-1 pl-5">
+                                {release.improvements.map((imp) => (
+                                  <li key={imp} className="text-[12px] leading-relaxed flex items-start gap-1.5" style={{ color: 'hsl(var(--docs-text-muted))' }}>
+                                    <span className="text-primary mt-1 shrink-0">↑</span> {imp}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {"fixes" in release && release.fixes && release.fixes.length > 0 && (
+                            <div>
+                              <div className="flex items-center gap-1.5 mb-1.5">
+                                <CheckCircle2 className="w-3 h-3 text-profit" />
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-profit">Fixed</span>
+                              </div>
+                              <ul className="space-y-1 pl-5">
+                                {release.fixes.map((fix) => (
+                                  <li key={fix} className="text-[12px] leading-relaxed flex items-start gap-1.5" style={{ color: 'hsl(var(--docs-text-muted))' }}>
+                                    <span className="text-profit mt-1 shrink-0">✓</span> {fix}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {"docs" in release && release.docs && release.docs.length > 0 && (
+                            <div>
+                              <div className="flex items-center gap-1.5 mb-1.5">
+                                <FileText className="w-3 h-3" style={{ color: 'hsl(var(--docs-text-muted))' }} />
+                                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'hsl(var(--docs-text-muted))' }}>Docs</span>
+                              </div>
+                              <ul className="space-y-1 pl-5">
+                                {release.docs.map((doc) => (
+                                  <li key={doc} className="text-[11px] leading-relaxed" style={{ color: 'hsl(var(--docs-text-muted) / 0.7)' }}>
+                                    📄 {doc}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                    <ul className="space-y-1">
-                      {release.items.map((item) => (
-                        <li key={item} className="text-xs text-muted-foreground flex items-center gap-1.5">
-                          <CheckCircle2 className="w-3 h-3 text-profit shrink-0" /> {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
               <ExpandableDetail title="Version Numbering Explained" icon={RefreshCw}>
