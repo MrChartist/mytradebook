@@ -523,10 +523,10 @@ export function FAQSection() {
       <MotionSection className="max-w-2xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>FAQ</SectionBadge>
-          <h2 className="font-display text-4xl lg:text-6xl font-bold mb-5 leading-[1.1] tracking-tight">
+          <h2 className="font-display text-[2rem] lg:text-[3rem] font-bold mb-5 leading-[1.1] tracking-[-0.02em]">
             Got{" "}<span className="accent-script">questions</span>?
           </h2>
-          <p className="text-muted-foreground text-lg">Everything you need to know about TradeBook.</p>
+          <p className="text-muted-foreground text-[15px] lg:text-base leading-[1.65]">Everything you need to know about TradeBook.</p>
         </motion.div>
 
         <motion.div variants={fadeUp}>
