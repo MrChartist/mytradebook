@@ -304,7 +304,7 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
 }
 
 function SectionDivider() {
-  return <div className="h-px bg-border/30 my-2" />;
+  return <div className="h-px bg-gradient-to-r from-transparent via-border/40 to-transparent my-4" />;
 }
 
 function SectionHeader({ id, title, description, icon: Icon }: {
