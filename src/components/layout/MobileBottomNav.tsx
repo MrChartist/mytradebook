@@ -34,12 +34,12 @@ export function MobileBottomNav() {
                   isActive ? "text-primary" : "text-muted-foreground"
                 )}
               >
-                <tab.icon className={cn("w-5 h-5 transition-transform", isActive && "text-primary scale-110")} />
-                <span className="text-[11px] font-medium">{tab.label}</span>
+                <tab.icon className={cn("w-5 h-5 transition-all duration-200", isActive && "text-primary")} />
+                <span className={cn("text-[10px] font-medium", isActive && "font-semibold")}>{tab.label}</span>
                 {isActive && (
                   <motion.div
                     layoutId="mobile-nav-indicator"
-                    className="absolute -bottom-0 w-10 h-[3px] rounded-full bg-primary shadow-[0_0_6px_hsl(var(--tb-accent)/0.3)]"
+                    className="absolute -bottom-0 w-8 h-[2.5px] rounded-full bg-primary"
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   />
                 )}

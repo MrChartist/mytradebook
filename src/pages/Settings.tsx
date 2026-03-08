@@ -29,12 +29,12 @@ export default function Settings() {
       <PageHeader title="Settings" subtitle="Manage your account and preferences" />
 
       <Tabs value={activeTab} onValueChange={(val) => setSearchParams({ tab: val })} className="w-full">
-        <TabsList className="w-full flex overflow-x-auto no-scrollbar justify-start gap-2 h-auto p-1 bg-card border border-border rounded-lg mb-6">
+        <TabsList className="w-full flex overflow-x-auto no-scrollbar justify-start gap-1.5 h-auto p-1 bg-muted/40 border border-border/50 rounded-xl mb-6">
           {settingsTabs.map((tab) => (
             <TabsTrigger
               key={tab.id}
               value={tab.id}
-              className="flex items-center gap-2 px-4 py-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground data-[state=active]:font-medium"
             >
               <tab.icon className="w-4 h-4 shrink-0" />
               <span className="whitespace-nowrap">{tab.label}</span>

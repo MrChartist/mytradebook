@@ -43,8 +43,8 @@ export function EmptyState({
         </div>
       </div>
 
-      <h3 className="font-bold text-lg mb-2">{title}</h3>
-      <p className="text-sm text-muted-foreground max-w-sm mb-4">{description}</p>
+      <h3 className="font-bold text-lg mb-1.5 tracking-tight">{title}</h3>
+      <p className="text-sm text-muted-foreground max-w-sm mb-5 leading-relaxed">{description}</p>
 
       {/* Optional mini-guide steps */}
       {steps && steps.length > 0 && (

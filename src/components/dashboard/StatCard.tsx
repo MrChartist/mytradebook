@@ -34,11 +34,11 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         onClick={isClickable ? handleClick : undefined}
         onKeyDown={isClickable ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleClick(); } } : undefined}
         className={cn(
-          "premium-card-hover p-5 group backdrop-blur-sm",
+          "premium-card-hover p-5 group",
           changeType === "profit" && "card-glow-profit",
           changeType === "loss" && "card-glow-loss",
           changeType === "neutral" && "card-glow-primary",
-          isClickable && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-[0.98]"
+          isClickable && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-[0.99] transition-transform duration-150"
         )}
       >
         <div className="flex items-start justify-between relative">
