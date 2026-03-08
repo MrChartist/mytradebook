@@ -90,11 +90,15 @@ export default function Calendar() {
         </div>
         <div className="inner-panel !p-2.5 text-center">
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50 font-medium">Best Day</p>
-          <p className="text-base font-bold font-mono text-profit mt-0.5">+₹{monthStats.best.toLocaleString()}</p>
+          <p className="text-base font-bold font-mono text-profit mt-0.5">
+            {monthStats.tradingDays > 0 ? `+₹${monthStats.best.toLocaleString()}` : "—"}
+          </p>
         </div>
         <div className="inner-panel !p-2.5 text-center">
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50 font-medium">Worst Day</p>
-          <p className="text-base font-bold font-mono text-loss mt-0.5">₹{monthStats.worst.toLocaleString()}</p>
+          <p className="text-base font-bold font-mono text-loss mt-0.5">
+            {monthStats.tradingDays > 0 ? `₹${monthStats.worst.toLocaleString()}` : "—"}
+          </p>
         </div>
       </div>
 
