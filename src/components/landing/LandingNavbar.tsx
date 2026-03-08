@@ -166,7 +166,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="md:hidden overflow-hidden border-t border-border/30 bg-background/95 backdrop-blur-xl"
+            className="md:hidden overflow-hidden border-t border-border/40 bg-background/95 backdrop-blur-xl"
           >
             <div className="px-4 py-3 space-y-0.5">
               {NAV_LINKS.map((item) => {
