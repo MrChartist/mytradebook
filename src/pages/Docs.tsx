@@ -542,7 +542,7 @@ export default function Docs() {
     { label: "Getting Started", ids: ["getting-started"] },
     { label: "Core Features", ids: ["dashboard", "trade-management", "csv-import", "trade-templates", "position-sizing", "trading-rules", "alerts", "studies", "watchlists", "journal"] },
     { label: "Advanced", ids: ["analytics", "calendar", "mistakes", "fundamentals", "reports"] },
-    { label: "Social & AI", ids: ["sharing", "achievements", "trade-coach"] },
+    { label: "Social & AI", ids: ["sharing", "achievements", "notifications", "referral", "public-profile", "trade-coach"] },
     { label: "Settings & Tools", ids: ["integrations", "ai-integration", "shortcuts", "pwa", "settings"] },
     { label: "Help", ids: ["faq", "changelog"] },
   ];
