@@ -4171,9 +4171,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── Phase 22. Mobile & PWA ──────────────────────── */}
+            {/* ── Phase 26. Mobile & PWA ──────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={22} total={26} />
+              <PhaseHeader phase={26} total={29} />
               <SectionHeader
                 id="pwa"
                 title="Mobile & PWA"
