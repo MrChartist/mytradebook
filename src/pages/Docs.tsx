@@ -667,7 +667,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
 
               <ProTip variant="info">
-                <p>Press <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-[11px] font-mono font-semibold">⌘K</kbd> anywhere to open the Command Palette — search trades, create alerts, and navigate instantly without touching the mouse.</p>
+                <p>Press <kbd className="px-1.5 py-0.5 rounded-md bg-muted border border-border text-[12px] font-mono font-semibold">⌘K</kbd> anywhere to open the Command Palette — search trades, create alerts, and navigate instantly without touching the mouse.</p>
               </ProTip>
 
               <SubTopic title="System Requirements & Browser Support" id="gs-system-req" />
