@@ -421,10 +421,10 @@ export function IndianMarketsSection() {
           {/* Text side */}
           <motion.div variants={fadeUp}>
             <SectionBadge>Made in India</SectionBadge>
-            <h2 className="font-display text-4xl lg:text-5xl font-bold mb-6 leading-[1.1] tracking-tight">
+            <h2 className="font-display text-[2rem] lg:text-[2.75rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">
               Built for{" "}<span className="accent-script">Indian</span>{" "}markets
             </h2>
-            <p className="text-muted-foreground text-[15px] leading-[1.7] mb-8">
+            <p className="text-muted-foreground text-[15px] leading-[1.7] mb-8 tracking-[-0.006em]">
               Unlike generic journals, TradeBook understands Indian market structure — segments, lot sizes, INR formatting, and trading hours.
             </p>
             <ul className="space-y-2 mb-10">
