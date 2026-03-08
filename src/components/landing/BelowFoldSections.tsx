@@ -626,7 +626,7 @@ export function FooterSection() {
             <h4 className="text-xs uppercase tracking-[0.12em] font-bold text-muted-foreground/50 mb-4">Resources</h4>
             <ul className="space-y-1.5 text-[14px] text-muted-foreground">
               {[
-                { label: "FAQ", action: () => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }) },
+                { label: "Documentation", action: () => navigate("/docs") },
                 { label: "Contact Us", action: () => window.open("mailto:founder@mrchartist.com", "_blank") },
               ].map((l) => (
                 <li key={l.label}>
