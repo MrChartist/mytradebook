@@ -413,7 +413,6 @@ export default function Studies() {
             const duration = study.pattern_duration;
 
             const menuActions: InsightCardAction[] = [
-              { label: "Edit", icon: Edit, onClick: () => {} },
               ...Object.keys(statusColors)
                 .filter(k => k !== studyStatus)
                 .map(k => ({ label: `Mark as ${k}`, onClick: () => handleStatusChange(study, k) })),
@@ -439,9 +438,6 @@ export default function Studies() {
                 timestamp={study.analysis_date
                   ? new Date(study.analysis_date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "2-digit" })
                   : undefined}
-                onView={() => {}}
-                onCreateAlert={() => {}}
-                onCreateTrade={() => {}}
                 menuActions={menuActions}
                 viewMode={viewMode}
               />
