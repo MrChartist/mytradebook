@@ -3202,7 +3202,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 16. Weekly Reports ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={16} total={26} />
+              <PhaseHeader phase={16} total={29} />
               <SectionHeader
                 id="reports"
                 title="Weekly Reports"
