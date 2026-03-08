@@ -150,7 +150,7 @@ export function DashboardKPICards({ alerts }: Props) {
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/trades?status=OPEN"); }}
       >
         <div className="flex items-center justify-between mb-4">
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Open Positions</span>
+          <span className="kpi-label">Open Positions</span>
           <div className="icon-badge bg-primary/10">
             <Target className="w-4.5 h-4.5 text-primary" />
           </div>
