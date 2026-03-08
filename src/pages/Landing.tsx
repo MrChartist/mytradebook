@@ -156,12 +156,6 @@ export default function Landing() {
       <GradientDivider />
 
       <Suspense fallback={<SectionFallback />}>
-        <ComparisonSection />
-      </Suspense>
-
-      <GradientDivider />
-
-      <Suspense fallback={<SectionFallback />}>
         <PricingSection />
       </Suspense>
 
