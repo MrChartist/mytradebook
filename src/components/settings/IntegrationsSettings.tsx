@@ -907,7 +907,7 @@ export default function IntegrationsSettings() {
             </Button>
           </div>
 
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[10px] text-muted-foreground/30">
             Auto-syncs daily at 6 AM IST. Use "Sync Now" for new listings and F&O contracts.
           </p>
         </div>
