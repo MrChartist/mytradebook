@@ -76,9 +76,10 @@ export default {
         sm: "var(--radius-sm)",
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
-        logo: ["Space Grotesk", "Inter", "system-ui", "sans-serif"],
+        sans: ["'Source Sans 3'", "system-ui", "sans-serif"],
+        display: ["'Libre Bodoni'", "Georgia", "serif"],
+        mono: ["'JetBrains Mono'", "monospace"],
+        logo: ["'Source Sans 3'", "system-ui", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {

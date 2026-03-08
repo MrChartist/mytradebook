@@ -85,7 +85,7 @@ export function HowItWorksSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>How It Works</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1] tracking-tight">Three steps to{" "}<span className="accent-script">mastery</span></h2>
+          <h2 className="font-display text-4xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight">Three steps to{" "}<span className="accent-script">mastery</span></h2>
           <p className="text-muted-foreground max-w-md mx-auto text-lg">From first trade to consistent edge — in minutes.</p>
         </motion.div>
 
@@ -175,7 +175,7 @@ export function PricingSection() {
       <MotionSection className="max-w-5xl mx-auto px-6 lg:px-8">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>Pricing</SectionBadge>
-          <h2 className="text-3xl lg:text-5xl font-extrabold mb-4 leading-[1.1] tracking-tight">
+          <h2 className="font-display text-3xl lg:text-5xl font-bold mb-4 leading-[1.1] tracking-tight">
             Simple,{" "}<span className="accent-script">transparent</span>{" "}pricing
           </h2>
           <p className="text-muted-foreground max-w-md mx-auto text-base lg:text-lg leading-relaxed">
@@ -328,7 +328,7 @@ export function TestimonialsSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>Testimonials</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1] tracking-tight">
+          <h2 className="font-display text-4xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight">
             Trusted by{" "}<span className="accent-script">real traders</span>
           </h2>
           <p className="text-muted-foreground max-w-md mx-auto text-lg">Here's what traders across India are saying.</p>
@@ -421,7 +421,7 @@ export function IndianMarketsSection() {
           {/* Text side */}
           <motion.div variants={fadeUp}>
             <SectionBadge>Made in India</SectionBadge>
-            <h2 className="text-4xl lg:text-5xl font-extrabold mb-6 leading-[1.1] tracking-tight">
+            <h2 className="font-display text-4xl lg:text-5xl font-bold mb-6 leading-[1.1] tracking-tight">
               Built for{" "}<span className="accent-script">Indian</span>{" "}markets
             </h2>
             <p className="text-muted-foreground text-[15px] leading-[1.7] mb-8">
@@ -523,7 +523,7 @@ export function FAQSection() {
       <MotionSection className="max-w-2xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-14">
           <SectionBadge>FAQ</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-5 leading-[1.1] tracking-tight">
+          <h2 className="font-display text-4xl lg:text-6xl font-bold mb-5 leading-[1.1] tracking-tight">
             Got{" "}<span className="accent-script">questions</span>?
           </h2>
           <p className="text-muted-foreground text-lg">Everything you need to know about TradeBook.</p>
@@ -589,10 +589,10 @@ export function FinalCTASection() {
           <span className="text-sm font-medium text-muted-foreground">1,200+ traders · 42,000+ trades</span>
         </motion.div>
 
-        <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight mb-3">
+        <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-6xl font-bold leading-[1.1] tracking-tight mb-3">
           Stop losing money to
         </motion.h2>
-        <motion.h2 variants={fadeUp} className="text-4xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight mb-8">
+        <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-6xl font-bold leading-[1.1] tracking-tight mb-8">
           <span className="accent-script">undisciplined</span> trading
         </motion.h2>
 

@@ -319,7 +319,7 @@ function SectionHeader({ id, title, description, icon: Icon }: {
   return (
     <div id={id} className="scroll-mt-24 mb-6 pb-5 border-b border-border/30 group">
       <div className="flex items-center gap-2 mb-2">
-        <h2 className="text-xl font-bold tracking-tight leading-tight">{title}</h2>
+        <h2 className="font-display text-xl font-bold tracking-tight leading-tight">{title}</h2>
         <button
           onClick={copyLink}
           className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 p-1 rounded text-muted-foreground/40 hover:text-primary transition-all text-[11px] font-mono"
@@ -455,7 +455,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
       <div className={cn("pt-20 border-b border-border/40", isInsideApp && "border-border/20")}>
         <div className="max-w-[1440px] mx-auto px-6 lg:px-8 py-8 lg:py-10">
           <div className="flex items-center gap-3 mb-3">
-            <h1 className="text-2xl lg:text-[1.7rem] font-bold tracking-tight">Documentation</h1>
+            <h1 className="font-display text-2xl lg:text-[1.7rem] font-bold tracking-tight">Documentation</h1>
             <button
               onClick={toggle}
               className={cn(
