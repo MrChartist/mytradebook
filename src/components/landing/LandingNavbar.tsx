@@ -49,20 +49,18 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
 
   return (
     <motion.nav
-      initial={{ y: -40, opacity: 0, scale: 0.97 }}
-      animate={{ y: 0, opacity: 1, scale: 1 }}
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed top-4 left-0 right-0 z-50 mx-auto max-w-3xl px-4"
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out border-b",
+        scrolled
+          ? "bg-card/90 backdrop-blur-xl border-border/40 shadow-[0_1px_12px_-4px_rgba(0,0,0,0.1)]"
+          : "bg-transparent backdrop-blur-none border-transparent shadow-none"
+      )}
       aria-label="Main navigation"
     >
-      <div
-        className={cn(
-          "flex items-center justify-between px-3 pl-4 h-14 rounded-full border backdrop-blur-xl transition-all duration-500 ease-out",
-          scrolled
-            ? "bg-card/90 border-border/50 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.12),inset_0_1px_0_0_hsl(0_0%_100%/0.06)]"
-            : "bg-transparent border-transparent shadow-none"
-        )}
-      >
+      <div className="mx-auto max-w-7xl flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
         {/* Logo + breadcrumb */}
         <div className="flex items-center gap-2 shrink-0">
           <motion.button
