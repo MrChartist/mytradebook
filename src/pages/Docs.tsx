@@ -1571,13 +1571,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Search}
               />
               <QuickNav items={[
-                { label: "Scanner Presets", id: "fundamentals" },
-                { label: "Custom Filters", id: "fundamentals" },
-                { label: "Stock Insights", id: "fundamentals" },
-                { label: "Results Table", id: "fundamentals" },
+                { label: "Scanner Presets", id: "sc-presets" },
+                { label: "Custom Filters", id: "sc-filters" },
+                { label: "Results Table", id: "sc-results" },
               ]} />
 
-              <SubTopic title="Scanner Presets" description="47 built-in presets across 5 categories for instant stock screening." />
+              <SubTopic title="Scanner Presets" description="47 built-in presets across 5 categories for instant stock screening." id="sc-presets" />
               <ScreenerPresetsMockup />
 
               <div className="grid md:grid-cols-2 gap-5 mt-6">
