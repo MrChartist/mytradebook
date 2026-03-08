@@ -478,7 +478,7 @@ export default function IntegrationsSettings() {
           )}
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {isDhanConnected ? (
             <>
               <div className="p-3 rounded-lg bg-profit/10 border border-profit/20">
