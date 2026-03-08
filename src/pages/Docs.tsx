@@ -978,7 +978,94 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             </motion.section>
 
             <SectionDivider />
+
+            {/* ── Phase 6. Position Sizing ────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={6} total={26} />
+              <SectionHeader
+                id="position-sizing"
+                title="Position Sizing Calculator"
+                description="Built-in risk calculator that tells you exactly how many shares to buy based on your capital, risk tolerance, and stop loss distance."
+                icon={Calculator}
+              />
+              <PositionSizingCalcMockup />
+              <StepByStep title="How It Works" steps={[
+                { title: "Set your capital & risk %", description: "Define your total capital and the max % you're willing to risk per trade (e.g., 1.5%)." },
+                { title: "Enter entry & stop loss prices", description: "The calculator computes the risk per share (entry − SL)." },
+                { title: "Get recommended quantity", description: "Max shares = (Capital × Risk%) ÷ Risk per share. Automatically rounds down." },
+                { title: "Review max loss", description: "See the maximum loss in rupees before you commit to the trade." },
+              ]} />
+              <ExpandableDetail title="Advanced: Kelly Criterion" icon={Target}>
+                <p>For experienced traders, the Position Sizing Calculator can suggest position sizes based on the Kelly Criterion — factoring in your historical win rate and average win/loss ratio to optimize long-term capital growth.</p>
+              </ExpandableDetail>
+              <ProTip variant="warning">
+                <p>Never risk more than 2% of your capital on a single trade. The calculator will flag oversized positions with a red warning if you exceed this threshold.</p>
+              </ProTip>
+              <ComparisonTable
+                title="Position Sizing — Free vs Pro"
+                rows={[
+                  { feature: "Basic calculator", free: true, pro: true },
+                  { feature: "Kelly Criterion", free: false, pro: true },
+                  { feature: "Auto-fill from trade form", free: true, pro: true },
+                  { feature: "Risk % presets", free: false, pro: true },
+                ]}
+              />
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 7. Trading Rules ──────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={7} total={26} />
+              <SectionHeader
+                id="trading-rules"
+                title="Trading Rules Checklist"
+                description="Define your personal pre-trade rules and enforce discipline. Every rule must be checked before a trade can be submitted."
+                icon={ClipboardCheck}
+              />
+              <TradingRulesMockup />
+              <FeatureCard icon={ClipboardCheck} title="How Trading Rules Work">
+                <p className="text-sm text-muted-foreground mb-3">Create a custom checklist that appears in the trade creation modal:</p>
+                <FeatureList items={[
+                  "Add unlimited custom rules in Settings → Trading Rules",
+                  "Drag-to-reorder rules by priority",
+                  "All rules must be checked to submit a new trade",
+                  "Rules can be temporarily toggled active/inactive",
+                  "Enforces consistent pre-trade analysis every time",
+                ]} />
+              </FeatureCard>
+              <ProTip variant="best-practice">
+                <p>Start with 3-5 rules maximum. The best rules are specific and actionable: "Confirm volume is above 20-day average" is better than "Check volume."</p>
+              </ProTip>
+              <ExpandableDetail title="Example Rules for Different Styles" icon={BookOpen} defaultOpen>
+                <div className="grid md:grid-cols-2 gap-4 mt-2">
+                  <div>
+                    <p className="text-[12px] font-semibold text-foreground mb-2">Intraday Trader</p>
+                    <ul className="space-y-1 text-[12px] text-muted-foreground">
+                      <li>✓ Check pre-market gap direction</li>
+                      <li>✓ Volume above VWAP</li>
+                      <li>✓ No trades in first 5 minutes</li>
+                      <li>✓ Risk under 1% of capital</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-semibold text-foreground mb-2">Swing Trader</p>
+                    <ul className="space-y-1 text-[12px] text-muted-foreground">
+                      <li>✓ Higher timeframe trend aligns</li>
+                      <li>✓ No earnings in next 5 days</li>
+                      <li>✓ Sector is not overbought</li>
+                      <li>✓ R:R is at least 1:3</li>
+                    </ul>
+                  </div>
+                </div>
+              </ExpandableDetail>
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 8. Alerts ─────────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={8} total={26} />
               <SectionHeader
                 id="alerts"
                 title="Alerts System"
