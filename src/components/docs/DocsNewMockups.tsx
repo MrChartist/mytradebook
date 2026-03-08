@@ -288,3 +288,152 @@ export function StreakShareMockup() {
     </MockupFrame>
   );
 }
+
+/* ──────────────────────────────────────────────
+   7. NotificationCenterMockup — Bell popover
+   ────────────────────────────────────────────── */
+export function NotificationCenterMockup() {
+  const notifications = [
+    { type: "alert", title: "RELIANCE crossed ₹2,850", time: "2m ago", read: false },
+    { type: "trade", title: "INFY BUY closed at +₹3,200", time: "15m ago", read: false },
+    { type: "system", title: "Weekly report generated", time: "1h ago", read: true },
+    { type: "alert", title: "TATAMOTORS hit stop loss target", time: "Yesterday", read: true },
+    { type: "report", title: "Morning briefing ready", time: "Yesterday", read: true },
+  ];
+  return (
+    <MockupFrame className="my-6" label="Notification Center">
+      <div className="max-w-sm mx-auto">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Heart className="w-5 h-5 text-primary" />
+              <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-loss text-[8px] text-white flex items-center justify-center font-bold">2</div>
+            </div>
+            <p className="text-sm font-bold">Notifications</p>
+          </div>
+          <button className="text-[10px] text-primary font-semibold hover:underline">Mark all read</button>
+        </div>
+        <div className="space-y-1">
+          {notifications.map((n, i) => (
+            <div key={i} className={cn(
+              "flex items-start gap-3 rounded-lg border p-2.5 transition-all",
+              !n.read ? "border-primary/20 bg-primary/[0.03]" : "border-border/15 bg-card/30"
+            )}>
+              <div className={cn(
+                "w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5",
+                n.type === "alert" ? "bg-[hsl(var(--warning))]/10" :
+                n.type === "trade" ? "bg-profit/10" :
+                n.type === "report" ? "bg-primary/10" : "bg-muted/20"
+              )}>
+                {n.type === "alert" && <Target className="w-3.5 h-3.5 text-[hsl(var(--warning))]" />}
+                {n.type === "trade" && <TrendingUp className="w-3.5 h-3.5 text-profit" />}
+                {n.type === "report" && <Star className="w-3.5 h-3.5 text-primary" />}
+                {n.type === "system" && <Shield className="w-3.5 h-3.5 text-muted-foreground" />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className={cn("text-[11px] leading-snug", !n.read ? "font-semibold text-foreground" : "text-muted-foreground")}>{n.title}</p>
+                <p className="text-[9px] text-muted-foreground/60 mt-0.5">{n.time}</p>
+              </div>
+              {!n.read && <div className="w-2 h-2 rounded-full bg-primary shrink-0 mt-2" />}
+            </div>
+          ))}
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   8. ReferralCardMockup — Referral program
+   ────────────────────────────────────────────── */
+export function ReferralCardMockup() {
+  return (
+    <MockupFrame className="my-6" label="Referral Program">
+      <div className="max-w-md mx-auto">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Award className="w-4.5 h-4.5 text-primary" />
+          </div>
+          <div>
+            <p className="text-sm font-bold">Referral Program</p>
+            <p className="text-[10px] text-muted-foreground">Invite friends, earn 30 extra trial days per signup</p>
+          </div>
+        </div>
+
+        <div className="flex gap-2 mb-4">
+          <div className="flex-1 bg-muted/30 rounded-lg px-3 py-2 text-[11px] text-muted-foreground truncate border border-border/30 font-mono">
+            https://tradebook.mrchartist.com/login?ref=A8K3M2X9
+          </div>
+          <div className="shrink-0 w-9 h-9 rounded-lg border border-border/30 flex items-center justify-center bg-card hover:bg-muted/20 transition-colors cursor-pointer">
+            <Download className="w-4 h-4 text-muted-foreground" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 text-center">
+          <div className="rounded-lg bg-card border border-border/20 p-3">
+            <p className="text-lg font-bold font-mono">7</p>
+            <p className="text-[9px] text-muted-foreground">Referred</p>
+          </div>
+          <div className="rounded-lg bg-profit/[0.04] border border-profit/20 p-3">
+            <p className="text-lg font-bold font-mono text-profit">4</p>
+            <p className="text-[9px] text-muted-foreground">Signed Up</p>
+          </div>
+          <div className="rounded-lg bg-primary/[0.04] border border-primary/20 p-3">
+            <p className="text-lg font-bold font-mono text-primary">120d</p>
+            <p className="text-[9px] text-muted-foreground">Bonus Days</p>
+          </div>
+        </div>
+
+        <div className="mt-3 p-2.5 rounded-lg bg-profit/[0.04] border border-profit/15 text-center">
+          <p className="text-[10px] text-profit font-semibold">🎉 You've earned 120 extra trial days from 4 successful referrals!</p>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   9. PublicProfileMockup — Public trader page
+   ────────────────────────────────────────────── */
+export function PublicProfileMockup() {
+  return (
+    <MockupFrame className="my-6" label="Public Profile">
+      <div className="max-w-md mx-auto">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/15 flex items-center justify-center text-xl font-bold text-primary">
+            RC
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <p className="text-base font-bold">Rahul C.</p>
+              <span className="px-1.5 py-0.5 rounded-full bg-profit/10 text-profit text-[9px] font-semibold">Public</span>
+            </div>
+            <p className="text-[11px] text-muted-foreground mt-0.5">Swing trader · NSE F&O · 2+ years experience</p>
+          </div>
+        </div>
+
+        <div className="rounded-lg bg-card/50 border border-border/20 p-3 mb-3">
+          <p className="text-[11px] text-muted-foreground italic">"Focused on price action setups with strict risk management. Sharing my journey to keep myself accountable."</p>
+        </div>
+
+        <div className="grid grid-cols-4 gap-2 text-center mb-3">
+          {[
+            { label: "Win Rate", value: "64%" },
+            { label: "Avg R:R", value: "1:2.3" },
+            { label: "Trades", value: "186" },
+            { label: "Streak", value: "5 🔥" },
+          ].map((s) => (
+            <div key={s.label} className="rounded-lg bg-muted/15 border border-border/15 p-2">
+              <p className="text-xs font-bold font-mono">{s.value}</p>
+              <p className="text-[8px] text-muted-foreground mt-0.5">{s.label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="p-2.5 rounded-lg bg-[hsl(var(--warning))]/[0.04] border border-[hsl(var(--warning))]/15">
+          <p className="text-[9px] text-[hsl(var(--warning))] font-medium">⚠️ Disclaimer: Not SEBI registered. Performance shown is self-reported. Past results don't guarantee future performance.</p>
+        </div>
+      </div>
+    </MockupFrame>
+  );
+}

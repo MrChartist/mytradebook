@@ -20,7 +20,7 @@ import {
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
   Wallet, Share2, MessageSquare, Command, Hash, Palette,
   PanelLeftClose, PanelLeftOpen, SlidersHorizontal,
-  Calculator, ClipboardCheck, Trophy, Info, Radio
+  Calculator, ClipboardCheck, Trophy, Info, Radio, Gift, Crown
 } from "lucide-react";
 // DocsNavbar is used instead of LandingNavbar on this page
 import { DocsNavbar } from "@/components/docs/DocsNavbar";
@@ -66,7 +66,8 @@ import {
 } from "@/components/docs/DocsVisualBlocks";
 import {
   ShareCardsMockup, AchievementsMockup, PositionSizingCalcMockup,
-  TradingRulesMockup, TradeCoachMockup, StreakShareMockup
+  TradingRulesMockup, TradeCoachMockup, StreakShareMockup,
+  NotificationCenterMockup, ReferralCardMockup, PublicProfileMockup
 } from "@/components/docs/DocsNewMockups";
 
 const SECTIONS = [
@@ -88,6 +89,9 @@ const SECTIONS = [
   { id: "reports", label: "Weekly Reports", icon: PieChart },
   { id: "sharing", label: "Sharing & Social", icon: Share2 },
   { id: "achievements", label: "Achievements", icon: Trophy },
+  { id: "notifications", label: "Notification Center", icon: Bell },
+  { id: "referral", label: "Referral Program", icon: Gift },
+  { id: "public-profile", label: "Public Profile", icon: Users },
   { id: "trade-coach", label: "AI Trade Coach", icon: Sparkles },
   { id: "integrations", label: "Integrations", icon: Layers },
   { id: "ai-integration", label: "AI Insights Setup", icon: Sparkles },
@@ -207,6 +211,21 @@ const SECTION_ANCHORS: Record<string, { label: string; id: string }[]> = {
     { label: "Sharing Badges", id: "ach-sharing" },
     { label: "Milestone Rewards", id: "ach-milestones" },
   ],
+  "notifications": [
+    { label: "Notification Types", id: "notif-types" },
+    { label: "Unread Management", id: "notif-unread" },
+    { label: "Click Actions", id: "notif-actions" },
+  ],
+  "referral": [
+    { label: "Getting Your Link", id: "ref-link" },
+    { label: "Sharing", id: "ref-sharing" },
+    { label: "Tracking Rewards", id: "ref-tracking" },
+  ],
+  "public-profile": [
+    { label: "Setup", id: "pp-setup" },
+    { label: "Privacy Controls", id: "pp-privacy" },
+    { label: "Monthly Stats", id: "pp-stats" },
+  ],
   "trade-coach": [
     { label: "Coaching Workflow", id: "tc-workflow" },
     { label: "Analysis Dimensions", id: "tc-analysis" },
@@ -239,8 +258,10 @@ const SECTION_ANCHORS: Record<string, { label: string; id: string }[]> = {
   ],
   "settings": [
     { label: "Profile & Billing", id: "set-account" },
+    { label: "Subscription & Plans", id: "set-plans" },
     { label: "Tags & Preferences", id: "set-tags" },
     { label: "Capital Management", id: "set-capital" },
+    { label: "Data Export & Backup", id: "set-export" },
     { label: "Security & Integrations", id: "set-security" },
   ],
   "faq": [
@@ -521,7 +542,7 @@ export default function Docs() {
     { label: "Getting Started", ids: ["getting-started"] },
     { label: "Core Features", ids: ["dashboard", "trade-management", "csv-import", "trade-templates", "position-sizing", "trading-rules", "alerts", "studies", "watchlists", "journal"] },
     { label: "Advanced", ids: ["analytics", "calendar", "mistakes", "fundamentals", "reports"] },
-    { label: "Social & AI", ids: ["sharing", "achievements", "trade-coach"] },
+    { label: "Social & AI", ids: ["sharing", "achievements", "notifications", "referral", "public-profile", "trade-coach"] },
     { label: "Settings & Tools", ids: ["integrations", "ai-integration", "shortcuts", "pwa", "settings"] },
     { label: "Help", ids: ["faq", "changelog"] },
   ];
@@ -530,7 +551,7 @@ export default function Docs() {
     <DocsColorModeProvider>
       <SEOHead
         title="Documentation — Complete Feature Guide for Indian Traders"
-        description="Step-by-step guide to TradeBook: dashboard setup, trade logging, alerts, AI analytics, journal, Dhan integration, and 26 features for NSE, BSE & MCX traders."
+        description="Step-by-step guide to TradeBook: dashboard setup, trade logging, alerts, AI analytics, journal, Dhan integration, and 29 features for NSE, BSE & MCX traders."
         path="/docs"
         ogType="article"
         datePublished="2025-12-01"
@@ -1191,7 +1212,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={1} total={26} />
+              <PhaseHeader phase={1} total={29} />
               <SectionHeader
                 id="getting-started"
                 title="Getting Started"
@@ -1292,7 +1313,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── 2. Dashboard ───────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4, delay: 0.05 }}>
-              <PhaseHeader phase={2} total={26} />
+              <PhaseHeader phase={2} total={29} />
               <SectionHeader
                 id="dashboard"
                 title="Dashboard"
@@ -1497,7 +1518,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 3. Trade Management ────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={3} total={26} />
+              <PhaseHeader phase={3} total={29} />
               <SectionHeader
                 id="trade-management"
                 title="Trade Management"
@@ -1783,7 +1804,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 4. CSV Import ──────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={4} total={26} />
+              <PhaseHeader phase={4} total={29} />
               <SectionHeader
                 id="csv-import"
                 title="CSV Import & Export"
@@ -1863,7 +1884,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 5. Trade Templates ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={5} total={26} />
+              <PhaseHeader phase={5} total={29} />
               <SectionHeader
                 id="trade-templates"
                 title="Trade Templates & Smart Suggestions"
@@ -1938,7 +1959,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 6. Position Sizing ────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={6} total={26} />
+              <PhaseHeader phase={6} total={29} />
               <SectionHeader
                 id="position-sizing"
                 title="Position Sizing Calculator"
@@ -2008,7 +2029,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 7. Trading Rules ──────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={7} total={26} />
+              <PhaseHeader phase={7} total={29} />
               <SectionHeader
                 id="trading-rules"
                 title="Trading Rules Checklist"
@@ -2105,7 +2126,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 8. Alerts ─────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={8} total={26} />
+              <PhaseHeader phase={8} total={29} />
               <SectionHeader
                 id="alerts"
                 title="Alerts System"
@@ -2305,7 +2326,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 9. Studies & Research ───────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={9} total={26} />
+              <PhaseHeader phase={9} total={29} />
               <SectionHeader
                 id="studies"
                 title="Studies & Research"
@@ -2409,7 +2430,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 10. Watchlists ──────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={10} total={26} />
+              <PhaseHeader phase={10} total={29} />
               <SectionHeader
                 id="watchlists"
                 title="Watchlists"
@@ -2498,7 +2519,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 11. Trade Journal ───────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={11} total={26} />
+              <PhaseHeader phase={11} total={29} />
               <SectionHeader
                 id="journal"
                 title="Trade Journal"
@@ -2602,7 +2623,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 12. Analytics (Pro) ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={12} total={26} />
+              <PhaseHeader phase={12} total={29} />
               <SectionHeader
                 id="analytics"
                 description="Deep performance analytics powered by your trade data. Understand your edge with heatmaps, breakdowns, and statistical measures. Available on the Pro plan."
@@ -2853,7 +2874,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 13. Calendar & Daily Journal ────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={13} total={26} />
+              <PhaseHeader phase={13} total={29} />
               <SectionHeader
                 id="calendar"
                 title="Calendar & Daily Journal"
@@ -2954,7 +2975,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 14. Mistakes Review ────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={14} total={26} />
+              <PhaseHeader phase={14} total={29} />
               <SectionHeader
                 id="mistakes"
                 title="Mistakes Review"
@@ -3038,7 +3059,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 15. Stock Screener (Fundamentals) ─────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={15} total={26} />
+              <PhaseHeader phase={15} total={29} />
               <SectionHeader
                 id="fundamentals"
                 title="Stock Screener"
@@ -3181,7 +3202,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 16. Weekly Reports ─────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={16} total={26} />
+              <PhaseHeader phase={16} total={29} />
               <SectionHeader
                 id="reports"
                 title="Weekly Reports"
@@ -3282,7 +3303,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 17. Sharing & Social Cards ────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={17} total={26} />
+              <PhaseHeader phase={17} total={29} />
               <SectionHeader
                 id="sharing"
                 title="Sharing & Social Cards"
@@ -3391,7 +3412,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 18. Achievements & Gamification ──────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={18} total={26} />
+              <PhaseHeader phase={18} total={29} />
               <SectionHeader
                 id="achievements"
                 title="Achievements & Gamification"
@@ -3498,16 +3519,195 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </ProTip>
 
               <NextStepBlock steps={[
+                { label: "Notification Center", description: "Stay on top of every event", targetId: "notifications" },
                 { label: "Sharing & Social", description: "Share your wins and streaks", targetId: "sharing" },
-                { label: "Trade Coach", description: "AI-powered trade analysis", targetId: "trade-coach" },
               ]} />
             </motion.section>
 
             <SectionDivider />
 
-            {/* ── Phase 19. AI Trade Coach ────────────────────── */}
+            {/* ── Phase 19. Notification Center ────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={19} total={26} />
+              <PhaseHeader phase={19} total={29} />
+              <SectionHeader
+                id="notifications"
+                title="Notification Center"
+                description="A unified feed for all your alerts, trade events, and system messages — accessible from the bell icon in the navigation bar."
+                icon={Bell}
+              />
+              <QuickNav items={[
+                { label: "Notification Types", id: "notif-types" },
+                { label: "Unread Management", id: "notif-unread" },
+                { label: "Click Actions", id: "notif-actions" },
+              ]} />
+
+              <ProTip variant="best-practice">
+                <p><strong>Why this matters:</strong> Traders often set alerts and then forget about them. The Notification Center aggregates every event — alert triggers, trade closes, weekly reports, system messages — into one persistent feed you can scan in seconds. Combined with Telegram delivery, you'll never miss a signal.</p>
+              </ProTip>
+
+              <NotificationCenterMockup />
+
+              <SubTopic title="Notification Types" description="Four categories of notifications delivered to your bell icon." id="notif-types" />
+              <FeatureCard icon={Bell} title="What Gets Notified">
+                <FeatureList items={[
+                  "Alert triggers — price alerts, condition-based alerts, and scanner matches appear instantly when triggered",
+                  "Trade events — partial closes, full closes, trailing SL activations, and target hits generate notifications",
+                  "System messages — weekly report generation, morning briefings, and account-related updates",
+                  "Reports — generated weekly reports and EOD summaries with direct links to view them",
+                ]} />
+              </FeatureCard>
+
+              <SubTopic title="Unread Management" description="Track what's new and mark items as read." id="notif-unread" />
+              <FeatureCard icon={Eye} title="Reading & Managing Notifications">
+                <FeatureList items={[
+                  "Unread count badge — the bell icon shows a red badge with the count of unread notifications",
+                  "Date grouping — notifications are grouped into Today, Yesterday, This Week, and Older for easy scanning",
+                  "Mark individual as read — click any notification to mark it as read and navigate to the related item",
+                  "Mark all as read — one-click button to clear all unread indicators at once",
+                  "Unread state persisted locally — your read/unread state survives page refreshes",
+                ]} />
+              </FeatureCard>
+
+              <SubTopic title="Click Actions" description="Each notification links directly to the relevant item." id="notif-actions" />
+              <ExpandableDetail title="Click-to-Navigate Behavior" icon={ArrowRight}>
+                <p>Clicking a notification takes you directly to the related item:</p>
+                <FeatureList items={[
+                  "Alert trigger → Opens the Alerts page with the triggered alert highlighted",
+                  "Trade event → Opens the Trade Detail modal for that specific trade",
+                  "Weekly report → Navigates to the Reports page with the generated report",
+                  "System message → Navigates to the relevant settings or feature page",
+                ]} />
+              </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Referral Program", description: "Invite friends, earn bonus days", targetId: "referral" },
+                { label: "Alerts System", description: "Set up the alerts that trigger notifications", targetId: "alerts" },
+              ]} />
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 20. Referral Program ────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={20} total={29} />
+              <SectionHeader
+                id="referral"
+                title="Referral Program"
+                description="Invite friends to TradeBook and earn 30 extra trial days for every successful signup. Share your unique link and track your rewards."
+                icon={Gift}
+              />
+              <QuickNav items={[
+                { label: "Getting Your Link", id: "ref-link" },
+                { label: "Sharing", id: "ref-sharing" },
+                { label: "Tracking Rewards", id: "ref-tracking" },
+              ]} />
+
+              <ReferralCardMockup />
+
+              <SubTopic title="Getting Your Referral Link" description="Find and copy your unique referral URL." id="ref-link" />
+              <StepByStep title="How to Get Your Referral Link" steps={[
+                { title: "Go to Settings", description: "Navigate to the Settings page from the sidebar or bottom nav." },
+                { title: "Find the Referral Card", description: "Scroll to the 'Referral Program' card in your settings. Your unique link is auto-generated on first visit." },
+                { title: "Copy the link", description: "Click the copy button next to your referral URL. It's now on your clipboard, ready to share." },
+              ]} />
+
+              <SubTopic title="How Sharing Works" description="What happens when someone uses your link." id="ref-sharing" />
+              <FeatureCard icon={Share2} title="Referral Flow">
+                <FeatureList items={[
+                  "Share your unique link via WhatsApp, Telegram, Twitter, or any platform",
+                  "When someone signs up using your link, they're tracked as your referral",
+                  "Once the referred user completes signup and email verification, the referral is marked as 'completed'",
+                  "You automatically receive 30 bonus trial days added to your account",
+                  "There's no limit on how many people you can refer",
+                ]} />
+              </FeatureCard>
+
+              <SubTopic title="Tracking Your Rewards" description="Monitor referral stats and bonus days earned." id="ref-tracking" />
+              <FeatureCard icon={Trophy} title="Referral Stats">
+                <FeatureList items={[
+                  "Total referred — number of people who clicked your link",
+                  "Successful signups — number who completed registration",
+                  "Bonus days earned — calculated as successful signups × 30 days",
+                  "All stats are visible in the Referral Card on your Settings page",
+                ]} />
+              </FeatureCard>
+
+              <ProTip variant="info">
+                <p>Referral bonus days stack with your existing trial period. If you have 10 days left and refer 2 friends who sign up, you'll have 70 days remaining (10 + 30 + 30).</p>
+              </ProTip>
+
+              <NextStepBlock steps={[
+                { label: "Public Profile", description: "Share your trading journey publicly", targetId: "public-profile" },
+                { label: "Sharing & Social", description: "Share P&L cards and streaks", targetId: "sharing" },
+              ]} />
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 21. Public Profile ──────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={21} total={29} />
+              <SectionHeader
+                id="public-profile"
+                title="Public Profile"
+                description="Create an opt-in public trader profile to share your trading stats, bio, and monthly performance — without exposing individual trade details."
+                icon={Users}
+              />
+              <QuickNav items={[
+                { label: "Setup", id: "pp-setup" },
+                { label: "Privacy Controls", id: "pp-privacy" },
+                { label: "Monthly Stats", id: "pp-stats" },
+              ]} />
+
+              <PublicProfileMockup />
+
+              <SubTopic title="Setting Up Your Profile" description="Create and customize your public trader page." id="pp-setup" />
+              <StepByStep title="How to Create Your Public Profile" steps={[
+                { title: "Go to Settings", description: "Navigate to Settings from the sidebar." },
+                { title: "Find Public Profile section", description: "Look for the 'Public Profile' or 'RA Mode' settings card." },
+                { title: "Add your details", description: "Enter a display name, bio, and optionally upload an avatar. These are visible to anyone who visits your profile." },
+                { title: "Toggle public visibility", description: "Enable the 'Public' toggle to make your profile accessible at /profile/[your-id]." },
+                { title: "Add a disclaimer", description: "Optionally add a custom disclaimer (e.g., 'Not SEBI registered'). A default disclaimer is shown if you don't set one." },
+              ]} />
+
+              <SubTopic title="Privacy Controls" description="You control exactly what's visible." id="pp-privacy" />
+              <FeatureCard icon={Shield} title="What's Shown vs Hidden">
+                <p className="text-sm text-muted-foreground mb-3">Your public profile shows aggregate stats only — never individual trade details:</p>
+                <FeatureList items={[
+                  "Visible — display name, bio, avatar, monthly win rate, average R:R, trade count, and current streak",
+                  "Hidden — individual trades, entry/exit prices, P&L amounts, specific symbols, notes, and journal entries",
+                  "The is_public toggle is off by default — your profile is private unless you explicitly enable it",
+                  "You can disable your public profile at any time by toggling it off in Settings",
+                  "Monthly stats are self-reported aggregates — visitors see performance summaries, not raw data",
+                ]} />
+              </FeatureCard>
+
+              <SubTopic title="Monthly Stats" description="Aggregate performance displayed on your profile." id="pp-stats" />
+              <FeatureCard icon={BarChart3} title="Monthly Performance Display">
+                <FeatureList items={[
+                  "Win rate percentage for the current and recent months",
+                  "Average risk-to-reward ratio across closed trades",
+                  "Total trade count to show activity level",
+                  "Current winning/losing streak",
+                  "Stats update automatically as you close trades — no manual input needed",
+                ]} />
+              </FeatureCard>
+
+              <ProTip variant="warning">
+                <p>Public profiles are designed for accountability and community — not as financial advice. Always include a disclaimer, especially if you share your profile link on social media. TradeBook adds a default "Not SEBI registered" disclaimer if you don't set a custom one.</p>
+              </ProTip>
+
+              <NextStepBlock steps={[
+                { label: "AI Trade Coach", description: "Get AI feedback on every trade", targetId: "trade-coach" },
+                { label: "Sharing & Social", description: "Share P&L and streak cards", targetId: "sharing" },
+              ]} />
+            </motion.section>
+
+            <SectionDivider />
+
+            {/* ── Phase 22. AI Trade Coach ────────────────────── */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={22} total={29} />
               <SectionHeader
                 id="trade-coach"
                 title="AI Trade Coach"
@@ -3595,9 +3795,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── Phase 20. Integrations ───────────────────────── */}
+            {/* ── Phase 23. Integrations ───────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={20} total={26} />
+              <PhaseHeader phase={23} total={29} />
               <SectionHeader
                 id="integrations"
                 title="Integrations"
@@ -3722,7 +3922,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             {/* ── Phase 24. AI Insights Setup ─────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={24} total={26} />
+              <PhaseHeader phase={24} total={29} />
               <SectionHeader
                 id="ai-integration"
                 title="AI Trade Insights"
@@ -3852,9 +4052,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── Phase 21. Keyboard Shortcuts ─────────────────── */}
+            {/* ── Phase 25. Keyboard Shortcuts ─────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={21} total={26} />
+              <PhaseHeader phase={25} total={29} />
               <SectionHeader
                 id="shortcuts"
                 title="Keyboard Shortcuts"
@@ -3971,9 +4171,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── Phase 22. Mobile & PWA ──────────────────────── */}
+            {/* ── Phase 26. Mobile & PWA ──────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={22} total={26} />
+              <PhaseHeader phase={26} total={29} />
               <SectionHeader
                 id="pwa"
                 title="Mobile & PWA"
@@ -4090,9 +4290,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── Phase 23. Settings ───────────────────────────── */}
+            {/* ── Phase 27. Settings ───────────────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={23} total={26} />
+              <PhaseHeader phase={27} total={29} />
               <SectionHeader
                 id="settings"
                 title="Settings"
@@ -4102,8 +4302,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
               <QuickNav items={[
                 { label: "Profile & Billing", id: "set-account" },
+                { label: "Subscription & Plans", id: "set-plans" },
                 { label: "Tags & Preferences", id: "set-tags" },
                 { label: "Capital Management", id: "set-capital" },
+                { label: "Data Export & Backup", id: "set-export" },
                 { label: "Security & Integrations", id: "set-security" },
               ]} />
 
@@ -4143,6 +4345,29 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "Alert check frequency (how often alerts are evaluated)",
                   ]} />
                   <div className="mt-4"><SettingsPreferencesMockup /></div>
+                </FeatureCard>
+              </div>
+
+              <SubTopic title="Subscription & Plans" description="Free, Pro, and Team tiers with trial mechanics and plan-gated features." id="set-plans" />
+              <div className="space-y-5">
+                <FeatureCard icon={Crown} title="Plan Tiers & Trial">
+                  <p className="text-sm text-muted-foreground mb-3">TradeBook offers three plan tiers to match your trading needs:</p>
+                  <FeatureList items={[
+                    "Free — core trade logging, basic analytics, and limited alerts. Great for getting started.",
+                    "Pro — unlocks AI Trade Coach, advanced analytics (sector heatmap, risk of ruin, pattern detection), unlimited alerts, CSV import, and weekly reports.",
+                    "Team — everything in Pro plus collaborative features and priority support.",
+                    "14-day Pro trial — every new account starts with full Pro access for 14 days, no credit card required.",
+                    "Plan-gated features show an 'Upgrade' prompt with a lock icon when you try to access them on a lower tier.",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Wallet} title="Billing & Upgrade Flow">
+                  <FeatureList items={[
+                    "Navigate to Settings → Billing to view your current plan and subscription status",
+                    "Choose between Monthly, Quarterly (save 17%), or Yearly (save 37%) billing cycles",
+                    "Upgrade instantly — your new plan activates immediately after payment",
+                    "Downgrade at end of billing period — you keep Pro access until the current cycle ends",
+                    "Referral bonus days extend your trial period (30 days per successful referral)",
+                  ]} />
                 </FeatureCard>
               </div>
 
@@ -4188,6 +4413,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </ul>
               </ExpandableDetail>
 
+              <SubTopic title="Data Export & Backup" description="Export your trading data for backup or external analysis." id="set-export" />
+              <div className="space-y-5">
+                <FeatureCard icon={Download} title="Export Options">
+                  <FeatureList items={[
+                    "JSON full backup — export your entire trading database (trades, journal entries, settings, tags) as a single JSON file via the backend export function",
+                    "CSV trade export — download your trades as a CSV file for use in Excel, Google Sheets, or external analysis tools",
+                    "CSV includes all trade fields: symbol, entry/exit prices, P&L, dates, tags, notes, segment, and more",
+                    "JSON backup preserves relationships between trades, studies, alerts, and tags — ideal for full data portability",
+                    "Access exports from Settings or trigger them via keyboard shortcut (⌘K → 'Export')",
+                  ]} />
+                </FeatureCard>
+              </div>
+
               <SubTopic title="Security & Integrations" description="Password management and third-party connections." id="set-security" />
               <div className="space-y-5">
                 <FeatureCard icon={Lock} title="Security">
@@ -4232,9 +4470,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── Phase 25. FAQ & Troubleshooting ──────────────── */}
+            {/* ── Phase 28. FAQ & Troubleshooting ──────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={25} total={26} />
+              <PhaseHeader phase={28} total={29} />
               <SectionHeader
                 id="faq"
                 title="FAQ & Troubleshooting"
@@ -4352,9 +4590,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── Phase 26. Changelog & Roadmap ────────────────── */}
+            {/* ── Phase 29. Changelog & Roadmap ────────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
-              <PhaseHeader phase={26} total={26} />
+              <PhaseHeader phase={29} total={29} />
               <SectionHeader
                 id="changelog"
                 title="Changelog & Roadmap"
