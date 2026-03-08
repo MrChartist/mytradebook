@@ -551,7 +551,7 @@ export default function Docs() {
     <DocsColorModeProvider>
       <SEOHead
         title="Documentation — Complete Feature Guide for Indian Traders"
-        description="Step-by-step guide to TradeBook: dashboard setup, trade logging, alerts, AI analytics, journal, Dhan integration, and 26 features for NSE, BSE & MCX traders."
+        description="Step-by-step guide to TradeBook: dashboard setup, trade logging, alerts, AI analytics, journal, Dhan integration, and 29 features for NSE, BSE & MCX traders."
         path="/docs"
         ogType="article"
         datePublished="2025-12-01"
