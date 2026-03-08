@@ -215,7 +215,7 @@ export function DashboardKPICards({ alerts }: Props) {
         onKeyDown={(e) => { if (e.key === "Enter") navigate("/alerts"); }}
       >
         <div className="flex items-center justify-between mb-4">
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Active Alerts</span>
+          <span className="kpi-label">Active Alerts</span>
           <div className="icon-badge bg-warning/10">
             <Bell className="w-4.5 h-4.5 text-warning" />
           </div>
