@@ -3519,8 +3519,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </ProTip>
 
               <NextStepBlock steps={[
+                { label: "Notification Center", description: "Stay on top of every event", targetId: "notifications" },
                 { label: "Sharing & Social", description: "Share your wins and streaks", targetId: "sharing" },
-                { label: "Trade Coach", description: "AI-powered trade analysis", targetId: "trade-coach" },
               ]} />
             </motion.section>
 
