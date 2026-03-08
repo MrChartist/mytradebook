@@ -846,6 +846,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   A compact monthly calendar where each day is color-coded by P&L — green shades for profitable days, red shades for losses. Shows P&L amounts in each cell. Click any day to jump to the full calendar view with daily journal and trade details.
                 </p>
                 <div className="mt-4"><CalendarHeatmapWidgetMockup /></div>
+                <MockupCaption>Intensity of green/red shading corresponds to magnitude of profit/loss. Hover for exact amounts; click any day to open the full calendar view.</MockupCaption>
               </FeatureCard>
 
               <SubTopic title="Customization & Layout" description="Tailor your dashboard to your workflow." id="db-customization" />
