@@ -747,9 +747,6 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="The core of TradeBook. Log every trade with detailed metadata — entry, exit, stop loss, targets, tags, chart images, and post-trade reviews. Manage your entire trading book from one screen."
                 icon={CandlestickChart}
               />
-              <ProTip>
-                <p>Always set your stop loss before submitting a trade. TradeBook calculates your risk-to-reward ratio automatically — trades with R:R below 1:2 are flagged in your analytics.</p>
-              </ProTip>
               <QuickNav items={[
                 { label: "Creating Trades", id: "tm-creating" },
                 { label: "Trade Lifecycle", id: "tm-lifecycle" },
@@ -758,6 +755,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Sharing & Discipline", id: "tm-sharing" },
                 { label: "Quick Actions", id: "tm-quick" },
               ]} />
+              <ProTip>
+                <p>Always set your stop loss before submitting a trade. TradeBook calculates your risk-to-reward ratio automatically — trades with R:R below 1:2 are flagged in your analytics.</p>
+              </ProTip>
 
               <SubTopic title="Creating & Managing Trades" description="Log trades with detailed metadata and smart defaults." id="tm-creating" />
 
