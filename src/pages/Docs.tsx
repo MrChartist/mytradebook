@@ -1373,7 +1373,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <SectionHeader
                 id="trading-rules"
                 title="Trading Rules Checklist"
-                description="Define your personal pre-trade rules and enforce discipline. Every rule must be checked before a trade can be submitted."
+                description="Define your personal pre-trade rules and enforce discipline. Every rule must be checked before a trade can be submitted — turning your best intentions into consistent behavior."
                 icon={ClipboardCheck}
               />
               <QuickNav items={[
@@ -1381,6 +1381,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Core vs Optional", id: "tr-core" },
                 { label: "Rule Examples", id: "tr-examples" },
               ]} />
+
+              <ProTip variant="best-practice">
+                <p><strong>Why this feature exists:</strong> Every trader has rules they know they should follow. The problem isn't knowledge — it's execution under pressure. When a setup looks exciting and the market is moving fast, discipline evaporates. The Trading Rules Checklist makes your rules <em>mandatory</em> — you physically can't submit a trade until every box is checked. This transforms "I should check the trend" from a suggestion into a gate that prevents impulsive entries.</p>
+              </ProTip>
 
               <InteractiveMockup label="Trading Rules Checklist">
                 <TradingRulesMockup />
