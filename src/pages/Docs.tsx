@@ -773,9 +773,19 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Customization", id: "db-customization" },
                 { label: "Advanced Widgets", id: "db-advanced" },
               ]} />
-              <InteractiveMockup label="Dashboard Overview">
+              <VisualWalkthrough
+                title="Dashboard Overview"
+                steps={[
+                  { marker: "1", label: "P&L Hero", detail: "Today's total P&L with realized vs unrealized split" },
+                  { marker: "2", label: "KPI Cards", detail: "MTD P&L, Open Positions, Win Rate, Active Alerts" },
+                  { marker: "3", label: "Risk Gauge", detail: "Color-coded risk % with daily/monthly goal progress" },
+                  { marker: "4", label: "Equity Curve", detail: "Cumulative P&L chart with drawdown markers" },
+                  { marker: "5", label: "Calendar Heatmap", detail: "Monthly grid color-coded by daily P&L" },
+                  { marker: "6", label: "Segment Filters", detail: "Filter all widgets by market segment and month" },
+                ]}
+              >
                 <DashboardMockup />
-              </InteractiveMockup>
+              </VisualWalkthrough>
 
               <SubTopic title="Performance Overview" description="Real-time P&L and key trading metrics at a glance." id="db-performance" />
               <FeatureCard icon={Activity} title="Today's P&L Hero Card">
