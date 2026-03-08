@@ -112,10 +112,10 @@ export function Sidebar() {
         <div className="flex items-center gap-1">
           <ThemeToggle />
           <NotificationBell />
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-sm)] text-muted-foreground">
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-sm)] text-muted-foreground" aria-label="Search">
             <Search className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-sm)] text-muted-foreground" onClick={() => setMobileOpen(true)}>
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-sm)] text-muted-foreground" onClick={() => setMobileOpen(true)} aria-label="Open menu">
             <Menu className="w-[18px] h-[18px]" />
           </Button>
         </div>
