@@ -85,8 +85,8 @@ export function HowItWorksSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>How It Works</SectionBadge>
-          <h2 className="font-display text-4xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight">Three steps to{" "}<span className="accent-script">mastery</span></h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-lg">From first trade to consistent edge — in minutes.</p>
+          <h2 className="font-display text-[2rem] lg:text-[3rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">Three steps to{" "}<span className="accent-script">mastery</span></h2>
+          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-base leading-[1.65]">From first trade to consistent edge — in minutes.</p>
         </motion.div>
 
         {/* Timeline steps */}
