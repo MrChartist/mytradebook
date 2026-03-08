@@ -471,8 +471,8 @@ function RightRail({ activeSection }: { activeSection: string }) {
               );
             })}
             {anchors.length === 0 && (
-              <p className="text-[11px] italic" style={{ color: 'hsl(var(--docs-text-muted) / 0.4)' }}>
-                No sub-sections
+              <p className="text-[11px] italic py-1" style={{ color: 'hsl(var(--docs-text-muted) / 0.35)' }}>
+                Select a section to see outline
               </p>
             )}
           </motion.nav>
