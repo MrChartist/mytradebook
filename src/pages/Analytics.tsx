@@ -61,12 +61,15 @@ export default function Analytics() {
   const totalPnl = closed.reduce((a, t) => a + (t.pnl || 0), 0);
   const wins = closed.filter((t) => (t.pnl || 0) > 0);
   const losses = closed.filter((t) => (t.pnl || 0) < 0);
+  const winRate = closed.length ? (wins.length / closed.length) * 100 : 0;
   const avgWin = wins.length ? wins.reduce((a, t) => a + (t.pnl || 0), 0) / wins.length : 0;
   const avgLoss = losses.length ? Math.abs(losses.reduce((a, t) => a + (t.pnl || 0), 0) / losses.length) : 0;
-  const profitFactor = avgLoss > 0 ? (avgWin * wins.length) / (avgLoss * losses.length) : 0;
+  const profitFactor = losses.length === 0 ? (wins.length > 0 ? Infinity : 0) : (avgWin * wins.length) / (avgLoss * losses.length);
   const expectancy = closed.length ? totalPnl / closed.length : 0;
   const bestTrade = closed.length ? Math.max(...closed.map((t) => t.pnl || 0)) : 0;
   const worstTrade = closed.length ? Math.min(...closed.map((t) => t.pnl || 0)) : 0;
+
+  const periodLabel = datePreset === "all" ? "All time" : datePreset === "custom" ? "Custom range" : presets.find(p => p.value === datePreset)?.label || "";
 
   const presets: { label: string; value: DatePreset }[] = [
     { label: "7D", value: "7d" },
