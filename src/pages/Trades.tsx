@@ -149,7 +149,7 @@ export default function Trades() {
       return acc;
     }, []);
     return { pnlSparkline: cumPnl, winRateSparkline: wrData };
-  }, [allTrades]);
+  }, [allTradesForCounts]);
 
   const sortedTrades = useMemo(() => {
     let list = [...trades];
