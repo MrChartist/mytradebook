@@ -315,13 +315,13 @@ export default function Reports() {
                 </div>
 
                 {/* Segments Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border/15">
                   {report.segments.map((segment) => {
                     const topSetups = (segment.top_setups as { name: string; count: number }[] | null) || [];
                     const commonMistakes = (segment.common_mistakes as { name: string; count: number }[] | null) || [];
                     return (
-                      <div key={segment.segment} className="p-5">
-                        <h4 className="font-medium text-sm text-muted-foreground mb-3">
+                      <div key={segment.segment} className="p-4">
+                        <h4 className="font-medium text-[11px] text-muted-foreground/60 uppercase tracking-wider mb-2.5">
                           {segmentDisplayNames[segment.segment] || segment.segment}
                         </h4>
                         <div className="space-y-3">
