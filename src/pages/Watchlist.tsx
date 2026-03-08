@@ -260,6 +260,44 @@ export default function WatchlistPage() {
         title="Delete Watchlist"
         description={`Delete "${listToDelete?.name}"? All items will be removed.`}
       />
+
+      {/* Rename dialog */}
+      <Dialog open={!!renameTarget} onOpenChange={(open) => !open && setRenameTarget(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Rename Watchlist</DialogTitle>
+            <DialogDescription>Enter a new name for "{renameTarget?.name}".</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              value={renameName}
+              onChange={(e) => setRenameName(e.target.value)}
+              placeholder="Watchlist name"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && renameName.trim() && renameTarget) {
+                  updateWatchlist.mutate({ id: renameTarget.id, name: renameName.trim() });
+                  setRenameTarget(null);
+                }
+              }}
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setRenameTarget(null)}>Cancel</Button>
+              <Button
+                disabled={!renameName.trim() || updateWatchlist.isPending}
+                onClick={() => {
+                  if (renameTarget && renameName.trim()) {
+                    updateWatchlist.mutate({ id: renameTarget.id, name: renameName.trim() });
+                    setRenameTarget(null);
+                  }
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
