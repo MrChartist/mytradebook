@@ -4365,7 +4365,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   <ul className="space-y-2">
                     {col.links.map((l) => (
                       <li key={l.label}>
-                        <button onClick={() => l.href.startsWith("mailto") ? window.open(l.href) : l.href.startsWith("#") ? document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: "smooth" }) : navigate(l.href)} className="docs-sidebar-item transition-colors" style={{ color: 'hsl(var(--docs-text-secondary))' }}>
+                        <button onClick={() => l.href.startsWith("mailto") ? window.open(l.href) : l.href.startsWith("#") ? document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: "smooth" }) : navigate(l.href)} className="docs-sidebar-item transition-colors hover:!text-[hsl(var(--docs-text-strong))]" style={{ color: 'hsl(var(--docs-text-secondary))' }}>
                           {l.label}
                         </button>
                       </li>
