@@ -15,9 +15,9 @@ import { fadeUp, blurIn, slideFromLeft, slideFromRight, popIn, MotionSection, Se
 
 /* ─── Data ─── */
 const steps = [
-  { step: "01", icon: BookOpen, title: "Log Your Trades", desc: "Add trades manually or auto-sync from Dhan. Tag setups, patterns, and mistakes." },
-  { step: "02", icon: Eye, title: "Spot Patterns", desc: "Segment-level analytics reveal what's working — by setup, time, and condition." },
-  { step: "03", icon: Zap, title: "Automate & Scale", desc: "Set rules, alerts, and trailing stops. Let the system enforce your discipline." },
+  { step: "01", icon: BookOpen, title: "Log", subtitle: "your trades", desc: "Manual entry or auto-sync from Dhan. Tag setups, patterns, and mistakes in seconds.", accent: "from-primary/20 to-primary/5" },
+  { step: "02", icon: Eye, title: "Analyze", subtitle: "your edge", desc: "Segment-level analytics reveal what's working — by setup, time, emotion, and market condition.", accent: "from-primary/15 to-primary/5" },
+  { step: "03", icon: Zap, title: "Automate", subtitle: "your discipline", desc: "Rules engine, smart alerts, and trailing stops enforce your system — even when you won't.", accent: "from-primary/10 to-primary/5" },
 ];
 
 const testimonials = [
