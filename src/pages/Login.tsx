@@ -154,7 +154,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex flex-col pt-16">
-      <SEOHead title="Login" description="Sign in or create your TradeBook account to start journaling trades." path="/login" noIndex />
+      <SEOHead title="Sign In or Sign Up" description="Sign in or create your free TradeBook account. Start journaling trades, tracking performance, and building your edge in NSE, BSE & MCX markets." path="/login" noIndex />
 
       {/* Navbar — Floating Island (matches Landing) */}
       <motion.nav

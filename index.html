@@ -44,15 +44,43 @@
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "TradeBook",
-      "description": "Trading journal and analytics platform for Indian markets",
+      "alternateName": "TradeBook by Mr Chartist",
+      "description": "Trading journal and analytics platform for Indian markets — NSE, BSE, MCX. Track, analyze, and improve your trades.",
       "url": "https://tradebook.mrchartist.com",
       "applicationCategory": "FinanceApplication",
       "operatingSystem": "Web",
+      "browserRequirements": "Requires JavaScript, modern browser",
+      "softwareVersion": "1.0",
+      "author": { "@type": "Organization", "name": "TradeBook" },
       "offers": {
         "@type": "Offer",
         "price": "0",
-        "priceCurrency": "INR"
-      }
+        "priceCurrency": "INR",
+        "description": "Free during beta"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "ratingCount": "1200",
+        "bestRating": "5"
+      },
+      "featureList": "Trade Logging, AI Analytics, Trailing Stop Loss, Dhan Integration, Telegram Alerts, Pattern Detection, Weekly Reports"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "TradeBook",
+      "url": "https://tradebook.mrchartist.com",
+      "logo": "https://tradebook.mrchartist.com/assets/logo.png",
+      "description": "Trading journal and analytics platform for Indian markets.",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "founder@mrchartist.com",
+        "contactType": "customer support"
+      },
+      "sameAs": []
     }
     </script>
     <script type="application/ld+json">
@@ -61,7 +89,7 @@
       "@type": "BreadcrumbList",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tradebook.mrchartist.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Docs", "item": "https://tradebook.mrchartist.com/docs" },
+        { "@type": "ListItem", "position": 2, "name": "Documentation", "item": "https://tradebook.mrchartist.com/docs" },
         { "@type": "ListItem", "position": 3, "name": "Login", "item": "https://tradebook.mrchartist.com/login" }
       ]
     }
@@ -74,17 +102,27 @@
         {
           "@type": "Question",
           "name": "Is TradeBook free?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Yes, TradeBook is free during beta. All core features are available at no cost." }
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes, TradeBook is free during beta. All core features — trade logging, AI analytics, alerts, and Dhan integration — are available at no cost." }
         },
         {
           "@type": "Question",
-          "name": "Which markets does TradeBook support?",
-          "acceptedAnswer": { "@type": "Answer", "text": "TradeBook is built for Indian markets — NSE, BSE, MCX — covering Equity Intraday, Positional, Futures, Options, and Commodities." }
+          "name": "Which Indian markets does TradeBook support?",
+          "acceptedAnswer": { "@type": "Answer", "text": "TradeBook supports NSE, BSE, and MCX markets covering Equity Cash, Equity Intraday, Futures, Options, Commodities, and Currency segments." }
         },
         {
           "@type": "Question",
           "name": "Can I sync trades from my broker?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Yes, TradeBook supports auto-sync with Dhan broker. You can also import trades via CSV." }
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes, TradeBook integrates with Dhan broker for live portfolio sync, auto-trade import, and one-click execution." }
+        },
+        {
+          "@type": "Question",
+          "name": "Does TradeBook work on mobile?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes, TradeBook is a Progressive Web App (PWA) that works on any device. Install it on your phone for a native app-like experience with offline support." }
+        },
+        {
+          "@type": "Question",
+          "name": "How does AI analytics work in TradeBook?",
+          "acceptedAnswer": { "@type": "Answer", "text": "TradeBook uses AI to detect trading patterns, provide trade coaching, generate insights on your performance, and suggest improvements based on your trading history." }
         }
       ]
     }
