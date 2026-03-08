@@ -3333,7 +3333,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </h3>
               <div className="space-y-3">
                 {[
-                  { version: "v3.2", date: "Mar 2026", items: ["Enhanced Docs — QuickNav, StepByStep guides, and ExpandableDetail across all sections", "Category-grouped FAQ with 17 questions", "PWA install walkthrough and offline queue explanation", "Settings configuration checklist", "Capital Management deep-dive", "AI Insights credit usage guide"] },
+                  { version: "v3.3", date: "Mar 2026", items: ["Notification Center upgrade — date grouping, type filters, click-to-navigate", "Quiet Hours & DND mode for notifications", "Enhanced Telegram message templates with emoji headers and separators", "Alert evaluation engine — staggered checks, priority system", "EOD Report & Morning Briefing template overhaul", "Docs final polish — QuickNav jump links, PhaseHeader badges, inline code styling, section highlight animation"] },
+                  { version: "v3.2", date: "Mar 2026", items: ["Enhanced Docs — StepByStep guides, ExpandableDetail, and ComparisonTable across all sections", "Category-grouped FAQ with 17 questions", "PWA install walkthrough and offline queue explanation", "Settings configuration checklist", "Capital Management deep-dive", "AI Insights credit usage guide"] },
                   { version: "v3.1", date: "Mar 2026", items: ["Trading Rules Checklist", "AI Trade Coach", "Smart Alert Suggestions", "Quick Close Popover", "Day/Time of Day Analysis", "Streak Tracker expansion", "Docs deep-links & reading time"] },
                   { version: "v3.0", date: "Mar 2026", items: ["AI Pattern Detection — behavioral insights", "Sector Rotation Heatmap", "Setup Win-Rate Matrix", "Emotional P&L Correlation"] },
                   { version: "v2.9", date: "Mar 2026", items: ["Dashboard drag-and-drop reordering", "Floating Trade Ticker", "Animated KPI numbers", "Mobile swipe-to-act on trades", "Quick Trade Entry via Command Palette", "P&L & Trade Share Cards"] },
@@ -3346,7 +3347,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     <div className="flex items-center gap-2 mb-2">
                       <Badge variant="secondary" className="bg-primary/10 text-primary border-none text-[10px]">{release.version}</Badge>
                       <span className="text-[10px] text-muted-foreground">{release.date}</span>
-                      {release.version === "v3.2" && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-profit/10 text-profit font-bold">Latest</span>}
+                      {release.version === "v3.3" && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-profit/10 text-profit font-bold">Latest</span>}
                     </div>
                     <ul className="space-y-1">
                       {release.items.map((item) => (
@@ -3375,12 +3376,15 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </h3>
               <div className="space-y-3">
                 {[
+                  { label: "Alert Chains & Workflows", desc: "Multi-step alert automation — 'If NIFTY crosses 22000, auto-create BANKNIFTY alert at 48000'", status: "In Progress" },
                   { label: "Social Trading", desc: "Share your trade journal publicly with a custom RA-compliant profile", status: "In Progress" },
+                  { label: "Notification Analytics", desc: "Dashboard showing delivery rates, alert trigger analytics, and bot health metrics", status: "Planned" },
                   { label: "Option Chain Analyzer", desc: "Visual option chain with Greeks, IV surface, and strategy payoff diagrams", status: "Planned" },
                   { label: "Advanced Backtesting", desc: "Test your strategies against historical data with simulated P&L", status: "Planned" },
-                  { label: "Zerodha Integration", desc: "Connect your Zerodha Kite account for live prices and auto-sync", status: "Exploring" },
                   { label: "Trade Similarity Engine", desc: "AI finds similar past trades and shows your historical win rate for that pattern", status: "Planned" },
+                  { label: "Zerodha Integration", desc: "Connect your Zerodha Kite account for live prices and auto-sync", status: "Exploring" },
                   { label: "Multi-Currency Support", desc: "Support for USD, EUR and other currencies for NRI traders", status: "Exploring" },
+                  { label: "Community Leaderboard", desc: "Opt-in public leaderboard comparing anonymized win rates and streaks", status: "Exploring" },
                 ].map((item) => (
                   <div key={item.label} className="premium-card-hover p-4 flex items-start gap-3">
                     <div className="mt-0.5">
