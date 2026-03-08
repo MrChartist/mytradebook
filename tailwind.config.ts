@@ -76,8 +76,8 @@ export default {
         sm: "var(--radius-sm)",
       },
       fontFamily: {
-        sans: ["'Source Sans 3'", "system-ui", "sans-serif"],
-        heading: ["'Libre Bodoni'", "Georgia", "serif"],
+        sans: ["'Inter'", "system-ui", "sans-serif"],
+        heading: ["'Sora'", "'Inter'", "sans-serif"],
         mono: ["'JetBrains Mono'", "monospace"],
       },
       keyframes: {

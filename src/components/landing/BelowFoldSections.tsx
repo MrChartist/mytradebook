@@ -73,7 +73,7 @@ export function HowItWorksSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>How It Works</SectionBadge>
-          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-6 leading-[1.08] tracking-[-0.018em]">Three steps to{" "}<span className="accent-serif">mastery</span></h2>
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-6 leading-[1.06] tracking-[-0.03em]">Three steps to{" "}<span className="text-gradient">mastery</span></h2>
           <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-[1rem] leading-[1.7]">From first trade to consistent edge — in minutes.</p>
         </motion.div>
 
@@ -163,8 +163,8 @@ export function PricingSection() {
       <MotionSection className="max-w-5xl mx-auto px-6 lg:px-8">
         <motion.div variants={fadeUp} className="text-center mb-16">
           <SectionBadge>Pricing</SectionBadge>
-          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-5 leading-[1.08] tracking-[-0.018em]">
-            Simple,{" "}<span className="accent-serif">transparent</span>{" "}pricing
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.06] tracking-[-0.03em]">
+            Simple,{" "}<span className="text-gradient">transparent</span>{" "}pricing
           </h2>
           <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-[1rem] leading-[1.7]">
             Everything free during beta. No credit card. No catch.
@@ -316,8 +316,8 @@ export function TestimonialsSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>Testimonials</SectionBadge>
-          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-6 leading-[1.08] tracking-[-0.018em]">
-            Trusted by{" "}<span className="accent-serif">real traders</span>
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-6 leading-[1.06] tracking-[-0.03em]">
+            Trusted by{" "}<span className="text-gradient">real traders</span>
           </h2>
           <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-[1rem] leading-[1.7]">Here's what traders across India are saying.</p>
         </motion.div>
@@ -409,8 +409,8 @@ export function IndianMarketsSection() {
           {/* Text side */}
           <motion.div variants={fadeUp}>
             <SectionBadge>Made in India</SectionBadge>
-            <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-6 leading-[1.08] tracking-[-0.018em]">
-              Built for{" "}<span className="accent-serif">Indian</span>{" "}markets
+            <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-6 leading-[1.06] tracking-[-0.03em]">
+              Built for{" "}<span className="text-gradient">Indian</span>{" "}markets
             </h2>
             <p className="text-muted-foreground text-[15px] lg:text-[1rem] leading-[1.7] mb-8 tracking-[-0.006em]">
               Unlike generic journals, TradeBook understands Indian market structure — segments, lot sizes, INR formatting, and trading hours.
@@ -511,8 +511,8 @@ export function FAQSection() {
       <MotionSection className="max-w-2xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-16">
           <SectionBadge>FAQ</SectionBadge>
-          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-5 leading-[1.08] tracking-[-0.018em]">
-            Got{" "}<span className="accent-serif">questions</span>?
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.06] tracking-[-0.03em]">
+            Got{" "}<span className="text-gradient">questions</span>?
           </h2>
           <p className="text-muted-foreground text-[15px] lg:text-[1rem] leading-[1.7]">Everything you need to know about TradeBook.</p>
         </motion.div>
@@ -577,11 +577,11 @@ export function FinalCTASection() {
           <span className="text-[13px] font-medium text-muted-foreground">1,200+ traders · 42,000+ trades</span>
         </motion.div>
 
-        <motion.h2 variants={fadeUp} className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold leading-[1.08] tracking-[-0.018em] mb-3">
+        <motion.h2 variants={fadeUp} className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold leading-[1.06] tracking-[-0.03em] mb-3">
           Stop losing money to
         </motion.h2>
-        <motion.h2 variants={fadeUp} className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold leading-[1.08] tracking-[-0.018em] mb-10">
-          <span className="accent-serif">undisciplined</span> trading
+        <motion.h2 variants={fadeUp} className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold leading-[1.06] tracking-[-0.03em] mb-10">
+          <span className="text-gradient">undisciplined</span> trading
         </motion.h2>
 
         <motion.p variants={fadeUp} className="text-[1rem] lg:text-[1.125rem] text-muted-foreground mb-14 max-w-xl mx-auto leading-[1.7] tracking-[-0.006em]">

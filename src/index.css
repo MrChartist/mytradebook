@@ -7,10 +7,10 @@
    ================================================================
    
    Font System (2-font + mono):
-     Display:  'Libre Bodoni' — premium serif for hero headlines,
+     Display:  'Sora' — modern geometric for hero headlines,
                major landing section titles, docs page title,
                top-level page titles where emphasis is useful
-     UI/Body:  'Source Sans 3' — all functional UI text: navbar,
+     UI/Body:  'Inter' — all functional UI text: navbar,
                footer, sidebar, docs body, dashboard, tables,
                forms, settings, buttons, labels, cards, badges
      Mono:     'JetBrains Mono' — code blocks, keyboard shortcuts,
@@ -216,9 +216,9 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
-    font-size: 1rem; /* 16px base for app */
+    font-size: 1rem;
     line-height: 1.6;
     letter-spacing: -0.011em;
   }
@@ -228,24 +228,28 @@
   .text-caption { font-size: 0.75rem;  line-height: 1.5; letter-spacing: 0.005em; } /* 12px */
   .text-body-sm { font-size: 0.875rem; line-height: 1.55; letter-spacing: -0.006em; } /* 14px */
   .text-body  { font-size: 1rem;      line-height: 1.6; letter-spacing: -0.011em; }  /* 16px */
-  .text-heading-sm { font-size: 1.125rem; line-height: 1.45; letter-spacing: -0.015em; font-weight: 600; font-family: 'Source Sans 3', sans-serif; } /* 18px */
-  .text-heading { font-size: 1.375rem; line-height: 1.35; letter-spacing: -0.02em; font-weight: 600; font-family: 'Source Sans 3', sans-serif; } /* 22px */
-  .text-heading-lg { font-size: 1.75rem; line-height: 1.25; letter-spacing: -0.025em; font-weight: 700; font-family: 'Source Sans 3', sans-serif; } /* 28px */
-  .text-display { font-size: 2.25rem; line-height: 1.15; letter-spacing: -0.028em; font-weight: 700; font-family: 'Libre Bodoni', Georgia, serif; } /* 36px — premium display */
+  .text-heading-sm { font-size: 1.125rem; line-height: 1.45; letter-spacing: -0.015em; font-weight: 600; font-family: 'Inter', sans-serif; }
+  .text-heading { font-size: 1.375rem; line-height: 1.35; letter-spacing: -0.02em; font-weight: 600; font-family: 'Inter', sans-serif; }
+  .text-heading-lg { font-size: 1.75rem; line-height: 1.25; letter-spacing: -0.025em; font-weight: 700; font-family: 'Inter', sans-serif; }
+  .text-display { font-size: 2.25rem; line-height: 1.15; letter-spacing: -0.028em; font-weight: 700; font-family: 'Sora', 'Inter', sans-serif; }
 
-  /* ── Accent serif (Libre Bodoni) — use sparingly in premium headings ── */
-  .accent-serif {
-    font-family: 'Libre Bodoni', Georgia, serif;
-    font-style: italic;
-    font-weight: 400;
+  /* ── Gradient text accent — replaces serif accent ── */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--tb-accent)) 0%, hsl(16 85% 55%) 50%, hsl(340 70% 55%) 100%);
   }
 
-  /* Legacy alias for accent-script (migration helper) — same as accent-serif */
+  /* Legacy alias — maps to gradient now */
+  .accent-serif {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--tb-accent)) 0%, hsl(16 85% 55%) 50%, hsl(340 70% 55%) 100%);
+    font-style: normal;
+  }
+
   .accent-script {
-    font-family: 'Libre Bodoni', Georgia, serif;
-    font-style: italic;
-    font-weight: 400;
-    color: hsl(var(--tb-accent));
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--tb-accent)) 0%, hsl(16 85% 55%) 50%, hsl(340 70% 55%) 100%);
+    font-style: normal;
   }
 
   /* ── Standardized label for KPI/stat cards ───── */
@@ -622,12 +626,12 @@
   /* ── Landing Page Typography ───────────────────── */
   .landing-page h1,
   .landing-page h2 {
-    font-family: 'Libre Bodoni', Georgia, serif;
-    letter-spacing: -0.02em;
+    font-family: 'Sora', 'Inter', sans-serif;
+    letter-spacing: -0.03em;
   }
 
   .landing-page h3 {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     letter-spacing: -0.015em;
   }
 
@@ -636,11 +640,17 @@
   .landing-page button,
   .landing-page a,
   .landing-page li {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
   }
 
   .landing-page .font-mono {
     font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── Glow line accent ── */
+  .glow-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, hsl(var(--tb-accent) / 0.5) 30%, hsl(var(--tb-accent) / 0.5) 70%, transparent 100%);
   }
 
   /* accent-script color is set in base layer above — no redefinition needed */
@@ -657,23 +667,23 @@
      ================================================================
      
      Typography hierarchy (technical docs):
-       Page title:        48px desktop, 42px tablet, 32px mobile — Libre Bodoni
-       Section title:     30px desktop, 26px tablet, 22px mobile — Source Sans 3, 650
-       Topic heading:     24px desktop, 21px tablet, 19px mobile — Source Sans 3, 650
-       Sub-topic heading: 20px desktop, 18px tablet, 17px mobile — Source Sans 3, 600
-       Card title:        17px desktop                           — Source Sans 3, 600
-       Body large:        17px desktop, 16px tablet, 15px mobile — Source Sans 3, 400
-       Body standard:     15.5px desktop, 15px tablet/mobile     — Source Sans 3, 400
-       Label:             13px, 550 weight, slight tracking       — Source Sans 3
-       Sidebar/nav:       13px, 450 weight                       — Source Sans 3
-       Helper/meta:       12.5px, 420 weight                     — Source Sans 3
-       Caption:           11.5px, 500 weight                     — Source Sans 3
-       Note/callout body: 14.5px, 440 weight                     — Source Sans 3
+       Page title:        48px desktop, 42px tablet, 32px mobile — Sora
+       Section title:     30px desktop, 26px tablet, 22px mobile — Inter, 650
+       Topic heading:     24px desktop, 21px tablet, 19px mobile — Inter, 650
+       Sub-topic heading: 20px desktop, 18px tablet, 17px mobile — Inter, 600
+       Card title:        17px desktop                           — Inter, 600
+       Body large:        17px desktop, 16px tablet, 15px mobile — Inter, 400
+       Body standard:     15.5px desktop, 15px tablet/mobile     — Inter, 400
+       Label:             13px, 550 weight, slight tracking       — Inter
+       Sidebar/nav:       13px, 450 weight                       — Inter
+       Helper/meta:       12.5px, 420 weight                     — Inter
+       Caption:           11.5px, 500 weight                     — Inter
+       Note/callout body: 14.5px, 440 weight                     — Inter
        Code:              13.5px, JetBrains Mono
      
      Font assignment:
-       Libre Bodoni  — page title only (serif editorial anchor)
-       Source Sans 3 — everything else (professional, highly readable)
+       Sora          — page title only (modern geometric anchor)
+       Inter         — everything else (professional, highly readable)
        JetBrains M.  — code, kbd, API, tokens, commands
      
      Spacing rhythm:
@@ -739,19 +749,19 @@
      Designed for technical reading, not posters.
      ────────────────────────────────────────────────── */
 
-  /* Page title: 48px desktop — Libre Bodoni serif anchor, restrained */
+  /* Page title: 48px desktop — Sora display anchor */
   .docs-title {
-    font-family: 'Libre Bodoni', Georgia, serif;
+    font-family: 'Sora', 'Inter', sans-serif;
     font-size: 3rem;
     line-height: 1.08;
     font-weight: 700;
     color: hsl(var(--docs-text-strong));
-    letter-spacing: -0.025em;
+    letter-spacing: -0.03em;
   }
 
   /* Section title: 30px desktop — clear section entry, not oversized */
   .docs-section-title {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 1.875rem;
     line-height: 1.15;
     font-weight: 650;
@@ -761,7 +771,7 @@
 
   /* Topic heading: 24px desktop — primary content divider */
   .docs-topic-heading {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 1.5rem;
     line-height: 1.22;
     font-weight: 650;
@@ -771,7 +781,7 @@
 
   /* Sub-topic heading: 20px desktop — secondary content divider */
   .docs-subtopic-heading {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 1.25rem;
     line-height: 1.3;
     font-weight: 600;
@@ -781,7 +791,7 @@
 
   /* Card title: 17px — compact but clear */
   .docs-card-title {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 1.0625rem;
     line-height: 1.35;
     font-weight: 600;
@@ -791,7 +801,7 @@
 
   /* Body large: 17px — intro paragraphs, section descriptions */
   .docs-body-lg {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 1.0625rem;
     line-height: 1.7;
     font-weight: 400;
@@ -801,7 +811,7 @@
 
   /* Body standard: 15.5px — main content text */
   .docs-body {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.96875rem;
     line-height: 1.72;
     font-weight: 400;
@@ -811,7 +821,7 @@
 
   /* Label: 13px — form labels, tag labels, meta identifiers */
   .docs-label {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.8125rem;
     line-height: 1.35;
     font-weight: 550;
@@ -821,7 +831,7 @@
 
   /* Sidebar / navigation: 13px — left rail items */
   .docs-sidebar-item {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.8125rem;
     line-height: 1.4;
     font-weight: 450;
@@ -829,7 +839,7 @@
 
   /* Helper / meta: 12.5px — timestamps, counts, secondary info */
   .docs-helper {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.78125rem;
     line-height: 1.45;
     font-weight: 420;
@@ -838,7 +848,7 @@
 
   /* Caption: 11.5px — smallest text, breadcrumbs, micro labels */
   .docs-caption {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.71875rem;
     line-height: 1.4;
     font-weight: 500;
@@ -848,7 +858,7 @@
 
   /* Note/callout body: 14.5px — ProTip, info, warning content */
   .docs-note {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.90625rem;
     line-height: 1.68;
     font-weight: 440;
@@ -904,7 +914,7 @@
 
   /* ── Docs card content typography ── */
   .docs-card-content > p {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.96875rem;
     line-height: 1.72;
     color: hsl(var(--docs-text-secondary));
@@ -932,7 +942,7 @@
     color: hsl(var(--docs-text-muted));
     transition: color 150ms ease-out, background 150ms ease-out;
     border-radius: 0.375rem;
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.8125rem;
     font-weight: 450;
     letter-spacing: 0.005em;
@@ -953,7 +963,7 @@
 
   /* Sidebar sub-topic link (nested under active section) */
   .docs-page .docs-sidebar-sub-link {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.75rem;
     font-weight: 420;
     line-height: 1.35;
@@ -968,7 +978,7 @@
 
   /* Sidebar group label — quieter, structured */
   .docs-page .docs-sidebar-group-label {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.65rem;
     font-weight: 650;
     letter-spacing: 0.08em;
@@ -999,7 +1009,7 @@
 
   /* ── Docs right rail (On this page) ── */
   .docs-page .docs-anchor-link {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     color: hsl(var(--docs-text-muted) / 0.7);
     font-size: 0.78125rem;
     font-weight: 430;
@@ -1023,7 +1033,7 @@
 
   /* ── Docs Navbar ── */
   .docs-navbar {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
   }
   .docs-navbar--top {
     background: transparent;
@@ -1068,7 +1078,7 @@
     font-weight: 550;
   }
   .docs-navbar-util-btn {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     color: hsl(var(--docs-text-muted) / 0.6);
     border: 1px solid hsl(var(--docs-border-subtle) / 0.6);
     background: hsl(var(--docs-elevated) / 0.3);
@@ -1128,7 +1138,7 @@
 
   /* ── Mobile topic rail ── */
   .docs-mobile-tab {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 0.01em;
@@ -1369,11 +1379,11 @@
     border-spacing: 0;
     border-radius: 0.75rem;
     overflow: hidden;
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.9375rem;
   }
   .docs-page table:not(.recharts-surface table) thead th {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -1525,7 +1535,7 @@
     border-bottom: 1px solid hsl(var(--docs-border-subtle) / 0.3);
   }
   .docs-page .docs-meta-key {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -1535,7 +1545,7 @@
     flex-shrink: 0;
   }
   .docs-page .docs-meta-value {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 0.9375rem;
     color: hsl(var(--docs-text-primary));
   }

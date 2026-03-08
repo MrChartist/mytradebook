@@ -67,10 +67,11 @@ export function MotionSection({ children, className }: { children: React.ReactNo
   );
 }
 
-/* ─── Section Label Badge — refined pill ────────────────── */
+/* ─── Section Label Badge — modern pill with glow dot ──── */
 export function SectionBadge({ children }: { children: React.ReactNode }) {
   return (
-    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-border/30 bg-card/40 backdrop-blur-sm text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/60 mb-6">
+    <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-border/25 bg-card/40 dark:bg-card/15 backdrop-blur-sm text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/60 mb-6">
+      <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
       {children}
     </div>
   );

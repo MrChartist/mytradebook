@@ -33,7 +33,7 @@ export function StickyCTA() {
         >
           <div className="max-w-md mx-auto px-4 pb-4 pointer-events-auto">
             <div
-              className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-full border border-border/30 bg-card/95 backdrop-blur-xl shadow-md"
+              className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-full border border-border/30 bg-card/95 backdrop-blur-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1),0_0_0_1px_hsl(var(--border)/0.15)]"
             >
               <p className="text-[13px] font-medium text-foreground hidden sm:block">
                 Start Free — No Credit Card

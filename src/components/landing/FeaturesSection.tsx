@@ -68,9 +68,9 @@ export function FeaturesSection() {
         {/* Heading */}
         <motion.div variants={fadeUp} className="text-center mb-16 lg:mb-20">
           <SectionBadge>Features</SectionBadge>
-          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-5 leading-[1.08] tracking-[-0.018em]">
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.06] tracking-[-0.03em]">
             Everything you need to{" "}
-            <span className="accent-serif">trade</span>{" "}better
+            <span className="text-gradient">trade</span>{" "}better
           </h2>
           <p className="text-muted-foreground max-w-lg mx-auto text-[15px] lg:text-[1rem] leading-[1.7] tracking-[-0.008em]">
             Journal, analyze, and automate — tools designed by traders, for traders.
@@ -101,7 +101,7 @@ export function FeaturesSection() {
                   f.span === "hero" ? "p-6 sm:p-8" : "p-5 sm:p-6",
                 )}
                 style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.03)" }}
-                whileHover={{ y: -3, borderColor: "hsl(var(--border) / 0.45)" }}
+                whileHover={{ y: -3, borderColor: "hsl(var(--border) / 0.45)", boxShadow: `inset 0 1px 0 0 hsl(0 0% 100% / 0.03), 0 0 30px -10px ${f.color.replace(")", " / 0.15)")}` }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
               >
                 {/* Colored top accent line */}
