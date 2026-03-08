@@ -68,6 +68,8 @@ export default function WatchlistPage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [listToDelete, setListToDelete] = useState<Watchlist | null>(null);
+  const [renameTarget, setRenameTarget] = useState<Watchlist | null>(null);
+  const [renameName, setRenameName] = useState("");
   const [newName, setNewName] = useState("");
   const [newDesc, setNewDesc] = useState("");
   const [newColor, setNewColor] = useState("#6366f1");
@@ -166,7 +168,7 @@ export default function WatchlistPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem><Edit2 className="w-4 h-4 mr-2" /> Rename</DropdownMenuItem>
+                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setRenameTarget(wl); setRenameName(wl.name); }}><Edit2 className="w-4 h-4 mr-2" /> Rename</DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         className="text-destructive"
@@ -258,6 +260,44 @@ export default function WatchlistPage() {
         title="Delete Watchlist"
         description={`Delete "${listToDelete?.name}"? All items will be removed.`}
       />
+
+      {/* Rename dialog */}
+      <Dialog open={!!renameTarget} onOpenChange={(open) => !open && setRenameTarget(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Rename Watchlist</DialogTitle>
+            <DialogDescription>Enter a new name for "{renameTarget?.name}".</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              value={renameName}
+              onChange={(e) => setRenameName(e.target.value)}
+              placeholder="Watchlist name"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && renameName.trim() && renameTarget) {
+                  updateWatchlist.mutate({ id: renameTarget.id, name: renameName.trim() });
+                  setRenameTarget(null);
+                }
+              }}
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setRenameTarget(null)}>Cancel</Button>
+              <Button
+                disabled={!renameName.trim() || updateWatchlist.isPending}
+                onClick={() => {
+                  if (renameTarget && renameName.trim()) {
+                    updateWatchlist.mutate({ id: renameTarget.id, name: renameName.trim() });
+                    setRenameTarget(null);
+                  }
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -292,9 +332,7 @@ function WatchlistDetail({
     [items]
   );
 
-  const symbolList = useMemo(() => items.map((i) => i.symbol), [items]);
-
-  const { prices, isPolling, lastUpdated, isLoading: pricesLoading } = useLivePrices(symbolList);
+  const { prices, isPolling, lastUpdated, isLoading: pricesLoading } = useLivePrices(instruments);
 
   // Check market closed: all prices have ltp 0 or no prices fetched
   const allUnavailable = items.length > 0 && Object.keys(prices).length === 0 && !pricesLoading;
@@ -443,6 +481,7 @@ function WatchlistDetail({
       <CreateTradeModal
         open={tradeModalOpen}
         onOpenChange={setTradeModalOpen}
+        initialData={tradePrefill ? { symbol: tradePrefill } : null}
       />
     </div>
   );
