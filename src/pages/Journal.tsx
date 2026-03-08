@@ -83,19 +83,19 @@ export default function Journal() {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in" role="region" aria-label="Trade journal">
+    <div className="space-y-4 animate-fade-in" role="region" aria-label="Trade journal">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold">Trade Journal</h1>
-            <p className="text-muted-foreground">
+          <div className="space-y-0.5">
+            <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Trade Journal</h1>
+            <p className="text-[13px] text-muted-foreground/70 leading-relaxed">
               Analyze your trading performance and patterns
             </p>
           </div>
           {analytics.journalStreak > 0 && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-warning/10 border border-warning/20 text-warning text-sm font-semibold">
-              🔥 {analytics.journalStreak} day streak
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-warning/8 border border-warning/15 text-warning text-[11px] font-semibold">
+              🔥 {analytics.journalStreak}d streak
             </span>
           )}
         </div>
