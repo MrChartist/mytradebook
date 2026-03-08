@@ -623,13 +623,13 @@ export default function IntegrationsSettings() {
                     </p>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="dhan-client-id-ak">Client ID</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="dhan-client-id-ak" className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">Client ID</Label>
                     <Input
                       id="dhan-client-id-ak"
                       value={dhanClientId}
                       onChange={(e) => setDhanClientId(e.target.value)}
-                      className="bg-accent border-border"
+                      className="bg-muted/20 border-border/20 h-9 text-[13px] focus:border-primary/30"
                       placeholder="Your Dhan Client ID"
                     />
                   </div>
