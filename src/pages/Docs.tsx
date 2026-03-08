@@ -487,14 +487,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             </button>
           </div>
           <p className="docs-body-lg max-w-xl" style={{ color: 'hsl(var(--docs-text-secondary))' }}>
-            Complete guide to every TradeBook feature — from trade logging to advanced analytics.
+            Complete guide to every TradeBook feature — from trade logging to advanced analytics for Indian market traders.
           </p>
-          <div className="flex items-center gap-3 mt-5 docs-caption">
+          <div className="flex items-center gap-3 mt-5 docs-caption flex-wrap">
             <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> ~35 min read</span>
             <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.4)' }} />
-            <span>Last updated: March 2026</span>
+            <span>Last updated: March 8, 2026</span>
             <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.4)' }} />
-            <span>26 sections</span>
+            <span>26 sections · 20+ interactive mockups</span>
           </div>
         </div>
       </div>
@@ -3290,6 +3290,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   { q: "How do Achievements work?", a: "Achievements are earned automatically as you hit milestones — like logging your first trade, reaching a win streak, or completing a week of journaling. Check your badge grid on the Dashboard to track progress." },
                   { q: "What is the Position Sizing Calculator?", a: "It calculates your ideal position size based on your capital, risk percentage, and stop loss distance. Available inside the trade creation modal to help you size positions consistently." },
                   { q: "Where can I find documentation for a specific feature?", a: "Use the sidebar search on this Docs page to filter sections by keyword. You can also use the QuickNav links at the top of each section to jump to specific topics." },
+                  { q: "How do Quiet Hours and DND work?", a: "Quiet Hours automatically mute notifications outside market hours (e.g., after 3:30 PM). DND mode pauses all notifications for a set duration. Both are configurable in Settings → Preferences." },
+                  { q: "What is the Notification Digest?", a: "When enabled, similar notifications are batched and delivered as a single summary instead of individual messages. This reduces notification fatigue during volatile trading sessions." },
+                  { q: "How are weekly reports different from daily journals?", a: "Daily journals capture your thoughts and plans for each trading day. Weekly reports are auto-generated performance summaries with segment breakdowns, top setups, and actionable insights — delivered every Monday." },
                 ].map((faq) => (
                   <div key={faq.q} className="premium-card-hover p-5 group my-3">
                     <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
@@ -3333,7 +3336,8 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </h3>
               <div className="space-y-3">
                 {[
-                  { version: "v3.2", date: "Mar 2026", items: ["Enhanced Docs — QuickNav, StepByStep guides, and ExpandableDetail across all sections", "Category-grouped FAQ with 17 questions", "PWA install walkthrough and offline queue explanation", "Settings configuration checklist", "Capital Management deep-dive", "AI Insights credit usage guide"] },
+                  { version: "v3.3", date: "Mar 2026", items: ["Notification Center upgrade — date grouping, type filters, click-to-navigate", "Quiet Hours & DND mode for notifications", "Enhanced Telegram message templates with emoji headers and separators", "Alert evaluation engine — staggered checks, priority system", "EOD Report & Morning Briefing template overhaul", "Docs final polish — QuickNav jump links, PhaseHeader badges, inline code styling, section highlight animation"] },
+                  { version: "v3.2", date: "Mar 2026", items: ["Enhanced Docs — StepByStep guides, ExpandableDetail, and ComparisonTable across all sections", "Category-grouped FAQ with 17 questions", "PWA install walkthrough and offline queue explanation", "Settings configuration checklist", "Capital Management deep-dive", "AI Insights credit usage guide"] },
                   { version: "v3.1", date: "Mar 2026", items: ["Trading Rules Checklist", "AI Trade Coach", "Smart Alert Suggestions", "Quick Close Popover", "Day/Time of Day Analysis", "Streak Tracker expansion", "Docs deep-links & reading time"] },
                   { version: "v3.0", date: "Mar 2026", items: ["AI Pattern Detection — behavioral insights", "Sector Rotation Heatmap", "Setup Win-Rate Matrix", "Emotional P&L Correlation"] },
                   { version: "v2.9", date: "Mar 2026", items: ["Dashboard drag-and-drop reordering", "Floating Trade Ticker", "Animated KPI numbers", "Mobile swipe-to-act on trades", "Quick Trade Entry via Command Palette", "P&L & Trade Share Cards"] },
@@ -3346,7 +3350,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     <div className="flex items-center gap-2 mb-2">
                       <Badge variant="secondary" className="bg-primary/10 text-primary border-none text-[10px]">{release.version}</Badge>
                       <span className="text-[10px] text-muted-foreground">{release.date}</span>
-                      {release.version === "v3.2" && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-profit/10 text-profit font-bold">Latest</span>}
+                      {release.version === "v3.3" && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-profit/10 text-profit font-bold">Latest</span>}
                     </div>
                     <ul className="space-y-1">
                       {release.items.map((item) => (
@@ -3375,12 +3379,15 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </h3>
               <div className="space-y-3">
                 {[
+                  { label: "Alert Chains & Workflows", desc: "Multi-step alert automation — 'If NIFTY crosses 22000, auto-create BANKNIFTY alert at 48000'", status: "In Progress" },
                   { label: "Social Trading", desc: "Share your trade journal publicly with a custom RA-compliant profile", status: "In Progress" },
+                  { label: "Notification Analytics", desc: "Dashboard showing delivery rates, alert trigger analytics, and bot health metrics", status: "Planned" },
                   { label: "Option Chain Analyzer", desc: "Visual option chain with Greeks, IV surface, and strategy payoff diagrams", status: "Planned" },
                   { label: "Advanced Backtesting", desc: "Test your strategies against historical data with simulated P&L", status: "Planned" },
-                  { label: "Zerodha Integration", desc: "Connect your Zerodha Kite account for live prices and auto-sync", status: "Exploring" },
                   { label: "Trade Similarity Engine", desc: "AI finds similar past trades and shows your historical win rate for that pattern", status: "Planned" },
+                  { label: "Zerodha Integration", desc: "Connect your Zerodha Kite account for live prices and auto-sync", status: "Exploring" },
                   { label: "Multi-Currency Support", desc: "Support for USD, EUR and other currencies for NRI traders", status: "Exploring" },
+                  { label: "Community Leaderboard", desc: "Opt-in public leaderboard comparing anonymized win rates and streaks", status: "Exploring" },
                 ].map((item) => (
                   <div key={item.label} className="premium-card-hover p-4 flex items-start gap-3">
                     <div className="mt-0.5">

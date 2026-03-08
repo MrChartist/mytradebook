@@ -982,19 +982,44 @@
   /* Docs divider */
   .docs-divider {
     height: 1px;
-    background: linear-gradient(90deg, transparent 0%, hsl(var(--docs-border-subtle)) 30%, hsl(var(--docs-border-subtle)) 70%, transparent 100%);
-    margin: 3.5rem 0;
+    background: linear-gradient(90deg, transparent 0%, hsl(var(--docs-border-subtle)) 20%, hsl(var(--docs-border-subtle)) 80%, transparent 100%);
+    margin: 4rem 0;
   }
-  
+
+  /* Docs section spacing consistency */
+  .docs-page main > section {
+    scroll-margin-top: 5rem;
+  }
+
   /* Light mode inline code */
   :root .docs-page code:not(pre code) {
     background: hsl(35 18% 92%);
     color: hsl(20 18% 25%);
+    padding: 0.15em 0.4em;
+    border-radius: 0.375rem;
+    font-size: 0.875em;
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid hsl(30 15% 87%);
   }
   
   .dark .docs-page code:not(pre code) {
     background: hsl(222 40% 14%);
     color: hsl(24 80% 70%);
+    border: 1px solid hsl(215 22% 20%);
+  }
+
+  /* Docs feature card hover lift */
+  .docs-page .docs-feature-card:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Docs smooth scroll target highlight */
+  .docs-page [id]:target {
+    animation: docs-highlight 1.5s ease-out;
+  }
+  @keyframes docs-highlight {
+    0% { outline: 2px solid hsl(var(--docs-accent) / 0.4); outline-offset: 4px; }
+    100% { outline: 2px solid transparent; outline-offset: 8px; }
   }
 }
 
