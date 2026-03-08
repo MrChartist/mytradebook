@@ -1051,7 +1051,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
         {/* ─────────────────────────────────────────────────────────────
             CENTER CONTENT COLUMN — Readable width, proper padding
             ───────────────────────────────────────────────────────────── */}
-        <main className="flex-1 min-w-0 px-5 sm:px-8 lg:px-12 xl:px-16 py-10 lg:py-12 pt-[7rem] lg:pt-12">
+        <main className="flex-1 min-w-0 px-5 sm:px-8 lg:px-12 xl:px-16 py-10 lg:py-12 pt-[8.5rem] lg:pt-12">
           <div className="max-w-[720px] mx-auto space-y-16 lg:space-y-18">
 
             {/* ── Phase 1. Getting Started ─────────────────────── */}
