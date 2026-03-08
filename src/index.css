@@ -791,7 +791,7 @@
 
   /* Card title: 17px — compact but clear */
   .docs-card-title {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 1.0625rem;
     line-height: 1.35;
     font-weight: 600;
