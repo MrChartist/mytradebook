@@ -1380,7 +1380,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "Risk of Ruin Calculator — statistical probability of account blowup",
                   ]} />
                 </FeatureCard>
-                <FeatureCard icon={Sparkles} title="AI Pattern Detection" badge="New">
+                <SubTopic title="AI-Powered Behavioral Analytics" description="Machine learning insights into your trading psychology." />
                   <p className="text-sm text-muted-foreground mb-3">
                     AI analyzes your entire trade history to surface hidden behavioral patterns — things you'd never spot manually. Powered by Gemini, it examines time-of-day performance, day-of-week tendencies, streak effects, and segment biases.
                   </p>
