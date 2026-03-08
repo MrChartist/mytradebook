@@ -385,6 +385,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
             A comprehensive guide to every feature, capability, and workflow in the platform — from your first trade log to advanced analytics.
           </p>
+          <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground/70">
+            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~25 min read</span>
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+            <span>Last updated: March 2026</span>
+          </div>
           {/* Hero stats strip */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
