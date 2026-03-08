@@ -582,7 +582,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   key={s.id}
                   onClick={() => scrollTo(s.id)}
                   className={cn(
-                    "shrink-0 px-2.5 py-1 rounded text-[11px] font-medium transition-colors whitespace-nowrap",
+                    "shrink-0 px-2.5 py-1 rounded text-[12px] font-medium transition-colors whitespace-nowrap",
                     activeSection === s.id
                       ? "bg-foreground text-background"
                       : "text-muted-foreground/60 hover:text-foreground"
