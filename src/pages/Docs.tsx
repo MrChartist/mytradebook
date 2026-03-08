@@ -2061,6 +2061,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Settings}
               />
               <SettingsPanelMockup />
+              <SubTopic title="Account & Preferences" description="Profile, billing, theme, and capital configuration." />
               <div className="grid md:grid-cols-2 gap-5">
                 <FeatureCard icon={Users} title="Profile & Billing">
                   <FeatureList items={[
