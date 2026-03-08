@@ -1934,6 +1934,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">This feedback loop is one of the most powerful features for improving your edge. Traders who link studies to trades can objectively measure which types of research lead to profitable outcomes.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Alerts", description: "Set alerts at your study price levels", targetId: "alerts" },
+                { label: "Watchlists", description: "Track study symbols in watchlists", targetId: "watchlists" },
+                { label: "Trade Management", description: "Execute trades from studies", targetId: "trade-management" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
