@@ -253,6 +253,8 @@ export default function Reports() {
   }
 
   return (
+    <>
+    <SEOHead title="Weekly Reports" noIndex />
     <PlanGate plan="pro" feature="weeklyReports" message="Upgrade to Pro to access weekly performance reports.">
     <div className="space-y-4 animate-fade-in">
       <PageHeader title="Weekly Reports" subtitle="Auto-generated performance summaries">
