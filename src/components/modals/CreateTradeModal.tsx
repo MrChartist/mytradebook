@@ -270,7 +270,6 @@ export function CreateTradeModal({ open, onOpenChange, initialData }: CreateTrad
 
       resetForm();
       onOpenChange(false);
-      fireProfitConfetti();
       toast.success("Trade created successfully! 🎉");
     } catch (error: unknown) {
       console.error("Trade creation failed:", error);

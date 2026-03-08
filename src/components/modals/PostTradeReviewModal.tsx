@@ -33,6 +33,17 @@ export function PostTradeReviewModal({ tradeId, symbol, pnl, open, onOpenChange,
   const [whatFailed, setWhatFailed] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Reset state when modal opens for a new trade
+  const [prevTradeId, setPrevTradeId] = useState(tradeId);
+  if (tradeId !== prevTradeId) {
+    setPrevTradeId(tradeId);
+    setRating(0);
+    setExecutionQuality(0);
+    setRulesFollowed(true);
+    setWhatWorked("");
+    setWhatFailed("");
+  }
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {

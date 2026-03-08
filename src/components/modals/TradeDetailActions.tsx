@@ -23,8 +23,9 @@ export function TradeDetailActions({ trade, onClose, isClosing, onShowReview, on
   const [shareOpen, setShareOpen] = useState(false);
 
   const handleClose = async () => {
-    if (!exitPrice) return;
-    await onClose(parseFloat(exitPrice));
+    const parsed = parseFloat(exitPrice);
+    if (!exitPrice || isNaN(parsed) || parsed <= 0) return;
+    await onClose(parsed);
     setClosingMode(false);
     setExitPrice("");
   };

@@ -653,7 +653,7 @@ export default function Trades() {
         }}
         isLoading={deleteTrade.isPending}
         title="Delete Trade"
-        description={`Are you sure you want to delete the trade for "${tradeToDelete?.symbol}"? This action cannot be undone.`}
+        description={`Are you sure you want to remove the trade for "${tradeToDelete?.symbol}"? It will be marked as cancelled.`}
       />
       <CsvImportModal
         open={csvImportOpen}

@@ -301,8 +301,8 @@ export function TradeDetailModal({ trade, open, onOpenChange, onDuplicate }: Tra
             onOpenChange(false);
           }}
           isLoading={deleteTrade.isPending}
-          title="Delete Trade"
-          description={`Are you sure you want to delete the trade for "${trade.symbol}"? This action cannot be undone.`}
+          title="Remove Trade"
+          description={`Are you sure you want to remove "${trade.symbol}"? It will be marked as cancelled.`}
         />
       </DialogContent>
     </Dialog>
