@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { MotionConfig } from "framer-motion";
+import { MotionConfig, AnimatePresence, motion } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
