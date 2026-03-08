@@ -129,7 +129,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
             <Button
               size="sm"
               onClick={() => navigate("/dashboard")}
-              className="bg-foreground hover:bg-foreground/90 text-background rounded-full px-4 h-8 text-[13px] font-semibold"
+              className="bg-foreground hover:bg-foreground/90 text-background rounded-[var(--radius-md)] px-4 h-8 text-[13px] font-semibold"
             >
               Dashboard
             </Button>
