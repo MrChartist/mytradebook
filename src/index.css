@@ -513,6 +513,42 @@
     font-size: 0.9375rem !important; /* Override text-sm inside docs cards */
     color: hsl(var(--muted-foreground) / 0.8) !important;
   }
+
+  /* ── Inline code styling ── */
+  .docs-card-content code:not(pre code),
+  [role="document"] code:not(pre code) {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8125rem;
+    padding: 0.15em 0.4em;
+    border-radius: 0.375rem;
+    background: hsl(var(--muted) / 0.6);
+    border: 1px solid hsl(var(--border) / 0.3);
+    color: hsl(var(--foreground) / 0.85);
+    font-weight: 500;
+  }
+
+  /* ── Code block theming ── */
+  .docs-code-block pre,
+  .docs-output-block pre {
+    margin: 0;
+    tab-size: 2;
+  }
+
+  .docs-code-block {
+    background: hsl(var(--muted) / 0.12);
+  }
+
+  .docs-output-block {
+    background: hsl(var(--muted) / 0.06);
+  }
+
+  .dark .docs-code-block {
+    background: hsl(222 47% 6%);
+  }
+
+  .dark .docs-output-block {
+    background: hsl(222 47% 5.5%);
+  }
 }
 
 @layer utilities {
