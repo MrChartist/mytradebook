@@ -155,12 +155,12 @@ export function DashboardKPICards({ alerts }: Props) {
             <Target className="w-4.5 h-4.5 text-primary" />
           </div>
         </div>
-        <p className="text-[28px] font-bold font-mono leading-none">{openTrades.length}</p>
+        <p className="kpi-value">{openTrades.length}</p>
         <div className="inner-panel mt-3">
-          <p className="text-[10px] text-muted-foreground">Risk to SL</p>
+          <p className="kpi-sublabel">Risk to SL</p>
           <p className="text-xs font-semibold font-mono text-loss mt-0.5">₹{riskAtSL.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</p>
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2">{monthTrades.length} total trades this month</p>
+        <p className="kpi-sublabel mt-2">{monthTrades.length} total trades this month</p>
       </div>
 
       {/* Win Rate */}
