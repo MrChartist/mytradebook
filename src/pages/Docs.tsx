@@ -754,6 +754,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-[12px] text-muted-foreground/60 mt-3">Internet Explorer is not supported. For real-time price updates, a stable broadband connection is recommended.</p>
               </ExpandableDetail>
+
+              <ExpandableDetail title="What TradeBook Does NOT Do — Setting Expectations" icon={AlertTriangle} badge="Clarity">
+                <p>Understanding what TradeBook isn't will help you use it correctly:</p>
+                <FeatureList items={[
+                  "Not a broker — TradeBook is a journaling and analytics platform, not a place to execute trades. You still need a broker (Dhan, Zerodha, etc.) to actually trade. We integrate with Dhan for live prices and order sync.",
+                  "Not real-time charting — We don't provide TradingView-style charting. Attach chart links/screenshots to your trades for visual reference. Use your broker or TradingView for charting.",
+                  "Not financial advice — AI insights, coach feedback, and analytics are educational tools based on YOUR data. They're not buy/sell recommendations. Always do your own research.",
+                  "Not a screener replacement — The Stock Screener is a discovery tool using NSE data via TradingView. For institutional-grade screening with live tick data, use specialized platforms.",
+                  "Not automatic trade execution — Even with Dhan connected, TradeBook doesn't auto-execute trades. The integration syncs data, not orders. You remain in full control.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">TradeBook excels at post-trade analysis, discipline enforcement, and behavioral improvement. It's the tool you use after your trading platform, not instead of it.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
