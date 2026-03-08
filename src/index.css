@@ -6,17 +6,24 @@
    TradeBook Design System v2 — Unified Visual Language
    ================================================================
    
+   Font System:
+     Display:  'Libre Bodoni' — premium serif for hero headlines,
+               marketing section headings, docs titles
+     Body:     'Source Sans 3' — all functional UI text, paragraphs,
+               nav, labels, buttons, forms, cards, tables
+     Mono:     'JetBrains Mono' — financial metrics, code snippets
+   
    Typography Scale (semantic):
-     --text-2xs:  0.625rem (10px)  — micro labels, metadata
-     --text-xs:   0.6875rem (11px) — captions, helper text
-     --text-sm:   0.8125rem (13px) — body small, nav items, badge text
-     --text-base: 0.875rem (14px)  — body default, table cells
-     --text-lg:   1rem (16px)      — card titles, dialog titles
-     --text-xl:   1.25rem (20px)   — section headings
-     --text-2xl:  1.5rem (24px)    — page titles
-     --text-3xl:  1.875rem (30px)  — hero headings (app)
+     --text-2xs:  0.625rem  (10px)  — micro labels, metadata
+     --text-xs:   0.6875rem (11px)  — captions, helper text
+     --text-sm:   0.8125rem (13px)  — body small, nav items, badges
+     --text-base: 0.875rem  (14px)  — body default, table cells
+     --text-lg:   1rem      (16px)  — card titles, dialog titles
+     --text-xl:   1.25rem   (20px)  — section headings
+     --text-2xl:  1.5rem    (24px)  — page titles
+     --text-3xl:  1.875rem  (30px)  — hero headings (app)
      
-   Spacing Rhythm: 4px base (p-1 = 4px, p-2 = 8px, p-3 = 12px, p-4 = 16px, p-5 = 20px, p-6 = 24px)
+   Spacing Rhythm: 4px base (p-1 = 4px … p-6 = 24px)
    
    Radius Tiers:
      --radius-sm: 0.5rem   (8px)  — chips, badges, inner panels
