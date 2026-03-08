@@ -985,14 +985,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Calculator}
               />
               <PositionSizingCalcMockup />
-              <SubTopic title="Calculation Workflow" description="How the calculator determines your optimal position size." />
+              <QuickNav items={[
+                { label: "Calculation Workflow", id: "ps-workflow" },
+                { label: "Advanced Sizing", id: "ps-advanced" },
+              ]} />
+              <SubTopic title="Calculation Workflow" description="How the calculator determines your optimal position size." id="ps-workflow" />
               <StepByStep title="How It Works" steps={[
                 { title: "Set your capital & risk %", description: "Define your total capital and the max % you're willing to risk per trade (e.g., 1.5%)." },
                 { title: "Enter entry & stop loss prices", description: "The calculator computes the risk per share (entry − SL)." },
                 { title: "Get recommended quantity", description: "Max shares = (Capital × Risk%) ÷ Risk per share. Automatically rounds down." },
                 { title: "Review max loss", description: "See the maximum loss in rupees before you commit to the trade." },
               ]} />
-              <SubTopic title="Advanced Sizing" description="Expert-level position sizing with the Kelly Criterion." />
+              <SubTopic title="Advanced Sizing" description="Expert-level position sizing with the Kelly Criterion." id="ps-advanced" />
               <ExpandableDetail title="Advanced: Kelly Criterion" icon={Target}>
                 <p>For experienced traders, the Position Sizing Calculator can suggest position sizes based on the Kelly Criterion — factoring in your historical win rate and average win/loss ratio to optimize long-term capital growth.</p>
               </ExpandableDetail>
