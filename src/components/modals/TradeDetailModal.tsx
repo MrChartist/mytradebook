@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import {
   Activity, Send, Calendar, ExternalLink, Loader2,
 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import type { Trade } from "@/hooks/useTrades";
 import { useTrades } from "@/hooks/useTrades";
 import { useTradeEvents } from "@/hooks/useTradeEvents";
