@@ -31,6 +31,18 @@ import { useTradeTemplates } from "@/hooks/useTradeTemplates";
 interface CreateTradeModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialData?: Partial<{
+    symbol: string;
+    segment: string;
+    trade_type: string;
+    quantity: number;
+    stop_loss: number | null;
+    targets: any;
+    timeframe: string;
+    holding_period: string;
+    notes: string | null;
+    chart_link: string | null;
+  }> | null;
 }
 
 const segmentLabels: Record<string, string> = {
