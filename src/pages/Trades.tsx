@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SwipeableTradeRow } from "@/components/trade/SwipeableTradeRow";
 import { useSearchParams } from "react-router-dom";
 import {
   TrendingUp,
@@ -533,7 +534,38 @@ export default function Trades() {
               { label: "Delete", icon: Trash2, onClick: () => { setTradeToDelete(trade); setDeleteModalOpen(true); }, variant: "destructive" as const },
             ];
 
-            return (
+            return isMobile && viewMode === "list" ? (
+              <SwipeableTradeRow
+                key={trade.id}
+                onView={() => setSelectedTrade(trade)}
+                onClose={trade.status === "OPEN" ? () => {
+                  const exitPrice = prices[trade.symbol]?.ltp || trade.current_price || trade.entry_price || 0;
+                  if (exitPrice > 0) closeTrade.mutate({ id: trade.id, exitPrice, closureReason: "Swipe close" });
+                } : undefined}
+              >
+                <InsightCard
+                  symbol={trade.symbol}
+                  direction={trade.trade_type as "BUY" | "SELL"}
+                  ltp={currentLtp}
+                  dayChangePercent={dayChange}
+                  typeLabel={segmentLabels[trade.segment] || trade.segment}
+                  typeColor={trade.trade_type === "BUY" ? "text-profit bg-profit/10" : "text-loss bg-loss/10"}
+                  status={sc?.label || trade.status || "Planned"}
+                  statusColor={sc?.color}
+                  levels={levels}
+                  potentialPercent={potentialPercent}
+                  riskReward={riskReward}
+                  pnl={trade.pnl ?? undefined}
+                  pnlPercent={trade.pnl_percent ?? undefined}
+                  subtitle={`Qty: ${trade.quantity}`}
+                  timestamp={entryDate.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "2-digit" })}
+                  notes={trade.notes || undefined}
+                  onView={() => setSelectedTrade(trade)}
+                  menuActions={menuActions}
+                  viewMode={viewMode}
+                />
+              </SwipeableTradeRow>
+            ) : (
               <InsightCard
                 key={trade.id}
                 symbol={trade.symbol}
