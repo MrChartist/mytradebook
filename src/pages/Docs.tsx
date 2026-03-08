@@ -3880,6 +3880,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <ProTip variant="info">
                 <p><strong>Still stuck?</strong> If your issue isn't covered here, reach out to support at <code>founder@mrchartist.com</code>. Include your browser name, device type, a screenshot of the issue, and any error messages from the browser console (F12 → Console tab) — it helps us resolve things much faster.</p>
               </ProTip>
+
+              <NextStepBlock steps={[
+                { label: "Changelog", description: "See what's new and coming next", targetId: "changelog" },
+                { label: "Getting Started", description: "Back to the basics", targetId: "getting-started" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
