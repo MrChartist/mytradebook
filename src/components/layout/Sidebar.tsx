@@ -221,7 +221,7 @@ export function Sidebar() {
           {collapsed && (
             <button
               onClick={() => setCollapsed(false)}
-              className="flex items-center justify-center w-full py-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted hover:shadow-sm transition-all"
+              className="flex items-center justify-center w-full py-2 rounded-[var(--radius-sm)] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-200"
             >
               <ChevronLeft className="w-[18px] h-[18px] rotate-180" />
             </button>
