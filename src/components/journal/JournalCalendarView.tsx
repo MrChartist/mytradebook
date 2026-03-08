@@ -198,7 +198,7 @@ export function JournalCalendarView({
 
   /* ─── Full calendar grid mode ─── */
   const calendarGrid = (
-    <div className="glass-card p-5">
+    <div className="surface-card p-5">
       {/* Month Navigation */}
       <div className="flex items-center justify-between mb-5">
         <Button variant="ghost" size="icon" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
