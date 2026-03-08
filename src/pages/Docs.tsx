@@ -2122,8 +2122,9 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
             <SectionDivider />
 
-            {/* ── FAQ & Troubleshooting ──────────────────── */}
+            {/* ── Phase 25. FAQ & Troubleshooting ──────────────── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.4 }}>
+              <PhaseHeader phase={25} total={26} />
               <SectionHeader
                 id="faq"
                 title="FAQ & Troubleshooting"
