@@ -84,37 +84,82 @@ const glassInner = "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)";
 export function HowItWorksSection() {
   const navigate = useNavigate();
   return (
-    <section className="py-24 lg:py-32 bg-muted/10 dot-pattern" aria-label="How it works">
+    <section className="py-24 lg:py-32" aria-label="How it works">
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>How It Works</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Three steps to{" "}<span className="accent-script">mastery</span></h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-lg">From first trade to edge mastery — in minutes.</p>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1] tracking-tight">Three steps to{" "}<span className="accent-script">mastery</span></h2>
+          <p className="text-muted-foreground max-w-md mx-auto text-lg">From first trade to consistent edge — in minutes.</p>
         </motion.div>
-        <div className="grid md:grid-cols-3 gap-8 relative">
-          {steps.map((item, i) => (
-            <motion.div key={item.step} variants={fadeUp} custom={i * 0.1} className="relative">
-              {i < steps.length - 1 && (<div className="hidden md:flex absolute top-16 -right-5 z-10 w-10 items-center justify-center"><ChevronRight className="w-5 h-5 text-[hsl(var(--tb-accent))] opacity-50" /></div>)}
-              <motion.div
-                className="relative rounded-2xl border border-border/40 bg-card p-9 h-full text-center overflow-hidden"
-                style={{ boxShadow: glassInner }}
-                whileHover={{ y: -3, borderColor: "hsl(var(--tb-accent) / 0.25)" }}
-              >
-                <div className="absolute top-2 right-4 text-7xl font-black text-[hsl(var(--tb-accent))] opacity-[0.04] select-none">{item.step}</div>
-                <span className="inline-flex items-center bg-[hsl(var(--tb-accent)/0.06)] rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[hsl(var(--tb-accent))] mb-3">Step {item.step}</span>
-                <motion.div className="w-14 h-14 rounded-2xl bg-[hsl(var(--tb-accent)/0.06)] ring-4 ring-[hsl(var(--tb-accent)/0.04)] flex items-center justify-center mx-auto mb-6" whileHover={{ scale: 1.08, rotate: -3 }}>
-                  <item.icon className="w-6 h-6 text-[hsl(var(--tb-accent))]" />
+
+        {/* Timeline steps */}
+        <div className="relative">
+          {/* Vertical connector line — desktop */}
+          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2">
+            <div className="h-full w-full bg-gradient-to-b from-transparent via-border/40 to-transparent" />
+          </div>
+
+          <div className="space-y-16 md:space-y-24">
+            {steps.map((item, i) => {
+              const isEven = i % 2 === 0;
+              return (
+                <motion.div
+                  key={item.step}
+                  variants={fadeUp}
+                  custom={i * 0.12}
+                  className={cn(
+                    "relative grid md:grid-cols-2 gap-8 md:gap-16 items-center",
+                    !isEven && "md:direction-rtl"
+                  )}
+                >
+                  {/* Center dot on timeline */}
+                  <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+                    <div className="w-4 h-4 rounded-full bg-primary border-4 border-background shadow-sm" />
+                  </div>
+
+                  {/* Number side */}
+                  <div className={cn("flex items-center gap-6", isEven ? "md:justify-end" : "md:justify-start md:order-2")}>
+                    <span className="text-[7rem] lg:text-[9rem] font-black leading-none tracking-tighter text-foreground/[0.04] select-none">
+                      {item.step}
+                    </span>
+                  </div>
+
+                  {/* Content card */}
+                  <motion.div
+                    className={cn(
+                      "rounded-2xl border border-border/30 bg-card/70 backdrop-blur-sm p-8 relative overflow-hidden",
+                      isEven ? "md:order-2" : "md:order-1"
+                    )}
+                    style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.04)" }}
+                    whileHover={{ y: -3, borderColor: "hsl(var(--border) / 0.5)" }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="flex items-center gap-4 mb-4">
+                      <div
+                        className="w-12 h-12 rounded-xl bg-primary/8 flex items-center justify-center"
+                      >
+                        <item.icon className="w-5.5 h-5.5 text-primary" />
+                      </div>
+                      <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                        Step {item.step}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-bold mb-2 tracking-tight">{item.title}</h3>
+                    <p className="text-[15px] text-muted-foreground leading-relaxed">{item.desc}</p>
+                  </motion.div>
                 </motion.div>
-                <h3 className="text-xl font-bold mb-3 tracking-tight">{item.title}</h3>
-                <p className="text-[15px] text-foreground/80 leading-relaxed">{item.desc}</p>
-              </motion.div>
-            </motion.div>
-          ))}
+              );
+            })}
+          </div>
         </div>
-        <motion.div variants={fadeUp} className="text-center mt-14">
-          <p className="text-muted-foreground mb-5">Ready to start? It takes less than 60 seconds.</p>
+
+        {/* CTA */}
+        <motion.div variants={fadeUp} className="text-center mt-20">
+          <p className="text-muted-foreground mb-5 text-base">Ready to start? Takes less than 60 seconds.</p>
           <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.97 }} className="inline-block">
-            <Button size="lg" className="h-12 px-8 gap-2 bg-[hsl(var(--tb-accent))] hover:bg-[hsl(var(--tb-accent-hover))] text-white rounded-full shadow-[0_4px_16px_hsl(var(--tb-accent)/0.25)] font-semibold" onClick={() => navigate("/login?mode=signup")}>Create Free Account <ArrowRight className="w-4 h-4" /></Button>
+            <Button size="lg" className="h-14 px-10 gap-2.5 bg-foreground hover:bg-foreground/90 text-background rounded-full shadow-lg font-semibold tracking-wide" onClick={() => navigate("/login?mode=signup")}>
+              Create Free Account <ArrowRight className="w-4 h-4" />
+            </Button>
           </motion.div>
         </motion.div>
       </MotionSection>
