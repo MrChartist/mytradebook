@@ -80,7 +80,7 @@ function ChatIdHelpGuide() {
         <div>
           <p className="font-semibold text-foreground mb-1">📱 Personal Chat</p>
           <ol className="list-decimal list-inside space-y-0.5 ml-1">
-            <li>Open Telegram and search for <a href="https://t.me/userinfobot" target="_blank" rel="noopener" className="text-primary hover:underline">@userinfobot</a></li>
+            <li>Open Telegram and search for <a href="https://t.me/userinfobot" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">@userinfobot</a></li>
             <li>Send <code className="bg-accent px-1 rounded">/start</code> — it will reply with your Chat ID</li>
             <li>Your ID is a positive number (e.g. <code className="bg-accent px-1 rounded">123456789</code>)</li>
           </ol>
@@ -91,7 +91,7 @@ function ChatIdHelpGuide() {
           <ol className="list-decimal list-inside space-y-0.5 ml-1">
             <li>Add your bot to the group</li>
             <li>Send any message in the group</li>
-            <li>Forward any group message to <a href="https://t.me/userinfobot" target="_blank" rel="noopener" className="text-primary hover:underline">@userinfobot</a> — it will reply with the group Chat ID</li>
+            <li>Forward any group message to <a href="https://t.me/userinfobot" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">@userinfobot</a> — it will reply with the group Chat ID</li>
             <li>Group IDs start with <code className="bg-accent px-1 rounded">-</code> (e.g. <code className="bg-accent px-1 rounded">-987654321</code>)</li>
           </ol>
         </div>
@@ -100,7 +100,7 @@ function ChatIdHelpGuide() {
           <p className="font-semibold text-foreground mb-1">📢 Channel</p>
           <ol className="list-decimal list-inside space-y-0.5 ml-1">
             <li>Add your bot as an <strong>admin</strong> to the channel</li>
-            <li>Forward any channel post to <a href="https://t.me/userinfobot" target="_blank" rel="noopener" className="text-primary hover:underline">@userinfobot</a></li>
+            <li>Forward any channel post to <a href="https://t.me/userinfobot" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">@userinfobot</a></li>
             <li>Channel IDs start with <code className="bg-accent px-1 rounded">-100</code> (e.g. <code className="bg-accent px-1 rounded">-1001234567890</code>)</li>
           </ol>
         </div>
@@ -399,7 +399,7 @@ export default function TelegramSettings() {
           <div className="p-4 rounded-lg border border-border bg-card space-y-3">
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground">
-                <strong>Step 1:</strong> Open Telegram and search for <a href="https://t.me/BotFather" target="_blank" rel="noopener" className="text-primary hover:underline font-medium">@BotFather</a>
+                <strong>Step 1:</strong> Open Telegram and search for <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">@BotFather</a>
               </p>
               <p className="text-xs text-muted-foreground">
                 <strong>Step 2:</strong> Send <code className="bg-accent px-1 rounded">/newbot</code>, follow prompts to name your bot
@@ -563,7 +563,7 @@ export default function TelegramSettings() {
             {showCustomBot && (
               <div className="mt-2 space-y-2 p-3 rounded-lg border border-border bg-card">
                 <p className="text-xs text-muted-foreground">
-                  Use a separate bot token for this specific chat. Create one via <a href="https://t.me/BotFather" target="_blank" rel="noopener" className="text-primary hover:underline">@BotFather</a>.
+                  Use a separate bot token for this specific chat. Create one via <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">@BotFather</a>.
                 </p>
                 <div className="space-y-2">
                   <Label className="text-xs">Bot Token (for this chat only)</Label>
