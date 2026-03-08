@@ -303,7 +303,7 @@
 
   /* Section divider for sidebar */
   .sidebar-section-label {
-    @apply px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground/60;
+    @apply px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/50;
   }
 
   .nav-active-bar {
@@ -313,10 +313,10 @@
     content: '';
     position: absolute;
     left: 0;
-    top: 15%;
-    bottom: 15%;
-    width: 3px;
-    border-radius: 0 3px 3px 0;
+    top: 18%;
+    bottom: 18%;
+    width: 2.5px;
+    border-radius: 0 2px 2px 0;
     background: hsl(var(--primary));
   }
 
