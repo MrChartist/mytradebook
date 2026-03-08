@@ -112,6 +112,18 @@ export function DashboardPreview() {
               <DashboardTab />
             </div>
           </div>
+
+          {/* Bottom fade teaser overlay */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 sm:h-44 bg-gradient-to-t from-card via-card/90 to-transparent pointer-events-none z-10" />
+          <div className="absolute bottom-4 sm:bottom-6 left-0 right-0 z-20 flex justify-center">
+            <a
+              href="/login"
+              className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-primary text-primary-foreground text-xs sm:text-sm font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-105 transition-all duration-300"
+            >
+              Start Trading Smarter
+              <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </a>
+          </div>
         </motion.div>
       </motion.div>
     </div>
