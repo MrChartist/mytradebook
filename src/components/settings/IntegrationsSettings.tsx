@@ -882,13 +882,13 @@ export default function IntegrationsSettings() {
           )}
           
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Clock className="w-3.5 h-3.5" />
+            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground/40">
+              <Clock className="w-3 h-3" />
               Last sync: {syncStatus.lastSync 
                 ? new Date(syncStatus.lastSync).toLocaleString() 
                 : "Never"}
             </div>
-            <div className="text-sm font-medium">
+            <div className="text-[11px] font-medium font-mono">
               Total: {totalInstruments.toLocaleString()}
             </div>
           </div>
