@@ -277,7 +277,7 @@ export default function Dashboard() {
         <div className="h-px bg-border/20" />
 
         {/* Row 2: Month selector + Segment filter */}
-        <div className="flex items-center gap-2.5 flex-wrap">
+        <div className="flex items-center gap-2.5 overflow-x-auto pb-1 scrollbar-none -mx-1 px-1">
           <div className="flex gap-0.5 bg-muted/40 rounded-lg p-0.5 border border-border/15">
             {[
               { label: "All", value: "all" },
