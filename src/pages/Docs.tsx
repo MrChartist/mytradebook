@@ -351,7 +351,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             A comprehensive guide to every feature, capability, and workflow — from your first trade log to advanced analytics.
           </p>
           <div className="flex items-center gap-2.5 mt-2.5 text-[11px] text-muted-foreground/50">
-            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~25 min read</span>
+            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> ~35 min read</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground/20" />
             <span>Last updated: March 2026</span>
           </div>
