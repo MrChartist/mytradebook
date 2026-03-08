@@ -54,7 +54,7 @@ import {
   DocsColorModeProvider, useDocsColorMode
 } from "@/components/docs/DocsMockups";
 import {
-  ProTip, StepByStep, ExpandableDetail,
+  ProTip, StepByStep, ExpandableDetail, ComparisonTable,
   InteractiveMockup, PhaseHeader, QuickNav, KeyMetric, SubTopic
 } from "@/components/docs/DocsEnhancements";
 import {
