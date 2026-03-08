@@ -331,21 +331,21 @@ export default function IntegrationsSettings() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* AI Provider Integration */}
-      <div className="glass-card p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="icon-badge bg-primary/10">
-            <Sparkles className="w-5 h-5 text-primary" />
+      <div className="premium-card-hover p-5">
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="icon-badge-sm bg-primary/8">
+            <Sparkles className="w-4 h-4 text-primary" />
           </div>
-          <div>
-            <h3 className="font-semibold">AI Trade Insights</h3>
-            <p className="text-sm text-muted-foreground">Connect your own Gemini or OpenAI key for AI-powered analysis</p>
+          <div className="flex-1">
+            <h3 className="text-[15px] font-semibold">AI Trade Insights</h3>
+            <p className="text-[11px] text-muted-foreground/50">Connect Gemini or OpenAI for AI-powered analysis</p>
           </div>
           {isAiConnected && (
-            <div className="ml-auto flex items-center gap-2 text-profit">
-              <CheckCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">{settings?.ai_provider === "gemini" ? "Gemini" : "OpenAI"}</span>
+            <div className="flex items-center gap-1.5 text-profit">
+              <CheckCircle className="w-3.5 h-3.5" />
+              <span className="text-[11px] font-medium">{settings?.ai_provider === "gemini" ? "Gemini" : "OpenAI"}</span>
             </div>
           )}
         </div>
