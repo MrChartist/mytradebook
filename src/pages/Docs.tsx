@@ -1055,7 +1055,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <AlertCardMockup />
                 <TelegramNotifMockup />
               </div>
-
+              <SubTopic title="Alert Types" description="Seven condition types to monitor any price action." />
               <FeatureCard icon={Bell} title="Alert Condition Types">
                 <FeatureList items={[
                   "Price Above — triggers when LTP exceeds your threshold",
