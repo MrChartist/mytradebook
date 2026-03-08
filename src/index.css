@@ -1780,3 +1780,28 @@
 .profit-pulse-glow {
   animation: profit-pulse 2s ease-in-out infinite;
 }
+
+/* ── Performance: GPU-promote animated layers ── */
+.will-change-transform { will-change: transform; }
+
+/* Content-visibility for heavy below-fold sections */
+.landing-page section:not(:first-of-type) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
+/* Reduce motion — honor user preference beyond framer-motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-scale-in,
+  .animate-slide-in-right {
+    animation: none !important;
+  }
+  .liquid-shine::before,
+  .bar-shine::after {
+    animation: none !important;
+  }
+  .profit-pulse-glow {
+    animation: none !important;
+  }
+}
