@@ -119,7 +119,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
           {extraRight}
           <ThemeToggle />
           <button
-            className="md:hidden w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted/60 transition-colors"
+            className="md:hidden w-9 h-9 flex items-center justify-center rounded-[var(--radius-sm)] hover:bg-muted/60 transition-colors duration-200"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle navigation menu"
           >
