@@ -266,15 +266,15 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
   icon: React.ElementType; title: string; children: React.ReactNode; badge?: string;
 }) {
   return (
-    <div className="group rounded-xl border border-border/40 bg-card relative overflow-hidden transition-colors duration-200 hover:border-border/60 mt-5">
-      <div className="p-5 pb-3">
+    <div className="group rounded-xl border border-border/30 bg-card relative overflow-hidden transition-colors duration-200 hover:border-border/40 mt-6">
+      <div className="px-5 pt-5 pb-3">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
             <Icon className="w-3.5 h-3.5 text-primary" />
           </div>
           <h4 className="text-[15px] font-semibold leading-tight">{title}</h4>
           {badge && (
-            <span className="text-[10px] font-semibold tracking-wide uppercase px-1.5 py-0.5 rounded bg-primary/8 text-primary">
+            <span className="text-[10px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-md bg-primary/8 text-primary">
               {badge}
             </span>
           )}
@@ -289,14 +289,14 @@ function FeatureCard({ icon: Icon, title, children, badge }: {
 
 function VideoPlaceholder({ title, duration }: { title: string; duration: string }) {
   return (
-    <div className="my-6 rounded-xl border border-border/40 bg-muted/15 overflow-hidden group cursor-pointer hover:border-border/60 transition-colors duration-200">
-      <div className="flex items-center gap-4 px-5 py-6">
-        <div className="w-11 h-11 rounded-full bg-primary/8 border border-primary/15 flex items-center justify-center shrink-0 group-hover:bg-primary/12 transition-colors">
+    <div className="my-6 rounded-xl border border-border/30 overflow-hidden group cursor-pointer hover:border-border/40 transition-colors duration-200">
+      <div className="flex items-center gap-4 px-5 py-5">
+        <div className="w-10 h-10 rounded-full bg-primary/8 border border-primary/15 flex items-center justify-center shrink-0 group-hover:bg-primary/12 transition-colors">
           <Play className="w-4 h-4 text-primary ml-0.5" />
         </div>
         <div>
           <p className="text-[15px] font-medium text-foreground">{title}</p>
-          <span className="text-[12px] text-muted-foreground/60">{duration} · Coming Soon</span>
+          <span className="text-[12px] text-muted-foreground/55">{duration} · Coming Soon</span>
         </div>
       </div>
     </div>
@@ -304,7 +304,7 @@ function VideoPlaceholder({ title, duration }: { title: string; duration: string
 }
 
 function SectionDivider() {
-  return <div className="h-px bg-gradient-to-r from-transparent via-border/25 to-transparent my-6" />;
+  return <div className="h-px bg-gradient-to-r from-transparent via-border/20 to-transparent my-8" />;
 }
 
 function SectionHeader({ id, title, description, icon: Icon }: {
