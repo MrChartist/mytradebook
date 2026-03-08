@@ -328,7 +328,7 @@ export function TestimonialsSection() {
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>Testimonials</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1] tracking-tight">
+          <h2 className="font-display text-4xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight">
             Trusted by{" "}<span className="accent-script">real traders</span>
           </h2>
           <p className="text-muted-foreground max-w-md mx-auto text-lg">Here's what traders across India are saying.</p>
