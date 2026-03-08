@@ -30,17 +30,16 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div className={cn(
-      "premium-card p-10 sm:p-12 text-center flex flex-col items-center",
+      "premium-card p-10 sm:p-14 text-center flex flex-col items-center",
       className
     )}>
       {/* Illustrated icon with decorative rings */}
-      <div className="relative mb-6">
-        <div className="absolute -inset-4 rounded-full border border-dashed border-primary/10 animate-[spin_30s_linear_infinite]" />
-        <div className="absolute -inset-8 rounded-full border border-dashed border-primary/5 animate-[spin_45s_linear_infinite_reverse]" />
-        <div className="w-20 h-20 rounded-2xl inner-panel flex items-center justify-center relative overflow-hidden shadow-sm">
-          <div className="absolute inset-0 dot-pattern opacity-30" />
+      <div className="relative mb-8">
+        <div className="absolute -inset-4 rounded-full border border-dashed border-primary/8 animate-[spin_40s_linear_infinite]" />
+        <div className="absolute -inset-8 rounded-full border border-dashed border-primary/4 animate-[spin_60s_linear_infinite_reverse]" />
+        <div className="w-16 h-16 rounded-2xl bg-muted/50 border border-border/40 flex items-center justify-center relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
-          <Icon className="w-8 h-8 text-primary/60 relative z-10" />
+          <Icon className="w-7 h-7 text-primary/50 relative z-10" />
         </div>
       </div>
 
