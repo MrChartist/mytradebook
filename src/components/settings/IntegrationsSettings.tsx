@@ -1023,11 +1023,11 @@ function TokenValidityCard({ settings, userId }: { settings: any; userId?: strin
       )}
 
       <div className="flex gap-2">
-        <Button variant="outline" size="sm" onClick={handleTest} disabled={testing}>
+        <Button variant="outline" size="sm" className="h-8 text-[11px] rounded-lg border-border/20" onClick={handleTest} disabled={testing}>
           {testing ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5 mr-1" />}
           Test Connection
         </Button>
-        <Button variant="outline" size="sm" onClick={handleRenew} disabled={renewing}>
+        <Button variant="outline" size="sm" className="h-8 text-[11px] rounded-lg border-border/20" onClick={handleRenew} disabled={renewing}>
           {renewing ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5 mr-1" />}
           Renew Token
         </Button>
