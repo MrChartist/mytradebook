@@ -329,7 +329,7 @@ function SectionHeader({ id, title, description, icon: Icon }: {
           <span id={`copy-${id}`}>#</span>
         </button>
       </div>
-      <p className="text-[13.5px] text-muted-foreground leading-relaxed max-w-2xl">{description}</p>
+      <p className="text-[15px] text-muted-foreground leading-relaxed max-w-2xl">{description}</p>
     </div>
   );
 }
