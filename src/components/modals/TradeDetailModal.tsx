@@ -203,13 +203,15 @@ export function TradeDetailModal({ trade, open, onOpenChange, onDuplicate }: Tra
               </>
             )}
 
-            {/* Notes */}
+            {/* Notes — rendered as Markdown */}
             {trade.notes && (
               <>
                 <Separator />
                 <div className="space-y-2">
                   <h4 className="font-medium">Notes</h4>
-                  <p className="text-sm text-muted-foreground p-3 rounded-lg bg-accent/50">{trade.notes}</p>
+                  <div className="text-sm text-muted-foreground p-3 rounded-lg bg-accent/50 prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-headings:my-2">
+                    <ReactMarkdown>{trade.notes}</ReactMarkdown>
+                  </div>
                 </div>
               </>
             )}
