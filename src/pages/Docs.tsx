@@ -2712,6 +2712,11 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><TelegramIntegrationDetailMockup /></div>
               </FeatureCard>
 
+              <CodeBlock tabs={[
+                { label: "Bot Token", language: "Text", code: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz" },
+                { label: "Chat IDs", language: "Text", code: "Personal chat:  123456789\nGroup chat:    -1001234567890\nChannel:       -1001234567890" },
+              ]} title="Telegram Credentials Format" />
+
               <SubTopic title="Troubleshooting" description="Common connection issues and how to resolve them." id="int-troubleshoot" />
               <ExpandableDetail title="Troubleshooting Dhan Connection Issues" icon={AlertTriangle} badge="Help">
                 <p>Common issues when connecting or using the Dhan integration, and how to fix them:</p>
