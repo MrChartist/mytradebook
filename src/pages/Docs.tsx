@@ -319,19 +319,22 @@ function SectionHeader({ id, title, description, icon: Icon }: {
   }, [id]);
 
   return (
-    <div id={id} className="scroll-mt-24 mb-6 pb-5 border-b border-border/30 group">
-      <div className="flex items-center gap-2 mb-2">
-        <h2 className="font-display text-xl font-bold tracking-tight leading-tight">{title}</h2>
+    <div id={id} className="scroll-mt-24 mb-6 group">
+      <div className="flex items-center gap-2.5 mb-3">
+        <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
+          <Icon className="w-4 h-4 text-primary" />
+        </div>
+        <h2 className="font-display text-[1.35rem] font-bold tracking-tight leading-tight">{title}</h2>
         <button
           onClick={copyLink}
-          className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 p-1 rounded text-muted-foreground/40 hover:text-primary transition-all text-[11px] font-mono"
+          className="opacity-0 group-hover:opacity-100 hover:!opacity-100 focus:!opacity-100 p-1 rounded text-muted-foreground/40 hover:text-primary transition-all text-[12px] font-mono"
           aria-label={`Copy link to ${title}`}
           title="Copy section link"
         >
           <span id={`copy-${id}`}>#</span>
         </button>
       </div>
-      <p className="text-[15px] text-muted-foreground leading-relaxed max-w-2xl">{description}</p>
+      <p className="text-[15px] text-muted-foreground leading-relaxed max-w-2xl pl-[42px]">{description}</p>
     </div>
   );
 }
