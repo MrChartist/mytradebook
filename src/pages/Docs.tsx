@@ -669,7 +669,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <MobileAppMockup />
 
               <SubTopic title="Platform Overview" description="Understand the key areas of TradeBook." id="gs-platform-overview" />
-              <div className="grid md:grid-cols-2 gap-5 mt-2">
+              <div className="space-y-5 mt-2">
                 <FeatureCard icon={Users} title="Create Your Account">
                   <p className="text-sm text-muted-foreground mb-3">Sign up with email and verify your account. You'll get a 14-day Pro trial with full access to every feature — no credit card required.</p>
                   <FeatureList items={[
@@ -1117,7 +1117,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <VideoPlaceholder title="How to Import Trades from CSV" duration="3 min" />
 
               <SubTopic title="Import & Export Details" description="Detailed capabilities for importing and exporting trade data." id="csv-details" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Upload} title="Importing Trades">
                   <p className="text-sm text-muted-foreground mb-3">Full-featured CSV import with validation:</p>
                   <FeatureList items={[
@@ -1833,7 +1833,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </ProTip>
 
               <SubTopic title="Core Metrics & AI Insights" description="Fundamental performance statistics that define your trading edge." id="an-core" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={BarChart3} title="Core Metrics" badge="Pro">
                   <p className="text-sm text-muted-foreground mb-3">The essential numbers that tell you whether you have an edge:</p>
                   <FeatureList items={[
@@ -1858,7 +1858,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
 
               <SubTopic title="Equity Curve & Drawdown Analysis" description="Visualize your capital curve and understand recovery patterns." id="an-equity" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={TrendingDown} title="Equity Curve & Drawdown" badge="Pro">
                   <p className="text-sm text-muted-foreground mb-3">
                     Full equity curve showing cumulative P&L over time with drawdown overlay:
@@ -1884,7 +1884,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
 
               <SubTopic title="Time-Based Analysis" description="Discover your most and least profitable trading windows." id="an-time" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Clock} title="Time-Based Heatmaps" badge="Pro">
                   <p className="text-sm text-muted-foreground mb-3">Two heatmaps that reveal your optimal trading schedule:</p>
                   <FeatureList items={[
@@ -1907,7 +1907,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
 
               <SubTopic title="Streaks & Risk-Reward" description="Track momentum and analyze your planned vs actual risk-reward ratios." id="an-streaks" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Activity} title="Streak Tracker" badge="Pro">
                   <p className="text-sm text-muted-foreground mb-3">Track and visualize winning and losing streaks:</p>
                   <FeatureList items={[
@@ -1935,7 +1935,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
 
               <SubTopic title="AI-Powered Behavioral Analytics" description="Machine learning insights into your trading psychology and hidden patterns." id="an-ai" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Sparkles} title="AI Pattern Detection" badge="New">
                   <p className="text-sm text-muted-foreground mb-3">
                     AI analyzes your entire trade history to surface hidden behavioral patterns — things you'd never spot manually:
@@ -2214,7 +2214,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <ScreenerPresetsMockup />
               </InteractiveMockup>
 
-              <div className="grid md:grid-cols-2 gap-5 mt-6">
+              <div className="space-y-5 mt-6">
                 <FeatureCard icon={Filter} title="47 Built-in Scanner Presets" badge="Expanded">
                   <p className="text-sm text-muted-foreground mb-3">Five category groups with comprehensive coverage:</p>
                   <FeatureList items={[
@@ -2246,7 +2246,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
               </InteractiveMockup>
 
-              <div className="grid md:grid-cols-2 gap-5 mt-6">
+              <div className="space-y-5 mt-6">
                 <FeatureCard icon={SlidersHorizontal} title="Custom Filter Builder">
                   <p className="text-sm text-muted-foreground mb-3">Build and save your own multi-condition screens:</p>
                   <FeatureList items={[
@@ -2269,12 +2269,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </FeatureCard>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-5 mt-2">
+              <div className="mt-5">
                 <StockPopupMockup />
               </div>
 
               <SubTopic title="Data-Rich Results" description="Sort, filter, and explore screening results with sparklines and inline search." id="sc-results" />
-              <div className="grid md:grid-cols-2 gap-5 mt-6">
+              <div className="space-y-5 mt-6">
                 <FeatureCard icon={BarChart3} title="Data-Rich Results Table">
                   <FeatureList items={[
                     "Sort by any column — market cap, P/E, ROE, price, volume, RSI",
@@ -2432,7 +2432,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               ]} />
 
               <SubTopic title="Card Types" description="Three types of share cards for different occasions." id="sh-cards" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Share2} title="P&L Share Cards">
                   <p className="text-sm text-muted-foreground mb-3">Generate visual P&L summaries to share on social media:</p>
                   <FeatureList items={[
@@ -2525,7 +2525,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               ]} />
 
               <SubTopic title="Badge Categories" description="Four achievement groups covering milestones, streaks, profit, and discipline." id="ach-categories" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Trophy} title="Milestones & Streaks">
                   <p className="text-sm text-muted-foreground mb-3">Track your trading volume and consistency:</p>
                   <FeatureList items={[
@@ -2784,7 +2784,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
 
               <AIProviderComparisonMockup />
 
-              <div className="grid md:grid-cols-2 gap-5 mt-6">
+              <div className="space-y-5 mt-6">
                 <FeatureCard icon={Star} title="Google Gemini (Recommended)" badge="Free">
                   <p className="text-sm text-muted-foreground mb-3">
                     <span className="font-semibold text-profit">Completely free</span> — Gemini's free tier is more than enough for daily trade analysis. No credit card required.
@@ -3012,7 +3012,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { title: "Launch from your home screen", description: "Open TradeBook like any native app — it runs full-screen without browser chrome.", detail: "Auto-updates happen seamlessly. You'll see a refresh prompt when a new version is available." },
               ]} />
 
-              <div className="grid md:grid-cols-2 gap-5 mt-6">
+              <div className="space-y-5 mt-6">
                 <FeatureCard icon={Smartphone} title="Install as App">
                   <p className="text-sm text-muted-foreground mb-3">
                     TradeBook works as a PWA — install it on your phone or desktop for instant access without the browser chrome.
@@ -3047,7 +3047,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </ProTip>
 
               <SubTopic title="Mobile Navigation & Onboarding" description="Touch-optimized navigation with guided onboarding for new users." id="pwa-mobile" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={LayoutDashboard} title="Mobile Navigation">
                   <FeatureList items={[
                     "Bottom navigation bar with key pages: Dashboard, Trades, Alerts, Journal",
@@ -3121,7 +3121,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               ]} />
 
               <SubTopic title="Profile & Billing" description="Manage your identity, subscription, and payment." id="set-account" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Users} title="Profile & Billing">
                   <FeatureList items={[
                     "Update your name, email, and phone number",
@@ -3145,7 +3145,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
 
               <SubTopic title="Tags & Customisation" description="Personalise your trading taxonomy with custom tags." id="set-tags" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Tag} title="Tag Management">
                   <p className="text-sm text-muted-foreground mb-3">Create and manage your custom tags:</p>
                   <FeatureList items={[
@@ -3163,7 +3163,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </ProTip>
 
               <SubTopic title="Capital Management" description="Track deposits, withdrawals, and net deployed capital." id="set-capital" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Wallet} title="Capital Management">
                   <FeatureList items={[
                     "Track deposits and withdrawals from your trading capital",
@@ -3187,7 +3187,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </ExpandableDetail>
 
               <SubTopic title="Security & Integrations" description="Password management and third-party connections." id="set-security" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={Lock} title="Security">
                   <FeatureList items={[
                     "Change your password",
