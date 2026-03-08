@@ -8,12 +8,13 @@ import {
   Award,
   AlertTriangle,
   Loader2,
-  RefreshCw,
   Share2,
+  TrendingUp,
+  TrendingDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -21,6 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PnlShareModal } from "@/components/sharing/PnlShareModal";
+import { useNavigate } from "react-router-dom";
 import type { Database } from "@/integrations/supabase/types";
 
 type WeeklyReport = Database["public"]["Tables"]["weekly_reports"]["Row"];
@@ -42,9 +44,14 @@ interface GroupedReport {
   overallWinRate: number;
 }
 
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+}
+
 export default function Reports() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSendingTelegram, setIsSendingTelegram] = useState<string | null>(null);
@@ -82,6 +89,14 @@ export default function Reports() {
       groupedReports.push({ weekStart, weekEnd, segments, totalPnl, totalTrades, overallWinRate });
     }
   }
+
+  // Aggregate stats across all reports
+  const allTimePnl = groupedReports.reduce((s, r) => s + r.totalPnl, 0);
+  const allTimeTrades = groupedReports.reduce((s, r) => s + r.totalTrades, 0);
+  const allTimeWins = reports?.reduce((s, r) => s + (r.winning_trades || 0), 0) ?? 0;
+  const allTimeWinRate = allTimeTrades > 0 ? (allTimeWins / allTimeTrades) * 100 : 0;
+  const bestWeek = groupedReports.length ? Math.max(...groupedReports.map((r) => r.totalPnl)) : 0;
+  const worstWeek = groupedReports.length ? Math.min(...groupedReports.map((r) => r.totalPnl)) : 0;
 
   const handleGenerateReport = async () => {
     setIsGenerating(true);
@@ -218,10 +233,6 @@ export default function Reports() {
     toast({ title: "Print dialog opened", description: "Choose 'Save as PDF' to download your report." });
   };
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
-  };
-
   if (isLoading) {
     return (
       <div className="space-y-4 animate-fade-in">
@@ -250,7 +261,7 @@ export default function Reports() {
             </Button>
           }
         />
-        <Button variant="outline" className="border-border">
+        <Button variant="outline" className="border-border" onClick={() => navigate("/calendar")}>
           <Calendar className="w-4 h-4 mr-2" />
           View Calendar
         </Button>
@@ -286,8 +297,46 @@ export default function Reports() {
         />
       ) : (
         <div className="space-y-4">
+          {/* Aggregate Summary Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="premium-card-hover p-4 space-y-1">
+              <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-medium">Cumulative P&L</p>
+              <p className={cn("text-lg font-bold font-mono", allTimePnl >= 0 ? "text-profit" : "text-loss")}>
+                {allTimePnl >= 0 ? "+" : ""}₹{allTimePnl.toLocaleString("en-IN")}
+              </p>
+              <p className="text-[11px] text-muted-foreground/50">{groupedReports.length} weeks tracked</p>
+            </div>
+            <div className="premium-card-hover p-4 space-y-1">
+              <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-medium">Overall Win Rate</p>
+              <p className={cn("text-lg font-bold font-mono", allTimeWinRate >= 50 ? "text-profit" : "text-loss")}>
+                {allTimeWinRate.toFixed(1)}%
+              </p>
+              <p className="text-[11px] text-muted-foreground/50">{allTimeTrades} total trades</p>
+            </div>
+            <div className="premium-card-hover p-4 space-y-1">
+              <div className="flex items-center gap-1.5">
+                <TrendingUp className="w-3.5 h-3.5 text-profit" />
+                <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-medium">Best Week</p>
+              </div>
+              <p className="text-lg font-bold font-mono text-profit">
+                +₹{bestWeek.toLocaleString("en-IN")}
+              </p>
+            </div>
+            <div className="premium-card-hover p-4 space-y-1">
+              <div className="flex items-center gap-1.5">
+                <TrendingDown className="w-3.5 h-3.5 text-loss" />
+                <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-medium">Worst Week</p>
+              </div>
+              <p className="text-lg font-bold font-mono text-loss">
+                {worstWeek >= 0 ? "+" : ""}₹{worstWeek.toLocaleString("en-IN")}
+              </p>
+            </div>
+          </div>
+
+          {/* Weekly Report Cards */}
           {groupedReports.map((report) => {
             const reportKey = `${report.weekStart}_${report.weekEnd}`;
+            const segCount = report.segments.length;
             return (
               <div key={reportKey} className="premium-card-hover !p-0 overflow-hidden">
                 {/* Report Header */}
@@ -296,7 +345,7 @@ export default function Reports() {
                     <h3 className="text-[15px] font-semibold">
                       Week: {formatDate(report.weekStart)} – {formatDate(report.weekEnd)}
                     </h3>
-                    <p className="text-[11px] text-muted-foreground/50">{report.totalTrades} trades executed</p>
+                    <p className="text-[11px] text-muted-foreground/50">{report.totalTrades} trades · {segCount} segment{segCount !== 1 ? "s" : ""}</p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
@@ -314,8 +363,14 @@ export default function Reports() {
                   </div>
                 </div>
 
-                {/* Segments Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border/15">
+                {/* Segments Grid — adaptive columns */}
+                <div className={cn(
+                  "grid divide-y md:divide-y-0 md:divide-x divide-border/15",
+                  segCount === 1 && "grid-cols-1",
+                  segCount === 2 && "grid-cols-1 md:grid-cols-2",
+                  segCount === 3 && "grid-cols-1 md:grid-cols-3",
+                  segCount >= 4 && "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
+                )}>
                   {report.segments.map((segment) => {
                     const topSetups = (segment.top_setups as { name: string; count: number }[] | null) || [];
                     const commonMistakes = (segment.common_mistakes as { name: string; count: number }[] | null) || [];
@@ -355,6 +410,9 @@ export default function Reports() {
                                 <span className="text-muted-foreground">Mistake:</span>
                                 <span className="font-medium text-loss">{commonMistakes[0]?.name || "None"}</span>
                               </div>
+                            )}
+                            {topSetups.length === 0 && commonMistakes.length === 0 && (
+                              <p className="text-[11px] text-muted-foreground/40 italic">No tags recorded</p>
                             )}
                           </div>
                         </div>
