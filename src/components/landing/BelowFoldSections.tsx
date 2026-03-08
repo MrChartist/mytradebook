@@ -163,8 +163,8 @@ export function PricingSection() {
       <MotionSection className="max-w-5xl mx-auto px-6 lg:px-8">
         <motion.div variants={fadeUp} className="text-center mb-16">
           <SectionBadge>Pricing</SectionBadge>
-          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-5 leading-[1.08] tracking-[-0.018em]">
-            Simple,{" "}<span className="accent-serif">transparent</span>{" "}pricing
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-bold mb-5 leading-[1.06] tracking-[-0.03em]">
+            Simple,{" "}<span className="text-gradient">transparent</span>{" "}pricing
           </h2>
           <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-[1rem] leading-[1.7]">
             Everything free during beta. No credit card. No catch.
