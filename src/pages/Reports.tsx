@@ -324,22 +324,22 @@ export default function Reports() {
                         <h4 className="font-medium text-[11px] text-muted-foreground/60 uppercase tracking-wider mb-2.5">
                           {segmentDisplayNames[segment.segment] || segment.segment}
                         </h4>
-                        <div className="space-y-3">
+                        <div className="space-y-2">
                           <div className="flex items-center justify-between">
-                            <span className="text-sm">P&L</span>
-                            <span className={cn("font-semibold", (segment.total_pnl || 0) >= 0 ? "text-profit" : "text-loss")}>
+                            <span className="text-[12px] text-muted-foreground/50">P&L</span>
+                            <span className={cn("font-semibold font-mono text-[13px]", (segment.total_pnl || 0) >= 0 ? "text-profit" : "text-loss")}>
                               {(segment.total_pnl || 0) >= 0 ? "+" : ""}₹{(segment.total_pnl || 0).toLocaleString()}
                             </span>
                           </div>
                           <div className="flex items-center justify-between">
-                            <span className="text-sm">Win Rate</span>
-                            <span className={cn("font-semibold", (segment.win_rate || 0) >= 50 ? "text-profit" : "text-loss")}>
+                            <span className="text-[12px] text-muted-foreground/50">Win Rate</span>
+                            <span className={cn("font-semibold font-mono text-[13px]", (segment.win_rate || 0) >= 50 ? "text-profit" : "text-loss")}>
                               {(segment.win_rate || 0).toFixed(1)}%
                             </span>
                           </div>
                           <div className="flex items-center justify-between">
-                            <span className="text-sm">Trades</span>
-                            <span className="font-semibold">{segment.total_trades}</span>
+                            <span className="text-[12px] text-muted-foreground/50">Trades</span>
+                            <span className="font-semibold font-mono text-[13px]">{segment.total_trades}</span>
                           </div>
                           <div className="pt-2 border-t border-border/50">
                             {topSetups.length > 0 && (
