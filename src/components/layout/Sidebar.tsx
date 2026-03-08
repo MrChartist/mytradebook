@@ -187,7 +187,7 @@ export function Sidebar() {
                     {isTrialing ? `Trial · ${trialDaysLeft}d` : plan}
                   </span>
                 </div>
-                <p className="text-[11px] text-muted-foreground truncate">{profile.email}</p>
+                <p className="text-caption text-muted-foreground truncate">{profile.email}</p>
               </div>
             </div>
           )}
