@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAlerts } from "@/hooks/useAlerts";
 import { CreateAlertModal } from "@/components/modals/CreateAlertModal";
+import { CreateTradeModal } from "@/components/modals/CreateTradeModal";
 import { EditAlertModal } from "@/components/modals/EditAlertModal";
 import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 import { InsightCard, type InsightCardAction } from "@/components/ui/insight-card";
