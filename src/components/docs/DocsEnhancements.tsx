@@ -167,7 +167,7 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
   const IconComp = Icon || ChevronRight;
 
   return (
-    <div className="rounded-lg border border-border/40 overflow-hidden my-4">
+    <div className="rounded-xl border border-border/40 overflow-hidden my-5">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-muted/20 transition-colors"
