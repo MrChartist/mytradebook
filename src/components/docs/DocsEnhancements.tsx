@@ -316,9 +316,9 @@ export function KeyMetric({ label, value, sub }: { label: string; value: string;
 /* ──────────────────────────────────────────────
    SubTopic — Visual sub-heading within a section
    ────────────────────────────────────────────── */
-export function SubTopic({ title, description }: { title: string; description?: string }) {
+export function SubTopic({ title, description, id }: { title: string; description?: string; id?: string }) {
   return (
-    <div className="mt-10 mb-5 first:mt-6">
+    <div id={id} className={cn("mt-10 mb-5 first:mt-6", id && "scroll-mt-24")}>
       <div className="flex items-center gap-3">
         <div className="w-1.5 h-1.5 rounded-full bg-primary/50" />
         <h3 className="text-[15px] font-bold tracking-tight text-foreground">{title}</h3>
