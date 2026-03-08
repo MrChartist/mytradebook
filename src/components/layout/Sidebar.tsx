@@ -121,22 +121,21 @@ export function Sidebar() {
       {/* Desktop Sidebar */}
       <aside
         className={cn(
-          "hidden lg:flex fixed left-0 top-0 z-40 h-screen flex-col bg-card border-r border-border transition-all duration-300",
+          "hidden lg:flex fixed left-0 top-0 z-40 h-screen flex-col bg-card border-r border-border/60 transition-all duration-300 ease-out",
           collapsed ? "w-[68px]" : "w-[230px]"
         )}
-        style={{ boxShadow: "inset -1px 0 0 0 hsl(0 0% 100% / 0.04)" }}
       >
         {/* Logo */}
-        <div className="flex items-center gap-2.5 px-4 h-[60px] border-b border-border/50" style={{ background: "linear-gradient(to bottom, transparent, hsl(0 0% 0% / 0.02))" }}>
+        <div className="flex items-center gap-2.5 px-4 h-[56px] border-b border-border/40">
           {collapsed ? (
             <img src={logo} alt="TradeBook" className="h-7 w-7 object-contain flex-shrink-0" />
           ) : (
-            <img src={logo} alt="TradeBook" className="h-8 object-contain animate-fade-in" />
+            <img src={logo} alt="TradeBook" className="h-8 object-contain" />
           )}
           {!collapsed && (
             <button
               onClick={() => setCollapsed(true)}
-              className="ml-auto w-7 h-7 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              className="ml-auto w-7 h-7 rounded-lg border border-border/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors duration-200"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
             </button>
@@ -144,25 +143,25 @@ export function Sidebar() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
-          {!collapsed && <div className="sidebar-section-label font-bold">Main</div>}
+        <nav className="flex-1 px-2.5 py-3 space-y-0.5 overflow-y-auto">
+          {!collapsed && <div className="sidebar-section-label">Main</div>}
           {mainNavItems.map(renderNavItem)}
 
           {!collapsed ? (
-            <div className="sidebar-section-label mt-6 font-bold">Analytics</div>
+            <div className="sidebar-section-label mt-5">Analytics</div>
           ) : (
-            <div className="my-3 mx-2 border-t border-border" />
+            <div className="my-2.5 mx-2 border-t border-border/40" />
           )}
           {analyticsNavItems.map(renderNavItem)}
         </nav>
 
         {/* Bottom Section */}
-        <div className="px-3 py-3 border-t border-border/50 space-y-0.5" style={{ background: "linear-gradient(to top, transparent, hsl(0 0% 0% / 0.02))" }}>
+        <div className="px-2.5 py-3 border-t border-border/40 space-y-0.5">
           {/* Theme toggle */}
           {!collapsed && (
-            <div className="flex items-center justify-between px-3 py-1.5 mb-1">
-              <span className="text-[11px] text-muted-foreground">Theme</span>
-              <div className="flex items-center gap-1">
+            <div className="flex items-center justify-between px-3 py-1.5 mb-1.5">
+              <span className="text-[11px] text-muted-foreground font-medium">Theme</span>
+              <div className="flex items-center gap-1.5">
                 <NotificationBell />
                 <ThemeToggle />
               </div>
@@ -170,7 +169,7 @@ export function Sidebar() {
           )}
           {/* Profile */}
           {!collapsed && profile && (
-            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/40 backdrop-blur-sm rounded-xl" style={{ boxShadow: "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)" }}>
+            <div className="flex items-center gap-2.5 px-3 py-2.5 mb-2 bg-muted/30 rounded-xl border border-border/30">
               <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0 ring-2 ring-background">
                 <span className="text-primary-foreground font-semibold text-xs">
                   {profile.name?.charAt(0).toUpperCase() || "U"}

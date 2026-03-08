@@ -9,13 +9,13 @@ interface PageHeaderProps {
 export function PageHeader({ title, subtitle, children }: PageHeaderProps) {
   return (
     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-      <div>
-        <h1 className="text-2xl lg:text-3xl font-bold">{title}</h1>
+      <div className="space-y-1">
+        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">{title}</h1>
         {subtitle && (
-          <p className="text-sm text-muted-foreground">{subtitle}</p>
+          <p className="text-sm text-muted-foreground leading-relaxed">{subtitle}</p>
         )}
       </div>
-      {children && <div className="flex gap-2 flex-wrap">{children}</div>}
+      {children && <div className="flex items-center gap-2 flex-wrap">{children}</div>}
     </div>
   );
 }

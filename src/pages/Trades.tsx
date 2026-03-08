@@ -594,19 +594,19 @@ export default function Trades() {
         </div>
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between pt-4">
+          <div className="flex items-center justify-between pt-5 border-t border-border/30">
             <p className="text-xs text-muted-foreground">
-              Showing {(currentPage - 1) * TRADES_PER_PAGE + 1}–{Math.min(currentPage * TRADES_PER_PAGE, sortedTrades.length)} of {sortedTrades.length} trades
+              Showing {(currentPage - 1) * TRADES_PER_PAGE + 1}–{Math.min(currentPage * TRADES_PER_PAGE, sortedTrades.length)} of {sortedTrades.length}
             </p>
             <div className="flex gap-1">
-              <Button variant="outline" size="sm" className="h-7 text-xs" disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>Previous</Button>
+              <Button variant="outline" size="sm" className="h-8 text-xs px-3" disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>Previous</Button>
               {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
                 const page = totalPages <= 5 ? i + 1 : currentPage <= 3 ? i + 1 : currentPage >= totalPages - 2 ? totalPages - 4 + i : currentPage - 2 + i;
                 return (
-                  <Button key={page} variant={page === currentPage ? "default" : "outline"} size="sm" className="h-7 w-7 text-xs p-0" onClick={() => setCurrentPage(page)}>{page}</Button>
+                  <Button key={page} variant={page === currentPage ? "default" : "outline"} size="sm" className="h-8 w-8 text-xs p-0" onClick={() => setCurrentPage(page)}>{page}</Button>
                 );
               })}
-              <Button variant="outline" size="sm" className="h-7 text-xs" disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}>Next</Button>
+              <Button variant="outline" size="sm" className="h-8 text-xs px-3" disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}>Next</Button>
             </div>
           </div>
         )}

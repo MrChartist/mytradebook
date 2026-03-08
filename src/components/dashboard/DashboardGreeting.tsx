@@ -41,15 +41,15 @@ export function DashboardGreeting() {
   }, [user]);
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1.5">
       <h1 className="text-2xl font-bold tracking-tight">
         {greeting}, <span className="text-primary">{displayName}</span>
       </h1>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5">
         <span className="text-xs text-muted-foreground">{dateStr}</span>
-        <span className="text-muted-foreground/30">•</span>
-        <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-2.5 py-1">
-          <span className={`w-1.5 h-1.5 rounded-full ${market.isOpen ? "bg-profit pulse-dot" : "bg-muted-foreground"}`} />
+        <span className="text-border">·</span>
+        <div className="flex items-center gap-1.5 bg-muted/40 rounded-full px-2.5 py-1 border border-border/30">
+          <span className={`w-1.5 h-1.5 rounded-full ${market.isOpen ? "bg-profit pulse-dot" : "bg-muted-foreground/50"}`} />
           <span className="text-[11px] text-muted-foreground font-medium">{market.label}</span>
         </div>
       </div>

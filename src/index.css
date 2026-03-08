@@ -148,26 +148,23 @@
 @layer components {
   /* ── Surface Cards ─────────────────────────────────── */
   .surface-card {
-    @apply bg-card rounded-[1.25rem] border border-border;
-    box-shadow: var(--shadow-sm), inset 0 1px 0 0 hsl(0 0% 100% / 0.08);
+    @apply bg-card rounded-[1.25rem] border border-border/80;
+    box-shadow: var(--shadow-sm);
   }
 
   .surface-card-hover {
-    @apply surface-card transition-all duration-300 ease-out;
+    @apply surface-card transition-all duration-200 ease-out;
   }
 
   .surface-card-hover:hover {
-    box-shadow: var(--shadow-md), inset 0 1px 0 0 hsl(0 0% 100% / 0.1);
-    border-color: hsl(var(--primary) / 0.18);
+    box-shadow: var(--shadow-md);
+    border-color: hsl(var(--border));
   }
 
   /* ── Premium Card (rich, layered) ──────────────────── */
   .premium-card {
-    @apply bg-card rounded-[1.25rem] border border-border p-6 relative overflow-hidden;
-    box-shadow:
-      var(--shadow-sm),
-      0 0 0 1px hsl(var(--border) / 0.4),
-      inset 0 1px 0 0 hsl(0 0% 100% / 0.08);
+    @apply bg-card rounded-[1.25rem] border border-border/80 p-6 relative overflow-hidden;
+    box-shadow: var(--shadow-sm);
   }
 
   .premium-card::after {
@@ -177,28 +174,24 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.12) 30%, hsl(0 0% 100% / 0.12) 70%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.08) 30%, hsl(0 0% 100% / 0.08) 70%, transparent 100%);
     pointer-events: none;
   }
 
   .premium-card-hover {
-    @apply premium-card transition-all duration-300 ease-out;
+    @apply premium-card transition-all duration-200 ease-out;
   }
 
   .premium-card-hover:hover {
-    box-shadow:
-      var(--shadow-lg),
-      0 0 0 1px hsl(var(--primary) / 0.15),
-      inset 0 1px 0 0 hsl(0 0% 100% / 0.12);
-    transform: translateY(-3px);
-    border-color: hsl(var(--primary) / 0.2);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: hsl(var(--primary) / 0.18);
   }
 
   /* ── Inner Panel (nested depth) ────────────────────── */
   .inner-panel {
     background: hsl(var(--card-inner));
-    @apply rounded-xl border border-border/40 p-3;
-    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.04);
+    @apply rounded-xl border border-border/30 p-3;
   }
 
   /* ── Card Corner Glows ────────────────────────────── */
@@ -303,7 +296,7 @@
 
   /* Section divider for sidebar */
   .sidebar-section-label {
-    @apply px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground/60;
+    @apply px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/50;
   }
 
   .nav-active-bar {
@@ -313,20 +306,18 @@
     content: '';
     position: absolute;
     left: 0;
-    top: 15%;
-    bottom: 15%;
-    width: 3px;
-    border-radius: 0 3px 3px 0;
+    top: 18%;
+    bottom: 18%;
+    width: 2.5px;
+    border-radius: 0 2px 2px 0;
     background: hsl(var(--primary));
   }
 
   /* ── Dashboard Utilities ───────────────────────── */
   .dashboard-card {
     @apply bg-card rounded-[1.25rem] border border-border/60 p-6 relative overflow-hidden;
-    box-shadow:
-      var(--shadow-sm),
-      inset 0 1px 0 0 hsl(0 0% 100% / 0.08);
-    transition: box-shadow 300ms ease-out, border-color 300ms ease-out, transform 300ms ease-out;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 200ms ease-out, border-color 200ms ease-out, transform 200ms ease-out;
   }
 
   .dashboard-card::after {
@@ -336,7 +327,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.1) 30%, hsl(0 0% 100% / 0.1) 70%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.06) 30%, hsl(0 0% 100% / 0.06) 70%, transparent 100%);
     pointer-events: none;
   }
 
@@ -345,10 +336,8 @@
   }
 
   .dashboard-card-hover:hover {
-    box-shadow:
-      var(--shadow-md),
-      inset 0 1px 0 0 hsl(0 0% 100% / 0.1);
-    border-color: hsl(var(--primary) / 0.18);
+    box-shadow: var(--shadow-md);
+    border-color: hsl(var(--primary) / 0.15);
     transform: translateY(-2px);
   }
 
@@ -578,8 +567,9 @@
 
 /* Focus visible ring for keyboard navigation */
 :focus-visible {
-  outline: 2px solid hsl(var(--primary));
+  outline: 2px solid hsl(var(--primary) / 0.5);
   outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* Selection colors */
@@ -638,12 +628,12 @@
   .dashboard-card, .premium-card-hover, .surface-card { box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; }
 }
 
-/* ── Card flip on hover ─────────────────────── */
+/* ── Card lift on hover ──────────────────────── */
 .card-hover-lift {
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
 }
 .card-hover-lift:hover {
-  transform: translateY(-4px) rotateX(2deg);
+  transform: translateY(-2px);
 }
 
 /* ── Profit pulse glow ──────────────────────── */
