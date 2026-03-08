@@ -1182,7 +1182,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><StudyCategoryWorkflowMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Pattern Tagging" description="Rich multi-category tagging for chart pattern recognition." />
+              <SubTopic title="Pattern Tagging" description="Rich multi-category tagging for chart pattern recognition." id="st-patterns" />
               <FeatureCard icon={Tag} title="Pattern Tagging System">
                 <p className="text-sm text-muted-foreground mb-3">Rich tagging for pattern recognition:</p>
                 <FeatureList items={[
