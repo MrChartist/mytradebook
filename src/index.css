@@ -1052,6 +1052,9 @@
     border-bottom: 1px solid hsl(var(--docs-border-subtle) / 0.5);
     box-shadow: 0 1px 3px -1px hsl(var(--docs-bg) / 0.15);
   }
+  .docs-navbar--glow {
+    border-image: linear-gradient(90deg, transparent 10%, hsl(var(--docs-accent) / 0.15) 50%, transparent 90%) 1;
+  }
   .docs-navbar-badge {
     display: inline-flex;
     align-items: center;
