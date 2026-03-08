@@ -4474,7 +4474,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </div>
               {[
                 { title: "Product", links: [{ label: "Features", href: "/#features" }, { label: "Pricing", href: "/#pricing" }, { label: "Documentation", href: "/docs" }] },
-                { title: "Resources", links: [{ label: "Changelog", href: "#changelog" }, { label: "FAQ", href: "#faq" }, { label: "Contact", href: "mailto:founder@mrchartist.com" }] },
+                { title: "Resources", links: [{ label: "Changelog", href: "#changelog" }, { label: "FAQ", href: "#faq" }, { label: "Support", href: "mailto:founder@mrchartist.com" }] },
                 { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }] },
               ].map((col) => (
                 <div key={col.title}>
