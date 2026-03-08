@@ -82,7 +82,7 @@ export class ErrorBoundary extends Component<Props, State> {
               An unexpected error occurred. We've logged it for review.
             </p>
             {this.state.errorId && (
-              <p className="text-[11px] text-muted-foreground/50 font-mono mb-6">
+              <p className="text-[11px] text-muted-foreground/70 font-mono mb-6">
                 Ref: {this.state.errorId}
               </p>
             )}

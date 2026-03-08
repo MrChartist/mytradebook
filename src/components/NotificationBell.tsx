@@ -124,6 +124,7 @@ export function NotificationBell() {
                 size="sm"
                 className="h-7 text-xs text-muted-foreground hover:text-destructive"
                 onClick={() => clearAll?.()}
+                aria-label="Clear all notifications"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </Button>

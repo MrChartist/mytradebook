@@ -258,7 +258,7 @@
   }
 
   .kpi-sublabel {
-    @apply text-[10px] text-muted-foreground/70;
+    @apply text-[10px] text-muted-foreground/80;
   }
 
   /* ── Consistent section spacing ─────────────── */
