@@ -2246,7 +2246,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </div>
               </InteractiveMockup>
 
-              <div className="grid md:grid-cols-2 gap-5 mt-6">
+              <div className="space-y-5 mt-6">
                 <FeatureCard icon={SlidersHorizontal} title="Custom Filter Builder">
                   <p className="text-sm text-muted-foreground mb-3">Build and save your own multi-condition screens:</p>
                   <FeatureList items={[
@@ -2269,7 +2269,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 </FeatureCard>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-5 mt-2">
+              <div className="mt-5">
                 <StockPopupMockup />
               </div>
 
