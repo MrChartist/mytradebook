@@ -455,6 +455,11 @@
     transition: box-shadow 200ms ease-out, border-color 200ms ease-out, transform 200ms ease-out;
   }
 
+  .dark .dashboard-card {
+    border-color: hsl(var(--border) / 0.5);
+    box-shadow: var(--shadow-sm), inset 0 1px 0 0 hsl(0 0% 100% / 0.025);
+  }
+
   .dashboard-card::after {
     content: '';
     position: absolute;
@@ -466,6 +471,10 @@
     pointer-events: none;
   }
 
+  .dark .dashboard-card::after {
+    background: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.03) 30%, hsl(0 0% 100% / 0.03) 70%, transparent 100%);
+  }
+
   .dashboard-card-hover {
     @apply dashboard-card;
   }
@@ -474,6 +483,10 @@
     box-shadow: var(--shadow-md);
     border-color: hsl(var(--primary) / 0.15);
     transform: translateY(-2px);
+  }
+
+  .dark .dashboard-card-hover:hover {
+    border-color: hsl(var(--primary) / 0.25);
   }
 
   .icon-badge {
