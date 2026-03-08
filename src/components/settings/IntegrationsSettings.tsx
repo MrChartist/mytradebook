@@ -848,12 +848,12 @@ export default function IntegrationsSettings() {
           
           {/* Sync status */}
           {syncStatus.status && (
-            <div className={`p-3 rounded-lg flex items-center gap-2 ${
+            <div className={`p-2.5 rounded-lg flex items-center gap-2 ${
               syncStatus.status === "completed" || syncStatus.status === "partial"
-                ? "bg-profit/10 border border-profit/20"
+                ? "bg-profit/6 border border-profit/15"
                 : syncStatus.status === "running"
-                ? "bg-blue-500/10 border border-blue-500/20"
-                : "bg-loss/10 border border-loss/20"
+                ? "bg-[hsl(210_80%_55%)]/6 border border-[hsl(210_80%_55%)]/15"
+                : "bg-loss/6 border border-loss/15"
             }`}>
               {(syncStatus.status === "completed" || syncStatus.status === "partial") ? (
                 <CheckCircle className="w-4 h-4 text-profit" />
