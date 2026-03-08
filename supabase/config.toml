@@ -50,3 +50,6 @@ verify_jwt = false
 
 [functions.suggest-alerts]
 verify_jwt = false
+
+[functions.pattern-detection]
+verify_jwt = false
