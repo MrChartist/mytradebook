@@ -265,8 +265,13 @@
 @layer components {
   /* ── Surface Cards ─────────────────────────────────── */
   .surface-card {
-    @apply bg-card rounded-[1.25rem] border border-border/80;
+    @apply bg-card rounded-[1.25rem] border border-border/70;
     box-shadow: var(--shadow-sm);
+  }
+
+  .dark .surface-card {
+    border-color: hsl(var(--border) / 0.55);
+    box-shadow: var(--shadow-sm), inset 0 1px 0 0 hsl(0 0% 100% / 0.025);
   }
 
   .surface-card-hover {
@@ -276,6 +281,10 @@
   .surface-card-hover:hover {
     box-shadow: var(--shadow-md);
     border-color: hsl(var(--border));
+  }
+
+  .dark .surface-card-hover:hover {
+    border-color: hsl(var(--border) / 0.8);
   }
 
   /* ── Premium Card (rich, layered) ──────────────────── */
