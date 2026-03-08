@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { BookOpen, Search, ArrowLeft, ExternalLink, Moon, Sun, Command } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
-import landingLogo from "@/assets/logo.png";
+import { BrandLogoInline } from "@/components/ui/brand-logo";
 
 interface DocsNavbarProps {
   isInsideApp?: boolean;
@@ -69,10 +69,7 @@ export function DocsNavbar({ isInsideApp = false, onSearchOpen }: DocsNavbarProp
             onClick={() => navigate("/")}
             className="flex items-center gap-2.5 transition-opacity duration-200 hover:opacity-75"
           >
-            <img src={landingLogo} alt="TradeBook" className="h-[30px] object-contain" />
-            <span className="hidden sm:inline font-heading text-[16px] font-semibold tracking-tight" style={{ color: 'hsl(var(--docs-text-strong))' }}>
-              TradeBook
-            </span>
+            <BrandLogoInline size="sm" />
           </button>
           <div className="hidden sm:flex items-center">
             <span 

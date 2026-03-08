@@ -28,7 +28,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useSubscription } from "@/hooks/useSubscription";
 import { NotificationBell } from "@/components/NotificationBell";
-import logo from "@/assets/logo.png";
+import { BrandLogoInline, BrandLogo } from "@/components/ui/brand-logo";
 
 const mainNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
@@ -108,7 +108,7 @@ export function Sidebar() {
     <>
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-card/95 backdrop-blur-xl border-b border-border/30 flex items-center justify-between px-3">
-        <img src={logo} alt="TradeBook" className="h-8 object-contain" />
+        <BrandLogoInline size="sm" />
         <div className="flex items-center gap-1">
           <ThemeToggle />
           <NotificationBell />
@@ -133,10 +133,10 @@ export function Sidebar() {
         {/* Logo */}
         <div className="flex items-center gap-2 px-3 h-14 border-b border-border/30">
           {collapsed ? (
-            <img src={logo} alt="TradeBook" className="h-7 w-7 object-contain flex-shrink-0 mx-auto" />
+            <span className="font-heading font-bold text-[13px] text-foreground mx-auto">TB</span>
           ) : (
             <>
-              <img src={logo} alt="TradeBook" className="h-8 object-contain" />
+              <BrandLogoInline size="sm" />
               <button
                 onClick={() => setCollapsed(true)}
                 aria-label="Collapse sidebar"

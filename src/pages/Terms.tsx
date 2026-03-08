@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, ScrollText } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import logo from "@/assets/logo.png";
+import { BrandLogoInline } from "@/components/ui/brand-logo";
 
 const sections = [
   { id: "acceptance", title: "1. Acceptance of Terms" },
@@ -30,7 +30,7 @@ export default function Terms() {
       >
         <div className="flex items-center justify-between px-3 pl-4 py-2 rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg shadow-foreground/[0.03]">
           <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="TradeBook" className="h-8 object-contain" />
+            <BrandLogoInline size="sm" />
           </Link>
           <div className="flex items-center gap-2">
             <ThemeToggle />

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
-import logo from "@/assets/logo.png";
+import { BrandLogo, BrandLogoInline } from "@/components/ui/brand-logo";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -166,7 +166,7 @@ export default function Login() {
         <div className="flex items-center justify-between px-3 pl-4 py-2 rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg shadow-foreground/[0.03]">
           <motion.div className="flex items-center gap-2" whileHover={{ scale: 1.03 }}>
             <Link to="/" className="flex items-center gap-2">
-              <img src={logo} alt="TradeBook" className="h-8 object-contain" />
+              <BrandLogoInline size="md" />
             </Link>
           </motion.div>
 
@@ -266,7 +266,7 @@ export default function Login() {
           >
             {/* Mobile Logo */}
             <div className="lg:hidden flex items-center gap-3 mb-6 justify-center">
-              <img src={logo} alt="TradeBook" className="h-10 object-contain" />
+              <BrandLogo size="lg" />
             </div>
 
             <div className="liquid-glass p-6 sm:p-8 rounded-2xl">

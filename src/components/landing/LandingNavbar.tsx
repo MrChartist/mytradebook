@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Menu, X, BookOpen, Zap, Tag, HelpCircle, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import landingLogo from "@/assets/logo.png";
+import { BrandLogoInline } from "@/components/ui/brand-logo";
 import { cn } from "@/lib/utils";
 
 interface LandingNavbarProps {
@@ -66,7 +66,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
             onClick={() => navigate("/")}
             className="flex items-center gap-2.5 hover:opacity-80 transition-opacity duration-200"
           >
-            <img src={landingLogo} alt="TradeBook" className="h-8 object-contain" />
+            <BrandLogoInline size="md" />
           </button>
           {activePage === "docs" && (
             <div className="hidden sm:flex items-center gap-1 text-[11px] text-muted-foreground ml-1.5">

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { SEOHead } from "@/components/SEOHead";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import logo from "@/assets/logo.png";
+import { BrandLogo } from "@/components/ui/brand-logo";
 
 const popularLinks = [
   { label: "Dashboard", href: "/dashboard", icon: Home },
@@ -47,7 +47,7 @@ const NotFound = () => {
         >
           {/* Logo */}
           <Link to="/" className="inline-block mb-8">
-            <img src={logo} alt="TradeBook" className="h-10 object-contain mx-auto" />
+            <BrandLogo size="lg" />
           </Link>
 
           {/* 404 Hero */}

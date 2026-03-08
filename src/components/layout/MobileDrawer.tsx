@@ -19,7 +19,7 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import logo from "@/assets/logo.png";
+import { BrandLogoInline } from "@/components/ui/brand-logo";
 
 const mainNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
@@ -82,7 +82,7 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
       <SheetContent side="left" className="w-[260px] p-0 bg-card border-border/40">
         <SheetHeader className="px-3 h-14 flex items-center border-b border-border/30">
           <div className="flex items-center gap-2">
-            <img src={logo} alt="TradeBook" className="h-8 object-contain" />
+            <BrandLogoInline size="sm" />
             <SheetTitle className="sr-only">TradeBook</SheetTitle>
           </div>
         </SheetHeader>
