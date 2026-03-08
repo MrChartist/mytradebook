@@ -29,6 +29,7 @@ import { TradeDetailTags } from "./TradeDetailTags";
 import { TradeDetailTimeline } from "./TradeDetailTimeline";
 import { TradeDetailTelegram } from "./TradeDetailTelegram";
 import { TradeDetailActions } from "./TradeDetailActions";
+import { TradeCoachPanel } from "@/components/trade/TradeCoachPanel";
 
 interface TradeDetailModalProps {
   trade: Trade | null;
@@ -237,6 +238,14 @@ export function TradeDetailModal({ trade, open, onOpenChange }: TradeDetailModal
               onAddEvent={handleAddEvent}
               isAdding={addEvent.isPending}
             />
+
+            {/* AI Trade Coach - only for closed trades */}
+            {trade.status === "CLOSED" && (
+              <>
+                <Separator />
+                <TradeCoachPanel trade={trade} />
+              </>
+            )}
 
             <Separator />
 

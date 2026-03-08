@@ -15,6 +15,8 @@ import { JournalCalendarView } from "@/components/journal/JournalCalendarView";
 import { RiskGoalWidget } from "@/components/dashboard/RiskGoalWidget";
 import { AITradeInsights } from "@/components/analytics/AITradeInsights";
 import { PortfolioHeatMap } from "@/components/dashboard/PortfolioHeatMap";
+import { AchievementsBadgeGrid } from "@/components/dashboard/AchievementsBadgeGrid";
+import { useAchievements } from "@/hooks/useAchievements";
 import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useLivePrices } from "@/hooks/useLivePrices";
@@ -178,6 +180,8 @@ export default function Dashboard() {
         return <QuickActions key={w.id} />;
       case "aiInsights":
         return <AITradeInsights key={w.id} compact maxInsights={2} />;
+      case "achievements":
+        return <AchievementsBadgeGrid key={w.id} />;
       default:
         return null;
     }

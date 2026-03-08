@@ -25,6 +25,7 @@ const DEFAULT_WIDGETS: WidgetConfig[] = [
   { id: "monthly", label: "Monthly Metrics", visible: true, order: 8 },
   { id: "actions", label: "Quick Actions", visible: true, order: 9 },
   { id: "aiInsights", label: "AI Insights", visible: true, order: 10 },
+  { id: "achievements", label: "Achievements", visible: true, order: 11 },
 ];
 
 export function useDashboardLayout() {

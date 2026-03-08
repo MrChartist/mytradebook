@@ -44,3 +44,9 @@ verify_jwt = false
 
 [functions.tradingview-scan]
 verify_jwt = false
+
+[functions.trade-coach]
+verify_jwt = false
+
+[functions.suggest-alerts]
+verify_jwt = false
