@@ -1001,6 +1001,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={ClipboardCheck}
               />
               <TradingRulesMockup />
+              <SubTopic title="Setup & Usage" description="How to create and enforce your personal trading rules." />
               <FeatureCard icon={ClipboardCheck} title="How Trading Rules Work">
                 <p className="text-sm text-muted-foreground mb-3">Create a custom checklist that appears in the trade creation modal:</p>
                 <FeatureList items={[
