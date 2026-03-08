@@ -109,10 +109,10 @@ export default function Calendar() {
         </div>
 
         {/* Right panel: trade list + journal */}
-        <div className="space-y-4 lg:max-h-[calc(100vh-220px)] lg:overflow-y-auto lg:pr-1">
+        <div className="space-y-3.5 lg:max-h-[calc(100vh-220px)] lg:overflow-y-auto lg:pr-1">
           {/* Trade list for selected day */}
-          <div className="glass-card p-5">
-            <h4 className="font-semibold mb-3 text-sm">
+          <div className="premium-card-hover p-4">
+            <h4 className="font-semibold mb-3 text-[13px]">
               {selectedDate ? `Trades — ${format(selectedDate, "MMM dd, yyyy")}` : "Select a date"}
             </h4>
             {selectedDayData && selectedDayData.trades.length > 0 ? (

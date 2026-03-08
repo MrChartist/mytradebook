@@ -217,7 +217,7 @@ export default function Alerts() {
         <div className="h-px bg-border/20" />
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
           <div
             role="button"
             tabIndex={0}

@@ -253,7 +253,7 @@ export default function Journal() {
         </TabsContent>
 
         {/* Calendar Tab */}
-        <TabsContent value="calendar" className="mt-6">
+        <TabsContent value="calendar" className="mt-4">
           <JournalCalendarView
             calendarData={analytics.calendarData}
             isLoading={analytics.isLoading}
@@ -262,11 +262,11 @@ export default function Journal() {
         </TabsContent>
 
         {/* Mistakes Review Tab (Kanban) */}
-        <TabsContent value="mistakes" className="mt-6">
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold">Mistakes Review Board</h3>
-            <p className="text-sm text-muted-foreground">
-              Review trades with mistakes, grouped by severity level
+        <TabsContent value="mistakes" className="mt-4">
+          <div className="mb-3">
+            <h3 className="text-[15px] font-semibold">Mistakes Review Board</h3>
+            <p className="text-[12px] text-muted-foreground/50">
+              Review trades with mistakes, grouped by severity
             </p>
           </div>
           <JournalKanbanBoard

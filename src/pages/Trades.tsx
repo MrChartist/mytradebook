@@ -325,7 +325,7 @@ export default function Trades() {
           </button>
         )}
         {(showStats || !isMobile) && (
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4" aria-live="polite" aria-label="Trade statistics">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5" aria-live="polite" aria-label="Trade statistics">
             <div
               role="button"
               tabIndex={0}

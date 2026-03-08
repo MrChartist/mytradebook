@@ -364,7 +364,7 @@ export default function Reports() {
                 </div>
 
                 {/* Report Actions */}
-                <div className="p-4 bg-accent/30 flex justify-end gap-2">
+                <div className="p-3 bg-muted/20 border-t border-border/10 flex justify-end gap-2">
                   <Button variant="outline" size="sm" className="border-border" onClick={() => handleDownloadPdf(report)}>
                     <Download className="w-4 h-4 mr-2" />
                     Download PDF

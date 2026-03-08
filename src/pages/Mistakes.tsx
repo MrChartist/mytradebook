@@ -233,7 +233,7 @@ export default function Mistakes() {
           Loss Severity Breakdown
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
           {columns.map((col) => (
             <div key={col.label} className="space-y-3">
               <div className="flex items-center justify-between">
