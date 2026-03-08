@@ -61,7 +61,7 @@ export function ProTip({ children, variant = "tip" }: { children: ReactNode; var
     <div className={cn(CARD_RADIUS, "border relative overflow-hidden", CARD_SPACING, s.border, s.bg, "docs-callout")}>
       {/* Left accent bar */}
       <div className={cn("absolute left-0 top-0 bottom-0 w-[3px]", s.accent)} />
-      <div className="flex items-start gap-3.5 px-6 py-5 pl-7">
+      <div className="flex items-start gap-3.5 px-6 py-5 pl-8">
         <Icon className={cn("w-4 h-4 shrink-0 mt-0.5", s.iconColor)} />
         <div className="flex-1 min-w-0">
           <p className={cn("text-[11px] font-bold uppercase tracking-wider mb-2", s.iconColor)}>{s.label}</p>
