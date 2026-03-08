@@ -508,7 +508,7 @@ export default function Login() {
                     Continue with Google
                   </Button>
 
-                  <p className="text-xs text-muted-foreground text-center mt-6">
+                  <p className="text-[11px] text-muted-foreground/60 text-center mt-6">
                     By signing in, you agree to our{" "}
                     <a href="/terms" className="text-primary hover:underline">Terms</a>{" "}and{" "}
                     <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a>
