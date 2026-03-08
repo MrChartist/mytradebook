@@ -382,7 +382,7 @@ export function IndianMarketsSection() {
         <div className="grid md:grid-cols-2 gap-14 items-center">
           <motion.div variants={fadeUp}>
             <SectionBadge>Made in India</SectionBadge>
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Built for{" "}<span className="text-[hsl(var(--tb-accent))] italic" style={{ fontFamily: "'Dancing Script', 'Satisfy', cursive" }}>Indian</span>{" "}markets</h2>
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-6 leading-[1.1]">Built for{" "}<span className="accent-script">Indian</span>{" "}markets</h2>
             <p className="text-foreground/80 text-[15px] leading-[1.7] mb-6">Unlike generic journals, TradeBook understands Indian market structure — segments, lot sizes, INR formatting, and market hours (9:15 AM – 3:30 PM).</p>
             <ul className="space-y-2.5 mb-8">
               {["NSE, BSE & MCX exchange support", "INR currency with Indian numbering (Lakhs, Crores)", "Dhan broker integration for auto-sync", "Indian market hours & holiday awareness"].map((item) => (
