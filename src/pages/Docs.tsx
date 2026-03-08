@@ -20,7 +20,7 @@ import {
   ArrowUpRight, ArrowDownRight, Play, Pause, RefreshCw, ExternalLink,
   Wallet, Share2, MessageSquare, Command, Hash, Palette,
   PanelLeftClose, PanelLeftOpen, SlidersHorizontal,
-  Calculator, ClipboardCheck, Trophy
+  Calculator, ClipboardCheck, Trophy, Info
 } from "lucide-react";
 import { LandingNavbar } from "@/components/landing/LandingNavbar";
 import {
@@ -1247,16 +1247,31 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 icon={Bell}
               />
               <QuickNav items={[
+                { label: "First Alert", id: "al-first" },
                 { label: "Alert Types", id: "al-types" },
-                { label: "Trigger Logic", id: "al-trigger" },
+                { label: "Trigger & Cooldown", id: "al-trigger" },
+                { label: "Telegram Delivery", id: "al-delivery" },
                 { label: "Management", id: "al-management" },
                 { label: "AI Suggestions", id: "al-ai" },
               ]} />
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <AlertCardMockup />
-                <TelegramNotifMockup />
-              </div>
-              <SubTopic title="Alert Types" description="Seven condition types to monitor any price action." id="al-types" />
+
+              <InteractiveMockup label="Alert Card & Telegram Notification">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <AlertCardMockup />
+                  <TelegramNotifMockup />
+                </div>
+              </InteractiveMockup>
+
+              <SubTopic title="Setting Up Your First Alert" description="Get started with price monitoring in under a minute." id="al-first" />
+              <StepByStep title="Setting Up Your First Alert" steps={[
+                { title: "Go to Alerts page", description: "Navigate to Alerts from the sidebar, or press ⌘K and type 'New Alert'.", detail: "You can also create alerts directly from a watchlist item or study." },
+                { title: "Search for a symbol", description: "Type the stock name or symbol. Works across NSE, BSE, and MCX.", detail: "The search auto-detects the exchange and segment." },
+                { title: "Choose a condition", description: "Select from 7 condition types: Price Above, Price Below, Crosses Above/Below, % Change, Volume Spike, or Custom.", detail: "For your first alert, 'Price Above' or 'Price Below' is the simplest starting point." },
+                { title: "Set threshold & delivery", description: "Enter the trigger price, choose recurrence (once/daily/continuous), and enable Telegram if connected.", detail: "You can also set a cooldown period to avoid repeated notifications." },
+                { title: "Save and monitor", description: "The alert goes live immediately. You'll see live LTP and distance-to-target on the alerts dashboard.", detail: "Alerts with live prices show '1.1% away' indicators that update in real time." },
+              ]} />
+
+              <SubTopic title="Alert Condition Types" description="Seven condition types to monitor any price action." id="al-types" />
               <FeatureCard icon={Bell} title="Alert Condition Types">
                 <FeatureList items={[
                   "Price Above — triggers when LTP exceeds your threshold",
@@ -1270,24 +1285,43 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><AlertConditionTypesMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="Trigger Logic & Delivery" description="Control when and how alerts fire and reach you." id="al-trigger" />
+              <ExpandableDetail title="Alert Condition Types Explained" icon={Info} badge="Deep Dive">
+                <p>Understanding the difference between threshold alerts and cross-detection alerts is key to avoiding false triggers:</p>
+                <FeatureList items={[
+                  "Price Above/Below — state-based. Fires whenever the current price IS above/below your threshold. If the stock opens above your level, it fires immediately.",
+                  "Crosses Above/Below — event-based. Fires only when the price MOVES through your level. It tracks the previous LTP and detects the crossover moment. This avoids false triggers on gap-up/down opens.",
+                  "% Change — relative to previous close. A '5% change' alert fires when the stock moves 5% from yesterday's close in either direction.",
+                  "Volume Spike — compares current volume to the stock's average volume. Useful for breakout confirmation.",
+                  "Custom — combine multiple conditions. Power-user feature for complex screening logic.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">Cross-detection alerts are generally more useful than simple price alerts because they avoid firing on stocks that already opened above/below your level.</p>
+              </ExpandableDetail>
+
+              <SubTopic title="Trigger Logic & Cooldown" description="Control when and how often alerts fire." id="al-trigger" />
               <FeatureCard icon={RefreshCw} title="Recurrence & Cooldowns">
                 <FeatureList items={[
                   "Once — fires once and auto-deactivates",
                   "Daily — resets every trading day, fires once per day",
                   "Continuous — fires every time the condition is met",
                   "Cooldown periods: 5 min, 15 min, 30 min, 1 hour, 1 day",
+                  "Check intervals: 5 min to 1 hour (configurable per alert)",
                   "Market hours only toggle (9:15 AM – 3:30 PM IST)",
                   "Set expiry dates for time-limited alerts",
                 ]} />
                 <div className="mt-4"><RecurrenceCooldownMockup /></div>
               </FeatureCard>
 
+              <ProTip variant="warning">
+                <p>Set a cooldown of at least <strong>15 minutes</strong> on continuous alerts to avoid notification spam. Without a cooldown, a stock hovering near your threshold can trigger dozens of alerts in rapid succession. For volatile F&O instruments, consider a 30-minute or 1-hour cooldown.</p>
+              </ProTip>
+
+              <SubTopic title="Telegram Delivery" description="Instant notifications with alert details and check frequency." id="al-delivery" />
               <FeatureCard icon={Send} title="Delivery Channels">
                 <p className="text-sm text-muted-foreground mb-3">Choose how you receive alert notifications:</p>
                 <FeatureList items={[
                   "In-app notification badge and dashboard panel",
-                  "Telegram instant message with alert details",
+                  "Telegram instant message with alert details and check interval (e.g., 'Checked every 15m')",
+                  "Route alerts to personal chat, groups, or channels",
                   "Live LTP tracking shows distance-to-target for each alert",
                   "Snooze alerts for 1 hour or rest of the day",
                   "Bulk pause/resume all alerts at once",
@@ -1304,11 +1338,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                   "Search and filter by symbol or condition type",
                   "Link alerts to studies or watchlist items",
                   "Trigger count tracking per alert",
+                  "Alert chains — triggering one alert can auto-create child alerts",
                 ]} />
                 <div className="mt-4"><AlertManagementMockup /></div>
               </FeatureCard>
 
-              <SubTopic title="AI-Powered Suggestions" description="Let AI recommend alerts based on your trading patterns." id="al-ai" />
+              <SubTopic title="Smart Alert Suggestions" description="Let AI recommend alerts based on your trading patterns." id="al-ai" />
               <FeatureCard icon={Sparkles} title="Smart Alert Suggestions" badge="AI">
                 <p className="text-sm text-muted-foreground mb-3">
                   AI analyzes your frequently traded symbols and suggests relevant price alerts with reasoning.
@@ -1322,6 +1357,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 ]} />
                 <p className="text-xs text-muted-foreground mt-3 italic">See also: <button onClick={() => document.getElementById("ai-integration")?.scrollIntoView({ behavior: "smooth" })} className="text-primary hover:underline">AI Insights Setup</button></p>
               </FeatureCard>
+
+              <ExpandableDetail title="Smart Alert Suggestions Deep Dive" icon={Sparkles} badge="AI">
+                <p>The Smart Alert engine works by analyzing your closed trade history through the <code className="px-1 py-0.5 rounded bg-muted text-[11px] font-mono">suggest-alerts</code> backend function:</p>
+                <FeatureList items={[
+                  "Identifies your top 5 most-traded symbols by frequency.",
+                  "For each symbol, it analyzes your average entry/exit prices, win rate, and recent price action.",
+                  "Generates contextual suggestions — e.g., 'Set alert at ₹2,450 (your average entry for RELIANCE, currently 3.2% below)'.",
+                  "Each suggestion includes AI-generated reasoning explaining why this alert level matters for your trading style.",
+                  "One-click creation converts the suggestion into a fully configured alert with sensible defaults.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">You need at least 10 closed trades before suggestions appear. The more trades you log, the more personalized the recommendations become.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
