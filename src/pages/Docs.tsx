@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { LandingNavbar } from "@/components/landing/LandingNavbar";
 import {
-  BentoFeatureGrid, OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
+  OnboardingFlowMockup, DashboardMockup, TradeCardMockup,
   TradeLifecycleFlow, AlertCardMockup, TelegramNotifMockup, WatchlistMockup,
   CalendarHeatmapMockup, KanbanBoardMockup, EquityCurveMockup,
   AnalyticsHeatmapMockup, AnalyticsMetricCards, ShortcutKeyboardMockup,
