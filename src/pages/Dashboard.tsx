@@ -16,12 +16,21 @@ import { RiskGoalWidget } from "@/components/dashboard/RiskGoalWidget";
 import { AITradeInsights } from "@/components/analytics/AITradeInsights";
 import { PortfolioHeatMap } from "@/components/dashboard/PortfolioHeatMap";
 import { AchievementsBadgeGrid } from "@/components/dashboard/AchievementsBadgeGrid";
+import { FloatingTradeTicker } from "@/components/dashboard/FloatingTradeTicker";
+import { SortableWidgetItem } from "@/components/dashboard/DashboardWidgetSortable";
 import { useAchievements } from "@/hooks/useAchievements";
 import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useLivePrices } from "@/hooks/useLivePrices";
 import { useDashboardLayout, type WidgetConfig } from "@/hooks/useDashboardLayout";
-import { Radio, Settings2, ChevronUp, ChevronDown, Eye, EyeOff, RotateCcw } from "lucide-react";
+import {
+  DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext, verticalListSortingStrategy, arrayMove,
+} from "@dnd-kit/sortable";
+import { Radio, Settings2, RotateCcw } from "lucide-react";
 import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -72,10 +81,16 @@ export const useDashboard = () => {
 export default function Dashboard() {
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(new Date());
   const [segment, setSegment] = useState<Segment>("All");
-  const { widgets, toggleWidget, moveWidget, resetLayout } = useDashboardLayout();
+  const { widgets, toggleWidget, moveWidget, resetLayout, reorderWidgets } = useDashboardLayout();
 
   const { trades: allTrades, isLoading: tradesLoading } = useTrades();
   const { alerts } = useAlerts({ active: true });
+
+  // Drag-n-drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor)
+  );
 
   // Filter by segment
   const trades = useMemo(() => {
@@ -87,7 +102,7 @@ export default function Dashboard() {
   const monthStart = selectedMonth ? startOfMonth(selectedMonth) : null;
   const monthEnd = selectedMonth ? endOfMonth(selectedMonth) : null;
   const monthTrades = useMemo(() => {
-    if (!monthStart || !monthEnd) return trades; // All time
+    if (!monthStart || !monthEnd) return trades;
     return trades.filter((t) => {
       const d = new Date(t.entry_time);
       return d >= monthStart && d <= monthEnd;
@@ -103,7 +118,6 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
 
-  // Compute calendarData for the compact calendar widget
   const calendarData = useMemo(() => {
     const map = new Map<string, { date: Date; dateStr: string; trades: any[]; tradeCount: number; pnl: number }>();
     trades.forEach((t) => {
@@ -124,7 +138,6 @@ export default function Dashboard() {
     navigate("/calendar");
   }, [navigate]);
 
-  // Check if alerts widget is visible for dynamic chart width
   const alertsVisible = widgets.find((w) => w.id === "alerts")?.visible ?? true;
 
   const ctx: DashboardContextValue = {
@@ -132,6 +145,15 @@ export default function Dashboard() {
     trades, monthTrades, openTrades,
     prices: prices as Record<string, { ltp: number }>,
     isPolling, lastUpdated,
+  };
+
+  const handlePopoverDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = widgets.findIndex((w) => w.id === active.id);
+    const newIndex = widgets.findIndex((w) => w.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+    reorderWidgets(oldIndex, newIndex);
   };
 
   const renderWidget = (w: WidgetConfig) => {
@@ -151,7 +173,7 @@ export default function Dashboard() {
           </div>
         );
       case "alerts":
-        return null; // Rendered with chart
+        return null;
       case "equityCurve":
         return <EquityCurve key={w.id} />;
       case "positions":
@@ -159,9 +181,7 @@ export default function Dashboard() {
       case "streakCalendar":
         return (
           <div key={w.id} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <div className="min-h-[360px]">
-              <StreakDiscipline />
-            </div>
+            <div className="min-h-[360px]"><StreakDiscipline /></div>
             <div className="min-h-[360px]">
               <JournalCalendarView
                 calendarData={calendarData}
@@ -192,11 +212,13 @@ export default function Dashboard() {
       <div className="space-y-5 animate-fade-in">
         <OnboardingWelcome />
 
+        {/* Floating Trade Ticker */}
+        <FloatingTradeTicker />
+
         {/* Row 1: Greeting + Live status + Settings */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <DashboardGreeting />
           <div className="flex items-center gap-3">
-            {/* Live status indicator */}
             <div className="flex items-center gap-2 text-xs bg-muted/50 rounded-full px-3 py-1.5">
               {isPolling && openInstruments.length > 0 ? (
                 <>
@@ -212,7 +234,7 @@ export default function Dashboard() {
               )}
             </div>
 
-            {/* Widget customization */}
+            {/* Widget customization with drag-and-drop */}
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -220,44 +242,43 @@ export default function Dashboard() {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-64 p-3" align="end">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between mb-2">
                     <p className="text-xs font-medium">Dashboard Widgets</p>
                     <Button variant="ghost" size="sm" className="h-6 text-[10px]" onClick={resetLayout}>
                       <RotateCcw className="w-3 h-3 mr-1" /> Reset
                     </Button>
                   </div>
-                  {widgets.map((w, i) => (
-                    <div key={w.id} className="flex items-center justify-between py-1">
-                      <button
-                        onClick={() => toggleWidget(w.id)}
-                        className={cn("flex items-center gap-2 text-xs", !w.visible && "text-muted-foreground")}
-                      >
-                        {w.visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                        {w.label}
-                      </button>
-                      <div className="flex gap-0.5">
-                        <button onClick={() => moveWidget(w.id, "up")} disabled={i === 0} className="p-0.5 text-muted-foreground hover:text-foreground disabled:opacity-30">
-                          <ChevronUp className="w-3 h-3" />
-                        </button>
-                        <button onClick={() => moveWidget(w.id, "down")} disabled={i === widgets.length - 1} className="p-0.5 text-muted-foreground hover:text-foreground disabled:opacity-30">
-                          <ChevronDown className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handlePopoverDragEnd}
+                  >
+                    <SortableContext
+                      items={widgets.map((w) => w.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {widgets.map((w) => (
+                        <SortableWidgetItem
+                          key={w.id}
+                          id={w.id}
+                          label={w.label}
+                          visible={w.visible}
+                          onToggle={() => toggleWidget(w.id)}
+                        />
+                      ))}
+                    </SortableContext>
+                  </DndContext>
                 </div>
               </PopoverContent>
             </Popover>
           </div>
         </div>
 
-        {/* Separator */}
         <div className="h-px bg-border/40" />
 
-        {/* Row 2: Month selector + Segment filter combined */}
+        {/* Row 2: Month selector + Segment filter */}
         <div className="flex items-center gap-3 flex-wrap">
-          {/* Month selector */}
           <div className="flex gap-1 bg-muted/60 rounded-full p-0.5 border border-border/30">
             {[
               { label: "All", value: "all" },
@@ -291,7 +312,6 @@ export default function Dashboard() {
 
           <div className="w-px h-5 bg-border/40" />
 
-          {/* Segment filter */}
           {SEGMENT_OPTIONS.map((opt) => (
             <button
               key={opt.value}
@@ -311,20 +331,16 @@ export default function Dashboard() {
         {/* Dynamic Widgets */}
         {tradesLoading ? (
           <div className="space-y-5">
-            {/* KPI skeleton */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               {[...Array(5)].map((_, i) => (
                 <Skeleton key={i} className="h-[140px] rounded-[1.25rem] shimmer-skeleton" />
               ))}
             </div>
-            {/* Chart + Alerts skeleton */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
               <Skeleton className="h-[300px] rounded-[1.25rem] lg:col-span-2 shimmer-skeleton" />
               <Skeleton className="h-[300px] rounded-[1.25rem] shimmer-skeleton" />
             </div>
-            {/* Equity curve skeleton */}
             <Skeleton className="h-[250px] rounded-[1.25rem] shimmer-skeleton" />
-            {/* Positions skeleton */}
             <Skeleton className="h-[200px] rounded-[1.25rem] shimmer-skeleton" />
           </div>
         ) : (

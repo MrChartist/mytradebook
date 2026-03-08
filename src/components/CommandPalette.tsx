@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/command";
 import {
   LayoutDashboard, TrendingUp, Bell, BookOpen, CalendarDays, AlertTriangle,
-  BarChart3, FileText, Settings, Eye, Sparkles, Plus, Clock,
+  BarChart3, FileText, Settings, Eye, Sparkles, Plus, Clock, Zap,
 } from "lucide-react";
 import { useTrades } from "@/hooks/useTrades";
 import { useAlerts } from "@/hooks/useAlerts";
@@ -56,6 +56,21 @@ const ACTIONS = [
   { label: "New Study", action: "new-study", icon: Sparkles, group: "Actions" },
 ];
 
+// Quick trade entry steps
+type QuickTradeStep = "idle" | "symbol" | "type" | "price" | "qty" | "confirm";
+
+const TRADE_TYPES = [
+  { label: "BUY (Long)", value: "BUY" },
+  { label: "SELL (Short)", value: "SELL" },
+];
+
+const SEGMENTS = [
+  { label: "Equity Intraday", value: "Equity_Intraday" },
+  { label: "Equity Positional", value: "Equity_Positional" },
+  { label: "Futures", value: "Futures" },
+  { label: "Options", value: "Options" },
+];
+
 interface CommandPaletteProps {
   onAction?: (action: string) => void;
 }
@@ -63,6 +78,8 @@ interface CommandPaletteProps {
 export function CommandPalette({ onAction }: CommandPaletteProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [quickTradeStep, setQuickTradeStep] = useState<QuickTradeStep>("idle");
+  const [quickTrade, setQuickTrade] = useState({ symbol: "", type: "BUY", segment: "Equity_Intraday", price: "", qty: "" });
   const navigate = useNavigate();
 
   const { trades } = useTrades();
@@ -82,32 +99,95 @@ export function CommandPalette({ onAction }: CommandPaletteProps) {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  useEffect(() => { if (!open) setQuery(""); }, [open]);
+  useEffect(() => {
+    if (!open) {
+      setQuery("");
+      setQuickTradeStep("idle");
+      setQuickTrade({ symbol: "", type: "BUY", segment: "Equity_Intraday", price: "", qty: "" });
+    }
+  }, [open]);
 
   const q = query.toLowerCase().trim();
   const showDynamic = q.length >= 2;
 
   const filteredTrades = useMemo(() => {
-    if (!showDynamic) return [];
+    if (!showDynamic || quickTradeStep !== "idle") return [];
     return trades.filter((t) => t.symbol.toLowerCase().includes(q)).slice(0, 5);
-  }, [trades, q, showDynamic]);
+  }, [trades, q, showDynamic, quickTradeStep]);
 
   const filteredAlerts = useMemo(() => {
-    if (!showDynamic) return [];
+    if (!showDynamic || quickTradeStep !== "idle") return [];
     return alerts.filter((a) => a.symbol.toLowerCase().includes(q)).slice(0, 5);
-  }, [alerts, q, showDynamic]);
+  }, [alerts, q, showDynamic, quickTradeStep]);
 
   const filteredJournal = useMemo(() => {
-    if (!showDynamic) return [];
+    if (!showDynamic || quickTradeStep !== "idle") return [];
     return journalEntries
       .filter((j) => {
         const searchable = [j.pre_market_plan, j.post_market_review, j.lessons_learned, j.market_outlook].filter(Boolean).join(" ").toLowerCase();
         return searchable.includes(q);
       })
       .slice(0, 3);
-  }, [journalEntries, q, showDynamic]);
+  }, [journalEntries, q, showDynamic, quickTradeStep]);
+
+  // Unique symbols from user's trade history
+  const knownSymbols = useMemo(() => {
+    const syms = new Set(trades.map((t) => t.symbol));
+    return Array.from(syms).slice(0, 20);
+  }, [trades]);
 
   const handleSelect = useCallback((value: string) => {
+    // Quick trade flow
+    if (value === "quick-trade") {
+      setQuickTradeStep("symbol");
+      setQuery("");
+      return;
+    }
+
+    if (quickTradeStep === "symbol") {
+      setQuickTrade((prev) => ({ ...prev, symbol: value.toUpperCase() }));
+      setQuickTradeStep("type");
+      setQuery("");
+      return;
+    }
+
+    if (quickTradeStep === "type") {
+      const [type, segment] = value.split("|");
+      setQuickTrade((prev) => ({ ...prev, type, segment }));
+      setQuickTradeStep("price");
+      setQuery("");
+      return;
+    }
+
+    if (quickTradeStep === "price") {
+      setQuickTrade((prev) => ({ ...prev, price: value }));
+      setQuickTradeStep("qty");
+      setQuery("");
+      return;
+    }
+
+    if (quickTradeStep === "qty") {
+      setQuickTrade((prev) => ({ ...prev, qty: value }));
+      setQuickTradeStep("confirm");
+      setQuery("");
+      return;
+    }
+
+    if (value === "confirm-quick-trade") {
+      setOpen(false);
+      // Navigate to trades with pre-filled params
+      const params = new URLSearchParams({
+        quick: "1",
+        symbol: quickTrade.symbol,
+        type: quickTrade.type,
+        segment: quickTrade.segment,
+        price: quickTrade.price,
+        qty: quickTrade.qty,
+      });
+      navigate(`/trades?${params.toString()}`);
+      return;
+    }
+
     setOpen(false);
     const navItem = NAV_ITEMS.find((n) => n.label.toLowerCase() === value);
     if (navItem) {
@@ -133,51 +213,188 @@ export function CommandPalette({ onAction }: CommandPaletteProps) {
     }
 
     navigate(`/trades?search=${encodeURIComponent(value)}`);
-  }, [navigate, onAction]);
+  }, [navigate, onAction, quickTradeStep, quickTrade]);
+
+  const getPlaceholder = () => {
+    switch (quickTradeStep) {
+      case "symbol": return "Type symbol name (e.g. RELIANCE, NIFTY)…";
+      case "type": return "Select trade type…";
+      case "price": return "Enter entry price…";
+      case "qty": return "Enter quantity…";
+      case "confirm": return "Confirm trade details…";
+      default: return "Search pages, trades, alerts… (⌘K)";
+    }
+  };
+
+  // Handle Enter for free-text steps
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && query.trim()) {
+      if (quickTradeStep === "symbol") {
+        handleSelect(query.trim());
+        e.preventDefault();
+      } else if (quickTradeStep === "price") {
+        handleSelect(query.trim());
+        e.preventDefault();
+      } else if (quickTradeStep === "qty") {
+        handleSelect(query.trim());
+        e.preventDefault();
+      }
+    }
+    if (e.key === "Escape" && quickTradeStep !== "idle") {
+      setQuickTradeStep("idle");
+      setQuery("");
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandInput placeholder="Search pages, trades, alerts… (⌘K)" value={query} onValueChange={setQuery} />
+      <div onKeyDown={handleKeyDown}>
+        <CommandInput placeholder={getPlaceholder()} value={query} onValueChange={setQuery} />
+      </div>
       <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
+        <CommandEmpty>
+          {quickTradeStep === "symbol" && query ? (
+            <button
+              className="w-full text-left px-2 py-1.5 text-sm text-primary"
+              onClick={() => handleSelect(query.trim())}
+            >
+              Use "{query.toUpperCase()}" →
+            </button>
+          ) : quickTradeStep === "price" && query ? (
+            <button
+              className="w-full text-left px-2 py-1.5 text-sm text-primary"
+              onClick={() => handleSelect(query.trim())}
+            >
+              Set price ₹{query} →
+            </button>
+          ) : quickTradeStep === "qty" && query ? (
+            <button
+              className="w-full text-left px-2 py-1.5 text-sm text-primary"
+              onClick={() => handleSelect(query.trim())}
+            >
+              Set quantity {query} →
+            </button>
+          ) : (
+            "No results found."
+          )}
+        </CommandEmpty>
 
-        {/* Recent Items */}
-        {!showDynamic && recentItems.length > 0 && (
+        {/* Quick Trade Flow */}
+        {quickTradeStep === "idle" && (
           <>
-            <CommandGroup heading="Recent">
-              {recentItems.map((item) => (
-                <CommandItem key={item.path} value={`recent:${item.path}`} onSelect={handleSelect}>
-                  <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
-                  <span className="flex-1">{item.label}</span>
-                  {item.meta && <span className="text-xs text-muted-foreground ml-2">{item.meta}</span>}
+            {!showDynamic && recentItems.length > 0 && (
+              <>
+                <CommandGroup heading="Recent">
+                  {recentItems.map((item) => (
+                    <CommandItem key={item.path} value={`recent:${item.path}`} onSelect={handleSelect}>
+                      <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
+                      <span className="flex-1">{item.label}</span>
+                      {item.meta && <span className="text-xs text-muted-foreground ml-2">{item.meta}</span>}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+                <CommandSeparator />
+              </>
+            )}
+
+            <CommandGroup heading="Navigate">
+              {NAV_ITEMS.map((item) => (
+                <CommandItem key={item.path} value={item.label} onSelect={handleSelect}>
+                  <item.icon className="w-4 h-4 mr-2 text-muted-foreground" />
+                  {item.label}
                 </CommandItem>
               ))}
             </CommandGroup>
+
             <CommandSeparator />
+
+            <CommandGroup heading="Quick Actions">
+              <CommandItem value="quick-trade" onSelect={handleSelect}>
+                <Zap className="w-4 h-4 mr-2 text-warning" />
+                <span className="font-medium">Quick Trade Entry</span>
+                <Badge variant="outline" className="ml-auto text-[10px] border-warning/30 text-warning">⚡ Keyboard</Badge>
+              </CommandItem>
+              {ACTIONS.map((item) => (
+                <CommandItem key={item.action} value={item.label} onSelect={handleSelect}>
+                  <item.icon className="w-4 h-4 mr-2 text-primary" />
+                  {item.label}
+                </CommandItem>
+              ))}
+            </CommandGroup>
           </>
         )}
 
-        <CommandGroup heading="Navigate">
-          {NAV_ITEMS.map((item) => (
-            <CommandItem key={item.path} value={item.label} onSelect={handleSelect}>
-              <item.icon className="w-4 h-4 mr-2 text-muted-foreground" />
-              {item.label}
+        {quickTradeStep === "symbol" && (
+          <CommandGroup heading="🔍 Select Symbol">
+            {knownSymbols
+              .filter((s) => !q || s.toLowerCase().includes(q))
+              .slice(0, 8)
+              .map((sym) => (
+                <CommandItem key={sym} value={sym} onSelect={handleSelect}>
+                  <TrendingUp className="w-4 h-4 mr-2 text-muted-foreground" />
+                  {sym}
+                </CommandItem>
+              ))}
+          </CommandGroup>
+        )}
+
+        {quickTradeStep === "type" && (
+          <CommandGroup heading={`📊 ${quickTrade.symbol} — Select Type & Segment`}>
+            {TRADE_TYPES.map((tt) =>
+              SEGMENTS.map((seg) => (
+                <CommandItem
+                  key={`${tt.value}|${seg.value}`}
+                  value={`${tt.value}|${seg.value}`}
+                  onSelect={handleSelect}
+                >
+                  <span className={cn(
+                    "w-2 h-2 rounded-full mr-2",
+                    tt.value === "BUY" ? "bg-profit" : "bg-loss"
+                  )} />
+                  {tt.label} — {seg.label}
+                </CommandItem>
+              ))
+            )}
+          </CommandGroup>
+        )}
+
+        {quickTradeStep === "price" && (
+          <CommandGroup heading={`💰 ${quickTrade.symbol} ${quickTrade.type} — Entry Price`}>
+            <CommandItem disabled>
+              <span className="text-xs text-muted-foreground">Type price and press Enter</span>
             </CommandItem>
-          ))}
-        </CommandGroup>
+          </CommandGroup>
+        )}
 
-        <CommandSeparator />
+        {quickTradeStep === "qty" && (
+          <CommandGroup heading={`📦 ${quickTrade.symbol} @ ₹${quickTrade.price} — Quantity`}>
+            {[1, 10, 25, 50, 100].map((qty) => (
+              <CommandItem key={qty} value={String(qty)} onSelect={handleSelect}>
+                {qty} shares
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        )}
 
-        <CommandGroup heading="Quick Actions">
-          {ACTIONS.map((item) => (
-            <CommandItem key={item.action} value={item.label} onSelect={handleSelect}>
-              <item.icon className="w-4 h-4 mr-2 text-primary" />
-              {item.label}
+        {quickTradeStep === "confirm" && (
+          <CommandGroup heading="✅ Confirm Quick Trade">
+            <CommandItem value="confirm-quick-trade" onSelect={handleSelect}>
+              <Zap className="w-4 h-4 mr-2 text-profit" />
+              <div className="flex-1">
+                <p className="font-medium">{quickTrade.type} {quickTrade.symbol}</p>
+                <p className="text-xs text-muted-foreground">
+                  {quickTrade.qty} qty @ ₹{quickTrade.price} • {quickTrade.segment.replace("_", " ")}
+                </p>
+              </div>
+              <Badge className="bg-profit/10 text-profit border-profit/20">Create →</Badge>
             </CommandItem>
-          ))}
-        </CommandGroup>
+          </CommandGroup>
+        )}
 
-        {filteredTrades.length > 0 && (
+        {/* Dynamic search results (only in idle mode) */}
+        {quickTradeStep === "idle" && filteredTrades.length > 0 && (
           <>
             <CommandSeparator />
             <CommandGroup heading="Trades">
@@ -194,7 +411,7 @@ export function CommandPalette({ onAction }: CommandPaletteProps) {
           </>
         )}
 
-        {filteredAlerts.length > 0 && (
+        {quickTradeStep === "idle" && filteredAlerts.length > 0 && (
           <>
             <CommandSeparator />
             <CommandGroup heading="Alerts">
@@ -209,7 +426,7 @@ export function CommandPalette({ onAction }: CommandPaletteProps) {
           </>
         )}
 
-        {filteredJournal.length > 0 && (
+        {quickTradeStep === "idle" && filteredJournal.length > 0 && (
           <>
             <CommandSeparator />
             <CommandGroup heading="Journal">
