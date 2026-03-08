@@ -3047,7 +3047,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               </ProTip>
 
               <SubTopic title="Mobile Navigation & Onboarding" description="Touch-optimized navigation with guided onboarding for new users." id="pwa-mobile" />
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="space-y-5">
                 <FeatureCard icon={LayoutDashboard} title="Mobile Navigation">
                   <FeatureList items={[
                     "Bottom navigation bar with key pages: Dashboard, Trades, Alerts, Journal",
