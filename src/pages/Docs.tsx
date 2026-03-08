@@ -377,7 +377,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
           >
             {[
               { label: "21 Sections", icon: FileText },
-              { label: "50+ Mockups", icon: Eye },
+              { label: "60+ Mockups", icon: Eye },
               { label: "Every Feature", icon: Zap },
               { label: "Free & Pro", icon: Star },
             ].map((stat) => (
