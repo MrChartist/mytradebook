@@ -1892,6 +1892,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { emoji: "🏗️", title: "Positional", description: "Sector-based: 'Banking', 'IT', 'FMCG'. Review each sector weekly." },
               ]} />
 
+              <SubTopic title="Building Your First Watchlist" description="Get started tracking instruments in under a minute." id="wl-first" />
+              <StepByStep title="Building Your First Watchlist" steps={[
+                { title: "Create a new watchlist", description: "Go to Watchlists and click '+ New Watchlist'. Give it a name and optionally assign a color.", detail: "Use descriptive names like 'Nifty 50 Breakouts' or 'F&O Weekly Expiry'." },
+                { title: "Add instruments", description: "Use the symbol search to find stocks, futures, or options. Click to add them.", detail: "Search covers NSE, BSE, and MCX." },
+                { title: "Organize & reorder", description: "Drag instruments to reorder by priority.", detail: "Move instruments between watchlists or add the same symbol to multiple lists." },
+                { title: "Monitor & act", description: "View live prices. Click any instrument to create an alert or log a trade.", detail: "Sort by % change to spot the day's biggest movers." },
+              ]} />
+
               <SubTopic title="Organization" description="Create and manage multiple watchlists with visual distinction." id="wl-org" />
               <FeatureCard icon={List} title="Watchlist Organization">
                 <p className="text-sm text-muted-foreground mb-3">Flexible tools to keep your watchlists clean and useful:</p>
