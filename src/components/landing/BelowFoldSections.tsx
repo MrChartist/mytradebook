@@ -81,12 +81,12 @@ const glassInner = "inset 0 1px 0 0 hsl(0 0% 100% / 0.06)";
 export function HowItWorksSection() {
   const navigate = useNavigate();
   return (
-    <section className="py-24 lg:py-32" aria-label="How it works">
+    <section className="py-28 lg:py-36" aria-label="How it works">
       <MotionSection className="max-w-5xl mx-auto px-6">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <SectionBadge>How It Works</SectionBadge>
-          <h2 className="font-heading text-[2rem] lg:text-[3rem] font-bold mb-6 leading-[1.1] tracking-[-0.02em]">Three steps to{" "}<span className="accent-serif">mastery</span></h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-base leading-[1.65]">From first trade to consistent edge — in minutes.</p>
+          <h2 className="font-heading text-[1.75rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold mb-6 leading-[1.08] tracking-[-0.018em]">Three steps to{" "}<span className="accent-serif">mastery</span></h2>
+          <p className="text-muted-foreground max-w-md mx-auto text-[15px] lg:text-[1rem] leading-[1.7]">From first trade to consistent edge — in minutes.</p>
         </motion.div>
 
         {/* Timeline steps */}
