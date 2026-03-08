@@ -139,6 +139,7 @@ export function Sidebar() {
               <img src={logo} alt="TradeBook" className="h-8 object-contain" />
               <button
                 onClick={() => setCollapsed(true)}
+                aria-label="Collapse sidebar"
                 className="ml-auto w-6 h-6 rounded-[var(--radius-sm)] flex items-center justify-center text-muted-foreground/60 hover:text-foreground hover:bg-muted/40 transition-colors duration-200"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
