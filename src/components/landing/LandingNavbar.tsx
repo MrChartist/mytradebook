@@ -93,7 +93,7 @@ export function LandingNavbar({ activePage = "home", isInsideApp = false, extraR
                 key={item.label}
                 onClick={() => handleNavClick(item.href)}
                 className={cn(
-                  "relative px-4 py-1.5 rounded-full text-sm font-medium transition-colors duration-200",
+                  "relative px-3.5 py-1.5 rounded-[var(--radius-sm)] text-[13px] font-medium transition-colors duration-200",
                   isActive
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground"
