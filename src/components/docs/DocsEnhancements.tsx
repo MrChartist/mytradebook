@@ -50,7 +50,7 @@ export function ProTip({ children, variant = "tip" }: { children: ReactNode; var
         <Icon className={cn("w-4 h-4 shrink-0 mt-0.5", s.iconColor)} />
         <div className="flex-1 min-w-0">
           <p className={cn("text-[11px] font-semibold uppercase tracking-wider mb-1", s.iconColor)}>{s.label}</p>
-          <div className="text-[15px] text-muted-foreground leading-[1.7] [&>p]:mb-0">{children}</div>
+          <div className="text-[15px] text-muted-foreground/80 leading-[1.75] [&>p]:mb-0">{children}</div>
         </div>
       </div>
     </div>
