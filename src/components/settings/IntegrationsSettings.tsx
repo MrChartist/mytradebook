@@ -377,15 +377,15 @@ export default function IntegrationsSettings() {
           ) : (
             <>
               {/* Provider tabs */}
-              <div className="flex gap-1 p-1 rounded-lg bg-accent">
+              <div className="flex gap-0.5 p-0.5 rounded-lg bg-muted/40 border border-border/15">
                 <button
                   type="button"
                   onClick={() => setAiProvider("gemini")}
                   className={cn(
-                    "flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors",
+                    "flex-1 py-1.5 px-3 text-[12px] font-medium rounded-md transition-all duration-200",
                     aiProvider === "gemini"
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-card text-foreground shadow-sm"
+                      : "text-muted-foreground/50 hover:text-foreground"
                   )}
                 >
                   Google Gemini
@@ -394,10 +394,10 @@ export default function IntegrationsSettings() {
                   type="button"
                   onClick={() => setAiProvider("openai")}
                   className={cn(
-                    "flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors",
+                    "flex-1 py-1.5 px-3 text-[12px] font-medium rounded-md transition-all duration-200",
                     aiProvider === "openai"
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-card text-foreground shadow-sm"
+                      : "text-muted-foreground/50 hover:text-foreground"
                   )}
                 >
                   OpenAI
