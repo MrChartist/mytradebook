@@ -1095,6 +1095,58 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "Risk of Ruin Calculator — statistical probability of account blowup",
                   ]} />
                 </FeatureCard>
+                <FeatureCard icon={Sparkles} title="AI Pattern Detection" badge="New">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    AI analyzes your entire trade history to surface hidden behavioral patterns — things you'd never spot manually. Powered by Gemini, it examines time-of-day performance, day-of-week tendencies, streak effects, and segment biases.
+                  </p>
+                  <FeatureList items={[
+                    "\"You lose 70% of trades taken after 2 PM\" — automatic time-of-day patterns",
+                    "Day-of-week performance analysis (e.g. Mondays are your worst day)",
+                    "Streak effects — do you overtrade after wins or freeze after losses?",
+                    "Segment bias detection — are you ignoring profitable segments?",
+                    "Severity levels: critical, warning, info — with actionable suggestions",
+                    "One-click refresh to re-run analysis with latest data",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Grid3X3} title="Sector Rotation Heatmap" badge="New">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    A 6-month heatmap grid showing how your trading allocation and P&L shifts across market segments over time. Spot trends in where you're focusing your capital.
+                  </p>
+                  <FeatureList items={[
+                    "Rows: Market segments (Options, Futures, Equity Intraday, etc.)",
+                    "Columns: Last 6 months of trading data",
+                    "Cell intensity based on trade volume — darker = more active",
+                    "Color coding: green cells for net profit, red for net loss",
+                    "Shows trade count and total P&L per cell on hover",
+                    "Helps identify segment rotation patterns and concentration risk",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Target} title="Setup Win-Rate Matrix" badge="New">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    A cross-tabulation of Segment × Timeframe showing win rates and trade counts. Instantly see which combinations of segment and timeframe give you the best edge.
+                  </p>
+                  <FeatureList items={[
+                    "Matrix grid: segments as rows, timeframes as columns",
+                    "Each cell shows win rate % and trade count",
+                    "Color-coded: green ≥ 60%, yellow 40-60%, red < 40%",
+                    "Identifies your best-performing segment/timeframe combos",
+                    "Highlights cells with statistical significance (5+ trades)",
+                    "Requires trades with timeframe and segment populated",
+                  ]} />
+                </FeatureCard>
+                <FeatureCard icon={Activity} title="Emotional P&L Correlation" badge="New">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    A bar chart correlating your emotion tags (FOMO, Calm, Anxious, Confident, etc.) with trading outcomes. See which emotional states lead to profits vs losses.
+                  </p>
+                  <FeatureList items={[
+                    "Average P&L per emotion tag — bars colored by profit/loss",
+                    "Win rate percentage displayed for each emotion",
+                    "Trade count per emotion for statistical context",
+                    "Uses the emotion_tag field on your trades",
+                    "Helps identify which emotional states to cultivate or avoid",
+                    "Empty state guide if no emotion tags are used yet",
+                  ]} />
+                </FeatureCard>
               </div>
             </motion.section>
 
