@@ -1830,6 +1830,12 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 }]} title="suggest-alerts" />
                 <p className="text-[12px] text-muted-foreground/55 mt-3">You need at least 10 closed trades before suggestions appear. The more trades you log, the more personalized the recommendations become.</p>
               </ExpandableDetail>
+
+              <NextStepBlock steps={[
+                { label: "Watchlists", description: "Track instruments with live prices", targetId: "watchlists" },
+                { label: "Studies & Research", description: "Link alerts to your research", targetId: "studies" },
+                { label: "Integrations", description: "Connect Telegram for alert delivery", targetId: "integrations" },
+              ]} />
             </motion.section>
 
             <SectionDivider />
