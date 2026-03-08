@@ -2515,37 +2515,82 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 description="Connect your broker and messaging apps to automate data flow, get live prices, and receive instant notifications."
                 icon={Layers}
               />
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <DhanFlowDiagram />
-                <TelegramChannelsMockup />
-              </div>
-              <SubTopic title="Broker Connection" description="Connect Dhan for live prices, portfolio sync, and one-click execution." id="int-broker" />
-              <div className="grid md:grid-cols-2 gap-5">
-                <FeatureCard icon={LineChart} title="Dhan Broker Integration">
-                  <p className="text-sm text-muted-foreground mb-3">Connect your Dhan trading account for seamless data sync:</p>
-                  <FeatureList items={[
-                    "OAuth-based secure authentication",
-                    "Auto-sync portfolio positions",
-                    "Live LTP (Last Traded Price) for open positions",
-                    "One-click trade execution from TradeBook",
-                    "Real-time P&L tracking with live prices",
-                    "Instrument master data sync for accurate symbol search",
-                  ]} />
-                  <div className="mt-4"><DhanIntegrationDetailMockup /></div>
-                </FeatureCard>
-                <FeatureCard icon={Send} title="Telegram Integration">
-                  <p className="text-sm text-muted-foreground mb-3">Get instant notifications on your phone via Telegram:</p>
-                  <FeatureList items={[
-                    "Alert triggers — instant notification when price conditions are met",
-                    "EOD (End of Day) reports — daily P&L summary after market close",
-                    "Morning briefings — pre-market overview of your open positions",
-                    "Weekly reports — full performance summary every Monday",
-                    "TSL updates — trailing stop loss movement notifications",
-                    "Multiple chat channels with segment-level routing",
-                  ]} />
-                  <div className="mt-4"><TelegramIntegrationDetailMockup /></div>
-                </FeatureCard>
-              </div>
+              <QuickNav items={[
+                { label: "Dhan Setup", id: "int-dhan" },
+                { label: "Telegram Setup", id: "int-telegram" },
+                { label: "Troubleshooting", id: "int-troubleshoot" },
+              ]} />
+
+              <ProTip variant="warning">
+                <p>Never share your API keys or access tokens publicly. TradeBook stores all credentials securely server-side — they are <strong>never exposed to the browser</strong> and cannot be read back from the client. Treat your Dhan API key and Telegram bot token like passwords.</p>
+              </ProTip>
+
+              <InteractiveMockup label="Integration Overview">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <DhanFlowDiagram />
+                  <TelegramChannelsMockup />
+                </div>
+              </InteractiveMockup>
+
+              <SubTopic title="Connecting Your Dhan Account" description="Link your Dhan broker for live prices, portfolio sync, and execution." id="int-dhan" />
+              <StepByStep title="Connecting Your Dhan Account" steps={[
+                { title: "Get your Dhan API credentials", description: "Log in to your Dhan dashboard and navigate to the API section. You'll need your API Key and API Secret for the OAuth flow.", detail: "Dhan offers two auth methods: a manual 24-hour Access Token (quick but expires daily) and a 12-month API Key + Secret OAuth flow (recommended for long-term use)." },
+                { title: "Enter credentials in TradeBook", description: "Go to Settings → Integrations → Dhan. Paste your API Key and Secret, then click Connect. TradeBook initiates the OAuth handshake.", detail: "The OAuth process opens a Dhan authorization window. Approve the connection and you'll be redirected back to TradeBook automatically." },
+                { title: "Activate Data API plan on Dhan", description: "Important: live prices require an active 'Data API' plan on Dhan's dashboard. Without it, you'll see API Error 806 (Data APIs not Subscribed).", detail: "This is a separate step from API Key creation. Go to Dhan Dashboard → API → Data API and activate the plan. It may be free or paid depending on your Dhan account type." },
+                { title: "Verify the connection", description: "Once connected, TradeBook shows a green 'Verified' status with the verification timestamp. Portfolio sync begins automatically.", detail: "Positions sync every 5 minutes during market hours (Mon–Fri, 9:15 AM – 3:30 PM IST). Live prices update for all open positions." },
+                { title: "Enable auto-sync (optional)", description: "Toggle 'Auto Sync Portfolio' in Dhan settings to automatically import executed orders and calculate P&L for closed positions.", detail: "Multiple API keys are supported with priority-based failover. If one key expires, the system falls back to the next active key." },
+              ]} />
+
+              <FeatureCard icon={LineChart} title="Dhan Broker Integration">
+                <p className="text-sm text-muted-foreground mb-3">Full-featured broker connection for seamless trading:</p>
+                <FeatureList items={[
+                  "OAuth-based secure authentication with 12-month token validity",
+                  "Auto-sync portfolio positions every 5 minutes during market hours",
+                  "Live LTP (Last Traded Price) for all open positions and watchlist items",
+                  "One-click trade execution from TradeBook",
+                  "Real-time P&L tracking with live prices",
+                  "Instrument master data sync for accurate symbol search",
+                  "Multiple API keys with priority-based failover",
+                ]} />
+                <div className="mt-4"><DhanIntegrationDetailMockup /></div>
+              </FeatureCard>
+
+              <SubTopic title="Setting Up Telegram Notifications" description="Get instant trade alerts, reports, and updates on your phone." id="int-telegram" />
+              <StepByStep title="Setting Up Telegram Notifications" steps={[
+                { title: "Create a Telegram bot via @BotFather", description: "Open Telegram, search for @BotFather, and send /newbot. Follow the prompts to name your bot and get your bot token.", detail: "The bot token looks like '123456789:ABCdefGHIjklMNOpqrsTUVwxyz'. Keep it private — anyone with this token can control your bot." },
+                { title: "Enter the bot token in TradeBook", description: "Go to Settings → Integrations → Telegram. Paste your bot token. TradeBook validates it via the Telegram getMe API and auto-populates the bot username.", detail: "If validation fails, double-check the token for extra spaces or missing characters." },
+                { title: "Add a chat destination", description: "Click 'Add Chat' and enter your Telegram chat ID. This can be your personal chat, a group, or a channel. Chat type is auto-detected from the ID prefix.", detail: "Personal chats have positive IDs. Groups and channels start with '-100'. You must /start the bot in the chat before it can send messages." },
+                { title: "Configure routing rules", description: "For each chat destination, select which segments (Equity, Options, Futures, etc.) and notification types (Trades, Alerts, Studies, Daily Reports) should be routed there.", detail: "Example: Route Options alerts to a dedicated 'F&O Alerts' channel, and send daily P&L reports to your personal chat." },
+                { title: "Test and verify", description: "Click 'Send Test Message' to verify delivery. The chat shows a green health indicator when verified. All deliveries are logged for troubleshooting.", detail: "If the test fails with 'chat not found', ensure you've sent /start to the bot in that specific chat or channel." },
+              ]} />
+
+              <FeatureCard icon={Send} title="Telegram Integration">
+                <p className="text-sm text-muted-foreground mb-3">Rich notification system with granular routing:</p>
+                <FeatureList items={[
+                  "Alert triggers — instant notification when price conditions are met",
+                  "EOD (End of Day) reports — daily P&L summary after market close",
+                  "Morning briefings — pre-market overview of your open positions",
+                  "Weekly reports — full performance summary every Monday",
+                  "TSL updates — trailing stop loss movement notifications",
+                  "Multiple chat destinations with segment-level and type-level routing",
+                  "Manual sends from Trade Detail modal — Full Card, P&L Snapshot, or Custom Notes",
+                ]} />
+                <div className="mt-4"><TelegramIntegrationDetailMockup /></div>
+              </FeatureCard>
+
+              <SubTopic title="Troubleshooting" description="Common connection issues and how to resolve them." id="int-troubleshoot" />
+              <ExpandableDetail title="Troubleshooting Dhan Connection Issues" icon={AlertTriangle} badge="Help">
+                <p>Common issues when connecting or using the Dhan integration, and how to fix them:</p>
+                <FeatureList items={[
+                  "API Error 806 (Data APIs not Subscribed) — You need to activate the 'Data API' plan on Dhan's dashboard separately. This is not the same as creating an API key. Go to Dhan Dashboard → API → Data API.",
+                  "Token Expired — Manual access tokens expire every 24 hours. Switch to the API Key + Secret OAuth flow for 12-month validity. TradeBook shows expiry warnings in advance.",
+                  "Prices showing ₹0 or not updating — The system only updates prices when valid data (> 0) is returned. Check that your Data API plan is active and market hours apply (Mon–Fri, 9:15 AM – 3:30 PM IST).",
+                  "OAuth callback not completing — The OAuth flow uses a popup window. Ensure your browser isn't blocking popups from TradeBook. Try disabling ad blockers temporarily.",
+                  "Portfolio not syncing — Auto-sync only runs during market hours. Outside market hours, positions reflect the last known state. You can manually trigger a sync from Settings.",
+                  "Multiple key failover — If your primary key fails, TradeBook automatically falls back to the next active key by priority. Check Settings → Dhan to see which key is currently active.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">If issues persist after checking the above, try disconnecting and reconnecting your Dhan account. This refreshes the OAuth tokens and re-validates all credentials.</p>
+              </ExpandableDetail>
             </motion.section>
 
             <SectionDivider />
