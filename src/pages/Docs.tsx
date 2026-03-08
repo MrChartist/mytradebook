@@ -784,7 +784,7 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
             <span className="w-0.5 h-0.5 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.3)' }} />
             <span>Updated Mar 8, 2026</span>
             <span className="w-0.5 h-0.5 rounded-full" style={{ background: 'hsl(var(--docs-text-muted) / 0.3)' }} />
-            <span>26 sections</span>
+            <span>{SECTIONS.length} sections</span>
           </div>
         </div>
       </header>
