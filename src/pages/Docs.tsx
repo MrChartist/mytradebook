@@ -1465,9 +1465,14 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <SectionHeader
                 id="alerts"
                 title="Alerts System"
-                description="Set price alerts, percentage change triggers, volume spike detectors, and custom conditions. Get notified instantly via in-app notifications or Telegram."
+                description="Set price alerts, percentage change triggers, volume spike detectors, and custom conditions. Get notified instantly via in-app notifications or Telegram — so you never miss a setup while away from the screen."
                 icon={Bell}
               />
+
+              <ProTip variant="info">
+                <p><strong>Why this feature exists:</strong> You can't watch 50 stocks simultaneously, but you can set 50 alerts. Alerts free you from staring at screens and replace reactive trading ("I just happened to see RELIANCE spike") with intentional trading ("My alert triggered at ₹2,450 because that's my planned entry level"). The best traders spend more time planning than watching — alerts make that possible.</p>
+              </ProTip>
+
               <QuickNav items={[
                 { label: "First Alert", id: "al-first" },
                 { label: "Alert Types", id: "al-types" },
