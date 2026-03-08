@@ -481,15 +481,15 @@ export default function IntegrationsSettings() {
         <div className="space-y-3">
           {isDhanConnected ? (
             <>
-              <div className="p-3 rounded-lg bg-profit/10 border border-profit/20">
+              <div className="p-2.5 rounded-lg bg-profit/6 border border-profit/15">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-profit" />
-                    <span className="text-sm font-medium">
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle className="w-3.5 h-3.5 text-profit" />
+                    <span className="text-[12px] font-medium">
                       {settings?.dhan_account_name} ({settings?.dhan_client_id})
                     </span>
                   </div>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-[10px] text-muted-foreground/40">
                     Connected {settings?.dhan_verified_at 
                       ? new Date(settings.dhan_verified_at).toLocaleDateString() 
                       : ""}
