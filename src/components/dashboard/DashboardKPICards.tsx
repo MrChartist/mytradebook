@@ -179,7 +179,7 @@ export function DashboardKPICards({ alerts }: Props) {
           </div>
         </div>
         <div className="flex items-baseline gap-2">
-          <p className={cn("text-[28px] font-bold font-mono leading-none", winRate >= 50 ? "text-profit" : "text-loss")}>{winRate.toFixed(1)}%</p>
+          <p className={cn("kpi-value", winRate >= 50 ? "text-profit" : "text-loss")}>{winRate.toFixed(1)}%</p>
         </div>
         {/* Mini circular progress */}
         <div className="flex items-center gap-2 mt-3">
