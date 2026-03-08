@@ -378,6 +378,7 @@ export default function Login() {
                         onChange={(e) => setEmail(e.target.value)}
                         onBlur={() => setEmailTouched(true)}
                         className={cn(
+                          "h-11",
                           emailError && "border-destructive focus-visible:ring-destructive"
                         )}
                         autoComplete="email"
