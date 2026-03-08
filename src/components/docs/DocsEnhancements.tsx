@@ -1,10 +1,11 @@
 import { cn } from "@/lib/utils";
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Lightbulb, ChevronDown, ChevronRight, Check, X, Crown,
   Zap, Star, ArrowRight, Lock, Unlock, Info, AlertTriangle,
-  Sparkles, Target, Shield, BookOpen, Eye
+  Sparkles, Target, Shield, BookOpen, Eye, Copy, CheckCircle2,
+  Terminal, FileCode, ArrowDownRight
 } from "lucide-react";
 
 /* ──────────────────────────────────────────────
