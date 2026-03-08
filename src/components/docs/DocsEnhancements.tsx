@@ -278,3 +278,123 @@ export function SubTopic({ title, description, id }: { title: string; descriptio
     </div>
   );
 }
+
+/* ──────────────────────────────────────────────
+   CodeBlock — Premium code display with tabs and copy
+   ────────────────────────────────────────────── */
+interface CodeTab {
+  label: string;
+  language?: string;
+  code: string;
+}
+
+export function CodeBlock({ tabs, title, className }: {
+  tabs: CodeTab[];
+  title?: string;
+  className?: string;
+}) {
+  const [activeTab, setActiveTab] = useState(0);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(tabs[activeTab].code).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [activeTab, tabs]);
+
+  return (
+    <div className={cn(CARD_RADIUS, "border", CARD_BORDER, "overflow-hidden", CARD_SPACING, "docs-code-block", className)}>
+      {/* Header bar with tabs and copy */}
+      <div className="flex items-center justify-between border-b border-border/15 bg-muted/10 px-1">
+        <div className="flex items-center gap-0">
+          {title && (
+            <span className="text-[11px] font-medium text-muted-foreground/50 px-3 py-2.5 shrink-0">{title}</span>
+          )}
+          {tabs.length > 1 ? (
+            <div className="flex items-center">
+              {title && <div className="w-px h-4 bg-border/20 mr-0.5" />}
+              {tabs.map((tab, i) => (
+                <button
+                  key={tab.label}
+                  onClick={() => setActiveTab(i)}
+                  className={cn(
+                    "px-3 py-2.5 text-[12px] font-medium transition-colors duration-150 relative",
+                    i === activeTab
+                      ? "text-foreground"
+                      : "text-muted-foreground/45 hover:text-muted-foreground/70"
+                  )}
+                >
+                  {tab.label}
+                  {i === activeTab && (
+                    <motion.div
+                      layoutId="code-tab-indicator"
+                      className="absolute bottom-0 left-2 right-2 h-[2px] bg-primary rounded-full"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          ) : (
+            !title && tabs[0]?.language && (
+              <span className="text-[11px] font-medium text-muted-foreground/45 px-3 py-2.5 flex items-center gap-1.5">
+                <FileCode className="w-3 h-3" />
+                {tabs[0].language}
+              </span>
+            )
+          )}
+        </div>
+        <button
+          onClick={handleCopy}
+          className={cn(
+            "flex items-center gap-1.5 px-3 py-2 text-[11px] font-medium transition-colors duration-150 mr-1",
+            copied ? "text-profit" : "text-muted-foreground/40 hover:text-muted-foreground/70"
+          )}
+          aria-label="Copy code"
+        >
+          {copied ? (
+            <>
+              <CheckCircle2 className="w-3 h-3" />
+              <span>Copied</span>
+            </>
+          ) : (
+            <>
+              <Copy className="w-3 h-3" />
+              <span>Copy</span>
+            </>
+          )}
+        </button>
+      </div>
+      {/* Code content */}
+      <div className="overflow-x-auto">
+        <pre className="px-5 py-4 text-[13px] leading-[1.8] font-mono text-foreground/85 whitespace-pre">
+          <code>{tabs[activeTab].code}</code>
+        </pre>
+      </div>
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   OutputBlock — Response / terminal output display
+   ────────────────────────────────────────────── */
+export function OutputBlock({ children, label = "Response", className }: {
+  children: string;
+  label?: string;
+  className?: string;
+}) {
+  return (
+    <div className={cn(CARD_RADIUS, "border border-border/20 overflow-hidden", CARD_SPACING, "docs-output-block", className)}>
+      <div className="flex items-center gap-1.5 px-4 py-2 border-b border-border/10 bg-muted/6">
+        <Terminal className="w-3 h-3 text-muted-foreground/40" />
+        <span className="text-[11px] font-medium text-muted-foreground/40 tracking-wide uppercase">{label}</span>
+      </div>
+      <div className="overflow-x-auto">
+        <pre className="px-5 py-4 text-[13px] leading-[1.8] font-mono text-muted-foreground/70 whitespace-pre">
+          <code>{children}</code>
+        </pre>
+      </div>
+    </div>
+  );
+}
