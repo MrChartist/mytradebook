@@ -141,8 +141,8 @@ export function HowItWorksSection() {
                         Step {item.step}
                       </span>
                     </div>
-                    <h3 className="text-xl font-bold mb-2 tracking-tight">{item.title}</h3>
-                    <p className="text-[15px] text-muted-foreground leading-relaxed">{item.desc}</p>
+                    <h3 className="text-xl font-semibold mb-2 tracking-[-0.015em]">{item.title}</h3>
+                    <p className="text-[15px] text-muted-foreground leading-[1.65]">{item.desc}</p>
                   </motion.div>
                 </motion.div>
               );
