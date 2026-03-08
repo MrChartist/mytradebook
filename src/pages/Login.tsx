@@ -269,36 +269,35 @@ export default function Login() {
               <img src={logo} alt="TradeBook" className="h-10 object-contain" />
             </div>
 
-            <div className="liquid-glass p-6 sm:p-8">
+            <div className="liquid-glass p-6 sm:p-8 rounded-2xl">
               {/* Forgot Password View */}
               {authMode === "forgot" ? (
                 <>
-                  <div className="text-center mb-8">
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                      <Mail className="w-6 h-6 text-primary" />
+                  <div className="text-center mb-7">
+                    <div className="w-12 h-12 rounded-xl bg-primary/8 flex items-center justify-center mx-auto mb-4">
+                      <Mail className="w-5 h-5 text-primary" />
                     </div>
-                    <h3 className="text-2xl sm:text-3xl font-heading font-bold mb-2 tracking-tight">Reset Password</h3>
-                    <p className="text-muted-foreground text-sm sm:text-base">
+                    <h3 className="text-2xl font-heading font-bold mb-2 tracking-tight">Reset Password</h3>
+                    <p className="text-muted-foreground text-[13px] leading-relaxed">
                       Enter your email and we'll send you a reset link.
                     </p>
                   </div>
 
-                  <form onSubmit={handleForgotPassword} className="space-y-4">
+                  <form onSubmit={handleForgotPassword} className="space-y-5">
                     <div>
-                      <label className="text-sm font-medium mb-2 block">Email Address</label>
+                      <label className="text-[13px] font-medium mb-2 block">Email Address</label>
                       <Input
                         type="email"
                         placeholder="Enter your email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="h-12 sm:h-11 text-base sm:text-sm"
                         autoComplete="email"
                         inputMode="email"
                         required
                       />
                     </div>
 
-                    <Button type="submit" className="w-full h-12 sm:h-11 text-base sm:text-sm" disabled={isBusy}>
+                    <Button type="submit" className="w-full h-11" disabled={isBusy}>
                       {isBusy ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
@@ -317,11 +316,11 @@ export default function Login() {
                 </>
               ) : (
                 <>
-                  <div className="text-center mb-6 sm:mb-8">
-                    <h3 className="text-2xl sm:text-3xl font-heading font-bold mb-2 tracking-tight">
+                  <div className="text-center mb-6">
+                    <h3 className="text-2xl font-heading font-bold mb-2 tracking-tight">
                       {authMode === "login" ? "Welcome Back" : "Create Account"}
                     </h3>
-                    <p className="text-muted-foreground text-sm sm:text-base">
+                    <p className="text-muted-foreground text-[13px] leading-relaxed">
                       {authMode === "login"
                         ? "Sign in to continue to your dashboard"
                         : "Sign up to start tracking your trades"}
@@ -354,23 +353,22 @@ export default function Login() {
                     </button>
                   </div>
 
-                  <form onSubmit={handleEmailAuth} className="space-y-4">
+                  <form onSubmit={handleEmailAuth} className="space-y-5">
                     {authMode === "signup" && (
                       <div>
-                        <label className="text-sm font-medium mb-2 block">Full Name</label>
+                        <label className="text-[13px] font-medium mb-2 block">Full Name</label>
                         <Input
                           type="text"
                           placeholder="Enter your name"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="h-12 sm:h-11 text-base sm:text-sm"
                           autoComplete="name"
                         />
                       </div>
                     )}
 
                     <div>
-                      <label className="text-sm font-medium mb-2 block">Email Address</label>
+                      <label className="text-[13px] font-medium mb-2 block">Email Address</label>
                       <Input
                         type="email"
                         placeholder="Enter your email"
@@ -378,7 +376,6 @@ export default function Login() {
                         onChange={(e) => setEmail(e.target.value)}
                         onBlur={() => setEmailTouched(true)}
                         className={cn(
-                          "h-12 sm:h-11 text-base sm:text-sm",
                           emailError && "border-destructive focus-visible:ring-destructive"
                         )}
                         autoComplete="email"
@@ -386,18 +383,18 @@ export default function Login() {
                         required
                       />
                       {emailError && (
-                        <p className="text-xs text-destructive mt-1.5">Please enter a valid email address</p>
+                        <p className="text-[11px] text-destructive mt-1.5">Please enter a valid email address</p>
                       )}
                     </div>
 
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <label className="text-sm font-medium">Password</label>
+                        <label className="text-[13px] font-medium">Password</label>
                         {authMode === "login" && (
                           <button
                             type="button"
                             onClick={() => setAuthMode("forgot")}
-                            className="text-xs text-primary hover:text-primary/80 font-medium py-1"
+                            className="text-[12px] text-primary hover:text-primary/80 font-medium py-1"
                           >
                             Forgot password?
                           </button>
@@ -409,7 +406,7 @@ export default function Login() {
                           placeholder="Enter your password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="h-12 sm:h-11 pr-10 text-base sm:text-sm"
+                          className="pr-10"
                           autoComplete={authMode === "login" ? "current-password" : "new-password"}
                           required
                           minLength={6}
@@ -442,7 +439,7 @@ export default function Login() {
                             </div>
                             <span className={cn(
                               "text-xs font-medium min-w-[42px] text-right",
-                              pwStrength.score <= 1 ? "text-destructive" : pwStrength.score <= 3 ? "text-yellow-500" : "text-profit"
+                              pwStrength.score <= 1 ? "text-destructive" : pwStrength.score <= 3 ? "text-warning" : "text-profit"
                             )}>
                               {pwStrength.label}
                             </span>
@@ -474,7 +471,7 @@ export default function Login() {
                       )}
                     </div>
 
-                    <Button type="submit" className="w-full h-12 sm:h-11 text-base sm:text-sm" disabled={isBusy}>
+                    <Button type="submit" className="w-full h-11" disabled={isBusy}>
                       {isBusy ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
@@ -488,17 +485,17 @@ export default function Login() {
 
                   <div className="relative my-6">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-border" />
+                      <div className="w-full border-t border-border/50" />
                     </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                    <div className="relative flex justify-center text-[11px] uppercase tracking-wider">
+                      <span className="bg-card px-3 text-muted-foreground/60">Or continue with</span>
                     </div>
                   </div>
 
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full h-12 sm:h-11 text-base sm:text-sm"
+                    className="w-full h-11"
                     onClick={handleGoogleAuth}
                     disabled={isBusy}
                   >
@@ -511,7 +508,7 @@ export default function Login() {
                     Continue with Google
                   </Button>
 
-                  <p className="text-xs text-muted-foreground text-center mt-6">
+                  <p className="text-[11px] text-muted-foreground/60 text-center mt-6">
                     By signing in, you agree to our{" "}
                     <a href="/terms" className="text-primary hover:underline">Terms</a>{" "}and{" "}
                     <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a>

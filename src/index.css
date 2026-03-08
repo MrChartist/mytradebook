@@ -249,18 +249,27 @@
 
   /* ── Standardized label for KPI/stat cards ───── */
   .kpi-label {
-    @apply text-caption font-semibold text-muted-foreground uppercase;
-    letter-spacing: 0.08em;
+    @apply text-[11px] font-semibold text-muted-foreground uppercase;
+    letter-spacing: 0.06em;
   }
 
   .kpi-value {
-    @apply text-[28px] font-bold font-mono leading-none;
-    letter-spacing: -0.02em;
+    @apply text-[26px] font-bold font-mono leading-none tracking-tight;
   }
 
   .kpi-sublabel {
-    @apply text-2xs text-muted-foreground;
+    @apply text-[10px] text-muted-foreground/70;
   }
+
+  /* ── Consistent section spacing ─────────────── */
+  .section-gap { @apply space-y-6; }
+  .section-gap-sm { @apply space-y-4; }
+  .section-gap-lg { @apply space-y-8; }
+
+  /* ── Consistent card padding ─────────────────── */
+  .card-padding { @apply p-5; }
+  .card-padding-sm { @apply p-4; }
+  .card-padding-lg { @apply p-6; }
 
   ::-webkit-scrollbar {
     width: 5px;
