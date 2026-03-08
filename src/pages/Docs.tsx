@@ -2023,7 +2023,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                     "Shows count of queued trades in the offline banner",
                   ]} />
                 </FeatureCard>
-                <SubTopic title="Mobile Navigation & Onboarding" description="Touch-optimized navigation with guided onboarding for new users." />
+              </div>
+              <SubTopic title="Mobile Navigation & Onboarding" description="Touch-optimized navigation with guided onboarding for new users." />
+              <div className="grid md:grid-cols-2 gap-5">
+                <FeatureCard icon={LayoutDashboard} title="Mobile Navigation">
                   <FeatureList items={[
                     "Bottom navigation bar with key pages: Dashboard, Trades, Alerts, Journal",
                     "Touch-optimized with safe-area insets for modern devices",
