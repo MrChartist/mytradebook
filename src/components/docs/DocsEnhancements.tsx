@@ -182,10 +182,10 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
   const IconComp = Icon || ChevronRight;
 
   return (
-    <div className="rounded-xl border border-border/20 bg-card/30 overflow-hidden my-3 transition-all duration-200 hover:border-border/30">
+    <div className="rounded-xl border border-border/20 bg-card/30 overflow-hidden my-4 transition-all duration-200 hover:border-border/30">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center gap-2.5 px-4 py-3 text-left group"
+        className="w-full flex items-center gap-3 px-4 py-3.5 text-left group"
       >
         <div className="w-7 h-7 rounded-lg bg-primary/6 flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
           <IconComp className="w-3.5 h-3.5 text-primary" />
@@ -205,8 +205,8 @@ export function ExpandableDetail({ title, icon: Icon, children, defaultOpen = fa
             transition={{ duration: 0.25, ease: "easeOut" }}
             className="overflow-hidden"
           >
-            <div className="px-4 pb-4 pt-0 border-t border-border/10">
-              <div className="pt-3 [&>p]:text-[13px] [&>p]:text-muted-foreground [&>p]:leading-relaxed">{children}</div>
+            <div className="px-4 pb-5 pt-0 border-t border-border/10">
+              <div className="pt-3.5 [&>p]:text-[13px] [&>p]:text-muted-foreground/80 [&>p]:leading-[1.7]">{children}</div>
             </div>
           </motion.div>
         )}
