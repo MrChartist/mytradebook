@@ -162,7 +162,10 @@ export function Sidebar() {
           {!collapsed && (
             <div className="flex items-center justify-between px-3 py-1.5 mb-1">
               <span className="text-[11px] text-muted-foreground">Theme</span>
-              <ThemeToggle />
+              <div className="flex items-center gap-1">
+                <NotificationBell />
+                <ThemeToggle />
+              </div>
             </div>
           )}
           {/* Profile */}
