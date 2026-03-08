@@ -1610,6 +1610,18 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 <div className="mt-4"><RecurrenceCooldownMockup /></div>
               </FeatureCard>
 
+              <ExpandableDetail title="LTP Quick-Set Buttons — Setting Alerts Fast" icon={Zap} badge="Real Feature">
+                <p>The alert creation form includes quick-set buttons that calculate threshold prices relative to the current LTP:</p>
+                <FeatureList items={[
+                  "LTP — Sets threshold to exact current price. Useful as a baseline.",
+                  "+0.5%, +1%, +2% — Sets threshold above current LTP by that percentage. Click '+1%' to set an alert 1% above current price.",
+                  "-0.5%, -1%, -2% — Sets threshold below current LTP. Perfect for support level alerts.",
+                  "Live recalculation — The button values update in real-time as LTP changes during market hours.",
+                  "Manual override — After clicking a quick-set button, you can still fine-tune the exact threshold value in the input field.",
+                ]} />
+                <p className="text-[12px] text-muted-foreground/60 mt-3">This feature is especially useful for setting multiple alerts quickly. Example workflow: Search RELIANCE → Click '+2%' → Save → Search TATA STEEL → Click '-1.5%' → Save. You've created two targeted alerts in under 30 seconds.</p>
+              </ExpandableDetail>
+
               <ProTip variant="warning">
                 <p>Set a cooldown of at least <strong>15 minutes</strong> on continuous alerts to avoid notification spam. Without a cooldown, a stock hovering near your threshold can trigger dozens of alerts in rapid succession. For volatile F&O instruments, consider a 30-minute or 1-hour cooldown.</p>
               </ProTip>
