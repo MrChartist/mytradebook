@@ -300,14 +300,14 @@ export default function Reports() {
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <p className="text-sm text-muted-foreground">Net P&L</p>
-                      <p className={cn("text-xl font-bold", report.totalPnl >= 0 ? "text-profit" : "text-loss")}>
+                      <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-medium">Net P&L</p>
+                      <p className={cn("text-lg font-bold font-mono", report.totalPnl >= 0 ? "text-profit" : "text-loss")}>
                         {report.totalPnl >= 0 ? "+" : ""}₹{report.totalPnl.toLocaleString()}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-muted-foreground">Win Rate</p>
-                      <p className={cn("text-xl font-bold", report.overallWinRate >= 50 ? "text-profit" : "text-loss")}>
+                      <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-medium">Win Rate</p>
+                      <p className={cn("text-lg font-bold font-mono", report.overallWinRate >= 50 ? "text-profit" : "text-loss")}>
                         {report.overallWinRate.toFixed(1)}%
                       </p>
                     </div>
