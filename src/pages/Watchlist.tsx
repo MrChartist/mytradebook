@@ -294,9 +294,7 @@ function WatchlistDetail({
     [items]
   );
 
-  const symbolList = useMemo(() => items.map((i) => i.symbol), [items]);
-
-  const { prices, isPolling, lastUpdated, isLoading: pricesLoading } = useLivePrices(symbolList);
+  const { prices, isPolling, lastUpdated, isLoading: pricesLoading } = useLivePrices(instruments);
 
   // Check market closed: all prices have ltp 0 or no prices fetched
   const allUnavailable = items.length > 0 && Object.keys(prices).length === 0 && !pricesLoading;
