@@ -34,6 +34,7 @@ interface UserSettings {
   truedata_enabled: boolean | null;
   truedata_verified_at: string | null;
   truedata_username: string | null;
+  telegram_message_templates: Record<string, string> | null;
   webhook_url: string | null;
   notification_preferences: {
     dnd_enabled?: boolean;
