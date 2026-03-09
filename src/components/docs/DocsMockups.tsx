@@ -2902,7 +2902,8 @@ export function TelegramIntegrationDetailMockup() {
   const deliveryLog = [
     { type: "Alert", symbol: "NIFTY", time: "10:34 AM", status: "✓ Delivered", color: "text-profit" },
     { type: "TSL Update", symbol: "RELIANCE", time: "11:12 AM", status: "✓ Delivered", color: "text-profit" },
-    { type: "EOD Report", symbol: "—", time: "3:45 PM", status: "⏳ Pending", color: "text-[hsl(var(--warning))]" },
+    { type: "/pnl Command", symbol: "—", time: "2:15 PM", status: "✓ Replied", color: "text-profit" },
+    { type: "EOD Report", symbol: "—", time: "3:45 PM", status: "✓ Delivered", color: "text-profit" },
   ];
   return (
     <MockupFrame className="my-6">
@@ -2976,15 +2977,80 @@ export function TelegramIntegrationDetailMockup() {
           ))}
         </div>
 
-        {/* Notification preview */}
+        {/* Interactive notification with buttons */}
         <div className="rounded-lg overflow-hidden mb-3">
           <div className="bg-[#1a2733] p-3 text-white space-y-1.5">
-            <p className="text-[10px] font-bold text-[#229ED9]">🔔 Alert Triggered</p>
-            <p className="text-[9px] opacity-90">NIFTY 50 crossed above <span className="font-mono font-bold">₹22,500</span></p>
-            <p className="text-[8px] opacity-60">LTP: ₹22,512.30 · Time: 10:34 AM IST</p>
+            <p className="text-[10px] font-bold text-[#229ED9]">🟢 NEW BUY TRADE</p>
+            <p className="text-[9px] opacity-90">📍 <span className="font-bold">RELIANCE</span> <span className="font-mono text-[8px] opacity-60">NSE·EQ</span></p>
+            <p className="text-[8px] opacity-75">💰 Entry: ₹2,845 · 🛑 SL: ₹2,810</p>
+            <p className="text-[8px] opacity-75">🎯 Target: ₹2,900 · ⚠️ Risk: ₹3,500</p>
+            {/* Inline buttons */}
+            <div className="flex gap-1.5 pt-2 border-t border-white/10 mt-1.5">
+              <span className="px-2.5 py-1 rounded bg-[#229ED9]/20 text-[8px] font-semibold text-[#229ED9]">📊 View Chart</span>
+              <span className="px-2.5 py-1 rounded bg-loss/20 text-[8px] font-semibold text-loss">✕ Close Trade</span>
+            </div>
             <div className="border-t border-white/10 pt-1.5 mt-1">
               <p className="text-[8px] opacity-50">via TradeBook · @MyTradeBot</p>
             </div>
+          </div>
+        </div>
+
+        {/* Alert notification with snooze buttons */}
+        <div className="rounded-lg overflow-hidden mb-3">
+          <div className="bg-[#1a2733] p-3 text-white space-y-1.5">
+            <p className="text-[10px] font-bold text-[hsl(var(--warning))]">🔔 Alert Triggered</p>
+            <p className="text-[9px] opacity-90">NIFTY 50 crossed above <span className="font-mono font-bold">₹22,500</span></p>
+            <p className="text-[8px] opacity-60">LTP: ₹22,512.30 · Time: 10:34 AM IST</p>
+            {/* Inline buttons */}
+            <div className="flex gap-1.5 pt-2 border-t border-white/10 mt-1.5">
+              <span className="px-2.5 py-1 rounded bg-[#229ED9]/20 text-[8px] font-semibold text-[#229ED9]">⏸ Snooze 15m</span>
+              <span className="px-2.5 py-1 rounded bg-[#229ED9]/20 text-[8px] font-semibold text-[#229ED9]">⏸ Snooze 1h</span>
+              <span className="px-2.5 py-1 rounded bg-loss/20 text-[8px] font-semibold text-loss">🗑 Delete</span>
+            </div>
+            <div className="border-t border-white/10 pt-1.5 mt-1">
+              <p className="text-[8px] opacity-50">via TradeBook · @MyTradeBot</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Chatbot commands preview */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 overflow-hidden mb-3">
+          <div className="px-3 py-1.5 bg-muted/30 border-b border-border/20">
+            <p className="text-[9px] font-bold">💬 Bot Commands</p>
+          </div>
+          <div className="p-3 space-y-1.5">
+            {[
+              { cmd: "/pnl", desc: "Today's P&L summary" },
+              { cmd: "/positions", desc: "Open positions list" },
+              { cmd: "/briefing", desc: "Morning market briefing" },
+              { cmd: "/help", desc: "Show all commands" },
+            ].map((c) => (
+              <div key={c.cmd} className="flex items-center gap-2">
+                <code className="text-[8px] font-mono font-bold text-[#229ED9] bg-[#229ED9]/8 px-1.5 py-0.5 rounded">{c.cmd}</code>
+                <span className="text-[8px] text-muted-foreground">{c.desc}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Custom template preview */}
+        <div className="rounded-lg bg-muted/20 border border-border/30 overflow-hidden mb-3">
+          <div className="px-3 py-1.5 bg-muted/30 border-b border-border/20 flex items-center justify-between">
+            <p className="text-[9px] font-bold">📝 Custom Templates</p>
+            <span className="px-1.5 py-0.5 rounded text-[7px] font-semibold bg-[hsl(var(--tb-accent))]/10 text-[hsl(var(--tb-accent))]">Customizable</span>
+          </div>
+          <div className="p-3 space-y-1.5">
+            {[
+              { key: "New Trade", badge: "Custom", example: "🚨 SIGNAL: {{symbol}} | Entry: {{entry_price}}" },
+              { key: "Trade Closed", badge: "Default", example: "Default rich format with P&L breakdown" },
+              { key: "Alert Triggered", badge: "Custom", example: "📈 {{symbol}} hit {{threshold}} | LTP: {{current_price}}" },
+            ].map((t) => (
+              <div key={t.key} className="flex items-center gap-2">
+                <span className="text-[8px] font-semibold w-20 shrink-0">{t.key}</span>
+                <span className={cn("px-1 py-0.5 rounded text-[7px] font-bold", t.badge === "Custom" ? "bg-[hsl(var(--tb-accent))]/10 text-[hsl(var(--tb-accent))]" : "bg-muted/50 text-muted-foreground")}>{t.badge}</span>
+                <span className="text-[7px] text-muted-foreground font-mono truncate">{t.example}</span>
+              </div>
+            ))}
           </div>
         </div>
 
