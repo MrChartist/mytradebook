@@ -9,6 +9,7 @@ const corsHeaders = {
 const TRADINGVIEW_SCAN_URL = "https://scanner.tradingview.com/india/scan";
 
 // Only fields known to work on the India scanner
+// NOTE: High.D, Low.D, VWAP are NOT supported on India scanner
 const FIELDS = [
   "name", "description", "industry", "sector",
   "close", "change", "volume", "relative_volume_10d_calc", "average_volume_10d_calc",
@@ -21,8 +22,7 @@ const FIELDS = [
   "price_52_week_high", "price_52_week_low",
   "Perf.W", "Perf.1M", "Perf.3M", "Perf.Y",
   "beta_1_year", "ATR",
-  "High.D", "Low.D",
-  "VWAP",
+  "open", "high", "low", // today's OHLC
 ];
 
 // Build a name→friendly-key map so we never rely on hardcoded indices
@@ -65,9 +65,9 @@ const FIELD_KEY_MAP: Record<string, string> = {
   "Perf.Y": "perf_y",
   "beta_1_year": "beta",
   "ATR": "atr",
-  "High.D": "day_high",
-  "Low.D": "day_low",
-  "VWAP": "vwap",
+  "open": "open",
+  "high": "day_high",
+  "low": "day_low",
 };
 
 const cache = new Map<string, { data: unknown; ts: number }>();

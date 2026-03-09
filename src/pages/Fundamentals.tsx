@@ -109,13 +109,8 @@ const SCANNER_PRESETS: ScannerPreset[] = [
   },
   { id: "penny_stocks", label: "Penny Stocks", description: "Price < ₹50", filters: [{ field: "close", op: "less", value: 50 }, { field: "close", op: "greater", value: 1 }], sortBy: "change", sortOrder: "desc", group: "price" },
   { id: "blue_chip", label: "Blue Chip", description: "Price > ₹1,000, Large cap", filters: [{ field: "close", op: "greater", value: 1000 }, { field: "market_cap_basic", op: "greater", value: 2e11 }], sortBy: "change", sortOrder: "desc", group: "price" },
-  // NEW: Above VWAP (client-side cross-field filter using valid field)
-  {
-    id: "above_vwap", label: "Above VWAP", description: "Price trading above intraday VWAP",
-    filters: [{ field: "change", op: "greater", value: 0 }],
-    clientPostFilters: [{ sourceField: "close", targetField: "vwap", direction: "above" }],
-    sortBy: "change", sortOrder: "desc", group: "price",
-  },
+  // NEW: Gap Up — open significantly above previous close (using change% as proxy)
+  { id: "gap_up", label: "Gap Up", description: "Change > 3% — opened with gap", filters: [{ field: "change", op: "greater", value: 3 }], sortBy: "change", sortOrder: "desc", group: "price" },
 
   // ── Volume ──
   { id: "vol_gainers", label: "Volume Gainers", description: "Rel. vol > 1.5× + price up", filters: [{ field: "relative_volume_10d_calc", op: "greater", value: 1.5 }, { field: "change", op: "greater", value: 0 }], sortBy: "volume", sortOrder: "desc", group: "volume" },

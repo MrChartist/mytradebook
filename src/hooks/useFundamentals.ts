@@ -41,10 +41,10 @@ export interface FundamentalData {
   perf_y: number | null;
   beta: number | null;
   atr: number | null;
-  // NEW: daily high/low + VWAP
+  // Today's OHLC (using "open", "high", "low" fields)
+  open: number | null;
   day_high: number | null;
   day_low: number | null;
-  vwap: number | null;
 }
 
 export interface ScanResponse {
