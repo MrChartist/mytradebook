@@ -1293,7 +1293,7 @@ Deno.serve(async (req) => {
         userId = trade.user_id;
         segment = trade.segment;
         notificationType = "trade";
-        imageUrl = getFirstChartImage(trade);
+        imageUrl = resolveChartImageUrl(trade);
         const settings = await getUserSettings(supabase, trade.user_id);
         message = buildManualTradeSnapshotMessage(trade, settings.ra_public_mode, settings.ra_disclaimer);
         break;
