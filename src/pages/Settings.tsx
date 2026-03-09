@@ -1,4 +1,4 @@
-import { User, Moon, Shield, Link, Tag, CreditCard } from "lucide-react";
+import { User, Moon, Shield, Link, Tag, CreditCard, Database } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProfileSettings from "@/components/settings/ProfileSettings";
 import PreferencesSettings from "@/components/settings/PreferencesSettings";
@@ -6,6 +6,7 @@ import SecuritySettings from "@/components/settings/SecuritySettings";
 import IntegrationsSettings from "@/components/settings/IntegrationsSettings";
 import TagManagementSettings from "@/components/settings/TagManagementSettings";
 import BillingSettings from "@/components/settings/BillingSettings";
+import DataBackupExport from "@/components/settings/DataBackupExport";
 import { useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/ui/page-header";
@@ -17,6 +18,7 @@ const settingsTabs = [
   { id: "security", label: "Security", icon: Shield },
   { id: "integrations", label: "Integrations", icon: Link },
   { id: "tags", label: "Tags", icon: Tag },
+  { id: "backup", label: "Backup", icon: Database },
 ];
 
 export default function Settings() {
@@ -71,6 +73,10 @@ export default function Settings() {
 
         <TabsContent value="tags" className="mt-0">
           <TagManagementSettings />
+        </TabsContent>
+
+        <TabsContent value="backup" className="mt-0">
+          <DataBackupExport />
         </TabsContent>
       </Tabs>
     </div>

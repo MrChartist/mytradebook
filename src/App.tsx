@@ -31,6 +31,7 @@ const Settings = lazy(() => import("./pages/Settings"));
 const Calendar = lazy(() => import("./pages/Calendar"));
 const Mistakes = lazy(() => import("./pages/Mistakes"));
 const Analytics = lazy(() => import("./pages/Analytics"));
+const Notifications = lazy(() => import("./pages/Notifications"));
 const DhanCallback = lazy(() => import("./pages/DhanCallback"));
 const Watchlist = lazy(() => import("./pages/Watchlist"));
 const Fundamentals = lazy(() => import("./pages/Fundamentals"));
@@ -100,6 +101,7 @@ function AnimatedRoutes() {
             { path: "/calendar", element: <Calendar />, skeleton: <CalendarSkeleton /> },
             { path: "/mistakes", element: <Mistakes /> },
             { path: "/analytics", element: <Analytics />, skeleton: <AnalyticsSkeleton /> },
+            { path: "/notifications", element: <Notifications /> },
             { path: "/watchlist", element: <Watchlist />, skeleton: <WatchlistSkeleton /> },
             { path: "/fundamentals", element: <Fundamentals /> },
           ].map(({ path, element, skeleton }) => (

@@ -18,6 +18,7 @@ import { AIPatternDetection } from "@/components/analytics/AIPatternDetection";
 import { SectorRotationHeatmap } from "@/components/analytics/SectorRotationHeatmap";
 import { SetupWinRateMatrix } from "@/components/analytics/SetupWinRateMatrix";
 import { EmotionalPnlCorrelation } from "@/components/analytics/EmotionalPnlCorrelation";
+import { ComparativePeriodAnalysis } from "@/components/analytics/ComparativePeriodAnalysis";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -174,6 +175,9 @@ export default function Analytics() {
 
           {/* AI Pattern Detection */}
           <AIPatternDetection trades={closed} />
+
+          {/* Comparative Period Analysis */}
+          <ComparativePeriodAnalysis trades={closed} />
 
           {/* Equity Curve & Drawdown */}
           <EquityCurveDrawdown trades={closed} startingCapital={startingCapital} capitalTransactions={capitalTransactions} />

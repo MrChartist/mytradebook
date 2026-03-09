@@ -51,6 +51,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { CsvImportModal } from "@/components/trade/CsvImportModal";
 import { tradesToCSV, downloadCSV } from "@/lib/csv-export";
 import { Sparkline } from "@/components/ui/sparkline";
+import { AdvancedTradeFilters, type AdvancedFilters } from "@/components/trade/AdvancedTradeFilters";
+import { BrokerageCalculatorPanel } from "@/components/trade/BrokerageCalculatorPanel";
 import { subDays, startOfDay, format } from "date-fns";
 
 const segmentLabels: Record<string, string> = {
@@ -102,6 +104,7 @@ export default function Trades() {
   const [csvImportOpen, setCsvImportOpen] = useState(false);
   const [showStats, setShowStats] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>({});
   const isMobile = useIsMobile();
   const TRADES_PER_PAGE = 25;
 
@@ -153,6 +156,17 @@ export default function Trades() {
 
   const sortedTrades = useMemo(() => {
     let list = [...trades];
+    // Apply advanced filters
+    if (advancedFilters.dateFrom) list = list.filter(t => new Date(t.entry_time) >= advancedFilters.dateFrom!);
+    if (advancedFilters.dateTo) list = list.filter(t => new Date(t.entry_time) <= advancedFilters.dateTo!);
+    if (advancedFilters.pnlMin !== undefined) list = list.filter(t => (t.pnl || 0) >= advancedFilters.pnlMin!);
+    if (advancedFilters.pnlMax !== undefined) list = list.filter(t => (t.pnl || 0) <= advancedFilters.pnlMax!);
+    if (advancedFilters.emotionTag) list = list.filter(t => t.emotion_tag === advancedFilters.emotionTag);
+    if (advancedFilters.holdingPeriod) list = list.filter(t => t.holding_period === advancedFilters.holdingPeriod);
+    if (advancedFilters.timeframe) list = list.filter(t => t.timeframe === advancedFilters.timeframe);
+    if (advancedFilters.confidenceMin !== undefined) list = list.filter(t => (t.confidence_score || 0) >= advancedFilters.confidenceMin!);
+    if (advancedFilters.confidenceMax !== undefined) list = list.filter(t => (t.confidence_score || 0) <= advancedFilters.confidenceMax!);
+    
     switch (sortBy) {
       case "pnl_high": list.sort((a, b) => (b.pnl || 0) - (a.pnl || 0)); break;
       case "pnl_low": list.sort((a, b) => (a.pnl || 0) - (b.pnl || 0)); break;
@@ -160,7 +174,7 @@ export default function Trades() {
       default: list.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
     }
     return list;
-  }, [trades, sortBy]);
+  }, [trades, sortBy, advancedFilters]);
 
   const totalPages = Math.max(1, Math.ceil(sortedTrades.length / TRADES_PER_PAGE));
   const paginatedTrades = useMemo(() => {
@@ -486,6 +500,7 @@ export default function Trades() {
               </div>
             )}
             <SortSelect value={sortBy} onValueChange={setSortBy} options={sortOptions} />
+            <AdvancedTradeFilters filters={advancedFilters} onChange={setAdvancedFilters} onClear={() => setAdvancedFilters({})} />
             <ViewToggle view={viewMode} onViewChange={setViewMode} />
           </div>
         </div>
