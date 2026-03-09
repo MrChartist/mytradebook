@@ -239,10 +239,110 @@ function istTime(): string {
 async function getUserSettings(supabase: any, userId: string) {
   const { data } = await supabase
     .from("user_settings")
-    .select("telegram_chat_id, ra_public_mode, ra_disclaimer, telegram_bot_token, telegram_bot_username")
+    .select("telegram_chat_id, ra_public_mode, ra_disclaimer, telegram_bot_token, telegram_bot_username, telegram_message_templates")
     .eq("user_id", userId)
     .maybeSingle();
-  return data || { telegram_chat_id: null, ra_public_mode: false, ra_disclaimer: null, telegram_bot_token: null, telegram_bot_username: null };
+  return data || { telegram_chat_id: null, ra_public_mode: false, ra_disclaimer: null, telegram_bot_token: null, telegram_bot_username: null, telegram_message_templates: null };
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  CUSTOM TEMPLATE ENGINE
+// ════════════════════════════════════════════════════════════════════
+
+function applyTemplate(template: string, vars: Record<string, string | number | null | undefined>): string {
+  return template.replace(/\{\{(\w+)\}\}/g, (_, key) => {
+    const val = vars[key];
+    if (val === null || val === undefined) return "—";
+    return String(val);
+  });
+}
+
+function getTradeTemplateVars(trade: any): Record<string, string | number | null> {
+  return {
+    symbol: trade.symbol,
+    side: trade.trade_type,
+    entry_price: trade.entry_price ? fmt(trade.entry_price) : "—",
+    stop_loss: trade.stop_loss ? fmt(trade.stop_loss) : "—",
+    current_price: trade.current_price ? fmt(trade.current_price) : "—",
+    pnl: fmt(trade.pnl),
+    pnl_percent: fmtPct(trade.pnl_percent),
+    quantity: trade.quantity,
+    segment: segmentLabels[trade.segment] || trade.segment,
+    status: trade.status,
+    targets: (trade.targets || []).map((t: number, i: number) => `T${i + 1}: ${fmt(t)}`).join(" / ") || "—",
+    risk_amount: trade.entry_price && trade.stop_loss && trade.quantity
+      ? fmt(Math.abs(trade.entry_price - trade.stop_loss) * trade.quantity)
+      : "—",
+    timeframe: trade.timeframe || "—",
+    holding_period: trade.holding_period || "—",
+    notes: trade.notes || "",
+  };
+}
+
+function buildMessageWithTemplate(
+  templates: Record<string, string> | null,
+  templateKey: string,
+  defaultBuilder: () => string,
+  vars: Record<string, string | number | null>
+): string {
+  if (templates && templates[templateKey]) {
+    return applyTemplate(templates[templateKey], vars);
+  }
+  return defaultBuilder();
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  INLINE KEYBOARD BUILDERS
+// ════════════════════════════════════════════════════════════════════
+
+function buildAlertInlineKeyboard(alertId: string) {
+  return {
+    inline_keyboard: [
+      [
+        { text: "⏸️ Snooze 15m", callback_data: `snooze_alert:${alertId}:15` },
+        { text: "⏸️ Snooze 1h", callback_data: `snooze_alert:${alertId}:60` },
+      ],
+      [
+        { text: "🗑️ Delete Alert", callback_data: `delete_alert:${alertId}` },
+      ],
+    ],
+  };
+}
+
+function buildTradeInlineKeyboard(tradeId: string, chartLink?: string | null) {
+  const row1: any[] = [];
+  if (chartLink) {
+    row1.push({ text: "📊 View Chart", url: chartLink });
+  }
+  row1.push({ text: "📒 Close Trade", callback_data: `close_trade:${tradeId}` });
+
+  return {
+    inline_keyboard: [row1],
+  };
+}
+
+function resolveChartImageUrl(trade: any): string | null {
+  // First try chart_images array
+  if (trade.chart_images && Array.isArray(trade.chart_images) && trade.chart_images.length > 0) {
+    const firstImage = trade.chart_images[0];
+    let url = typeof firstImage === 'string' ? firstImage : firstImage?.url;
+    if (url) {
+      // Convert relative Supabase storage paths to full URLs
+      if (url.startsWith('/') && !url.startsWith('//')) {
+        const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+        url = `${supabaseUrl}/storage/v1/object/public/trade-charts${url}`;
+      }
+      return url;
+    }
+  }
+  // Then try chart_link if it's a direct image URL
+  if (trade.chart_link) {
+    const link = trade.chart_link.toLowerCase();
+    if (link.match(/\.(png|jpg|jpeg|webp|gif)(\?|$)/)) {
+      return trade.chart_link;
+    }
+  }
+  return null;
 }
 
 async function getUserTelegramChats(
@@ -297,17 +397,19 @@ async function sleep(ms: number): Promise<void> {
 }
 
 async function sendTelegramPhoto(
-  token: string, chatId: string, photoUrl: string, caption: string
+  token: string, chatId: string, photoUrl: string, caption: string, replyMarkup?: any
 ): Promise<TelegramResult> {
   try {
     const truncatedCaption = caption.length > 1024 ? caption.substring(0, 1021) + "..." : caption;
+    const body: any = {
+      chat_id: chatId, photo: photoUrl,
+      caption: truncatedCaption, parse_mode: "Markdown",
+    };
+    if (replyMarkup) body.reply_markup = replyMarkup;
     const response = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId, photo: photoUrl,
-        caption: truncatedCaption, parse_mode: "Markdown",
-      }),
+      body: JSON.stringify(body),
     });
     const result = await response.json();
 
@@ -326,16 +428,18 @@ async function sendTelegramPhoto(
 }
 
 async function sendTelegramMessage(
-  token: string, chatId: string, message: string
+  token: string, chatId: string, message: string, replyMarkup?: any
 ): Promise<TelegramResult> {
   try {
+    const body: any = {
+      chat_id: chatId, text: message,
+      parse_mode: "Markdown", disable_web_page_preview: true,
+    };
+    if (replyMarkup) body.reply_markup = replyMarkup;
     const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId, text: message,
-        parse_mode: "Markdown", disable_web_page_preview: true,
-      }),
+      body: JSON.stringify(body),
     });
     const result = await response.json();
 
@@ -358,19 +462,20 @@ async function sendWithRetry(
   chatId: string,
   message: string,
   imageUrl: string | null,
+  replyMarkup?: any,
   maxRetries = 3
 ): Promise<TelegramResult> {
   let lastResult: TelegramResult = { success: false, error: "No attempts made" };
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     if (imageUrl) {
-      lastResult = await sendTelegramPhoto(token, chatId, imageUrl, message);
+      lastResult = await sendTelegramPhoto(token, chatId, imageUrl, message, replyMarkup);
       if (!lastResult.success) {
         console.log(`Photo send failed for ${chatId}, trying text-only...`);
-        lastResult = await sendTelegramMessage(token, chatId, message);
+        lastResult = await sendTelegramMessage(token, chatId, message, replyMarkup);
       }
     } else {
-      lastResult = await sendTelegramMessage(token, chatId, message);
+      lastResult = await sendTelegramMessage(token, chatId, message, replyMarkup);
     }
 
     if (lastResult.success) return lastResult;
@@ -434,7 +539,8 @@ async function sendToMultipleChats(
   imageUrl: string | null,
   userId: string | null,
   notificationType: string,
-  segment: string | null
+  segment: string | null,
+  replyMarkup?: any
 ): Promise<{
   successCount: number;
   failCount: number;
@@ -447,7 +553,7 @@ async function sendToMultipleChats(
   for (const chat of chats) {
     const token = chat.bot_token || defaultToken;
     const tokenTier = chat.bot_token ? "custom" : (defaultToken && defaultToken !== (Deno.env.get("TELEGRAM_BOT_TOKEN") || "")) ? "personal" : "system";
-    const result = await sendWithRetry(token, chat.chat_id, message, imageUrl, 3);
+    const result = await sendWithRetry(token, chat.chat_id, message, imageUrl, replyMarkup, 3);
 
     if (userId) {
       await logDeliveryAttempt(supabase, userId, chat.chat_id, notificationType, segment, result, 1);
@@ -1009,6 +1115,7 @@ Deno.serve(async (req) => {
     let userId: string | null = null;
     let segment: string | null = null;
     let notificationType = "other";
+    let replyMarkup: any = undefined;
 
     switch (payload.type) {
       case "new_trade": {
@@ -1019,8 +1126,16 @@ Deno.serve(async (req) => {
         segment = trade.segment;
         notificationType = "trade";
         const settings = await getUserSettings(supabase, trade.user_id);
-        imageUrl = getFirstChartImage(trade);
-        message = buildNewTradeMessage(trade, settings.ra_public_mode, settings.ra_disclaimer);
+        imageUrl = resolveChartImageUrl(trade);
+        const vars = getTradeTemplateVars(trade);
+        message = buildMessageWithTemplate(
+          settings.telegram_message_templates, "new_trade",
+          () => buildNewTradeMessage(trade, settings.ra_public_mode, settings.ra_disclaimer),
+          vars
+        );
+        if (trade.status !== "CLOSED") {
+          replyMarkup = buildTradeInlineKeyboard(trade.id, trade.chart_link);
+        }
         break;
       }
       case "trade_update": {
@@ -1031,7 +1146,7 @@ Deno.serve(async (req) => {
         segment = trade.segment;
         notificationType = "trade";
         const settings = await getUserSettings(supabase, trade.user_id);
-        imageUrl = getFirstChartImage(trade);
+        imageUrl = resolveChartImageUrl(trade);
         const { data: events } = await supabase.from("trade_events").select("*").eq("trade_id", trade.id).order("timestamp", { ascending: false }).limit(1);
         message = buildTradeUpdateMessage(trade, events?.[0], settings.ra_public_mode);
         break;
@@ -1044,8 +1159,13 @@ Deno.serve(async (req) => {
         segment = trade.segment;
         notificationType = "trade";
         const settings = await getUserSettings(supabase, trade.user_id);
-        imageUrl = getFirstChartImage(trade);
-        message = buildTradeClosedMessage(trade, settings.ra_public_mode, settings.ra_disclaimer);
+        imageUrl = resolveChartImageUrl(trade);
+        const vars = getTradeTemplateVars(trade);
+        message = buildMessageWithTemplate(
+          settings.telegram_message_templates, "trade_closed",
+          () => buildTradeClosedMessage(trade, settings.ra_public_mode, settings.ra_disclaimer),
+          vars
+        );
         break;
       }
       case "trade_sl_modified": {
@@ -1066,6 +1186,7 @@ Deno.serve(async (req) => {
         userId = alert.user_id;
         notificationType = "alert";
         message = buildAlertTriggeredMessage(alert, payload.current_price);
+        replyMarkup = buildAlertInlineKeyboard(alert.id);
         break;
       }
       case "alert_created": {
@@ -1172,7 +1293,7 @@ Deno.serve(async (req) => {
         userId = trade.user_id;
         segment = trade.segment;
         notificationType = "trade";
-        imageUrl = getFirstChartImage(trade);
+        imageUrl = resolveChartImageUrl(trade);
         const settings = await getUserSettings(supabase, trade.user_id);
         message = buildManualTradeSnapshotMessage(trade, settings.ra_public_mode, settings.ra_disclaimer);
         break;
@@ -1236,7 +1357,8 @@ Deno.serve(async (req) => {
       imageUrl,
       userId,
       notificationType,
-      segment
+      segment,
+      replyMarkup
     );
 
     if (result.successCount === 0) {
