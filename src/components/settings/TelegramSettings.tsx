@@ -741,6 +741,13 @@ export default function TelegramSettings() {
           </div>
         )}
       </div>
+
+      {/* Custom Message Templates */}
+      {chats.length > 0 && (
+        <div className="border-t border-border pt-6">
+          <TelegramTemplateSettings />
+        </div>
+      )}
     </div>
   );
 }
