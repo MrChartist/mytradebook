@@ -615,7 +615,7 @@ export default function TelegramSettings() {
         >
           <div className="flex items-center gap-2">
             <History className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm font-medium">Delivery Log (Last 10)</span>
+            <span className="text-sm font-medium">Delivery Log (Last 50)</span>
             {deliveryLogs.length > 0 && (
               <Badge variant="outline" className="text-xs">
                 {deliveryLogs.filter((l) => !l.success).length > 0 && (
