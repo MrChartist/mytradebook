@@ -74,6 +74,10 @@ export default function Settings() {
         <TabsContent value="tags" className="mt-0">
           <TagManagementSettings />
         </TabsContent>
+
+        <TabsContent value="backup" className="mt-0">
+          <DataBackupExport />
+        </TabsContent>
       </Tabs>
     </div>
   );
