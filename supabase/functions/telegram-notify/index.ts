@@ -397,17 +397,19 @@ async function sleep(ms: number): Promise<void> {
 }
 
 async function sendTelegramPhoto(
-  token: string, chatId: string, photoUrl: string, caption: string
+  token: string, chatId: string, photoUrl: string, caption: string, replyMarkup?: any
 ): Promise<TelegramResult> {
   try {
     const truncatedCaption = caption.length > 1024 ? caption.substring(0, 1021) + "..." : caption;
+    const body: any = {
+      chat_id: chatId, photo: photoUrl,
+      caption: truncatedCaption, parse_mode: "Markdown",
+    };
+    if (replyMarkup) body.reply_markup = replyMarkup;
     const response = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId, photo: photoUrl,
-        caption: truncatedCaption, parse_mode: "Markdown",
-      }),
+      body: JSON.stringify(body),
     });
     const result = await response.json();
 
@@ -426,16 +428,18 @@ async function sendTelegramPhoto(
 }
 
 async function sendTelegramMessage(
-  token: string, chatId: string, message: string
+  token: string, chatId: string, message: string, replyMarkup?: any
 ): Promise<TelegramResult> {
   try {
+    const body: any = {
+      chat_id: chatId, text: message,
+      parse_mode: "Markdown", disable_web_page_preview: true,
+    };
+    if (replyMarkup) body.reply_markup = replyMarkup;
     const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId, text: message,
-        parse_mode: "Markdown", disable_web_page_preview: true,
-      }),
+      body: JSON.stringify(body),
     });
     const result = await response.json();
 
@@ -458,19 +462,20 @@ async function sendWithRetry(
   chatId: string,
   message: string,
   imageUrl: string | null,
+  replyMarkup?: any,
   maxRetries = 3
 ): Promise<TelegramResult> {
   let lastResult: TelegramResult = { success: false, error: "No attempts made" };
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     if (imageUrl) {
-      lastResult = await sendTelegramPhoto(token, chatId, imageUrl, message);
+      lastResult = await sendTelegramPhoto(token, chatId, imageUrl, message, replyMarkup);
       if (!lastResult.success) {
         console.log(`Photo send failed for ${chatId}, trying text-only...`);
-        lastResult = await sendTelegramMessage(token, chatId, message);
+        lastResult = await sendTelegramMessage(token, chatId, message, replyMarkup);
       }
     } else {
-      lastResult = await sendTelegramMessage(token, chatId, message);
+      lastResult = await sendTelegramMessage(token, chatId, message, replyMarkup);
     }
 
     if (lastResult.success) return lastResult;
