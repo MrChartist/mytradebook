@@ -225,9 +225,15 @@ export default function Dashboard() {
     }
   };
 
+  const densityClasses = {
+    compact: "space-y-2.5",
+    comfortable: "space-y-4",
+    spacious: "space-y-6"
+  };
+
   return (
     <DashboardContext.Provider value={ctx}>
-      <div className="space-y-4 animate-fade-in">
+      <div className={cn("animate-fade-in", densityClasses[density])}>
         <OnboardingWelcome />
 
         {/* Floating Trade Ticker */}
