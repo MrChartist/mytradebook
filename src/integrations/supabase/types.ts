@@ -1472,6 +1472,7 @@ export type Database = {
           telegram_enabled: boolean | null
           telegram_link_code: string | null
           telegram_link_expires_at: string | null
+          telegram_message_templates: Json | null
           telegram_verified_at: string | null
           theme: string | null
           timezone: string | null
@@ -1515,6 +1516,7 @@ export type Database = {
           telegram_enabled?: boolean | null
           telegram_link_code?: string | null
           telegram_link_expires_at?: string | null
+          telegram_message_templates?: Json | null
           telegram_verified_at?: string | null
           theme?: string | null
           timezone?: string | null
@@ -1558,6 +1560,7 @@ export type Database = {
           telegram_enabled?: boolean | null
           telegram_link_code?: string | null
           telegram_link_expires_at?: string | null
+          telegram_message_templates?: Json | null
           telegram_verified_at?: string | null
           theme?: string | null
           timezone?: string | null
