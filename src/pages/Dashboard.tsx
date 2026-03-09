@@ -298,26 +298,27 @@ export default function Dashboard() {
 
                   <div className="space-y-1.5 pt-2 border-t">
                     <Label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2 block">Widgets</Label>
-                  <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handlePopoverDragEnd}
-                  >
-                    <SortableContext
-                      items={widgets.map((w) => w.id)}
-                      strategy={verticalListSortingStrategy}
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handlePopoverDragEnd}
                     >
-                      {widgets.map((w) => (
-                        <SortableWidgetItem
-                          key={w.id}
-                          id={w.id}
-                          label={w.label}
-                          visible={w.visible}
-                          onToggle={() => toggleWidget(w.id)}
-                        />
-                      ))}
-                    </SortableContext>
-                  </DndContext>
+                      <SortableContext
+                        items={widgets.map((w) => w.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        {widgets.map((w) => (
+                          <SortableWidgetItem
+                            key={w.id}
+                            id={w.id}
+                            label={w.label}
+                            visible={w.visible}
+                            onToggle={() => toggleWidget(w.id)}
+                          />
+                        ))}
+                      </SortableContext>
+                    </DndContext>
+                  </div>
                 </div>
               </PopoverContent>
             </Popover>
