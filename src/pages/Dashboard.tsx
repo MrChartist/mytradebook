@@ -236,6 +236,29 @@ export default function Dashboard() {
       <div className={cn("animate-fade-in", densityClasses[density])}>
         <OnboardingWelcome />
 
+        {/* Focus Mode Active Banner */}
+        {focusMode && (
+          <div className="mb-4 p-3 rounded-lg border border-primary/30 bg-primary/5 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <div>
+                <p className="text-sm font-medium text-primary">Focus Mode Active</p>
+                <p className="text-xs text-muted-foreground">
+                  {widgets.length - getVisibleWidgets().length} widget{widgets.length - getVisibleWidgets().length !== 1 ? 's' : ''} hidden
+                </p>
+              </div>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-7 text-xs text-primary hover:text-primary"
+              onClick={() => setFocusMode(false)}
+            >
+              Turn Off
+            </Button>
+          </div>
+        )}
+
         {/* Floating Trade Ticker */}
         <FloatingTradeTicker />
 

@@ -62,7 +62,7 @@ export function useUserSettings() {
       
       const { data, error } = await supabase
         .from("user_settings")
-        .select("id, user_id, default_sl_percent, alert_frequency_minutes, auto_sync_portfolio, theme, timezone, telegram_chat_id, telegram_verified_at, telegram_enabled, dhan_client_id, dhan_verified_at, dhan_enabled, dhan_account_name, dhan_token_expiry, ai_provider, ra_public_mode, ra_disclaimer, starting_capital, dashboard_layout, tsl_profiles, truedata_enabled, truedata_verified_at, truedata_username, webhook_url, dhan_consent_id, telegram_link_expires_at, telegram_bot_username, created_at, updated_at")
+        .select("id, user_id, default_sl_percent, alert_frequency_minutes, auto_sync_portfolio, theme, timezone, telegram_chat_id, telegram_verified_at, telegram_enabled, dhan_client_id, dhan_verified_at, dhan_enabled, dhan_account_name, dhan_token_expiry, ai_provider, ra_public_mode, ra_disclaimer, starting_capital, dashboard_layout, dashboard_focus_mode, dashboard_density, tsl_profiles, truedata_enabled, truedata_verified_at, truedata_username, webhook_url, dhan_consent_id, telegram_link_expires_at, telegram_bot_username, notification_preferences, created_at, updated_at")
         .eq("user_id", user.id)
         .single();
 
