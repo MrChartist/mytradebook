@@ -18,6 +18,7 @@ const settingsTabs = [
   { id: "security", label: "Security", icon: Shield },
   { id: "integrations", label: "Integrations", icon: Link },
   { id: "tags", label: "Tags", icon: Tag },
+  { id: "backup", label: "Backup", icon: Database },
 ];
 
 export default function Settings() {
