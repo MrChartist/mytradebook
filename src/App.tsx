@@ -31,6 +31,7 @@ const Settings = lazy(() => import("./pages/Settings"));
 const Calendar = lazy(() => import("./pages/Calendar"));
 const Mistakes = lazy(() => import("./pages/Mistakes"));
 const Analytics = lazy(() => import("./pages/Analytics"));
+const Notifications = lazy(() => import("./pages/Notifications"));
 const DhanCallback = lazy(() => import("./pages/DhanCallback"));
 const Watchlist = lazy(() => import("./pages/Watchlist"));
 const Fundamentals = lazy(() => import("./pages/Fundamentals"));
