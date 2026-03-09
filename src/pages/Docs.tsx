@@ -235,6 +235,10 @@ const SECTION_ANCHORS: Record<string, { label: string; id: string }[]> = {
   "integrations": [
     { label: "Dhan Setup", id: "int-dhan" },
     { label: "Telegram Setup", id: "int-telegram" },
+    { label: "Interactive Buttons", id: "int-tg-buttons" },
+    { label: "Chatbot Commands", id: "int-tg-commands" },
+    { label: "Custom Templates", id: "int-tg-templates" },
+    { label: "Chart Snapshots", id: "int-tg-charts" },
     { label: "Webhook & API", id: "int-webhook" },
     { label: "Data Sync", id: "int-sync" },
   ],
