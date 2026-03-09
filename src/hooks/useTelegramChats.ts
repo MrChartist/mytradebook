@@ -347,7 +347,7 @@ export function useTelegramChats() {
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
-        .limit(10);
+        .limit(50);
       if (error) throw error;
       return (data || []) as unknown as TelegramDeliveryLog[];
     },

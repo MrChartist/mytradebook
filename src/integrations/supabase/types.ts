@@ -1448,6 +1448,8 @@ export type Database = {
           alert_frequency_minutes: number | null
           auto_sync_portfolio: boolean | null
           created_at: string | null
+          dashboard_density: string | null
+          dashboard_focus_mode: boolean | null
           dashboard_layout: Json | null
           default_sl_percent: number | null
           dhan_access_token: string | null
@@ -1489,6 +1491,8 @@ export type Database = {
           alert_frequency_minutes?: number | null
           auto_sync_portfolio?: boolean | null
           created_at?: string | null
+          dashboard_density?: string | null
+          dashboard_focus_mode?: boolean | null
           dashboard_layout?: Json | null
           default_sl_percent?: number | null
           dhan_access_token?: string | null
@@ -1530,6 +1534,8 @@ export type Database = {
           alert_frequency_minutes?: number | null
           auto_sync_portfolio?: boolean | null
           created_at?: string | null
+          dashboard_density?: string | null
+          dashboard_focus_mode?: boolean | null
           dashboard_layout?: Json | null
           default_sl_percent?: number | null
           dhan_access_token?: string | null
