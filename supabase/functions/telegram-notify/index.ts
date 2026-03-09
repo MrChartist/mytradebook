@@ -539,7 +539,8 @@ async function sendToMultipleChats(
   imageUrl: string | null,
   userId: string | null,
   notificationType: string,
-  segment: string | null
+  segment: string | null,
+  replyMarkup?: any
 ): Promise<{
   successCount: number;
   failCount: number;
@@ -552,7 +553,7 @@ async function sendToMultipleChats(
   for (const chat of chats) {
     const token = chat.bot_token || defaultToken;
     const tokenTier = chat.bot_token ? "custom" : (defaultToken && defaultToken !== (Deno.env.get("TELEGRAM_BOT_TOKEN") || "")) ? "personal" : "system";
-    const result = await sendWithRetry(token, chat.chat_id, message, imageUrl, 3);
+    const result = await sendWithRetry(token, chat.chat_id, message, imageUrl, replyMarkup, 3);
 
     if (userId) {
       await logDeliveryAttempt(supabase, userId, chat.chat_id, notificationType, segment, result, 1);
