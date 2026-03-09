@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { SEOHead } from "@/components/SEOHead";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,9 +22,28 @@ const FAQSection = lazy(() => import("@/components/landing/BelowFoldSections").t
 const FinalCTASection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.FinalCTASection })));
 const FooterSection = lazy(() => import("@/components/landing/BelowFoldSections").then(m => ({ default: m.FooterSection })));
 
-function SectionFallback() {
-  return <div className="py-24 flex items-center justify-center"><div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>;
-}
+const SectionFallback = React.forwardRef<HTMLDivElement>((_, ref) => (
+  <div ref={ref} className="py-24 px-6">
+    <div className="max-w-6xl mx-auto space-y-8 animate-pulse">
+      {/* Section badge skeleton */}
+      <div className="flex justify-center">
+        <div className="h-6 w-24 rounded-full bg-muted/20" />
+      </div>
+      {/* Title skeleton */}
+      <div className="flex flex-col items-center gap-4">
+        <div className="h-10 w-80 rounded-lg bg-muted/15" />
+        <div className="h-5 w-64 rounded-lg bg-muted/10" />
+      </div>
+      {/* Grid skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-48 rounded-xl bg-muted/10 border border-border/10" />
+        ))}
+      </div>
+    </div>
+  </div>
+));
+SectionFallback.displayName = "SectionFallback";
 
 export default function Landing() {
   const navigate = useNavigate();

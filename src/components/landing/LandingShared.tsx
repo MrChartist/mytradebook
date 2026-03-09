@@ -121,6 +121,7 @@ export function SectionBadge({ children }: { children: React.ReactNode }) {
 }
 
 /* ─── Gradient Divider ──────────────────────────────────── */
-export function GradientDivider() {
-  return <div className="h-px bg-gradient-to-r from-transparent via-border/25 to-transparent max-w-4xl mx-auto my-2" />;
-}
+export const GradientDivider = React.forwardRef<HTMLDivElement>((_, ref) => {
+  return <div ref={ref} className="h-px bg-gradient-to-r from-transparent via-border/25 to-transparent max-w-4xl mx-auto my-2" />;
+});
+GradientDivider.displayName = "GradientDivider";

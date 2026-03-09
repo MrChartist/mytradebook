@@ -180,9 +180,9 @@ export function CalendarMiniPreview() {
 }
 
 /* ─── Scanner ─────────────────────────────────────────── */
-export function ScannerMiniPreview() {
+export const ScannerMiniPreview = React.forwardRef<HTMLDivElement>((_, ref) => {
   return (
-    <div className="mt-4 space-y-2">
+    <div ref={ref} className="mt-4 space-y-2">
       <div className="flex items-center gap-1 flex-wrap">
         {["Top Gainers", "Undervalued", "Momentum"].map((p, i) => (
           <span key={p} className={cn("px-2 py-0.5 rounded-full text-[9px] font-semibold", i === 0 ? "bg-primary/8 text-primary" : "bg-muted/30 text-muted-foreground/60")}>{p}</span>
@@ -194,7 +194,8 @@ export function ScannerMiniPreview() {
       </div>
     </div>
   );
-}
+});
+ScannerMiniPreview.displayName = "ScannerMiniPreview";
 
 /* ─── Position Sizing ─────────────────────────────────── */
 export function SizingMiniPreview() {
