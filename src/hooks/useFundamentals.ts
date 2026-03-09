@@ -41,6 +41,10 @@ export interface FundamentalData {
   perf_y: number | null;
   beta: number | null;
   atr: number | null;
+  // NEW: daily high/low + VWAP
+  day_high: number | null;
+  day_low: number | null;
+  vwap: number | null;
 }
 
 export interface ScanResponse {
@@ -54,6 +58,27 @@ export interface ScanFilter {
   value: number;
 }
 
+/**
+ * Client-side post-filters for cross-field percentage comparisons.
+ * Used for 52W High/Low proximity, ATH/ATL zones, Day High/Low, SMA proximity etc.
+ * These cannot be expressed as simple TradingView filter expressions.
+ */
+export interface ClientPostFilter {
+  /** Field on FundamentalData to test (e.g. "close") */
+  sourceField: keyof FundamentalData;
+  /** Reference field on FundamentalData to compare against (e.g. "high_52w") */
+  targetField: keyof FundamentalData;
+  /**
+   * "within_pct_below" → (targetField - sourceField) / targetField <= threshold/100
+   * "within_pct_above" → (sourceField - targetField) / targetField <= threshold/100
+   * "above"            → sourceField > targetField
+   * "below"            → sourceField < targetField
+   */
+  direction: "within_pct_below" | "within_pct_above" | "above" | "below";
+  /** Percentage threshold (only for within_pct_* directions) */
+  threshold?: number;
+}
+
 export interface ScanParams {
   symbols?: string[];
   mode?: "symbols" | "top";
@@ -63,15 +88,64 @@ export interface ScanParams {
   sortOrder?: "asc" | "desc";
   filters?: ScanFilter[];
   rawFilters?: unknown[];
+  /** When set, fetches a larger batch and applies these filters client-side */
+  clientPostFilters?: ClientPostFilter[];
+}
+
+/** Apply a single client post-filter to a row */
+function applyClientPostFilter(s: FundamentalData, f: ClientPostFilter): boolean {
+  const src = s[f.sourceField] as number | null;
+  const tgt = s[f.targetField] as number | null;
+  if (src == null || tgt == null || tgt === 0) return false;
+
+  switch (f.direction) {
+    case "within_pct_below":
+      return tgt > 0 && (tgt - src) / tgt <= (f.threshold ?? 0) / 100;
+    case "within_pct_above":
+      return tgt > 0 && (src - tgt) / tgt <= (f.threshold ?? 0) / 100;
+    case "above":
+      return src > tgt;
+    case "below":
+      return src < tgt;
+    default:
+      return true;
+  }
 }
 
 export function useFundamentals(params: ScanParams = {}) {
-  const { symbols, mode, limit = 500, offset = 0, sortBy, sortOrder, filters, rawFilters } = params;
+  const {
+    symbols,
+    mode,
+    limit = 500,
+    offset = 0,
+    sortBy,
+    sortOrder,
+    filters,
+    rawFilters,
+    clientPostFilters,
+  } = params;
 
-  return useQuery<ScanResponse>({
-    queryKey: ["fundamentals", symbols ?? "top", limit, offset, sortBy, sortOrder, filters, rawFilters],
+  // When we have clientPostFilters, request a larger batch so that after
+  // filtering we still have enough rows. We fetch up to 1000 from offset 0
+  // and do pagination ourselves.
+  const hasClientFilters = (clientPostFilters?.length ?? 0) > 0;
+  const fetchLimit = hasClientFilters ? 1000 : limit;
+  const fetchOffset = hasClientFilters ? 0 : offset;
+
+  const { data: result, isLoading, isFetching, error } = useQuery<ScanResponse>({
+    queryKey: [
+      "fundamentals",
+      symbols ?? "top",
+      fetchLimit,
+      fetchOffset,
+      sortBy,
+      sortOrder,
+      filters,
+      rawFilters,
+      clientPostFilters,
+    ],
     queryFn: async () => {
-      const payload: Record<string, unknown> = { limit, offset };
+      const payload: Record<string, unknown> = { limit: fetchLimit, offset: fetchOffset };
 
       if (symbols?.length) {
         payload.symbols = symbols;
@@ -103,6 +177,30 @@ export function useFundamentals(params: ScanParams = {}) {
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
+
+  // Apply client-side post-filters and slice the page
+  const filteredData = (() => {
+    if (!result) return null;
+    if (!hasClientFilters) return result;
+
+    const filtered = result.data.filter((row) =>
+      clientPostFilters!.every((f) => applyClientPostFilter(row, f))
+    );
+
+    // Paginate the client-filtered results
+    const page = filtered.slice(offset, offset + limit);
+    return {
+      data: page,
+      totalCount: filtered.length,
+    } as ScanResponse;
+  })();
+
+  return {
+    data: filteredData ?? result,
+    isLoading,
+    isFetching,
+    error,
+  };
 }
 
 // Formatting helpers
