@@ -392,7 +392,7 @@ export default function Dashboard() {
             <Skeleton className="h-[220px] rounded-[1.25rem] shimmer-skeleton" />
           </div>
         ) : (
-          widgets.map((w) => renderWidget(w))
+          getVisibleWidgets().map((w) => renderWidget(w))
         )}
       </div>
     </DashboardContext.Provider>
