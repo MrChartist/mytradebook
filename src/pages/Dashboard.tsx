@@ -14,6 +14,13 @@ import { StreakDiscipline } from "@/components/dashboard/StreakDiscipline";
 import { RiskGoalWidget } from "@/components/dashboard/RiskGoalWidget";
 import { FloatingTradeTicker } from "@/components/dashboard/FloatingTradeTicker";
 import { SortableWidgetItem } from "@/components/dashboard/DashboardWidgetSortable";
+import { DailyScorecard } from "@/components/dashboard/DailyScorecard";
+import { DisciplineScore } from "@/components/dashboard/DisciplineScore";
+import { MorningBriefing } from "@/components/dashboard/MorningBriefing";
+import { RiskMeter } from "@/components/dashboard/RiskMeter";
+import { MobileDashboardSettings } from "@/components/dashboard/MobileDashboardSettings";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 // Lazy-loaded heavy widgets
 const JournalCalendarView = lazy(() => import("@/components/journal/JournalCalendarView").then(m => ({ default: m.JournalCalendarView })));
@@ -83,7 +90,7 @@ export const useDashboard = () => {
 export default function Dashboard() {
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(new Date());
   const [segment, setSegment] = useState<Segment>("All");
-  const { widgets, toggleWidget, moveWidget, resetLayout, reorderWidgets } = useDashboardLayout();
+  const { widgets, toggleWidget, resetLayout, reorderWidgets, focusMode, setFocusMode, density, setDensity, getVisibleWidgets } = useDashboardLayout();
 
   const { trades: allTrades, isLoading: tradesLoading } = useTrades();
   const { alerts } = useAlerts({ active: true });
@@ -159,8 +166,15 @@ export default function Dashboard() {
   };
 
   const renderWidget = (w: WidgetConfig) => {
-    if (!w.visible) return null;
     switch (w.id) {
+      case "dailyScorecard":
+        return <DailyScorecard key={w.id} />;
+      case "disciplineScore":
+        return <DisciplineScore key={w.id} />;
+      case "morningBriefing":
+        return <MorningBriefing key={w.id} />;
+      case "riskMeter":
+        return <RiskMeter key={w.id} />;
       case "kpi":
         return <DashboardKPICards key={w.id} alerts={alerts} />;
       case "riskGoal":
@@ -211,9 +225,15 @@ export default function Dashboard() {
     }
   };
 
+  const densityClasses = {
+    compact: "space-y-2.5",
+    comfortable: "space-y-4",
+    spacious: "space-y-6"
+  };
+
   return (
     <DashboardContext.Provider value={ctx}>
-      <div className="space-y-4 animate-fade-in">
+      <div className={cn("animate-fade-in", densityClasses[density])}>
         <OnboardingWelcome />
 
         {/* Floating Trade Ticker */}
@@ -238,40 +258,67 @@ export default function Dashboard() {
               )}
             </div>
 
+            <MobileDashboardSettings />
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-7 w-7">
+                <Button variant="ghost" size="icon" className="hidden md:flex h-7 w-7">
                   <Settings2 className="w-3.5 h-3.5" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-60 p-2.5" align="end">
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <p className="text-[11px] font-medium">Dashboard Widgets</p>
-                    <Button variant="ghost" size="sm" className="h-6 text-[9px]" onClick={resetLayout}>
+              <PopoverContent className="w-64 p-3" align="end">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-semibold">Dashboard View</p>
+                    <Button variant="ghost" size="sm" className="h-6 text-[10px] px-2" onClick={resetLayout}>
                       <RotateCcw className="w-3 h-3 mr-1" /> Reset
                     </Button>
                   </div>
-                  <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handlePopoverDragEnd}
-                  >
-                    <SortableContext
-                      items={widgets.map((w) => w.id)}
-                      strategy={verticalListSortingStrategy}
-                    >
-                      {widgets.map((w) => (
-                        <SortableWidgetItem
-                          key={w.id}
-                          id={w.id}
-                          label={w.label}
-                          visible={w.visible}
-                          onToggle={() => toggleWidget(w.id)}
-                        />
+                  
+                  <div className="flex items-center justify-between bg-muted/40 p-2 rounded-md">
+                    <Label className="text-xs flex items-center gap-1.5 cursor-pointer">Focus Mode</Label>
+                    <Switch checked={focusMode} onCheckedChange={setFocusMode} />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Density</Label>
+                    <div className="flex gap-1">
+                      {(["compact", "comfortable", "spacious"] as const).map(d => (
+                        <Button 
+                          key={d} 
+                          variant={density === d ? "secondary" : "ghost"} 
+                          size="sm" 
+                          onClick={() => setDensity(d)}
+                          className="h-6 text-[10px] flex-1 capitalize"
+                        >
+                          {d}
+                        </Button>
                       ))}
-                    </SortableContext>
-                  </DndContext>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5 pt-2 border-t">
+                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2 block">Widgets</Label>
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handlePopoverDragEnd}
+                    >
+                      <SortableContext
+                        items={widgets.map((w) => w.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        {widgets.map((w) => (
+                          <SortableWidgetItem
+                            key={w.id}
+                            id={w.id}
+                            label={w.label}
+                            visible={w.visible}
+                            onToggle={() => toggleWidget(w.id)}
+                          />
+                        ))}
+                      </SortableContext>
+                    </DndContext>
+                  </div>
                 </div>
               </PopoverContent>
             </Popover>
@@ -346,7 +393,7 @@ export default function Dashboard() {
             <Skeleton className="h-[220px] rounded-[1.25rem] shimmer-skeleton" />
           </div>
         ) : (
-          widgets.map((w) => renderWidget(w))
+          getVisibleWidgets().map((w) => renderWidget(w))
         )}
       </div>
     </DashboardContext.Provider>
