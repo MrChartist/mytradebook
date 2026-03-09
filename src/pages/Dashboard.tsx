@@ -166,8 +166,15 @@ export default function Dashboard() {
   };
 
   const renderWidget = (w: WidgetConfig) => {
-    if (!w.visible) return null;
     switch (w.id) {
+      case "dailyScorecard":
+        return <DailyScorecard key={w.id} />;
+      case "disciplineScore":
+        return <DisciplineScore key={w.id} />;
+      case "morningBriefing":
+        return <MorningBriefing key={w.id} />;
+      case "riskMeter":
+        return <RiskMeter key={w.id} />;
       case "kpi":
         return <DashboardKPICards key={w.id} alerts={alerts} />;
       case "riskGoal":
