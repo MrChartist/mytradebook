@@ -4,6 +4,11 @@ import {
   ExternalLink, Filter, Unplug, AlertTriangle, ChevronDown, ChevronUp, History,
   BarChart3, Bell, BookOpen, FileText, Circle, HelpCircle, Bot,
 } from "lucide-react";
+// rest of imports follow
+  MessageCircle, Send, Trash2, Plus, CheckCircle, Loader2,
+  ExternalLink, Filter, Unplug, AlertTriangle, ChevronDown, ChevronUp, History,
+  BarChart3, Bell, BookOpen, FileText, Circle, HelpCircle, Bot,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
