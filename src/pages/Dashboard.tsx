@@ -258,20 +258,46 @@ export default function Dashboard() {
               )}
             </div>
 
+            <MobileDashboardSettings />
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-7 w-7">
+                <Button variant="ghost" size="icon" className="hidden md:flex h-7 w-7">
                   <Settings2 className="w-3.5 h-3.5" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-60 p-2.5" align="end">
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <p className="text-[11px] font-medium">Dashboard Widgets</p>
-                    <Button variant="ghost" size="sm" className="h-6 text-[9px]" onClick={resetLayout}>
+              <PopoverContent className="w-64 p-3" align="end">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-semibold">Dashboard View</p>
+                    <Button variant="ghost" size="sm" className="h-6 text-[10px] px-2" onClick={resetLayout}>
                       <RotateCcw className="w-3 h-3 mr-1" /> Reset
                     </Button>
                   </div>
+                  
+                  <div className="flex items-center justify-between bg-muted/40 p-2 rounded-md">
+                    <Label className="text-xs flex items-center gap-1.5 cursor-pointer">Focus Mode</Label>
+                    <Switch checked={focusMode} onCheckedChange={setFocusMode} />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Density</Label>
+                    <div className="flex gap-1">
+                      {(["compact", "comfortable", "spacious"] as const).map(d => (
+                        <Button 
+                          key={d} 
+                          variant={density === d ? "secondary" : "ghost"} 
+                          size="sm" 
+                          onClick={() => setDensity(d)}
+                          className="h-6 text-[10px] flex-1 capitalize"
+                        >
+                          {d}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5 pt-2 border-t">
+                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2 block">Widgets</Label>
                   <DndContext
                     sensors={sensors}
                     collisionDetection={closestCenter}
