@@ -1357,7 +1357,8 @@ Deno.serve(async (req) => {
       imageUrl,
       userId,
       notificationType,
-      segment
+      segment,
+      replyMarkup
     );
 
     if (result.successCount === 0) {
