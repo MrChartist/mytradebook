@@ -14,6 +14,13 @@ import { StreakDiscipline } from "@/components/dashboard/StreakDiscipline";
 import { RiskGoalWidget } from "@/components/dashboard/RiskGoalWidget";
 import { FloatingTradeTicker } from "@/components/dashboard/FloatingTradeTicker";
 import { SortableWidgetItem } from "@/components/dashboard/DashboardWidgetSortable";
+import { DailyScorecard } from "@/components/dashboard/DailyScorecard";
+import { DisciplineScore } from "@/components/dashboard/DisciplineScore";
+import { MorningBriefing } from "@/components/dashboard/MorningBriefing";
+import { RiskMeter } from "@/components/dashboard/RiskMeter";
+import { MobileDashboardSettings } from "@/components/dashboard/MobileDashboardSettings";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 // Lazy-loaded heavy widgets
 const JournalCalendarView = lazy(() => import("@/components/journal/JournalCalendarView").then(m => ({ default: m.JournalCalendarView })));
