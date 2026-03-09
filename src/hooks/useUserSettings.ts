@@ -28,11 +28,22 @@ interface UserSettings {
   ra_disclaimer: string | null;
   starting_capital: number | null;
   dashboard_layout: any;
+  dashboard_focus_mode: boolean | null;
+  dashboard_density: string | null;
   tsl_profiles: any;
   truedata_enabled: boolean | null;
   truedata_verified_at: string | null;
   truedata_username: string | null;
   webhook_url: string | null;
+  notification_preferences: {
+    dnd_enabled?: boolean;
+    dnd_until?: string | null;
+    quiet_hours_enabled?: boolean;
+    quiet_hours_start?: string;
+    quiet_hours_end?: string;
+    digest_enabled?: boolean;
+    importance_threshold?: string;
+  } | null;
   created_at: string | null;
   updated_at: string | null;
 }
