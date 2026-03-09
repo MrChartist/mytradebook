@@ -31,7 +31,7 @@ export function QuickTradeEntry({ open, onOpenChange }: QuickTradeEntryProps) {
   const [submitting, setSubmitting] = useState(false);
 
   const handleInstrumentSelect = (inst: SelectedInstrument) => {
-    setSymbol(inst.tradingSymbol || inst.symbol);
+    setSymbol(inst.symbol);
   };
 
   const handleSubmit = async () => {
