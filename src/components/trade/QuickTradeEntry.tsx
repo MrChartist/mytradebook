@@ -110,10 +110,8 @@ export function QuickTradeEntry({ open, onOpenChange }: QuickTradeEntryProps) {
       {/* Symbol */}
       <div className="mb-3">
         <InstrumentPicker
-          value={symbol}
           onSelect={handleInstrumentSelect}
           segment={segment}
-          placeholder="Search symbol..."
         />
       </div>
 
