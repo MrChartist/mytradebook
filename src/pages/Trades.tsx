@@ -51,6 +51,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { CsvImportModal } from "@/components/trade/CsvImportModal";
 import { tradesToCSV, downloadCSV } from "@/lib/csv-export";
 import { Sparkline } from "@/components/ui/sparkline";
+import { AdvancedTradeFilters, type AdvancedFilters } from "@/components/trade/AdvancedTradeFilters";
+import { BrokerageCalculatorPanel } from "@/components/trade/BrokerageCalculatorPanel";
 import { subDays, startOfDay, format } from "date-fns";
 
 const segmentLabels: Record<string, string> = {
