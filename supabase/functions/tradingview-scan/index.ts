@@ -21,6 +21,8 @@ const FIELDS = [
   "price_52_week_high", "price_52_week_low",
   "Perf.W", "Perf.1M", "Perf.3M", "Perf.Y",
   "beta_1_year", "ATR",
+  "High.D", "Low.D",
+  "VWAP",
 ];
 
 // Build a name→friendly-key map so we never rely on hardcoded indices
@@ -63,6 +65,9 @@ const FIELD_KEY_MAP: Record<string, string> = {
   "Perf.Y": "perf_y",
   "beta_1_year": "beta",
   "ATR": "atr",
+  "High.D": "day_high",
+  "Low.D": "day_low",
+  "VWAP": "vwap",
 };
 
 const cache = new Map<string, { data: unknown; ts: number }>();
@@ -126,6 +131,8 @@ serve(async (req) => {
       }
 
       // rawFilters: pass TradingView-native filter objects directly (for cross-field comparisons)
+      // Only valid ones like { left: "close", operation: "egreater", right: "SMA50" } work.
+      // Expressions like "price_52_week_high*0.97" are NOT supported and must be done client-side.
       const rawFilters: unknown[] = body.rawFilters ?? [];
       for (const rf of rawFilters) {
         filter.push(rf);
