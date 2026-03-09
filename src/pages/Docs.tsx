@@ -3906,6 +3906,77 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
                 { label: "Chat IDs", language: "Text", code: "Personal chat:  123456789\nGroup chat:    -1001234567890\nChannel:       -1001234567890" },
               ]} title="Telegram Credentials Format" />
 
+              {/* ── Interactive Buttons ─── */}
+              <SubTopic title="Interactive Buttons" description="Take action on notifications without leaving Telegram." id="int-tg-buttons" />
+              <FeatureCard icon={Zap} title="Inline Action Buttons" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">Every notification now includes contextual inline buttons so you can act instantly:</p>
+                <FeatureList items={[
+                  "Alert notifications — [Snooze 15m] [Snooze 1h] [Delete Alert] buttons appear below each alert",
+                  "Trade notifications — [Close Trade] [View Chart] buttons for quick position management",
+                  "Snooze temporarily mutes the alert, delete permanently removes it, close trade marks the position as closed",
+                  "All actions are processed server-side via the Telegram webhook — no need to open the app",
+                  "Button callbacks update your TradeBook data in real-time and send a confirmation message",
+                ]} />
+                <ProTip variant="tip">
+                  <p><strong>How it works:</strong> When you tap an inline button, Telegram sends a callback to our webhook. The webhook identifies you via your Telegram chat ID, verifies your account, and executes the action securely. You'll see a confirmation message in the chat within seconds.</p>
+                </ProTip>
+              </FeatureCard>
+
+              {/* ── Chatbot Commands ─── */}
+              <SubTopic title="Chatbot Commands" description="Query your trading data directly from Telegram." id="int-tg-commands" />
+              <FeatureCard icon={Command} title="Telegram Bot Commands" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">Type commands in any chat with your bot to get instant trading summaries:</p>
+                <FeatureList items={[
+                  "/pnl — Today's P&L summary with win rate, total trades, and net profit/loss",
+                  "/positions — List all open positions with current P&L and entry prices",
+                  "/briefing — Morning market briefing with open positions overview and key levels",
+                  "/help — Show all available commands and their descriptions",
+                ]} />
+                <CodeBlock tabs={[
+                  { label: "/pnl Response", language: "Text", code: "📊 Today's P&L Summary\n━━━━━━━━━━━━━━━━━━\n💰 Net P&L: +₹12,450\n📈 Win Rate: 75%\n🔄 Total Trades: 8\n✅ Winners: 6 | ❌ Losers: 2\n📅 Date: 09 Mar 2026" },
+                  { label: "/positions", language: "Text", code: "📋 Open Positions (3)\n━━━━━━━━━━━━━━━━━━\n📍 RELIANCE · BUY\n   Entry: ₹2,845 · P&L: +₹1,540\n📍 NIFTY FUT · SELL\n   Entry: ₹22,380 · P&L: -₹800\n📍 HDFCBANK · BUY\n   Entry: ₹1,678 · P&L: +₹450" },
+                ]} title="Command Response Examples" />
+                <ProTip variant="warning">
+                  <p>Commands only work when your Telegram account is linked to TradeBook. The bot identifies you by your chat ID, which must match a verified destination in Settings → Integrations → Telegram.</p>
+                </ProTip>
+              </FeatureCard>
+
+              {/* ── Custom Message Templates ─── */}
+              <SubTopic title="Custom Message Templates" description="Define your own notification formats using variable placeholders." id="int-tg-templates" />
+              <FeatureCard icon={FileText} title="Custom Message Templates" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">Personalize how your Telegram notifications look with template variables:</p>
+                <FeatureList items={[
+                  "Three template types — New Trade, Trade Closed, and Alert Triggered",
+                  "Use {{variable}} placeholders like {{symbol}}, {{entry_price}}, {{pnl}}, {{pnl_percent}}, {{stop_loss}}, {{risk_amount}}",
+                  "Leave a template empty to use the default rich format — no configuration needed",
+                  "Real-time variable reference panel with one-click copy for all available placeholders",
+                  "Ideal for RA (Research Analyst) channels — create clean, branded signal formats",
+                ]} />
+                <CodeBlock tabs={[
+                  { label: "Signal Template", language: "Text", code: "🚨 NEW SIGNAL: {{symbol}}\n━━━━━━━━━━━━━━━\n📍 Side: {{side}}\n💰 Entry: {{entry_price}}\n🛑 SL: {{stop_loss}}\n🎯 Targets: {{targets}}\n⚠️ Risk: {{risk_amount}}\n📊 Timeframe: {{timeframe}}" },
+                  { label: "P&L Template", language: "Text", code: "📒 TRADE CLOSED: {{symbol}}\n━━━━━━━━━━━━━━━\n💰 P&L: {{pnl}} ({{pnl_percent}}%)\n📊 Status: {{status}}\n📝 {{notes}}" },
+                ]} title="Example Custom Templates" />
+                <ProTip variant="tip">
+                  <p>Find the template editor in <strong>Settings → Integrations → Telegram → Custom Message Templates</strong>. There are 13+ variables available including <code>{"{{symbol}}"}</code>, <code>{"{{side}}"}</code>, <code>{"{{entry_price}}"}</code>, <code>{"{{stop_loss}}"}</code>, <code>{"{{pnl}}"}</code>, <code>{"{{quantity}}"}</code>, <code>{"{{segment}}"}</code>, <code>{"{{holding_period}}"}</code>, and more.</p>
+                </ProTip>
+              </FeatureCard>
+
+              {/* ── Auto-Attached Chart Snapshots ─── */}
+              <SubTopic title="Auto-Attached Chart Snapshots" description="Chart images are automatically sent alongside trade notifications." id="int-tg-charts" />
+              <FeatureCard icon={Eye} title="Auto-Attached Chart Snapshots" badge="New">
+                <p className="text-sm text-muted-foreground mb-3">When you add a chart image or link to a trade, it's automatically included in Telegram notifications:</p>
+                <FeatureList items={[
+                  "Chart images uploaded to TradeBook storage are resolved to full URLs and sent via Telegram's sendPhoto API",
+                  "Direct image URLs in the Chart Link field (ending in .png, .jpg, .gif, .webp) are sent as photo attachments",
+                  "TradingView chart links are included as clickable [View Chart] buttons on the notification",
+                  "The notification caption includes all trade details — no separate text message needed",
+                  "Works with both automated notifications (new trade, close trade) and manual sends from Trade Detail",
+                ]} />
+                <ProTip variant="tip">
+                  <p><strong>Best practice:</strong> Upload chart screenshots directly to TradeBook when creating a trade. The system automatically detects and attaches them to Telegram messages. For TradingView users, paste the chart link in the 'Chart Link' field — it appears as a button in the notification.</p>
+                </ProTip>
+              </FeatureCard>
+
               <SubTopic title="Troubleshooting" description="Common connection issues and how to resolve them." id="int-troubleshoot" />
               <ExpandableDetail title="Troubleshooting Dhan Connection Issues" icon={AlertTriangle} badge="Help">
                 <p>Common issues when connecting or using the Dhan integration, and how to fix them:</p>
