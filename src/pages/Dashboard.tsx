@@ -90,7 +90,7 @@ export const useDashboard = () => {
 export default function Dashboard() {
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(new Date());
   const [segment, setSegment] = useState<Segment>("All");
-  const { widgets, toggleWidget, moveWidget, resetLayout, reorderWidgets } = useDashboardLayout();
+  const { widgets, toggleWidget, resetLayout, reorderWidgets, focusMode, setFocusMode, density, setDensity, getVisibleWidgets } = useDashboardLayout();
 
   const { trades: allTrades, isLoading: tradesLoading } = useTrades();
   const { alerts } = useAlerts({ active: true });
