@@ -642,6 +642,77 @@ export default function TelegramSettings() {
         )}
       </div>
 
+      {/* Quiet Hours / DND Settings */}
+      <div className="mb-6">
+        <h4 className="font-medium text-sm mb-3 flex items-center gap-2">
+          <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">3</span>
+          Quiet Hours / Do Not Disturb
+        </h4>
+        <div className="p-4 rounded-lg border border-border bg-card space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium">Enable Quiet Hours</p>
+              <p className="text-xs text-muted-foreground">Stop notifications during specific hours</p>
+            </div>
+            <Switch
+              checked={settings?.notification_preferences?.quiet_hours_enabled ?? false}
+              onCheckedChange={(checked) => {
+                const prefs = settings?.notification_preferences || {};
+                updateSettings.mutate({
+                  notification_preferences: { ...prefs, quiet_hours_enabled: checked }
+                } as any);
+              }}
+            />
+          </div>
+          
+          {settings?.notification_preferences?.quiet_hours_enabled && (
+            <div className="space-y-3 pt-2 border-t border-border">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-xs">Start Time</Label>
+                  <Input
+                    type="time"
+                    value={settings?.notification_preferences?.quiet_hours_start || "22:00"}
+                    onChange={(e) => {
+                      const prefs = settings?.notification_preferences || {};
+                      updateSettings.mutate({
+                        notification_preferences: { ...prefs, quiet_hours_start: e.target.value }
+                      } as any);
+                    }}
+                    className="bg-accent border-border text-xs"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">End Time</Label>
+                  <Input
+                    type="time"
+                    value={settings?.notification_preferences?.quiet_hours_end || "08:00"}
+                    onChange={(e) => {
+                      const prefs = settings?.notification_preferences || {};
+                      updateSettings.mutate({
+                        notification_preferences: { ...prefs, quiet_hours_end: e.target.value }
+                      } as any);
+                    }}
+                    className="bg-accent border-border text-xs"
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                No notifications will be sent between{" "}
+                <span className="font-mono text-foreground">
+                  {settings?.notification_preferences?.quiet_hours_start || "22:00"}
+                </span>
+                {" "}and{" "}
+                <span className="font-mono text-foreground">
+                  {settings?.notification_preferences?.quiet_hours_end || "08:00"}
+                </span>
+                {" "}IST. Morning briefings and critical alerts may still be delivered.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Notification Mode */}
       <div>
         <h4 className="font-medium text-sm mb-3">Notification Mode</h4>
