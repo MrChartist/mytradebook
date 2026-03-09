@@ -101,6 +101,7 @@ function AnimatedRoutes() {
             { path: "/calendar", element: <Calendar />, skeleton: <CalendarSkeleton /> },
             { path: "/mistakes", element: <Mistakes /> },
             { path: "/analytics", element: <Analytics />, skeleton: <AnalyticsSkeleton /> },
+            { path: "/notifications", element: <Notifications /> },
             { path: "/watchlist", element: <Watchlist />, skeleton: <WatchlistSkeleton /> },
             { path: "/fundamentals", element: <Fundamentals /> },
           ].map(({ path, element, skeleton }) => (
