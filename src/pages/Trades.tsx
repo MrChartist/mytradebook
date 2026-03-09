@@ -500,6 +500,7 @@ export default function Trades() {
               </div>
             )}
             <SortSelect value={sortBy} onValueChange={setSortBy} options={sortOptions} />
+            <AdvancedTradeFilters filters={advancedFilters} onChange={setAdvancedFilters} onClear={() => setAdvancedFilters({})} />
             <ViewToggle view={viewMode} onViewChange={setViewMode} />
           </div>
         </div>
