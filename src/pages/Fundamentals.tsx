@@ -245,6 +245,7 @@ export default function Fundamentals() {
 
   const activeFilters = isCustomMode ? appliedFilters : preset.filters;
   const activeRawFilters = isCustomMode ? undefined : preset.rawFilters;
+  const activeClientPostFilters = isCustomMode ? undefined : preset.clientPostFilters;
 
   const { data: result, isLoading, isFetching } = useFundamentals({
     limit: pageSize,
@@ -253,6 +254,7 @@ export default function Fundamentals() {
     sortOrder: isCustomMode ? (sortAsc ? "asc" : "desc") : (preset.sortOrder || (sortAsc ? "asc" : "desc")),
     filters: activeFilters,
     rawFilters: activeRawFilters,
+    clientPostFilters: activeClientPostFilters,
   });
 
   const stocks = useMemo(() => {
@@ -268,13 +270,9 @@ export default function Fundamentals() {
           s.industry?.toLowerCase().includes(q)
       );
     }
-    if (presetId === "near_52w_high") {
-      list = list.filter(
-        (s) => s.close != null && s.high_52w != null && s.high_52w > 0 && ((s.high_52w - s.close) / s.high_52w) * 100 < 5
-      );
-    }
+    // Note: clientPostFilters are now applied inside useFundamentals hook
     return list;
-  }, [result, search, presetId]);
+  }, [result, search]);
 
   const totalCount = result?.totalCount ?? 0;
   const totalPages = Math.ceil(totalCount / pageSize);
