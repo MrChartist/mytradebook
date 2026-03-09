@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { useTelegramChats, SEGMENT_LABELS, type TelegramChat, type NotificationTypeRouting, DEFAULT_NOTIFICATION_TYPES } from "@/hooks/useTelegramChats";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { DeliveryLogPanel } from "@/components/telegram/DeliveryLogPanel";
+import TelegramTemplateSettings from "@/components/settings/TelegramTemplateSettings";
 
 const SEGMENT_KEYS = Object.keys(SEGMENT_LABELS);
 
