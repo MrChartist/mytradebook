@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { CheckCircle, XCircle, Clock, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { TelegramDeliveryLog } from "@/hooks/useTelegramChats";
 
@@ -8,7 +10,20 @@ interface DeliveryLogPanelProps {
   isLoading: boolean;
 }
 
+type Filter = "all" | "success" | "failed";
+
 export function DeliveryLogPanel({ logs, isLoading }: DeliveryLogPanelProps) {
+  const [filter, setFilter] = useState<Filter>("all");
+
+  const filtered = logs.filter((l) => {
+    if (filter === "success") return l.success;
+    if (filter === "failed") return !l.success;
+    return true;
+  });
+
+  const successCount = logs.filter((l) => l.success).length;
+  const failedCount = logs.filter((l) => !l.success).length;
+
   if (isLoading) {
     return (
       <div className="p-4 text-center text-muted-foreground text-sm">
@@ -71,69 +86,90 @@ export function DeliveryLogPanel({ logs, isLoading }: DeliveryLogPanelProps) {
   };
 
   return (
-    <div className="space-y-2">
-      {logs.map((log) => (
-        <div
-          key={log.id}
-          className={cn(
-            "p-3 rounded-lg border text-sm",
-            log.success
-              ? "bg-profit/5 border-profit/20"
-              : "bg-loss/5 border-loss/20"
-          )}
-        >
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-2 flex-1 min-w-0">
-              {log.success ? (
-                <CheckCircle className="w-4 h-4 text-profit flex-shrink-0 mt-0.5" />
-              ) : (
-                <XCircle className="w-4 h-4 text-loss flex-shrink-0 mt-0.5" />
-              )}
+    <div className="space-y-3">
+      {/* Filter chips */}
+      <div className="flex items-center gap-1.5">
+        {([
+          { key: "all" as Filter, label: `All (${logs.length})` },
+          { key: "success" as Filter, label: `✓ Passed (${successCount})` },
+          { key: "failed" as Filter, label: `✗ Failed (${failedCount})` },
+        ]).map(({ key, label }) => (
+          <Button
+            key={key}
+            variant={filter === key ? "secondary" : "ghost"}
+            size="sm"
+            className={cn(
+              "h-6 text-[10px] px-2",
+              filter === key && key === "success" && "text-profit",
+              filter === key && key === "failed" && "text-loss",
+            )}
+            onClick={() => setFilter(key)}
+          >
+            {label}
+          </Button>
+        ))}
+      </div>
 
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-medium font-mono text-xs truncate">
-                    {log.chat_id}
-                  </span>
-                  <Badge
-                    variant="outline"
-                    className="text-[10px] px-1.5 py-0"
-                  >
-                    {getNotificationTypeLabel(log.notification_type)}
-                  </Badge>
-                  {log.segment && (
-                    <Badge
-                      variant="outline"
-                      className="text-[10px] px-1.5 py-0 bg-primary/5"
-                    >
-                      {getSegmentLabel(log.segment)}
-                    </Badge>
+      {filtered.length === 0 ? (
+        <p className="text-xs text-muted-foreground text-center py-4">
+          No {filter} entries
+        </p>
+      ) : (
+        <div className="space-y-2 max-h-64 overflow-y-auto">
+          {filtered.map((log) => (
+            <div
+              key={log.id}
+              className={cn(
+                "p-3 rounded-lg border text-sm",
+                log.success
+                  ? "bg-profit/5 border-profit/20"
+                  : "bg-loss/5 border-loss/20"
+              )}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-2 flex-1 min-w-0">
+                  {log.success ? (
+                    <CheckCircle className="w-4 h-4 text-profit flex-shrink-0 mt-0.5" />
+                  ) : (
+                    <XCircle className="w-4 h-4 text-loss flex-shrink-0 mt-0.5" />
                   )}
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium font-mono text-xs truncate">
+                        {log.chat_id}
+                      </span>
+                      <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                        {getNotificationTypeLabel(log.notification_type)}
+                      </Badge>
+                      {log.segment && (
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-primary/5">
+                          {getSegmentLabel(log.segment)}
+                        </Badge>
+                      )}
+                    </div>
+
+                    {!log.success && log.error_message && (
+                      <p className="text-xs text-loss mt-1 line-clamp-2">
+                        {log.error_message}
+                      </p>
+                    )}
+
+                    {log.success && (
+                      <p className="text-xs text-profit mt-1">Delivered successfully</p>
+                    )}
+                  </div>
                 </div>
 
-                {!log.success && log.error_message && (
-                  <p className="text-xs text-loss mt-1 line-clamp-2">
-                    {log.error_message}
-                  </p>
-                )}
-
-                {log.success && (
-                  <p className="text-xs text-profit mt-1">
-                    Delivered successfully
-                  </p>
-                )}
+                <div className="flex items-center gap-1 text-xs text-muted-foreground flex-shrink-0">
+                  <Clock className="w-3 h-3" />
+                  <span className="whitespace-nowrap">{formatTimestamp(log.created_at)}</span>
+                </div>
               </div>
             </div>
-
-            <div className="flex items-center gap-1 text-xs text-muted-foreground flex-shrink-0">
-              <Clock className="w-3 h-3" />
-              <span className="whitespace-nowrap">
-                {formatTimestamp(log.created_at)}
-              </span>
-            </div>
-          </div>
+          ))}
         </div>
-      ))}
+      )}
     </div>
   );
 }
