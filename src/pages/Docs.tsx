@@ -3811,6 +3811,10 @@ function DocsContent({ navigate, isInsideApp, activeSection, scrollTo, sidebarGr
               <QuickNav items={[
                 { label: "Dhan Setup", id: "int-dhan" },
                 { label: "Telegram Setup", id: "int-telegram" },
+                { label: "Interactive Buttons", id: "int-tg-buttons" },
+                { label: "Chatbot Commands", id: "int-tg-commands" },
+                { label: "Custom Templates", id: "int-tg-templates" },
+                { label: "Chart Snapshots", id: "int-tg-charts" },
                 { label: "Troubleshooting", id: "int-troubleshoot" },
               ]} />
 
