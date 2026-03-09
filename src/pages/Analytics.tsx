@@ -176,6 +176,9 @@ export default function Analytics() {
           {/* AI Pattern Detection */}
           <AIPatternDetection trades={closed} />
 
+          {/* Comparative Period Analysis */}
+          <ComparativePeriodAnalysis trades={closed} />
+
           {/* Equity Curve & Drawdown */}
           <EquityCurveDrawdown trades={closed} startingCapital={startingCapital} capitalTransactions={capitalTransactions} />
 
