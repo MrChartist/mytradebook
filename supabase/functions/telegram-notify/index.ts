@@ -1115,6 +1115,7 @@ Deno.serve(async (req) => {
     let userId: string | null = null;
     let segment: string | null = null;
     let notificationType = "other";
+    let replyMarkup: any = undefined;
 
     switch (payload.type) {
       case "new_trade": {
@@ -1125,8 +1126,16 @@ Deno.serve(async (req) => {
         segment = trade.segment;
         notificationType = "trade";
         const settings = await getUserSettings(supabase, trade.user_id);
-        imageUrl = getFirstChartImage(trade);
-        message = buildNewTradeMessage(trade, settings.ra_public_mode, settings.ra_disclaimer);
+        imageUrl = resolveChartImageUrl(trade);
+        const vars = getTradeTemplateVars(trade);
+        message = buildMessageWithTemplate(
+          settings.telegram_message_templates, "new_trade",
+          () => buildNewTradeMessage(trade, settings.ra_public_mode, settings.ra_disclaimer),
+          vars
+        );
+        if (trade.status !== "CLOSED") {
+          replyMarkup = buildTradeInlineKeyboard(trade.id, trade.chart_link);
+        }
         break;
       }
       case "trade_update": {
@@ -1137,7 +1146,7 @@ Deno.serve(async (req) => {
         segment = trade.segment;
         notificationType = "trade";
         const settings = await getUserSettings(supabase, trade.user_id);
-        imageUrl = getFirstChartImage(trade);
+        imageUrl = resolveChartImageUrl(trade);
         const { data: events } = await supabase.from("trade_events").select("*").eq("trade_id", trade.id).order("timestamp", { ascending: false }).limit(1);
         message = buildTradeUpdateMessage(trade, events?.[0], settings.ra_public_mode);
         break;
@@ -1150,8 +1159,13 @@ Deno.serve(async (req) => {
         segment = trade.segment;
         notificationType = "trade";
         const settings = await getUserSettings(supabase, trade.user_id);
-        imageUrl = getFirstChartImage(trade);
-        message = buildTradeClosedMessage(trade, settings.ra_public_mode, settings.ra_disclaimer);
+        imageUrl = resolveChartImageUrl(trade);
+        const vars = getTradeTemplateVars(trade);
+        message = buildMessageWithTemplate(
+          settings.telegram_message_templates, "trade_closed",
+          () => buildTradeClosedMessage(trade, settings.ra_public_mode, settings.ra_disclaimer),
+          vars
+        );
         break;
       }
       case "trade_sl_modified": {
@@ -1172,6 +1186,7 @@ Deno.serve(async (req) => {
         userId = alert.user_id;
         notificationType = "alert";
         message = buildAlertTriggeredMessage(alert, payload.current_price);
+        replyMarkup = buildAlertInlineKeyboard(alert.id);
         break;
       }
       case "alert_created": {
