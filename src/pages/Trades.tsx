@@ -104,6 +104,7 @@ export default function Trades() {
   const [csvImportOpen, setCsvImportOpen] = useState(false);
   const [showStats, setShowStats] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>({});
   const isMobile = useIsMobile();
   const TRADES_PER_PAGE = 25;
 
