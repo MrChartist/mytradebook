@@ -27,6 +27,8 @@ export default defineConfig(({ mode }) => ({
         clientsClaim: false,
       },
       manifest: {
+        id: "/",
+        scope: "/",
         name: "TradeBook – Trading Journal",
         short_name: "TradeBook",
         description: "A structured trading journal and analytics platform for Indian markets.",

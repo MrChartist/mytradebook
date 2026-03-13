@@ -156,10 +156,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (error) {
           console.error("[Auth] getSession error:", error);
-          if (!IS_AUTH_CALLBACK && !IS_PENDING) {
-            try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch (_) {}
-          }
-          if (!IS_AUTH_CALLBACK && !IS_PENDING) resolveLoading("getSession-error");
+          // Always clear stale tokens on error — prevents bad_jwt loops
+          try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch (_) {}
+          try { await supabase.auth.signOut(); } catch (_) {}
+          setSession(null);
+          setUser(null);
+          setProfile(null);
+          clearPendingFlag();
+          resolveLoading("getSession-error-cleared");
           return;
         }
 
