@@ -121,7 +121,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (currentSession?.user) {
           setSession(currentSession);
           setUser(currentSession.user);
-          // Clear pending flag on successful auth
           clearPendingFlag();
           fetchProfile(currentSession.user.id);
           resolveLoading(`auth-event:${event}`);
@@ -131,6 +130,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setProfile(null);
           clearPendingFlag();
           resolveLoading("signed-out-event");
+        } else if (event === "INITIAL_SESSION") {
+          // INITIAL_SESSION fires exactly once — if no user, resolve loading
+          // (unless we're in a callback/pending flow where user may arrive shortly)
+          if (!IS_AUTH_CALLBACK && !IS_PENDING) {
+            resolveLoading("initial-no-session");
+          }
+        } else if (event === "TOKEN_REFRESHED") {
+          // Token was refreshed but no user — stale token scenario
+          if (!currentSession?.user) {
+            console.warn("[Auth] TOKEN_REFRESHED with no user, clearing state");
+            setSession(null);
+            setUser(null);
+            setProfile(null);
+            resolveLoading("token-refresh-no-user");
+          }
         }
       }
     );
